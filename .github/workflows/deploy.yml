@@ -19,27 +19,20 @@ permissions:
   contents: read
 
 jobs:
-  # push main：建置 + 部署
+  # push main：建置 + 推 gh-pages 分支（Pages 用 legacy 模式吃該分支）
+  # 註：workflow 模式（upload-pages-artifact + deploy-pages）在新開站上連三次
+  #     秒回 deployment_failed（2026-07-03），改走十年老店的分支模式。
   deploy:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pages: write
-      id-token: write
-    # 同時間只跑一個部署，避免舊建置蓋掉新版；進行中的不取消（保完整部署）
+      contents: write
     concurrency:
       group: github-pages
       cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
 
       - name: Setup Node 26
         uses: actions/setup-node@v4
@@ -55,14 +48,12 @@ jobs:
         env:
           BASE_PATH: /ndhu-ted-course-hub
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Push out/ to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: out
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+          force_orphan: true
 
   # PR：只驗證＋建置，不部署
   check:
