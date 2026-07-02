@@ -1,7 +1,10 @@
 # DEPLOY——一頁部署步驟（給 Ted／立霧）
 
-> 目標：把這個資料夾變成公開 GitHub repo，用 GitHub Actions 自動部署到
-> `https://<帳號>.github.io/ndhu-ted-course-hub/`。全程約十分鐘，一次設定、之後 push 就自動上線。
+> 目標：把這個資料夾變成公開 GitHub repo，push 就自動驗證、建置、上線到
+> `https://<帳號>.github.io/ndhu-ted-course-hub/`。
+>
+> **現況（2026-07-03）**：已由洄瀾完成部署上線——repo `cwstedctw/ndhu-ted-course-hub`、
+> 網址 `https://cwstedctw.github.io/ndhu-ted-course-hub/`。以下步驟留給重建或搬家時用。
 
 ## 0. 前置（本機一次性）
 
@@ -41,11 +44,16 @@ git push -u origin main
 
 ## 3. 開 GitHub Pages（一次性）
 
-repo 頁面 → **Settings → Pages → Build and deployment → Source 選「GitHub Actions」**。存了就好，不用選 branch。
+repo 頁面 → **Settings → Pages → Build and deployment → Source 選「Deploy from a branch」→ Branch 選 `gh-pages`／`/ (root)`**。
+
+- CI（`deploy.yml`）會在每次 push main 後，把建置產物推上 `gh-pages` 分支（peaceiris/actions-gh-pages），Pages 再吃這個分支。
+- ⚠️ 為什麼不用「GitHub Actions」模式：新開站用 `actions/deploy-pages` 連三次秒回 `deployment_failed`（2026-07-03 實戰），改分支模式後一次就過——別改回去。
+- 首次把 Source 切到 `gh-pages` 時，若分支已存在但 Pages 沒自動建置，手動點火一次：
+  `gh api -X POST repos/<帳號>/ndhu-ted-course-hub/pages/builds`
 
 ## 4. 完成、驗收
 
-- Actions 分頁看 `deploy` workflow 跑完綠燈（validate → next build → scan → 部署，約 2-3 分鐘）。
+- Actions 分頁看 `deploy` workflow 綠燈（validate → next build → scan → 推 gh-pages，約 1-2 分鐘），Pages 隨後自動建置。
 - 開 `https://<帳號>.github.io/ndhu-ted-course-hub/` 看到首頁即成功。
 
 ## 之後的日常
@@ -61,5 +69,5 @@ repo 頁面 → **Settings → Pages → Build and deployment → Source 選「G
 
 - **commit 時 hooks 沒反應**：忘了 `git config core.hooksPath .githooks`（每個 clone 都要設一次）。
 - **hooks 報 `\r` 或 command not found**：檔案被轉成 CRLF——`git config core.autocrlf false` 後重新 checkout，或把 `.githooks/` 兩檔存回 LF。
-- **Pages 404**：Settings→Pages 的 Source 沒選 GitHub Actions，或首次部署還沒跑完。
+- **Pages 404**：Settings→Pages 的 Source 沒選 `gh-pages` 分支；或切換 Source 後第一次建置沒被觸發（用上面 §3 的手動點火指令）。
 - **CI 在 `npm ci` 失敗**：`package-lock.json` 沒 commit（見步驟 0）。
