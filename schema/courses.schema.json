@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hub.ndhu-ted/schema/courses.schema.json",
+  "title": "courses.json — 課程總索引（8 班）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["semester", "updated", "courses"],
+  "properties": {
+    "semester": { "$ref": "_defs.schema.json#/$defs/semester" },
+    "updated": { "$ref": "_defs.schema.json#/$defs/isoDate" },
+    "courses": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["slug", "courseDir", "sectionId", "name", "nameEn", "sectionLabel",
+                     "credits", "kind", "status", "tagline", "chips", "order"],
+        "properties": {
+          "slug": { "type": "string", "pattern": "^11501-[a-z0-9]+(-[a-z0-9]+)*$" },
+          "courseDir": { "type": "string", "pattern": "^11501-[a-z0-9]+(-[a-z0-9]+)*$" },
+          "sectionId": { "anyOf": [ { "type": "string", "pattern": "^[A-Z]{2}$" }, { "type": "null" } ] },
+          "name": { "type": "string", "minLength": 1 },
+          "nameEn": { "type": ["string", "null"] },
+          "sectionLabel": { "type": ["string", "null"] },
+          "credits": { "enum": [2, 3] },
+          "kind": { "enum": ["regular", "lecture-series"] },
+          "status": { "enum": ["open", "conditional", "closed"] },
+          "tagline": { "type": ["string", "null"] },
+          "chips": { "type": "array", "maxItems": 3, "items": { "type": "string", "minLength": 1 } },
+          "order": { "type": "integer", "minimum": 1, "maximum": 8 }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "sectionId": { "type": "null" } } },
+            "then": { "properties": { "sectionLabel": { "type": "null" } } },
+            "else": { "properties": { "sectionLabel": { "type": "string", "minLength": 1 } } }
+          }
+        ]
+      }
+    }
+  }
+}

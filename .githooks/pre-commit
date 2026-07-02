@@ -1,0 +1,77 @@
+#!/bin/sh
+# NDHU TED Course Hub — pre-commit 內容防線（A9）
+#
+# 掃「本次 commit 的新增行」（staged diff），命中任一規則就擋下：
+#   規則 1  學號樣式：4 開頭、連續 8-9 碼數字（獨立字串，前後不接英數）
+#           → 全部檔案都掃、零例外。學生個資零容忍。
+#   規則 2  internal＋Notes 連寫的內部註記鍵——內部口徑不進 Hub
+#           → 防線程式與說明文件合法提及此鍵名，跳過：
+#             .githooks/ .github/ scripts/ docs/ README.md
+#   規則 3  Apps Script 部署 ID（AKfy＋cb 開頭的長字串）
+#           → 只允許 content/site.json 裡 scoreUrl 那一行；防線程式跳過
+#
+# 啟用：git config core.hooksPath .githooks（詳 docs/DEPLOY.md）
+# pre-push 用同一套規則再掃 origin/main..HEAD；CI 的 validate/scan 是第三層。
+# 若被誤擋：先找洄瀾確認，不要用 --no-verify 硬繞。
+
+LC_ALL=C
+export LC_ALL
+
+# pattern 以字串串接組出，避免 hook 檔被自己掃中
+SID_PAT='(^|[^0-9A-Za-z_])4[0-9]{7,8}([^0-9A-Za-z_]|$)'
+NOTES_PAT='internal''Notes'
+GAS_PAT='AKfy''cb'
+
+fail=0
+
+files=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$files" ] && exit 0
+
+IFS='
+'
+for f in $files; do
+  added=$(git diff --cached --unified=0 --no-color -- "$f" | grep '^+' | grep -v '^+++')
+  [ -z "$added" ] && continue
+
+  # 規則 1：學號樣式——所有檔都掃、無例外
+  if printf '%s\n' "$added" | grep -Eq "$SID_PAT"; then
+    echo "[pre-commit 擋下] $f：新增行疑似含學號（4 開頭連續 8-9 碼數字）。學生個資不進 repo。"
+    fail=1
+  fi
+
+  # 規則 2：內部註記鍵（防線程式、schema 禁欄規則與說明文件跳過）
+  case "$f" in
+    .githooks/*|.github/*|scripts/*|schema/*|docs/*|README.md) ;;
+    *)
+      if printf '%s\n' "$added" | grep -q "$NOTES_PAT"; then
+        echo "[pre-commit 擋下] $f：新增行含 ${NOTES_PAT} 欄位。內部口徑不進 Hub，content 與程式碼都不得含此鍵。"
+        fail=1
+      fi
+      ;;
+  esac
+
+  # 規則 3：Apps Script 部署 ID 白名單
+  case "$f" in
+    .githooks/*|.github/*|scripts/*) ;;
+    content/site.json)
+      # site.json 裡也只放行「同一行有 scoreUrl 鍵」的那行
+      if printf '%s\n' "$added" | grep "$GAS_PAT" | grep -vq 'scoreUrl'; then
+        echo "[pre-commit 擋下] $f：${GAS_PAT} 部署 ID 只允許出現在 scoreUrl 欄位那一行。"
+        fail=1
+      fi
+      ;;
+    *)
+      if printf '%s\n' "$added" | grep -q "$GAS_PAT"; then
+        echo "[pre-commit 擋下] $f：${GAS_PAT} 部署 ID 只允許出現在 content/site.json 的 scoreUrl 欄。"
+        fail=1
+      fi
+      ;;
+  esac
+done
+
+if [ "$fail" -ne 0 ]; then
+  echo ""
+  echo "commit 已擋下。把上列內容移掉再 commit；確定誤判就找洄瀾，不要 --no-verify 硬繞（pre-push 與 CI 還會再擋）。"
+  exit 1
+fi
+exit 0

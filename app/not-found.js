@@ -1,0 +1,69 @@
+// app/not-found.js —— 自訂 404（詳細設計書 IA 章 §4.10）
+// output:'export' 會把本頁產成根目錄 404.html，未知路徑（含被拔掉的 /build-log/、
+// 不存在的 talk id）一律回傳它。
+// 鐵律：零資料檔依賴——不讀 content JSON、不 fetch，純靜態；
+//       title 只給主詞「找不到頁面」，品牌尾由 layout 的 %s 模板補上。
+import Link from 'next/link';
+
+export const metadata = {
+  title: '找不到頁面',
+  robots: { index: false, follow: false },
+};
+
+export default function NotFound() {
+  return (
+    <main className="nf-main">
+      <style>{`
+        .nf-main { display: flex; justify-content: center; text-align: center; padding: 72px 20px 88px; }
+        .nf-box { max-width: 520px; }
+        .nf-code {
+          margin: 0; font-size: 58px; font-weight: 900; line-height: 1;
+          letter-spacing: .05em; color: var(--teal, #0E7C7B);
+        }
+        .nf-stream { display: block; width: 230px; max-width: 100%; height: auto; margin: 10px auto 4px; }
+        .nf-box h1 { font-size: 24px; margin: 8px 0 10px; line-height: 1.5; }
+        .nf-copy { color: var(--ink-60, #5B584F); font-size: 15px; line-height: 1.9; margin: 0 0 28px; }
+        .nf-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .nf-btn {
+          display: inline-block; text-decoration: none; font-weight: 700;
+          border-radius: 999px; padding: 11px 26px; font-size: 15px;
+        }
+        .nf-btn-primary { background: var(--gold, #D9A441); color: #3D2E0B; }
+        .nf-btn-primary:hover { filter: brightness(1.05); }
+        .nf-btn-secondary { background: var(--teal, #0E7C7B); color: #fff; }
+        .nf-btn-secondary:hover { background: var(--teal-dark, #0A5958); }
+        @media print { .nf-actions { display: none; } }
+      `}</style>
+      <div className="nf-box">
+        <p className="nf-code" aria-hidden="true">404</p>
+        {/* 溪流分岔插圖：實線＝還在的水路，點線＝不存在的支流（純裝飾） */}
+        <svg className="nf-stream" viewBox="0 0 260 90" aria-hidden="true" focusable="false">
+          <path
+            d="M0 45 C 55 45 82 45 110 45"
+            fill="none" stroke="var(--teal, #0E7C7B)" strokeWidth="5"
+            strokeLinecap="round" opacity=".9"
+          />
+          <path
+            d="M110 45 C 152 45 176 20 258 13"
+            fill="none" stroke="var(--teal-mid, #5FB3B0)" strokeWidth="4"
+            strokeLinecap="round" opacity=".85"
+          />
+          <path
+            d="M110 45 C 152 45 176 72 258 79"
+            fill="none" stroke="var(--teal-mid, #5FB3B0)" strokeWidth="4"
+            strokeLinecap="round" strokeDasharray="1 11" opacity=".55"
+          />
+        </svg>
+        <h1>這條支流不存在</h1>
+        <p className="nf-copy">
+          溪水在這裡分了岔——你要找的頁面不在這一頭。
+          可能是網址打錯了字，也可能這一頁已經改道。
+        </p>
+        <div className="nf-actions">
+          <Link className="nf-btn nf-btn-primary" href="/">回首頁</Link>
+          <Link className="nf-btn nf-btn-secondary" href="/courses/">看 115-1 課程</Link>
+        </div>
+      </div>
+    </main>
+  );
+}

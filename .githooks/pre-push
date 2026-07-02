@@ -1,0 +1,88 @@
+#!/bin/sh
+# NDHU TED Course Hub — pre-push 內容防線（A9）
+#
+# pre-commit 擋「正要 commit 的」，pre-push 擋「已 commit、還沒推出去的」——
+# 補「沒掛 hook 的機器 commit 了、或 --no-verify 硬繞」的漏洞
+# （brain repo 2026-06-07 事故的教訓：commit 這關漏了，push 這關要抓回來）。
+#
+# 掃描範圍：origin/main..HEAD 的新增行；
+#           origin/main 不存在（首次 push）→ 以空樹為基準＝HEAD 全量掃。
+# 規則與 pre-commit 完全相同：
+#   規則 1  學號樣式（4 開頭連續 8-9 碼數字）——全部檔案、零例外
+#   規則 2  internal＋Notes 連寫的內部註記鍵——防線程式與說明文件跳過
+#   規則 3  Apps Script 部署 ID（AKfy＋cb 開頭）——只允許 content/site.json 的 scoreUrl 行
+#
+# 啟用：git config core.hooksPath .githooks（詳 docs/DEPLOY.md）
+
+LC_ALL=C
+export LC_ALL
+
+# pattern 以字串串接組出，避免 hook 檔被自己掃中
+SID_PAT='(^|[^0-9A-Za-z_])4[0-9]{7,8}([^0-9A-Za-z_]|$)'
+NOTES_PAT='internal''Notes'
+GAS_PAT='AKfy''cb'
+
+# 空 repo（還沒有任何 commit）沒東西可掃
+git rev-parse -q --verify HEAD >/dev/null 2>&1 || exit 0
+
+if git rev-parse -q --verify origin/main >/dev/null 2>&1; then
+  BASE=origin/main
+else
+  # 首次 push：origin/main 還不存在 → 空樹當基準，等於掃 HEAD 的全部內容
+  BASE=$(git hash-object -t tree /dev/null)
+fi
+
+fail=0
+
+files=$(git diff --name-only --diff-filter=ACMR "$BASE" HEAD)
+[ -z "$files" ] && exit 0
+
+IFS='
+'
+for f in $files; do
+  added=$(git diff --unified=0 --no-color "$BASE" HEAD -- "$f" | grep '^+' | grep -v '^+++')
+  [ -z "$added" ] && continue
+
+  # 規則 1：學號樣式——所有檔都掃、無例外
+  if printf '%s\n' "$added" | grep -Eq "$SID_PAT"; then
+    echo "[pre-push 擋下] $f：待推送的新增行疑似含學號（4 開頭連續 8-9 碼數字）。"
+    fail=1
+  fi
+
+  # 規則 2：內部註記鍵（防線程式、schema 禁欄規則與說明文件跳過）
+  case "$f" in
+    .githooks/*|.github/*|scripts/*|schema/*|docs/*|README.md) ;;
+    *)
+      if printf '%s\n' "$added" | grep -q "$NOTES_PAT"; then
+        echo "[pre-push 擋下] $f：待推送的新增行含 ${NOTES_PAT} 欄位。內部口徑不進 Hub。"
+        fail=1
+      fi
+      ;;
+  esac
+
+  # 規則 3：Apps Script 部署 ID 白名單
+  case "$f" in
+    .githooks/*|.github/*|scripts/*) ;;
+    content/site.json)
+      if printf '%s\n' "$added" | grep "$GAS_PAT" | grep -vq 'scoreUrl'; then
+        echo "[pre-push 擋下] $f：${GAS_PAT} 部署 ID 只允許出現在 scoreUrl 欄位那一行。"
+        fail=1
+      fi
+      ;;
+    *)
+      if printf '%s\n' "$added" | grep -q "$GAS_PAT"; then
+        echo "[pre-push 擋下] $f：${GAS_PAT} 部署 ID 只允許出現在 content/site.json 的 scoreUrl 欄。"
+        fail=1
+      fi
+      ;;
+  esac
+done
+
+if [ "$fail" -ne 0 ]; then
+  echo ""
+  echo "push 已擋下。注意：這些內容已寫進 commit 歷史——只改檔案再 commit 一次是不夠的，"
+  echo "要把含個資的 commit 整個撤掉（例：git reset --soft origin/main 後重做乾淨的 commit），"
+  echo "或找洄瀾協助改寫歷史。確定誤判也先找洄瀾，不要 --no-verify 硬繞（CI 還有一層）。"
+  exit 1
+fi
+exit 0

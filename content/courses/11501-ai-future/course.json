@@ -1,0 +1,59 @@
+{
+  "id": "115-1-ai-future",
+  "kind": "lecture-series",
+  "name": "AI未來應用與趨勢探索：洄瀾的智慧未來",
+  "nameEn": null,
+  "semester": "115-1",
+  "org": "國立東華大學 通識教育中心",
+  "instructor": {
+    "name": "陳文盛",
+    "title": "專案助理教授",
+    "email": "wschen@gms.ndhu.edu.tw",
+    "phone": "03-890-6610",
+    "office": "理工二館 C306",
+    "contact": "Microsoft Teams 發訊息",
+    "promise": { "status": "pending", "note": "教師一句話 8 月由 Ted 補" }
+  },
+  "credits": 3,
+  "courseType": { "status": "pending", "note": "課別待 Ted 依開課清單核定" },
+  "weeksSystem": { "status": "pending", "note": "週制（16／17 週）開學前確認" },
+  "sections": [
+    {
+      "id": "AA",
+      "code": null,
+      "systemId": null,
+      "time": null,
+      "timeNote": { "status": "pending", "note": "上課時間開學前公布" },
+      "room": null
+    }
+  ],
+  "intro": {
+    "promise": { "status": "pending", "note": "課程一句話 8 月由 Ted 補" },
+    "chips": { "status": "pending", "note": "課程亮點標籤 8 月由 Ted 補" },
+    "destination": { "status": "pending", "note": "課程終點與三步驟 8 月由 Ted 補" },
+    "phases": { "status": "pending", "note": "課程分段 8 月由 Ted 補" },
+    "weeklyPlan": { "status": "pending", "note": "週次表（含 12 場演講週次）開學前公布" },
+    "grading": { "status": "pending", "note": "評分比例 8 月由 Ted 補" },
+    "aiRules": { "status": "pending", "note": "AI 使用守則 8 月由 Ted 補（可沿用共通三條）" },
+    "aiPolicyExamples": { "status": "pending", "note": "AI 使用情境實例待 Ted 給" },
+    "toolGroups": { "status": "pending", "note": "課程工具帶 8 月由 Ted 補" },
+    "dailyTools": { "status": "pending", "note": "日常工具清單 8 月由 Ted 補" },
+    "whatToBring": { "status": "pending", "note": "上課要帶什麼 8 月由 Ted 補" },
+    "faq": { "status": "pending", "note": "常見問題 8 月由 Ted 補" }
+  },
+  "meta": {
+    "lastReviewed": null,
+    "validForSemester": "115-1",
+    "owner": "Ted（陳文盛）",
+    "sources": [
+      "M0 骨架：依 workspace/outbox/20260702-wailan-course-hub-詳細設計書.md 第三章產出（2026-07-03），課程內容 8 月由 Ted 填；12 場演講資料另見同資料夾 talks.json"
+    ]
+  },
+  "hub": {
+    "links": [],
+    "scoreUrl": null,
+    "showcaseRefs": [],
+    "heroImage": null,
+    "showPromptButtons": false
+  }
+}

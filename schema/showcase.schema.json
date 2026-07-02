@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hub.ndhu-ted/schema/showcase.schema.json",
+  "title": "showcase/<semester>.json — 學期精選作品",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["semester", "items"],
+  "properties": {
+    "semester": { "$ref": "_defs.schema.json#/$defs/semester" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "courseDir", "group", "title", "summary",
+                     "image", "link", "credit", "consent"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^\\d{4}-[a-z0-9]+(-[a-z0-9]+)*-\\d{2}$" },
+          "courseDir": { "type": "string", "pattern": "^11501-[a-z0-9]+(-[a-z0-9]+)*$" },
+          "group": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "summary": { "type": "string", "minLength": 1 },
+          "image": { "anyOf": [ { "type": "string", "pattern": "^/images/showcase/" }, { "type": "null" } ] },
+          "link": { "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl" },
+          "credit": { "type": ["string", "null"] },
+          "consent": { "enum": ["not-needed", "obtained", "pending"] },
+          "consentDate": { "$ref": "_defs.schema.json#/$defs/nullableIsoDate" }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "credit": { "type": "string" } } },
+            "then": { "properties": { "consent": { "const": "obtained" } } }
+          }
+        ]
+      }
+    }
+  }
+}

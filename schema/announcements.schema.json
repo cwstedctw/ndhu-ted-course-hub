@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hub.ndhu-ted/schema/announcements.schema.json",
+  "title": "announcements.json — 首頁公告",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["items"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "date", "title", "body", "pinned", "validUntil"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^a-\\d{8}-\\d{2}$" },
+          "date": { "$ref": "_defs.schema.json#/$defs/isoDate" },
+          "title": { "type": "string", "minLength": 1 },
+          "body": { "type": "string", "minLength": 1 },
+          "pinned": { "type": "boolean" },
+          "validUntil": { "$ref": "_defs.schema.json#/$defs/nullableIsoDate" }
+        }
+      }
+    }
+  }
+}

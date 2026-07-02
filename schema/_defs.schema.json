@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hub.ndhu-ted/schema/_defs.schema.json",
+  "title": "_defs — 共用型別（日期、時刻、學期、https 網址、成績網址、pending 物件、MOE 指標）",
+  "$defs": {
+    "isoDate": { "type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "nullableIsoDate": { "anyOf": [ { "$ref": "#/$defs/isoDate" }, { "type": "null" } ] },
+    "hhmmTime": { "type": "string", "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$" },
+    "nullableHhmmTime": { "anyOf": [ { "$ref": "#/$defs/hhmmTime" }, { "type": "null" } ] },
+    "semester": { "type": "string", "pattern": "^\\d{3}-[12]$" },
+    "httpsUrl": { "type": "string", "format": "uri", "pattern": "^https://" },
+    "nullableHttpsUrl": { "anyOf": [ { "$ref": "#/$defs/httpsUrl" }, { "type": "null" } ] },
+    "scoreV2Url": { "type": "string", "format": "uri", "pattern": "^https://script\\.google\\.com/" },
+    "nullableScoreV2Url": { "anyOf": [ { "$ref": "#/$defs/scoreV2Url" }, { "type": "null" } ] },
+    "moeIndicator": { "enum": ["legal", "ethical", "application"] },
+    "pendingField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "note"],
+      "properties": {
+        "status": { "enum": ["pending", "pending_ted"] },
+        "note": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

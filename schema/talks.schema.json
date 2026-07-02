@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hub.ndhu-ted/schema/talks.schema.json",
+  "title": "talks.json — 演講課 12 場",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["courseDir", "moeIndicators", "talks"],
+  "properties": {
+    "courseDir": { "const": "11501-ai-future" },
+    "moeIndicators": {
+      "type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true,
+      "items": { "$ref": "_defs.schema.json#/$defs/moeIndicator" }
+    },
+    "talks": {
+      "type": "array", "minItems": 12, "maxItems": 12,
+      "items": { "$ref": "#/$defs/talk" }
+    }
+  },
+  "$defs": {
+    "talk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "no", "status", "date", "time", "venue", "title", "speaker",
+                   "abstract", "moe", "poster", "worksheetUrl", "materials"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^t(0[1-9]|1[0-2])$" },
+        "no": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "status": { "enum": ["confirmed", "tba", "done"] },
+        "date": { "$ref": "_defs.schema.json#/$defs/nullableIsoDate" },
+        "time": { "$ref": "_defs.schema.json#/$defs/nullableHhmmTime" },
+        "venue": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "speaker": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "title", "org", "photo"],
+          "properties": {
+            "name": { "type": ["string", "null"] },
+            "title": { "type": ["string", "null"] },
+            "org": { "type": ["string", "null"] },
+            "photo": { "anyOf": [ { "type": "string", "pattern": "^/images/talks/" }, { "type": "null" } ] }
+          }
+        },
+        "abstract": { "type": ["string", "null"] },
+        "moe": {
+          "type": "array", "uniqueItems": true,
+          "items": { "$ref": "_defs.schema.json#/$defs/moeIndicator" }
+        },
+        "poster": { "anyOf": [ { "type": "string", "pattern": "^/images/talks/" }, { "type": "null" } ] },
+        "worksheetUrl": { "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl" },
+        "materials": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "url"],
+            "properties": {
+              "label": { "type": "string", "minLength": 1 },
+              "url": { "$ref": "_defs.schema.json#/$defs/httpsUrl" }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "enum": ["confirmed", "done"] } } },
+          "then": {
+            "properties": {
+              "date": { "type": "string" },
+              "title": { "type": "string", "minLength": 1 },
+              "speaker": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "minLength": 1 },
+                  "org": { "type": "string", "minLength": 1 }
+                }
+              },
+              "moe": { "type": "array", "minItems": 1 }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

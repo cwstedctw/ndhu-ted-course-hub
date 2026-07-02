@@ -1,0 +1,27 @@
+{
+  "brand": {
+    "name": "NDHU TED Course Hub",
+    "semester": "115-1",
+    "description": "東華大學陳文盛老師 115-1 學期的課程入口網站：八個班的課程介紹、十二場系列演講、上學期精選作品與成績查詢。",
+    "palette": {
+      "teal": "#0E7C7B",
+      "gold": "#D9A441",
+      "cream": "#F4ECD8",
+      "ink": "#1A1A1A"
+    }
+  },
+  "baseUrl": null,
+  "scoreUrl": "https://script.google.com/a/macros/gms.ndhu.edu.tw/s/AKfycbzeTRwPCrlIquvgpqbBhXvIHC4xBHCeroiO0cbY4rocro72PabSWW7mR5PR49KR-NOt/exec",
+  "scoreDemoUrl": null,
+  "about": {
+    "name": "陳文盛",
+    "title": "專案助理教授",
+    "email": "wschen@gms.ndhu.edu.tw",
+    "office": "理工二館 C306",
+    "contact": "Microsoft Teams 發訊息"
+  },
+  "footerCredits": "Designed by Wailan · Crafted by Liwu · Reviewed by Xiuguluan · Directed by Ted Chen",
+  "buildLog": {
+    "enabled": false
+  }
+}

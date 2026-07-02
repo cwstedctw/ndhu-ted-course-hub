@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hub.ndhu-ted/schema/site.schema.json",
+  "title": "site.json — 全站設定",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["brand", "baseUrl", "scoreUrl", "scoreDemoUrl", "about", "footerCredits", "buildLog"],
+  "properties": {
+    "brand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "semester", "description", "palette"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "semester": { "$ref": "_defs.schema.json#/$defs/semester" },
+        "description": { "type": ["string", "null"] },
+        "palette": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["teal", "gold", "cream", "ink"],
+          "properties": {
+            "teal": { "const": "#0E7C7B" },
+            "gold": { "const": "#D9A441" },
+            "cream": { "const": "#F4ECD8" },
+            "ink": { "const": "#1A1A1A" }
+          }
+        }
+      }
+    },
+    "baseUrl": { "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl" },
+    "scoreUrl": { "$ref": "_defs.schema.json#/$defs/scoreV2Url" },
+    "scoreDemoUrl": { "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl" },
+    "about": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "title", "email", "office", "contact"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "office": { "type": "string", "minLength": 1 },
+        "contact": { "type": "string", "minLength": 1 }
+      }
+    },
+    "footerCredits": { "type": "string", "minLength": 1 },
+    "buildLog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled"],
+      "properties": { "enabled": { "type": "boolean" } }
+    }
+  }
+}
