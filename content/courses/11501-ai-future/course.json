@@ -1,8 +1,9 @@
 {
+  "$comment": "課程介紹單一內容源（一份內容、多種輸出）。本檔＝洄瀾 2026-07-03 草稿 v2：改據 115-1 正式教學計畫 GC__68240（OneDrive 東華課程資料/11501/AI未來應用…/教學計畫/ 正本）重寫——評分、週次、教室、教材皆為真值；systemId 取自同夾 _課程資訊.json。12 場講座之講者講題開課前公告（talks.json 陸續補）。文案語氣待 陳文盛 過目。",
   "id": "115-1-ai-future",
   "kind": "lecture-series",
   "name": "AI未來應用與趨勢探索：洄瀾的智慧未來",
-  "nameEn": null,
+  "nameEn": "Exploring Future AI Applications and Trends: Hualien’s Smart Future",
   "semester": "115-1",
   "org": "國立東華大學 通識教育中心",
   "instructor": {
@@ -12,45 +13,243 @@
     "phone": "03-890-6610",
     "office": "理工二館 C306",
     "contact": "Microsoft Teams 發訊息",
-    "promise": { "status": "pending", "note": "教師一句話 8 月由 Ted 補" }
+    "promise": { "status": "pending", "note": "教師一句話由 陳文盛 補（不代擬 陳文盛 第一人稱）" }
   },
   "credits": 3,
-  "courseType": { "status": "pending", "note": "課別待 Ted 依開課清單核定" },
-  "weeksSystem": { "status": "pending", "note": "週制（16／17 週）開學前確認" },
+  "courseType": "校核心選修",
+  "weeksSystem": "17 週新制",
   "sections": [
     {
       "id": "AA",
-      "code": null,
-      "systemId": null,
+      "code": "GC__68240",
+      "systemId": "115194356",
       "time": null,
       "timeNote": { "status": "pending", "note": "上課時間開學前公布" },
-      "room": null
+      "room": "理工二館 ZT講堂 C101"
     }
   ],
   "intro": {
-    "promise": { "status": "pending", "note": "課程一句話 8 月由 Ted 補" },
-    "chips": { "status": "pending", "note": "課程亮點標籤 8 月由 Ted 補" },
-    "destination": { "status": "pending", "note": "課程終點與三步驟 8 月由 Ted 補" },
-    "phases": { "status": "pending", "note": "課程分段 8 月由 Ted 補" },
-    "weeklyPlan": { "status": "pending", "note": "週次表（含 12 場演講週次）開學前公布" },
-    "grading": { "status": "pending", "note": "評分比例 8 月由 Ted 補" },
-    "aiRules": { "status": "pending", "note": "AI 使用守則 8 月由 Ted 補（可沿用共通三條）" },
-    "aiPolicyExamples": { "status": "pending", "note": "AI 使用情境實例待 Ted 給" },
-    "toolGroups": { "status": "pending", "note": "課程工具帶 8 月由 Ted 補" },
-    "dailyTools": { "status": "pending", "note": "日常工具清單 8 月由 Ted 補" },
-    "whatToBring": { "status": "pending", "note": "上課要帶什麼 8 月由 Ted 補" },
-    "faq": { "status": "pending", "note": "常見問題 8 月由 Ted 補" }
+    "promise": "一學期 12 場專家演講：看懂 AI 的未來，也想清楚它的規則——從洄瀾出發",
+    "chips": [
+      "每週一位專家",
+      "AI×法律×在地",
+      "全國巡迴課程"
+    ],
+    "destination": {
+      "title": "這門課的終點：你自己的 AI 未來觀點",
+      "sub": "聽 12 場、問 12 次，期末交一份書面報告（2,000–3,000 字），再上成果發表會把觀點端出來。",
+      "steps": [
+        {
+          "label": "聽",
+          "sub": "12 場專家演講：AI 法律、智慧醫療、金融科技、自駕車、原住民族法輪番上陣"
+        },
+        {
+          "label": "問",
+          "sub": "每一場都是當面向專家提問的機會——問題常常比答案值錢"
+        },
+        {
+          "label": "說",
+          "sub": "期末書面報告＋成果發表會，發表你對 AI 未來的觀點"
+        }
+      ]
+    },
+    "phases": [
+      {
+        "id": 1,
+        "title": "開場與導論",
+        "body": "課程介紹、分組與課程地圖——先看懂棋盤，再看每一步棋。",
+        "weeks": "W1"
+      },
+      {
+        "id": 2,
+        "title": "12 場專題演講",
+        "body": "自第二週起，AI 法律、智慧醫療、金融科技、自駕車、原住民族法等領域校內外專家輪流開講；主題涵蓋《人工智慧基本法》、國際 AI 治理、數據治理、AI 金融、智慧交通、防災韌性與在地產業。",
+        "weeks": "W2–15"
+      },
+      {
+        "id": 3,
+        "title": "期末驗收",
+        "body": "期末書面報告（2,000–3,000 字，主題五選一）＋成果發表會口頭發表——本課無期中考。",
+        "weeks": "W16–17"
+      }
+    ],
+    "phasesNote": "教育部「大專校院 AI 法律通識教育推動計畫」全國 20 校巡迴課程——東華場，聚焦花蓮三大特色專題：地震防災 AI 法制、原住民族權益與 AI、偏鄉醫療與智慧觀光法規",
+    "weeklyPlan": [
+      { "w": "1", "label": "課程介紹·分組·課程地圖", "part": 1 },
+      { "w": "2", "label": "專題演講 1", "part": 2 },
+      { "w": "3", "label": "停課（中秋節）", "part": 2 },
+      { "w": "4", "label": "專題演講 2", "part": 2 },
+      { "w": "5", "label": "停課（國慶日補假）", "part": 2 },
+      { "w": "6", "label": "專題演講 3", "part": 2 },
+      { "w": "7", "label": "專題演講 4", "part": 2 },
+      { "w": "8", "label": "專題演講 5", "part": 2 },
+      { "w": "9", "label": "專題演講 6", "part": 2 },
+      { "w": "10", "label": "專題演講 7", "part": 2 },
+      { "w": "11", "label": "專題演講 8", "part": 2 },
+      { "w": "12", "label": "專題演講 9", "part": 2 },
+      { "w": "13", "label": "專題演講 10", "part": 2 },
+      { "w": "14", "label": "專題演講 11", "part": 2 },
+      { "w": "15", "label": "專題演講 12", "part": 2 },
+      { "w": "16", "label": "停課（行憲紀念日）", "part": 3 },
+      { "w": "17", "label": "期末發表與書面報告", "part": 3, "milestone": true }
+    ],
+    "weeklyPlanNote": "講者與講題開課前公告——場次詳情看上方海報牆；W9 期中評量週本課無期中考、正常授課（照 115-1 教學計畫）",
+    "grading": [
+      {
+        "pct": 30,
+        "label": "出席與課堂參與",
+        "sub": "每週簽到、課堂提問與討論"
+      },
+      {
+        "pct": 20,
+        "label": "平時作業",
+        "sub": "閱讀心得、單元小作業"
+      },
+      {
+        "pct": 30,
+        "label": "期末書面報告",
+        "sub": "個人或小組，2,000–3,000 字"
+      },
+      {
+        "pct": 20,
+        "label": "期末口頭發表",
+        "sub": "成果發表會"
+      }
+    ],
+    "gradingNote": "沒有期中考、沒有筆試——來聽、來問、期末把觀點寫下來、講出來。期末報告主題五選一：AI 醫療與資料治理、AI 金融與消費者保護、智慧交通與城市治理、防災與環境治理、在地產業與原住民族文化保存。",
+    "platforms": [
+      {
+        "use": "課堂點名",
+        "name": "Zuvio"
+      },
+      {
+        "use": "公告與繳交",
+        "name": "Microsoft Teams"
+      }
+    ],
+    "aiRules": [
+      {
+        "title": "能解釋自己的過程",
+        "body": "說得出你怎麼問、怎麼改、為什麼這樣決定。",
+        "bodyLong": "當老師或助教詢問時，你要能清楚說出你怎麼對 AI 提問、怎麼修改它的輸出、為什麼這樣決定。"
+      },
+      {
+        "title": "會查證 AI 的輸出",
+        "body": "AI 會錯也會編；交出去前你要查過。",
+        "bodyLong": "AI 會犯錯，也會編造不存在的事實。交出去之前，你必須親自核對——這門課聽了一學期的 AI 治理，更要以身作則。"
+      },
+      {
+        "title": "用 AI 要揭露",
+        "body": "作業用了生成式 AI，文末揭露工具與用途。",
+        "bodyLong": "使用生成式 AI 完成作業時，須於文末揭露所用工具與用途——這是課程明定的規則，也是 AI 治理的第一課：透明。"
+      }
+    ],
+    "aiRulesNote": "前兩條沿用 陳文盛 核定版（2026-06-12）；第三條取自 115-1 教學計畫教學策略原文（AI 使用揭露規則）",
+    "aiPolicyExamples": {
+      "structure": [
+        "可以使用（開放）",
+        "需註明與說明（引導）",
+        "禁止使用（限制）"
+      ],
+      "structureNote": "三分類架構沿用 陳文盛 核定版（2026-06-12）",
+      "examples": {
+        "status": "pending_ted",
+        "note": "各分類的情境實例待 陳文盛 給"
+      }
+    },
+    "whatToBring": [
+      "一顆好奇的腦袋——本課最重要的配備",
+      "至少一個想問專家的問題",
+      "筆記工具隨你：筆電、平板或紙筆都行（教室＝理工二館 ZT講堂 C101）"
+    ],
+    "faq": [
+      {
+        "q": "要寫程式嗎？",
+        "a": "完全不用。先備條件：無，授課語言中文。這門課練的是看懂 AI、想清楚規則——聽講、提問、思考、發表。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫補充說明（先備條件：無；授課語言：中文）"
+      },
+      {
+        "q": "講者是誰？",
+        "a": "AI 法律、智慧醫療、金融科技、自駕車、原住民族法等領域的校內外專家，自第二週起共 12 場。講者與講題開課前公告——場次陸續更新在上方海報牆，先保留一點驚喜。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫課程描述（12 場專題演講、開課前公告）"
+      },
+      {
+        "q": "課名的「洄瀾」是什麼意思？",
+        "a": "洄瀾是花蓮的舊名。這門課把 AI 的未來放進花蓮的在地脈絡，特別聚焦三大專題：地震與防災 AI 法制、原住民族權益與 AI（傳統智慧財產權、語言保存、數據主權）、偏鄉醫療與智慧觀光法規。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫課程描述（花蓮在地三大特色專題）"
+      },
+      {
+        "q": "這門課什麼來頭？",
+        "a": "教育部「大專校院 AI 法律通識教育推動計畫」，全國 20 所大專校院合作開課，東華是其中一站——等於把全國等級的講者陣容請進花蓮，還配一名 TA 照顧大家。",
+        "status": "confirmed",
+        "source": "AI法律計畫 README（教育部高教司、20 校合作）＋教學計畫補充說明（TA 1 名）"
+      },
+      {
+        "q": "怎麼評分？",
+        "a": "沒有期中考、沒有筆試。出席與課堂參與 30%、平時作業（閱讀心得、小作業）20%、期末書面報告 30%（2,000–3,000 字、主題五選一）、成果發表會口頭發表 20%。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫評量說明"
+      },
+      {
+        "q": "作業可以用 AI 寫嗎？",
+        "a": "可以用生成式 AI 協助，但要在文末揭露所用工具與用途。一整個學期都在聽 AI 治理，我們自己先做到透明。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫教學策略（AI 使用揭露規則）"
+      },
+      {
+        "q": "要買課本嗎？",
+        "a": "主要教材是《AI來了 LAW變了》；《人工智慧基本法》、歐盟 AI Act 摘要、OECD AI 原則與各週講師講義由課程提供。購書方式開學說明。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫教科書欄；購書方式待開學公告"
+      }
+    ],
+    "finale": {
+      "nextWeek": "專題演講自第二週開跑——講者開課前公告",
+      "action": "先想好一個你最想問專家的 AI 問題",
+      "materialsUrl": {
+        "status": "pending",
+        "note": "課程教材網址開學前補（教學計畫掛全國法規資料庫、OECD AI Policy Observatory）"
+      }
+    },
+    "placeholders": [
+      "12 場講者與講題（開課前公告，補進 talks.json）",
+      "上課時間節次",
+      "Teams 團隊代碼",
+      "TA 名字"
+    ]
   },
   "meta": {
     "lastReviewed": null,
     "validForSemester": "115-1",
-    "owner": "Ted（陳文盛）",
+    "owner": "陳文盛（陳文盛）",
     "sources": [
-      "M0 骨架：依 workspace/outbox/20260702-wailan-course-hub-詳細設計書.md 第三章產出（2026-07-03），課程內容 8 月由 Ted 填；12 場演講資料另見同資料夾 talks.json"
+      "115-1 教學計畫 GC__68240（OneDrive 東華課程資料/11501/AI未來應用…/教學計畫/ 正本 PDF）＝課程描述、17 週進度、評量 30/20/30/20、教室 C101、教材真值",
+      "_課程資訊.json（2026-06-05 快照）＝systemId 115194356",
+      "projects/115-1-AI法律通識教育推動計畫/README.md＝計畫框架（教育部、20 校、每學期成果分享）",
+      "12 場講座資料＝同資料夾 talks.json（開課前公告後補）",
+      "洄瀾 2026-07-03 草稿 v2：v1 據 README 保守留 pending，取得正式教學計畫後補齊評分與週次；文案待 陳文盛 過目"
     ]
   },
   "hub": {
-    "links": [],
+    "links": [
+      {
+        "platform": "zuvio",
+        "use": "課堂點名",
+        "label": "Zuvio",
+        "url": null,
+        "urlStatus": "pending"
+      },
+      {
+        "platform": "teams",
+        "use": "公告與繳交",
+        "label": "Microsoft Teams",
+        "url": null,
+        "urlStatus": "pending"
+      }
+    ],
     "scoreUrl": null,
     "showcaseRefs": [],
     "heroImage": null,

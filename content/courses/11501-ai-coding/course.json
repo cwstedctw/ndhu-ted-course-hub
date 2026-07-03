@@ -1,8 +1,9 @@
 {
+  "$comment": "課程介紹單一內容源（一份內容、多種輸出）。本檔＝洄瀾 2026-07-03 草稿：課程結構、週次、評量取自 115-1 教學計畫 GC__68210（教務系統 PDF），文案語氣待 陳文盛 過目。W4／W8 停課為教學計畫載明之國定假日。",
   "id": "115-1-ai-coding",
   "kind": "regular",
   "name": "和AI一起寫程式：創意生活應用",
-  "nameEn": null,
+  "nameEn": "Coding with AI: Creative Everyday Projects",
   "semester": "115-1",
   "org": "國立東華大學 通識教育中心",
   "instructor": {
@@ -12,45 +13,312 @@
     "phone": "03-890-6610",
     "office": "理工二館 C306",
     "contact": "Microsoft Teams 發訊息",
-    "promise": { "status": "pending", "note": "教師一句話 8 月由 Ted 補" }
+    "promise": { "status": "pending", "note": "教師一句話由 陳文盛 補（不代擬 陳文盛 第一人稱）" }
   },
   "credits": 3,
-  "courseType": { "status": "pending", "note": "課別待 Ted 依開課清單核定" },
-  "weeksSystem": { "status": "pending", "note": "週制（16／17 週）開學前確認" },
+  "courseType": "校核心選修",
+  "weeksSystem": "17 週新制",
   "sections": [
     {
       "id": "AA",
-      "code": null,
-      "systemId": null,
-      "time": null,
-      "timeNote": { "status": "pending", "note": "上課時間開學前公布" },
-      "room": null
+      "code": "GC__68210",
+      "systemId": "115189112",
+      "time": "週一 第 4–6 節",
+      "timeNote": { "status": "pending", "note": "實際上課時刻開學前補；節次據 115-1 開課統計表（送件版），以開學正式課表為準" },
+      "room": "理工二館 E403"
     }
   ],
   "intro": {
-    "promise": { "status": "pending", "note": "課程一句話 8 月由 Ted 補" },
-    "chips": { "status": "pending", "note": "課程亮點標籤 8 月由 Ted 補" },
-    "destination": { "status": "pending", "note": "課程終點與三步驟 8 月由 Ted 補" },
-    "phases": { "status": "pending", "note": "課程分段 8 月由 Ted 補" },
-    "weeklyPlan": { "status": "pending", "note": "週次表開學前公布" },
-    "grading": { "status": "pending", "note": "評分比例 8 月由 Ted 補" },
-    "aiRules": { "status": "pending", "note": "AI 使用守則 8 月由 Ted 補（可沿用共通三條）" },
-    "aiPolicyExamples": { "status": "pending", "note": "AI 使用情境實例待 Ted 給" },
-    "toolGroups": { "status": "pending", "note": "課程工具帶 8 月由 Ted 補" },
-    "dailyTools": { "status": "pending", "note": "日常工具清單 8 月由 Ted 補" },
-    "whatToBring": { "status": "pending", "note": "上課要帶什麼 8 月由 Ted 補" },
-    "faq": { "status": "pending", "note": "常見問題 8 月由 Ted 補" }
+    "promise": "vibe coding 入門：用聊天的方式寫程式，把你的點子做成能分享的作品",
+    "chips": [
+      "不用背語法",
+      "零基礎友善",
+      "作品放得上網"
+    ],
+    "destination": {
+      "title": "這門課的終點：你的第一個上線作品",
+      "sub": "三段旅程：先用網頁 AI 對話寫程式，再免安裝做出互動 Web App，最後走進本機開發——期末端出一個真的放上網的創意應用。",
+      "steps": [
+        {
+          "label": "用對話寫程式",
+          "sub": "網頁 AI＋Google Colab，第一堂課就讓程式跑起來"
+        },
+        {
+          "label": "做出互動 Web App",
+          "sub": "AI Canvas 免安裝生成網頁，GitHub Pages 一鍵上線分享"
+        },
+        {
+          "label": "走進本機開發",
+          "sub": "VS Code、命令列、Git——最後讓 AI CLI 住進你的終端機"
+        }
+      ]
+    },
+    "phases": [
+      {
+        "id": 1,
+        "title": "聊天就能寫程式",
+        "body": "提示基本功、AI 倫理與資料安全；用 Google Colab 跑 AI 產生的 Python。邏輯用鬧鐘、紅綠燈、點餐來理解，Debug 交給 AI 家教。",
+        "weeks": "W1–9"
+      },
+      {
+        "id": 2,
+        "title": "從程式到能用的作品",
+        "body": "AI Canvas（Claude Artifacts、ChatGPT Canvas、Google AI Studio）即時生成互動網頁，串上 AI 功能，再用 GitHub Pages 免命令列發佈。",
+        "weeks": "W10–12"
+      },
+      {
+        "id": 3,
+        "title": "走進本機開發",
+        "body": "VS Code、命令列、Git／GitHub 完整流程；AI CLI 終端代理（Google Antigravity、Claude Code）陪你衝刺期末專題。",
+        "weeks": "W13–17"
+      }
+    ],
+    "phasesNote": "為非資訊背景設計——不背語法、不刷題，練的是把想法說清楚、讓 AI 動手的能力",
+    "weeklyPlan": [
+      { "w": "1", "label": "Vibe Coding 初體驗", "part": 1 },
+      { "w": "2", "label": "提示基本功·AI 倫理", "part": 1 },
+      { "w": "3", "label": "Colab 跑第一支 Python", "part": 1 },
+      { "w": "4", "label": "停課（教師節）", "part": 1 },
+      { "w": "5", "label": "邏輯就是生活", "part": 1 },
+      { "w": "6", "label": "Debug 不用怕", "part": 1 },
+      { "w": "7", "label": "生活小工具·分組啟動", "part": 1 },
+      { "w": "8", "label": "停課（光復節補假）", "part": 1 },
+      { "w": "9", "label": "期中小作品發表", "part": 1, "milestone": true },
+      { "w": "10", "label": "認識 AI Canvas", "part": 2 },
+      { "w": "11", "label": "動手做互動 Web App", "part": 2 },
+      { "w": "12", "label": "作品串 AI·上線分享", "part": 2 },
+      { "w": "13", "label": "VS Code 與 AI 編輯器", "part": 3 },
+      { "w": "14", "label": "命令列入門·期末啟動", "part": 3 },
+      { "w": "15", "label": "Git 與 GitHub", "part": 3 },
+      { "w": "16", "label": "AI CLI 終端代理衝刺", "part": 3 },
+      { "w": "17", "label": "期末發表與旅程回顧", "part": 3, "milestone": true }
+    ],
+    "weeklyPlanNote": "週次與停課日照 115-1 教學計畫；工具屬活內容層，開學前依當時生態再校一次",
+    "grading": [
+      {
+        "pct": 10,
+        "label": "平時成績",
+        "sub": "參與和小練習"
+      },
+      {
+        "pct": 20,
+        "label": "作業成績",
+        "sub": "作業與小專案"
+      },
+      {
+        "pct": 30,
+        "label": "期中作品",
+        "sub": "各組展示用網頁 AI 完成的 Python 小工具"
+      },
+      {
+        "pct": 40,
+        "label": "期末專案",
+        "sub": "創意應用成果發表＋旅程回顧"
+      }
+    ],
+    "gradingNote": "沒有筆試。期中發表小作品和提示心得；期末展示從網頁 AI 一路到 AI CLI 的創意應用，並回顧你的 vibe coding 旅程。",
+    "toolGroups": [
+      {
+        "group": "用對話寫程式",
+        "items": [
+          {
+            "name": "ChatGPT · Claude",
+            "sub": "用自然語言產生、解釋、修改程式"
+          },
+          {
+            "name": "Google Colab",
+            "sub": "瀏覽器直接跑 Python，免安裝"
+          }
+        ]
+      },
+      {
+        "group": "免安裝做 App",
+        "items": [
+          {
+            "name": "Claude Artifacts · ChatGPT Canvas",
+            "sub": "對話視窗即時長出互動網頁"
+          },
+          {
+            "name": "Google AI Studio",
+            "sub": "描述需求，就給你能玩的原型"
+          }
+        ]
+      },
+      {
+        "group": "分享作品",
+        "items": [
+          {
+            "name": "GitHub · GitHub Pages",
+            "sub": "免費把作品放上網，網址直接傳給朋友"
+          }
+        ]
+      },
+      {
+        "group": "本機開發",
+        "items": [
+          {
+            "name": "VS Code",
+            "sub": "開發者的正規編輯器"
+          },
+          {
+            "name": "AI CLI 終端代理",
+            "sub": "Google Antigravity·Claude Code——AI 在終端機幫你讀檔、改檔、跑程式"
+          }
+        ]
+      }
+    ],
+    "toolGroupsNote": "工具會換、能力不換——實際以開學當週的等效工具為準",
+    "dailyTools": [
+      {
+        "name": "聊天機器人",
+        "sub": "ChatGPT·Claude·Gemini"
+      },
+      {
+        "name": "程式遊樂場",
+        "sub": "Google Colab·AI Studio"
+      },
+      {
+        "name": "作品基地",
+        "sub": "GitHub·GitHub Pages"
+      }
+    ],
+    "platforms": [
+      {
+        "use": "課堂點名",
+        "name": "Zuvio"
+      },
+      {
+        "use": "交作業",
+        "name": "Microsoft Teams"
+      },
+      {
+        "use": "課堂共筆",
+        "name": "HackMD"
+      }
+    ],
+    "aiRules": [
+      {
+        "title": "能解釋自己的過程",
+        "body": "說得出你怎麼問、怎麼改、為什麼這樣決定。",
+        "bodyLong": "當老師或助教詢問時，你要能清楚說出你怎麼對 AI 提問、怎麼修改它的輸出、為什麼這樣決定。"
+      },
+      {
+        "title": "會查證 AI 的輸出",
+        "body": "AI 會錯也會編；交出去前你要查過。",
+        "bodyLong": "AI 會犯錯，也會編造不存在的事實。程式也一樣——交出去之前，先確認它真的能跑、真的做對事。"
+      },
+      {
+        "title": "守學術誠信",
+        "body": "遵守誠信、隱私與著作權。",
+        "bodyLong": "遵守誠信、隱私與著作權。把 AI 當成一起完成作品的夥伴，而不是替你寫作業的人。"
+      }
+    ],
+    "aiRulesNote": "三條守則沿用人工智慧概論 陳文盛 核定版（2026-06-12）；第二條依程式課情境微調",
+    "aiPolicyExamples": {
+      "structure": [
+        "可以使用（開放）",
+        "需註明與說明（引導）",
+        "禁止使用（限制）"
+      ],
+      "structureNote": "三分類架構沿用 陳文盛 核定版（2026-06-12）",
+      "examples": {
+        "status": "pending_ted",
+        "note": "各分類的情境實例待 陳文盛 給"
+      }
+    },
+    "whatToBring": [
+      "可上網的筆電（後段會裝免費的 VS Code）",
+      "GitHub 與 Google 帳號（都免費，課堂會一起辦）",
+      "教室在理工二館 E403（人工智慧教室），限修 40 人——有插座的位子先到先選"
+    ],
+    "faq": [
+      {
+        "q": "完全沒寫過程式，真的可以嗎？",
+        "a": "可以，這門課的預設就是零基礎。第一堂課你就會用一句話讓 AI 寫出第一支程式——剩下的學期，我們慢慢把它變成你的超能力。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫課程描述與 W1"
+      },
+      {
+        "q": "要買軟體或設備嗎？",
+        "a": "不用花錢。Colab、AI Canvas、GitHub 全部免費，後段安裝的 VS Code 也免費；帶一台能上網的筆電就好。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫教材清單與補充說明"
+      },
+      {
+        "q": "跟資工系的程式課差在哪？",
+        "a": "我們不背語法、不刷題。練的是把想法說清楚讓 AI 動手的能力，加上看懂、驗證 AI 產出的判斷力——vibe coding 時代的基本功。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫課程目標"
+      },
+      {
+        "q": "為什麼還要學命令列和 Git？聽起來很硬。",
+        "a": "因為最強的 AI 助手就住在終端機裡。學會之後，AI 能直接幫你管整個專案——這是課程最後的大絕招，也是你跟「只會用網頁 AI 的人」拉開差距的地方。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫 W13–16"
+      },
+      {
+        "q": "期中、期末要做什麼？",
+        "a": "期中各組展示用網頁 AI 做的 Python 小工具、分享提示心得；期末發表你的創意應用，並回顧整趟旅程。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫 W9、W17 與評量說明"
+      },
+      {
+        "q": "AI 可以用到什麼程度？",
+        "a": "在這門課，AI 不只可以用，根本是必修隊友。但每段程式你都要能解釋、能驗證，守住資料安全與學術誠信——AI 動手，你當導演。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫課程目標與 W2"
+      }
+    ],
+    "finale": {
+      "nextWeek": "提示基本功——把話說清楚，AI 才會做對",
+      "action": "想一個你希望程式幫你解決的生活小麻煩，帶來上課",
+      "materialsUrl": {
+        "status": "pending",
+        "note": "課程教材網址開學前補"
+      }
+    },
+    "placeholders": [
+      "實際上課時刻（節次已定，開學前換算鐘點）",
+      "Teams 團隊代碼",
+      "TA 名字",
+      "課程教材網址"
+    ]
   },
   "meta": {
     "lastReviewed": null,
     "validForSemester": "115-1",
-    "owner": "Ted（陳文盛）",
+    "owner": "陳文盛（陳文盛）",
     "sources": [
-      "M0 骨架：依 workspace/outbox/20260702-wailan-course-hub-詳細設計書.md 第三章產出（2026-07-03），課程內容 8 月由 Ted 填"
+      "115-1 教學計畫 GC__68210（教務系統 PDF；與 OneDrive 11501 正本比對一致）＝課程描述、17 週進度、評量比例、E403 限修 40 真值",
+      "OneDrive 11501/和AI一起寫程式…/_課程資訊.json（2026-06-05 快照）＝systemId 115189112",
+      "OneDrive 11501/開課與行政/115-1校核心通識課程統計表_文盛.xlsx（送件版）＝節次（週一 4–6）、教室 E403、限修 40",
+      "洄瀾 2026-07-03 草稿：intro 文案與 FAQ 語氣待 陳文盛 過目；上課時間開學前補"
     ]
   },
   "hub": {
-    "links": [],
+    "links": [
+      {
+        "platform": "zuvio",
+        "use": "課堂點名",
+        "label": "Zuvio",
+        "url": null,
+        "urlStatus": "pending"
+      },
+      {
+        "platform": "teams",
+        "use": "交作業",
+        "label": "Microsoft Teams",
+        "url": null,
+        "urlStatus": "pending"
+      },
+      {
+        "platform": "hackmd",
+        "use": "課堂共筆",
+        "label": "HackMD",
+        "url": null,
+        "urlStatus": "pending"
+      }
+    ],
     "scoreUrl": null,
     "showcaseRefs": [],
     "heroImage": null,

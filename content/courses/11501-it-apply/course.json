@@ -1,8 +1,9 @@
 {
+  "$comment": "課程介紹單一內容源（一份內容、多種輸出）。本檔＝洄瀾 2026-07-03 草稿：課程結構、週次、評量取自 115-1 教學計畫 GC__1480AA（OneDrive 正本同版）；AA/AB 代碼、系統編號、時段取自 OneDrive 東華課程資料/11501 各班 _課程資訊.json（2026-06-14 快照）。文案語氣待 陳文盛 過目。",
   "id": "115-1-it-apply",
   "kind": "regular",
   "name": "資訊科技與應用",
-  "nameEn": null,
+  "nameEn": "Information Technology and its Applications",
   "semester": "115-1",
   "org": "國立東華大學 通識教育中心",
   "instructor": {
@@ -12,55 +13,347 @@
     "phone": "03-890-6610",
     "office": "理工二館 C306",
     "contact": "Microsoft Teams 發訊息",
-    "promise": { "status": "pending", "note": "教師一句話 8 月由 Ted 補" }
+    "promise": { "status": "pending", "note": "教師一句話由 陳文盛 補（不代擬 陳文盛 第一人稱）" }
   },
   "credits": 2,
-  "courseType": { "status": "pending", "note": "課別待 Ted 依開課清單核定" },
-  "weeksSystem": { "status": "pending", "note": "週制（16／17 週）開學前確認" },
+  "courseType": "校核心選修",
+  "weeksSystem": "17 週新制",
   "sections": [
     {
       "id": "AA",
-      "code": null,
-      "systemId": null,
-      "time": null,
-      "timeNote": { "status": "pending", "note": "上課時間開學前公布" },
-      "room": null
+      "code": "GC__1480AA",
+      "systemId": "115128983",
+      "time": "週一 第 11–12 節",
+      "timeNote": { "status": "pending", "note": "實際上課時刻開學前補；節次與教室據 115-1 開課統計表（送件版），以開學正式課表為準" },
+      "room": "理工二館 E403"
     },
     {
       "id": "AB",
-      "code": null,
-      "systemId": null,
-      "time": null,
-      "timeNote": { "status": "pending", "note": "上課時間開學前公布" },
-      "room": null
+      "code": "GC__1480AB",
+      "systemId": "115173124",
+      "time": "週二 第 11–12 節",
+      "timeNote": { "status": "pending", "note": "實際上課時刻開學前補；統計表送件版教室為 E402（與 AA 的 E403 不同間），以開學正式課表為準" },
+      "room": "理工二館 E402"
     }
   ],
   "intro": {
-    "promise": { "status": "pending", "note": "課程一句話 8 月由 Ted 補" },
-    "chips": { "status": "pending", "note": "課程亮點標籤 8 月由 Ted 補" },
-    "destination": { "status": "pending", "note": "課程終點與三步驟 8 月由 Ted 補" },
-    "phases": { "status": "pending", "note": "課程分段 8 月由 Ted 補" },
-    "weeklyPlan": { "status": "pending", "note": "週次表開學前公布" },
-    "grading": { "status": "pending", "note": "評分比例 8 月由 Ted 補" },
-    "aiRules": { "status": "pending", "note": "AI 使用守則 8 月由 Ted 補（可沿用共通三條）" },
-    "aiPolicyExamples": { "status": "pending", "note": "AI 使用情境實例待 Ted 給" },
-    "toolGroups": { "status": "pending", "note": "課程工具帶 8 月由 Ted 補" },
-    "dailyTools": { "status": "pending", "note": "日常工具清單 8 月由 Ted 補" },
-    "whatToBring": { "status": "pending", "note": "上課要帶什麼 8 月由 Ted 補" },
-    "faq": { "status": "pending", "note": "常見問題 8 月由 Ted 補" }
+    "promise": "把 AI 變成你的 24 小時學習助教，文書、資料、簡報一路點好點滿",
+    "chips": [
+      "AI 當助教",
+      "報告變漂亮",
+      "表格會算數"
+    ],
+    "destination": {
+      "title": "這門課的終點：一套拿得出手的數位作品",
+      "sub": "沒有紙筆考試。期末交出「AI 幫過你、你也說得清楚」的整合作品：一份正式報告、一個會動的儀表板、一份自動生成的簡報。",
+      "steps": [
+        {
+          "label": "把 AI 帶在身邊",
+          "sub": "網頁、桌面、瀏覽器擴充三條路徑，卡關隨時有 24 小時助教可問"
+        },
+        {
+          "label": "把報告寫漂亮",
+          "sub": "Word、Docs 一路練到 LaTeX——排版從此靠樣式，不靠熬夜"
+        },
+        {
+          "label": "讓資料自己動",
+          "sub": "新世代函數、AI 儀表板、自動化腳本，最後讓 AI 幫你長出簡報"
+        }
+      ]
+    },
+    "phases": [
+      {
+        "id": 1,
+        "title": "AI 助教上工",
+        "body": "網頁版、桌面版、瀏覽器擴充三條路徑把 AI 帶在身邊；提問策略、資訊查證、學術誠信一次打底。",
+        "weeks": "W1–4"
+      },
+      {
+        "id": 2,
+        "title": "文書大升級",
+        "body": "Word／Google Docs 進階排版，再解鎖 LaTeX（Overleaf＋OpenAI Prism）——報告、履歷、論文級排版都出得了手。",
+        "weeks": "W5–9"
+      },
+      {
+        "id": 3,
+        "title": "資料與簡報自動化",
+        "body": "XLOOKUP、FILTER、Power Query 玩轉資料，AI 設計儀表板、Apps Script 自動化，最後用 AI Agent 直接生成簡報。",
+        "weeks": "W10–17"
+      }
+    ],
+    "phasesNote": "課程刻意把 AI 排在學期最前面——之後每一週，你都有 24 小時待命的學習助教",
+    "weeklyPlan": [
+      { "w": "1", "label": "AI 工具地圖·帳號與資安", "part": 1 },
+      { "w": "2", "label": "網頁版 AI 與提問策略", "part": 1 },
+      { "w": "3", "label": "AI 搜尋與資訊查證", "part": 1 },
+      { "w": "4", "label": "桌面 AI 與瀏覽器擴充", "part": 1 },
+      { "w": "5–6", "label": "Word／Docs 進階排版", "part": 2 },
+      { "w": "7–8", "label": "LaTeX（Overleaf＋Prism）", "part": 2 },
+      { "w": "9", "label": "期中報告繳交與互評", "part": 2, "milestone": true },
+      { "w": "10", "label": "新世代試算表函數", "part": 3 },
+      { "w": "11", "label": "Power Query 與樞紐分析", "part": 3 },
+      { "w": "12", "label": "AI 儀表板與 Apps Script", "part": 3 },
+      { "w": "13", "label": "簡報設計基礎", "part": 3 },
+      { "w": "14", "label": "AI Agent 自動生成簡報", "part": 3 },
+      { "w": "15", "label": "AI 圖像與著作權", "part": 3 },
+      { "w": "16", "label": "期末專題工作坊", "part": 3 },
+      { "w": "17", "label": "期末整合作品發表", "part": 3, "milestone": true }
+    ],
+    "weeklyPlanNote": "主題與工具屬活內容層，開學前依當時生態再校一次；真值＝115-1 教學計畫",
+    "grading": [
+      {
+        "pct": 20,
+        "label": "平時成績",
+        "sub": "出席、課堂實作、簡短反思與負責任 AI 使用"
+      },
+      {
+        "pct": 20,
+        "label": "作業成績",
+        "sub": null
+      },
+      {
+        "pct": 25,
+        "label": "期中報告",
+        "sub": "個人小型報告（Word／Docs 或 LaTeX）＋AI 使用紀錄"
+      },
+      {
+        "pct": 35,
+        "label": "期末作品",
+        "sub": "報告＋儀表板＋簡報的整合發表"
+      }
+    ],
+    "gradingNote": "全學期不舉行紙筆考試——期中交個人報告、期末發表整合作品。AI 可以用好用滿，但要附使用紀錄、說得出你怎麼查證。",
+    "toolGroups": [
+      {
+        "group": "把 AI 帶在身邊",
+        "items": [
+          {
+            "name": "ChatGPT · Claude · Gemini",
+            "sub": "網頁版：隨開隨問的第一站"
+          },
+          {
+            "name": "Claude Desktop · ChatGPT 桌面版",
+            "sub": "桌面版：讀得到你的本機檔案"
+          },
+          {
+            "name": "瀏覽器擴充",
+            "sub": "在網頁裡隨叫隨到的小幫手"
+          }
+        ]
+      },
+      {
+        "group": "查資料",
+        "items": [
+          {
+            "name": "Perplexity · Felo",
+            "sub": "AI 搜尋、來源查核、幻覺判斷"
+          }
+        ]
+      },
+      {
+        "group": "寫報告",
+        "items": [
+          {
+            "name": "Word · Google Docs",
+            "sub": "樣式、自動目錄、追蹤修訂一次學會"
+          },
+          {
+            "name": "Overleaf ＋ OpenAI Prism",
+            "sub": "免安裝的 LaTeX——論文級排版直接在瀏覽器"
+          }
+        ]
+      },
+      {
+        "group": "玩資料",
+        "items": [
+          {
+            "name": "Excel · Google Sheets",
+            "sub": "XLOOKUP、FILTER 動態陣列，跟老派 VLOOKUP 說再見"
+          },
+          {
+            "name": "Power Query · Apps Script",
+            "sub": "資料清理與自動化——程式讓 AI 來寫"
+          }
+        ]
+      },
+      {
+        "group": "做簡報",
+        "items": [
+          {
+            "name": "PowerPoint · Google Slides",
+            "sub": "版面、配色、講者模式打好底"
+          },
+          {
+            "name": "AI Agent ＋ Slide Skill",
+            "sub": "Codex、Antigravity、Claude Code：從大綱直接長出簡報"
+          }
+        ]
+      }
+    ],
+    "toolGroupsNote": "工具會換、能力不換——實際以開學當週的等效工具為準",
+    "dailyTools": [
+      {
+        "name": "聊天機器人",
+        "sub": "ChatGPT·Claude·Gemini"
+      },
+      {
+        "name": "AI 搜尋",
+        "sub": "Perplexity·Felo"
+      },
+      {
+        "name": "雲端辦公",
+        "sub": "Microsoft 365·Google Workspace"
+      },
+      {
+        "name": "遠距會議",
+        "sub": "Google Meet·Teams"
+      }
+    ],
+    "platforms": [
+      {
+        "use": "課堂點名",
+        "name": "Zuvio"
+      },
+      {
+        "use": "交作業",
+        "name": "Microsoft Teams"
+      },
+      {
+        "use": "課堂共筆",
+        "name": "HackMD"
+      }
+    ],
+    "aiRules": [
+      {
+        "title": "能解釋自己的過程",
+        "body": "說得出你怎麼問、怎麼改、為什麼這樣決定。",
+        "bodyLong": "當老師或助教詢問時，你要能清楚說出你怎麼對 AI 提問、怎麼修改它的輸出、為什麼這樣決定。"
+      },
+      {
+        "title": "會查證 AI 的輸出",
+        "body": "AI 會錯也會編；交出去前你要查過。",
+        "bodyLong": "AI 會犯錯，也會編造不存在的事實。交出去之前，你必須親自核對。"
+      },
+      {
+        "title": "守學術誠信",
+        "body": "遵守誠信、隱私與著作權。",
+        "bodyLong": "遵守誠信、隱私與著作權。把 AI 當成一起完成作品的夥伴，而不是替你寫作業的人。"
+      }
+    ],
+    "aiRulesNote": "三條守則沿用人工智慧概論 陳文盛 核定版（2026-06-12）",
+    "aiPolicyExamples": {
+      "structure": [
+        "可以使用（開放）",
+        "需註明與說明（引導）",
+        "禁止使用（限制）"
+      ],
+      "structureNote": "三分類架構沿用 陳文盛 核定版（2026-06-12）",
+      "examples": {
+        "status": "pending_ted",
+        "note": "各分類的情境實例待 陳文盛 給"
+      }
+    },
+    "whatToBring": [
+      "筆記型電腦（建議自備——這門課每週都在動手做）",
+      "學校 @gms.ndhu.edu.tw Google 帳號（多數工具直接用它註冊）",
+      "LaTeX 免安裝：Overleaf 與 OpenAI Prism 在瀏覽器裡就能用"
+    ],
+    "faq": [
+      {
+        "q": "我不是資訊背景，跟得上嗎？",
+        "a": "這門課本來就是為非資訊背景設計的。開學第一個月先把 AI 助教帶在身邊，之後不管學文書、資料還是簡報，卡關都有 24 小時家教可以問。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫課程描述"
+      },
+      {
+        "q": "跟「人工智慧概論」有什麼不同？",
+        "a": "概論練的是 AI 素養與工作流；這門課練的是辦公室即戰力——文書、試算表、簡報全面升級。兩門都修也不衝突：一門練腦、一門練手。",
+        "status": "confirmed",
+        "source": "兩課 115-1 教學計畫對照"
+      },
+      {
+        "q": "考試怎麼考？",
+        "a": "不考紙筆。期中交一份個人報告（Word、Docs 或 LaTeX 擇一），期末發表整合作品——整學期用做的，不用背的。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫評量說明"
+      },
+      {
+        "q": "LaTeX 聽起來很可怕……",
+        "a": "以前可怕，現在不會。Overleaf 加上 OpenAI Prism，瀏覽器打開就能寫，AI 隨時幫你除錯。學會之後，你的報告會漂亮到被同學追問是怎麼做的。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫 W7–8＋補充說明"
+      },
+      {
+        "q": "作業量大概多少？",
+        "a": "作業佔總成績 20%，以課堂實作的延伸為主；確切次數與節奏開學公告。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫評量比例"
+      },
+      {
+        "q": "AI 可以用到什麼程度？",
+        "a": "用好用滿，而且這門課鼓勵你用。但要能解釋過程、會查證輸出、附上 AI 使用紀錄、守學術誠信。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫補充說明"
+      }
+    ],
+    "finale": {
+      "nextWeek": "網頁版 AI 與提問策略——先學會怎麼問",
+      "action": "帶一份你最想讓 AI 拯救的報告或表格來",
+      "materialsUrl": {
+        "status": "pending",
+        "note": "課程教材網址開學前補"
+      }
+    },
+    "placeholders": [
+      "實際上課時刻（節次已定，開學前換算鐘點）",
+      "AB 班教室複核（統計表 E402）",
+      "Teams 團隊代碼",
+      "TA 名字",
+      "課程教材網址"
+    ]
   },
   "meta": {
     "lastReviewed": null,
     "validForSemester": "115-1",
-    "owner": "Ted（陳文盛）",
+    "owner": "陳文盛（陳文盛）",
     "sources": [
-      "M0 骨架：依 workspace/outbox/20260702-wailan-course-hub-詳細設計書.md 第三章產出（2026-07-03），課程內容 8 月由 Ted 填"
+      "115-1 教學計畫 GC__1480AA（教務系統 PDF；與 OneDrive 11501 正本比對一致）＝課程描述、17 週進度、評量比例真值",
+      "OneDrive 11501/資訊科技與應用AA·AB/_課程資訊.json（2026-06-14 快照）＝代碼、系統編號、時段（AA 一11–12／AB 二11–12）",
+      "OneDrive 11501/開課與行政/115-1校核心通識課程統計表_文盛.xlsx（送件版）＝節次複核＋教室（AA E403／AB E402）、限修 40",
+      "洄瀾 2026-07-03 草稿：intro 文案與 FAQ 語氣待 陳文盛 過目；實際上課時刻與教室開學前補"
     ]
   },
   "hub": {
-    "links": [],
+    "links": [
+      {
+        "platform": "zuvio",
+        "use": "課堂點名",
+        "label": "Zuvio",
+        "url": null,
+        "urlStatus": "pending"
+      },
+      {
+        "platform": "teams",
+        "use": "交作業",
+        "label": "Microsoft Teams",
+        "url": null,
+        "urlStatus": "pending"
+      },
+      {
+        "platform": "hackmd",
+        "use": "課堂共筆",
+        "label": "HackMD",
+        "url": null,
+        "urlStatus": "pending"
+      }
+    ],
     "scoreUrl": null,
-    "showcaseRefs": ["1142-it-apply-01", "1142-it-apply-02", "1142-it-apply-03", "1142-it-apply-04"],
+    "showcaseRefs": [
+      "1142-it-apply-01",
+      "1142-it-apply-02",
+      "1142-it-apply-03",
+      "1142-it-apply-04"
+    ],
     "heroImage": null,
     "showPromptButtons": false
   }

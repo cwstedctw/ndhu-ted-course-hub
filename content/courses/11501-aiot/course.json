@@ -1,10 +1,11 @@
 {
+  "$comment": "課程介紹單一內容源（一份內容、多種輸出）。本檔＝洄瀾 2026-07-03 草稿：課程結構、週次、評量取自 115-1 教學計畫 CSIE35490（教務系統 PDF），文案語氣待 陳文盛 過目。注意：本課開課單位＝資訊工程學系（學程課），非通識中心；教學計畫假期備註顯示週四上課，實際節次開學前公布。",
   "id": "115-1-aiot",
   "kind": "regular",
   "name": "AIoT 智慧裝置實作",
-  "nameEn": null,
+  "nameEn": "AIoT Smart Device Practice",
   "semester": "115-1",
-  "org": "國立東華大學 通識教育中心",
+  "org": "國立東華大學 資訊工程學系",
   "instructor": {
     "name": "陳文盛",
     "title": "專案助理教授",
@@ -12,45 +13,307 @@
     "phone": "03-890-6610",
     "office": "理工二館 C306",
     "contact": "Microsoft Teams 發訊息",
-    "promise": { "status": "pending", "note": "教師一句話 8 月由 Ted 補" }
+    "promise": { "status": "pending", "note": "教師一句話由 陳文盛 補（不代擬 陳文盛 第一人稱）" }
   },
   "credits": 3,
-  "courseType": { "status": "pending", "note": "課別待 Ted 依開課清單核定" },
-  "weeksSystem": { "status": "pending", "note": "週制（16／17 週）開學前確認" },
+  "courseType": "資訊工程學系 學程選修（學三）",
+  "weeksSystem": "17 週新制",
   "sections": [
     {
       "id": "AA",
-      "code": null,
-      "systemId": null,
+      "code": "CSIE35490",
+      "systemId": "115108606",
       "time": null,
-      "timeNote": { "status": "pending", "note": "上課時間開學前公布" },
+      "timeNote": { "status": "pending", "note": "教學計畫假期備註顯示週四上課；實際節次開學前公布" },
       "room": null
     }
   ],
   "intro": {
-    "promise": { "status": "pending", "note": "課程一句話 8 月由 Ted 補" },
-    "chips": { "status": "pending", "note": "課程亮點標籤 8 月由 Ted 補" },
-    "destination": { "status": "pending", "note": "課程終點與三步驟 8 月由 Ted 補" },
-    "phases": { "status": "pending", "note": "課程分段 8 月由 Ted 補" },
-    "weeklyPlan": { "status": "pending", "note": "週次表開學前公布" },
-    "grading": { "status": "pending", "note": "評分比例 8 月由 Ted 補" },
-    "aiRules": { "status": "pending", "note": "AI 使用守則 8 月由 Ted 補（可沿用共通三條）" },
-    "aiPolicyExamples": { "status": "pending", "note": "AI 使用情境實例待 Ted 給" },
-    "toolGroups": { "status": "pending", "note": "課程工具帶 8 月由 Ted 補" },
-    "dailyTools": { "status": "pending", "note": "日常工具清單 8 月由 Ted 補" },
-    "whatToBring": { "status": "pending", "note": "上課要帶什麼 8 月由 Ted 補" },
-    "faq": { "status": "pending", "note": "常見問題 8 月由 Ted 補" }
+    "promise": "一塊 Arduino UNO Q、一個學期，打造會聽、會看、會即時反應的智慧裝置",
+    "chips": [
+      "會聽會看會動",
+      "邊緣 AI 實戰",
+      "組隊做出真裝置"
+    ],
+    "destination": {
+      "title": "這門課的終點：一台可展示的 AIoT 智慧裝置",
+      "sub": "不考筆試，考「東西會不會動」——期中展示 MCU 感測控制小系統，期末組隊端出完整的智慧裝置。",
+      "steps": [
+        {
+          "label": "打好地基",
+          "sub": "App Lab、Linux 命令列、SSH，加上 AI 輔助開發當隊友"
+        },
+        {
+          "label": "讓裝置有感覺",
+          "sub": "GPIO、感測器、致動器——感知世界、即時反應"
+        },
+        {
+          "label": "接上大腦",
+          "sub": "MPU 邊緣運算：語音、影像、儀表板，整合成完整系統"
+        }
+      ]
+    },
+    "phases": [
+      {
+        "id": 1,
+        "title": "環境與地基",
+        "body": "UNO Q 雙架構、Arduino App Lab、Git、Linux 命令列與 SSH；AI 輔助程式開發的工作流。",
+        "weeks": "W1–3"
+      },
+      {
+        "id": 2,
+        "title": "MCU：感測與控制",
+        "body": "GPIO、I2C／SPI／UART 感測器、致動器與即時反應，一路做到多感測器小系統；W9 期中專題展示。",
+        "weeks": "W4–9"
+      },
+      {
+        "id": 3,
+        "title": "MPU：語音、影像與整合",
+        "body": "UNO Q 上的 Debian Linux、語音辨識與合成、OpenCV 物件偵測、IoT 儀表板，最後 MCU＋MPU 橋接成完整裝置。",
+        "weeks": "W10–17"
+      }
+    ],
+    "phasesNote": "雙語授課（中英並行）、Lab-based 任務導向——每週都在動手",
+    "weeklyPlan": [
+      { "w": "1", "label": "課程介紹·UNO Q 雙架構", "part": 1 },
+      { "w": "2", "label": "App Lab·Git·開發板連線", "part": 1 },
+      { "w": "3", "label": "Linux·SSH·AI 輔助開發", "part": 1 },
+      { "w": "4", "label": "GPIO 與數位／類比 I/O", "part": 2 },
+      { "w": "5", "label": "感測器匯流排與資料清理", "part": 2 },
+      { "w": "6", "label": "致動器與即時反應", "part": 2 },
+      { "w": "7", "label": "多感測器控制小系統", "part": 2 },
+      { "w": "8", "label": "期中整合·除錯·彩排", "part": 2 },
+      { "w": "9", "label": "期中專題展示", "part": 2, "milestone": true },
+      { "w": "10", "label": "全校運動會停課", "part": 3 },
+      { "w": "11", "label": "MPU：Linux 與 Python 服務", "part": 3 },
+      { "w": "12", "label": "語音辨識與語音合成", "part": 3 },
+      { "w": "13", "label": "攝影機·OpenCV 物件偵測", "part": 3 },
+      { "w": "14", "label": "IoT 儀表板與 HDMI 介面", "part": 3 },
+      { "w": "15", "label": "MCU＋MPU 系統整合", "part": 3 },
+      { "w": "16", "label": "期末專題實作與諮詢", "part": 3 },
+      { "w": "17", "label": "期末專題展示", "part": 3, "milestone": true }
+    ],
+    "weeklyPlanNote": "週次照 115-1 教學計畫（中秋、國慶、光復節、行憲紀念日皆不影響週四上課；W10 運動會停課）",
+    "grading": [
+      {
+        "pct": 10,
+        "label": "課堂展示",
+        "sub": "平時成績（含出缺席）"
+      },
+      {
+        "pct": 20,
+        "label": "作業",
+        "sub": null
+      },
+      {
+        "pct": 30,
+        "label": "期中專題",
+        "sub": "MCU 感測控制小系統展示"
+      },
+      {
+        "pct": 40,
+        "label": "期末專題",
+        "sub": "完整 AIoT 裝置團隊展示"
+      }
+    ],
+    "gradingNote": "沒有紙筆考試——期中、期末都是把裝置做出來、上台展示；程式碼審查與除錯是日常。",
+    "toolGroups": [
+      {
+        "group": "主角",
+        "items": [
+          {
+            "name": "Arduino UNO Q",
+            "sub": "一塊板子兩顆腦：MCU 管即時反應、MPU 跑 Linux 與 AI"
+          }
+        ]
+      },
+      {
+        "group": "開發基本功",
+        "items": [
+          {
+            "name": "Arduino App Lab · IDE",
+            "sub": "官方開發環境"
+          },
+          {
+            "name": "Git · Python · SSH",
+            "sub": "版本控制、腳本、遠端連線"
+          }
+        ]
+      },
+      {
+        "group": "感官配備",
+        "items": [
+          {
+            "name": "感測器套件 · 致動器",
+            "sub": "讓裝置感知世界、做出動作"
+          },
+          {
+            "name": "麥克風 · 喇叭 · 攝影機 · HDMI",
+            "sub": "語音互動與視覺辨識的硬體"
+          }
+        ]
+      },
+      {
+        "group": "邊緣 AI",
+        "items": [
+          {
+            "name": "語音辨識／TTS · OpenCV",
+            "sub": "裝置端的聽與看"
+          },
+          {
+            "name": "IoT 儀表板",
+            "sub": "資料紀錄與即時可視化"
+          }
+        ]
+      }
+    ],
+    "toolGroupsNote": "硬體與軟體清單以教學計畫為準；配置方式開學第一週說明",
+    "dailyTools": [
+      {
+        "name": "AI 程式助手",
+        "sub": "查錯誤訊息、解釋程式、vibe coding"
+      },
+      {
+        "name": "官方文件",
+        "sub": "docs.arduino.cc（UNO Q）"
+      }
+    ],
+    "platforms": [
+      {
+        "use": "課堂點名",
+        "name": "Zuvio"
+      },
+      {
+        "use": "交作業",
+        "name": "Microsoft Teams"
+      },
+      {
+        "use": "課堂共筆",
+        "name": "HackMD"
+      }
+    ],
+    "aiRules": [
+      {
+        "title": "能解釋自己的過程",
+        "body": "說得出你怎麼問、怎麼改、為什麼這樣決定。",
+        "bodyLong": "當老師或助教詢問時，你要能清楚說出你怎麼對 AI 提問、怎麼修改它的輸出、為什麼這樣決定。"
+      },
+      {
+        "title": "會查證 AI 的輸出",
+        "body": "AI 會錯也會編；交出去前你要查過。",
+        "bodyLong": "AI 會犯錯，也會編造不存在的事實。程式與電路更是如此——上板子之前，先確認它真的能跑、接得對。"
+      },
+      {
+        "title": "守學術誠信",
+        "body": "遵守誠信、隱私與著作權。",
+        "bodyLong": "遵守誠信、隱私與著作權。把 AI 當成一起完成作品的夥伴，而不是替你寫作業的人。"
+      }
+    ],
+    "aiRulesNote": "三條守則沿用人工智慧概論 陳文盛 核定版（2026-06-12）；第二條依實作課情境微調",
+    "aiPolicyExamples": {
+      "structure": [
+        "可以使用（開放）",
+        "需註明與說明（引導）",
+        "禁止使用（限制）"
+      ],
+      "structureNote": "三分類架構沿用 陳文盛 核定版（2026-06-12）",
+      "examples": {
+        "status": "pending_ted",
+        "note": "各分類的情境實例待 陳文盛 給"
+      }
+    },
+    "whatToBring": [
+      "筆記型電腦（開發與連開發板用）",
+      "GitHub 與 Google 帳號",
+      "動手的心——這門課每週都在做東西；硬體配置方式開學第一週說明"
+    ],
+    "faq": [
+      {
+        "q": "上課用什麼語言？",
+        "a": "雙語授課、中英並行——講解與教材兼顧中文和英文，國際生也能跟上。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫教學策略（Bilingual lecture）"
+      },
+      {
+        "q": "需要什麼基礎？",
+        "a": "這是資工系三年級的學程課。課程從開發環境與 Linux 基礎帶起，AI 輔助開發全程相伴——有寫程式的底子會走得比較順。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫系級欄（學三／學程）與 W1–3"
+      },
+      {
+        "q": "考試怎麼考？",
+        "a": "不考筆試，考「東西會不會動」。期中展示 MCU 感測控制小系統，期末團隊展示完整 AIoT 裝置。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫評量說明"
+      },
+      {
+        "q": "一個人做還是分組？",
+        "a": "分組專題、團隊展示——系統整合本來就是團隊運動。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫課程目標與教學策略（team demos）"
+      },
+      {
+        "q": "UNO Q 是什麼來頭？",
+        "a": "Arduino 新一代開發板：同一塊板上有 MCU（即時控制）加上能跑 Debian Linux 的 MPU（邊緣運算）——等於單晶片和小電腦合體。這門課就是要把兩顆腦都用起來。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫課程描述"
+      },
+      {
+        "q": "期末專題可以做什麼？",
+        "a": "語音控制、影像偵測、感測自動化、儀表板監控……只要 MCU＋MPU 整合得起來都歡迎。第一週會看專題範例找靈感——先想一個你想做的裝置，期末就做它。",
+        "status": "confirmed",
+        "source": "115-1 教學計畫 W1（project examples）與 W15–17"
+      }
+    ],
+    "finale": {
+      "nextWeek": "基礎環境建置：App Lab、Git、開發板連線",
+      "action": "先想一個你想做的智慧裝置——期末就做它",
+      "materialsUrl": {
+        "status": "pending",
+        "note": "課程教材網址開學前補（教學計畫掛 docs.arduino.cc UNO Q 文件）"
+      }
+    },
+    "placeholders": [
+      "上課節次與教室",
+      "Teams 團隊代碼",
+      "TA 名字",
+      "硬體配置方式說明"
+    ]
   },
   "meta": {
     "lastReviewed": null,
     "validForSemester": "115-1",
-    "owner": "Ted（陳文盛）",
+    "owner": "陳文盛（陳文盛）",
     "sources": [
-      "M0 骨架：依 workspace/outbox/20260702-wailan-course-hub-詳細設計書.md 第三章產出（2026-07-03），課程內容 8 月由 Ted 填"
+      "115-1 教學計畫 CSIE35490（教務系統 PDF；與 OneDrive 11501 正本比對一致）＝課程描述、17 週進度、評量比例、雙語授課、硬軟體清單真值",
+      "OneDrive 11501/AIoT智慧裝置實作/_課程資訊.json（2026-06-05 快照）＝systemId 115108606；註：教學計畫另分學士班國際組／資工組兩版 Signed PDF（歸檔於同夾）",
+      "洄瀾 2026-07-03 草稿：intro 文案與 FAQ 語氣待 陳文盛 過目；開課單位由骨架的通識中心更正為資訊工程學系（依教學計畫）"
     ]
   },
   "hub": {
-    "links": [],
+    "links": [
+      {
+        "platform": "zuvio",
+        "use": "課堂點名",
+        "label": "Zuvio",
+        "url": null,
+        "urlStatus": "pending"
+      },
+      {
+        "platform": "teams",
+        "use": "交作業",
+        "label": "Microsoft Teams",
+        "url": null,
+        "urlStatus": "pending"
+      },
+      {
+        "platform": "hackmd",
+        "use": "課堂共筆",
+        "label": "HackMD",
+        "url": null,
+        "urlStatus": "pending"
+      }
+    ],
     "scoreUrl": null,
     "showcaseRefs": [],
     "heroImage": null,
