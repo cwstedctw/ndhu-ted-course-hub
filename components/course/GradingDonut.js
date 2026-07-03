@@ -42,6 +42,7 @@ export default function GradingDonut({ grading, gradingNote }) {
                   {segments.map((s, i) => (
                     <circle
                       key={i}
+                      className="donut-seg" /* §11-6 hover 活化（globals），純視覺、資料流不動 */
                       cx="85"
                       cy="85"
                       r={R}

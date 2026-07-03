@@ -3,7 +3,8 @@
    來源：course-hub-prototype/styles.css 全套移植＋詳細設計書第五章 token 精修
    結構：1. token（primitive→semantic→原型別名）　2. 基底與無障礙
          3. 版面共用　4. 首頁區塊　5. 課程頁區塊　6. 演講海報牆
-         7. 頁首頁尾　8. 水波占位　9. reduced-motion　10. 列印
+         7. 頁首頁尾　8. 水波占位　11. 視覺升級（2026-07 場景化，含動畫總開關）
+         9. reduced-motion　10. 列印（9、10 殿後才能蓋掉 11 的 hover 與裝飾）
    ========================================================================= */
 
 /* ── 1a. Primitive token（設計書 §5-1.2；元件禁止直接引用，一律吃 semantic 層） ── */
@@ -14,6 +15,8 @@
   --teal-500: #0E7C7B;   /* 品牌基準（定案） */
   --teal-600: #0C6B6A;
   --teal-700: #0A5A59;
+  --teal-800: #084C4B;   /* hero 場景漸層中段（2026-07 視覺升級） */
+  --teal-900: #053B3A;   /* hero 場景漸層底（2026-07 視覺升級） */
   --gold-050: #F6E8C8;
   --gold-100: #EFD9A6;
   --gold-200: #E8CD8C;   /* 僅限深底（teal-700）上的文字 */
@@ -66,6 +69,7 @@
 
   --font-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei",
                "微軟正黑體", system-ui, sans-serif;
+  --font-display: "Noto Serif TC", "Songti TC", serif; /* 標題舞台感：只給 hero／course-hero 的 h1 */
 
   /* ── 1c. 原型別名（course-hub-prototype/styles.css 的變數名，指回 token；
         既有版面規則與其他元件沿用這些名字，不破壞視覺基準） ── */
@@ -376,12 +380,261 @@ a.card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(14, 124,
   to   { background-position: 14px 8px, -12px -6px; }
 }
 
+/* =========================================================================
+   ── 11. 視覺升級：溪谷場景化（2026-07 拍板九點；純 CSS/SVG、零新依賴）
+   動畫一律收在 @media (prefers-reduced-motion: no-preference)（§11-10），
+   hover 位移在 §9 reduce 中和、裝飾與動畫在 §10 列印全關。
+   ========================================================================= */
+
+/* ── 11-1 首頁 hero 深 teal 場景（app/page.js 加 .hero-scene；
+      /courses/ 的 .hero courses-hero 維持淺底不受影響） ── */
+.hero-scene {
+  position: relative;
+  overflow: hidden;
+  padding: 60px 0 92px;
+  color: var(--cream-100);
+  background:
+    radial-gradient(640px 320px at 87% -12%, rgb(217 164 65 / .22), transparent 58%),
+    linear-gradient(180deg, var(--teal-700) 0%, var(--teal-800) 52%, var(--teal-900) 100%);
+}
+.hero-scene > .container { position: relative; z-index: 1; }
+.hero-scene h1 { display: inline-block; color: var(--surface-000); }
+/* h1 底下 gold 底線（reduce 時為靜態滿寬；掃入動畫在 §11-10） */
+.hero-scene h1::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin-top: 10px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--gold-500), var(--gold-200));
+}
+.hero-scene .tag { color: var(--teal-100); } /* on teal-700 ≈ 6.0:1，AA */
+/* 底部兩層 cream 波浪（低透明、不吃指標事件；漂移動畫在 §11-10） */
+.hero-scene::before,
+.hero-scene::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 90' preserveAspectRatio='none'%3E%3Cpath d='M0 50C150 20 300 20 450 50C600 80 750 80 900 50L900 90L0 90Z' fill='%23F4ECD8'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: 0 bottom;
+}
+.hero-scene::before { height: 84px; background-size: 900px 84px; opacity: .12; }
+.hero-scene::after  { height: 60px; background-size: 660px 60px; opacity: .08; }
+
+/* ── 11-2 課程頁 hero：同語彙但幅度小——單層波浪＋小聚光 ── */
+.course-hero { position: relative; overflow: hidden; }
+.course-hero > .container { position: relative; z-index: 1; }
+.course-hero::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 44px;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 90' preserveAspectRatio='none'%3E%3Cpath d='M0 50C150 20 300 20 450 50C600 80 750 80 900 50L900 90L0 90Z' fill='%23F4ECD8'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: 0 bottom;
+  background-size: 720px 44px;
+  opacity: .10;
+}
+.course-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(440px 220px at 90% -12%, rgb(217 164 65 / .16), transparent 60%);
+}
+
+/* ── 11-4 標題舞台感：hero 標題上 serif；全站 section h2 掛 gold 螢光筆底線 ── */
+.hero h1,
+.course-hero h1 { font-family: var(--font-display); }
+section > .container > h2 {
+  display: inline-block; /* 讓螢光筆只鋪到文字寬 */
+  background: linear-gradient(transparent 62%, rgb(217 164 65 / .32) 0);
+}
+
+/* ── 11-3 票券卡（首頁與 /courses/ 的 .cards 卡片牆共用；bento 卡不在 .cards 內、不受影響） ── */
+.cards .card { overflow: hidden; } /* 讓 gold 頂條跟著圓角收邊 */
+.cards .card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold-500);
+}
+.cards a.card {
+  transition:
+    transform .28s cubic-bezier(.34, 1.56, .64, 1),
+    box-shadow .28s cubic-bezier(.34, 1.56, .64, 1),
+    border-color .2s ease-out;
+}
+.cards a.card:hover,
+.cards a.card:focus-visible,
+.cards a.card:active {
+  transform: translate(-3px, -3px);
+  box-shadow: 5px 5px 0 var(--teal-deep);
+  border-color: var(--teal);
+}
+.cards .card .badge { transition: transform .28s cubic-bezier(.34, 1.56, .64, 1); }
+.cards a.card:hover .badge,
+.cards a.card:focus-visible .badge { transform: scale(1.06); }
+
+/* ── 11-5 海報牆策展化 ── */
+.talk {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  transition:
+    transform .3s cubic-bezier(.34, 1.56, .64, 1),
+    box-shadow .3s ease-out;
+}
+@media (max-width: 759px) { .talk { aspect-ratio: 3 / 4; } } /* 手機放寬 */
+.wall .talk:nth-child(3n + 1) { transform: rotate(-1.2deg); }
+.wall .talk:nth-child(3n)     { transform: rotate(1.1deg); }
+.wall .talk:hover,
+.wall .talk:focus-visible {
+  transform: rotate(0deg) scale(1.03) translateY(-3px);
+  box-shadow: 6px 6px 0 var(--teal-deep);
+  z-index: 1;
+}
+/* confirmed 卡右上角 gold「膠帶」（半透明、45°，靠 overflow:hidden 收進圓角） */
+.wall .talk:not(.tba):not(.done)::after {
+  content: '';
+  position: absolute;
+  top: -7px; right: -18px;
+  width: 58px; height: 15px;
+  background: rgb(217 164 65 / .58);
+  transform: rotate(45deg);
+}
+/* done：低飽和印刷感＋紙紋底，不整卡灰掉 */
+.talk.done {
+  filter: sepia(.24) contrast(.93) saturate(.8);
+  background:
+    repeating-linear-gradient(0deg, rgb(26 26 26 / .028) 0 1px, transparent 1px 3px),
+    var(--paper);
+}
+/* tba：ripple 之上疊一層等高線（細線、低透明；慢漂動畫在 §11-10） */
+.talk.tba::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(112deg, rgb(14 124 123 / .10) 0 1px, transparent 1px 10px),
+    repeating-linear-gradient(112deg, rgb(14 124 123 / .05) 0 1px, transparent 1px 23px);
+}
+
+/* ── 11-6 評分環活化（GradingDonut 的 segment 掛 .donut-seg；資料流不動） ── */
+.donut-seg { transform-box: fill-box; transform-origin: center; }
+.donut-seg:hover { stroke-width: 32; transform: scale(1.02); }
+
+/* ── 11-7 時間軸潮汐化：phase 卡間波浪虛線（手機縱向、桌機橫向）＋里程碑 gold 呼吸點 ── */
+.phase { position: relative; }
+.phase:nth-child(n + 2)::before {
+  content: '';
+  position: absolute;
+  top: -13px; left: 50%;
+  width: 8px; height: 14px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='24'%3E%3Cpath d='M4 0Q8 6 4 12T4 24' fill='none' stroke='%230E7C7B' stroke-width='1.5' stroke-linecap='round' stroke-dasharray='3 4' opacity='.55'/%3E%3C/svg%3E") repeat-y center top / 8px 24px;
+}
+@media (min-width: 760px) {
+  .phase:nth-child(n + 2)::before {
+    top: 50%; left: -13px;
+    width: 14px; height: 8px;
+    transform: translateY(-50%);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8'%3E%3Cpath d='M0 4Q6 0 12 4T24 4' fill='none' stroke='%230E7C7B' stroke-width='1.5' stroke-linecap='round' stroke-dasharray='3 4' opacity='.55'/%3E%3C/svg%3E") repeat-x left center / 24px 8px;
+  }
+}
+.weeks .ms::before {
+  content: '';
+  display: inline-block;
+  width: 7px; height: 7px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: var(--gold-500);
+}
+
+/* ── 11-8 成績鈕斜切亮條（.score-btn＝課程頁；.score-cta＝/score/ 大按鈕）
+      亮條平時停在 -150%，hover 掃到 150%；transition 只在 no-preference 掛（§11-10） ── */
+.score-btn,
+.score-cta { position: relative; overflow: hidden; }
+.score-btn::before,
+.score-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgb(255 255 255 / .38) 50%, transparent 62%);
+  transform: translateX(-150%);
+}
+.score-btn:hover::before,
+.score-btn:focus-visible::before,
+.score-cta:hover::before,
+.score-cta:focus-visible::before { transform: translateX(150%); }
+
+/* ── 11-9 置頂公告：gold 左條＋右上「置頂」字章（非 pinned 不動） ── */
+.ann article.pinned {
+  position: relative;
+  border-left: 4px solid var(--gold-500);
+}
+.ann article.pinned::after {
+  content: '置頂';
+  content: '置頂' / ''; /* 支援 alt 語法的瀏覽器：純裝飾、不重複報讀（sr-only 已有「置頂公告」） */
+  position: absolute;
+  top: 10px; right: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1.6;
+  padding: 0 4px 0 6px;
+  color: var(--gold-700); /* on gold-tint ≈ 5.2:1，AA */
+  border: 1.5px solid var(--gold-600);
+  border-radius: var(--radius-xs);
+  background: rgb(255 253 248 / .55);
+  transform: rotate(3deg);
+}
+
+/* ── 11-10 動畫總開關：全部只在 no-preference 生效（reduce＝全靜態） ── */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-scene::before  { animation: wave-drift-a 12s linear infinite; }
+  .hero-scene::after   { animation: wave-drift-b 8s linear infinite; }
+  .course-hero::before { animation: wave-drift-c 16s linear infinite; }
+  .hero-scene h1::after { animation: underline-in .9s cubic-bezier(.22, 1, .36, 1) .2s both; }
+  .talk.tba::after { animation: contour-drift 24s linear infinite alternate; }
+  .weeks .ms::before { animation: ms-breathe 2.6s ease-in-out infinite alternate; }
+  .donut-seg { transition: stroke-width .25s ease-out, transform .25s ease-out; }
+  .score-btn::before,
+  .score-cta::before { transition: transform .7s ease; }
+
+  @keyframes wave-drift-a { to { background-position-x: -900px; } }
+  @keyframes wave-drift-b { to { background-position-x: 660px; } }
+  @keyframes wave-drift-c { to { background-position-x: -720px; } }
+  @keyframes underline-in { from { width: 0; } to { width: 100%; } }
+  @keyframes contour-drift { to { background-position: 64px 26px, -38px 14px; } }
+  @keyframes ms-breathe { from { transform: scale(1); } to { transform: scale(1.15); } }
+}
+
 /* ── 9. prefers-reduced-motion：水波改靜態、hover 不浮起、捲動不平滑 ── */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .ripple { animation: none; }
   a.card, .talk { transition: none; }
   a.card:hover { transform: none; box-shadow: var(--shadow-card); }
+  /* §11 視覺升級的 hover 位移在 reduce 一併中和（裝飾維持靜態） */
+  .cards a.card, .cards .card .badge { transition: none; }
+  .cards a.card:hover,
+  .cards a.card:focus-visible,
+  .cards a.card:active { transform: none; box-shadow: var(--shadow-card); }
+  .cards a.card:hover .badge,
+  .cards a.card:focus-visible .badge { transform: none; }
+  .wall .talk:nth-child(3n + 1),
+  .wall .talk:nth-child(3n) { transform: none; }
+  .wall .talk:hover,
+  .wall .talk:focus-visible { transform: none; box-shadow: none; }
+  .donut-seg:hover { transform: none; }
 }
 
 /* ── 10. 列印（設計書 §5-3.5：隱藏導覽與動畫、水波印成靜態淡底、頁尾轉淺、印出外連網址） ── */
@@ -400,4 +653,23 @@ a.card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(14, 124,
     font-size: 90%;
     color: var(--ink-500);
   }
+  /* §11 視覺升級：列印時動畫、波浪、聚光、陰影、傾斜全關；深底文字轉墨色 */
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .hero-scene { background: none; color: var(--ink-900); }
+  .hero-scene h1 { color: var(--ink-900); }
+  .hero-scene .tag { color: var(--ink-700); }
+  .course-hero { background: none !important; color: var(--ink-900); }
+  .course-hero .en, .course-hero .promise { color: var(--ink-700); }
+  section > .container > h2 { background: none; }
+  .talk, .cards a.card { transform: none !important; }
+  .talk { aspect-ratio: auto; filter: none; }
+  .talk.done { background: var(--paper); }
+  .hero-scene::before, .hero-scene::after, .hero-scene h1::after,
+  .course-hero::before, .course-hero::after,
+  .cards .card::before,
+  .wall .talk:not(.tba):not(.done)::after,
+  .talk.tba::after,
+  .phase:nth-child(n + 2)::before,
+  .weeks .ms::before,
+  .score-btn::before, .score-cta::before { display: none !important; }
 }

@@ -126,8 +126,9 @@ export default async function HomePage() {
         .ann-body li { margin: 2px 0; }
       `}</style>
 
-      {/* 區塊 1：品牌 hero（洄瀾數位溪谷視覺；文案沿用 Ted 過目的原型基準） */}
-      <div className="hero">
+      {/* 區塊 1：品牌 hero（洄瀾數位溪谷視覺；文案沿用 Ted 過目的原型基準）
+          .hero-scene＝2026-07 視覺升級的深 teal 場景（globals §11-1），只掛首頁 */}
+      <div className="hero hero-scene">
         <div className="container">
           <h1>這學期，把 AI 用在真實任務上</h1>
           <p className="tag">
