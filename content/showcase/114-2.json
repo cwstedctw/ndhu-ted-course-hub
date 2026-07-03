@@ -7,7 +7,7 @@
       "group": "114-2 AA 班・個人專題",
       "title": "WCMD：讓 AI 動手操作 Windows 的 MCP Server",
       "summary": "用 Roo Code 搭配 DeepSeek，一週開發出自己的 MCP Server，讓 AI 代理能讀螢幕、辨識 UI 元件、自動點滑鼠打鍵盤，成果公開發布在 GitHub。",
-      "image": null,
+      "image": "/images/showcase/1142-ai-intro-01.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
@@ -18,7 +18,7 @@
       "group": "114-2 AA 班・個人專題",
       "title": "用 AI 代理做出專題報導網站〈一罐梅酒的風土〉",
       "summary": "把 25 天的釀酒觀察日記、照片與試喝筆記餵給 Codex，讓 AI 讀檔、寫網頁，從零做出另一門課要繳的專題報導網站，真的上線有公開網址。",
-      "image": null,
+      "image": "/images/showcase/1142-ai-intro-02.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
@@ -29,7 +29,7 @@
       "group": "114-2 AB 班・個人專題",
       "title": "Gemini 論文寫作助手",
       "summary": "把 AI 帶進自己真實的論文研究：訪談逐字稿主題分析、英文文獻翻譯與追蹤、APA 格式校正，還整理出一週實戰時程與親身試出來的優缺點。",
-      "image": null,
+      "image": "/images/showcase/1142-ai-intro-03.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
@@ -40,7 +40,7 @@
       "group": "114-2 AB 班・個人專題",
       "title": "智慧飲料店庫存管理與 AI 預測系統",
       "summary": "先訪談幾家真實手搖飲店，再用 Claude 在一週內從零打造 Python 後端加網頁前端的庫存管理與預測系統，最後拿人機協作理論回頭對照自己的開發經驗。",
-      "image": null,
+      "image": "/images/showcase/1142-ai-intro-04.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
@@ -51,7 +51,7 @@
       "group": "114-2 AA 班・期末專案",
       "title": "MIRAGE PRISM：FF14 幻化分享社群平台",
       "summary": "真的上線的社群網站：前端用 Vanilla JS 串接 XIVAPI，資料庫走 Supabase，靠 AI 寫程式、除錯與講解，最後部署上 GitHub Pages。",
-      "image": null,
+      "image": "/images/showcase/1142-it-apply-01.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
@@ -62,7 +62,7 @@
       "group": "114-2 AA 班・期末專案",
       "title": "從零到上線的美甲電商網站",
       "summary": "一步步下精準提示詞：指定色碼、3×3 商品格、右下角懸浮購物車，讓 AI 生成整個電商頁面，再部署到免費主機拿到公開網址。",
-      "image": null,
+      "image": "/images/showcase/1142-it-apply-02.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
@@ -73,7 +73,7 @@
       "group": "114-2 AB 班・期末報告",
       "title": "互動式社會科教材平台",
       "summary": "為社會科教學做的互動教材網站：Zero Dependency 架構、.NET HttpListener 本地伺服器，成品公開部署在 GitHub Pages。",
-      "image": null,
+      "image": "/images/showcase/1142-it-apply-03.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
@@ -84,7 +84,7 @@
       "group": "114-2 AB 班・期末報告",
       "title": "台股即時儀表板",
       "summary": "讓兩個 AI 代理分工，五天做出台股看盤儀表板；系統設計自己拿主意：API 請求限速防封鎖、LocalStorage 存資料、K 線圖只重繪最後一根燭線。",
-      "image": null,
+      "image": "/images/showcase/1142-it-apply-04.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
@@ -95,7 +95,7 @@
       "group": "114-2・個人裝置實作",
       "title": "MCU×FPGA 電磁波干涉即時渲染",
       "summary": "ESP32 讀旋轉編碼器算出波動參數，經 SPI 封包丟給 FPGA 用 Verilog 逐像素渲染，60FPS 的 VGA 畫面即時呈現電磁波的反射、穿透與干涉。",
-      "image": null,
+      "image": "/images/showcase/1142-maker-intro-01.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
@@ -106,7 +106,7 @@
       "group": "114-2・個人裝置實作",
       "title": "無線靜音格鬥 Hitbox",
       "summary": "12 顆電容觸控鍵加 BLE HID 的自製無線控制器，做了賽事規則的 SOCD 清理與記憶體優化，實際拿來打格鬥遊戲，順便解決宿舍鍵盤噪音。",
-      "image": null,
+      "image": "/images/showcase/1142-maker-intro-02.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
@@ -117,7 +117,7 @@
       "group": "114-2・個人裝置實作",
       "title": "虛擬娃娃機",
       "summary": "ESP32 與網頁雙向連動的娃娃機：Web Serial 通訊、OLED 與網頁雙螢幕、Web Audio 音效，線上 demo 完整可玩。",
-      "image": null,
+      "image": "/images/showcase/1142-maker-intro-03.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
@@ -128,7 +128,7 @@
       "group": "114-2・個人裝置實作",
       "title": "遠端冷氣遙控器（日立協定逆向）",
       "summary": "逆向學習冷氣的紅外線協定，能重播也能直接生成 Hitachi 344-bit 指令，用手機網頁透過 ESP32 真的遙控到牆上那台冷氣。",
-      "image": null,
+      "image": "/images/showcase/1142-maker-intro-04.jpg",
       "link": null,
       "credit": null,
       "consent": "not-needed"
