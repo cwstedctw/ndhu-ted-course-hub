@@ -13,7 +13,7 @@ export async function generateMetadata() {
     description,
     openGraph: {
       title: `${title}｜${site.brand.name}`, description,
-      images: [`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/og-default.jpg`],
+      images: ['/images/og-default.jpg'],
     },
     twitter: { card: 'summary_large_image' },
   };

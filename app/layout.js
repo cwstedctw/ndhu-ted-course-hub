@@ -32,8 +32,10 @@ export const metadata = {
     siteName: brand.name,
     locale: 'zh_TW',
     type: 'website',
-    // 預設社群預覽圖（立霧水彩溪谷）；配 metadataBase 產絕對網址
-    images: [`${BASE_PATH}/images/og-default.jpg`],
+    // 預設社群預覽圖（立霧水彩溪谷）。⚠️路徑不加 BASE_PATH：metadataBase（site.json
+    // baseUrl）已含 /ndhu-ted-course-hub 子路徑，Next 是「串接」不是 URL 語意解析，
+    // 再加會疊兩次（2026-07-03 上線實測踩到）。favicon 是原樣輸出、相反地要手補。
+    images: ['/images/og-default.jpg'],
   },
   twitter: { card: 'summary_large_image' },
 };

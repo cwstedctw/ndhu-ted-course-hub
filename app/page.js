@@ -100,8 +100,9 @@ export async function generateMetadata() {
     description,
     openGraph: {
       title, description, siteName: brand.name, locale: 'zh_TW', type: 'website',
-      // 頁面層 openGraph 會整包蓋掉 layout 的，images 必須跟著帶（Next 淺合併）
-      images: [`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/og-default.jpg`],
+      // 頁面層 openGraph 會整包蓋掉 layout 的，images 必須跟著帶（Next 淺合併）；
+      // 路徑不加 BASE_PATH——metadataBase 已含子路徑（詳 layout.js 註記）
+      images: ['/images/og-default.jpg'],
     },
     twitter: { card: 'summary_large_image' },
   };
