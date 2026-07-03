@@ -1,6 +1,6 @@
 // components/SiteHeader.js — 全站頁首（server component）
 // 品牌字標（logo.png＋站名＋學期，連回首頁）＋導覽：課程／成績查詢／關於。
-// 「作品展示」導覽項 Ted 2026-07-03 圈示拿掉（/showcase/ 頁保留，課程頁作品區仍引用）。
+// 「作品展示」導覽項 陳文盛老師 2026-07-03 圈示拿掉（/showcase/ 頁保留，課程頁作品區仍引用）。
 // 裁決：導覽列的「成績查詢」直接外連 site.json 的 scoreUrl（V2 Apps Script /exec）新分頁，
 // 一律 target="_blank" rel="noopener noreferrer"——Hub 本身零成績、零個資。
 // 「施工日誌」唯 buildLog.enabled 為 true 才渲染（現值 false，待拍板）。

@@ -1,4 +1,4 @@
-# DEPLOY——一頁部署步驟（給 Ted／立霧）
+# DEPLOY——一頁部署步驟（給陳文盛老師／立霧）
 
 > 目標：把這個資料夾變成公開 GitHub repo，push 就自動驗證、建置、上線到
 > `https://<帳號>.github.io/ndhu-ted-course-hub/`。

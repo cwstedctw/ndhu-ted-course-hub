@@ -1,8 +1,8 @@
 // app/about/page.js —— 關於頁（詳細設計書 IA 章 §4.9）
-// 區塊 1：Ted 名片卡（site.json about.{name,title,email,office,contact}；email 用 mailto）
+// 區塊 1：陳文盛老師 名片卡（site.json about.{name,title,email,office,contact}；email 用 mailto）
 //         phone 一律不渲染——渲染白名單排除（IA 章 §3），site.schema.json 亦無此欄。
 // 區塊 2：AI 團隊聯名（footerCredits 原字串直出，頁尾署名的放大版）
-//         ＋團隊水彩合繪（出自團隊首作影片，2026-07-03 Ted 定調全站視覺跟影片走）。
+//         ＋團隊水彩合繪（出自團隊首作影片，2026-07-03 陳文盛老師 定調全站視覺跟影片走）。
 import { getSite } from '@/lib/content';
 
 const BP = process.env.NEXT_PUBLIC_BASE_PATH || '';

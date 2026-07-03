@@ -1,5 +1,5 @@
 {
-  "$comment": "課程介紹的單一內容源（一份內容、多種輸出；F1，2026-06-12）。對齊 NDHU_TED_Course_Hub SPEC 的 data schema 思路；投影片 build/、HTML intro、選課快卡都從這份產出，禁止在載體中 hard-code 課程資訊。status: confirmed＝教學計畫或開課清單真值；pending_ted＝草稿待 Ted 核，不得當真值用。",
+  "$comment": "課程介紹的單一內容源（一份內容、多種輸出；F1，2026-06-12）。對齊 NDHU_TED_Course_Hub SPEC 的 data schema 思路；投影片 build/、HTML intro、選課快卡都從這份產出，禁止在載體中 hard-code 課程資訊。status: confirmed＝教學計畫或開課清單真值；pending_ted＝草稿待 陳文盛 核，不得當真值用。",
   "id": "115-1-gc6753-ai-intro",
   "kind": "regular",
   "name": "人工智慧概論",
@@ -70,7 +70,7 @@
           "sub": "整合多項 AI 工具，產出具備說明、查證與反思的工作流"
         }
       ],
-      "stepsNote": "步驟說明文 Ted 核定 2026-06-12（D 案 1–3；投影片可只放 label，說明文給 HTML 版用）"
+      "stepsNote": "步驟說明文 陳文盛 核定 2026-06-12（D 案 1–3；投影片可只放 label，說明文給 HTML 版用）"
     },
     "phases": [
       {
@@ -244,7 +244,7 @@
         ]
       }
     ],
-    "toolGroupsSubNote": "副標擴寫 Ted 核定 2026-06-12（D 案 8）；投影片空間不夠可縮回短版",
+    "toolGroupsSubNote": "副標擴寫 陳文盛 核定 2026-06-12（D 案 8）；投影片空間不夠可縮回短版",
     "toolGroupsNote": "工具會換、能力不換——AI 工具汰換快，實際以開學當週的等效工具為準。",
     "dailyTools": [
       {
@@ -295,17 +295,17 @@
         "bodyLong": "遵守誠信、隱私與著作權。把 AI 當成一起完成作品的夥伴，而不是替你寫作業的人。"
       }
     ],
-    "aiRulesNote": "bodyLong＝Ted 核定 2026-06-12（D 案 4–6，第 6 條軟化版）；投影片用 body、HTML 版可用 bodyLong",
+    "aiRulesNote": "bodyLong＝陳文盛 核定 2026-06-12（D 案 4–6，第 6 條軟化版）；投影片用 body、HTML 版可用 bodyLong",
     "aiPolicyExamples": {
       "structure": [
         "可以使用（開放）",
         "需註明與說明（引導）",
         "禁止使用（限制）"
       ],
-      "structureNote": "三分類架構 Ted 核定 2026-06-12（D 案 7）",
+      "structureNote": "三分類架構 陳文盛 核定 2026-06-12（D 案 7）",
       "examples": {
         "status": "pending_ted",
-        "note": "各分類的情境實例待 Ted 給"
+        "note": "各分類的情境實例待 陳文盛 給"
       }
     },
     "whatToBring": [
@@ -324,17 +324,17 @@
         "q": "作業量大概多少？",
         "a": "作業佔總成績 20%，以課堂工具實作的延伸小作業為主；確切次數與節奏待開學公告。",
         "status": "confirmed",
-        "source": "Ted 核可 2026-06-12"
+        "source": "陳文盛 核可 2026-06-12"
       },
       {
         "q": "期末作品長什麼樣子？",
         "a": "期末是 AI 工作流專題：至少整合兩類 AI 工具，說明過程、查證與反思。課堂會展示過去學期的優秀作品當參考；這學期做得好的專題，也會成為下學期的示範作品。",
         "exampleAssets": {
           "status": "pending",
-          "note": "過去學期優秀作品的去識別化素材由 Ted 提供後嵌入"
+          "note": "過去學期優秀作品的去識別化素材由 陳文盛 提供後嵌入"
         },
         "status": "confirmed",
-        "source": "教學計畫成績評量＋Ted 定 2026-06-12（每學期末選優秀作品當下學期範例，滾動制）"
+        "source": "教學計畫成績評量＋陳文盛 定 2026-06-12（每學期末選優秀作品當下學期範例，滾動制）"
       },
       {
         "q": "AI 可以用到什麼程度？",
@@ -352,7 +352,7 @@
         "q": "還沒選上怎麼辦？",
         "a": "先來上第一堂課——這門課預設歡迎所有想修的同學，加選方式課堂上說。",
         "status": "confirmed",
-        "source": "Ted 定 2026-06-12：預設全收"
+        "source": "陳文盛 定 2026-06-12：預設全收"
       }
     ],
     "finale": {
@@ -376,7 +376,7 @@
   "meta": {
     "lastReviewed": "2026-06-12",
     "validForSemester": "115-1",
-    "owner": "Ted（陳文盛）",
+    "owner": "陳文盛（陳文盛）",
     "sources": [
       "workspace/outbox/20260610-wailan-課程介紹內容檔-人工智慧概論115-1.md",
       "20260611-wailan-設計系統補齊指示.md",

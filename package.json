@@ -2,7 +2,7 @@
   "name": "ndhu-ted-course-hub",
   "version": "0.1.0",
   "private": true,
-  "description": "NDHU TED Course Hub——Ted 115-1 課程入口網站（Next.js 靜態輸出、content/ JSON 驅動、零學生個資）",
+  "description": "NDHU TED Course Hub——陳文盛老師 115-1 課程入口網站（Next.js 靜態輸出、content/ JSON 驅動、零學生個資）",
   "scripts": {
     "dev": "next dev",
     "validate": "node scripts/validate-content.mjs",

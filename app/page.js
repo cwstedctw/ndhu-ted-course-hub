@@ -141,7 +141,7 @@ export default async function HomePage() {
       {/* 區塊 1：品牌 hero（立霧水彩溪谷全景＝影片同款畫風；globals §11-1），只掛首頁 */}
       <div className="hero hero-scene">
         <div className="container">
-          {/* 文字墊紙板：Ted 2026-07-03 圈示副標壓山景不清楚→半透明 cream 面板保可讀性 */}
+          {/* 文字欄：hero-copy 現只管排版（紙板已依陳文盛老師指示撤除，字深＋背景淡紗保可讀性） */}
           <div className="hero-copy">
             <h1>這學期，把 AI 用在真實任務上</h1>
             <p className="tag">
