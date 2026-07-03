@@ -1,8 +1,9 @@
 {
+  "$comment": "課程介紹單一內容源（一份內容、多種輸出）。本檔＝洄瀾 2026-07-03 草稿：課程結構、器材、評量取自 114-2 教學計畫 GC__67570（同名課上學期版，Downloads PDF）；115-1 版教學計畫、科目代碼、週次表開學前以教務系統為準。文案語氣待 Ted 過目。",
   "id": "115-1-maker-intro",
   "kind": "regular",
   "name": "創客入門–智慧生活裝置實作",
-  "nameEn": null,
+  "nameEn": "Makers Beginning - Smart Living Device Implementation",
   "semester": "115-1",
   "org": "國立東華大學 通識教育中心",
   "instructor": {
@@ -12,47 +13,275 @@
     "phone": "03-890-6610",
     "office": "理工二館 C306",
     "contact": "Microsoft Teams 發訊息",
-    "promise": { "status": "pending", "note": "教師一句話 8 月由 Ted 補" }
+    "promise": { "status": "pending", "note": "教師一句話由 Ted 補（不代擬 Ted 第一人稱）" }
   },
   "credits": 3,
-  "courseType": { "status": "pending", "note": "課別待 Ted 依開課清單核定" },
-  "weeksSystem": { "status": "pending", "note": "週制（16／17 週）開學前確認" },
+  "courseType": "校核心選修",
+  "weeksSystem": "17 週新制",
   "sections": [
     {
       "id": "AA",
       "code": null,
       "systemId": null,
       "time": null,
-      "timeNote": { "status": "pending", "note": "上課時間開學前公布" },
+      "timeNote": { "status": "pending", "note": "115-1 科目代碼與上課時間開學前補（114-2 版代碼＝GC__67570）" },
       "room": null
     }
   ],
   "intro": {
-    "promise": { "status": "pending", "note": "課程一句話 8 月由 Ted 補" },
-    "chips": { "status": "pending", "note": "課程亮點標籤 8 月由 Ted 補" },
-    "destination": { "status": "pending", "note": "課程終點與三步驟 8 月由 Ted 補" },
-    "phases": { "status": "pending", "note": "課程分段 8 月由 Ted 補" },
-    "weeklyPlan": { "status": "pending", "note": "週次表開學前公布" },
-    "grading": { "status": "pending", "note": "評分比例 8 月由 Ted 補" },
-    "aiRules": { "status": "pending", "note": "AI 使用守則 8 月由 Ted 補（可沿用共通三條）" },
-    "aiPolicyExamples": { "status": "pending", "note": "AI 使用情境實例待 Ted 給" },
-    "toolGroups": { "status": "pending", "note": "課程工具帶 8 月由 Ted 補" },
-    "dailyTools": { "status": "pending", "note": "日常工具清單 8 月由 Ted 補" },
-    "whatToBring": { "status": "pending", "note": "上課要帶什麼 8 月由 Ted 補" },
-    "faq": { "status": "pending", "note": "常見問題 8 月由 Ted 補" }
+    "promise": "從點亮一顆 LED 開始，用 MicroPython 和簡單電路做出你的智慧生活裝置",
+    "chips": [
+      "一人一片 ESP32",
+      "從零開始教",
+      "做出會動的東西"
+    ],
+    "destination": {
+      "title": "這門課的終點：親手做出一個智慧生活裝置",
+      "sub": "呼吸燈、門鈴、光感應燈、自動門——一路練上來，期末把這些技能組成你自己的專題。",
+      "steps": [
+        {
+          "label": "看懂電與程式",
+          "sub": "基本電學、微控制器、MicroPython，從零開始不跳級"
+        },
+        {
+          "label": "讓零件聽話",
+          "sub": "LED、開關、蜂鳴器、感測器——一個一個點亮"
+        },
+        {
+          "label": "做出你的裝置",
+          "sub": "Wi-Fi、藍牙連上世界，期末專題親手實作"
+        }
+      ]
+    },
+    "phases": [
+      {
+        "id": 1,
+        "title": "基礎：電路與程式",
+        "body": "微控制器架構與腳位、基本電子電路與電學、MicroPython 變數與流程控制——所有東西從第一步教起。",
+        "weeks": "前段"
+      },
+      {
+        "id": 2,
+        "title": "零件實戰",
+        "body": "LED、按壓開關、可變電阻、蜂鳴器、LCD、光敏電阻、人體紅外線感應——輸出入零件一個個上手。",
+        "weeks": "中段"
+      },
+      {
+        "id": 3,
+        "title": "應用與期末專題",
+        "body": "呼吸燈、門鈴、光感應燈、自動門等生活應用，再加 Wi-Fi 物聯網與 BLE 藍牙，收尾在期末專題實作。",
+        "weeks": "後段"
+      }
+    ],
+    "phasesNote": "課程結構以 114-2 版教學計畫為底；115-1 正式週次開學前公布",
+    "weeklyPlan": {
+      "status": "pending",
+      "note": "115-1 週次表開學前公布；結構參照 114-2 版教學計畫（Downloads GC__67570 PDF）"
+    },
+    "grading": [
+      {
+        "pct": 10,
+        "label": "平時成績",
+        "sub": "含出缺席"
+      },
+      {
+        "pct": 20,
+        "label": "作業成績",
+        "sub": null
+      },
+      {
+        "pct": 30,
+        "label": "期中考",
+        "sub": null
+      },
+      {
+        "pct": 40,
+        "label": "期末專題",
+        "sub": "智慧生活裝置實作"
+      }
+    ],
+    "gradingNote": "比例取自 114-2 版教學計畫，115-1 若有調整以開學公告為準；期末＝完成一個智慧生活裝置專題。",
+    "toolGroups": [
+      {
+        "group": "主角",
+        "items": [
+          {
+            "name": "ESP32（Circus EZ Start Kit+）",
+            "sub": "開發板加擴展板，一人一片、期末繳回"
+          }
+        ]
+      },
+      {
+        "group": "程式",
+        "items": [
+          {
+            "name": "MicroPython",
+            "sub": "用 Python 的親切語法直接控制硬體"
+          }
+        ]
+      },
+      {
+        "group": "零件箱",
+        "items": [
+          {
+            "name": "LED · 按壓開關 · 蜂鳴器 · LCD",
+            "sub": "基本輸出入——裝置的手腳和嗓門"
+          },
+          {
+            "name": "光敏電阻 · 人體紅外線感應",
+            "sub": "讓裝置有感覺的感測器"
+          }
+        ]
+      },
+      {
+        "group": "連上世界",
+        "items": [
+          {
+            "name": "Wi-Fi · BLE 藍牙",
+            "sub": "把裝置接上網路與手機"
+          }
+        ]
+      }
+    ],
+    "toolGroupsNote": "器材清單以 114-2 版為底；115-1 開學當週以實際發放為準",
+    "platforms": [
+      {
+        "use": "課堂點名",
+        "name": "Zuvio"
+      },
+      {
+        "use": "交作業",
+        "name": "Microsoft Teams"
+      },
+      {
+        "use": "課堂共筆",
+        "name": "HackMD"
+      }
+    ],
+    "aiRules": [
+      {
+        "title": "能解釋自己的過程",
+        "body": "說得出你怎麼問、怎麼改、為什麼這樣決定。",
+        "bodyLong": "當老師或助教詢問時，你要能清楚說出你怎麼對 AI 提問、怎麼修改它的輸出、為什麼這樣決定。"
+      },
+      {
+        "title": "會查證 AI 的輸出",
+        "body": "AI 會錯也會編；交出去前你要查過。",
+        "bodyLong": "AI 會犯錯，也會編造不存在的事實。接電路、跑程式之前，先確認 AI 給的做法是對的。"
+      },
+      {
+        "title": "守學術誠信",
+        "body": "遵守誠信、隱私與著作權。",
+        "bodyLong": "遵守誠信、隱私與著作權。把 AI 當成一起完成作品的夥伴，而不是替你寫作業的人。"
+      }
+    ],
+    "aiRulesNote": "三條守則沿用人工智慧概論 Ted 核定版（2026-06-12）；第二條依實作課情境微調",
+    "aiPolicyExamples": {
+      "structure": [
+        "可以使用（開放）",
+        "需註明與說明（引導）",
+        "禁止使用（限制）"
+      ],
+      "structureNote": "三分類架構沿用 Ted 核定版（2026-06-12）",
+      "examples": {
+        "status": "pending_ted",
+        "note": "各分類的情境實例待 Ted 給"
+      }
+    },
+    "whatToBring": [
+      "筆記型電腦（寫程式、查資料用）",
+      "開發板不用買——課堂提供 ESP32 套件一人一片（期末記得繳回）",
+      "不用先懂電路——從基本電學開始教"
+    ],
+    "faq": [
+      {
+        "q": "完全不懂電路、沒寫過程式，可以修嗎？",
+        "a": "可以。課程從基本電學和 MicroPython 第一步教起，零件一個一個認識——這門課的名字就叫「入門」。",
+        "status": "confirmed",
+        "source": "114-2 教學計畫課程目標與進度表"
+      },
+      {
+        "q": "開發板要自己買嗎？",
+        "a": "不用。課堂提供 ESP32 Circus EZ Start Kit+ 一人一片，期末繳回。用出感情想自己收一片？教學計畫的參考資料有連結。",
+        "status": "confirmed",
+        "source": "114-2 教學計畫課程描述（一人一片，期末繳回）"
+      },
+      {
+        "q": "會做出哪些東西？",
+        "a": "呼吸燈、門鈴、光感應燈、調光旋鈕、自動門……都是課堂實作；期末再把這些技能組成你自己的智慧生活裝置。",
+        "status": "confirmed",
+        "source": "114-2 教學計畫進度表 W10–13"
+      },
+      {
+        "q": "跟「AIoT 智慧裝置實作」差在哪？",
+        "a": "創客入門是通識課、從零開始，用 ESP32 和 MicroPython 打基礎；AIoT 是資工系學程課，做語音、影像、邊緣運算的完整系統。先修創客、再挑戰 AIoT，剛剛好。",
+        "status": "confirmed",
+        "source": "兩課教學計畫對照（GC__67570 vs CSIE35490）"
+      },
+      {
+        "q": "期末專題是什麼？",
+        "a": "把學期所學組合成一個智慧生活裝置，最後兩週在課堂實作完成。題目自己想——生活裡哪裡缺一個會自己亮的燈、會自己開的門？",
+        "status": "confirmed",
+        "source": "114-2 教學計畫課程描述與 W16–17"
+      }
+    ],
+    "finale": {
+      "nextWeek": null,
+      "action": "開始觀察生活：哪裡缺一個會自己亮的燈、會自己開的門？",
+      "materialsUrl": {
+        "status": "pending",
+        "note": "課程教材網址開學前補"
+      }
+    },
+    "placeholders": [
+      "115-1 科目代碼與系統編號",
+      "上課時間與教室",
+      "115-1 週次表",
+      "Teams 團隊代碼",
+      "TA 名字",
+      "課程教材網址"
+    ]
   },
   "meta": {
     "lastReviewed": null,
     "validForSemester": "115-1",
     "owner": "Ted（陳文盛）",
     "sources": [
-      "M0 骨架：依 workspace/outbox/20260702-wailan-course-hub-詳細設計書.md 第三章產出（2026-07-03），課程內容 8 月由 Ted 填"
+      "114-2 教學計畫 GC__67570（教務系統 PDF）＝課程結構、ESP32 器材、實作清單、評量比例參照；115-1 版開學前以教務系統為準",
+      "洄瀾 2026-07-03 草稿：intro 文案與 FAQ 語氣待 Ted 過目；115-1 科目代碼、週次、時間教室開學前補"
     ]
   },
   "hub": {
-    "links": [],
+    "links": [
+      {
+        "platform": "zuvio",
+        "use": "課堂點名",
+        "label": "Zuvio",
+        "url": null,
+        "urlStatus": "pending"
+      },
+      {
+        "platform": "teams",
+        "use": "交作業",
+        "label": "Microsoft Teams",
+        "url": null,
+        "urlStatus": "pending"
+      },
+      {
+        "platform": "hackmd",
+        "use": "課堂共筆",
+        "label": "HackMD",
+        "url": null,
+        "urlStatus": "pending"
+      }
+    ],
     "scoreUrl": null,
-    "showcaseRefs": ["1142-maker-intro-01", "1142-maker-intro-02", "1142-maker-intro-03", "1142-maker-intro-04"],
+    "showcaseRefs": [
+      "1142-maker-intro-01",
+      "1142-maker-intro-02",
+      "1142-maker-intro-03",
+      "1142-maker-intro-05"
+    ],
     "heroImage": null,
     "showPromptButtons": false
   }

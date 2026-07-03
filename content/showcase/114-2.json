@@ -116,20 +116,20 @@
       "courseDir": "11501-maker-intro",
       "group": "114-2・個人裝置實作",
       "title": "虛擬娃娃機",
-      "summary": "ESP32 與網頁雙向連動的娃娃機：Web Serial 通訊、OLED 與網頁雙螢幕、Web Audio 音效，線上 demo 完整可玩。",
+      "summary": "ESP32 與網頁雙向連動的娃娃機：Web Serial 通訊、OLED 與網頁雙螢幕、Web Audio 音效——網頁版已上線，點進去就能玩。",
       "image": "/images/showcase/1142-maker-intro-03.jpg",
-      "link": null,
+      "link": "https://ndhu-claw-machine.netlify.app",
       "credit": null,
       "consent": "not-needed"
     },
     {
-      "id": "1142-maker-intro-04",
+      "id": "1142-maker-intro-05",
       "courseDir": "11501-maker-intro",
       "group": "114-2・個人裝置實作",
-      "title": "遠端冷氣遙控器（日立協定逆向）",
-      "summary": "逆向學習冷氣的紅外線協定，能重播也能直接生成 Hitachi 344-bit 指令，用手機網頁透過 ESP32 真的遙控到牆上那台冷氣。",
-      "image": "/images/showcase/1142-maker-intro-04.jpg",
-      "link": null,
+      "title": "ESP32 Ultimate Companion：多合一生活小站",
+      "summary": "OLED 加 Web 介面的桌上小夥伴：三款小遊戲、溫溼度顯示、鬧鐘與番茄鐘全打包——網頁版已上線，點進去就能玩。",
+      "image": "/images/showcase/1142-maker-intro-05.jpg",
+      "link": "https://ndhu-companion-hub.netlify.app",
       "credit": null,
       "consent": "not-needed"
     }
