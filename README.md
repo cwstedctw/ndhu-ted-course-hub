@@ -55,6 +55,15 @@ content/
 3. **未定資訊不編造**——用 pending 物件 `{"status":"pending","note":"…"}`，前端渲染成水波占位。
 4. 繁體中文台灣用語；改完跑 `npm run validate` 再 commit。
 
+### 一份內容、兩種輸出（2026-07-03 定案）
+
+`content/courses/<課程>/course.json` 是每門課的**單一內容源**，餵兩個輸出：
+
+1. **本站課程頁**——push 即上線。
+2. **課程介紹簡報**（19 頁 deck）——老師端簡報產線讀**同一份** course.json 產出，供課堂投影。產線與課程私有備忘（internal notes、講者提醒）不在本 repo。
+
+因此：改課程內容**一律改 course.json**，不要在頁面元件裡硬編；也不要為簡報另開第二份內容檔——內容分兩家一定漂移。schema 已保留 `sections[].deckName` 對應各班簡報名。
+
 ## 部署：GitHub Pages
 
 - `npm run build`（CI 設 `BASE_PATH=/ndhu-ted-course-hub`）→ 靜態檔在 `out/`，發佈到 GitHub Pages。
