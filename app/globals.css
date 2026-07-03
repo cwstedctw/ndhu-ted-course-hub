@@ -402,12 +402,26 @@ body {
   padding: 64px 0 150px;
   color: var(--ink-900);
   background-color: #EFE7D2; /* 圖載入前的紙色底 */
+  /* 上層 cream 淡紗（Ted 2026-07-03：背景降 alpha 保文字清楚）＋水彩圖 */
   background-image:
-    radial-gradient(620px 330px at 22% 14%, rgb(244 236 216 / .80), rgb(244 236 216 / 0) 68%),
+    linear-gradient(180deg, rgb(244 236 216 / .42) 0%, rgb(244 236 216 / .18) 46%, rgb(244 236 216 / 0) 72%),
     var(--bg-hero, none);
   background-size: auto, cover;
   background-position: 0 0, center bottom;
   background-repeat: no-repeat, no-repeat;
+}
+/* 文字墊紙板：半透明 cream＋微模糊，副標在任何裁切下都清楚（AA 以實色近似驗） */
+.hero-copy {
+  max-width: 660px;
+  background: rgb(244 236 216 / .82);
+  -webkit-backdrop-filter: blur(2.5px);
+  backdrop-filter: blur(2.5px);
+  border-radius: 18px;
+  padding: 26px 30px 28px;
+  box-shadow: 0 2px 18px rgb(26 26 26 / .06);
+}
+@media (max-width: 759px) {
+  .hero-copy { padding: 20px 20px 22px; border-radius: 14px; }
 }
 .hero-scene > .container { position: relative; z-index: 1; }
 .hero-scene h1 { display: inline-block; color: var(--ink-900); }

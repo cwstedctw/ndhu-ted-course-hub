@@ -141,16 +141,19 @@ export default async function HomePage() {
       {/* 區塊 1：品牌 hero（立霧水彩溪谷全景＝影片同款畫風；globals §11-1），只掛首頁 */}
       <div className="hero hero-scene">
         <div className="container">
-          <h1>這學期，把 AI 用在真實任務上</h1>
-          <p className="tag">
-            八班課程、一個入口——課程介紹、評分方式、平台連結、上學期作品，開學前一次看清楚。
-          </p>
-          <ul className="chips">
-            <li>問得出來</li>
-            <li>查得到底</li>
-            <li>做得出東西</li>
-          </ul>
-          <a className="cta" href="#courses">看 {semester} 課程</a>
+          {/* 文字墊紙板：Ted 2026-07-03 圈示副標壓山景不清楚→半透明 cream 面板保可讀性 */}
+          <div className="hero-copy">
+            <h1>這學期，把 AI 用在真實任務上</h1>
+            <p className="tag">
+              八班課程、一個入口——課程介紹、評分方式、平台連結、上學期作品，開學前一次看清楚。
+            </p>
+            <ul className="chips">
+              <li>問得出來</li>
+              <li>查得到底</li>
+              <li>做得出東西</li>
+            </ul>
+            <a className="cta" href="#courses">看 {semester} 課程</a>
+          </div>
         </div>
       </div>
 
