@@ -411,8 +411,8 @@ body {
   background-position: 0 0, center bottom;
   background-repeat: no-repeat, no-repeat;
 }
-/* 文字欄只管行寬，無底板（Ted 拍板：不要 board） */
-.hero-copy { max-width: 660px; }
+/* 文字欄無底板（Ted 拍板：不要 board）；寬度放開讓副標桌機一行排完（Ted 2026-07-03 三修） */
+.hero-copy { max-width: none; }
 .hero-scene > .container { position: relative; z-index: 1; }
 .hero-scene h1 { display: inline-block; color: var(--ink-900); }
 /* h1 底下 gold 底線（reduce 時為靜態滿寬；掃入動畫在 §11-10） */
@@ -425,7 +425,7 @@ body {
   border-radius: var(--radius-full);
   background: linear-gradient(90deg, var(--gold-500), var(--gold-200));
 }
-.hero-scene .tag { color: var(--ink-900); font-weight: 600; } /* Ted 二修：字加深加粗；on 淡紗後背景 >10:1 */
+.hero-scene .tag { color: var(--ink-900); font-weight: 600; max-width: none; } /* Ted 二修：字加深加粗；三修：解除 620px 行寬限制，桌機一行排完（手機自然折行） */
 /* CSS 假波浪已退役——水彩圖裡有真溪水（wave-drift-a/b 動畫一併移除，見 §11-10） */
 
 /* ── 11-2 課程頁 hero：深 teal 壓暗漸層疊立霧水彩水面（--bg-flow 由 layout 手組），
