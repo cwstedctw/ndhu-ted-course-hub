@@ -223,25 +223,29 @@
         "items": [
           {
             "name": "Manus 等 Agent",
-            "sub": "具備自主解決任務能力的 AI Agent"
+            "sub": "具備自主解決任務能力的 AI Agent",
+            "subShort": "自主解決任務的 AI Agent"
           },
           {
             "name": "Claude Desktop",
-            "sub": "支援本機資料與自動化的桌面助手"
+            "sub": "支援本機資料與自動化的桌面助手",
+            "subShort": "本機資料與自動化"
           },
           {
             "name": "Codex · Antigravity",
-            "sub": "工作流自動化與腳本指令呼叫"
+            "sub": "工作流自動化與腳本指令呼叫",
+            "subShort": "工作流自動化"
           },
           {
             "name": "command-line AI",
-            "sub": "非資訊背景也能上手的批次處理"
+            "sub": "非資訊背景也能上手的批次處理",
+            "subShort": "批次處理"
           }
         ]
       }
     ],
     "toolGroupsSubNote": "副標擴寫 Ted 核定 2026-06-12（D 案 8）；投影片空間不夠可縮回短版",
-    "toolGroupsNote": "AI 工具汰換快，工具會換、能力不換——實際以開學當週的等效工具為準",
+    "toolGroupsNote": "工具會換、能力不換——AI 工具汰換快，實際以開學當週的等效工具為準",
     "dailyTools": [
       {
         "name": "聊天機器人",
