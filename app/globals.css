@@ -402,27 +402,17 @@ body {
   padding: 64px 0 150px;
   color: var(--ink-900);
   background-color: #EFE7D2; /* 圖載入前的紙色底 */
-  /* 上層 cream 淡紗（Ted 2026-07-03：背景降 alpha 保文字清楚）＋水彩圖 */
+  /* 整片 cream 淡紗把水彩壓淡（Ted 2026-07-03 二修：不要紙板，改字深＋背景更淡），
+     由上而下 .66→.46→.20，溪谷在下緣仍看得見 */
   background-image:
-    linear-gradient(180deg, rgb(244 236 216 / .42) 0%, rgb(244 236 216 / .18) 46%, rgb(244 236 216 / 0) 72%),
+    linear-gradient(180deg, rgb(244 236 216 / .66) 0%, rgb(244 236 216 / .46) 55%, rgb(244 236 216 / .20) 100%),
     var(--bg-hero, none);
   background-size: auto, cover;
   background-position: 0 0, center bottom;
   background-repeat: no-repeat, no-repeat;
 }
-/* 文字墊紙板：半透明 cream＋微模糊，副標在任何裁切下都清楚（AA 以實色近似驗） */
-.hero-copy {
-  max-width: 660px;
-  background: rgb(244 236 216 / .82);
-  -webkit-backdrop-filter: blur(2.5px);
-  backdrop-filter: blur(2.5px);
-  border-radius: 18px;
-  padding: 26px 30px 28px;
-  box-shadow: 0 2px 18px rgb(26 26 26 / .06);
-}
-@media (max-width: 759px) {
-  .hero-copy { padding: 20px 20px 22px; border-radius: 14px; }
-}
+/* 文字欄只管行寬，無底板（Ted 拍板：不要 board） */
+.hero-copy { max-width: 660px; }
 .hero-scene > .container { position: relative; z-index: 1; }
 .hero-scene h1 { display: inline-block; color: var(--ink-900); }
 /* h1 底下 gold 底線（reduce 時為靜態滿寬；掃入動畫在 §11-10） */
@@ -435,7 +425,7 @@ body {
   border-radius: var(--radius-full);
   background: linear-gradient(90deg, var(--gold-500), var(--gold-200));
 }
-.hero-scene .tag { color: var(--ink-700); } /* 墨色 on cream 紙空＞7:1，AA；淡光暈由背景 scrim 承擔 */
+.hero-scene .tag { color: var(--ink-900); font-weight: 600; } /* Ted 二修：字加深加粗；on 淡紗後背景 >10:1 */
 /* CSS 假波浪已退役——水彩圖裡有真溪水（wave-drift-a/b 動畫一併移除，見 §11-10） */
 
 /* ── 11-2 課程頁 hero：深 teal 壓暗漸層疊立霧水彩水面（--bg-flow 由 layout 手組），
