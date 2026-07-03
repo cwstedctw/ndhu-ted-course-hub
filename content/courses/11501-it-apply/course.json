@@ -60,7 +60,7 @@
   "hub": {
     "links": [],
     "scoreUrl": null,
-    "showcaseRefs": [],
+    "showcaseRefs": ["1142-it-apply-01", "1142-it-apply-02", "1142-it-apply-03", "1142-it-apply-04"],
     "heroImage": null,
     "showPromptButtons": false
   }

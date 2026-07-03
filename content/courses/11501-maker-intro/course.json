@@ -52,7 +52,7 @@
   "hub": {
     "links": [],
     "scoreUrl": null,
-    "showcaseRefs": [],
+    "showcaseRefs": ["1142-maker-intro-01", "1142-maker-intro-02", "1142-maker-intro-03", "1142-maker-intro-04"],
     "heroImage": null,
     "showPromptButtons": false
   }

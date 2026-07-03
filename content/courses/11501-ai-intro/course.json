@@ -404,7 +404,7 @@
       }
     ],
     "scoreUrl": null,
-    "showcaseRefs": [],
+    "showcaseRefs": ["1142-ai-intro-01", "1142-ai-intro-02", "1142-ai-intro-03", "1142-ai-intro-04"],
     "heroImage": null,
     "showPromptButtons": false
   }
