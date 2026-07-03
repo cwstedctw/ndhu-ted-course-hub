@@ -98,7 +98,11 @@ export async function generateMetadata() {
   return {
     title: { absolute: title },
     description,
-    openGraph: { title, description, siteName: brand.name, locale: 'zh_TW', type: 'website' },
+    openGraph: {
+      title, description, siteName: brand.name, locale: 'zh_TW', type: 'website',
+      // 頁面層 openGraph 會整包蓋掉 layout 的，images 必須跟著帶（Next 淺合併）
+      images: [`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/og-default.jpg`],
+    },
     twitter: { card: 'summary_large_image' },
   };
 }
@@ -126,8 +130,14 @@ export default async function HomePage() {
         .ann-body li { margin: 2px 0; }
       `}</style>
 
-      {/* 區塊 1：品牌 hero（洄瀾數位溪谷視覺；文案沿用 Ted 過目的原型基準）
-          .hero-scene＝2026-07 視覺升級的深 teal 場景（globals §11-1），只掛首頁 */}
+      {/* 首頁大圖預先載入（React 19 會把 link 提升進 head；只掛首頁不掛全站） */}
+      <link
+        rel="preload"
+        as="image"
+        href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/bg/valley-hero.webp`}
+        fetchPriority="high"
+      />
+      {/* 區塊 1：品牌 hero（立霧水彩溪谷全景＝影片同款畫風；globals §11-1），只掛首頁 */}
       <div className="hero hero-scene">
         <div className="container">
           <h1>這學期，把 AI 用在真實任務上</h1>

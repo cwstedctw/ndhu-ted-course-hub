@@ -23,7 +23,10 @@ export async function generateMetadata() {
   return {
     title: pageTitle,
     description,
-    openGraph: { title: fullTitle, description, siteName: site.brand.name, locale: 'zh_TW', type: 'website' },
+    openGraph: {
+      title: fullTitle, description, siteName: site.brand.name, locale: 'zh_TW', type: 'website',
+      images: [`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/og-default.jpg`],
+    },
     twitter: { card: 'summary_large_image' },
   };
 }

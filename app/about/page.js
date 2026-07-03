@@ -1,8 +1,11 @@
 // app/about/page.js —— 關於頁（詳細設計書 IA 章 §4.9）
 // 區塊 1：Ted 名片卡（site.json about.{name,title,email,office,contact}；email 用 mailto）
 //         phone 一律不渲染——渲染白名單排除（IA 章 §3），site.schema.json 亦無此欄。
-// 區塊 2：AI 團隊聯名（footerCredits 原字串直出，頁尾署名的放大版）。
+// 區塊 2：AI 團隊聯名（footerCredits 原字串直出，頁尾署名的放大版）
+//         ＋團隊水彩合繪（出自團隊首作影片，2026-07-03 Ted 定調全站視覺跟影片走）。
 import { getSite } from '@/lib/content';
+
+const BP = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export async function generateMetadata() {
   const site = await getSite();
@@ -12,7 +15,10 @@ export async function generateMetadata() {
   return {
     title,
     description,
-    openGraph: { title: `${title}｜${site.brand.name}`, description },
+    openGraph: {
+      title: `${title}｜${site.brand.name}`, description,
+      images: [`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/og-default.jpg`],
+    },
     twitter: { card: 'summary_large_image' },
   };
 }
@@ -42,6 +48,7 @@ export default async function AboutPage() {
           border-radius: var(--radius, 14px); padding: 24px 22px 26px;
         }
         .about-credits h2 { margin: 0 0 8px; font-size: 17px; color: #fff; }
+        .about-team-art { width: 100%; height: auto; border-radius: 10px; margin: 6px 0 12px; display: block; }
         .about-credits p { margin: 4px 0; font-size: 14px; }
         .about-credits-line { font-size: 16.5px; font-weight: 700; letter-spacing: .02em; line-height: 1.9; }
         @media (max-width: 479px) {
@@ -70,7 +77,15 @@ export default async function AboutPage() {
 
           <div className="about-credits">
             <h2>AI 協作團隊</h2>
-            <p>這個網站由 {about.name} 老師與 AI 協作團隊共同打造。</p>
+            <img
+              className="about-team-art"
+              src={`${BP}/images/team-watercolor.webp`}
+              alt="水彩合繪：陳文盛老師與三位溪流化身的 AI 夥伴——洄瀾、立霧、秀姑巒——在花蓮的辮狀溪床邊一同工作"
+              width="1280"
+              height="720"
+              loading="lazy"
+            />
+            <p>這個網站由 {about.name} 老師與 AI 協作團隊共同打造——團隊以花蓮的三條溪為名。</p>
             <p className="about-credits-line">{footerCredits}</p>
           </div>
         </div>

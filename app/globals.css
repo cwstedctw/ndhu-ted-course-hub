@@ -386,19 +386,31 @@ a.card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(14, 124,
    hover 位移在 §9 reduce 中和、裝飾與動畫在 §10 列印全關。
    ========================================================================= */
 
-/* ── 11-1 首頁 hero 深 teal 場景（app/page.js 加 .hero-scene；
-      /courses/ 的 .hero courses-hero 維持淺底不受影響） ── */
+/* ── 11-0 全站水彩紙紋（立霧 contour-cream.webp；圖 URL 由 layout.js 以
+      basePath 手組進 body 的 --bg-texture，CSS 不寫死路徑；列印在 §10 關） ── */
+body {
+  background-image: var(--bg-texture, none);
+  background-size: 520px auto;
+}
+
+/* ── 11-1 首頁 hero＝立霧水彩溪谷全景（影片同款畫風，Ted 2026-07-03 定調）：
+      上方 cream 紙色天空放標題（文字用墨色）、辮狀溪床在下緣露出；
+      /courses/ 的 .hero courses-hero 維持淺底不受影響 ── */
 .hero-scene {
   position: relative;
   overflow: hidden;
-  padding: 60px 0 92px;
-  color: var(--cream-100);
-  background:
-    radial-gradient(640px 320px at 87% -12%, rgb(217 164 65 / .22), transparent 58%),
-    linear-gradient(180deg, var(--teal-700) 0%, var(--teal-800) 52%, var(--teal-900) 100%);
+  padding: 64px 0 150px;
+  color: var(--ink-900);
+  background-color: #EFE7D2; /* 圖載入前的紙色底 */
+  background-image:
+    radial-gradient(620px 330px at 22% 14%, rgb(244 236 216 / .80), rgb(244 236 216 / 0) 68%),
+    var(--bg-hero, none);
+  background-size: auto, cover;
+  background-position: 0 0, center bottom;
+  background-repeat: no-repeat, no-repeat;
 }
 .hero-scene > .container { position: relative; z-index: 1; }
-.hero-scene h1 { display: inline-block; color: var(--surface-000); }
+.hero-scene h1 { display: inline-block; color: var(--ink-900); }
 /* h1 底下 gold 底線（reduce 時為靜態滿寬；掃入動畫在 §11-10） */
 .hero-scene h1::after {
   content: '';
@@ -409,23 +421,20 @@ a.card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(14, 124,
   border-radius: var(--radius-full);
   background: linear-gradient(90deg, var(--gold-500), var(--gold-200));
 }
-.hero-scene .tag { color: var(--teal-100); } /* on teal-700 ≈ 6.0:1，AA */
-/* 底部兩層 cream 波浪（低透明、不吃指標事件；漂移動畫在 §11-10） */
-.hero-scene::before,
-.hero-scene::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0; bottom: -1px;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 90' preserveAspectRatio='none'%3E%3Cpath d='M0 50C150 20 300 20 450 50C600 80 750 80 900 50L900 90L0 90Z' fill='%23F4ECD8'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  background-position: 0 bottom;
-}
-.hero-scene::before { height: 84px; background-size: 900px 84px; opacity: .12; }
-.hero-scene::after  { height: 60px; background-size: 660px 60px; opacity: .08; }
+.hero-scene .tag { color: var(--ink-700); } /* 墨色 on cream 紙空＞7:1，AA；淡光暈由背景 scrim 承擔 */
+/* CSS 假波浪已退役——水彩圖裡有真溪水（wave-drift-a/b 動畫一併移除，見 §11-10） */
 
-/* ── 11-2 課程頁 hero：同語彙但幅度小——單層波浪＋小聚光 ── */
-.course-hero { position: relative; overflow: hidden; }
+/* ── 11-2 課程頁 hero：深 teal 壓暗漸層疊立霧水彩水面（--bg-flow 由 layout 手組），
+      cream 文字對比維持 AA；單層波浪＋小聚光保留 ── */
+.course-hero {
+  position: relative;
+  overflow: hidden;
+  background-image:
+    linear-gradient(180deg, rgb(10 89 88 / .86), rgb(7 64 63 / .93)),
+    var(--bg-flow, none);
+  background-size: cover, cover;
+  background-position: center, center;
+}
 .course-hero > .container { position: relative; z-index: 1; }
 .course-hero::before {
   content: '';
@@ -599,8 +608,6 @@ section > .container > h2 {
 
 /* ── 11-10 動畫總開關：全部只在 no-preference 生效（reduce＝全靜態） ── */
 @media (prefers-reduced-motion: no-preference) {
-  .hero-scene::before  { animation: wave-drift-a 12s linear infinite; }
-  .hero-scene::after   { animation: wave-drift-b 8s linear infinite; }
   .course-hero::before { animation: wave-drift-c 16s linear infinite; }
   .hero-scene h1::after { animation: underline-in .9s cubic-bezier(.22, 1, .36, 1) .2s both; }
   .talk.tba::after { animation: contour-drift 24s linear infinite alternate; }
@@ -609,8 +616,6 @@ section > .container > h2 {
   .score-btn::before,
   .score-cta::before { transition: transform .7s ease; }
 
-  @keyframes wave-drift-a { to { background-position-x: -900px; } }
-  @keyframes wave-drift-b { to { background-position-x: 660px; } }
   @keyframes wave-drift-c { to { background-position-x: -720px; } }
   @keyframes underline-in { from { width: 0; } to { width: 100%; } }
   @keyframes contour-drift { to { background-position: 64px 26px, -38px 14px; } }

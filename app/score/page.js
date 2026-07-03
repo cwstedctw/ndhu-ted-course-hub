@@ -11,7 +11,10 @@ export async function generateMetadata() {
   return {
     title,
     description,
-    openGraph: { title: `${title}｜${site.brand.name}`, description },
+    openGraph: {
+      title: `${title}｜${site.brand.name}`, description,
+      images: [`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/og-default.jpg`],
+    },
     twitter: { card: 'summary_large_image' },
   };
 }

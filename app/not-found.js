@@ -20,7 +20,7 @@ export default function NotFound() {
           margin: 0; font-size: 58px; font-weight: 900; line-height: 1;
           letter-spacing: .05em; color: var(--teal, #0E7C7B);
         }
-        .nf-stream { display: block; width: 230px; max-width: 100%; height: auto; margin: 10px auto 4px; }
+        .nf-art { display: block; width: 300px; max-width: 100%; height: auto; margin: 12px auto 6px; border-radius: 12px; }
         .nf-box h1 { font-size: 24px; margin: 8px 0 10px; line-height: 1.5; }
         .nf-copy { color: var(--ink-60, #5B584F); font-size: 15px; line-height: 1.9; margin: 0 0 28px; }
         .nf-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
@@ -36,24 +36,15 @@ export default function NotFound() {
       `}</style>
       <div className="nf-box">
         <p className="nf-code" aria-hidden="true">404</p>
-        {/* 溪流分岔插圖：實線＝還在的水路，點線＝不存在的支流（純裝飾） */}
-        <svg className="nf-stream" viewBox="0 0 260 90" aria-hidden="true" focusable="false">
-          <path
-            d="M0 45 C 55 45 82 45 110 45"
-            fill="none" stroke="var(--teal, #0E7C7B)" strokeWidth="5"
-            strokeLinecap="round" opacity=".9"
-          />
-          <path
-            d="M110 45 C 152 45 176 20 258 13"
-            fill="none" stroke="var(--teal-mid, #5FB3B0)" strokeWidth="4"
-            strokeLinecap="round" opacity=".85"
-          />
-          <path
-            d="M110 45 C 152 45 176 72 258 79"
-            fill="none" stroke="var(--teal-mid, #5FB3B0)" strokeWidth="4"
-            strokeLinecap="round" strokeDasharray="1 11" opacity=".55"
-          />
-        </svg>
+        {/* 立霧水彩插圖：小紙船停在溪石岔口（純裝飾；basePath 於 build 時 inline，維持零資料檔依賴） */}
+        <img
+          className="nf-art"
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/bg/boat-404.webp`}
+          alt=""
+          aria-hidden="true"
+          width="1024"
+          height="1024"
+        />
         <h1>這條支流不存在</h1>
         <p className="nf-copy">
           溪水在這裡分了岔——你要找的頁面不在這一頭。

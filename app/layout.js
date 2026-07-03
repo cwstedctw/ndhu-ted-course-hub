@@ -32,6 +32,8 @@ export const metadata = {
     siteName: brand.name,
     locale: 'zh_TW',
     type: 'website',
+    // 預設社群預覽圖（立霧水彩溪谷）；配 metadataBase 產絕對網址
+    images: [`${BASE_PATH}/images/og-default.jpg`],
   },
   twitter: { card: 'summary_large_image' },
 };
@@ -43,7 +45,14 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="zh-Hant-TW">
-      <body>
+      {/* 背景圖 URL 統一在此手組 basePath（globals.css 的 url() 不吃 basePath，寫死會 404） */}
+      <body
+        style={{
+          '--bg-hero': `url(${BASE_PATH}/images/bg/valley-hero.webp)`,
+          '--bg-flow': `url(${BASE_PATH}/images/bg/flow-teal.webp)`,
+          '--bg-texture': `url(${BASE_PATH}/images/bg/contour-cream.webp)`,
+        }}
+      >
         <a className="skip-link" href="#main">跳到主要內容</a>
         <SiteHeader />
         <main id="main">{children}</main>
