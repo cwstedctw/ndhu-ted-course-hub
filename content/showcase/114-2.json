@@ -8,7 +8,7 @@
       "title": "WCMD：讓 AI 動手操作 Windows 的 MCP Server",
       "summary": "用 Roo Code 搭配 DeepSeek，一週開發出自己的 MCP Server，讓 AI 代理能讀螢幕、辨識 UI 元件、自動點滑鼠打鍵盤，成果公開發布在 GitHub。",
       "image": "/images/showcase/1142-ai-intro-01.jpg",
-      "link": null,
+      "link": "https://github.com/leowu0511/WinControl-MCP-Driver",
       "credit": null,
       "consent": "not-needed"
     },
@@ -52,7 +52,7 @@
       "title": "MIRAGE PRISM：FF14 幻化分享社群平台",
       "summary": "真的上線的社群網站：前端用 Vanilla JS 串接 XIVAPI，資料庫走 Supabase，靠 AI 寫程式、除錯與講解，最後部署上 GitHub Pages。",
       "image": "/images/showcase/1142-it-apply-01.jpg",
-      "link": null,
+      "link": "https://edgysans1447.github.io/mirage-prism/",
       "credit": null,
       "consent": "not-needed"
     },
@@ -63,7 +63,7 @@
       "title": "從零到上線的美甲電商網站",
       "summary": "一步步下精準提示詞：指定色碼、3×3 商品格、右下角懸浮購物車，讓 AI 生成整個電商頁面，再部署到免費主機拿到公開網址。",
       "image": "/images/showcase/1142-it-apply-02.jpg",
-      "link": null,
+      "link": "https://nails-in-dorm.infinityfreeapp.com",
       "credit": null,
       "consent": "not-needed"
     },
@@ -74,7 +74,7 @@
       "title": "互動式社會科教材平台",
       "summary": "為社會科教學做的互動教材網站：Zero Dependency 架構、.NET HttpListener 本地伺服器，成品公開部署在 GitHub Pages。",
       "image": "/images/showcase/1142-it-apply-03.jpg",
-      "link": null,
+      "link": "https://shane960819-web.github.io/ai-shane960819-web/",
       "credit": null,
       "consent": "not-needed"
     },
@@ -85,7 +85,7 @@
       "title": "台股即時儀表板",
       "summary": "讓兩個 AI 代理分工，五天做出台股看盤儀表板；系統設計自己拿主意：API 請求限速防封鎖、LocalStorage 存資料、K 線圖只重繪最後一根燭線。",
       "image": "/images/showcase/1142-it-apply-04.jpg",
-      "link": null,
+      "link": "https://stock-portfolio-tracker-gold.vercel.app",
       "credit": null,
       "consent": "not-needed"
     },
