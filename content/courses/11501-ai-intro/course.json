@@ -241,7 +241,7 @@
       }
     ],
     "toolGroupsSubNote": "副標擴寫 Ted 核定 2026-06-12（D 案 8）；投影片空間不夠可縮回短版",
-    "toolGroupsNote": "工具會換、能力不換——實際以開學當週的等效工具為準",
+    "toolGroupsNote": "AI 工具汰換快，工具會換、能力不換——實際以開學當週的等效工具為準",
     "dailyTools": [
       {
         "name": "聊天機器人",
@@ -404,7 +404,12 @@
       }
     ],
     "scoreUrl": null,
-    "showcaseRefs": ["1142-ai-intro-01", "1142-ai-intro-02", "1142-ai-intro-03", "1142-ai-intro-04"],
+    "showcaseRefs": [
+      "1142-ai-intro-01",
+      "1142-ai-intro-02",
+      "1142-ai-intro-03",
+      "1142-ai-intro-04"
+    ],
     "heroImage": null,
     "showPromptButtons": false
   }
