@@ -25,8 +25,8 @@
       "systemId": "115133850",
       "time": "週一 第 8–10 節",
       "timeNote": {
-        "status": "pending",
-        "note": "實際上課時刻開學前補"
+        "status": "confirmed",
+        "note": "節次與教室據 AA 教師開課查詢（2026-07-03 正式開課資料）"
       },
       "room": "理工二館 E403",
       "slidoEvent": null,
@@ -38,8 +38,8 @@
       "systemId": "115123740",
       "time": "週二 第 8–10 節",
       "timeNote": {
-        "status": "pending",
-        "note": "實際上課時刻開學前補"
+        "status": "confirmed",
+        "note": "節次與教室據 AA 教師開課查詢（2026-07-03 正式開課資料）"
       },
       "room": "理工二館 E403",
       "slidoEvent": null,
@@ -380,7 +380,8 @@
     "sources": [
       "workspace/outbox/20260610-wailan-課程介紹內容檔-人工智慧概論115-1.md",
       "20260611-wailan-設計系統補齊指示.md",
-      "reviews/20260611-wailan-最終整合報告.md（四方定稿）"
+      "reviews/20260611-wailan-最終整合報告.md（四方定稿）",
+      "AA 教師開課查詢 SubjTransfer（2026-07-03 抓取）＝正式節次與教室真值：AA 一8–10／AB 二8–10，皆理工二館 E403"
     ]
   },
   "hub": {
