@@ -29,6 +29,7 @@
         "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表（第N節＝N+5時10分起）"
       },
       "room": "理工二館 E403",
+      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-intro-aa/",
       "slidoEvent": null,
       "deckName": "115_01 人工智慧概論AA Introduction"
     },
@@ -42,6 +43,7 @@
         "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表（第N節＝N+5時10分起）"
       },
       "room": "理工二館 E403",
+      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-intro-ab/",
       "slidoEvent": null,
       "deckName": "115_01 人工智慧概論AB Introduction"
     }
