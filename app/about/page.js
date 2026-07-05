@@ -42,6 +42,7 @@ export default async function AboutPage() {
         .about-facts { display: grid; grid-template-columns: 6em 1fr; gap: 8px 14px; margin: 0; font-size: 15px; }
         .about-facts dt { font-weight: 700; color: var(--teal-deep, #07403F); }
         .about-facts dd { margin: 0; overflow-wrap: anywhere; }
+        .about-contact-note { display: block; margin-top: 3px; font-size: 13px; color: var(--ink-40, #8B8779); }
         .about-credits {
           margin-top: 26px; text-align: center;
           background: var(--teal-deep, #07403F); color: var(--teal-tint, #E3F1F0);
@@ -71,7 +72,12 @@ export default async function AboutPage() {
               <dt>研究室</dt>
               <dd>{about.office}</dd>
               <dt>聯絡方式</dt>
-              <dd>{about.contact}</dd>
+              <dd>
+                {about.contact}
+                {typeof about.contactNote === 'string' && about.contactNote.trim() ? (
+                  <span className="about-contact-note">{about.contactNote}</span>
+                ) : null}
+              </dd>
             </dl>
           </div>
 

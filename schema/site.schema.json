@@ -52,7 +52,11 @@
         "title": { "type": "string", "minLength": 1 },
         "email": { "type": "string", "format": "email" },
         "office": { "type": "string", "minLength": 1 },
-        "contact": { "type": "string", "minLength": 1 }
+        "contact": { "type": "string", "minLength": 1 },
+        "contactNote": {
+          "description": "聯絡方式下的回覆預期小字（降低學生催問焦慮；null／缺＝不出）。2026-07-05 學生視角升級",
+          "type": ["string", "null"]
+        }
       }
     },
     "footerCredits": { "type": "string", "minLength": 1 },
