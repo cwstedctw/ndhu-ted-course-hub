@@ -16,7 +16,7 @@ const STATUS_BADGE = {
 };
 
 export default function CourseCard({ course }) {
-  const { slug, name, nameEn, sectionLabel, credits, kind, status, tagline, chips } = course;
+  const { slug, name, nameEn, sectionLabel, credits, kind, status, tagline, chips, timeShort } = course;
   const badge = STATUS_BADGE[status] ?? STATUS_BADGE.open;
   const isClosed = status === 'closed';
   const isLecture = kind === 'lecture-series';
@@ -41,7 +41,10 @@ export default function CourseCard({ course }) {
           </ul>
         ) : null}
         <span className="meta">
-          {sectionLabel ? `${sectionLabel} 班` : '單班'}・{credits} 學分
+          {/* timeShort＝sections[].time 的節次段（lib getCourseCards）；AA/AB 雙班卡靠它分流 */}
+          {[sectionLabel ? `${sectionLabel} 班` : '單班', `${credits} 學分`, timeShort]
+            .filter(Boolean)
+            .join('・')}
         </span>
       </Link>
     </li>

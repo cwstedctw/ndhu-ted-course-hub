@@ -100,7 +100,13 @@ body {
   font-family: var(--font-sans);
   line-height: 1.8; /* CJK 內文行高 ≥1.7（設計書 §5-2.2） */
   overflow-wrap: break-word;
+  /* 短頁（成績查詢／404）footer 貼底：直向 flex＋main 撐滿，長頁不受影響 */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;  /* 舊瀏覽器後備 */
+  min-height: 100dvh;
 }
+body > main { flex: 1 0 auto; }
 img { max-width: 100%; height: auto; }
 a { color: var(--color-link); }
 time { font-variant-numeric: tabular-nums; }
@@ -236,12 +242,29 @@ a.card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(14, 124,
 .course-hero { background: var(--teal); color: var(--cream); padding: 40px 0 30px; }
 .course-hero h1 { margin: 0 0 2px; font-size: clamp(24px, 3.6vw, 34px); }
 .course-hero .en { color: var(--teal-tint); font-size: 14px; }
+/* 英文課名自成一行（長名如演講課不再 inline 接在中文後折行尷尬）；副標回 sans 襯 serif 主標 */
+.course-hero h1 .en { display: block; margin-top: 4px; font-family: var(--font-sans); font-weight: 400; }
 .facts { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 0; padding: 0; list-style: none; }
 .facts li {
   background: rgba(255, 255, 255, .12); border: 1px solid var(--teal-mid);
   border-radius: var(--radius-full); padding: 3px 12px; font-size: 13px;
 }
 .promise { margin: 16px 0 0; font-size: 15.5px; color: #fff; border-left: 4px solid var(--gold); padding-left: 12px; }
+
+/* 課程頁錨點導覽（hero 下第一條，SectionNav）：膠囊列、非 sticky、零 JS */
+.section-nav { padding: 14px 0 0; }
+.section-nav ul { display: flex; gap: 8px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
+.section-nav a {
+  display: inline-block;
+  background: var(--teal-tint); color: var(--teal-700);
+  border-radius: var(--radius-full); padding: 4px 14px;
+  font-size: 13.5px; text-decoration: none;
+}
+.section-nav a:hover { background: var(--teal-100); }
+/* 錨點跳轉預留 sticky 頁首高度（首頁 #courses 已個別處理） */
+#talks, #intro, #grading, #weeks, #ai-rules, #tools, #links, #score, #showcase, #bring, #faq {
+  scroll-margin-top: 76px;
+}
 
 .bento { display: grid; grid-template-columns: 1fr; gap: 14px; }
 @media (min-width: 760px) { .bento { grid-template-columns: repeat(2, 1fr); } }
@@ -298,6 +321,10 @@ a.card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(14, 124,
 .tg ul { margin: 0; padding: 0; list-style: none; font-size: 13.5px; }
 .tg li { margin-bottom: 7px; }
 .tg small { color: var(--ink-40); display: block; }
+/* 日常隨身工具卡（ToolBelt .tg-daily）：滿排橫排，多欄檔位下不再孤兒直列 */
+.tg-daily { grid-column: 1 / -1; }
+.tg-daily ul { display: flex; flex-wrap: wrap; gap: 2px 32px; }
+.tg-daily li { margin-bottom: 0; }
 
 .platforms { display: flex; gap: 10px; flex-wrap: wrap; }
 .plat { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 10px 16px; font-size: 14px; }
@@ -537,6 +564,13 @@ section > .container > h2 {
     repeating-linear-gradient(112deg, rgb(14 124 123 / .10) 0 1px, transparent 1px 10px),
     repeating-linear-gradient(112deg, rgb(14 124 123 / .05) 0 1px, transparent 1px 23px);
 }
+/* 全場皆 tba 的緊湊牆（TalksWall .wall-tba-all）：佔位卡改矮卡多欄、一屏 12 格；
+   任一場公布即回滿版海報比例。傾斜與 hover 沿用 .talk 既有規則 */
+.wall.wall-tba-all { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (min-width: 760px)  { .wall.wall-tba-all { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1180px) { .wall.wall-tba-all { grid-template-columns: repeat(4, 1fr); } }
+.wall.wall-tba-all .talk { aspect-ratio: auto; min-height: 96px; }
+.wall.wall-tba-all .talk .ripple { padding: 16px 10px; font-size: 13px; }
 
 /* ── 11-6 評分環活化（GradingDonut 的 segment 掛 .donut-seg；資料流不動） ── */
 .donut-seg { transform-box: fill-box; transform-origin: center; }
@@ -648,7 +682,7 @@ section > .container > h2 {
 
 /* ── 10. 列印（設計書 §5-3.5：隱藏導覽與動畫、水波印成靜態淡底、頁尾轉淺、印出外連網址） ── */
 @media print {
-  .site-head, .site-nav, .skip-link, .cta, .score-btn { display: none !important; }
+  .site-head, .site-nav, .skip-link, .cta, .score-btn, .section-nav { display: none !important; }
   body { background: #fff; }
   .ripple { animation: none; background: var(--teal-050); }
   .card, .talk, .ann, .grading, .phase, .rule, .light, .tg, .plat {

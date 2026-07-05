@@ -2,7 +2,7 @@
 // V1 學期下拉只有「115-1」單一選項（不堆 Tab；多學期資料結構列本章未決事項，V2 再議）。
 // 卡片牆與首頁共用 CourseCard；資料一律經 lib/content.js 讀 content/courses.json。
 
-import { getSite, getCourses } from '@/lib/content';
+import { getSite, getCourses, getCourseCards } from '@/lib/content';
 import CourseCard from '@/components/CourseCard';
 
 function sortedCourses(index) {
@@ -35,7 +35,8 @@ export default async function CoursesPage() {
   const site = await getSite();
   const index = await getCourses();
   const semester = index.semester || site.brand.semester;
-  const courses = sortedCourses(index);
+  // 牆面卡片走 getCourseCards（索引筆＋timeShort 節次短版）；metadata 仍用純索引即可
+  const courses = [...getCourseCards()].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
 
   return (
     <>

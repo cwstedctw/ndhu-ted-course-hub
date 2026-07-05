@@ -17,11 +17,16 @@ export default function TalksWall({ talks, courseSlug }) {
     .sort((a, b) => (a.no || 0) - (b.no || 0));
   if (list.length === 0) return null;
 
+  // 全場皆 tba → 緊湊模式（.wall-tba-all，globals §11-5）：佔位卡不吃 2/3 海報比例，
+  // 12 格一屏看完；任何一場公布講者即回滿版海報牆
+  const allTba = list.every((t) => t.status === 'tba');
+
   return (
     <section id="talks">
       <div className="container">
         <h2>演講海報牆</h2>
-        <div className="wall">
+        {allTba ? <p className="note" style={{ margin: '0 0 10px' }}>12 場講者洽談中——確認一場、揭一張海報。</p> : null}
+        <div className={allTba ? 'wall wall-tba-all' : 'wall'}>
           {list.map((t) => {
             const href = `/courses/${courseSlug}/talks/${t.id}/`;
 

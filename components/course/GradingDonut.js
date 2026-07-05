@@ -54,16 +54,19 @@ export default function GradingDonut({ grading, gradingNote }) {
                     />
                   ))}
                 </g>
-                <text
-                  x="85"
-                  y="90"
-                  textAnchor="middle"
-                  fontSize="15"
-                  fill="var(--ink, #1A1A1A)"
-                  fontWeight="bold"
-                >
-                  {total}%
-                </text>
+                {/* 中心不放加總（恆為 100%＝無資訊）；比例不足/超過 100 才現形當警訊 */}
+                {total !== 100 ? (
+                  <text
+                    x="85"
+                    y="90"
+                    textAnchor="middle"
+                    fontSize="15"
+                    fill="var(--red-700, #A6392E)"
+                    fontWeight="bold"
+                  >
+                    {total}%
+                  </text>
+                ) : null}
               </svg>
               <ul className="legend">
                 {segments.map((s, i) => (

@@ -19,6 +19,7 @@ import ShowcaseSection from '@/components/course/ShowcaseSection';
 import WhatToBring from '@/components/course/WhatToBring';
 import FaqList from '@/components/course/FaqList';
 import Ripple from '@/components/course/Ripple';
+import SectionNav from '@/components/course/SectionNav';
 import { asArray, hasText, isPending } from '@/components/course/pending';
 
 // 課程頁 /courses/[slug]/（設計書二章 §4.3 一般課程頁；§4.4 演講課變體）
@@ -109,9 +110,44 @@ export default async function CoursePage({ params }) {
   // 成績查詢真值：hub.scoreUrl 覆寫，否則吃 site.json scoreUrl（V2 Apps Script /exec）
   const scoreUrl = hasText(hub.scoreUrl) ? hub.scoreUrl : site?.scoreUrl;
 
+  // 錨點導覽：條件鏡射各元件的 return null 守門（指向 ripple 佔位 OK、指向不存在 NG）
+  const navItems = [
+    isLecture && talks.length > 0 ? { href: '#talks', label: '演講海報牆' } : null,
+    { href: '#intro', label: '課程介紹' },
+    !introPending &&
+    (isPending(intro.grading) ||
+      asArray(intro.grading).some((g) => typeof g?.pct === 'number' && hasText(g?.label)))
+      ? { href: '#grading', label: '成績怎麼算' }
+      : null,
+    !introPending &&
+    (isPending(intro.phases) ||
+      isPending(intro.weeklyPlan) ||
+      asArray(intro.phases).length > 0 ||
+      asArray(intro.weeklyPlan).length > 0)
+      ? { href: '#weeks', label: '每週進度' }
+      : null,
+    !introPending &&
+    (asArray(intro.aiRules).length > 0 || asArray(intro.aiPolicyExamples).length > 0)
+      ? { href: '#ai-rules', label: 'AI 守則' }
+      : null,
+    !introPending &&
+    (asArray(intro.toolGroups).some((g) => hasText(g?.group)) ||
+      asArray(intro.dailyTools).some((t) => hasText(t?.name)))
+      ? { href: '#tools', label: '會用的工具' }
+      : null,
+    hasText(scoreUrl) ? { href: '#score', label: '查成績' } : null,
+    { href: '#showcase', label: '上學期作品' },
+    !introPending &&
+    (isPending(intro.faq) ||
+      asArray(intro.faq).some((f) => f?.status === 'confirmed' && hasText(f?.q) && hasText(f?.a)))
+      ? { href: '#faq', label: 'FAQ' }
+      : null,
+  ];
+
   return (
     <>
       <CourseHero course={course} section={section} indexEntry={indexEntry} sibling={sibling} />
+      <SectionNav items={navItems} />
       {isLecture ? <TalksWall talks={talks} courseSlug={slug} /> : null}
       {introPending ? (
         <section id="intro">

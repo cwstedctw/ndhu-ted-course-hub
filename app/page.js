@@ -3,7 +3,7 @@
 // 公告過濾發生在 build 時（SSG）——validUntil 過期即不出 HTML；公告異動要重新 build。
 // title／description 沿用 layout 的預設（＝§4.1 SEO 規格），此處同值補 og 標籤（IA 章 §3 通則）。
 
-import { getSite, getAnnouncements, getCourses } from '@/lib/content';
+import { getSite, getAnnouncements, getCourses, getCourseCards } from '@/lib/content';
 import CourseCard from '@/components/CourseCard';
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
@@ -114,7 +114,8 @@ export default async function HomePage() {
   const semester = site.brand?.semester || index.semester || '115-1';
   const wallSemester = index.semester || semester;
   // 卡片牆依 courses.json 的 order 排序（§4.1 區塊 2）；缺筆由 validate 在 build 前擋下
-  const courses = [...(index.courses || [])].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+  // getCourseCards＝索引筆＋sections[].time 節次短版（timeShort），AA/AB 雙班卡分流用
+  const courses = [...getCourseCards()].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
   const announcements = pickAnnouncements();
 
   return (

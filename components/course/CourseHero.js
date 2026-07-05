@@ -95,7 +95,11 @@ export default function CourseHero({ course, section, indexEntry, sibling }) {
         </ul>
         {hasText(instructor?.promise) ? (
           <p className="promise">
-            「{instructor.promise}」{hasText(instructor?.name) ? `——${instructor.name}` : ''}
+            {/* 名人金句自帶「引號＋——出處」（五課，2026-07-03 拍板）→ 原樣輸出，
+                不再外包「」也不補教師署名（否則雙引號雙署名）；教師本人句照舊格式 */}
+            {instructor.promise.includes('——')
+              ? instructor.promise
+              : `「${instructor.promise}」${hasText(instructor?.name) ? `——${instructor.name}` : ''}`}
           </p>
         ) : null}
       </div>

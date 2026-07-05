@@ -20,7 +20,14 @@ export default function NotFound() {
           margin: 0; font-size: 58px; font-weight: 900; line-height: 1;
           letter-spacing: .05em; color: var(--teal, #0E7C7B);
         }
-        .nf-art { display: block; width: 300px; max-width: 100%; height: auto; margin: 12px auto 6px; border-radius: 12px; }
+        .nf-art {
+          display: block; width: 300px; max-width: 100%; height: auto;
+          margin: 12px auto 6px; border-radius: 12px;
+          /* 融進頁面紙紋、去方形接縫：multiply 吃掉插圖自身紙色＋放射 mask 羽化四邊 */
+          mix-blend-mode: multiply;
+          -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+          mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+        }
         .nf-box h1 { font-size: 24px; margin: 8px 0 10px; line-height: 1.5; }
         .nf-copy { color: var(--ink-60, #5B584F); font-size: 15px; line-height: 1.9; margin: 0 0 28px; }
         .nf-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }

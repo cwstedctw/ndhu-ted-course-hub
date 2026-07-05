@@ -27,7 +27,8 @@ export default function ToolBelt({ toolGroups, dailyTools, toolGroupsNote }) {
             </div>
           ))}
           {daily.length > 0 ? (
-            <div className="tg" key="daily-tools">
+            /* tg-daily＝滿排橫排（globals）：避免 4 欄檔位下孤兒直列卡 */
+            <div className="tg tg-daily" key="daily-tools">
               <h4>日常隨身工具</h4>
               <ul>{daily.map(toolItem)}</ul>
             </div>
