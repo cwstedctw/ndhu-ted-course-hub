@@ -11,7 +11,15 @@ const STATUS_BADGE = {
   closed: { className: 'badge badge-gray', label: '本學期停開' },
 };
 
-export default function CourseHero({ course, section, indexEntry, sibling }) {
+// 教室 →「地圖 ↗」：取 room 第一段（建物名）組 Google Maps 搜尋連結——
+// 純查詢字串、不寫死座標；新生第一週找教室的真實痛點（2026-07-05 學生視角升級）
+function roomMapUrl(room) {
+  const building = String(room).trim().split(/\s+/)[0];
+  if (!building) return null;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`國立東華大學 ${building}`)}`;
+}
+
+export default function CourseHero({ course, section, indexEntry, sibling, enrollUrl }) {
   const status = indexEntry?.status || 'open';
   const badge = STATUS_BADGE[status] || STATUS_BADGE.open;
   const closed = status === 'closed';
@@ -82,8 +90,36 @@ export default function CourseHero({ course, section, indexEntry, sibling }) {
               {timePending ? <small>（實際上課時刻開學前補）</small> : null}
             </li>
           ) : null}
-          {room ? <li>{room}</li> : null}
+          {room ? (
+            <li>
+              {room}
+              {roomMapUrl(room) ? (
+                <>
+                  {'　'}
+                  <a href={roomMapUrl(room)} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
+                    地圖 ↗
+                  </a>
+                </>
+              ) : null}
+            </li>
+          ) : null}
           {!time && !room ? <li>上課時間地點開學前公布</li> : null}
+          {/* 官方教學計畫（sections[].syllabusUrl，休眠欄位——AA 課程查詢連結補值後自動現身） */}
+          {hasText(section?.syllabusUrl) ? (
+            <li>
+              <a href={section.syllabusUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
+                官方教學計畫 ↗
+              </a>
+            </li>
+          ) : null}
+          {/* 怎麼選課（site.json enrollUrl，休眠欄位；停開班不出） */}
+          {!closed && hasText(enrollUrl) ? (
+            <li>
+              <a href={enrollUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
+                怎麼選課 ↗
+              </a>
+            </li>
+          ) : null}
           {/* 課程介紹簡報（sections[].deckUrl，站內 public/decks/ 自足單檔；2026-07-05 Ted 拍板掛上站） */}
           {hasText(section?.deckUrl) ? (
             <li>

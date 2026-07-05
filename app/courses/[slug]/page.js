@@ -137,6 +137,9 @@ export default async function CoursePage({ params }) {
       : null,
     hasText(scoreUrl) ? { href: '#score', label: '查成績' } : null,
     { href: '#showcase', label: '上學期作品' },
+    !introPending && asArray(intro.whatToBring).some(hasText)
+      ? { href: '#bring', label: '要帶什麼' }
+      : null,
     !introPending &&
     (isPending(intro.faq) ||
       asArray(intro.faq).some((f) => f?.status === 'confirmed' && hasText(f?.q) && hasText(f?.a)))
@@ -146,7 +149,13 @@ export default async function CoursePage({ params }) {
 
   return (
     <>
-      <CourseHero course={course} section={section} indexEntry={indexEntry} sibling={sibling} />
+      <CourseHero
+        course={course}
+        section={section}
+        indexEntry={indexEntry}
+        sibling={sibling}
+        enrollUrl={site?.enrollUrl}
+      />
       <SectionNav items={navItems} />
       {isLecture ? <TalksWall talks={talks} courseSlug={slug} /> : null}
       {introPending ? (
@@ -164,6 +173,7 @@ export default async function CoursePage({ params }) {
             weeksSystem={course.weeksSystem}
             phases={intro.phases}
             weeklyPlan={intro.weeklyPlan}
+            weekOneStart={site?.weekOneStart}
           />
           <AiRules aiRules={intro.aiRules} aiPolicyExamples={intro.aiPolicyExamples} />
           <ToolBelt

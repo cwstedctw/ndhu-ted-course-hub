@@ -21,9 +21,12 @@ export async function generateMetadata() {
 
 export default async function ScorePage() {
   const site = await getSite();
-  const { scoreUrl, scoreDemoUrl } = site;
+  const { scoreUrl, scoreDemoUrl, scoreDisputeUrl } = site;
   // scoreDemoUrl 為 null → 整塊不渲染（§4.7 區塊 3；現值即 null）
   const showDemo = typeof scoreDemoUrl === 'string' && scoreDemoUrl.length > 0;
+  // 成績複查（2026-07-05 學生視角升級）：走表單不走 email 是既定流程；
+  // scoreDisputeUrl 未定時出占位句、有值換成連結
+  const disputeReady = typeof scoreDisputeUrl === 'string' && scoreDisputeUrl.length > 0;
 
   return (
     <main className="score-main">
@@ -43,6 +46,8 @@ export default async function ScorePage() {
           margin: 30px auto 0; background: var(--teal-tint, #E3F1F0); color: var(--teal-deep, #07403F);
           border-radius: var(--radius, 14px); padding: 14px 18px; font-size: 14px; line-height: 1.8;
         }
+        .score-dispute { margin: 14px 0 0; font-size: 14px; color: var(--ink-60, #5B584F); }
+        .score-dispute-pending { color: var(--teal-700, #0A5A59); }
         .score-demo {
           margin: 34px auto 0; padding-top: 18px;
           border-top: 1px solid var(--line, #E5DCC3); font-size: 14.5px;
@@ -65,6 +70,17 @@ export default async function ScorePage() {
           <p className="score-zero">
             <strong>本站不存放任何成績</strong>——按下按鈕後，登入驗證與成績查詢
             都在學校授權的系統上完成，本站不經手、也看不到任何資料。
+          </p>
+          <p className="score-dispute">
+            成績有疑義？複查一律走表單、不用寄信——
+            {disputeReady ? (
+              <a href={scoreDisputeUrl} target="_blank" rel="noopener noreferrer">
+                填成績複查表單
+              </a>
+            ) : (
+              <span className="score-dispute-pending">複查表單連結開學後公布</span>
+            )}
+            。
           </p>
           {showDemo ? (
             <p className="score-demo">
