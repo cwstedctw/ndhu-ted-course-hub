@@ -1,0 +1,301 @@
+{
+  "$comment": "英文雙語版 overlay（deck 專屬、不上網頁；Hub 課程頁是純中文）。依 decisions.md 第六節 overlay 原則，英文內容不進 Hub course.json，放這裡。鍵對齊 course.json 結構：每個中文欄位配一個 en 值。generate_deck.py --lang bilingual --overlay <本檔> 消費。內容 1:1 抽自 v1 _v1歸檔-course-intro-deck/build/generate_aa_en.py（AA 雙語版，唯讀）。只 AA、AB 純中文不做。",
+  "appliesTo": "115-1-gc6753-ai-intro",
+  "section": "AA",
+  "lang": "bilingual",
+  "en": {
+    "nameEn": "Introduction to Artificial Intelligence",
+    "org": "General Education Center, NDHU",
+    "orgFooter": "National Dong Hwa University · General Education Center　國立東華大學 通識教育中心",
+    "instructor": {
+      "name": "Prof. Wen-Sheng Chen",
+      "title": "Project Assistant Professor · General Education Center, NDHU",
+      "office": "Science & Engineering Building II, Room C306",
+      "contact": "Microsoft Teams message",
+      "promise": "I'll help you put AI to work on <b style=\"color:var(--teal)\">real tasks</b>—not just tool demos."
+    },
+    "cover": {
+      "kicker": "GENERAL EDUCATION · COURSE INTRO",
+      "promise": "From sharper questions and real verification, to building a complete workflow with AI",
+      "chips": ["Ask sharp questions", "Verify to the source", "Build something real"],
+      "chipsZh": "問得出來 · 查得到底 · 做得出東西",
+      "metaEn": "Fall 2026 · Semester 115-1　·　General Education Center, NDHU　·　Instructor: <b>Prof. Wen-Sheng Chen</b>",
+      "metaZh": "115 學年度 第 1 學期 · 國立東華大學 通識教育中心 · 授課教師：陳文盛"
+    },
+    "section": {
+      "codeLineEn": "Section AA <small>· GC__6753AA · ID 115133850</small><br><small>General-education core · 3 credits · 17-week term</small>",
+      "codeLineZh": "AA 班・校核心選修・3 學分・17 週新制",
+      "timeEn": "Monday, periods 8–10 · 13:10–16:00",
+      "timePendingEn": "",
+      "timeZh": "週一 第 8–10 節・13:10–16:00",
+      "roomEn": "Science & Engineering Building II, Room E403",
+      "roomZh": "理工二館 E403",
+      "roomBlueprintEn": "Science &amp; Engineering Building II · Room E403　<span style=\"color:var(--gold)\">AI Classroom</span>",
+      "roomBlueprintZh": "理工二館 E403・AI 教室",
+      "roomBlueprintNote": "【Classroom floor plan — TBA before semester 教室平面圖・開學前補】"
+    },
+    "info": {
+      "kicker": "COURSE INFO",
+      "titleEn": "Course Information",
+      "titleZh": "課程資訊",
+      "sectionLabel": "Section / Code",
+      "timeLabel": "Time",
+      "roomLabel": "Classroom",
+      "instructorLabel": "Instructor",
+      "instructorValueEn": "Prof. Wen-Sheng Chen <small>· TA to be announced</small>",
+      "instructorValueZh": "陳文盛・TA 開學前待補",
+      "instructorTaPendingEn": "to be announced",
+      "contactLabel": "Contact",
+      "contactValueEn": "Message me on Microsoft Teams · wschen@gms.ndhu.edu.tw",
+      "contactValueZh": "用 Microsoft Teams 發訊息給我",
+      "platformsLabel": "Class Platforms",
+      "platformsValueEn": "Roll call: Zuvio · Submit: Teams · Notes: HackMD",
+      "platformsValueZh": "點名 Zuvio・作業 Teams・共筆 HackMD"
+    },
+    "location": {
+      "kicker": "WHERE WE MEET",
+      "titleEn": "Where We Meet",
+      "titleZh": "上課地點"
+    },
+    "about": {
+      "kicker": "YOUR INSTRUCTOR",
+      "titleEn": "About Me — Wen-Sheng Chen",
+      "titleZh": "關於我　陳文盛",
+      "subtitleZh": "專案助理教授・國立東華大學 通識教育中心",
+      "promiseZh": "我會帶你把 AI 用在真實任務，而不只看工具展示。",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "officeLabel": "Office",
+      "officeValueZh": "理工二館 C306",
+      "contactLabel": "Contact",
+      "contactValueEn": "Microsoft Teams message",
+      "contactValueZh": "用 Teams 發訊息"
+    },
+    "office": {
+      "kicker": "OFFICE",
+      "titleEn": "My Office",
+      "titleZh": "研究室位置",
+      "blueprintEn": "Science &amp; Engineering Building II, Room C306",
+      "blueprintZh": "理工二館 C306",
+      "blueprintNote": "【Office floor plan — TBA before semester 研究室平面圖・開學前補】"
+    },
+    "slido1": {
+      "kicker": "JOIN AT SLIDO.COM",
+      "titleEnHtml": "Grab your phone—<br>let's meet you first",
+      "titleZh": "拿出手機，先認識一下你",
+      "subEn": "Scan the QR to join　slido.com　·　#",
+      "subPendingEn": "TBA",
+      "noteEn": "Coming up: what AI feels like to you, your department, and which AI tools you've tried.",
+      "noteZh": "等等問你：你心中的 AI 像什麼、你來自哪個系、用過哪些 AI 工具",
+      "qrPendingEn": "QR TBA"
+    },
+    "phases": {
+      "kicker": "WHAT YOU'LL LEARN",
+      "titleEn": "What you'll learn: three parts",
+      "titleZh": "這門課在學什麼：三部曲",
+      "noteEnHtml": "At the core: <span class=\"em-g\">AI literacy</span>—we don't start from coding, so non-CS students keep up.",
+      "noteZh": "核心是 AI 素養（AI literacy）——不從寫程式開始，非資訊背景也跟得上",
+      "items": [
+        {
+          "headEn": "AI everyone can use",
+          "headZh": "人人會用的 AI",
+          "bodyEn": "Ask good questions, break tasks down, verify answers; run one full cycle on Teachable Machine—data → label → train → test → improve.",
+          "bodyZh": "問對問題、拆解任務、查證答案；用 Teachable Machine 走一次「資料→標記→訓練→測試→改進」。"
+        },
+        {
+          "headEn": "Task AI tools & agents",
+          "headZh": "任務型 AI 工具與 Agent",
+          "bodyEn": "AI search & research, AI slide-making, music and media generation, and emerging agentic tools.",
+          "bodyZh": "AI 搜尋研究、AI 簡報、音樂與多媒體生成、新興 agentic 工具。"
+        },
+        {
+          "headEn": "Desktop AI & pro workflows",
+          "headZh": "桌面 AI 與專業工作流",
+          "bodyEn": "AI on local files, less copy-paste; command-line automation that non-CS folks can pick up too.",
+          "bodyZh": "AI 處理本機資料、減少重複貼上；非資訊背景也能上手的 command-line 自動化。"
+        }
+      ]
+    },
+    "destination": {
+      "kicker": "COURSE DESTINATION",
+      "titleEnHtml": "Where this course leads:<br>build your own AI workflow",
+      "titleZh": "這門課的終點：做出你的 AI 工作流",
+      "subEn": "Not memorizing tool names—turning a real problem into work you can explain, verify, and show.",
+      "subZh": "不是背工具名稱，而是把一個真實問題，變成能說明、能查證、能展示的作品。",
+      "steps": [
+        { "labelEn": "Ask a real question", "labelZh": "提出真實問題" },
+        { "labelEn": "Verify & break down", "labelZh": "查證與拆解" },
+        { "labelEn": "Ship a showable piece", "labelZh": "做出可展示作品" }
+      ]
+    },
+    "weeks": {
+      "kicker": "17-WEEK ROADMAP",
+      "titleEn": "17-Week Roadmap",
+      "titleZh": "17 週課程地圖",
+      "labelsEn": [
+        "Intro · Responsible AI",
+        "Web AI: ask & plan",
+        "Teachable Machine I–II",
+        "AI search & research",
+        "AI slides (Gamma)",
+        "AI media (Suno)",
+        "Midterm · Part 1",
+        "Task AI & agents",
+        "Desktop AI · local data",
+        "Command-line AI",
+        "Workflow project",
+        "Final workshop",
+        "Final showcase"
+      ],
+      "band1En": [
+        { "flex": 3, "text": "PART 1 · AI EVERYONE CAN USE (W1–5)" },
+        { "flex": 4, "text": "PART 2 · TASK AI & AGENTS (W6–10)" }
+      ],
+      "band2En": [
+        { "flex": 1, "text": "P2" },
+        { "flex": 5, "text": "PART 3 · DESKTOP AI & PRO WORKFLOWS (W11–17)" }
+      ],
+      "legendEn": "●=weekly topic　<span style=\"color:var(--gold)\">●</span>=midterm/final milestone　·　bands=the three parts　｜　每週主題・里程碑・三部曲分段"
+    },
+    "grading": {
+      "kicker": "GRADING",
+      "titleEn": "How grades work",
+      "titleZh": "成績怎麼算",
+      "items": [
+        { "labelEn": "Participation", "labelZh": "平時成績", "subEn": "including attendance" },
+        { "labelEn": "Assignments", "labelZh": "作業成績", "subEn": "" },
+        { "labelEn": "Midterm", "labelZh": "期中考", "subEn": "covers Part 1" },
+        { "labelEn": "Final", "labelZh": "期末", "subEn": "AI workflow project" }
+      ],
+      "noteEnHtml": "Final = an AI workflow project: combine at least two kinds of AI tools, and explain your process, verification, and reflection. <b style=\"color:var(--ink)\">The final isn't a tool-name quiz—it's showing how you solve a task with AI.</b>",
+      "noteZh": "期末＝AI 工作流專題：至少整合兩類 AI 工具，說明過程、查證與反思。期末不是考工具名稱，是展示你怎麼用 AI 解決任務。"
+    },
+    "help": {
+      "kicker": "GETTING HELP",
+      "titleEn": "Stuck? Here's how to reach me",
+      "titleZh": "卡關了，怎麼找我",
+      "teamsLabel": "Microsoft Teams",
+      "teamsValueEn": "Just message me",
+      "teamsValueZh": "直接發訊息給我",
+      "emailLabel": "Email",
+      "noteEn": "On Slido you can ask without raising your hand.　上 Slido，問問題不用舉手。"
+    },
+    "teams": {
+      "kicker": "JOIN ON TEAMS",
+      "titleEn": "Join the course on Teams",
+      "titleZh": "加入 Teams 課程",
+      "items": [
+        { "en": "Use your school Office 365 account (activate NDHU Office 365 first)", "zh": "用學校 Office 365 帳號（先啟用國立東華大學 Office 365）" },
+        { "en": "Install the Teams desktop app (recommended)", "zh": "建議安裝 Teams 桌面版" },
+        { "enPrefix": "Team code: ", "pendingEn": "TBA", "zh": "團隊代碼：開學前待補" }
+      ]
+    },
+    "platforms": {
+      "kicker": "OUR PLATFORMS",
+      "titleEn": "Tools we use online",
+      "titleZh": "這門課的網路工具",
+      "items": [
+        { "nameEn": "Roll call", "value": "Zuvio", "zh": "課堂點名" },
+        { "nameEn": "Turn in work", "value": "Microsoft Teams", "zh": "交作業" },
+        { "nameEn": "Shared notes", "value": "HackMD", "zh": "課堂共筆" }
+      ]
+    },
+    "tools": {
+      "kicker": "TOOLS WE'LL TRY",
+      "titleEn": "Tools you'll use hands-on",
+      "titleZh": "課堂會親手用到的工具",
+      "groups": [
+        {
+          "groupEn": "Understand AI",
+          "groupZh": "理解 AI",
+          "items": [{ "name": "Teachable Machine", "sub": "grasp AI training, no coding" }]
+        },
+        {
+          "groupEn": "Research",
+          "groupZh": "查資料",
+          "items": [{ "name": "Perplexity · Felo", "sub": "AI-driven search & research" }]
+        },
+        {
+          "groupEn": "Make content",
+          "groupZh": "做內容",
+          "items": [
+            { "name": "Gamma", "sub": "AI slides & fast layout" },
+            { "name": "Suno", "sub": "AI music & media" }
+          ]
+        },
+        {
+          "groupEn": "Tasks & automation",
+          "groupZh": "任務型與自動化",
+          "items": [
+            { "name": "Manus & agents", "sub": "autonomous task agents" },
+            { "name": "Claude Desktop", "sub": "local data & automation" },
+            { "name": "Codex · Antigravity", "sub": "workflow automation" },
+            { "name": "command-line AI", "sub": "batch processing" }
+          ]
+        }
+      ],
+      "pstripEn": [
+        { "use": "Roll call", "name": "Zuvio" },
+        { "use": "Turn in", "name": "Teams" },
+        { "use": "Notes", "name": "HackMD" }
+      ],
+      "noteEnHtml": "<b style=\"color:var(--ink)\">Tools change, skills don't.</b> We'll use the best equivalent that week.　工具會換、能力不換。"
+    },
+    "daily": {
+      "kicker": "FOR DAILY USE",
+      "titleEn": "Everyday AI tools",
+      "titleZh": "日常 AI 工具推薦",
+      "items": [
+        { "nameEn": "Chatbots", "sub": "ChatGPT·Claude·Gemini·Grok", "zh": "聊天機器人" },
+        { "nameEn": "AI search", "sub": "Perplexity·Felo", "zh": "AI 搜尋" },
+        { "nameEn": "AI notebook", "sub": "NotebookLM", "zh": "AI 筆記本" },
+        { "nameEn": "AI playground", "sub": "Google AI Studio", "zh": "AI 實驗場" }
+      ],
+      "noteEnHtml": "Week 1, just pick <b style=\"color:var(--ink)\">one that fits you</b>—no need to install them all.　第一週先挑一個順手的就好。"
+    },
+    "bring": {
+      "kicker": "WHAT TO BRING",
+      "titleEn": "What to bring",
+      "titleZh": "上課要帶什麼",
+      "items": [
+        { "enHtml": "A laptop or tablet (<b>laptop recommended</b>)", "zh": "筆電或平板（建議筆電）" },
+        { "enHtml": "Some tools need a free account", "zh": "部分工具需註冊免費帳號" },
+        { "enHtml": "Room E403—seats near outlets go first-come", "zh": "教室 理工二館 E403——有插座的位子先到先選" }
+      ]
+    },
+    "rules": {
+      "kicker": "HOW WE USE AI",
+      "titleEn": "How we use AI in this course",
+      "titleZh": "這門課的 AI 使用守則",
+      "subEn": "You may learn and create with AI—but you must:",
+      "subZh": "可以用 AI 學習與創作，但你要——",
+      "items": [
+        { "headEn": "Explain your own process", "headZh": "能解釋自己的過程", "bodyEn": "Be able to say how you asked, how you revised, and why you decided that way.", "bodyZh": "說得出你怎麼問、怎麼改、為什麼這樣決定。" },
+        { "headEn": "Verify what AI gives you", "headZh": "會查證 AI 的輸出", "bodyEn": "AI gets things wrong and makes things up; check before you hand it in.", "bodyZh": "AI 會錯也會編；交出去前你要查過。" },
+        { "headEn": "Keep academic integrity", "headZh": "守學術誠信", "bodyEn": "Honor integrity, privacy, and copyright.", "bodyZh": "遵守誠信、隱私與著作權。" }
+      ]
+    },
+    "slido2": {
+      "kicker": "BACK TO SLIDO",
+      "titleEnHtml": "Last thing—<br>tell me what you hope for",
+      "titleZh": "最後，聊聊你的期待",
+      "subEn": "Scan slido.com once more　·　#",
+      "subPendingEn": "TBA",
+      "noteEnHtml": "Why you're taking this, <b style=\"color:var(--gold)\">what you most want AI to help you do</b>, and one word for your hopes.",
+      "noteZh": "修課動機、你最想用 AI 幫你完成什麼事、一個詞形容你的期待",
+      "qrPendingEn": "QR TBA"
+    },
+    "finale": {
+      "kicker": "SEE YOU NEXT WEEK",
+      "titleEnHtml": "Welcome to<br>Introduction to AI",
+      "titleZh": "歡迎來到人工智慧概論",
+      "nextWeekEn": "Next week: Web AI—how to ask questions and plan a task.",
+      "nextWeekZh": "下週預告：Web AI——怎麼問問題、怎麼規劃任務",
+      "actionEn": "Your small task: bring one problem you'd like to solve with AI.",
+      "actionZh": "下週的小任務：帶一個你想用 AI 解決的問題來",
+      "materialsEn": "Course site: cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-intro-aa/",
+      "materialsPendingEn": "",
+      "materialsZh": "課程網站"
+    }
+  }
+}

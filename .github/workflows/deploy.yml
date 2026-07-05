@@ -4,8 +4,9 @@
 #   1. push 到 main → 驗證 + 建置 + 部署 GitHub Pages
 #   2. PR 對 main   → 只跑驗證 + 建置（含輸出掃描），不部署
 #
-# npm run build 依 package.json 合約＝ validate → next build → scan，
-# 所以 CI 只要呼叫 build，內容 schema 驗證與個資／internalNotes 輸出掃描都在裡面。
+# npm run build 依 package.json 合約＝ validate → decks → next build → scan，
+# 所以 CI 只要呼叫 build，內容 schema 驗證、簡報現產（scripts/deck/，發布前才產
+# ——2026-07-05 Ted 拍板、產物不進版控）與個資／internalNotes 輸出掃描都在裡面。
 
 name: deploy
 
@@ -40,10 +41,19 @@ jobs:
           node-version: 26
           cache: npm
 
+      # 簡報產線（scripts/deck/）：發布前才產 deck，需要 Python＋qrcode（掃碼卡）
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install qrcode（第 19 頁掃碼卡）
+        run: pip install qrcode
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Build（validate + next build + scan）
+      - name: Build（validate + decks + next build + scan）
         run: npm run build
         env:
           BASE_PATH: /ndhu-ted-course-hub
@@ -69,10 +79,18 @@ jobs:
           node-version: 26
           cache: npm
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install qrcode（第 19 頁掃碼卡）
+        run: pip install qrcode
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Build（validate + next build + scan，不部署）
+      - name: Build（validate + decks + next build + scan，不部署）
         run: npm run build
         env:
           BASE_PATH: /ndhu-ted-course-hub

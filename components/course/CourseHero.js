@@ -84,6 +84,21 @@ export default function CourseHero({ course, section, indexEntry, sibling }) {
           ) : null}
           {room ? <li>{room}</li> : null}
           {!time && !room ? <li>上課時間地點開學前公布</li> : null}
+          {/* 課程介紹簡報（sections[].deckUrl，站內 public/decks/ 自足單檔；2026-07-05 Ted 拍板掛上站） */}
+          {hasText(section?.deckUrl) ? (
+            <li>
+              <a href={withBase(section.deckUrl)} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
+                課程介紹簡報 ↗
+              </a>
+            </li>
+          ) : null}
+          {hasText(section?.deckUrlEn) ? (
+            <li>
+              <a href={withBase(section.deckUrlEn)} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
+                簡報英文雙語版 ↗
+              </a>
+            </li>
+          ) : null}
           {sibling ? (
             <li>
               <Link href={`/courses/${sibling.slug}/`} style={{ color: 'inherit' }}>

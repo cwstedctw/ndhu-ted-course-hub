@@ -9,6 +9,8 @@
 ## 0. 前置（本機一次性）
 
 - 需要 git 與 Node.js（本機 20 以上即可；CI 固定用 Node 26）。
+- 需要 Python 3（`npm run build` 的 decks 步驟＝發布前現產課程介紹簡報，2026-07-05 起）；
+  裝 `pip install qrcode` 第 19 頁才有掃碼卡（沒裝只是少 QR、退回純文字網址）。
 - 這個資料夾目前住在 wailan_agent repo 裡面——先把整個 `ndhu-ted-course-hub/` **複製到 wailan_agent 外面**再操作，避免巢狀 repo 打架。
 - 在複製出來的資料夾裡跑 `npm install`，會產生 `package-lock.json`——**這個檔要一起 commit**（CI 的 `npm ci` 與快取都靠它）。
 - 先本機驗一次 `npm run build` 全綠再上。

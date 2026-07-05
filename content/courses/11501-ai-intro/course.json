@@ -30,6 +30,8 @@
       },
       "room": "理工二館 E403",
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-intro-aa/",
+      "deckUrl": "/decks/11501-ai-intro-aa.html",
+      "deckUrlEn": "/decks/11501-ai-intro-aa-en.html",
       "slidoEvent": null,
       "deckName": "115_01 人工智慧概論AA Introduction"
     },
@@ -44,6 +46,7 @@
       },
       "room": "理工二館 E403",
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-intro-ab/",
+      "deckUrl": "/decks/11501-ai-intro-ab.html",
       "slidoEvent": null,
       "deckName": "115_01 人工智慧概論AB Introduction"
     }

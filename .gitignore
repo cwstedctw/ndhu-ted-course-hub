@@ -1,3 +1,6 @@
 node_modules/
 .next/
 out/
+# 簡報建置產物：發布前才產（scripts/deck/build_decks.py），10MB 級不進版控（2026-07-05）
+public/decks/
+__pycache__/

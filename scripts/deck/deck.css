@@ -1,0 +1,377 @@
+/* NDHU 課程介紹簡報 — deck.css
+   依「NDHU 課程簡報設計系統」規格本機實作（teal 水青 + 暖金 + 墨綠深底；Noto Sans TC + Outfit）。
+   畫布 1280×720（16:9）。深淺頁交錯製造節奏。 */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@400;700;900&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root{
+  --teal:#0E7C7B; --teal-700:#0E7C7B; --teal-050:#E6F2F2;
+  --dark:#062524; --dark-2:#0B2B2B;
+  --gold:#D9A441;
+  --cream:#FAF8F2; --white:#FFFFFF;
+  --ink:#132525; --mist:#5E7676;
+  --on-dark:#E6F2F2; --on-dark-dim:#9FBDBC;
+  --placeholder:#B9C6C5;
+  --card-shadow:0 6px 24px rgba(6,37,36,.07);
+  --zh:'Noto Sans TC',sans-serif;
+  --zh-serif:'Noto Serif TC','Noto Sans TC',sans-serif;
+  --lat:'Outfit','Noto Sans TC',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#333}
+
+.slide{
+  position:relative; width:1280px; height:720px; overflow:hidden;
+  /* A17：英數自動走 Outfit、中文退位 Noto（display 大標另留 zh-serif） */
+  font-family:var(--lat); color:var(--ink);
+  padding:72px 96px; display:flex; flex-direction:column;
+}
+.slide--light{
+  background:var(--cream);
+  background-image: radial-gradient(circle at 100% 100%, rgba(14, 124, 123, 0.03) 0%, transparent 45%),
+                    radial-gradient(circle at 0% 0%, rgba(217, 164, 65, 0.03) 0%, transparent 35%);
+}
+.slide--dark{background:var(--dark); color:var(--on-dark)}
+
+/* Kicker：左上全大寫英文小標 */
+.kicker{
+  font-family:var(--lat); font-weight:700; font-size:15px;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--gold);
+}
+.slide--light .kicker{color:var(--teal)}
+
+/* 標題 + 金色短底線 */
+.title{
+  font-family:var(--zh-serif);
+  font-weight:900; line-height:1.12; letter-spacing:.01em;
+  font-size:44px; color:inherit; margin-top:8px;
+}
+.title--big{font-size:60px}
+.rule{width:64px; height:3px; background:var(--gold); border:0; margin:18px 0 0}
+.slide--dark .rule{width:96px}
+
+.subtitle{font-size:24px; font-weight:500; color:var(--mist); margin-top:14px}
+.slide--dark .subtitle{color:var(--on-dark-dim)}
+
+/* 校徽印信：右下角 */
+.seal{position:absolute; right:40px; bottom:34px; width:46px; height:46px; opacity:.95}
+.footer-org{position:absolute; left:96px; bottom:40px; font-size:14px; letter-spacing:.04em;
+  color:var(--mist)}
+.slide--dark .footer-org{color:var(--on-dark-dim)}
+
+/* 深底裝飾弧線 */
+.arc{position:absolute; border:1.5px solid rgba(217,164,65,.16); border-radius:50%; pointer-events:none}
+
+/* 卡片（G4：邊框只給淺底頁，深底白卡不動） */
+.card{
+  background:var(--white);
+  border-radius:20px;
+  box-shadow:var(--card-shadow);
+  padding:26px 30px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.slide--light .card{border:1px solid rgba(6,37,36,.08)}
+.card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(6, 37, 36, 0.11);
+}
+
+.card-blueprint {
+  background-color: #071c1c;
+  border: 2px dashed rgba(23, 163, 152, 0.5);
+  border-radius: 20px;
+  color: var(--on-dark);
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+.card-blueprint::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: 
+    linear-gradient(rgba(23, 163, 152, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 163, 152, 0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+}
+
+.infocard{position:relative; padding-left:34px}
+.infocard::before{content:''; position:absolute; left:0; top:14px; bottom:14px; width:4px;
+  background:var(--teal); border-radius:4px}
+.label{font-family:var(--lat); font-weight:700; font-size:13px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--mist)}
+.value{font-size:24px; font-weight:700; color:var(--ink); margin-top:4px}
+.value small{font-size:16px; font-weight:500; color:var(--mist)}
+
+.grid{display:grid; gap:24px; margin-top:auto; margin-bottom:auto}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+
+/* 三部曲 PART 卡 */
+.part .pnum{font-family:var(--lat); font-weight:800; font-size:40px; color:var(--teal); line-height:1}
+.part .phead{font-size:22px; font-weight:900; color:var(--ink); margin-top:10px}
+.part .pbody{font-size:16px; font-weight:400; color:var(--mist); margin-top:10px; line-height:1.55}
+
+/* 工具卡 */
+.tool{display:flex; flex-direction:column; gap:8px; align-items:flex-start}
+.tool .ic{width:46px; height:46px; border-radius:12px; background:var(--teal-050);
+  display:flex; align-items:center; justify-content:center; color:var(--teal); font-size:22px}
+.tool .tname{font-size:18px; font-weight:700; color:var(--ink)}
+.tool .tsub{font-size:13px; color:var(--mist)}
+
+/* 成績大數字 */
+.stat{display:flex; flex-direction:column}
+.stat .num{font-family:var(--lat); font-weight:800; font-size:58px; line-height:1;
+  font-variant-numeric:tabular-nums; color:var(--ink)}
+.stat .num .pct{color:var(--gold)}
+.stat .slabel{font-size:18px; font-weight:700; color:var(--ink); margin-top:10px}
+.stat .ssub{font-size:13px; color:var(--mist); margin-top:4px}
+
+/* 時間軸 */
+.timeline{display:flex; flex-wrap:wrap; gap:14px 0; margin-top:30px}
+.wk{flex:1 1 0; min-width:0; position:relative; padding:0 6px; transition: transform 0.2s ease;}
+.wk:hover{transform: translateY(-2px);}
+.wk .dot{
+  width:16px; height:16px; border-radius:50%; background:var(--white); 
+  border:4.5px solid var(--teal); margin:0 auto 10px;
+  box-shadow: 0 4px 8px rgba(14, 124, 123, 0.15);
+  transition: all 0.3s ease;
+  position: relative; z-index: 2;
+}
+.wk:hover .dot{
+  transform: scale(1.25);
+  border-color: var(--gold);
+}
+.wk .dot.ms{
+  border-color: var(--gold);
+  box-shadow: 0 4px 10px rgba(217, 164, 65, 0.3);
+}
+.wk .dot.pending{
+  border-color: var(--placeholder);
+  box-shadow: none;
+}
+.wk .wnum{font-family:var(--lat); font-weight:700; font-size:13px; color:var(--mist); text-align:center}
+/* A4：週標籤 12.5→15px（投影後排可讀） */
+.wk .wlab{font-size:15px; color:var(--ink); text-align:center; margin-top:4px; line-height:1.3}
+
+/* A4：三段色帶（Part 1／2／3 分群，淡色帶＋小標，不搶里程碑的金） */
+.pband{display:flex; gap:6px; margin-top:12px}
+.pband div{
+  height:24px; border-radius:7px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--lat); font-weight:700; font-size:11.5px; letter-spacing:.08em;
+}
+.pband .p1{background:rgba(14,124,123,.14); color:var(--teal)}
+.pband .p2{background:rgba(217,164,65,.16); color:#9C7222}
+.pband .p3{background:rgba(6,37,36,.10); color:var(--ink)}
+.tlbar{
+  position:absolute; left:60px; right:60px; height:4px; 
+  background: linear-gradient(90deg, var(--teal) 0%, var(--gold) 50%, var(--teal) 100%);
+  border-radius: 2px;
+}
+
+/* 大字深底頁（章節 / Slido 掃碼） */
+.big-center{justify-content:center}
+.big-title{font-family:var(--zh-serif); font-size:72px; font-weight:900; line-height:1.1; letter-spacing:.01em}
+.big-sub{font-size:24px; font-weight:500; color:var(--on-dark-dim); margin-top:18px}
+
+.qr-phone {
+  position: absolute; right: 120px; top: 50%; transform: translateY(-50%);
+  width: 210px; height: 380px;
+  border: 7px solid var(--on-dark-dim);
+  border-radius: 36px;
+  background: rgba(6, 37, 36, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(14, 124, 123, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+.qr-phone::before {
+  content: '';
+  position: absolute;
+  top: 10px; width: 60px; height: 16px;
+  background: var(--on-dark-dim);
+  border-radius: 8px;
+}
+.qr-phone .qr-screen {
+  width: 100%;
+  height: calc(100% - 15px);
+  margin-top: 15px;
+  background: var(--dark-2);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.qr-phone .qr-placeholder {
+  width: 140px; height: 140px;
+  border: 2px dashed var(--gold);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-dark-dim);
+}
+
+.qr-box{position:absolute; right:120px; top:50%; transform:translateY(-50%);
+  width:200px; height:200px; border:2px dashed rgba(159,189,188,.5); border-radius:14px;
+  display:flex; align-items:center; justify-content:center; color:var(--on-dark-dim);
+  font-family:var(--lat); font-weight:700; letter-spacing:.1em}
+
+/* 佔位字 */
+.pending-text{color:var(--placeholder); font-weight:500}
+
+/* 封面 hero */
+.cover{padding:0}
+.cover .hero{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+.cover .hero-intro{object-position:center center; filter:saturate(1.08) contrast(1.04)}
+.cover .scrim{position:absolute; inset:0;
+  background:
+    radial-gradient(circle at 76% 26%, rgba(217,164,65,.16) 0%, transparent 22%),
+    linear-gradient(105deg, rgba(6,37,36,.94) 0%, rgba(6,37,36,.78) 38%, rgba(6,37,36,.28) 72%, rgba(6,37,36,.12) 100%)}
+.cover .inner{position:relative; height:100%; padding:96px; display:flex; flex-direction:column;
+  justify-content:center}
+.cover .ctitle{font-family:var(--zh-serif); font-size:88px; font-weight:900; color:#fff; line-height:1.08; letter-spacing:.01em;
+  text-shadow:0 14px 34px rgba(0,0,0,.36)}
+.cover .csub{font-family:var(--lat); font-weight:600; font-size:28px; color:var(--gold); margin-top:14px}
+.cover .cover-promise{font-size:24px; font-weight:700; color:var(--on-dark); margin-top:24px}
+.cover .cover-chips{display:flex; gap:10px; margin-top:18px}
+.cover .cover-chips span{
+  display:inline-flex; align-items:center; height:34px; padding:0 16px;
+  border:1px solid rgba(217,164,65,.45); border-radius:999px;
+  background:rgba(6,37,36,.42); color:#F8E8B8; font-size:15px; font-weight:700;
+  backdrop-filter:blur(8px)
+}
+.cover .cmeta{font-size:20px; color:var(--on-dark); margin-top:auto; padding-top:30px; font-weight:500}
+.cover .cmeta b{font-weight:700}
+
+/* 課程終點：AI 工作流概念頁 */
+.concept-hero{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  object-position:center center; filter:saturate(1.04) contrast(1.03)
+}
+.concept-scrim{
+  position:absolute; inset:0;
+  background:
+    radial-gradient(circle at 30% 34%, rgba(217,164,65,.16) 0%, transparent 24%),
+    linear-gradient(260deg, rgba(6,37,36,.96) 0%, rgba(6,37,36,.78) 42%, rgba(6,37,36,.24) 76%, rgba(6,37,36,.08) 100%)
+}
+.concept-copy{
+  position:relative; z-index:1; width:720px; height:100%;
+  display:flex; flex-direction:column; justify-content:center
+}
+/* B1：文字右置變體（露出背景圖左側核心細節）＋金色流程箭頭 */
+.concept-copy--right{margin-left:auto; align-items:flex-end; text-align:right}
+.concept-copy--right .big-sub{margin-left:auto}
+.step-arrow{display:flex; align-items:center; color:var(--gold);
+  font:800 24px var(--lat); padding:0 8px}
+.concept-copy .big-title{text-shadow:0 14px 36px rgba(0,0,0,.38)}
+.concept-copy .big-sub{max-width:650px}
+.concept-steps{display:flex; gap:12px; margin-top:28px}
+.concept-steps div{
+  width:178px; min-height:96px; padding:16px 18px;
+  border:1px solid rgba(217,164,65,.42); border-radius:16px;
+  background:rgba(6,37,36,.50); backdrop-filter:blur(8px)
+}
+.concept-steps b{
+  display:block; font-family:var(--lat); font-size:26px; line-height:1;
+  color:var(--gold); margin-bottom:10px
+}
+.concept-steps span{display:block; font-size:18px; font-weight:800; color:#F8E8B8}
+
+.list{margin-top:24px; display:flex; flex-direction:column; gap:16px}
+.list li{list-style:none; display:flex; gap:14px; align-items:flex-start; font-size:21px; line-height:1.5}
+.list li .b{width:9px; height:9px; border-radius:50%; background:var(--gold); margin-top:11px; flex:none}
+/* A8：稀疏清單頁置中＋放大 */
+.vcenter{flex:1; display:flex; flex-direction:column; justify-content:center}
+.list--lg li{font-size:24px}
+.list--lg li .b{margin-top:13px}
+.muted{color:var(--mist); font-size:15px}
+.spacer{flex:1}
+
+/* A13：深底副標的金色強調 */
+.em-g{color:var(--gold); font-weight:900}
+
+/* B3：工具橫帶（用途→工具）＋平台帶 */
+.tband{display:flex; align-items:center; gap:22px; padding:19px 0;
+  border-bottom:1px solid rgba(6,37,36,.08)}
+.tband:last-of-type{border-bottom:0}
+.tband .g{flex:0 0 200px; display:flex; align-items:center; gap:12px}
+.tband .g .ic{width:40px; height:40px; border-radius:11px; background:var(--teal-050);
+  display:flex; align-items:center; justify-content:center; flex:none}
+.tband .g .gn{font:900 19px var(--zh); color:var(--teal)}
+.tband .items{display:flex; gap:12px; flex-wrap:wrap}
+.tband .it{padding:8px 16px; border:1px solid rgba(6,37,36,.10); border-radius:11px; background:var(--white)}
+.tband .it b{font:700 16.5px var(--lat); color:var(--ink); display:block}
+.tband .it span{font:400 12.5px var(--zh); color:var(--mist)}
+.pstrip{display:flex; gap:12px; margin-top:18px; padding-top:14px; border-top:1.5px solid var(--teal-050)}
+.pstrip .p{flex:1; display:flex; align-items:baseline; gap:10px; justify-content:center;
+  padding:10px 0; border-radius:10px; background:rgba(14,124,123,.06)}
+.pstrip .p .use{font:700 14px var(--zh); color:var(--teal)}
+.pstrip .p .pn{font:700 16px var(--lat); color:var(--ink)}
+
+/* B4：守則契約清單（深底金色大數字） */
+.rule-item{display:flex; gap:30px; align-items:flex-start; padding:24px 0;
+  border-bottom:1px solid rgba(230,242,242,.10)}
+.rule-item:last-of-type{border-bottom:0}
+.rule-item .num{flex:0 0 92px; font:800 54px/1 var(--lat); color:var(--gold)}
+.rule-item .rt{font:900 27px var(--zh); color:var(--on-dark)}
+.rule-item .rb{font:400 18px/1.6 var(--zh); color:var(--on-dark-dim); margin-top:6px}
+
+/* A6：工具用途分組卡 */
+.tgroup{display:flex; flex-direction:column; gap:0; padding:22px 22px 18px}
+.tgroup .ghead{display:flex; align-items:center; gap:10px; padding-bottom:14px;
+  border-bottom:1.5px solid var(--teal-050); margin-bottom:14px}
+.tgroup .ghead .ic{width:38px; height:38px; border-radius:10px; background:var(--teal-050);
+  display:flex; align-items:center; justify-content:center; flex:none}
+.tgroup .ghead .gname{font-size:17px; font-weight:900; color:var(--teal); font-family:var(--zh)}
+.tgroup .titem{padding:7px 0}
+.tgroup .titem .tn{font-size:16.5px; font-weight:700; color:var(--ink); line-height:1.3}
+.tgroup .titem .ts{font-size:13px; color:var(--mist); margin-top:1px}
+
+/* ===================================================================
+   雙語版（AA）：英文為主、中文小字在下
+   通用：任何英文文字後面接 <span class="zh-sub">中文</span> 即可
+   =================================================================== */
+.zh-sub{display:block; font-family:var(--zh); font-weight:500; font-size:15px;
+  line-height:1.35; color:var(--mist); margin-top:2px; letter-spacing:.01em}
+.slide--dark .zh-sub{color:var(--on-dark-dim)}
+.value .zh-sub{font-size:15px}
+.part .pbody .zh-sub, .tool .tsub .zh-sub{font-size:13px}
+
+/* 雙語標題：英文（Outfit）大 + 中文 serif 小字 */
+.bi-title{font-family:var(--lat); font-weight:800; font-size:38px; line-height:1.12;
+  color:inherit; margin-top:8px}
+.bi-title.big{font-size:50px}
+.bi-title .zh{display:block; font-family:var(--zh-serif); font-weight:700;
+  font-size:23px; color:var(--mist); margin-top:5px; letter-spacing:.02em}
+.slide--dark .bi-title .zh{color:var(--on-dark-dim)}
+
+/* 雙語封面標題 */
+.cover .ctitle.en{font-family:var(--lat); font-size:58px; letter-spacing:.004em; line-height:1.06}
+.cover .ctitle .zh{display:block; font-family:var(--zh-serif); font-size:40px; color:#fff;
+  opacity:.94; margin-top:8px; font-weight:900}
+
+/* 雙語大字深底頁標題 */
+.big-title .zh{display:block; font-family:var(--zh-serif); font-size:36px;
+  color:var(--on-dark-dim); margin-top:8px; font-weight:700}
+
+/* 雙語副標：英文一行、中文小字一行 */
+.subtitle .zh-sub{font-size:16px; margin-top:4px; color:inherit; opacity:.8}
+
+/* 修：概念頁步驟箭頭別被 .concept-steps div 框成空盒 */
+.concept-steps .step-arrow{width:auto; min-height:0; padding:0 4px; border:0;
+  background:none; backdrop-filter:none; align-self:center}
