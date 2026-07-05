@@ -179,7 +179,7 @@ class Deck:
         # 非通識單位（如資工系 AIoT）不得掛 GENERAL EDUCATION，退為通用 COURSE INTRO。
         kicker = COVER_KICKER if "通識" in org else "COURSE INTRO"
         inner = (
-            '<img class="hero hero-intro" src="../assets/intro-hero-ai.png" alt="">'
+            '<img class="hero hero-intro" src="../assets/intro-hero-ai.webp" alt="">'
             '<div class="scrim"></div>'
             '<div class="inner">'
             f'<div class="kicker">{esc(kicker)}</div>'
@@ -189,7 +189,7 @@ class Deck:
             f'<div class="cover-chips">{chips_html}</div>'
             f'<div class="cmeta">{self._semester_display(semester)}　·　{esc(org)}<br>'
             f'授課教師：<b>{esc(instructor_name)}</b></div>'
-            '<img src="../assets/seal-white.png" alt="NDHU" '
+            '<img src="../assets/seal-white.webp" alt="NDHU" '
             'style="position:absolute;right:96px;top:88px;width:60px;height:60px;opacity:.95">'
             '</div>'
         )
@@ -369,7 +369,7 @@ class Deck:
             if i < len(steps):
                 steps_html += '<div class="step-arrow">→</div>'
         inner = (
-            '<img class="concept-hero" src="../assets/workflow-hero-ai.png" alt="">'
+            '<img class="concept-hero" src="../assets/workflow-hero-ai.webp" alt="">'
             '<div class="concept-scrim"></div>'
             '<div class="concept-copy concept-copy--right">'
             '<div class="kicker">COURSE DESTINATION</div>'
@@ -780,7 +780,7 @@ class BilingualDeck:
         name_zh = self.course.get("name", "")
         chips_html = "".join(f"<span>{bb.esc(x)}</span>" for x in c.get("chips", []))
         inner = (
-            '<img class="hero hero-intro" src="../assets/intro-hero-ai.png" alt="">'
+            '<img class="hero hero-intro" src="../assets/intro-hero-ai.webp" alt="">'
             '<div class="scrim"></div>'
             '<div class="inner">'
             f'<div class="kicker">{bb.esc(c["kicker"])}</div>'
@@ -791,7 +791,7 @@ class BilingualDeck:
             f'<div class="muted" style="color:#F8E8B8;margin-top:10px;font-size:15px">{bb.esc(c["chipsZh"])}</div>'
             f'<div class="cmeta">{c["metaEn"]}'
             f'<br><span style="font-size:16px;color:var(--on-dark-dim)">{bb.esc(c["metaZh"])}</span></div>'
-            '<img src="../assets/seal-white.png" alt="NDHU" '
+            '<img src="../assets/seal-white.webp" alt="NDHU" '
             'style="position:absolute;right:96px;top:88px;width:60px;height:60px;opacity:.95">'
             '</div>'
         )
@@ -916,7 +916,7 @@ class BilingualDeck:
             if i < len(steps):
                 steps_html += '<div class="step-arrow">→</div>'
         inner = (
-            '<img class="concept-hero" src="../assets/workflow-hero-ai.png" alt="">'
+            '<img class="concept-hero" src="../assets/workflow-hero-ai.webp" alt="">'
             '<div class="concept-scrim"></div>'
             '<div class="concept-copy concept-copy--right">'
             f'<div class="kicker">{bb.esc(d["kicker"])}</div>'

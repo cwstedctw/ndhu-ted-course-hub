@@ -98,7 +98,7 @@ TAIL = '</body></html>'
 
 
 def seal(dark, alt="國立東華大學"):
-    src = "../assets/seal-white.png" if dark else "../assets/seal-color.png"
+    src = "../assets/seal-white.webp" if dark else "../assets/seal-color.webp"
     return f'<img class="seal" src="{src}" alt="{alt}">'
 
 
