@@ -31,16 +31,12 @@
     "scoreUrl": { "$ref": "_defs.schema.json#/$defs/scoreV2Url" },
     "scoreDemoUrl": { "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl" },
     "weekOneStart": {
-      "description": "第 1 週週一日期（YYYY-MM-DD；學期行事曆真值）。null＝未定，課程頁「本週」高亮休眠（2026-07-05 學生視角升級）",
+      "description": "第 1 週週一日期（YYYY-MM-DD；學期行事曆真值，115-1＝2026-09-07 全校開始上課）。null＝未定，課程頁「本週」高亮休眠（2026-07-05 學生視角升級）",
       "type": ["string", "null"],
       "format": "date"
     },
-    "scoreDisputeUrl": {
-      "description": "成績複查表單連結。null＝開學前未定，成績頁出「開學後提供」占位句",
-      "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl"
-    },
     "enrollUrl": {
-      "description": "學校選課系統入口。null＝未定，課程頁不出「怎麼選課」chip",
+      "description": "學校選課入口（教務處「選課常用系統」總覽頁）。null＝未定，課程頁不出「怎麼選課」chip",
       "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl"
     },
     "about": {

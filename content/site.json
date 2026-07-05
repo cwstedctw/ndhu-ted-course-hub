@@ -13,9 +13,8 @@
   "baseUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub",
   "scoreUrl": "https://script.google.com/a/macros/gms.ndhu.edu.tw/s/AKfycbzeTRwPCrlIquvgpqbBhXvIHC4xBHCeroiO0cbY4rocro72PabSWW7mR5PR49KR-NOt/exec",
   "scoreDemoUrl": null,
-  "weekOneStart": null,
-  "scoreDisputeUrl": null,
-  "enrollUrl": null,
+  "weekOneStart": "2026-09-07",
+  "enrollUrl": "https://aa.ndhu.edu.tw/p/406-1004-120908,r4109.php",
   "about": {
     "name": "陳文盛",
     "title": "專案助理教授",
