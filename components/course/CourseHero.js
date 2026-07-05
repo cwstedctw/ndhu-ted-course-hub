@@ -104,15 +104,7 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
             </li>
           ) : null}
           {!time && !room ? <li>上課時間地點開學前公布</li> : null}
-          {/* 官方教學計畫（sections[].syllabusUrl，休眠欄位——AA 課程查詢連結補值後自動現身） */}
-          {hasText(section?.syllabusUrl) ? (
-            <li>
-              <a href={section.syllabusUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
-                官方教學計畫 ↗
-              </a>
-            </li>
-          ) : null}
-          {/* 怎麼選課（site.json enrollUrl，休眠欄位；停開班不出） */}
+          {/* 怎麼選課（site.json enrollUrl；停開班不出） */}
           {!closed && hasText(enrollUrl) ? (
             <li>
               <a href={enrollUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
