@@ -90,46 +90,42 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
               {timePending ? <small>（實際上課時刻開學前補）</small> : null}
             </li>
           ) : null}
-          {room ? (
-            <li>
-              {room}
-              {roomMapUrl(room) ? (
-                <>
-                  {'　'}
-                  <a href={roomMapUrl(room)} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
-                    地圖 ↗
-                  </a>
-                </>
-              ) : null}
+          {room ? <li>{room}</li> : null}
+          {!time && !room ? <li>上課時間地點開學前公布</li> : null}
+          {/* 動作連結（fact-action）：anchor 撐滿藥丸、手機 44px 觸控高——見 globals .facts li.fact-action */}
+          {room && roomMapUrl(room) ? (
+            <li className="fact-action">
+              <a href={roomMapUrl(room)} target="_blank" rel="noopener noreferrer">
+                地圖 ↗
+              </a>
             </li>
           ) : null}
-          {!time && !room ? <li>上課時間地點開學前公布</li> : null}
           {/* 怎麼選課（site.json enrollUrl；停開班不出） */}
           {!closed && hasText(enrollUrl) ? (
-            <li>
-              <a href={enrollUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
+            <li className="fact-action">
+              <a href={enrollUrl} target="_blank" rel="noopener noreferrer">
                 怎麼選課 ↗
               </a>
             </li>
           ) : null}
           {/* 課程介紹簡報（sections[].deckUrl，站內 public/decks/ 自足單檔；2026-07-05 Ted 拍板掛上站） */}
           {hasText(section?.deckUrl) ? (
-            <li>
-              <a href={withBase(section.deckUrl)} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
+            <li className="fact-action">
+              <a href={withBase(section.deckUrl)} target="_blank" rel="noopener noreferrer">
                 課程介紹簡報 ↗
               </a>
             </li>
           ) : null}
           {hasText(section?.deckUrlEn) ? (
-            <li>
-              <a href={withBase(section.deckUrlEn)} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
+            <li className="fact-action">
+              <a href={withBase(section.deckUrlEn)} target="_blank" rel="noopener noreferrer">
                 簡報英文雙語版 ↗
               </a>
             </li>
           ) : null}
           {sibling ? (
-            <li>
-              <Link href={`/courses/${sibling.slug}/`} style={{ color: 'inherit' }}>
+            <li className="fact-action">
+              <Link href={`/courses/${sibling.slug}/`}>
                 另一班：{sibling.sectionLabel}
                 {hasText(sibling.time) ? `（${sibling.time}）` : ''} →
               </Link>
@@ -139,10 +135,18 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
         {hasText(instructor?.promise) ? (
           <p className="promise">
             {/* 名人金句自帶「引號＋——出處」（五課，2026-07-03 拍板）→ 原樣輸出，
-                不再外包「」也不補教師署名（否則雙引號雙署名）；教師本人句照舊格式 */}
-            {instructor.promise.includes('——')
-              ? instructor.promise
-              : `「${instructor.promise}」${hasText(instructor?.name) ? `——${instructor.name}` : ''}`}
+                不再外包「」也不補教師署名（否則雙引號雙署名）；教師本人句照舊格式，
+                署名用 nowrap 包住不斷名字（手機窄螢幕） */}
+            {instructor.promise.includes('——') ? (
+              instructor.promise
+            ) : (
+              <>
+                「{instructor.promise}」
+                {hasText(instructor?.name) ? (
+                  <span style={{ whiteSpace: 'nowrap' }}>——{instructor.name}</span>
+                ) : null}
+              </>
+            )}
           </p>
         ) : null}
       </div>
