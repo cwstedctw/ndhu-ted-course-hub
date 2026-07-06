@@ -1,0 +1,81 @@
+1:"$Sreact.fragment"
+2:I[22016,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],""]
+4:I[71104,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"default"]
+5:I[39756,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"default"]
+6:I[37457,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"default"]
+d:I[68027,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"default",1]
+:HL["/ndhu-ted-course-hub/_next/static/chunks/1v9x7n146ab1_.css","style"]
+:HL["/ndhu-ted-course-hub/logo.png","image"]
+:HL["/ndhu-ted-course-hub/images/bg/boat-404.webp","image"]
+3:["$","style",null,{"children":"@media (max-width:759px){.nav-toggle{display:none!important}.nav-wrap .site-nav{display:flex!important;position:static!important;flex-direction:row!important;background:none!important;box-shadow:none!important;padding:0!important}}"}]
+7:T62d,
+        .nf-main { display: flex; justify-content: center; text-align: center; padding: 72px 20px 88px; }
+        .nf-box { max-width: 520px; }
+        .nf-code {
+          margin: 0; font-size: 58px; font-weight: 900; line-height: 1;
+          letter-spacing: .05em; color: var(--teal, #0E7C7B);
+        }
+        .nf-art {
+          display: block; width: 300px; max-width: 100%; height: auto;
+          margin: 12px auto 6px; border-radius: 12px;
+          /* 融進頁面紙紋、去方形接縫：multiply 吃掉插圖自身紙色＋放射 mask 羽化四邊 */
+          mix-blend-mode: multiply;
+          -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+          mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+        }
+        .nf-box h1 { font-size: 24px; margin: 8px 0 10px; line-height: 1.5; }
+        .nf-copy { color: var(--ink-60, #5B584F); font-size: 15px; line-height: 1.9; margin: 0 0 28px; }
+        .nf-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .nf-btn {
+          display: inline-block; text-decoration: none; font-weight: 700;
+          border-radius: 999px; padding: 11px 26px; font-size: 15px;
+        }
+        .nf-btn-primary { background: var(--gold, #D9A441); color: #3D2E0B; }
+        .nf-btn-primary:hover { filter: brightness(1.05); }
+        .nf-btn-secondary { background: var(--teal, #0E7C7B); color: #fff; }
+        .nf-btn-secondary:hover { background: var(--teal-dark, #0A5958); }
+        @media print { .nf-actions { display: none; } }
+      0:{"P":null,"c":["","about",""],"q":"","i":false,"f":[[["",{"children":["about",{"children":["__PAGE__",{}]}]},"$undefined","$undefined",16],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/ndhu-ted-course-hub/_next/static/chunks/1v9x7n146ab1_.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"zh-Hant-TW","children":["$","body",null,{"style":{"--bg-hero":"url(/ndhu-ted-course-hub/images/bg/valley-hero.webp)","--bg-flow":"url(/ndhu-ted-course-hub/images/bg/flow-teal.webp)","--bg-texture":"url(/ndhu-ted-course-hub/images/bg/contour-cream.webp)"},"children":[["$","a",null,{"className":"skip-link","href":"#main","children":"跳到主要內容"}],["$","header",null,{"className":"site-head","children":["$","div",null,{"className":"container bar","children":[["$","$L2",null,{"className":"brand","href":"/","children":[["$","img",null,{"src":"/ndhu-ted-course-hub/logo.png","alt":"","width":"36","height":"36"}],["$","span",null,{"children":"NDHU TED Course Hub"}],["$","span",null,{"className":"sem","children":"115-1"}]]}],["$","noscript",null,{"children":"$3"}],["$","$L4",null,{"scoreUrl":"https://script.google.com/a/macros/gms.ndhu.edu.tw/s/AKfycbzeTRwPCrlIquvgpqbBhXvIHC4xBHCeroiO0cbY4rocro72PabSWW7mR5PR49KR-NOt/exec","buildLogEnabled":false}]]}]}],["$","main",null,{"id":"main","children":["$","$L5",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","main",null,{"className":"nf-main","children":[["$","style",null,{"children":"$7"}],["$","div",null,{"className":"nf-box","children":[["$","p",null,{"className":"nf-code","aria-hidden":"true","children":"404"}],["$","img",null,{"className":"nf-art","src":"/ndhu-ted-course-hub/images/bg/boat-404.webp","alt":"","aria-hidden":"true","width":"1024","height":"1024"}],["$","h1",null,{"children":"這條支流不存在"}],["$","p",null,{"className":"nf-copy","children":"溪水在這裡分了岔——你要找的頁面不在這一頭。 可能是網址打錯了字，也可能這一頁已經改道。"}],["$","div",null,{"className":"nf-actions","children":[["$","$L2",null,{"className":"nf-btn nf-btn-primary","href":"/","children":"回首頁"}],["$","$L2",null,{"className":"nf-btn nf-btn-secondary","href":"/courses/","children":"看 115-1 課程"}]]}]]}]]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}],"$L8"]}]}]]}],{"children":["$L9",{"children":["$La",{},null,false,null]},null,false,"$@b"]},null,false,null],"$Lc",false]],"m":"$undefined","G":["$d",["$Le"]],"S":true,"h":null,"s":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"4cXYbH9r36xkq5-1LTS0w"}
+10:I[97367,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"OutletBoundary"]
+11:"$Sreact.suspense"
+14:I[97367,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"ViewportBoundary"]
+16:I[97367,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"MetadataBoundary"]
+8:["$","footer",null,{"className":"site-foot","children":["$","div",null,{"className":"container","children":[["$","p",null,{"children":"Designed by Wailan · Crafted by Liwu · Reviewed by Xiuguluan · Directed by Chen Wen-Sheng"}],["$","p",null,{"children":["聯絡：",["$","a",null,{"href":"mailto:wschen@gms.ndhu.edu.tw","children":"wschen@gms.ndhu.edu.tw"}]]}],["$","p",null,{"children":["本站零成績、零個資 ｜ © 2026 ","陳文盛"," ｜ ","115-1"," 學期"]}]]}]}]
+9:["$","$1","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+a:["$","$1","c",{"children":["$Lf",null,["$","$L10",null,{"children":["$","$11",null,{"name":"Next.MetadataOutlet","children":"$@12"}]}]]}]
+13:[]
+b:"$W13"
+c:["$","$1","h",{"children":[null,["$","$L14",null,{"children":"$L15"}],["$","div",null,{"hidden":true,"children":["$","$L16",null,{"children":["$","$11",null,{"name":"Next.Metadata","children":"$L17"}]}]}],null]}]
+e:["$","link","0",{"rel":"stylesheet","href":"/ndhu-ted-course-hub/_next/static/chunks/1v9x7n146ab1_.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]
+18:T6b6,
+        .about-main { padding: 48px 0 32px; }
+        .about-wrap { max-width: 620px; margin: 0 auto; }
+        .about-wrap h1 { font-size: clamp(24px, 3.6vw, 32px); margin: 0 0 18px; text-align: center; line-height: 1.4; }
+        .about-card {
+          background: var(--paper, #FDFAF2); border: 1px solid var(--line, #E5DCC3);
+          border-radius: var(--radius, 14px); padding: 24px 28px;
+        }
+        .about-card h2 { margin: 0; font-size: 22px; line-height: 1.4; }
+        .about-title-line { margin: 2px 0 16px; color: var(--ink-60, #5B584F); font-size: 14.5px; }
+        .about-facts { display: grid; grid-template-columns: 6em 1fr; gap: 8px 14px; margin: 0; font-size: 15px; }
+        .about-facts dt { font-weight: 700; color: var(--teal-deep, #07403F); }
+        .about-facts dd { margin: 0; overflow-wrap: anywhere; }
+        .about-contact-note { display: block; margin-top: 3px; font-size: 13px; color: var(--ink-40, #8B8779); }
+        .about-credits {
+          margin-top: 26px; text-align: center;
+          background: var(--teal-deep, #07403F); color: var(--teal-tint, #E3F1F0);
+          border-radius: var(--radius, 14px); padding: 24px 22px 26px;
+        }
+        .about-credits h2 { margin: 0 0 8px; font-size: 17px; color: #fff; }
+        .about-team-art { width: 100%; height: auto; border-radius: 10px; margin: 6px 0 12px; display: block; }
+        .about-credits p { margin: 4px 0; font-size: 14px; }
+        .about-credits-line { font-size: 16.5px; font-weight: 700; letter-spacing: .02em; line-height: 1.9; }
+        @media (max-width: 479px) {
+          .about-facts { grid-template-columns: 1fr; gap: 2px; }
+          .about-facts dd { margin-bottom: 10px; }
+        }
+      f:["$","main",null,{"className":"about-main","children":[["$","style",null,{"children":"$18"}],["$","section",null,{"children":["$","div",null,{"className":"container about-wrap","children":[["$","h1",null,{"children":"關於"}],["$","div",null,{"className":"about-card","children":[["$","h2",null,{"children":"陳文盛"}],["$","p",null,{"className":"about-title-line","children":"專案助理教授"}],["$","dl",null,{"className":"about-facts","children":[["$","dt",null,{"children":"Email"}],["$","dd",null,{"children":["$","a",null,{"href":"mailto:wschen@gms.ndhu.edu.tw","children":"wschen@gms.ndhu.edu.tw"}]}],["$","dt",null,{"children":"研究室"}],["$","dd",null,{"children":"理工二館 C306"}],["$","dt",null,{"children":"聯絡方式"}],["$","dd",null,{"children":["Microsoft Teams 發訊息",["$","span",null,{"className":"about-contact-note","children":"傳訊息給我最快，看到我會盡快回。"}]]}]]}]]}],["$","div",null,{"className":"about-credits","children":[["$","h2",null,{"children":"AI 協作團隊"}],["$","img",null,{"className":"about-team-art","src":"/ndhu-ted-course-hub/images/team-watercolor.webp","alt":"水彩合繪：陳文盛老師與三位溪流化身的 AI 夥伴——洄瀾、立霧、秀姑巒——在花蓮的辮狀溪床邊一同工作","width":"1280","height":"720","loading":"lazy"}],["$","p",null,{"children":["這個網站由 ","陳文盛"," 老師與 AI 協作團隊共同打造——團隊以花蓮的三條溪為名。"]}],["$","p",null,{"className":"about-credits-line","children":"Designed by Wailan · Crafted by Liwu · Reviewed by Xiuguluan · Directed by Chen Wen-Sheng"}]]}]]}]}]]}]
+15:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#F4ECD8"}]]
+19:I[27201,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"IconMark"]
+12:null
+17:[["$","title","0",{"children":"關於｜NDHU TED Course Hub"}],["$","meta","1",{"name":"description","content":"國立東華大學 專案助理教授 陳文盛——聯絡方式、研究室位置與 AI 協作團隊介紹。"}],["$","meta","2",{"property":"og:title","content":"關於｜NDHU TED Course Hub"}],["$","meta","3",{"property":"og:description","content":"國立東華大學 專案助理教授 陳文盛——聯絡方式、研究室位置與 AI 協作團隊介紹。"}],["$","meta","4",{"property":"og:image","content":"https://cwstedctw.github.io/ndhu-ted-course-hub/images/og-default.jpg"}],["$","meta","5",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","6",{"name":"twitter:title","content":"關於｜NDHU TED Course Hub"}],["$","meta","7",{"name":"twitter:description","content":"國立東華大學 專案助理教授 陳文盛——聯絡方式、研究室位置與 AI 協作團隊介紹。"}],["$","meta","8",{"name":"twitter:image","content":"https://cwstedctw.github.io/ndhu-ted-course-hub/images/og-default.jpg"}],["$","link","9",{"rel":"icon","href":"/ndhu-ted-course-hub/logo.png"}],["$","$L19","10",{}]]

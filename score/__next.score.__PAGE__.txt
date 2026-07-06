@@ -1,0 +1,30 @@
+1:"$Sreact.fragment"
+3:I[97367,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+2:T5da,
+        .score-main { padding: 48px 0 32px; }
+        .score-wrap { max-width: 620px; margin: 0 auto; text-align: center; }
+        .score-wrap h1 { font-size: clamp(24px, 3.6vw, 32px); margin: 0 0 10px; line-height: 1.4; }
+        .score-lead { color: var(--ink-60, #5B584F); font-size: 15.5px; margin: 0 0 28px; }
+        .score-cta {
+          display: inline-block; background: var(--teal, #0E7C7B); color: #fff;
+          font-weight: 700; font-size: 17.5px; text-decoration: none;
+          padding: 14px 46px; border-radius: 999px;
+        }
+        .score-cta:hover { background: var(--teal-dark, #0A5958); }
+        .score-open-note { font-size: 13px; color: var(--ink-60, #5B584F); margin: 10px 0 0; }
+        .score-zero {
+          margin: 30px auto 0; background: var(--teal-tint, #E3F1F0); color: var(--teal-deep, #07403F);
+          border-radius: var(--radius, 14px); padding: 14px 18px; font-size: 14px; line-height: 1.8;
+        }
+        .score-dispute { margin: 14px 0 0; font-size: 14px; color: var(--ink-60, #5B584F); }
+        .score-demo {
+          margin: 34px auto 0; padding-top: 18px;
+          border-top: 1px solid var(--line, #E5DCC3); font-size: 14.5px;
+        }
+        .score-demo .score-demo-note { color: var(--ink-40, #8B8779); font-size: 12.5px; }
+        /* 大按鈕手機通欄（§4.7 RWD：單欄置中） */
+        @media (max-width: 759px) { .score-cta { display: block; width: 100%; } }
+        @media print { .score-cta { display: none; } }
+      0:{"rsc":["$","$1","c",{"children":[["$","main",null,{"className":"score-main","children":[["$","style",null,{"children":"$2"}],["$","section",null,{"children":["$","div",null,{"className":"container score-wrap","children":[["$","h1",null,{"children":"成績查詢"}],["$","p",null,{"className":"score-lead","children":"查詢需以東華 Google 帳號（@gms.ndhu.edu.tw）登入，登入後只看得到自己的成績。"}],["$","a",null,{"className":"score-cta","href":"https://script.google.com/a/macros/gms.ndhu.edu.tw/s/AKfycbzeTRwPCrlIquvgpqbBhXvIHC4xBHCeroiO0cbY4rocro72PabSWW7mR5PR49KR-NOt/exec","target":"_blank","rel":"noopener noreferrer","children":"查詢成績"}],["$","p",null,{"className":"score-open-note","children":"另開新視窗，需東華帳號登入"}],["$","p",null,{"className":"score-zero","children":[["$","strong",null,{"children":"本站不存放任何成績"}],"——按下按鈕後，登入驗證與成績查詢 都在學校授權的系統上完成，本站不經手、也看不到任何資料。"]}],["$","p",null,{"className":"score-dispute","children":"成績有疑義？登入成績查詢系統後，點「申請成績複查」送出——會直接進老師的 複查清單，比寄信更快處理。"}],null]}]}]]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"4cXYbH9r36xkq5-1LTS0w"}
+5:null

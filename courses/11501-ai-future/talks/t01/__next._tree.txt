@@ -1,0 +1,4 @@
+:HL["/ndhu-ted-course-hub/_next/static/chunks/1v9x7n146ab1_.css","style"]
+:HL["/ndhu-ted-course-hub/logo.png","image"]
+:HL["/ndhu-ted-course-hub/images/bg/boat-404.webp","image"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"courses","param":null,"prefetchHints":0,"slots":{"children":{"name":"11501-ai-future","param":null,"prefetchHints":0,"slots":{"children":{"name":"talks","param":null,"prefetchHints":0,"slots":{"children":{"name":"id","param":{"type":"d","key":"t01","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}}}},"staleTime":300,"buildId":"4cXYbH9r36xkq5-1LTS0w"}

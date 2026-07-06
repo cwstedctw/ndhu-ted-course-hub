@@ -1,0 +1,32 @@
+1:"$Sreact.fragment"
+3:I[97367,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+2:T6b6,
+        .about-main { padding: 48px 0 32px; }
+        .about-wrap { max-width: 620px; margin: 0 auto; }
+        .about-wrap h1 { font-size: clamp(24px, 3.6vw, 32px); margin: 0 0 18px; text-align: center; line-height: 1.4; }
+        .about-card {
+          background: var(--paper, #FDFAF2); border: 1px solid var(--line, #E5DCC3);
+          border-radius: var(--radius, 14px); padding: 24px 28px;
+        }
+        .about-card h2 { margin: 0; font-size: 22px; line-height: 1.4; }
+        .about-title-line { margin: 2px 0 16px; color: var(--ink-60, #5B584F); font-size: 14.5px; }
+        .about-facts { display: grid; grid-template-columns: 6em 1fr; gap: 8px 14px; margin: 0; font-size: 15px; }
+        .about-facts dt { font-weight: 700; color: var(--teal-deep, #07403F); }
+        .about-facts dd { margin: 0; overflow-wrap: anywhere; }
+        .about-contact-note { display: block; margin-top: 3px; font-size: 13px; color: var(--ink-40, #8B8779); }
+        .about-credits {
+          margin-top: 26px; text-align: center;
+          background: var(--teal-deep, #07403F); color: var(--teal-tint, #E3F1F0);
+          border-radius: var(--radius, 14px); padding: 24px 22px 26px;
+        }
+        .about-credits h2 { margin: 0 0 8px; font-size: 17px; color: #fff; }
+        .about-team-art { width: 100%; height: auto; border-radius: 10px; margin: 6px 0 12px; display: block; }
+        .about-credits p { margin: 4px 0; font-size: 14px; }
+        .about-credits-line { font-size: 16.5px; font-weight: 700; letter-spacing: .02em; line-height: 1.9; }
+        @media (max-width: 479px) {
+          .about-facts { grid-template-columns: 1fr; gap: 2px; }
+          .about-facts dd { margin-bottom: 10px; }
+        }
+      0:{"rsc":["$","$1","c",{"children":[["$","main",null,{"className":"about-main","children":[["$","style",null,{"children":"$2"}],["$","section",null,{"children":["$","div",null,{"className":"container about-wrap","children":[["$","h1",null,{"children":"關於"}],["$","div",null,{"className":"about-card","children":[["$","h2",null,{"children":"陳文盛"}],["$","p",null,{"className":"about-title-line","children":"專案助理教授"}],["$","dl",null,{"className":"about-facts","children":[["$","dt",null,{"children":"Email"}],["$","dd",null,{"children":["$","a",null,{"href":"mailto:wschen@gms.ndhu.edu.tw","children":"wschen@gms.ndhu.edu.tw"}]}],["$","dt",null,{"children":"研究室"}],["$","dd",null,{"children":"理工二館 C306"}],["$","dt",null,{"children":"聯絡方式"}],["$","dd",null,{"children":["Microsoft Teams 發訊息",["$","span",null,{"className":"about-contact-note","children":"傳訊息給我最快，看到我會盡快回。"}]]}]]}]]}],["$","div",null,{"className":"about-credits","children":[["$","h2",null,{"children":"AI 協作團隊"}],["$","img",null,{"className":"about-team-art","src":"/ndhu-ted-course-hub/images/team-watercolor.webp","alt":"水彩合繪：陳文盛老師與三位溪流化身的 AI 夥伴——洄瀾、立霧、秀姑巒——在花蓮的辮狀溪床邊一同工作","width":"1280","height":"720","loading":"lazy"}],["$","p",null,{"children":["這個網站由 ","陳文盛"," 老師與 AI 協作團隊共同打造——團隊以花蓮的三條溪為名。"]}],["$","p",null,{"className":"about-credits-line","children":"Designed by Wailan · Crafted by Liwu · Reviewed by Xiuguluan · Directed by Chen Wen-Sheng"}]]}]]}]}]]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"4cXYbH9r36xkq5-1LTS0w"}
+5:null

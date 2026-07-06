@@ -1,0 +1,114 @@
+1:"$Sreact.fragment"
+2:I[22016,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],""]
+4:I[71104,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"default"]
+5:I[39756,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"default"]
+6:I[37457,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"default"]
+11:I[68027,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"default",1]
+:HL["/ndhu-ted-course-hub/_next/static/chunks/1v9x7n146ab1_.css","style"]
+:HL["/ndhu-ted-course-hub/logo.png","image"]
+:HL["/ndhu-ted-course-hub/images/bg/boat-404.webp","image"]
+3:["$","style",null,{"children":"@media (max-width:759px){.nav-toggle{display:none!important}.nav-wrap .site-nav{display:flex!important;position:static!important;flex-direction:row!important;background:none!important;box-shadow:none!important;padding:0!important}}"}]
+7:T62d,
+        .nf-main { display: flex; justify-content: center; text-align: center; padding: 72px 20px 88px; }
+        .nf-box { max-width: 520px; }
+        .nf-code {
+          margin: 0; font-size: 58px; font-weight: 900; line-height: 1;
+          letter-spacing: .05em; color: var(--teal, #0E7C7B);
+        }
+        .nf-art {
+          display: block; width: 300px; max-width: 100%; height: auto;
+          margin: 12px auto 6px; border-radius: 12px;
+          /* 融進頁面紙紋、去方形接縫：multiply 吃掉插圖自身紙色＋放射 mask 羽化四邊 */
+          mix-blend-mode: multiply;
+          -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+          mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+        }
+        .nf-box h1 { font-size: 24px; margin: 8px 0 10px; line-height: 1.5; }
+        .nf-copy { color: var(--ink-60, #5B584F); font-size: 15px; line-height: 1.9; margin: 0 0 28px; }
+        .nf-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .nf-btn {
+          display: inline-block; text-decoration: none; font-weight: 700;
+          border-radius: 999px; padding: 11px 26px; font-size: 15px;
+        }
+        .nf-btn-primary { background: var(--gold, #D9A441); color: #3D2E0B; }
+        .nf-btn-primary:hover { filter: brightness(1.05); }
+        .nf-btn-secondary { background: var(--teal, #0E7C7B); color: #fff; }
+        .nf-btn-secondary:hover { background: var(--teal-dark, #0A5958); }
+        @media print { .nf-actions { display: none; } }
+      0:{"P":null,"c":["","courses","11501-ai-future","talks","t11",""],"q":"","i":false,"f":[[["",{"children":["courses",{"children":["11501-ai-future",{"children":["talks",{"children":[["id","t11","d",null],{"children":["__PAGE__",{}]}]}]}]}]},"$undefined","$undefined",16],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/ndhu-ted-course-hub/_next/static/chunks/1v9x7n146ab1_.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","async":true,"nonce":"$undefined"}],["$","script","script-1",{"src":"/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"zh-Hant-TW","children":["$","body",null,{"style":{"--bg-hero":"url(/ndhu-ted-course-hub/images/bg/valley-hero.webp)","--bg-flow":"url(/ndhu-ted-course-hub/images/bg/flow-teal.webp)","--bg-texture":"url(/ndhu-ted-course-hub/images/bg/contour-cream.webp)"},"children":[["$","a",null,{"className":"skip-link","href":"#main","children":"跳到主要內容"}],["$","header",null,{"className":"site-head","children":["$","div",null,{"className":"container bar","children":[["$","$L2",null,{"className":"brand","href":"/","children":[["$","img",null,{"src":"/ndhu-ted-course-hub/logo.png","alt":"","width":"36","height":"36"}],["$","span",null,{"children":"NDHU TED Course Hub"}],["$","span",null,{"className":"sem","children":"115-1"}]]}],["$","noscript",null,{"children":"$3"}],["$","$L4",null,{"scoreUrl":"https://script.google.com/a/macros/gms.ndhu.edu.tw/s/AKfycbzeTRwPCrlIquvgpqbBhXvIHC4xBHCeroiO0cbY4rocro72PabSWW7mR5PR49KR-NOt/exec","buildLogEnabled":false}]]}]}],["$","main",null,{"id":"main","children":["$","$L5",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","main",null,{"className":"nf-main","children":[["$","style",null,{"children":"$7"}],["$","div",null,{"className":"nf-box","children":[["$","p",null,{"className":"nf-code","aria-hidden":"true","children":"404"}],["$","img",null,{"className":"nf-art","src":"/ndhu-ted-course-hub/images/bg/boat-404.webp","alt":"","aria-hidden":"true","width":"1024","height":"1024"}],["$","h1",null,{"children":"這條支流不存在"}],["$","p",null,{"className":"nf-copy","children":"溪水在這裡分了岔——你要找的頁面不在這一頭。 可能是網址打錯了字，也可能這一頁已經改道。"}],["$","div",null,{"className":"nf-actions","children":[["$","$L2",null,{"className":"nf-btn nf-btn-primary","href":"/","children":"回首頁"}],"$L8"]}]]}]]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}],"$L9"]}]}]]}],{"children":["$La",{"children":["$Lb",{"children":["$Lc",{"children":["$Ld",{"children":["$Le",{},null,false,null]},null,false,"$@f"]},null,false,"$@f"]},null,false,"$@f"]},null,false,"$@f"]},null,false,null],"$L10",false]],"m":"$undefined","G":["$11",["$L12"]],"S":true,"h":null,"s":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"4cXYbH9r36xkq5-1LTS0w"}
+14:I[97367,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"OutletBoundary"]
+15:"$Sreact.suspense"
+18:I[97367,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"ViewportBoundary"]
+1a:I[97367,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"MetadataBoundary"]
+8:["$","$L2",null,{"className":"nf-btn nf-btn-secondary","href":"/courses/","children":"看 115-1 課程"}]
+9:["$","footer",null,{"className":"site-foot","children":["$","div",null,{"className":"container","children":[["$","p",null,{"children":"Designed by Wailan · Crafted by Liwu · Reviewed by Xiuguluan · Directed by Chen Wen-Sheng"}],["$","p",null,{"children":["聯絡：",["$","a",null,{"href":"mailto:wschen@gms.ndhu.edu.tw","children":"wschen@gms.ndhu.edu.tw"}]]}],["$","p",null,{"children":["本站零成績、零個資 ｜ © 2026 ","陳文盛"," ｜ ","115-1"," 學期"]}]]}]}]
+a:["$","$1","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+b:["$","$1","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+c:["$","$1","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+d:["$","$1","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L6",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+e:["$","$1","c",{"children":["$L13",null,["$","$L14",null,{"children":["$","$15",null,{"name":"Next.MetadataOutlet","children":"$@16"}]}]]}]
+17:[]
+f:"$W17"
+10:["$","$1","h",{"children":[null,["$","$L18",null,{"children":"$L19"}],["$","div",null,{"hidden":true,"children":["$","$L1a",null,{"children":["$","$15",null,{"name":"Next.Metadata","children":"$L1b"}]}]}],null]}]
+12:["$","link","0",{"rel":"stylesheet","href":"/ndhu-ted-course-hub/_next/static/chunks/1v9x7n146ab1_.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]
+1c:T1013,
+.tdp { max-width: 820px; margin: 0 auto; padding: 28px 20px 44px; }
+.tdp-back { font-size: 14px; color: var(--teal-dark, #0A5958); }
+.tdp-course { font-size: 13px; color: var(--ink-40, #8B8779); margin: 10px 0 0; }
+.tdp-head { margin: 6px 0 18px; }
+.tdp-badges { margin: 0 0 4px; display: flex; gap: 8px; flex-wrap: wrap; }
+.tdp-no { font-size: 12.5px; background: var(--gold-tint, #F7EAD1); color: var(--gold-deep, #7A5A1E); border: 1px solid var(--gold, #D9A441); border-radius: 999px; padding: 2px 10px; font-weight: 700; }
+.tdp-done { font-size: 12.5px; background: #ECE7D8; color: var(--ink-60, #5B584F); border-radius: 999px; padding: 2px 10px; }
+.tdp h1 { font-size: clamp(24px, 4vw, 32px); line-height: 1.4; margin: 8px 0 12px; }
+.tdp h2 { font-size: 19px; margin: 26px 0 10px; padding-left: 10px; border-left: 4px solid var(--teal, #0E7C7B); line-height: 1.4; }
+.tdp-meta { display: flex; gap: 8px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
+.tdp-meta li { background: var(--teal-tint, #E3F1F0); color: var(--teal-deep, #07403F); border-radius: 999px; padding: 3px 12px; font-size: 13.5px; }
+.tdp-meta li.pending { background: #ECE7D8; color: var(--ink-40, #8B8779); }
+.tdp-moe { display: flex; gap: 6px; flex-wrap: wrap; list-style: none; margin: 10px 0 0; padding: 0; }
+.tdp-moe li { font-size: 12px; background: var(--teal-tint, #E3F1F0); color: var(--teal-deep, #07403F); border-radius: 999px; padding: 1px 10px; }
+.tdp-speaker { display: flex; gap: 16px; align-items: center; background: var(--paper, #FDFAF2); border: 1px solid var(--line, #E5DCC3); border-radius: var(--radius, 14px); padding: 16px 18px; margin: 18px 0; }
+.tdp-photo, .tdp-avatar { width: 84px; height: 84px; border-radius: 50%; flex: 0 0 auto; object-fit: cover; }
+.tdp-avatar { display: inline-flex; align-items: center; justify-content: center; background: var(--teal-tint, #E3F1F0); color: var(--teal-deep, #07403F); font-size: 30px; font-weight: 700; }
+.tdp-spk-name { margin: 0; font-size: 18px; font-weight: 700; }
+.tdp-spk-org { margin: 2px 0 0; font-size: 14px; color: var(--ink-60, #5B584F); }
+.tdp-abstract { font-size: 15.5px; margin: 0 0 12px; }
+.tdp-worksheet-row { margin: 26px 0 6px; }
+.tdp-worksheet { display: inline-block; background: var(--gold, #D9A441); color: #3D2E0B; font-weight: 700; text-decoration: none; padding: 12px 30px; border-radius: 999px; font-size: 16px; }
+.tdp-worksheet:hover { filter: brightness(1.05); }
+.tdp-note { font-size: 12.5px; color: var(--ink-40, #8B8779); margin-left: 8px; }
+.tdp-poster { display: block; width: 100%; max-width: 480px; border: 1px solid var(--line, #E5DCC3); border-radius: var(--radius, 14px); }
+.tdp-materials { margin: 0; padding-left: 20px; font-size: 15px; }
+.tdp-materials li { margin-bottom: 6px; }
+.tdp-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--line, #E5DCC3); font-size: 14.5px; }
+.tdp-nav span { min-width: 84px; }
+.tdp-nav span:last-child { text-align: right; }
+.tdp-ripple {
+  border: 1.5px dashed var(--teal-mid, #5FB3B0); border-radius: var(--radius, 14px);
+  color: var(--teal-deep, #07403F); font-size: 14.5px; text-align: center;
+  padding: 30px 16px; margin: 18px 0; line-height: 1.9;
+  background:
+    repeating-radial-gradient(circle at 30% 45%, rgba(14,124,123,.10) 0 6px, transparent 6px 26px),
+    repeating-radial-gradient(circle at 72% 60%, rgba(14,124,123,.07) 0 5px, transparent 5px 22px);
+  animation: tdp-drift 7s ease-in-out infinite alternate;
+}
+.tdp-ripple small { color: var(--ink-60, #5B584F); font-size: 13px; }
+@keyframes tdp-drift { from { background-position: 0 0, 0 0; } to { background-position: 14px 8px, -12px -6px; } }
+@media (prefers-reduced-motion: reduce) { .tdp-ripple { animation: none; } }
+@media (max-width: 759px) {
+  .tdp-worksheet { display: block; text-align: center; }
+  .tdp-note { display: block; margin: 6px 0 0; text-align: center; }
+}
+@media print {
+  .tdp-back, .tdp-worksheet-row, .tdp-nav { display: none !important; }
+  .tdp-ripple { animation: none; background: none; }
+}
+13:["$","article",null,{"className":"tdp","children":[["$","style",null,{"children":"$1c"}],null,"$L1d","$L1e","$L1f","$L20",null,null,null,null,"$L21"]}]
+1d:["$","p",null,{"children":["$","$L2",null,{"className":"tdp-back","href":"/courses/11501-ai-future/#talks","children":"← 回演講海報牆"}]}]
+1e:["$","p",null,{"className":"tdp-course","children":["AI未來應用與趨勢探索：洄瀾的智慧未來","——12 場系列演講"]}]
+1f:["$","header",null,{"className":"tdp-head","children":[["$","p",null,{"className":"tdp-badges","children":[["$","span",null,{"className":"tdp-no","children":["第 ",11," 場"]}],null]}],["$","h1",null,{"children":"第 11 場演講（敬請期待）"}],["$","ul",null,{"className":"tdp-meta","aria-label":"時間與地點","children":[["$","li",null,{"className":"pending","children":"日期待定"}],["$","li",null,{"className":"pending","children":"時間待定"}],["$","li",null,{"className":"pending","children":"地點待定"}]]}],null]}]
+20:["$","div",null,{"className":"tdp-ripple","role":"status","children":["講者確認後公布",["$","br",null,{}],["$","small",null,{"children":"講者、講題與摘要確認後，會在本頁更新。"}]]}]
+21:["$","nav",null,{"className":"tdp-nav","aria-label":"場次導覽","children":[["$","span",null,{"children":["$","$L2",null,{"href":"/courses/11501-ai-future/talks/t10/","children":["← 第 ",10," 場"]}]}],["$","$L2",null,{"href":"/courses/11501-ai-future/#talks","children":"回海報牆"}],["$","span",null,{"children":["$","$L2",null,{"href":"/courses/11501-ai-future/talks/t12/","children":["第 ",12," 場 →"]}]}]]}]
+19:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#F4ECD8"}]]
+22:I[27201,["/ndhu-ted-course-hub/_next/static/chunks/17kt2w53bwrl3.js","/ndhu-ted-course-hub/_next/static/chunks/3rxsc4xc2zpkk.js"],"IconMark"]
+16:null
+1b:[["$","title","0",{"children":"第 11 場演講（敬請期待）｜AI未來應用與趨勢探索｜NDHU TED Course Hub"}],["$","meta","1",{"name":"description","content":"「AI未來應用與趨勢探索：洄瀾的智慧未來」12 場系列演講第 11 場，講者與講題確認後於本頁公布。"}],["$","meta","2",{"property":"og:title","content":"第 11 場演講（敬請期待）｜AI未來應用與趨勢探索｜NDHU TED Course Hub"}],["$","meta","3",{"property":"og:description","content":"「AI未來應用與趨勢探索：洄瀾的智慧未來」12 場系列演講第 11 場，講者與講題確認後於本頁公布。"}],["$","meta","4",{"property":"og:site_name","content":"NDHU TED Course Hub"}],["$","meta","5",{"property":"og:locale","content":"zh_TW"}],["$","meta","6",{"property":"og:image","content":"https://cwstedctw.github.io/ndhu-ted-course-hub/images/og-default.jpg"}],["$","meta","7",{"property":"og:type","content":"website"}],["$","meta","8",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","9",{"name":"twitter:title","content":"第 11 場演講（敬請期待）｜AI未來應用與趨勢探索｜NDHU TED Course Hub"}],["$","meta","10",{"name":"twitter:description","content":"「AI未來應用與趨勢探索：洄瀾的智慧未來」12 場系列演講第 11 場，講者與講題確認後於本頁公布。"}],["$","meta","11",{"name":"twitter:image","content":"https://cwstedctw.github.io/ndhu-ted-course-hub/images/og-default.jpg"}],["$","link","12",{"rel":"icon","href":"/ndhu-ted-course-hub/logo.png"}],["$","$L22","13",{}]]
