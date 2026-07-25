@@ -11,7 +11,11 @@ const COURSE_SHORT = 'AI未來應用與趨勢探索';
 const COURSE_FULL = 'AI未來應用與趨勢探索：洄瀾的智慧未來';
 const WALL_HREF = '/courses/11501-ai-future/#talks';
 
-const MOE_LABELS = { legal: '法律', ethical: '倫理', application: '應用' };
+const MOE_LABELS = {
+  b1_ethics: '倫理法律', b1_rights: '權益尊重', b2_risk: '資安風險',
+  b2_verify: '資訊查核', b3_impact: '社會影響', b3_account: '人類當責',
+  legal: '法律', ethical: '倫理', application: '應用' // 舊資料相容
+};
 const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
 
 /* ── 資料存取（容錯：getTalks() 可能回整份物件或純陣列） ── */
@@ -95,10 +99,18 @@ export async function generateMetadata({ params }) {
   if (!talk) return { title: `找不到場次｜${COURSE_SHORT}` };
 
   const no = talkNo(talk);
-  if (talk.status === 'tba' || !talk.title) {
+  if (talk.status === 'tba') {
     return {
       title: `第 ${no} 場演講（敬請期待）｜${COURSE_SHORT}`,
       description: `「${COURSE_FULL}」12 場系列演講第 ${no} 場，講者與講題確認後於本頁公布。`,
+    };
+  }
+  // 講者已敲定、講題還沒回來：別再說「講者確認後公布」，那已經不是事實
+  if (!talk.title) {
+    const who = talk.speaker?.name ? `講者${talk.speaker.name}` : '講者';
+    return {
+      title: `第 ${no} 場演講（講題公布中）｜${COURSE_SHORT}`,
+      description: `「${COURSE_FULL}」12 場系列演講第 ${no} 場，${who}已確認，講題確認後於本頁公布。`,
     };
   }
 
@@ -143,7 +155,13 @@ export default async function TalkDetailPage({ params }) {
           <span className="tdp-no">第 {no} 場</span>
           {isDone ? <span className="tdp-done">已結束</span> : null}
         </p>
-        <h1>{isTba || !talk.title ? `第 ${no} 場演講（敬請期待）` : talk.title}</h1>
+        <h1>
+          {talk.title
+            ? talk.title
+            : isTba
+              ? `第 ${no} 場演講（敬請期待）`
+              : '講題公布中'}
+        </h1>
         <ul className="tdp-meta" aria-label="時間與地點">
           <li className={dateText ? '' : 'pending'}>{dateText || '日期待定'}</li>
           <li className={talk.time ? '' : 'pending'}>{talk.time || '時間待定'}</li>

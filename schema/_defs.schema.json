@@ -12,7 +12,7 @@
     "nullableHttpsUrl": { "anyOf": [ { "$ref": "#/$defs/httpsUrl" }, { "type": "null" } ] },
     "scoreV2Url": { "type": "string", "format": "uri", "pattern": "^https://script\\.google\\.com/" },
     "nullableScoreV2Url": { "anyOf": [ { "$ref": "#/$defs/scoreV2Url" }, { "type": "null" } ] },
-    "moeIndicator": { "enum": ["legal", "ethical", "application"] },
+    "moeIndicator": { "enum": ["b1_ethics", "b1_rights", "b2_risk", "b2_verify", "b3_impact", "b3_account"] },
     "pendingField": {
       "type": "object",
       "additionalProperties": false,

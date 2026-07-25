@@ -8,7 +8,11 @@ import { asArray, hasText, withBase } from './pending';
 //   done＝已結束角標＋materials 非空加「講座資料」標
 // 整卡連到 /courses/{slug}/talks/{id}/；MOE 指標中文對照：legal 法律／ethical 倫理／application 應用。
 
-const MOE_LABELS = { legal: '法律', ethical: '倫理', application: '應用' };
+const MOE_LABELS = {
+  b1_ethics: '倫理法律', b1_rights: '權益尊重', b2_risk: '資安風險',
+  b2_verify: '資訊查核', b3_impact: '社會影響', b3_account: '人類當責',
+  legal: '法律', ethical: '倫理', application: '應用' // 舊資料相容
+};
 
 export default function TalksWall({ talks, courseSlug }) {
   const list = asArray(talks)

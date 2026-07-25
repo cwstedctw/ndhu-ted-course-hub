@@ -8,7 +8,8 @@
   "properties": {
     "courseDir": { "const": "11501-ai-future" },
     "moeIndicators": {
-      "type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true,
+      "$comment": "上限＝負責任 AI 六面向的個數（2026-07-20 由三指標改六面向時漏改，補上）",
+      "type": "array", "minItems": 3, "maxItems": 6, "uniqueItems": true,
       "items": { "$ref": "_defs.schema.json#/$defs/moeIndicator" }
     },
     "talks": {
@@ -65,14 +66,13 @@
         {
           "if": { "properties": { "status": { "enum": ["confirmed", "done"] } } },
           "then": {
+            "$comment": "confirmed＝『講者敲定』，不等於講題／單位都到齊。title 與 speaker.org 允許 null：顯示層本來就有 fallback（海報牆「講題公布中」、單位缺就不印那一段），硬要求會逼人先填假資料。date、speaker.name、moe 仍是硬條件。",
             "properties": {
               "date": { "type": "string" },
-              "title": { "type": "string", "minLength": 1 },
               "speaker": {
                 "type": "object",
                 "properties": {
-                  "name": { "type": "string", "minLength": 1 },
-                  "org": { "type": "string", "minLength": 1 }
+                  "name": { "type": "string", "minLength": 1 }
                 }
               },
               "moe": { "type": "array", "minItems": 1 }
