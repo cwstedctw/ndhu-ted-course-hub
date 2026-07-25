@@ -26,6 +26,7 @@
       "time": "週一 第 11–12 節・16:10–18:00",
       "timeNote": { "status": "confirmed", "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表" },
       "room": "理工二館 E403",
+      "schedule": { "day": 1, "periods": [11, 12], "startTime": "16:10", "endTime": "18:00", "room": "理工二館 E403" },
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-it-apply-aa/"
     },
     {
@@ -35,6 +36,7 @@
       "time": "週二 第 11–12 節・16:10–18:00",
       "timeNote": { "status": "confirmed", "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；教室由送件版 E402 改為 E403，與 AA 班同間；鐘點據課務組上課節次時間對照表" },
       "room": "理工二館 E403",
+      "schedule": { "day": 2, "periods": [11, 12], "startTime": "16:10", "endTime": "18:00", "room": "理工二館 E403" },
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-it-apply-ab/"
     }
   ],

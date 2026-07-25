@@ -3,6 +3,7 @@
 // ＋skip link＋SiteHeader／SiteFooter。資料一律經 lib/content.js 讀 content/，不 hard-code。
 
 import './globals.css';
+import './v3-home.css';
 import { getSite } from '@/lib/content';
 import SiteHeader from '@/components/SiteHeader';
 import SiteFooter from '@/components/SiteFooter';

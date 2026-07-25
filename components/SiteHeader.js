@@ -30,6 +30,9 @@ export default function SiteHeader() {
         <noscript>
           <style>{`@media (max-width:759px){.nav-toggle{display:none!important}.nav-wrap .site-nav{display:flex!important;position:static!important;flex-direction:row!important;background:none!important;box-shadow:none!important;padding:0!important}}`}</style>
         </noscript>
+        {/* v3 W2：常駐文字捷徑「怎麼加入」（手機也不收進漢堡；樣式在 app/v3-home.css）。
+            指向首頁的 #join——在首頁是同頁錨點，其他頁是回首頁的加入區。 */}
+        <a className="v3-head-join" href={`${BASE_PATH}/#join`}>怎麼加入</a>
         <NavMenu scoreUrl={site.scoreUrl} buildLogEnabled={buildLog?.enabled} />
       </div>
     </header>

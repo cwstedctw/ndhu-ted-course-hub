@@ -1,14 +1,30 @@
-// app/page.js — 首頁（詳細設計書二章 §4.1：hero＋8 班卡片牆＋最新公告，僅此三塊、零演講內容）
-// 資料一律經 lib/content.js 讀 content/，不 hard-code 課程資訊。
+// app/page.js — 首頁（v3 W2 全面改版，設計計畫 §4.2）
+//
+// 由上而下六區塊：Hero → 課程掃視 #courses → 週課表 #week → 演講 spotlight #talk
+//                → 怎麼加入 #join → 公告 #announcements；外加手機浮動底欄。
+// 公告區與頁尾沿用現制，一行沒動。
+//
+// 鐵律：
+//   ・事實只吃 content JSON——課名／課號／節次／鐘點／教室／講者全部經 lib/content.js，
+//     首頁自己不寫第二份課程資料（設計計畫 C7）；重組形狀的工作在 components/home/model.js。
+//   ・官方連結原則（F2–F5）：站上不寫選課規則、不寫選課日期、不教怎麼加簽；
+//     按鈕命名「教務系統選課 ↗」「演講課候補登記 ↗（外部表單）」，網址真值＝site.json。
+//   ・炫的預算（C6）：本頁零自動動效，hover 只有升起 4px＋邊線亮。
 // 公告過濾發生在 build 時（SSG）——validUntil 過期即不出 HTML；公告異動要重新 build。
-// title／description 沿用 layout 的預設（＝§4.1 SEO 規格），此處同值補 og 標籤（IA 章 §3 通則）。
 
-import { getSite, getAnnouncements, getCourses, getCourseCards } from '@/lib/content';
-import CourseCard from '@/components/CourseCard';
+import { getSite, getAnnouncements } from '@/lib/content';
+import { buildHomeModel } from '@/components/home/model';
+import HomeHero from '@/components/home/HomeHero';
+import CourseScan from '@/components/home/CourseScan';
+import WeekSchedule from '@/components/home/WeekSchedule';
+import TalkSpotlight from '@/components/home/TalkSpotlight';
+import JoinSection from '@/components/home/JoinSection';
+import StickyBar from '@/components/home/StickyBar';
+import NoJs from '@/components/home/NoJs';
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
-/* ── 公告（§4.1 區塊 3）：build 時過濾與排序 ──────────────────────────
+/* ── 公告（區塊 6，沿用現制）：build 時過濾與排序 ──────────────────────
    規則：validUntil 早於建置日 → 濾掉；pinned 恆置頂；其餘依 date 新→舊；取前 5 則。
    超過 5 則或逾期即下架＝刻意決策（V1 不做公告歷史頁）。 */
 function pickAnnouncements(maxItems = 5) {
@@ -110,23 +126,20 @@ export async function generateMetadata() {
 
 export default async function HomePage() {
   const site = await getSite();
-  const index = await getCourses();
-  const semester = site.brand?.semester || index.semester || '115-1';
-  const wallSemester = index.semester || semester;
-  // 卡片牆依 courses.json 的 order 排序（§4.1 區塊 2）；缺筆由 validate 在 build 前擋下
-  // getCourseCards＝索引筆＋sections[].time 節次短版（timeShort），AA/AB 雙班卡分流用
-  const courses = [...getCourseCards()].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+  const model = buildHomeModel();
   const announcements = pickAnnouncements();
+
+  // Hero 第三顆 chip 的「幾月開學」：由 site.json 的 weekOneStart 推，不另外寫死日期
+  const monthMatch = /^\d{4}-(\d{2})-\d{2}$/.exec(site.weekOneStart || '');
+  const semesterMonth = monthMatch ? Number(monthMatch[1]) : null;
 
   return (
     <>
       <style>{`
-        /* 頁首 sticky（globals §7），錨點跳轉預留頭部高度 */
-        #courses, #announcements { scroll-margin-top: 76px; }
-        /* 置頂公告：gold 淡底＋圖釘＋sr-only「置頂公告」（設計書 §5-4.3） */
+        /* 公告區沿用現制（設計書 §5-4.3）：置頂 gold 淡底＋圖釘＋少量 markdown 版面 */
+        #announcements { scroll-margin-top: 76px; }
         .ann article.pinned { background: var(--gold-tint); border-radius: 10px; padding: 12px 14px; margin: 8px 0; }
         .ann .pin { margin-right: 4px; }
-        /* 公告 body 的少量 markdown（段落與清單） */
         .ann-body p + p { margin-top: 6px; }
         .ann-body ul { margin: 4px 0 0; padding-left: 20px; font-size: 14px; color: var(--ink-60); }
         .ann-body li { margin: 2px 0; }
@@ -136,41 +149,34 @@ export default async function HomePage() {
       <link
         rel="preload"
         as="image"
-        href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/images/bg/valley-hero.webp`}
+        href={`${BASE_PATH}/images/bg/valley-hero.webp`}
         fetchPriority="high"
       />
-      {/* 區塊 1：品牌 hero（立霧水彩溪谷全景＝影片同款畫風；globals §11-1），只掛首頁 */}
-      <div className="hero hero-scene">
-        <div className="container">
-          {/* 文字欄：hero-copy 現只管排版（紙板已依陳文盛老師指示撤除，字深＋背景淡紗保可讀性） */}
-          <div className="hero-copy">
-            <h1>這學期，把 AI 用在真實任務上</h1>
-            <p className="tag">
-              八班課程、一個入口——課程介紹、評分方式、平台連結、上學期作品，開學前一次看清楚。
-            </p>
-            <ul className="chips">
-              <li>問得出來</li>
-              <li>查得到底</li>
-              <li>做得出東西</li>
-            </ul>
-            <a className="cta" href="#courses">看 {semester} 課程</a>
-          </div>
-        </div>
-      </div>
 
-      {/* 區塊 2：8 班課程卡片牆（courses.json，依 order 排序；徽章三態見 CourseCard） */}
-      <section id="courses" aria-labelledby="courses-title">
-        <div className="container">
-          <h2 id="courses-title">{wallSemester} 開課清單</h2>
-          <ul className="cards">
-            {courses.map((course) => (
-              <CourseCard key={course.slug} course={course} />
-            ))}
-          </ul>
-        </div>
-      </section>
+      {/* 區塊 1：Hero（承諾句＋答案列三 chip＋雙 CTA；桌機右欄＝下一場演講焦點卡） */}
+      <HomeHero
+        stats={model.heroStats}
+        semesterMonth={semesterMonth}
+        spotlight={model.spotlight}
+      />
 
-      {/* 區塊 3：最新公告（pinned 置頂、date 新→舊、取 5 則；無有效公告＝低調單行） */}
+      {/* 區塊 2：課程掃視（決策篩選 chips＋6 張併班課卡） */}
+      <CourseScan groups={model.groups} filters={model.filters} />
+
+      {/* 區塊 3：週課表（桌機格線／手機依天 tab） */}
+      <WeekSchedule week={model.week} />
+
+      {/* 區塊 4：演講 spotlight（手機版焦點卡的落點＋看完整場次） */}
+      <TalkSpotlight spotlight={model.spotlight} />
+
+      {/* 區塊 5：怎麼加入（全課號表＋兩個官方入口） */}
+      <JoinSection
+        rows={model.codeTable}
+        enrollUrl={site.enrollUrl}
+        waitlistUrl={site.waitlistUrl}
+      />
+
+      {/* 區塊 6：最新公告（pinned 置頂、date 新→舊、取 5 則；無有效公告＝低調單行） */}
       <section id="announcements" aria-labelledby="announcements-title">
         <div className="container">
           <h2 id="announcements-title">最新公告</h2>
@@ -197,6 +203,12 @@ export default async function HomePage() {
           )}
         </div>
       </section>
+
+      {/* 手機浮動底欄（捲過 Hero 才出現；沒有 JS 就不存在） */}
+      <StickyBar enrollUrl={site.enrollUrl} />
+
+      {/* 關掉 JS 時的後備樣式（控制項收起、內容全展開） */}
+      <NoJs />
     </>
   );
 }

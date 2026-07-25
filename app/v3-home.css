@@ -1,0 +1,749 @@
+/* =========================================================================
+   v3-home.css — v3 首頁改版（W2）的全部新樣式
+   在 app/layout.js 於 globals.css 之後 import；**只新增、不改 globals.css**
+   （v1 樣式原封留給課程頁用，也避免與其他施工軌撞車）。
+
+   規矩（設計計畫 C6「炫的預算」）：
+     ・本段零自動動效——沒有倒數、沒有跑馬燈、沒有 shimmer、沒有 keyframes
+     ・hover 只做「升起 4px＋邊線亮」，而且只掛在 prefers-reduced-motion: no-preference
+     ・全部互動 44px 起；focus 環吃 globals 的 :focus-visible（不另外關掉）
+     ・gold＝離站加入 CTA 專用，每個視口至多一顆實心 gold；CopyCode 一律中性 teal（C9）
+     ・顏色只作輔助——分類色走「左側 4px 色條」，資訊本身一定有文字
+
+   顏色一律吃 globals.css 的 token（primitive／semantic／原型別名／場景層），
+   這支檔案不新增任何色票 hex。
+
+   目錄：0 共用鈕與 CopyCode　1 頂欄捷徑　2 Hero　3 焦點卡　4 課程掃視
+         5 週課表　6 演講 spotlight　7 怎麼加入　8 手機浮動底欄
+         9 課程頁 EnrollBox　10 reduced-motion　11 列印
+   ========================================================================= */
+
+/* ── 0a. 區塊共用：錨點跳轉留 sticky 頁首的高度 ────────────────────── */
+.v3-sec,
+#v3-hero,
+#courses,
+#week,
+#talk,
+#join {
+  scroll-margin-top: 76px;
+}
+.v3-sec { padding: 30px 0 10px; }
+
+/* ── 0b. 按鈕三型 ───────────────────────────────────────────────────
+      gold＝離站加入（每視口 ≤1）／outline＝站內次要／ghost＝低調捷徑 */
+.v3-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-full);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.v3-btn-gold {
+  background: var(--gold-500);
+  color: var(--ink-900);       /* on gold-500 ≈ 7.7:1，AA 有餘 */
+  border-color: var(--gold-600);
+}
+.v3-btn-gold:hover { border-color: var(--gold-700); box-shadow: 0 6px 16px rgb(var(--gold-500-rgb) / .34); }
+.v3-btn-outline {
+  background: rgb(var(--surface-000-rgb) / .9);
+  color: var(--color-link);
+  border-color: var(--teal-500);
+}
+.v3-btn-outline:hover { border-color: var(--teal-700); background: var(--teal-050); }
+.v3-btn-ghost {
+  background: var(--color-surface);
+  color: var(--color-link);
+  border-color: var(--line);
+  font-weight: 600;
+}
+.v3-btn-ghost:hover { border-color: var(--teal-200); }
+.v3-btn-block { width: 100%; }
+
+/* ── 0c. CopyCode（C9）：monospace 藥丸＋⧉，中性 teal、絕不 gold ──── */
+.v3-copy {
+  display: inline-flex;
+  align-items: stretch;
+  max-width: 100%;
+  min-height: 44px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--teal-200);
+  border-radius: var(--radius-full);
+}
+.v3-copy-code {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px 0 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  letter-spacing: .03em;
+  color: var(--color-link);
+  white-space: nowrap;
+  /* 降級③：完全沒有 JS 時，點一下就整串選起來 */
+  -webkit-user-select: all;
+  user-select: all;
+}
+.v3-copy-btn {
+  flex: 0 0 auto;
+  width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+  color: var(--color-link);
+  font-size: 17px;
+  cursor: pointer;
+}
+.v3-copy-btn:hover { background: var(--teal-050); }
+.v3-copy-flash {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal-700);
+  white-space: nowrap;
+}
+.v3-copy-flash:empty { display: none; }   /* 沒有回饋文字時不佔位 */
+
+/* ── 1. 頂欄常駐捷徑「怎麼加入」（手機不收進漢堡） ────────────────── */
+.v3-head-join {
+  margin-left: auto;                       /* 靠右，與漢堡／導覽同一側 */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--teal-mid);
+  border-radius: var(--radius-full);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.v3-head-join:hover { background: rgb(255 255 255 / .14); }
+/* 捷徑接手了「推到最右」的工作，導覽區的 auto margin 要讓開，否則兩個 auto 對半分空間 */
+.site-head .bar .nav-wrap { margin-left: 0; }
+/* 順手止血：漢堡鈕的 margin-right:-4px（globals §7）碰上「頁首 bar 沒有左右 padding」，
+   會讓整份文件在 375px 多出 4px 橫向捲動。實測這是 v1 就有的行為（把捷徑藏掉、
+   nav-wrap 還原成 auto 一樣 379px），不是本次新增；但頂欄現在放了加入捷徑，
+   手機橫向捲動要先擋掉——這裡只把負邊界歸零（視覺位移 4px），
+   根因在 globals §7 的 .site-head .bar padding，留給 W4 動頁首時一併處理。 */
+.site-head .nav-toggle { margin-right: 0; }
+/* 品牌字太長時寧可截字也不要讓頁首撐成兩列（sticky 頁首在手機上很貴） */
+.site-head .brand { min-width: 0; }
+.site-head .brand > span:not(.sem) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 759px) {
+  .site-head .bar { gap: 8px; }
+}
+@media (max-width: 419px) {
+  /* 375px 基準：學期徽章讓位給捷徑鈕（學期資訊頁面內文照樣有） */
+  .site-head .brand .sem { display: none; }
+  .site-head .brand > span:not(.sem) { font-size: 14px; }
+  .v3-head-join { padding: 0 10px; font-size: 13px; }
+}
+
+/* ── 2. Hero ───────────────────────────────────────────────────────
+      底圖沿用立霧水彩溪谷（--bg-hero 由 layout.js 手組 basePath），
+      上面壓一層 cream 淡紗保文字對比；沒有任何動畫。 */
+.v3-hero {
+  position: relative;
+  padding: 30px 0 28px;
+  background-color: var(--cream-150);
+  background-image:
+    linear-gradient(180deg,
+      rgb(var(--cream-100-rgb) / .74) 0%,
+      rgb(var(--cream-100-rgb) / .54) 55%,
+      rgb(var(--cream-100-rgb) / .28) 100%),
+    var(--bg-hero, none);
+  background-size: auto, cover;
+  background-position: 0 0, center bottom;
+  background-repeat: no-repeat, no-repeat;
+}
+.v3-hero-grid { display: grid; gap: 20px; }
+.v3-hero h1 {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: clamp(27px, 6.4vw, 44px);
+  line-height: 1.3;
+  color: var(--ink-900);
+  text-wrap: balance;
+}
+.v3-answers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.v3-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  background: rgb(var(--surface-000-rgb) / .92);
+  border: 1px solid var(--teal-200);
+  border-radius: var(--radius-full);
+  color: var(--teal-700);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+.v3-chip:hover { border-color: var(--teal-500); background: var(--surface-000); }
+.v3-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; }
+
+@media (min-width: 900px) {
+  .v3-hero { padding: 52px 0 44px; }
+  .v3-hero-grid {
+    grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr);
+    gap: 30px;
+    align-items: center;
+  }
+}
+
+/* ── 3. 「下一場演講」焦點卡（外層 data-scene="stage"，底色與文字色由場景層重映） ──
+      C6 的 Glass 白名單雖含焦點卡，這裡刻意收成「實底＋一層靜態光暈」：
+      手機半透明本來就要退實色，兩套都做等於兩套都要測，直接用實底最穩。 */
+.v3-focus {
+  position: relative;
+  overflow: hidden;
+  padding: 18px 18px 14px;
+  border: 1px solid var(--night-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgb(5 59 58 / .22);
+}
+.v3-focus::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(340px 160px at 88% -12%, var(--glow-soft), transparent 70%);
+}
+.v3-focus > * { position: relative; }
+.v3-focus-kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--glow-500);
+}
+.v3-focus-no {
+  padding: 1px 8px;
+  border: 1px solid var(--night-border);
+  border-radius: var(--radius-full);
+  color: var(--mist-300);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.v3-focus-when {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 6px;
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--cream-100);
+  font-variant-numeric: tabular-nums;
+}
+.v3-focus-clock { font-size: 15px; font-weight: 600; color: var(--mist-300); }
+.v3-focus-title { margin: 0 0 10px; font-size: 17px; line-height: 1.5; color: var(--cream-100); }
+.v3-focus-speaker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  margin: 0 0 4px;
+  font-size: 13.5px;
+  color: var(--mist-300);
+}
+.v3-focus-speaker strong { font-size: 15.5px; color: var(--cream-100); }
+.v3-focus-org { flex-basis: 100%; font-size: 12.5px; line-height: 1.55; }
+.v3-focus-venue { margin: 0; font-size: 12.5px; color: var(--mist-300); }
+.v3-focus-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--glow-500);
+  font-size: 14.5px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.v3-focus-link:hover { text-decoration: underline; }
+
+/* 同一張卡兩個落點：桌機在 Hero 右欄、手機在區塊 4——任一寬度只有一張進無障礙樹 */
+.v3-focus-hero { display: none; }
+.v3-focus-spot { display: block; }
+@media (min-width: 900px) {
+  .v3-focus-hero { display: block; }
+  .v3-focus-spot { display: none; }
+}
+
+/* ── 4. 課程掃視（決策篩選 chips＋6 張併班課卡） ────────────────────── */
+.v3-filters {
+  display: flex;
+  gap: 8px;
+  margin: 0 -20px 4px;      /* 讓橫滑列在手機能滑到視口邊 */
+  padding: 2px 20px 10px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.v3-fchip {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 16px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--cream-300);
+  border-radius: var(--radius-full);
+  color: var(--ink-700);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.v3-fchip:hover { border-color: var(--teal-500); }
+.v3-fchip.is-on {
+  background: var(--teal-500);
+  border-color: var(--teal-700);
+  color: #fff;              /* on teal-500 ≈ 4.9:1 */
+}
+
+.v3-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 760px)  { .v3-cards { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1180px) { .v3-cards { grid-template-columns: repeat(3, 1fr); } }
+
+.v3-card {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 16px 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--teal-500);   /* 分類色：只是輔助，資訊本身都有文字 */
+  border-radius: var(--radius);
+}
+.v3-card[data-cat="maker-iot"]   { border-left-color: var(--green-700); }
+.v3-card[data-cat="expert-talk"] { border-left-color: var(--gold-600); }
+.v3-card.is-closed { opacity: .6; filter: grayscale(.5); }
+.v3-card:hover,
+.v3-card:focus-within {
+  box-shadow: var(--shadow-card-hover);
+  /* 只亮三邊，左邊留給分類色 */
+  border-top-color: var(--teal-200);
+  border-right-color: var(--teal-200);
+  border-bottom-color: var(--teal-200);
+}
+.v3-card-corner {
+  position: absolute;
+  top: 0; right: 0;
+  padding: 3px 10px 4px;
+  background: var(--gold-tint);
+  color: var(--gold-deep);
+  border-left: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0 var(--radius) 0 10px;
+  font-size: 10.5px;
+  font-weight: 500;
+}
+.v3-badge {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11.5px;
+}
+.v3-badge-open   { background: var(--color-badge-open-bg); color: var(--color-badge-open-text); }
+.v3-badge-cond   { background: var(--color-badge-cond-bg); color: var(--color-badge-cond-text); border: 1px solid var(--color-badge-cond-border); font-weight: 700; }
+.v3-badge-closed { background: var(--color-badge-closed-bg); color: var(--color-badge-closed-text); }
+
+.v3-card-title { margin: 0; font-size: 16.5px; line-height: 1.45; }
+.v3-card-title a { color: var(--color-text); text-decoration: none; }
+.v3-card-title a:hover { text-decoration: underline; }
+/* 課名連結撐滿整張卡（stretched link）——一行文字只有 24px 高，用整卡當觸控範圍才守得住
+   「互動 44px 起」；卡內真正要各自點的控制項（切班次、看詳情、複製課號）疊在覆蓋層之上。
+   ⚠️ 覆蓋層是 ::after，DOM 上沒有巢狀連結，輔具讀到的仍是一個課名連結。 */
+.v3-card-title a::after { content: ''; position: absolute; inset: 0; z-index: 0; }
+.v3-seg,
+.v3-card-foot { position: relative; z-index: 1; }
+.v3-card-en { display: block; margin-top: 2px; font-size: 11.5px; font-weight: 400; color: var(--ink-40); }
+.v3-card-tagline { margin: 0; font-size: 13.5px; color: var(--ink-60); }
+.v3-card-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.v3-card-chips li {
+  padding: 2px 9px;
+  background: var(--teal-tint);
+  border-radius: var(--radius-full);
+  color: var(--teal-700);
+  font-size: 11.5px;
+}
+
+.v3-seg {
+  align-self: flex-start;
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--cream-100);
+  border: 1.5px solid var(--cream-300);
+  border-radius: var(--radius-full);
+}
+.v3-seg-btn {
+  min-height: 44px;
+  padding: 0 14px;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-full);
+  color: var(--ink-700);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.v3-seg-btn.is-on { background: var(--teal-500); color: #fff; }
+
+.v3-pane { display: none; }
+.v3-pane.is-on { display: flex; flex: 1 1 auto; flex-direction: column; }
+.v3-card-time {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  font-size: 13.5px;
+  color: var(--ink-60);
+  font-variant-numeric: tabular-nums;
+}
+.v3-pane-label {
+  padding: 1px 6px;
+  background: var(--teal-050);
+  border-radius: var(--radius-xs);
+  color: var(--teal-700);
+  font-size: 12px;
+  font-weight: 700;
+}
+.v3-card-credits { color: var(--ink-40); font-size: 12.5px; }
+.v3-card-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+}
+.v3-detail-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-link);
+  font-size: 14.5px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.v3-detail-link:hover { text-decoration: underline; }
+
+/* ── 5. 週課表 ──────────────────────────────────────────────────────
+      桌機（≥768px）全週格線／手機依天 tab。兩套都在 HTML 裡，靠 CSS 決定哪套出場。 */
+.v3-week-grid { display: none; }
+@media (min-width: 768px) {
+  .v3-week-grid { display: grid; gap: 6px; margin: 14px 0 0; }
+  .v3-week-mobile { display: none; }
+}
+.v3-week-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cream-100);
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-60);
+}
+.v3-week-time {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding-right: 6px;
+  color: var(--ink-40);
+  font-size: 11.5px;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+}
+.v3-week-time b { font-size: 13px; color: var(--ink-60); }
+.v3-week-time.is-free b { font-size: 11.5px; font-weight: 600; }
+.v3-week-cell {
+  background: var(--surface-000);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+.v3-week-cell.is-free { background: var(--cream-100); border-style: dashed; }
+.v3-week-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  overflow: hidden;
+  padding: 6px 8px;
+  background: var(--surface-000);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--teal-500);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  text-decoration: none;
+}
+.v3-week-tile[data-cat="maker-iot"]   { border-left-color: var(--green-700); }
+.v3-week-tile[data-cat="expert-talk"] { border-left-color: var(--gold-600); }
+.v3-week-tile:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-top-color: var(--teal-200);
+  border-right-color: var(--teal-200);
+  border-bottom-color: var(--teal-200);
+}
+.v3-tile-name { font-size: 13px; font-weight: 700; line-height: 1.35; }
+.v3-tile-name i { font-style: normal; color: var(--ink-60); }
+.v3-tile-meta { font-size: 11.5px; color: var(--ink-60); font-variant-numeric: tabular-nums; }
+
+.v3-day-tabs { display: flex; gap: 8px; margin: 12px 0 10px; }
+.v3-day-tab {
+  flex: 1 1 0;
+  min-height: 44px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--cream-300);
+  border-radius: var(--radius-sm);
+  color: var(--ink-700);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.v3-day-tab:hover { border-color: var(--teal-500); }
+.v3-day-tab.is-on { background: var(--teal-500); border-color: var(--teal-700); color: #fff; }
+.v3-day-panel { display: none; }
+.v3-day-panel.is-on { display: block; }
+/* 有 tab 時日期標題交給 tab 講，這行給輔具與無 JS 版用 */
+.v3-day-title {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.v3-day-list { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.v3-day-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 8px 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--teal-500);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  text-decoration: none;
+}
+.v3-day-row[data-cat="maker-iot"]   { border-left-color: var(--green-700); }
+.v3-day-row[data-cat="expert-talk"] { border-left-color: var(--gold-600); }
+.v3-day-row:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-top-color: var(--teal-200);
+  border-right-color: var(--teal-200);
+  border-bottom-color: var(--teal-200);
+}
+.v3-day-time {
+  display: flex;
+  flex-direction: column;
+  min-width: 92px;
+  font-variant-numeric: tabular-nums;
+}
+.v3-day-time b { font-size: 13.5px; }
+.v3-day-time small { font-size: 11.5px; color: var(--ink-40); }
+.v3-day-name { display: flex; flex: 1 1 auto; flex-direction: column; font-size: 14.5px; font-weight: 700; line-height: 1.4; }
+.v3-day-name i { font-style: normal; color: var(--ink-60); }
+.v3-day-name small { font-size: 11.5px; font-weight: 400; color: var(--ink-60); }
+.v3-day-go { flex: 0 0 auto; color: var(--color-link); font-weight: 700; }
+.v3-week-push { margin: 12px 0 0; font-size: 14px; color: var(--ink-60); }
+.v3-week-push a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; }
+
+/* ── 6. 演講 spotlight ─────────────────────────────────────────────── */
+.v3-spot { display: grid; gap: 16px; margin-top: 12px; }
+@media (min-width: 900px) {
+  .v3-spot { grid-template-columns: minmax(0, 1fr); }
+}
+.v3-spot-side { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.v3-spot-count {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+  font-size: 15px;
+  color: var(--ink-60);
+}
+.v3-spot-count b { font-size: 26px; color: var(--teal-700); font-variant-numeric: tabular-nums; }
+.v3-spot-count span { font-size: 13px; color: var(--ink-40); }
+
+/* ── 7. 怎麼加入 #join ─────────────────────────────────────────────── */
+.v3-join-sec { padding-bottom: 24px; }
+.v3-join { display: grid; gap: 18px; margin-top: 10px; }
+@media (min-width: 900px) {
+  .v3-join { grid-template-columns: minmax(0, 1.3fr) minmax(260px, .7fr); align-items: start; }
+}
+.v3-codes {
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.v3-codes-title { margin: 4px 0 6px; font-size: 13.5px; font-weight: 700; color: var(--ink-60); }
+.v3-code-list { margin: 0; padding: 0; list-style: none; }
+.v3-code-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.v3-code-list li:last-child { border-bottom: 0; }
+.v3-code-name { flex: 1 1 170px; font-size: 14px; font-weight: 600; line-height: 1.45; }
+.v3-code-name i { font-style: normal; font-weight: 400; color: var(--ink-60); }
+.v3-join-actions { display: flex; flex-direction: column; gap: 10px; }
+
+/* ── 8. 手機浮動底欄（<720px；捲過 Hero 才由 JS 掛上來） ─────────────── */
+.v3-sticky { display: none; }
+@media (max-width: 719px) {
+  .v3-sticky {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: calc(56px + env(safe-area-inset-bottom, 0px));
+    padding: 6px 12px calc(6px + env(safe-area-inset-bottom, 0px));
+    background: rgb(var(--surface-000-rgb) / .97);
+    border-top: 1px solid var(--cream-300);
+    box-shadow: 0 -6px 18px rgb(26 26 26 / .10);
+  }
+  /* 底欄可能蓋到頁尾最後一行，頁尾在手機多留一段 */
+  .site-foot { padding-bottom: 84px; }
+}
+.v3-sticky-left,
+.v3-sticky-right {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: var(--radius-full);
+  font-size: 14.5px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.v3-sticky-left {
+  flex: 0 0 auto;
+  padding: 0 14px;
+  border: 1.5px solid var(--teal-200);
+  color: var(--color-link);
+}
+.v3-sticky-right {
+  flex: 1 1 auto;
+  padding: 0 16px;
+  background: var(--teal-500);
+  border: 2px solid var(--teal-700);
+  color: #fff;
+}
+/* gold 互斥：Hero 主 CTA 離開視口後才上 gold（JS 加 is-gold） */
+.v3-sticky-right.is-gold {
+  background: var(--gold-500);
+  border-color: var(--gold-600);
+  color: var(--ink-900);
+}
+
+/* ── 9. 課程頁 EnrollBox（hero 正下方） ───────────────────────────── */
+.v3-enroll { background: var(--cream-150); border-bottom: 1px solid var(--line); }
+.v3-enroll-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.v3-enroll-code { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.v3-enroll-label { font-size: 13px; font-weight: 700; color: var(--ink-60); }
+.v3-enroll .v3-copy-code { font-size: 18px; font-weight: 700; letter-spacing: .05em; }
+.v3-enroll-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-left: auto; }
+@media (max-width: 759px) {
+  .v3-enroll-actions { width: 100%; margin-left: 0; }
+  .v3-enroll-actions .v3-btn { flex: 1 1 100%; }
+}
+
+/* ── 10. 動效：hover 位移只在 no-preference 生效（C6：零自動動效） ──── */
+@media (prefers-reduced-motion: no-preference) {
+  .v3-btn,
+  .v3-chip,
+  .v3-card,
+  .v3-week-tile,
+  .v3-day-row,
+  .v3-fchip,
+  .v3-copy {
+    transition: transform .18s ease-out, box-shadow .18s ease-out, border-color .18s ease-out;
+  }
+  .v3-btn:hover,
+  .v3-chip:hover,
+  .v3-card:hover,
+  .v3-week-tile:hover,
+  .v3-day-row:hover { transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v3-btn, .v3-chip, .v3-card, .v3-week-tile, .v3-day-row, .v3-fchip, .v3-copy { transition: none; }
+  .v3-btn:hover, .v3-chip:hover, .v3-card:hover, .v3-week-tile:hover, .v3-day-row:hover { transform: none; }
+}
+
+/* ── 11. 列印：互動控制項全關、被收起的內容全展開 ───────────────────── */
+@media print {
+  .v3-sticky,
+  .v3-filters,
+  .v3-seg,
+  .v3-day-tabs,
+  .v3-copy-btn,
+  .v3-hero-actions { display: none !important; }
+  .v3-pane,
+  .v3-day-panel { display: block !important; }
+  .v3-day-title {
+    position: static; width: auto; height: auto;
+    margin: 0 0 4px; clip-path: none; white-space: normal;
+    font-size: 14px;
+  }
+  .v3-hero { background: none !important; }
+  .v3-card, .v3-codes, .v3-week-tile, .v3-day-row, .v3-copy, .v3-focus {
+    box-shadow: none !important;
+    border-color: var(--cream-300);
+  }
+  .site-foot { padding-bottom: 26px; }
+}

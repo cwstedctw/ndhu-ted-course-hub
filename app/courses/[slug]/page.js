@@ -7,6 +7,7 @@ import {
   getShowcase,
 } from '@/lib/content';
 import CourseHero from '@/components/course/CourseHero';
+import EnrollBox from '@/components/course/EnrollBox';
 import TalksWall from '@/components/course/TalksWall';
 import IntroBento from '@/components/course/IntroBento';
 import GradingDonut from '@/components/course/GradingDonut';
@@ -155,6 +156,15 @@ export default async function CoursePage({ params }) {
         indexEntry={indexEntry}
         sibling={sibling}
         enrollUrl={site?.enrollUrl}
+      />
+      {/* v3 W2 加入動線：hero 正下方的課號＋官方入口盒（設計計畫 §4.4） */}
+      <EnrollBox
+        code={section?.code}
+        enrollUrl={site?.enrollUrl}
+        waitlistUrl={site?.waitlistUrl}
+        isLecture={isLecture}
+        sibling={sibling}
+        closed={indexEntry?.status === 'closed'}
       />
       <SectionNav items={navItems} />
       {isLecture ? <TalksWall talks={talks} courseSlug={slug} /> : null}
