@@ -39,7 +39,11 @@
             "name": { "type": ["string", "null"] },
             "title": { "type": ["string", "null"] },
             "org": { "type": ["string", "null"] },
-            "photo": { "anyOf": [ { "type": "string", "pattern": "^/images/talks/" }, { "type": "null" } ] }
+            "photo": { "anyOf": [ { "type": "string", "pattern": "^/images/talks/" }, { "type": "null" } ] },
+            "bio": {
+              "description": "講者簡介（v3 新增，2026-07-25，optional／可 null）。缺／null＝海報牆不出簡介段",
+              "type": ["string", "null"]
+            }
           }
         },
         "abstract": { "type": ["string", "null"] },
@@ -49,6 +53,13 @@
         },
         "poster": { "anyOf": [ { "type": "string", "pattern": "^/images/talks/" }, { "type": "null" } ] },
         "worksheetUrl": { "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl" },
+        "week": {
+          "description": "對應課程第幾週（v3 新增，2026-07-25，optional／可 null）。缺／null＝尚未排定對應週次",
+          "anyOf": [
+            { "type": "integer", "minimum": 1, "maximum": 18 },
+            { "type": "null" }
+          ]
+        },
         "materials": {
           "type": "array",
           "items": {

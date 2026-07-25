@@ -15,6 +15,14 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # v3（2026-07-25）：每週一 06:00 台灣時間（UTC 21:00 週日）重建——
+  # 讓「confirmed 且日期已過 → 顯示已結束」的衍生狀態每週自動刷新，
+  # 免去整學期手動翻狀態。cron 只重建、不碰 Google Sheet（拉資料永遠
+  # 走本機 scripts/talks/pull_talks.py＋人工 commit，CI 無任何 Sheet 憑證）。
+  schedule:
+    - cron: "0 21 * * 0"
+  # 手動觸發（測試全鏈或臨時重建用）
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,7 +32,9 @@ jobs:
   # 註：workflow 模式（upload-pages-artifact + deploy-pages）在新開站上連三次
   #     秒回 deployment_failed（2026-07-03），改走十年老店的分支模式。
   deploy:
-    if: github.event_name == 'push'
+    # push main／週排程／手動觸發都部署；schedule 天生只跑預設分支，
+    # workflow_dispatch 加 ref 護欄避免從其他分支誤部署
+    if: github.event_name == 'push' || github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     permissions:
       contents: write

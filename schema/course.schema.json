@@ -14,7 +14,16 @@
       "items": {
         "type": "object",
         "required": ["id"],
-        "properties": { "id": { "type": "string", "pattern": "^[A-Z]{2}$" } }
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Z]{2}$" },
+          "schedule": {
+            "description": "結構化課表資料（v3 新增，2026-07-25，optional／可 null）。不動既有 time 字串（顯示層仍用 time）；schedule 供之後結構化排程／週曆功能用。缺／null＝尚未結構化。",
+            "anyOf": [
+              { "$ref": "#/$defs/sectionSchedule" },
+              { "type": "null" }
+            ]
+          }
+        }
       }
     },
     "intro": {
@@ -24,6 +33,24 @@
     "hub": { "$ref": "#/$defs/hub" }
   },
   "$defs": {
+    "sectionSchedule": {
+      "description": "day：1–7 整數，1＝週一……7＝週日（ISO 8601 曜日編號）；periods：[起,迄] 節次整數，對應既有 time 字串「第 A–B 節」",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["day", "periods", "startTime", "endTime", "room"],
+      "properties": {
+        "day": { "type": "integer", "minimum": 1, "maximum": 7 },
+        "periods": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "integer", "minimum": 1, "maximum": 20 }
+        },
+        "startTime": { "$ref": "_defs.schema.json#/$defs/hhmmTime" },
+        "endTime": { "$ref": "_defs.schema.json#/$defs/hhmmTime" },
+        "room": { "type": "string", "minLength": 1 }
+      }
+    },
     "hub": {
       "type": "object",
       "additionalProperties": false,

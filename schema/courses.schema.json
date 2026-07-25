@@ -29,7 +29,19 @@
           "status": { "enum": ["open", "conditional", "closed"] },
           "tagline": { "type": ["string", "null"] },
           "chips": { "type": "array", "maxItems": 3, "items": { "type": "string", "minLength": 1 } },
-          "order": { "type": "integer", "minimum": 1, "maximum": 8 }
+          "order": { "type": "integer", "minimum": 1, "maximum": 8 },
+          "cat": {
+            "description": "v3 首頁分類 chip 用（2026-07-25 新增，optional／可 null）。與既有 kind 語義無關——kind 分 regular/lecture-series 是資料結構層，cat 是首頁展示分類層",
+            "anyOf": [
+              { "enum": ["ai-code", "maker-iot", "expert-talk"] },
+              { "type": "null" }
+            ]
+          },
+          "filters": {
+            "description": "v3 首頁決策篩選 chips 用（2026-07-25 新增，optional，可省略／空陣列）",
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
         },
         "allOf": [
           {

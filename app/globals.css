@@ -1,7 +1,7 @@
 /* =========================================================================
    NDHU TED Course Hub — 全域樣式（洄瀾數位溪谷）
    來源：course-hub-prototype/styles.css 全套移植＋詳細設計書第五章 token 精修
-   結構：1. token（primitive→semantic→原型別名）　2. 基底與無障礙
+   結構：1. token（primitive→semantic→原型別名→§1d 場景層）　2. 基底與無障礙
          3. 版面共用　4. 首頁區塊　5. 課程頁區塊　6. 演講海報牆
          7. 頁首頁尾　8. 水波占位　11. 視覺升級（2026-07 場景化，含動畫總開關）
          9. reduced-motion　10. 列印（9、10 殿後才能蓋掉 11 的 hover 與裝飾）
@@ -15,6 +15,7 @@
   --teal-500: #0E7C7B;   /* 品牌基準（定案） */
   --teal-600: #0C6B6A;
   --teal-700: #0A5A59;
+  --teal-750: #0A5958;   /* 課程頁 hero 壓暗漸層上緣；跟 teal-700 只差一階，照原值保留不動 */
   --teal-800: #084C4B;   /* hero 場景漸層中段（2026-07 視覺升級） */
   --teal-900: #053B3A;   /* hero 場景漸層底（2026-07 視覺升級） */
   --gold-050: #F6E8C8;
@@ -25,6 +26,7 @@
   --gold-700: #7A5A1E;   /* cream 上的 gold 系文字唯一合法解 */
   --surface-000: #FFFDF8;
   --cream-100: #F4ECD8;  /* 品牌基準（定案）：全站頁面底色 */
+  --cream-150: #EFE7D2;  /* 首頁 hero 水彩圖載入前的紙色底（比 cream-100 深一階） */
   --cream-200: #E9DFC5;
   --cream-300: #D9CCA9;
   --ink-900: #1A1A1A;    /* 品牌基準（定案） */
@@ -36,6 +38,29 @@
   --red-050: #F6E4DF;
   --red-700: #A6392E;
   --gray-badge-bg: #E5E0D3;
+  --white-000: #FFFFFF;  /* 純白：深底上的文字與掃光亮條唯一來源 */
+
+  /* ── 1a-2. 場景 primitive（2026-07 v3 暗場舞台「stage」；搭 §1d 用。
+        亮場一律不引用這組，元件仍只吃 semantic 層。） ── */
+  --night-900: #0B4A47;              /* 暗場面板底 */
+  --night-950: #083A38;              /* 更深階（暗場 surface） */
+  --glow-500: #4FE3B0;               /* 暗場焦點光（連結／focus 環） */
+  --glow-soft: rgba(79, 227, 176, .14);   /* 焦點光的淡暈 */
+  --mist-300: #B8CFC9;               /* 暗場次要文字：v2 的 dim 在這底上對比不足，改用這支 */
+  --night-border: rgba(79, 227, 176, .22);/* 暗場描邊 */
+  --night-gold: var(--gold-200);     /* 暗場 gold 文字（gold-700 在深底看不見） */
+
+  /* ── 1a-3. 通道值 token（把上面色票拆成 R G B 三個數，給要疊 alpha 的用法：
+        rgb(var(--teal-500-rgb) / .10)。值與同名色票完全相同，只是換寫法；
+        ⚠️ url() 裡的內嵌 SVG 吃不到 var()，那三處在 §11 就地標註對應 token。） ── */
+  --white-000-rgb: 255 255 255;      /* = --white-000    #FFFFFF */
+  --surface-000-rgb: 255 253 248;    /* = --surface-000  #FFFDF8 */
+  --cream-100-rgb: 244 236 216;      /* = --cream-100    #F4ECD8 */
+  --ink-900-rgb: 26 26 26;           /* = --ink-900      #1A1A1A */
+  --teal-500-rgb: 14 124 123;        /* = --teal-500     #0E7C7B */
+  --teal-750-rgb: 10 89 88;          /* = --teal-750     #0A5958 */
+  --teal-deep-rgb: 7 64 63;          /* = --teal-deep    #07403F（原型別名層那支深 teal） */
+  --gold-500-rgb: 217 164 65;        /* = --gold-500     #D9A441 */
 
   /* ── 1b. Semantic token（設計書 §5-1.3；元件只吃這層） ── */
   --color-bg: var(--cream-100);
@@ -89,6 +114,46 @@
   --line: var(--cream-200);
   --radius: 14px;                /* 原型通用圓角 */
 }
+
+/* ── 1d. 場景層（scene token；2026-07 v3 暗場舞台）───────────────────────
+      掛法：<section data-scene="stage">…</section>，或整頁掛在 <html>／<body>。
+      只重映 semantic 與原型別名兩層，元件規則一行都不用改——換場景＝換 token。
+      ⚠️ v3 之前沒有任何頁面掛 data-scene，這整段目前不會命中任何元素，
+         加了不影響現有輸出；列印時一律被 §10 拉回亮版。 ────────────────── */
+[data-scene="stage"] {
+  /* semantic 層重映 */
+  --color-bg: var(--night-900);
+  --color-surface: var(--night-950);
+  --color-text: var(--cream-100);
+  --color-text-2nd: var(--mist-300);
+  --color-text-muted: var(--mist-300);  /* 暗場不再往下壓一階，壓了對比就不足 */
+  --color-link: var(--glow-500);
+  --color-focus-ring: var(--glow-500);
+  /* 原型別名層同步（既有版面規則吃的是這層） */
+  --paper: var(--night-950);
+  --ink: var(--cream-100);
+  --ink-60: var(--mist-300);
+  --ink-40: var(--mist-300);
+  --line: var(--night-border);
+  --gold-deep: var(--night-gold);
+
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+/* 暗場常用文字：這些元件本來吃亮場的灰階，統一改吃重映後的 semantic 次要色 */
+[data-scene="stage"] .note,
+[data-scene="stage"] .spk,
+[data-scene="stage"] .card .en,
+[data-scene="stage"] .card .meta,
+[data-scene="stage"] .card .tagline,
+[data-scene="stage"] .ann time,
+[data-scene="stage"] .ann p,
+[data-scene="stage"] .phase p,
+[data-scene="stage"] .rule,
+[data-scene="stage"] .faq p,
+[data-scene="stage"] .tg small,
+[data-scene="stage"] .plat small,
+[data-scene="stage"] .legend small { color: var(--color-text-muted); }
 
 /* ── 2. 基底與無障礙 ── */
 * { box-sizing: border-box; }
@@ -491,11 +556,14 @@ body {
   overflow: hidden;
   padding: 64px 0 150px;
   color: var(--ink-900);
-  background-color: #EFE7D2; /* 圖載入前的紙色底 */
+  background-color: var(--cream-150); /* 圖載入前的紙色底 */
   /* 整片 cream 淡紗把水彩壓淡（Ted 2026-07-03 二修：不要紙板，改字深＋背景更淡），
      由上而下 .66→.46→.20，溪谷在下緣仍看得見 */
   background-image:
-    linear-gradient(180deg, rgb(244 236 216 / .66) 0%, rgb(244 236 216 / .46) 55%, rgb(244 236 216 / .20) 100%),
+    linear-gradient(180deg,
+      rgb(var(--cream-100-rgb) / .66) 0%,
+      rgb(var(--cream-100-rgb) / .46) 55%,
+      rgb(var(--cream-100-rgb) / .20) 100%),
     var(--bg-hero, none);
   background-size: auto, cover;
   background-position: 0 0, center bottom;
@@ -524,7 +592,7 @@ body {
   position: relative;
   overflow: hidden;
   background-image:
-    linear-gradient(180deg, rgb(10 89 88 / .86), rgb(7 64 63 / .93)),
+    linear-gradient(180deg, rgb(var(--teal-750-rgb) / .86), rgb(var(--teal-deep-rgb) / .93)),
     var(--bg-flow, none);
   background-size: cover, cover;
   background-position: center, center;
@@ -536,6 +604,8 @@ body {
   left: 0; right: 0; bottom: -1px;
   height: 44px;
   pointer-events: none;
+  /* ⚠️ 內嵌 SVG 的 fill='%23F4ECD8' ＝ --cream-100；url() 吃不到 var()，只能寫死。
+        將來要拆暗版，改的是這一行（暗版對應色：--night-900）。 */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 90' preserveAspectRatio='none'%3E%3Cpath d='M0 50C150 20 300 20 450 50C600 80 750 80 900 50L900 90L0 90Z' fill='%23F4ECD8'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
   background-position: 0 bottom;
@@ -547,7 +617,7 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(440px 220px at 90% -12%, rgb(217 164 65 / .16), transparent 60%);
+  background: radial-gradient(440px 220px at 90% -12%, rgb(var(--gold-500-rgb) / .16), transparent 60%);
 }
 
 /* ── 11-4 標題舞台感：hero 標題上 serif；全站 section h2 掛 gold 螢光筆底線 ── */
@@ -555,7 +625,7 @@ body {
 .course-hero h1 { font-family: var(--font-display); }
 section > .container > h2 {
   display: inline-block; /* 讓螢光筆只鋪到文字寬 */
-  background: linear-gradient(transparent 62%, rgb(217 164 65 / .32) 0);
+  background: linear-gradient(transparent 62%, rgb(var(--gold-500-rgb) / .32) 0);
 }
 
 /* ── 11-3 票券卡（首頁與 /courses/ 的 .cards 卡片牆共用；bento 卡不在 .cards 內、不受影響） ── */
@@ -607,14 +677,14 @@ section > .container > h2 {
   position: absolute;
   top: -7px; right: -18px;
   width: 58px; height: 15px;
-  background: rgb(217 164 65 / .58);
+  background: rgb(var(--gold-500-rgb) / .58);
   transform: rotate(45deg);
 }
 /* done：低飽和印刷感＋紙紋底，不整卡灰掉 */
 .talk.done {
   filter: sepia(.24) contrast(.93) saturate(.8);
   background:
-    repeating-linear-gradient(0deg, rgb(26 26 26 / .028) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg, rgb(var(--ink-900-rgb) / .028) 0 1px, transparent 1px 3px),
     var(--paper);
 }
 /* tba：ripple 之上疊一層等高線（細線、低透明；慢漂動畫在 §11-10） */
@@ -624,8 +694,8 @@ section > .container > h2 {
   inset: 0;
   pointer-events: none;
   background:
-    repeating-linear-gradient(112deg, rgb(14 124 123 / .10) 0 1px, transparent 1px 10px),
-    repeating-linear-gradient(112deg, rgb(14 124 123 / .05) 0 1px, transparent 1px 23px);
+    repeating-linear-gradient(112deg, rgb(var(--teal-500-rgb) / .10) 0 1px, transparent 1px 10px),
+    repeating-linear-gradient(112deg, rgb(var(--teal-500-rgb) / .05) 0 1px, transparent 1px 23px);
 }
 /* 全場皆 tba 的緊湊牆（TalksWall .wall-tba-all）：佔位卡改矮卡多欄、一屏 12 格；
    任一場公布即回滿版海報比例。傾斜與 hover 沿用 .talk 既有規則 */
@@ -648,6 +718,8 @@ section > .container > h2 {
   width: 8px; height: 14px;
   transform: translateX(-50%);
   pointer-events: none;
+  /* ⚠️ 內嵌 SVG 的 stroke='%230E7C7B' ＝ --teal-500；url() 吃不到 var()，只能寫死。
+        將來要拆暗版，改的是這一行（暗版對應色：--glow-500）。 */
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='24'%3E%3Cpath d='M4 0Q8 6 4 12T4 24' fill='none' stroke='%230E7C7B' stroke-width='1.5' stroke-linecap='round' stroke-dasharray='3 4' opacity='.55'/%3E%3C/svg%3E") repeat-y center top / 8px 24px;
 }
 @media (min-width: 760px) {
@@ -655,6 +727,7 @@ section > .container > h2 {
     top: 50%; left: -13px;
     width: 14px; height: 8px;
     transform: translateY(-50%);
+    /* ⚠️ 同上：內嵌 SVG 的 stroke='%230E7C7B' ＝ --teal-500（暗版對應 --glow-500） */
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='8'%3E%3Cpath d='M0 4Q6 0 12 4T24 4' fill='none' stroke='%230E7C7B' stroke-width='1.5' stroke-linecap='round' stroke-dasharray='3 4' opacity='.55'/%3E%3C/svg%3E") repeat-x left center / 24px 8px;
   }
 }
@@ -677,7 +750,7 @@ section > .container > h2 {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(105deg, transparent 38%, rgb(255 255 255 / .38) 50%, transparent 62%);
+  background: linear-gradient(105deg, transparent 38%, rgb(var(--white-000-rgb) / .38) 50%, transparent 62%);
   transform: translateX(-150%);
 }
 .score-btn:hover::before,
@@ -703,7 +776,7 @@ section > .container > h2 {
   color: var(--gold-700); /* on gold-tint ≈ 5.2:1，AA */
   border: 1.5px solid var(--gold-600);
   border-radius: var(--radius-xs);
-  background: rgb(255 253 248 / .55);
+  background: rgb(var(--surface-000-rgb) / .55);
   transform: rotate(3deg);
 }
 
@@ -778,4 +851,29 @@ section > .container > h2 {
   .phase:nth-child(n + 2)::before,
   .weeks .ms::before,
   .score-btn::before, .score-cta::before { display: none !important; }
+
+  /* §1d 場景層：列印一律強制回亮版（暗底吃墨、glow 在紙上根本看不見）。
+     token 一併復原成亮場值，所以 §1d 底下那些吃 semantic 色的元件也自動轉墨色。 */
+  [data-scene] {
+    --color-bg: var(--cream-100);
+    --color-surface: var(--surface-000);
+    --color-text: var(--ink-900);
+    --color-text-2nd: var(--ink-700);
+    --color-text-muted: var(--ink-500);
+    --color-link: var(--teal-700);
+    --color-focus-ring: var(--teal-700);
+    --paper: var(--surface-000);
+    --ink: var(--ink-900);
+    --ink-60: var(--ink-700);
+    --ink-40: var(--ink-500);
+    --line: var(--cream-200);
+    --gold-deep: var(--gold-700);
+    /* 去 glow：暗場的光暈與描邊在紙上一律不印 */
+    --glow-soft: transparent;
+    --night-border: var(--cream-300);
+    background: var(--cream-100) !important;
+    color: var(--ink-900) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
 }

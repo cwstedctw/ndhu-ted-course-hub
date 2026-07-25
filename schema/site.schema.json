@@ -39,6 +39,10 @@
       "description": "學校選課入口（教務處「選課常用系統」總覽頁）。null＝未定，課程頁不出「怎麼選課」chip",
       "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl"
     },
+    "waitlistUrl": {
+      "description": "演講課候補報名頁入口（v3 新增，2026-07-25）。null／缺＝未定，不出「候補報名」入口",
+      "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl"
+    },
     "about": {
       "type": "object",
       "additionalProperties": false,

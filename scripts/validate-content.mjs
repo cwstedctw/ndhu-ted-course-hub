@@ -23,11 +23,16 @@
  *           enum 切換、依設計書慣例表豁免）
  *       #16 announcements validUntil 不得早於 date
  *       #18 intro.grading 為真值陣列時，pct 總和必須＝100（pending 物件跳過不驗）
+ *       #20 外連白名單（v3 新增，2026-07-25）——content 內所有 http(s) 網址：一律 https、
+ *           網域必須在腳本檔頭 ALLOWED_URL_HOSTS 白名單內；null／缺（欄位型別允許時）跳過
  *
  *   警告（印出但不擋建置）：
  *       #15 引用圖檔（/images/…）在 public/ 找不到——bootstrap 期先警告，圖檔管線
  *           （M4）就位後應提升為 fail
  *       #19 confirmed／done 場次 time／venue 仍為 null（設計書明定警告不 fail）
+ *       #21 sections[].schedule↔time 字串一致性（v3 新增，2026-07-25）——schedule 存在時，
+ *           day／節次／鐘點需與 time 字串（如「週一 第 8–10 節・13:10–16:00」）對得上，
+ *           對不上只警告不擋（time 字串仍是顯示層真值）
  *       其他：UTF-8 BOM、未涵蓋的 content JSON、未被 courses.json 引用的課程資料夾
  *
  * 用法：node scripts/validate-content.mjs [repo根目錄]
@@ -54,6 +59,26 @@ const SCHEMA_DIR = existsSync(path.join(ROOT, "schema"))
 const PUBLIC_DIR = path.join(ROOT, "public");
 const SCHEMA_ID_BASE = "https://hub.ndhu-ted/schema/";
 const MAX_SCHEMA_ERRORS_PER_FILE = 20;
+
+/**
+ * #20 外連白名單（2026-07-25 新增）。
+ * content/ 內任何 http(s) 網址的 hostname 都要出現在這裡，否則 FAIL。
+ * 新增一個外部網域（新平台、新的學生作品連結……）時，先把它的 hostname 加進這個 Set，
+ * 再把網址寫進 content/——順序反過來會被本腳本擋下。
+ * 目前收錄＝2026-07-25 讀 content/ 現行內容實際用到的網域（見各行註解）。
+ */
+const ALLOWED_URL_HOSTS = new Set([
+  "cwstedctw.github.io", // hub 本體＋各課程 hubUrl（GitHub Pages）
+  "script.google.com", // 成績查詢系統 V2（Apps Script Web App）
+  "aa.ndhu.edu.tw", // 教務處「選課常用系統」入口（site.json enrollUrl）
+  "github.com", // 學生作品連結：WinControl-MCP-Driver
+  "edgysans1447.github.io", // 學生作品：mirage-prism（FF14 幻化分享）
+  "nails-in-dorm.infinityfreeapp.com", // 學生作品：美甲電商網站
+  "stock-portfolio-tracker-gold.vercel.app", // 學生作品：台股即時儀表板
+  "ndhu-claw-machine.netlify.app", // 學生作品：虛擬娃娃機
+  "ndhu-companion-hub.netlify.app", // 學生作品：ESP32 Ultimate Companion
+  "ndhu-ai-talks.netlify.app", // 演講課候補報名頁（site.json waitlistUrl，v3 新增）
+]);
 
 const failures = []; // {file, rule, msg}
 const warnings = [];
@@ -441,9 +466,89 @@ function checkImageRefs(file, node, jsonPath) {
   }
 }
 
+/* ── 規則 #20（FAIL）：外連白名單（https＋網域白名單） ───────── */
+
+function checkExternalLinks(file, node, jsonPath) {
+  if (Array.isArray(node)) {
+    node.forEach((v, i) => checkExternalLinks(file, v, `${jsonPath}[${i}]`));
+    return;
+  }
+  if (!node || typeof node !== "object") return;
+  for (const [k, v] of Object.entries(node)) {
+    if (typeof v !== "string") {
+      checkExternalLinks(file, v, `${jsonPath}/${k}`);
+      continue;
+    }
+    if (!/^https?:\/\//i.test(v)) continue; // 非網址字串（或非 http/https 開頭）不驗
+    if (!v.startsWith("https://")) {
+      fail(file, "#20 外連必須 https", `${jsonPath}/${k}「${v}」是 http，不是 https——外部連結一律要 https`);
+      continue;
+    }
+    let host;
+    try {
+      host = new URL(v).hostname;
+    } catch {
+      fail(file, "#20 外連網址格式", `${jsonPath}/${k}「${v}」不是合法網址（URL 解析失敗）`);
+      continue;
+    }
+    if (!ALLOWED_URL_HOSTS.has(host)) {
+      fail(file, "#20 外連網域白名單", `${jsonPath}/${k}「${v}」網域「${host}」不在白名單——確認網域正確後把它加進 scripts/validate-content.mjs 檔頭的 ALLOWED_URL_HOSTS`);
+    }
+  }
+}
+
 for (const { file, data } of allParsed) {
   checkPendingShapes(file, data, "");
   checkImageRefs(file, data, "");
+  checkExternalLinks(file, data, "");
+}
+
+/* ── 規則 #21（WARN）：sections[].schedule ↔ time 字串一致性 ─── */
+
+const WEEKDAY_CHAR_TO_NUM = { "一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "日": 7 };
+// 例：「週一 第 8–10 節・13:10–16:00」（節次／鐘點段用全形・分隔，"・"後段可省）
+const TIME_STRING_RE = /^週([一二三四五六日])\s*第\s*(\d+)\s*[–-]\s*(\d+)\s*節(?:・(\d{2}:\d{2})\s*[–-]\s*(\d{2}:\d{2}))?/;
+
+function checkScheduleTimeConsistency(file, sections) {
+  if (!Array.isArray(sections)) return;
+  sections.forEach((s, i) => {
+    if (!s || typeof s !== "object") return;
+    const sched = s.schedule;
+    if (!sched || typeof sched !== "object") return; // 缺／null＝尚未結構化，跳過
+    const label = `sections[${i}]（${s.id ?? "?"}）`;
+    if (typeof s.time !== "string") {
+      warn(file, "#21 schedule↔time 一致性", `${label} 有 schedule 但 time 缺／非字串，無法比對`);
+      return;
+    }
+    const m = s.time.match(TIME_STRING_RE);
+    if (!m) {
+      warn(file, "#21 schedule↔time 一致性", `${label} time「${s.time}」剖析不出「週X 第A–B節」格式，無法比對 schedule`);
+      return;
+    }
+    const [, wd, p1, p2, st, et] = m;
+    const wantDay = WEEKDAY_CHAR_TO_NUM[wd];
+    if (typeof sched.day === "number" && wantDay !== sched.day) {
+      warn(file, "#21 schedule↔time 一致性", `${label} time 字串曜日「週${wd}」（day 應為 ${wantDay}）與 schedule.day=${sched.day} 不一致`);
+    }
+    if (Array.isArray(sched.periods) && sched.periods.length === 2) {
+      const [sp1, sp2] = sched.periods;
+      if (Number(p1) !== sp1 || Number(p2) !== sp2) {
+        warn(file, "#21 schedule↔time 一致性", `${label} time 字串節次「第${p1}–${p2}節」與 schedule.periods=[${sp1},${sp2}] 不一致`);
+      }
+    }
+    if (st && et) {
+      if (typeof sched.startTime === "string" && sched.startTime !== st) {
+        warn(file, "#21 schedule↔time 一致性", `${label} time 字串起始鐘點「${st}」與 schedule.startTime「${sched.startTime}」不一致`);
+      }
+      if (typeof sched.endTime === "string" && sched.endTime !== et) {
+        warn(file, "#21 schedule↔time 一致性", `${label} time 字串結束鐘點「${et}」與 schedule.endTime「${sched.endTime}」不一致`);
+      }
+    }
+  });
+}
+
+for (const [, { data, file }] of courseDataByDir) {
+  checkScheduleTimeConsistency(file, data.sections);
 }
 
 /* ── 涵蓋檢查：content 下不在驗證清單內的 JSON ────────────────── */
