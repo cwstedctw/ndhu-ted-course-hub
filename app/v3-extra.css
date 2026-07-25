@@ -1,0 +1,177 @@
+/* =========================================================================
+   v3-extra.css — W4-G「課程搜尋＋議程索引頁」的全部新樣式
+   在 app/layout.js 於 v3-talks.css 之後 import（本軌不能動 layout.js，
+   import 一行交給洄瀾接線——見施工回報）；**只新增、不改 globals.css／
+   v3-home.css／v3-talks.css**，避免與其他施工軌撞車（設計計畫慣例）。
+
+   規矩（設計計畫 C6「炫的預算」／§8 補強）：
+     ・零自動動效——沒有 shimmer、沒有跑馬燈、沒有 keyframes；
+       唯一的動效是連結 hover 背景色淡入，且只在 prefers-reduced-motion:
+       no-preference 生效。
+     ・互動 44px 起（清除搜尋鈕、議程每一列）。
+     ・對比寫死 WCAG AA 4.5:1：本檔全部文字色沿用 globals.css 既有 semantic
+       token（teal-700 on teal-050／cream-100、ink-60／ink-700 on 白底），
+       這些配對已在別處（tdp／v3-talk）驗過，這裡不再另組新色票。
+
+   顏色一律吃 globals.css 的 token（primitive／semantic／原型別名／場景層），
+   這支檔案不新增任何色票 hex。
+
+   目錄：1 課程搜尋框（首頁 CourseScan）　2 議程索引頁（/talks/）
+   ========================================================================= */
+
+/* ── 1. 課程搜尋框：CourseScan 頂部、篩選 chips 正上方 ─────────────────
+      無 JS 時整塊由 CourseScan.js 自帶的 <noscript> 樣式隱藏（同檔案內，
+      不靠這裡）——這裡只管「有 JS 時」長什麼樣子。 */
+.v3-search {
+  position: relative;
+  max-width: 360px;
+  margin: 0 0 14px;
+}
+.v3-search-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 40px 0 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14.5px;
+  font-family: inherit;
+}
+.v3-search-input::placeholder { color: var(--ink-40, var(--color-text-muted)); }
+.v3-search-input:hover { border-color: var(--teal-200); }
+.v3-search-input:focus { border-color: var(--teal-500); }
+/* 瀏覽器原生的 search input 內建 clear 圖示：外觀交給我們自己那顆按鈕管理，
+   避免兩顆清除鈕疊在一起（不同瀏覽器支援度不一，統一藏原生那顆較好預期） */
+.v3-search-input::-webkit-search-cancel-button { display: none; }
+.v3-search-clear {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-60, var(--color-text-2nd));
+  font-size: 14px;
+  cursor: pointer;
+}
+.v3-search-clear:hover { background: var(--teal-050); color: var(--teal-700); }
+
+.v3-search-empty {
+  margin: 4px 0 16px;
+  font-size: 14px;
+  color: var(--ink-60, var(--color-text-2nd));
+}
+
+/* ── 2. 議程索引頁 /courses/11501-ai-future/talks/ ──────────────────────
+      12 場直式時間軸清單：日期軌＋「講題・講者」一行＋狀態徽章，整列可點。
+      資料語彙沿用場刊卡三態（v3-talks.css 的 .v3-talk[data-state]），
+      這裡是獨立命名的緊湊版，不共用、不覆寫既有規則。 */
+.v3-agenda { max-width: 760px; margin: 0 auto; padding: 28px 20px 44px; }
+.v3-agenda-back { font-size: 14px; color: var(--color-link); }
+.v3-agenda-course { font-size: 13px; color: var(--ink-40, var(--color-text-muted)); margin: 10px 0 0; }
+.v3-agenda-head { margin: 6px 0 22px; }
+.v3-agenda-head h1 { font-size: clamp(22px, 4vw, 30px); line-height: 1.4; margin: 8px 0 12px; }
+.v3-agenda-stat { font-size: 14.5px; color: var(--ink-60, var(--color-text-2nd)); margin: 0 0 16px; }
+.v3-agenda-stat b { font-size: 18px; color: var(--teal-700); }
+
+.v3-agenda-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+.v3-agenda-row { border-bottom: 1px solid var(--line); }
+.v3-agenda-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  padding: 13px 8px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+.v3-agenda-link:hover,
+.v3-agenda-link:focus-visible { background: var(--teal-050); }
+
+.v3-agenda-when {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 74px;
+  font-variant-numeric: tabular-nums;
+}
+.v3-agenda-no {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--teal-700);
+}
+.v3-agenda-date { font-size: 14.5px; font-weight: 700; }
+.v3-agenda-date i { font-style: normal; font-size: 12px; font-weight: 400; color: var(--ink-40, var(--color-text-muted)); }
+.v3-agenda-date.is-pending { font-size: 13px; font-weight: 600; color: var(--ink-40, var(--color-text-muted)); }
+
+.v3-agenda-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.v3-agenda-badge {
+  flex: 0 0 auto;
+  padding: 3px 11px;
+  border-radius: var(--radius-full);
+  background: var(--teal-050);
+  color: var(--teal-700);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* 三態：next 提亮、ended/done 退色、tba 中性——語彙同 v3-talks.css，命名各自獨立 */
+.v3-agenda-row[data-state="next"] .v3-agenda-link { background: rgb(var(--teal-500-rgb) / .06); }
+.v3-agenda-row[data-state="next"] .v3-agenda-badge { background: var(--teal-500); color: var(--white-000, #fff); }
+.v3-agenda-row[data-state="ended"] .v3-agenda-badge,
+.v3-agenda-row[data-state="done"] .v3-agenda-badge { background: var(--gray-badge-bg); color: var(--ink-700, var(--color-text-2nd)); }
+.v3-agenda-row[data-state="ended"] .v3-agenda-title,
+.v3-agenda-row[data-state="done"] .v3-agenda-title { color: var(--ink-60, var(--color-text-2nd)); }
+.v3-agenda-row[data-state="tba"] .v3-agenda-badge { background: var(--cream-100); color: var(--ink-60, var(--color-text-2nd)); }
+.v3-agenda-row[data-state="tba"] .v3-agenda-title { color: var(--ink-60, var(--color-text-2nd)); font-weight: 500; }
+
+.v3-agenda-foot { margin-top: 26px; font-size: 14.5px; }
+.v3-agenda-foot a { color: var(--color-link); }
+
+/* C6：唯一動效是 hover 背景色淡入，且只在 no-preference 生效 */
+@media (prefers-reduced-motion: no-preference) {
+  .v3-agenda-link { transition: background-color .15s ease-out; }
+}
+@media (max-width: 520px) {
+  .v3-agenda-when { min-width: 58px; }
+  .v3-agenda-badge { font-size: 11px; padding: 2px 8px; }
+}
+@media print {
+  .v3-agenda-back, .v3-agenda-head a, .v3-agenda-foot { display: none !important; }
+}
+
+/* ── C6 動效預算執法（計畫 v1.1：每頁同時可見自動動效 ≤1）──
+   課程頁保留 course-hero 溪水（wave-drift-c）當唯一常駐動效；
+   其餘 v1 遺留的常駐動畫一律關閉（v3 W4 收斂，2026-07-26）：
+   ・待補占位的水波漂移（.ripple drift——課程頁 platforms/showcase 等占位仍在用）
+   ・週次表里程碑呼吸（ms-breathe）
+   ・舊海報牆 tba 等高線漂移（contour-drift，元件已退役、保險起見一併關） */
+.ripple { animation: none; }
+.weeks .ms::before { animation: none; }
+.talk.tba::after { animation: none; }

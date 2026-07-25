@@ -4,7 +4,8 @@
    （v1 樣式原封留給課程頁用，也避免與其他施工軌撞車）。
 
    規矩（設計計畫 C6「炫的預算」）：
-     ・本段零自動動效——沒有倒數、沒有跑馬燈、沒有 shimmer、沒有 keyframes
+     ・本段自動動效 ≤1（C6 硬上限）——W4-E 起，唯一一個是焦點卡「第 N 場」徽章的
+       呼吸光暈（§3c）；星空／溪谷星點背景全部純靜態、沒有倒數、沒有跑馬燈
      ・hover 只做「升起 4px＋邊線亮」，而且只掛在 prefers-reduced-motion: no-preference
      ・全部互動 44px 起；focus 環吃 globals 的 :focus-visible（不另外關掉）
      ・gold＝離站加入 CTA 專用，每個視口至多一顆實心 gold；CopyCode 一律中性 teal（C9）
@@ -173,6 +174,76 @@
   background-position: 0 0, center bottom;
   background-repeat: no-repeat, no-repeat;
 }
+@media (max-width: 719px) {
+  /* 手機 Hero 視覺延續（設計計畫 §8 條 8）：底部疊一抹極淡的星點，
+     呼應區塊 4 的暗場焦點卡（手機把桌機右欄那張卡移到那裡）——
+     純 CSS 背景圖層＋固定座標、零動畫，不佔版面高度、不影響文字對比
+     （疊在既有兩層背景「之後」＝視覺上在最底層，蓋不到上面的 cream 淡紗）。 */
+  .v3-hero {
+    background-image:
+      linear-gradient(180deg,
+        rgb(var(--cream-100-rgb) / .74) 0%,
+        rgb(var(--cream-100-rgb) / .54) 55%,
+        rgb(var(--cream-100-rgb) / .28) 100%),
+      var(--bg-hero, none),
+      radial-gradient(1px   1px   at 10% 97%, var(--teal-200), transparent 60%),
+      radial-gradient(1px   1px   at 26% 93%, var(--teal-200), transparent 60%),
+      radial-gradient(1.3px 1.3px at 44% 98%, var(--teal-200), transparent 60%),
+      radial-gradient(1px   1px   at 62% 94%, var(--teal-200), transparent 60%),
+      radial-gradient(1.2px 1.2px at 79% 97%, var(--teal-200), transparent 60%),
+      radial-gradient(1px   1px   at 94% 92%, var(--teal-200), transparent 60%);
+    background-size: auto, cover, auto, auto, auto, auto, auto, auto;
+    background-position: 0 0, center bottom, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+    background-repeat:
+      no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  }
+}
+/* 暗版兩檔位（globals.css §12-1 系統暗／§12-4 手動切暗）各自對 .v3-hero 掛了一條
+   特異度更高的 background-image 整批覆寫（把 cream 淡紗加濃到 .90/.80/.62），
+   會蓋掉上面剛加的星點——這裡比照 globals.css 自己的作法「兩個檔位各補一份」
+   （它們的規矩：CSS 沒有 mixin，選擇器清單也跨不了 @media），
+   特異度打平＋來源順序在後＝這裡贏，星點在暗版也還在；
+   星色改用 mist-300／glow-500，跟 §3 暗場焦點卡同一組語彙（不是硬套亮版 teal-200）。 */
+@media (max-width: 719px) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .v3-hero {
+    background-image:
+      linear-gradient(180deg,
+        rgb(var(--cream-100-rgb) / .90) 0%,
+        rgb(var(--cream-100-rgb) / .80) 55%,
+        rgb(var(--cream-100-rgb) / .62) 100%),
+      var(--bg-hero, none),
+      radial-gradient(1px   1px   at 10% 97%, var(--mist-300), transparent 60%),
+      radial-gradient(1px   1px   at 26% 93%, var(--mist-300), transparent 60%),
+      radial-gradient(1.3px 1.3px at 44% 98%, var(--glow-500), transparent 60%),
+      radial-gradient(1px   1px   at 62% 94%, var(--mist-300), transparent 60%),
+      radial-gradient(1.2px 1.2px at 79% 97%, var(--glow-500), transparent 60%),
+      radial-gradient(1px   1px   at 94% 92%, var(--mist-300), transparent 60%);
+    background-size: auto, cover, auto, auto, auto, auto, auto, auto;
+    background-position: 0 0, center bottom, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+    background-repeat:
+      no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  }
+}
+@media (max-width: 719px) {
+  :root[data-theme="dark"] .v3-hero {
+    background-image:
+      linear-gradient(180deg,
+        rgb(var(--cream-100-rgb) / .90) 0%,
+        rgb(var(--cream-100-rgb) / .80) 55%,
+        rgb(var(--cream-100-rgb) / .62) 100%),
+      var(--bg-hero, none),
+      radial-gradient(1px   1px   at 10% 97%, var(--mist-300), transparent 60%),
+      radial-gradient(1px   1px   at 26% 93%, var(--mist-300), transparent 60%),
+      radial-gradient(1.3px 1.3px at 44% 98%, var(--glow-500), transparent 60%),
+      radial-gradient(1px   1px   at 62% 94%, var(--mist-300), transparent 60%),
+      radial-gradient(1.2px 1.2px at 79% 97%, var(--glow-500), transparent 60%),
+      radial-gradient(1px   1px   at 94% 92%, var(--mist-300), transparent 60%);
+    background-size: auto, cover, auto, auto, auto, auto, auto, auto;
+    background-position: 0 0, center bottom, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+    background-repeat:
+      no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  }
+}
 .v3-hero-grid { display: grid; gap: 20px; }
 .v3-hero h1 {
   margin: 0 0 16px;
@@ -217,22 +288,53 @@
 }
 
 /* ── 3. 「下一場演講」焦點卡（外層 data-scene="stage"，底色與文字色由場景層重映） ──
-      C6 的 Glass 白名單雖含焦點卡，這裡刻意收成「實底＋一層靜態光暈」：
-      手機半透明本來就要退實色，兩套都做等於兩套都要測，直接用實底最穩。 */
+      W4-E 打磨：靜態星空＋細光纖邊框＋gold 膠帶角語彙延續（同 v3-talks.css §8 confirmed
+      卡）；「這場的詳情 →」hover 補一圈柔光（見下面 .v3-focus-link:hover）。
+      桌機（≥900px）升級 Glass 白名單＝backdrop-filter blur(12px)（見 §3b）；
+      手機／不支援瀏覽器一律吃這裡的預設實底——舊顧慮「手機半透明本來就要退實色，
+      兩套都做等於兩套都要測」改成「只在桌機疊一次 Glass、其餘全走這個預設」，
+      不是每種寬度都測兩套。 */
 .v3-focus {
   position: relative;
   overflow: hidden;
   padding: 18px 18px 14px;
   border: 1px solid var(--night-border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 10px 30px rgb(5 59 58 / .22);
+  box-shadow:
+    0 10px 30px rgb(5 59 58 / .22),   /* 既有：卡片落陰影 */
+    0 0 18px 0 var(--glow-soft);      /* 細光纖邊框：描邊本身仍是上面那條 1px night-border，
+                                          這裡疊一層外散光暈，讓細邊看起來像會發光的光纖 */
 }
 .v3-focus::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(340px 160px at 88% -12%, var(--glow-soft), transparent 70%);
+  background:
+    radial-gradient(340px 160px at 88% -12%, var(--glow-soft), transparent 70%), /* 既有：焦點光暈 */
+    /* 靜態星空：純 CSS 小圓點模擬星點，不用 canvas／不用 rAF——10 顆固定座標、零動畫，
+       這一層跟下面 §3c 的徽章呼吸是兩件事：星星本身完全不動。 */
+    radial-gradient(1.4px 1.4px at 6%  14%, var(--mist-300), transparent 60%),
+    radial-gradient(1px   1px   at 18% 55%, var(--mist-300), transparent 60%),
+    radial-gradient(1.6px 1.6px at 9%  82%, var(--glow-500), transparent 60%),
+    radial-gradient(1px   1px   at 32% 8%,  var(--mist-300), transparent 60%),
+    radial-gradient(1.2px 1.2px at 41% 68%, var(--mist-300), transparent 60%),
+    radial-gradient(1.3px 1.3px at 55% 24%, var(--glow-500), transparent 60%),
+    radial-gradient(1px   1px   at 63% 88%, var(--mist-300), transparent 60%),
+    radial-gradient(1px   1px   at 74% 40%, var(--mist-300), transparent 60%),
+    radial-gradient(1.4px 1.4px at 86% 70%, var(--glow-500), transparent 60%),
+    radial-gradient(1px   1px   at 94% 18%, var(--mist-300), transparent 60%);
+}
+/* gold 膠帶角語彙延續：跟 v3-talks.css 的 confirmed 卡同一招（角落 45° 半透明 gold 色塊），
+   純裝飾、不是 CTA，不占用「gold 每視口 ≤1 顆」那條規則管的實心 CTA 名額。 */
+.v3-focus::after {
+  content: '';
+  position: absolute;
+  top: -7px; right: -18px;
+  width: 58px; height: 15px;
+  pointer-events: none;
+  background: rgb(var(--gold-500-rgb) / .58);
+  transform: rotate(45deg);
 }
 .v3-focus > * { position: relative; }
 .v3-focus-kicker {
@@ -286,7 +388,43 @@
   font-weight: 700;
   text-decoration: none;
 }
-.v3-focus-link:hover { text-decoration: underline; }
+/* hover 亮起：底線＋一圈柔光暈，呼應「摸到光纖會發光」的語彙；
+   text-shadow 過渡收在 §10 統一管 reduced-motion（沒有位移，純色彩變化）。 */
+.v3-focus-link:hover {
+  text-decoration: underline;
+  text-shadow: 0 0 12px var(--glow-soft);
+}
+
+/* ── 3b. Glass 白名單（C6）：桌機（≥900px）升級毛玻璃，其餘一律吃上面的實底 ──
+      @supports 偵測 backdrop-filter；偵測不到＝維持本節預設的實底——那就是規格要的
+      「降級半透明實底」退回值，不必為了退回再疊一組獨立的色。
+      color-mix() 只是從既有 token（--night-950）推導出半透明版本，
+      沒有新增任何色票 hex；74–85% 深色比例已核過對比（cream-100／mist-300／
+      glow-500 三種卡內文字色，在最壞情境「背後透出 Hero 亮 cream」下都仍 ≥4.5:1）。 */
+@media (min-width: 900px) {
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .v3-focus {
+      background: color-mix(in srgb, var(--night-950) 85%, transparent);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+  }
+}
+
+/* ── 3c. 全頁唯一的自動動效（C6 硬上限 ≤1）：徽章呼吸光暈 ──────────────
+      規格給的兩選一（倒數徽章呼吸／單顆星 twinkle）這裡選前者：
+      「第 N 場」徽章隨著 3.2s 週期輕輕吸一口氣，星空（§3 上面那 10 顆點）
+      維持純靜態，全頁不會有第二個 animation。 */
+@media (prefers-reduced-motion: no-preference) {
+  .v3-focus-no { animation: v3-focus-no-pulse 3.2s ease-in-out infinite; }
+}
+@keyframes v3-focus-no-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; border-color: var(--night-border); }
+  50%      { box-shadow: 0 0 10px 2px var(--glow-soft); border-color: var(--glow-500); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v3-focus-no { animation: none; }
+}
 
 /* 同一張卡兩個落點：桌機在 Hero 右欄、手機在區塊 4——任一寬度只有一張進無障礙樹 */
 .v3-focus-hero { display: none; }
@@ -744,6 +882,16 @@
   .v3-card, .v3-codes, .v3-week-tile, .v3-day-row, .v3-copy, .v3-focus {
     box-shadow: none !important;
     border-color: var(--cream-300);
+  }
+  /* 星空／gold 膠帶角是裝飾，不進紙本；Glass 與呼吸光暈同理關掉
+     （[data-scene] 印刷已強制回亮版底色，這裡只補這支檔案自己加的三個效果）。 */
+  .v3-focus::before,
+  .v3-focus::after { display: none !important; }
+  .v3-focus,
+  .v3-focus-no {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    animation: none !important;
   }
   .site-foot { padding-bottom: 26px; }
 }

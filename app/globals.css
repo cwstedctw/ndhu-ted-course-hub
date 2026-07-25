@@ -49,6 +49,16 @@
   --mist-300: #B8CFC9;               /* 暗場次要文字：v2 的 dim 在這底上對比不足，改用這支 */
   --night-border: rgba(79, 227, 176, .22);/* 暗場描邊 */
   --night-gold: var(--gold-200);     /* 暗場 gold 文字（gold-700 在深底看不見） */
+  /* 2026-07 W4-D 追加：亮場那三支「淺色底」在暗場的對應底色。
+     全部取實色（不用半透明）——半透明疊在不同父層上算出來的對比不一樣，
+     對比表要能寫死數字就不能讓底色浮動。 */
+  --night-tint: #0E4F4A;             /* 暗場 chip／膠囊底（對應 --teal-050） */
+  --night-mute: #1C4B48;             /* 暗場中性徽章底（對應 --gray-badge-bg） */
+  --night-gold-tint: #3D3316;        /* 暗場 gold chip 底（對應 --gold-050） */
+  /* teal-050 的**定值**：給「底色本來就是品牌深 teal、兩版都不會變」的元件用
+     （課程頁 hero 的英文副標）。這種地方不能跟著 --teal-050 翻面——底色沒翻，
+     字翻了就變成深字壓深底。 */
+  --tint-on-brand: #E7F1EF;
 
   /* ── 1a-3. 通道值 token（把上面色票拆成 R G B 三個數，給要疊 alpha 的用法：
         rgb(var(--teal-500-rgb) / .10)。值與同名色票完全相同，只是換寫法；
@@ -117,10 +127,15 @@
 
 /* ── 1d. 場景層（scene token；2026-07 v3 暗場舞台）───────────────────────
       掛法：<section data-scene="stage">…</section>，或整頁掛在 <html>／<body>。
-      只重映 semantic 與原型別名兩層，元件規則一行都不用改——換場景＝換 token。
-      ⚠️ v3 之前沒有任何頁面掛 data-scene，這整段目前不會命中任何元素，
-         加了不影響現有輸出；列印時一律被 §10 拉回亮版。 ────────────────── */
+      只重映 token，元件規則一行都不用改——換場景＝換 token。
+      掛在哪：①首頁 Hero 的「下一場演講」焦點卡 ②演講區 #talks（W4-D 掛上）。
+      列印時一律被 §10 拉回亮版。
+      ⚠️ W4-D 起，這組值與 §12 的暗版 token 組是**同一組**（同樣的深底、同樣的
+         文字色階）。改任何一支，§1d 與 §12 的兩個檔位要一起改，不然
+         「亮站上的暗舞台」跟「整站暗版」會長出兩套暗色。 ────────────────── */
 [data-scene="stage"] {
+  color-scheme: dark;
+
   /* semantic 層重映 */
   --color-bg: var(--night-900);
   --color-surface: var(--night-950);
@@ -129,7 +144,33 @@
   --color-text-muted: var(--mist-300);  /* 暗場不再往下壓一階，壓了對比就不足 */
   --color-link: var(--glow-500);
   --color-focus-ring: var(--glow-500);
-  /* 原型別名層同步（既有版面規則吃的是這層） */
+  --color-badge-open-bg: var(--night-tint);
+  --color-badge-open-text: var(--glow-500);
+  --color-badge-closed-bg: var(--night-mute);
+  --color-badge-closed-text: var(--mist-300);
+
+  /* 中性 primitive 反向（W4-D 追加）：v3-home.css／v3-talks.css 有一批規則直接吃
+     primitive（`color: var(--ink-700)`、`background: var(--teal-050)`…），
+     只重映 semantic 層它們不會跟著轉——這裡把「只帶明暗、不帶品牌意義」的那幾支
+     一起翻面。⚠️ 品牌色（teal-500／gold-500／gold-600）與深底上的文字色
+     （cream-100、白）刻意不翻，翻了 CTA 與頁首就變色。 */
+  --surface-000: var(--night-900);
+  --surface-000-rgb: 11 74 71;
+  --cream-150: var(--night-950);
+  --cream-100-rgb: 8 58 56;          /* 只用在「壓在水彩圖上的紗」，不是文字色 */
+  --cream-200: var(--night-border);
+  --cream-300: var(--night-border);
+  --ink-700: var(--mist-300);
+  --ink-500: var(--mist-300);
+  --gray-badge-bg: var(--night-mute);
+  --teal-050: var(--night-tint);
+  --teal-100: var(--night-mute);
+  --teal-700: var(--teal-200);
+  --teal-deep: var(--teal-200);
+  --gold-050: var(--night-gold-tint);
+  --gold-700: var(--gold-200);       /* 連帶：--color-badge-cond-border 在暗場改吃 gold-200 */
+
+  /* 原型別名層同步（既有版面規則吃的是這層；指向已翻面 primitive 的別名會自動跟著走） */
   --paper: var(--night-950);
   --ink: var(--cream-100);
   --ink-60: var(--mist-300);
@@ -140,6 +181,8 @@
   background: var(--color-bg);
   color: var(--color-text);
 }
+/* 場景是整條 section 時給多一點上下留白，暗色帶才像「舞台」不像「色塊」 */
+section[data-scene="stage"] { padding: 34px 0 28px; }
 /* 暗場常用文字：這些元件本來吃亮場的灰階，統一改吃重映後的 semantic 次要色 */
 [data-scene="stage"] .note,
 [data-scene="stage"] .spk,
@@ -461,8 +504,15 @@ a.card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(14, 124,
 .brand { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 700; }
 .brand img { width: 36px; height: 36px; border-radius: 50%; background: var(--cream); }
 .brand .sem {
-  font-size: 12px; color: var(--teal-tint); font-weight: 400;
+  /* 2026-07 W4-D 改：原本吃 --teal-tint，壓在 teal-500 頁首上實測只有 4.35:1，
+     12px 小字不到 AA 4.5——這是亮版就有的舊帳，做暗版量出來順手補上（白字＝5.02:1）。
+     另一個理由：--teal-tint 在暗版會翻成深色，留著它這裡會變成深字壓深底。 */
+  font-size: 12px; color: var(--white-000); font-weight: 400;
   border: 1px solid var(--teal-mid); border-radius: var(--radius-full); padding: 1px 8px;
+  /* 420–479px（大螢幕手機）這一段學期徽章會出現、頁首又還沒寬到放得下，
+     不擋一下「115-1」會被拆成兩行變成一顆長膠囊——寧可讓品牌名多截一點字 */
+  white-space: nowrap;
+  flex: 0 0 auto;
 }
 .site-nav { display: flex; gap: 18px; flex-wrap: wrap; }
 .site-nav a { color: #fff; text-decoration: none; font-size: 14.5px; padding: 4px 0; }
@@ -877,3 +927,274 @@ section > .container > h2 {
     text-shadow: none !important;
   }
 }
+
+/* =========================================================================
+   ── 12. 全站自動暗版＋手動切換（2026-07 W4-D；設計計畫 §2 D1）
+   ─────────────────────────────────────────────────────────────────────────
+   三個檔位，優先序＝**手動選擇永遠贏過系統設定**：
+
+     A. 系統暗、使用者沒手動選過  →  12-1（`:not([data-theme="light"])` 守衛）
+     B. 使用者手動選暗            →  12-2（`:root[data-theme="dark"]`，不看系統）
+     C. 使用者手動選亮            →  什麼都不做＝§1b 的亮版 token
+                                     （A 的 :not() 守衛已經把它讓開，見 12-3）
+
+   為什麼 C 不再抄一份亮版值：那要把 §1a 的 primitive 十幾支 hex **再抄第三遍**，
+   抄錯或漏改就會長出第三套配色。用 `:not([data-theme="light"])` 守衛達成同樣效果，
+   而且「亮版只有一份真值」這件事還守得住。（三檔位實測見 docs/contrast-pairs.md）
+
+   全段只掛 **@media screen**：列印時整段自動不生效、token 回亮版，
+   不必也不該再寫一份列印復原（§10 那份是給 [data-scene] 用的，兩者不衝突）。
+
+   翻面原則（D1 退場線條件①：只重映中性色、不改資訊層級與品牌 CTA）：
+     ・翻：底色、面板色、文字灰階、描邊、chip 底、中性徽章底
+     ・不翻：teal-500（主鈕底）、gold-500／gold-600（離站加入 CTA）、
+             cream-100 與白（深底上的文字色）、ink-900（gold 底上的文字色）
+     ・gold CTA 兩版同色：gold-500 底＋ink-900 字＝7.7:1，暗版原封不動
+   ========================================================================= */
+
+/* ── 12-1 檔位 A：系統暗版（沒手動選過才生效） ─────────────────────── */
+@media screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    /* semantic 層 */
+    --color-bg: var(--night-950);
+    --color-surface: var(--night-900);
+    --color-text: var(--cream-100);
+    --color-text-2nd: var(--mist-300);
+    --color-text-muted: var(--mist-300);
+    --color-link: var(--glow-500);
+    --color-focus-ring: var(--glow-500);
+    --color-badge-open-bg: var(--night-tint);
+    --color-badge-open-text: var(--glow-500);
+    --color-badge-closed-bg: var(--night-mute);
+    --color-badge-closed-text: var(--mist-300);
+    --color-footer-bg: var(--night-900);
+    --color-footer-text: var(--cream-100);
+    --shadow-card: 0 1px 3px rgb(0 0 0 / .44), 0 4px 12px rgb(0 0 0 / .34);
+    --shadow-card-hover: 0 2px 6px rgb(0 0 0 / .50), 0 8px 20px rgb(0 0 0 / .42);
+
+    /* 中性 primitive 反向（理由與清單同 §1d） */
+    --surface-000: var(--night-900);
+    --surface-000-rgb: 11 74 71;
+    --cream-150: var(--night-950);
+    --cream-100-rgb: 8 58 56;
+    --cream-200: var(--night-border);
+    --cream-300: var(--night-border);
+    --ink-700: var(--mist-300);
+    --ink-500: var(--mist-300);
+    --gray-badge-bg: var(--night-mute);
+    --teal-050: var(--night-tint);
+    --teal-100: var(--night-mute);
+    --teal-700: var(--teal-200);
+    --teal-deep: var(--teal-200);
+    --gold-050: var(--night-gold-tint);
+    --gold-700: var(--gold-200);
+
+    /* 原型別名層（指不到已翻面 primitive 的才補） */
+    --ink: var(--cream-100);
+    --gold-deep: var(--night-gold);
+  }
+}
+
+/* ── 12-2 檔位 B：手動選暗（不看系統設定） ─────────────────────────── */
+@media screen {
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+
+    /* semantic 層 */
+    --color-bg: var(--night-950);
+    --color-surface: var(--night-900);
+    --color-text: var(--cream-100);
+    --color-text-2nd: var(--mist-300);
+    --color-text-muted: var(--mist-300);
+    --color-link: var(--glow-500);
+    --color-focus-ring: var(--glow-500);
+    --color-badge-open-bg: var(--night-tint);
+    --color-badge-open-text: var(--glow-500);
+    --color-badge-closed-bg: var(--night-mute);
+    --color-badge-closed-text: var(--mist-300);
+    --color-footer-bg: var(--night-900);
+    --color-footer-text: var(--cream-100);
+    --shadow-card: 0 1px 3px rgb(0 0 0 / .44), 0 4px 12px rgb(0 0 0 / .34);
+    --shadow-card-hover: 0 2px 6px rgb(0 0 0 / .50), 0 8px 20px rgb(0 0 0 / .42);
+
+    /* 中性 primitive 反向 */
+    --surface-000: var(--night-900);
+    --surface-000-rgb: 11 74 71;
+    --cream-150: var(--night-950);
+    --cream-100-rgb: 8 58 56;
+    --cream-200: var(--night-border);
+    --cream-300: var(--night-border);
+    --ink-700: var(--mist-300);
+    --ink-500: var(--mist-300);
+    --gray-badge-bg: var(--night-mute);
+    --teal-050: var(--night-tint);
+    --teal-100: var(--night-mute);
+    --teal-700: var(--teal-200);
+    --teal-deep: var(--teal-200);
+    --gold-050: var(--night-gold-tint);
+    --gold-700: var(--gold-200);
+
+    /* 原型別名層 */
+    --ink: var(--cream-100);
+    --gold-deep: var(--night-gold);
+  }
+}
+
+/* ── 12-3 檔位 C：手動選亮 ─────────────────────────────────────────
+      token 不用做事（12-1 的守衛已經讓開）；只把 color-scheme 講清楚，
+      免得系統是暗版時瀏覽器仍把捲軸／表單元件畫成暗色。 */
+:root[data-theme="light"] { color-scheme: light; }
+
+/* ── 12-4 元件補丁（暗版）：少數規則寫死了亮色，token 翻面救不到 ──────
+      兩個檔位各掛一份（CSS 沒有 mixin，選擇器清單也跨不了 @media）。 */
+@media screen and (prefers-color-scheme: dark) {
+  /* 紙紋是**不透明**的米色圖（contour-cream.webp，實測 RGB 236,233,214、無 alpha），
+     暗版不關掉會把整頁鋪成米色——這是暗版最大的一顆地雷 */
+  :root:not([data-theme="light"]) body { background-image: none; }
+  /* hero 水彩也是亮圖：把上面那層紗加濃（.74/.54/.28 → .90/.80/.62），
+     標題與副標本來寫死 ink-900，改吃 semantic 文字色 */
+  :root:not([data-theme="light"]) .v3-hero,
+  :root:not([data-theme="light"]) .hero-scene {
+    background-image:
+      linear-gradient(180deg,
+        rgb(var(--cream-100-rgb) / .90) 0%,
+        rgb(var(--cream-100-rgb) / .80) 55%,
+        rgb(var(--cream-100-rgb) / .62) 100%),
+      var(--bg-hero, none);
+  }
+  :root:not([data-theme="light"]) .v3-hero h1,
+  :root:not([data-theme="light"]) .hero-scene h1,
+  :root:not([data-theme="light"]) .hero-scene .tag { color: var(--color-text); }
+  /* 課程頁 hero 兩版都是品牌深 teal 底：英文副標吃定值，不跟著 --teal-tint 翻面 */
+  :root:not([data-theme="light"]) .course-hero .en { color: var(--tint-on-brand); }
+  /* 404 頁那顆大「404」寫死 teal-500，壓在暗底只剩 2.5:1 */
+  :root:not([data-theme="light"]) .nf-code { color: var(--teal-200); }
+  /* 同一頁的小紙船插圖用 mix-blend-mode: multiply（為亮紙底設計的），壓在暗底上
+     會被乘成一團看不出東西 → 改 screen 低透明度：暗底上仍是「淡淡一張水彩」，
+     不會變成一顆亮到搶戲的圓盤（C6：裝飾不搶注意力） */
+  :root:not([data-theme="light"]) .nf-art { mix-blend-mode: screen; opacity: .32; }
+  :root:not([data-theme="light"]) .nav-wrap .site-nav.open { background: var(--night-950); }
+  /* 這幾處把 cream-100 當「底色」用，但 cream-100 在暗版是「深底上的文字色」不能翻 */
+  :root:not([data-theme="light"]) .v3-seg,
+  :root:not([data-theme="light"]) .v3-week-head,
+  :root:not([data-theme="light"]) .v3-week-cell.is-free { background: var(--night-950); }
+  /* 頁內 <style> 的硬編亮底（演講詳情頁／關於頁；那兩支檔案不歸本軌動） */
+  :root:not([data-theme="light"]) .tdp-done,
+  :root:not([data-theme="light"]) .tdp-meta li.pending,
+  :root:not([data-theme="light"]) .tdp-past { background: var(--night-mute); }
+  :root:not([data-theme="light"]) .about-credits {
+    background: var(--night-900);
+    color: var(--mist-300);
+  }
+}
+@media screen {
+  :root[data-theme="dark"] body { background-image: none; }
+  :root[data-theme="dark"] .v3-hero,
+  :root[data-theme="dark"] .hero-scene {
+    background-image:
+      linear-gradient(180deg,
+        rgb(var(--cream-100-rgb) / .90) 0%,
+        rgb(var(--cream-100-rgb) / .80) 55%,
+        rgb(var(--cream-100-rgb) / .62) 100%),
+      var(--bg-hero, none);
+  }
+  :root[data-theme="dark"] .v3-hero h1,
+  :root[data-theme="dark"] .hero-scene h1,
+  :root[data-theme="dark"] .hero-scene .tag { color: var(--color-text); }
+  :root[data-theme="dark"] .course-hero .en { color: var(--tint-on-brand); }
+  :root[data-theme="dark"] .nf-code { color: var(--teal-200); }
+  :root[data-theme="dark"] .nf-art { mix-blend-mode: screen; opacity: .32; }
+  :root[data-theme="dark"] .nav-wrap .site-nav.open { background: var(--night-950); }
+  :root[data-theme="dark"] .v3-seg,
+  :root[data-theme="dark"] .v3-week-head,
+  :root[data-theme="dark"] .v3-week-cell.is-free { background: var(--night-950); }
+  :root[data-theme="dark"] .tdp-done,
+  :root[data-theme="dark"] .tdp-meta li.pending,
+  :root[data-theme="dark"] .tdp-past { background: var(--night-mute); }
+  :root[data-theme="dark"] .about-credits {
+    background: var(--night-900);
+    color: var(--mist-300);
+  }
+}
+
+/* ── 12-5 元件補丁（暗場舞台）：只寫一份就夠 ───────────────────────
+      演講區 #talks 與 Hero 焦點卡**永遠**掛著 data-scene="stage"，
+      所以「亮站上的暗舞台」與「整站暗版」都會命中這一份，不必抄兩遍。
+      這些是 v3-talks.css 裡直接吃亮色 primitive、token 翻面救不到的幾處。 */
+/* 進度點：teal-500 實心點壓在暗底只有 2.55:1，狀態看不出來 → 改吃 glow */
+[data-scene="stage"] .v3-dot::before {
+  background: var(--glow-500);
+  border-color: var(--glow-500);
+}
+[data-scene="stage"] .v3-dot[data-state="tba"]::before {
+  background: none;
+  border-color: var(--mist-300);
+}
+[data-scene="stage"] .v3-dot[data-state="ended"]::before,
+[data-scene="stage"] .v3-dot[data-state="done"]::before {
+  background: var(--mist-300);
+  border-color: var(--mist-300);
+  opacity: .55;                                  /* 已結束＝退色但仍看得見 */
+}
+[data-scene="stage"] .v3-dot[data-state="next"]::before {
+  box-shadow: 0 0 0 3px rgb(79 227 176 / .32);
+}
+/* 卡左緣狀態色：teal-500 在暗底幾乎看不出來，換成暗場也讀得到的階 */
+[data-scene="stage"] .v3-talk { border-left-color: var(--teal-mid); }
+[data-scene="stage"] .v3-talk[data-state="next"] { border-left-color: var(--glow-500); }
+[data-scene="stage"] .v3-talk[data-state="ended"],
+[data-scene="stage"] .v3-talk[data-state="done"] {
+  background: var(--night-950);                  /* 原本吃 cream-100 當底 */
+  border-left-color: var(--mist-300);
+}
+[data-scene="stage"] .v3-talk[data-state="tba"] .v3-talk-badge,
+[data-scene="stage"] .v3-talk-mat { background: var(--night-mute); }
+
+/* ── 12-6 亮暗切換鈕（components/ThemeToggle.js） ─────────────────────
+      §8 補強條 9：精簡日／月小圖示，不擠壓「怎麼加入」常駐捷徑。
+      44×44 觸控（WCAG 2.5.5）；圖示是**純 CSS 切換**，first paint 就正確，
+      不等 JS hydrate（沒有 JS 時鈕不會動，但也不會顯示錯的圖示）。 */
+.v3-theme-toggle {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--teal-mid);
+  border-radius: var(--radius-full);
+  color: #fff;                        /* 在 teal-500 頁首上：21:1 以上 */
+  cursor: pointer;
+}
+.v3-theme-toggle:hover { background: rgb(255 255 255 / .14); }
+.v3-theme-toggle svg { display: block; width: 19px; height: 19px; }
+/* 小螢幕頁首止血：多了這顆 44px 的鈕之後，340–375px 的頁首會折成兩列
+   （sticky 頁首從 68px 長到 108px，等於每頁少掉 40px 可視高度——實測 iPhone SE
+   的 375px 正好中招）。改成「不折行、品牌名截字」：折行是 flex 在**縮之前**就
+   先換列造成的，關掉 wrap 它才會去縮品牌那一欄（ellipsis 由 v3-home.css 提供）。
+   ⚠️ 選擇器要 .container.bar 才壓得過 v3-home.css 的同名規則（那支比 globals 晚 import）。 */
+@media (max-width: 759px) {
+  .site-head .container.bar { flex-wrap: nowrap; }
+  .site-head .container.bar .brand { flex: 0 1 auto; min-width: 0; }
+}
+@media (max-width: 419px) {
+  .site-head .container.bar { gap: 6px; }
+  .site-head .container.bar .brand { gap: 8px; }
+  .site-head .container.bar .brand img { width: 30px; height: 30px; }
+}
+/* 顯示的是「按下去會變成哪一版」：亮版顯示月亮、暗版顯示太陽 */
+.v3-theme-sun { display: none; }
+.v3-theme-moon { display: block; }
+@media screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .v3-theme-sun { display: block; }
+  :root:not([data-theme="light"]) .v3-theme-moon { display: none; }
+}
+@media screen {
+  :root[data-theme="dark"] .v3-theme-sun { display: block; }
+  :root[data-theme="dark"] .v3-theme-moon { display: none; }
+}
+@media print { .v3-theme-toggle { display: none !important; } }

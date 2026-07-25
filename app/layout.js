@@ -5,6 +5,7 @@
 import './globals.css';
 import './v3-home.css';
 import './v3-talks.css';
+import './v3-extra.css';
 import { getSite } from '@/lib/content';
 import SiteHeader from '@/components/SiteHeader';
 import SiteFooter from '@/components/SiteFooter';
@@ -43,12 +44,32 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: '#F4ECD8', // cream-100，與頁面底色一致（設計書 §5-5.1）
+  // 兩版各給一支，手機瀏覽器的網址列才會跟著頁面底色走
+  // （亮＝cream-100、暗＝night-950；設計書 §5-5.1、globals.css §12）
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F4ECD8' },
+    { media: '(prefers-color-scheme: dark)', color: '#083A38' },
+  ],
 };
+
+// 防閃（FOUC）：first paint 前把使用者上次選的版本寫回 <html data-theme>，
+// 免得系統是亮版、使用者選了暗版時先閃一下亮底。
+// ・只讀 localStorage、只寫一個屬性，沒有 localStorage（無痕／擋儲存）就靜靜跳過
+// ・**沒有 JS 就完全不執行**＝退回純 @media (prefers-color-scheme) 行為，
+//   這是 D1 白紙黑字的 fallback，不是意外
+const THEME_INIT_SCRIPT =
+  "(function(){try{var t=localStorage.getItem('theme');" +
+  "if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}" +
+  '}catch(e){}})();';
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="zh-Hant-TW">
+    // suppressHydrationWarning：上面那支 script 會在 hydrate 之前改 <html> 的屬性，
+    // 屬性對不上是預期行為（next-themes 同一套做法），不是真的 hydration 錯誤
+    <html lang="zh-Hant-TW" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       {/* 背景圖 URL 統一在此手組 basePath（globals.css 的 url() 不吃 basePath，寫死會 404） */}
       <body
         style={{

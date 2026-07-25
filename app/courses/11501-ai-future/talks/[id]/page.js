@@ -11,6 +11,12 @@
 //   4. 頁底候補 CTA：文案「演講課候補登記 ↗（外部表單）」、網址吃 site.json 的 waitlistUrl。
 //      官方連結原則（F2–F5、C2）：不解釋候補機制、不寫選課規則與日期，只把去處講清楚。
 //   5. 海報位：有海報→桌機雙欄（正文 7／海報 5、海報 sticky）；沒海報→單欄自然收，不留空洞。
+//   6. W4-F（2026-07-26）加「加入行事曆」連結：只有 display==='confirmed'（講者已敲定、
+//      還沒過 F1 拍板的 11:30 結束線）才顯示，指向 scripts/build-ics.mjs 產出的
+//      public/ics/{id}.ics（BASE 前綴、中性樣式沿用 tdp-cta-btn，非 gold）。
+//      ⚠️ build-ics.mjs 目前**沒有**接進 npm run build 鏈，這顆連結假設 public/ics/
+//      底下已經有對應檔案存在——沒跑過那支腳本就先 npm run build，urlcheck
+//      （scripts/check-output.mjs 的資產參照檢查）會抓到連結指向不存在的檔案而讓建置失敗。
 // 逐欄 fallback（講題整理中／日期待定…）、Event JSON-LD、前後場導覽全部沿用，沒有動。
 
 import Link from 'next/link';
@@ -323,6 +329,13 @@ export default async function TalkDetailPage({ params }) {
 
       {/* 頁底行動：候補入口三處之一（§4.3）。命名把去處講清楚，機制一律不解釋（C2 v1.1） */}
       <section className="tdp-cta" aria-label="接下來">
+        {/* 加入行事曆：只有講者已敲定且還沒過 11:30 結束線才顯示（W4-F、F1 拍板）。
+            中性樣式沿用 tdp-cta-btn，gold 全站只留給教務系統選課那一顆（C6／C9）。 */}
+        {display === 'confirmed' ? (
+          <a className="tdp-cta-btn" href={`${BASE}/ics/${talk.id}.ics`}>
+            加入行事曆（.ics）
+          </a>
+        ) : null}
         {hasWaitlist ? (
           <a className="tdp-cta-btn" href={waitlistUrl} target="_blank" rel="noopener noreferrer">
             演講課候補登記 ↗（外部表單）<span className="sr-only">（另開新視窗）</span>

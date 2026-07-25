@@ -97,7 +97,10 @@ export default function TalksWall({ talks, courseSlug }) {
   };
 
   return (
-    <section id="talks" className="v3-talks">
+    // data-scene="stage"＝暗場舞台第二處（第一處是首頁 Hero 的焦點卡）。
+    // 掛上去整段就換一套 token（globals.css §1d），這支檔案不必改任何顏色；
+    // 列印時 §10 會把它拉回亮版。
+    <section id="talks" className="v3-talks" data-scene="stage">
       <div className="container">
         <h2>演講海報牆</h2>
 

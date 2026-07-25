@@ -8,6 +8,7 @@
 import Link from 'next/link';
 import { getSite } from '@/lib/content';
 import NavMenu from './NavMenu';
+import ThemeToggle from './ThemeToggle';
 
 // 純 <img> 不會自動吃 basePath（next.config.mjs 有註明），手動補前綴
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
@@ -33,6 +34,9 @@ export default function SiteHeader() {
         {/* v3 W2：常駐文字捷徑「怎麼加入」（手機也不收進漢堡；樣式在 app/v3-home.css）。
             指向首頁的 #join——在首頁是同頁錨點，其他頁是回首頁的加入區。 */}
         <a className="v3-head-join" href={`${BASE_PATH}/#join`}>怎麼加入</a>
+        {/* v3 W4-D：亮／暗切換鈕。擺在捷徑與導覽之間，捷徑仍是右側第一顆、不被擠掉
+            （§8 補強條 9）；樣式在 globals.css §12-6。 */}
+        <ThemeToggle />
         <NavMenu scoreUrl={site.scoreUrl} buildLogEnabled={buildLog?.enabled} />
       </div>
     </header>
