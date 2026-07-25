@@ -10,7 +10,8 @@
     "scan": "node scripts/scan-output.mjs",
     "talks:pull": "python scripts/talks/pull_talks.py",
     "talks:test": "python scripts/talks/test_pull_talks.py",
-    "build": "npm run validate && npm run decks && next build && npm run scan"
+    "urlcheck": "node scripts/check-output.mjs",
+    "build": "npm run validate && npm run decks && next build && npm run scan && npm run urlcheck"
   },
   "dependencies": {
     "next": "^16.2.10",

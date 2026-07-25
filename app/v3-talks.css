@@ -1,0 +1,355 @@
+/* =========================================================================
+   v3-talks.css — v3 演講區（W3-1）場刊卡三態海報牆的全部新樣式
+   在 app/layout.js 於 v3-home.css 之後 import；**只新增、不改 globals.css**。
+   globals.css §11-5 那套 .wall/.talk（2/3 直式海報格）原封不動留著，
+   等海報到齊要切「版式 C」時再啟用——這支檔案完全不碰它。
+
+   規矩（設計計畫 C6「炫的預算」）：
+     ・本段零自動動效——沒有 shimmer、沒有跑馬燈、沒有 keyframes
+       （連水波占位 .ripple 的 drift 都在牆內關掉：12 格裡有 3 張 tba，
+         3 個同時飄就直接打破「每頁同時可見的自動動效 ≤1」的硬上限）
+     ・hover 只做「升起 4px」，而且只掛在 prefers-reduced-motion: no-preference
+     ・互動 44px 起；唯一例外是 12 顆進度點（見 §2 註解，取 WCAG 2.5.8 的 24px 下限）
+     ・顏色只作輔助——六面向 chips 分三系上色，**每系另配一個圖形符號**
+     ・gold 只出現在 confirmed 卡的膠帶角（裝飾、非 CTA），不與「離站加入 CTA 專用 gold」打架
+
+   顏色一律吃 globals.css 的 token（primitive／semantic／原型別名／場景層），
+   這支檔案不新增任何色票 hex。
+
+   目錄：1 牆頭資訊列　2 進度點　3 卡片格線與卡殼　4 日期軌　5 主資訊
+         6 六面向 chips　7 行動列　8 三態　9 reduced-motion　10 列印
+   ========================================================================= */
+
+/* ── 1. 牆頭共用資訊列：時間地點全牆只印這一次 ────────────────────── */
+.v3-talks-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 18px;
+  margin: 0 0 14px;
+}
+.v3-talks-facts {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-60);
+  font-variant-numeric: tabular-nums;
+}
+.v3-talks-rail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+}
+.v3-talks-count {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-40);
+  font-variant-numeric: tabular-nums;
+}
+.v3-talks-count b { font-size: 15px; color: var(--teal-700); }
+
+/* ── 2. 12 顆進度點（每顆錨到該張卡） ──────────────────────────────
+      ⚠️ 觸控尺寸例外：12 顆一列在 375px 寬放不下 44×44（12×44＝528px），
+         這裡取「直向 44px 觸控高＋橫向 24px（WCAG 2.5.8 AA 下限）」，
+         並保留 flex-wrap，更窄的螢幕自己換行。 */
+.v3-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.v3-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  min-height: 44px;
+  text-decoration: none;
+}
+.v3-dot::before {
+  content: '';
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1.5px solid var(--teal-500);
+  background: var(--teal-500);           /* 已確認＝實心 */
+}
+.v3-dot[data-state="tba"]::before {
+  background: none;                      /* 洽談中＝空心 */
+  border-style: dashed;
+  border-color: var(--mist-300);
+}
+.v3-dot[data-state="ended"]::before,
+.v3-dot[data-state="done"]::before {
+  background: var(--ink-300);            /* 已結束＝實心但退色 */
+  border-color: var(--ink-300);
+}
+.v3-dot[data-state="next"]::before {
+  box-shadow: 0 0 0 3px rgb(var(--teal-500-rgb) / .28);   /* 下一場＝帶光環 */
+}
+.v3-dot:hover::before { transform: scale(1.25); }
+
+/* ── 3. 卡片格線與卡殼 ────────────────────────────────────────────
+      取消 2/3 aspect-ratio：沒有海報時那個比例只會撐出空框，
+      改讓卡高跟著內容走（講題 3 行、職稱單位 2 行是上限，長短差不會太離譜）。 */
+.v3-talk-wall {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 760px)  { .v3-talk-wall { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1180px) { .v3-talk-wall { grid-template-columns: repeat(3, 1fr); } }
+
+.v3-talk {
+  position: relative;
+  overflow: hidden;               /* 把 gold 膠帶角收進圓角裡 */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px 10px;
+  background: var(--color-surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--teal-500);
+  border-radius: var(--radius);
+  scroll-margin-top: 76px;        /* 進度點跳過來時讓開 sticky 頁首 */
+}
+.v3-talk:hover,
+.v3-talk:focus-within {
+  box-shadow: var(--shadow-card-hover);
+  /* 只亮三邊，左邊留給狀態色 */
+  border-top-color: var(--teal-200);
+  border-right-color: var(--teal-200);
+  border-bottom-color: var(--teal-200);
+}
+
+/* ── 4. 日期軌 ───────────────────────────────────────────────────── */
+.v3-talk-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0;
+}
+.v3-talk-no,
+.v3-talk-when {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+.v3-talk-no {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--teal-700);
+}
+.v3-talk-no i { font-style: normal; font-weight: 400; color: var(--ink-40); }
+.v3-talk-when { font-size: 16px; font-weight: 700; color: var(--color-text); }
+.v3-talk-when i { font-style: normal; font-size: 12px; letter-spacing: .08em; color: var(--ink-40); }
+.v3-talk-when.is-pending { font-size: 13px; font-weight: 600; color: var(--ink-40); }
+.v3-talk-badge {
+  margin-left: auto;
+  padding: 2px 10px;
+  background: var(--teal-050);
+  border-radius: var(--radius-full);
+  color: var(--teal-700);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ── 5. 主資訊：講題 3 行、職稱單位 2 行（真資料 org 最長 24 字，兩行收得住） ── */
+.v3-talk-title {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.v3-talk-title a {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  color: var(--color-text);
+  text-decoration: none;
+}
+.v3-talk-title a:hover { text-decoration: underline; }
+/* 整卡可點（stretched link）：覆蓋層是 ::after，DOM 上沒有巢狀連結，
+   輔具讀到的仍是一個以講題為名的連結；行動列疊在覆蓋層之上各自可點。 */
+.v3-talk-title a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.v3-talk-spk {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  font-size: 13.5px;
+}
+.v3-talk-spk strong { font-size: 15px; color: var(--color-text); }
+.v3-talk-role {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-60);
+}
+/* 例外才出聲：只有跟牆頭眾數不同的場次才會印到自己的時間／地點 */
+.v3-talk-odd { margin: 0; font-size: 12.5px; font-weight: 600; color: var(--gold-700); }
+/* 水波占位在牆內收窄，並關掉 drift 動畫（C6：同時可見的自動動效 ≤1） */
+.v3-talk .ripple {
+  padding: 18px 12px;
+  font-size: 13px;
+  line-height: 1.7;
+  animation: none;
+}
+
+/* ── 6. 六面向 chips：分三系上色，**每系另配一個圖形符號**（不只靠顏色） ── */
+.v3-talk-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.v3-talk-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 9px;
+  background: var(--color-surface);
+  border: 1px solid var(--cream-300);
+  border-radius: var(--radius-full);
+  color: var(--ink-700);
+  font-size: 11.5px;
+}
+.v3-talk-tag i { font-style: normal; font-size: 9px; line-height: 1; }
+.v3-talk-tag[data-fam="b1"] { border-color: var(--gold-600); color: var(--gold-700); }
+.v3-talk-tag[data-fam="b2"] { border-color: var(--teal-200); color: var(--teal-700); }
+.v3-talk-tag[data-fam="b3"] { border-color: var(--cream-300); color: var(--ink-700); }
+
+/* ── 7. 行動列 ───────────────────────────────────────────────────── */
+.v3-talk-acts {
+  position: relative;             /* 疊在整卡覆蓋層之上 */
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  margin: auto 0 0;               /* 一律貼卡底，卡高不齊時仍對齊 */
+}
+.v3-talk-go,
+.v3-talk-act {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-link);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.v3-talk-go:hover,
+.v3-talk-act:hover { text-decoration: underline; }
+.v3-talk-mat {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  background: var(--cream-100);
+  border-radius: var(--radius-full);
+  color: var(--ink-60);
+  font-size: 12px;
+}
+
+/* ── 8. 三態視覺 ─────────────────────────────────────────────────── */
+/* confirmed／next：gold 膠帶角（半透明、45°，靠 overflow:hidden 收邊） */
+.v3-talk[data-state="confirmed"]::after,
+.v3-talk[data-state="next"]::after {
+  content: '';
+  position: absolute;
+  top: -7px; right: -18px;
+  width: 58px; height: 15px;
+  pointer-events: none;
+  background: rgb(var(--gold-500-rgb) / .58);
+  transform: rotate(45deg);
+}
+/* next＝12 場裡的下一場：多一圈強調框＋徽章實心 */
+.v3-talk[data-state="next"] {
+  border-color: var(--teal-200);
+  border-left-color: var(--teal-700);
+  box-shadow: 0 0 0 2px rgb(var(--teal-500-rgb) / .30);
+}
+.v3-talk[data-state="next"] .v3-talk-badge {
+  background: var(--teal-500);
+  color: var(--white-000);        /* on teal-500 ≈ 4.9:1 */
+}
+/* ended／done：低彩度、無假按鈕（行動列只剩看詳情與真的存在的資料） */
+.v3-talk[data-state="ended"],
+.v3-talk[data-state="done"] {
+  background: var(--cream-100);
+  border-left-color: var(--ink-300);
+}
+.v3-talk[data-state="ended"] .v3-talk-no,
+.v3-talk[data-state="done"] .v3-talk-no { color: var(--ink-60); }
+.v3-talk[data-state="ended"] .v3-talk-badge,
+.v3-talk[data-state="done"] .v3-talk-badge {
+  background: var(--gray-badge-bg);
+  color: var(--ink-700);
+}
+.v3-talk[data-state="ended"] .v3-talk-tag,
+.v3-talk[data-state="done"] .v3-talk-tag {
+  background: none;
+  border-color: var(--cream-300);
+  color: var(--ink-700);
+}
+/* tba：mist 虛線＋水波占位，卡面不放任何預測內容 */
+.v3-talk[data-state="tba"] {
+  border: 1.5px dashed var(--mist-300);
+  border-left-width: 4px;
+  background: var(--color-surface);
+}
+.v3-talk[data-state="tba"] .v3-talk-title a { color: var(--ink-60); font-weight: 600; }
+.v3-talk[data-state="tba"] .v3-talk-badge {
+  background: var(--cream-100);
+  color: var(--ink-60);
+  font-weight: 600;
+}
+
+/* ── 9. 動效：hover 位移只在 no-preference 生效（C6：零自動動效） ───── */
+@media (prefers-reduced-motion: no-preference) {
+  .v3-talk,
+  .v3-dot::before {
+    transition: transform .18s ease-out, box-shadow .18s ease-out, border-color .18s ease-out;
+  }
+  .v3-talk:hover { transform: translateY(-4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v3-talk, .v3-dot::before { transition: none; }
+  .v3-talk:hover { transform: none; }
+  .v3-dot:hover::before { transform: none; }
+}
+
+/* ── 10. 列印：進度點是導覽、印不出用途；卡片不跨頁切斷 ───────────── */
+@media print {
+  .v3-talks-rail { display: none !important; }
+  .v3-talk {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border-color: var(--cream-300);
+  }
+  .v3-talk::after { display: none; }        /* 膠帶角是裝飾，不進紙本 */
+  .v3-talk-title a,
+  .v3-talk-role { -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
+}

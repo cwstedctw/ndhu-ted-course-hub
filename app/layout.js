@@ -4,6 +4,7 @@
 
 import './globals.css';
 import './v3-home.css';
+import './v3-talks.css';
 import { getSite } from '@/lib/content';
 import SiteHeader from '@/components/SiteHeader';
 import SiteFooter from '@/components/SiteFooter';
