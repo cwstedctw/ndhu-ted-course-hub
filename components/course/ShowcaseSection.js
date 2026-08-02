@@ -2,13 +2,15 @@ import Ripple from './Ripple';
 import { asArray, hasText, withBase } from './pending';
 
 // 區塊 9：上學期作品（#showcase，設計書二章 §4.3 區塊 9、五章 §4.11）
-// hub.showcaseRefs 解析後的 items 傳入；空 → 水波占位。
+// hub.showcaseRefs 解析後的 items 傳入；空 → 回傳 null 整區不渲染（首次開課的課沒有「上學期作品」，別掛「選件中」空頭支票——Ted 2026-08-02）。
 // 預設匿名（組別＋作品名）；credit 僅 consent="obtained" 渲染（CI 已擋，元件當第二道保險）；
 // consent="pending" 的作品一律過濾不渲染（縱深防線）；image 缺 → teal 底紋占位。
 export default function ShowcaseSection({ items }) {
   const safeItems = asArray(items).filter(
     (it) => it && it.consent !== 'pending' && hasText(it.title)
   );
+
+  if (safeItems.length === 0) return null;
 
   return (
     <section id="showcase">
