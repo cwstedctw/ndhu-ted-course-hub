@@ -8,8 +8,7 @@
 //      **一個字都不改 talks.json**（資料只有 confirmed／tba／done 三態）。
 //   2. tba 詳情頁 noindex：講者還沒敲定的占位頁不進搜尋結果，confirmed／已結束照常可索引。
 //   3. 講者簡介 speaker.bio 有值才渲染（schema 2026-07-25 新增、目前 12 場全 null）。
-//   4. 頁底候補 CTA：文案「演講課候補登記 ↗（外部表單）」、網址吃 site.json 的 waitlistUrl。
-//      官方連結原則（F2–F5、C2）：不解釋候補機制、不寫選課規則與日期，只把去處講清楚。
+//   4. 頁底行動：加入行事曆（.ics）＋回海報牆——講者報名頁是講者自薦用、課程網不放候補鈕（Ted 2026-08-02）。
 //   5. 海報位：有海報→桌機雙欄（正文 7／海報 5、海報 sticky）；沒海報→單欄自然收，不留空洞。
 //   6. W4-F（2026-07-26）加「加入行事曆」連結：只有 display==='confirmed'（講者已敲定、
 //      還沒過 F1 拍板的 11:30 結束線）才顯示，指向 scripts/build-ics.mjs 產出的
@@ -175,8 +174,6 @@ export default async function TalkDetailPage({ params }) {
   const bio = hasText(talk.speaker?.bio) ? talk.speaker.bio.trim() : null;
   const materials = listMaterials(talk);
   const hasPoster = !isTba && hasText(talk.poster);
-  const waitlistUrl = getSite().waitlistUrl;
-  const hasWaitlist = hasText(waitlistUrl);
 
   return (
     <article className={hasPoster ? 'tdp has-poster' : 'tdp'}>
@@ -327,7 +324,7 @@ export default async function TalkDetailPage({ params }) {
         ) : null}
       </div>
 
-      {/* 頁底行動：候補入口三處之一（§4.3）。命名把去處講清楚，機制一律不解釋（C2 v1.1） */}
+      {/* 頁底行動：加入行事曆＋回海報牆（講者報名頁是講者自薦用、課程網不放候補鈕—Ted 2026-08-02） */}
       <section className="tdp-cta" aria-label="接下來">
         {/* 加入行事曆：只有講者已敲定且還沒過 11:30 結束線才顯示（W4-F、F1 拍板）。
             中性樣式沿用 tdp-cta-btn，gold 全站只留給教務系統選課那一顆（C6／C9）。 */}
@@ -336,12 +333,7 @@ export default async function TalkDetailPage({ params }) {
             加入行事曆（.ics）
           </a>
         ) : null}
-        {hasWaitlist ? (
-          <a className="tdp-cta-btn" href={waitlistUrl} target="_blank" rel="noopener noreferrer">
-            演講課候補登記 ↗（外部表單）<span className="sr-only">（另開新視窗）</span>
-          </a>
-        ) : null}
-        <Link className="tdp-cta-back" href={WALL_HREF}>看 12 場完整場次 →</Link>
+                <Link className="tdp-cta-back" href={WALL_HREF}>看 12 場完整場次 →</Link>
       </section>
 
       <nav className="tdp-nav" aria-label="場次導覽">
@@ -395,7 +387,7 @@ const tdpCss = `
 .tdp-side-title { margin-top: 0 !important; }
 .tdp-materials { margin: 0; padding-left: 20px; font-size: 15px; }
 .tdp-materials li { margin-bottom: 6px; }
-/* 頁底行動：候補是 outline 中性色——gold 全站只留給「教務系統選課」那一顆（C6／C9） */
+/* 頁底行動：中性樣式——gold 全站只留給「教務系統選課」那一顆（C6／C9） */
 .tdp-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin: 34px 0 0; padding: 18px; background: var(--paper, #FDFAF2); border: 1px solid var(--line, #E5DCC3); border-radius: var(--radius, 14px); }
 .tdp-cta-btn { display: inline-block; font-size: 15px; font-weight: 700; text-decoration: none; color: var(--teal-dark, #0A5958); background: transparent; border: 1.5px solid var(--teal, #0E7C7B); border-radius: 999px; padding: 11px 22px; }
 .tdp-cta-btn:hover { background: var(--teal-tint, #E3F1F0); }

@@ -99,7 +99,7 @@ export default async function CoursePage({ params }) {
     talks = Array.isArray(data) ? data : asArray(data?.talks);
   }
 
-  // 上學期作品：hub.showcaseRefs → showcase/114-2.json items 對照（refs 空＝不查檔、直接水波）
+  // 上學期作品：hub.showcaseRefs → showcase/114-2.json items 對照（refs 空＝整區不出現：首次開課的課沒有上學期作品）
   const refs = asArray(hub.showcaseRefs);
   let showcaseItems = [];
   if (refs.length > 0) {
@@ -137,7 +137,7 @@ export default async function CoursePage({ params }) {
       ? { href: '#tools', label: '會用的工具' }
       : null,
     hasText(scoreUrl) ? { href: '#score', label: '查成績' } : null,
-    { href: '#showcase', label: '上學期作品' },
+    showcaseItems.length > 0 ? { href: '#showcase', label: '上學期作品' } : null,
     !introPending && asArray(intro.whatToBring).some(hasText)
       ? { href: '#bring', label: '要帶什麼' }
       : null,
@@ -161,7 +161,6 @@ export default async function CoursePage({ params }) {
       <EnrollBox
         code={section?.code}
         enrollUrl={site?.enrollUrl}
-        waitlistUrl={site?.waitlistUrl}
         isLecture={isLecture}
         sibling={sibling}
         closed={indexEntry?.status === 'closed'}

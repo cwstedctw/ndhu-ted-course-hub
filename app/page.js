@@ -8,7 +8,7 @@
 //   ・事實只吃 content JSON——課名／課號／節次／鐘點／教室／講者全部經 lib/content.js，
 //     首頁自己不寫第二份課程資料（設計計畫 C7）；重組形狀的工作在 components/home/model.js。
 //   ・官方連結原則（F2–F5）：站上不寫選課規則、不寫選課日期、不教怎麼加簽；
-//     按鈕命名「教務系統選課 ↗」「演講課候補登記 ↗（外部表單）」，網址真值＝site.json。
+//     按鈕命名「教務系統選課 ↗」，網址真值＝site.json。
 //   ・炫的預算（C6）：本頁零自動動效，hover 只有升起 4px＋邊線亮。
 // 公告過濾發生在 build 時（SSG）——validUntil 過期即不出 HTML；公告異動要重新 build。
 
@@ -173,7 +173,6 @@ export default async function HomePage() {
       <JoinSection
         rows={model.codeTable}
         enrollUrl={site.enrollUrl}
-        waitlistUrl={site.waitlistUrl}
       />
 
       {/* 區塊 6：最新公告（pinned 置頂、date 新→舊、取 5 則；無有效公告＝低調單行） */}

@@ -77,7 +77,6 @@ const ALLOWED_URL_HOSTS = new Set([
   "stock-portfolio-tracker-gold.vercel.app", // 學生作品：台股即時儀表板
   "ndhu-claw-machine.netlify.app", // 學生作品：虛擬娃娃機
   "ndhu-companion-hub.netlify.app", // 學生作品：ESP32 Ultimate Companion
-  "ndhu-ai-talks.netlify.app", // 演講課候補報名頁（site.json waitlistUrl，v3 新增）
 ]);
 
 const failures = []; // {file, rule, msg}

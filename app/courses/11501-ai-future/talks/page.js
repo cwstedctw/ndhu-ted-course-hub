@@ -2,8 +2,7 @@
 //
 // 舊版（2026-07-02 定案）是純轉址殼：JS location.replace／meta refresh／手動連結三層保險，
 // 一律跳回課程頁海報牆錨點 ../#talks，不建索引子頁。這次升級成真正的頁面：
-//   ・頁首＝課名＋「已確認 N/12」＋候補 CTA（官方連結原則 F2–F5、C2：只把去處講清楚，
-//     不解釋候補機制）。
+//   ・頁首＝課名＋「已確認 N/12」。
 //   ・12 場直式時間軸清單：每列＝日期軌（場次編號＋日期）＋「講題・講者」一行＋狀態徽章，
 //     整列可點連到單場詳情頁——資料語彙沿用 components/course/TalksWall.js 的三態場刊卡，
 //     但排成緊湊的清單版（設計計畫 §4.3、C2/C6）。
@@ -98,8 +97,6 @@ export default async function TalksIndexPage() {
   const nextId = getNextTalk(now)?.id ?? null;
   const total = talks.length;
   const confirmed = talks.filter((t) => t.status === 'confirmed' || t.status === 'done').length;
-  const waitlistUrl = site?.waitlistUrl;
-  const hasWaitlist = hasText(waitlistUrl);
 
   const stateOf = (t) => {
     const state = getTalkDisplayStatus(t, now);
@@ -118,12 +115,7 @@ export default async function TalksIndexPage() {
         <p className="v3-agenda-stat">
           已確認 <b>{confirmed}</b>/{total} 場
         </p>
-        {hasWaitlist ? (
-          <a className="v3-btn v3-btn-outline" href={waitlistUrl} target="_blank" rel="noopener noreferrer">
-            演講課候補登記 ↗（外部表單）<span className="sr-only">（另開新視窗）</span>
-          </a>
-        ) : null}
-      </header>
+              </header>
 
       <ol className="v3-agenda-list">
         {talks.map((t) => {
