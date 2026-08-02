@@ -238,3 +238,6 @@
   border: 1px solid var(--teal, #0E7C7B);
   margin-left: 6px;
 }
+
+/* emi 雙語同區塊：EN 行在上、zh 在下（Ted 2026-08-02） */
+.hero-biline { display: block; }
