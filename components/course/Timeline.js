@@ -10,7 +10,7 @@ import { asArray, hasText, isPending } from './pending';
 // 一行（2026-07-05 學生視角升級）。null＝休眠（SSG 靜態不變）。
 import NowWeek from './NowWeek';
 
-export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart }) {
+export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart, bare = false }) {
   const phasesPending = isPending(phases);
   const planPending = isPending(weeklyPlan);
   const phaseList = asArray(phases).filter((p) => hasText(p?.title));
@@ -30,11 +30,9 @@ export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart
 
   const nowEnabled = hasText(weekOneStart) && rows.length > 0;
 
-  return (
-    <section id="weeks" aria-label={`${ws || ''}課程進度`}>
-      <div className="container">
-        <h2>{title}</h2>
-        {nowEnabled ? <NowWeek weekOneStart={weekOneStart} /> : null}
+  const body = (
+    <>
+      {nowEnabled ? <NowWeek weekOneStart={weekOneStart} /> : null}
         {phaseList.length > 0 ? (
           <>
             <div className="phases">
@@ -59,6 +57,14 @@ export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart
         ) : (
           <Ripple>週次進度規劃開學前公布</Ripple>
         )}
+    </>
+  );
+  if (bare) return body;
+  return (
+    <section id="weeks" aria-label={`${ws || ''}課程進度`}>
+      <div className="container">
+        <h2>{title}</h2>
+        {body}
       </div>
     </section>
   );

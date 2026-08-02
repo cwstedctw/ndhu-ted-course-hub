@@ -175,3 +175,66 @@
 .ripple { animation: none; }
 .weeks .ms::before { animation: none; }
 .talk.tba::after { animation: none; }
+
+/* ── 2026-08-02 課程頁重整 R1–R5：折疊區＋決策卡補件＋emi 徽章 ─────────── */
+.v3-foldsec { padding: 10px 0; }
+.v3-fold {
+  border: 1px solid var(--line, #E5DCC3);
+  border-radius: var(--radius, 14px);
+  background: var(--paper, #FDFAF2);
+}
+.v3-fold > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 12px 18px;
+  font-size: 19px;
+  font-weight: 800;
+}
+.v3-fold > summary::-webkit-details-marker { display: none; }
+.v3-fold > summary::before {
+  content: '▸';
+  color: var(--teal, #0E7C7B);
+  transition: transform 0.15s ease;
+}
+.v3-fold[open] > summary::before { transform: rotate(90deg); }
+@media (prefers-reduced-motion: reduce) {
+  .v3-fold > summary::before { transition: none; }
+}
+.v3-fold-body { padding: 0 18px 16px; }
+.v3-fold-h3 { margin: 14px 0 8px; font-size: 15.5px; color: var(--teal-dark, #0A5958); }
+.v3-fold-note { margin: 12px 0 0; font-size: 14px; opacity: 0.85; }
+/* 決策卡（R2）：hero 一句話定位與關鍵字 chips */
+.course-hero .hero-tagline { margin: 8px 0 0; font-size: 15.5px; opacity: 0.95; }
+.course-hero .hero-chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.course-hero .hero-chips li {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  font-size: 13.5px;
+}
+/* 外籍生班（emi）徽章：hero 深底用亮底、首頁卡亮底用 teal 邊 */
+.badge-emi { background: rgba(255, 255, 255, 0.92); color: var(--teal-dark, #0A5958); }
+.v3-badge-emi {
+  background: var(--teal-tint, #E3F1F0);
+  color: var(--teal-dark, #0A5958);
+  border: 1px solid var(--teal, #0E7C7B);
+}
+
+.v3-fold > summary h2 { font: inherit; margin: 0; display: inline; }
+.badge-emi-card {
+  background: var(--teal-tint, #E3F1F0);
+  color: var(--teal-dark, #0A5958);
+  border: 1px solid var(--teal, #0E7C7B);
+  margin-left: 6px;
+}

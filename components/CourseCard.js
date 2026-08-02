@@ -16,7 +16,7 @@ const STATUS_BADGE = {
 };
 
 export default function CourseCard({ course }) {
-  const { slug, name, nameEn, sectionLabel, credits, kind, status, tagline, chips, timeShort } = course;
+  const { slug, name, nameEn, sectionLabel, credits, kind, status, tagline, chips, timeShort, emi } = course;
   const badge = STATUS_BADGE[status] ?? STATUS_BADGE.open;
   const isClosed = status === 'closed';
   const isLecture = kind === 'lecture-series';
@@ -27,6 +27,7 @@ export default function CourseCard({ course }) {
       <Link className={cardClass} href={`/courses/${slug}/`}>
         {isLecture ? <span className="corner-lect">12 場系列演講</span> : null}
         <span className={badge.className}>{badge.label}</span>
+        {emi ? <span className="badge badge-emi-card">International・EMI 外籍生班</span> : null}
         <h3>
           {name}
           {sectionLabel ? ` ${sectionLabel}` : ''}

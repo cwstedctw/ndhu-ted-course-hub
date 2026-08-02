@@ -15,17 +15,18 @@ export default function EnrollBox({
   isLecture = false,
   sibling = null,
   closed = false,
+  emi = false,
 }) {
   const hasCode = typeof code === 'string' && code.trim() !== '';
   const hasEnroll = !closed && typeof enrollUrl === 'string' && enrollUrl.trim() !== '';
-  if (!hasCode && !hasEnroll && !hasWaitlist && !sibling) return null;
+  if (!hasCode && !hasEnroll && !sibling) return null;
 
   return (
     <div className="v3-enroll" role="group" aria-label="加入這門課">
       <div className="container v3-enroll-box">
         {hasCode ? (
           <div className="v3-enroll-code">
-            <span className="v3-enroll-label">選課代碼</span>
+            <span className="v3-enroll-label">{emi ? 'Course code 選課代碼' : '選課代碼'}</span>
             <CopyCode code={code} what="選課代碼" />
           </div>
         ) : null}
@@ -38,7 +39,8 @@ export default function EnrollBox({
               target="_blank"
               rel="noopener noreferrer"
             >
-              教務系統選課 ↗<span className="sr-only">（另開新視窗）</span>
+              {emi ? 'Enroll (AA course system) ↗ 教務系統選課' : '教務系統選課 ↗'}
+              <span className="sr-only">（另開新視窗）</span>
             </a>
           ) : null}
                     {sibling?.slug ? (

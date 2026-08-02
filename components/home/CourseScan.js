@@ -28,7 +28,7 @@ const STATUS_BADGE = {
  *  只吃已經傳進來的 group 形狀（model.js 組好的），不另外讀 content。 */
 function haystackOf(group) {
   const codes = group.sections.map((s) => s.code).filter(Boolean).join(' ');
-  return [group.name, group.nameEn, group.tagline, group.chips.join(' '), codes]
+  return [group.name, group.nameEn, group.tagline, group.chips.join(' '), codes, group.emi ? 'EMI International 外籍生班 英語授課' : '']
     .filter(Boolean)
     .join(' ')
     .toLowerCase();
@@ -111,11 +111,11 @@ export default function CourseScan({ groups, filters }) {
         <ul className="v3-cards">
           {shown.map((g) => {
             const badge = STATUS_BADGE[g.status] ?? STATUS_BADGE.open;
-            const cur = picked[g.courseDir] ?? 0;
+            const cur = picked[g.key] ?? 0;
             const multi = g.sections.length > 1;
 
             return (
-              <li key={g.courseDir}>
+              <li key={g.key}>
                 <article
                   className={g.status === 'closed' ? 'v3-card is-closed' : 'v3-card'}
                   data-cat={g.cat || undefined}
@@ -124,6 +124,9 @@ export default function CourseScan({ groups, filters }) {
                     <span className="v3-card-corner">12 場系列演講</span>
                   ) : null}
                   <span className={badge.className}>{badge.label}</span>
+                  {g.emi ? (
+                    <span className="v3-badge v3-badge-emi">International・EMI 外籍生班</span>
+                  ) : null}
 
                   <h3 className="v3-card-title">
                     <Link href={`/courses/${g.sections[cur]?.slug ?? g.sections[0].slug}/`}>
@@ -154,8 +157,8 @@ export default function CourseScan({ groups, filters }) {
                           type="button"
                           className={i === cur ? 'v3-seg-btn is-on' : 'v3-seg-btn'}
                           aria-pressed={i === cur}
-                          aria-controls={`${baseId}-${g.courseDir}-${i}`}
-                          onClick={() => setPicked((p) => ({ ...p, [g.courseDir]: i }))}
+                          aria-controls={`${baseId}-${g.key}-${i}`}
+                          onClick={() => setPicked((p) => ({ ...p, [g.key]: i }))}
                         >
                           {s.sectionLabel ? `${s.sectionLabel} 班` : '本班'}
                         </button>
@@ -166,7 +169,7 @@ export default function CourseScan({ groups, filters }) {
                   {g.sections.map((s, i) => (
                     <div
                       key={s.slug}
-                      id={`${baseId}-${g.courseDir}-${i}`}
+                      id={`${baseId}-${g.key}-${i}`}
                       className={i === cur ? 'v3-pane is-on' : 'v3-pane'}
                     >
                       <p className="v3-card-time" title={s.room || undefined}>

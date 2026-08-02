@@ -30,7 +30,20 @@
       "type": "object",
       "properties": { "internalNotes": false }
     },
-    "hub": { "$ref": "#/$defs/hub" }
+    "hub": { "$ref": "#/$defs/hub" },
+    "en": {
+      "type": "object",
+      "description": "emi 外籍生班英文層（2026-08-02 重整 R5）；正本＝英文版教學計畫，只覆蓋決策卡／課前準備／評分摘要",
+      "additionalProperties": false,
+      "properties": {
+        "$comment": { "type": "string" },
+        "tagline": { "type": ["string", "null"] },
+        "timeLine": { "type": ["string", "null"] },
+        "gradingLine": { "type": ["string", "null"] },
+        "whatToBring": { "type": "array", "items": { "type": "string" } },
+        "platformUse": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    }
   },
   "$defs": {
     "sectionSchedule": {

@@ -4,7 +4,7 @@ import { asArray, hasText } from './pending';
 // 名稱與用途吃 hub.links[]（有網址版）；hub.links 空 → 退回 intro.platforms[]（無網址版）。
 // url 非 null → 可點按鈕（新分頁）；url null → 只顯示平台名＋用途、絕不做假連結；
 // urlStatus pending → 小字「連結開學前補」。
-export default function PlatformLinks({ hubLinks, platforms }) {
+export default function PlatformLinks({ hubLinks, platforms, bare = false }) {
   let items = asArray(hubLinks)
     .filter((l) => hasText(l?.label))
     .map((l) => ({
@@ -26,11 +26,8 @@ export default function PlatformLinks({ hubLinks, platforms }) {
   }
   if (items.length === 0) return null;
 
-  return (
-    <section id="links">
-      <div className="container">
-        <h2>上課用哪些平台</h2>
-        <div className="platforms">
+  const body = (
+    <div className="platforms">
           {items.map((item) =>
             item.url ? (
               <a
@@ -54,7 +51,14 @@ export default function PlatformLinks({ hubLinks, platforms }) {
               </div>
             )
           )}
-        </div>
+    </div>
+  );
+  if (bare) return body;
+  return (
+    <section id="links">
+      <div className="container">
+        <h2>上課用哪些平台</h2>
+        {body}
       </div>
     </section>
   );

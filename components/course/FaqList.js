@@ -5,21 +5,17 @@ import { asArray, hasText, isPending } from './pending';
 // 原生 <details>/<summary> 手風琴（零 JS、no-JS 降級天生成立）。
 // status 是渲染過濾器：只渲染 status="confirmed"；source 屬內部溯源，不對外渲染；
 // exampleAssets pending → 答案照渲染、素材位置水波占位。
-export default function FaqList({ faq }) {
+export default function FaqList({ faq, bare = false }) {
   const pending = isPending(faq);
   const items = asArray(faq).filter(
     (f) => f?.status === 'confirmed' && hasText(f?.q) && hasText(f?.a)
   );
   if (!pending && items.length === 0) return null;
 
-  return (
-    <section id="faq">
-      <div className="container">
-        <h2>常見問題</h2>
-        {pending ? (
-          <Ripple>FAQ 整理中，開學前公布</Ripple>
-        ) : (
-          <div className="faq">
+  const body = pending ? (
+    <Ripple>FAQ 整理中，開學前公布</Ripple>
+  ) : (
+    <div className="faq">
             {items.map((f) => (
               <details key={f.q}>
                 <summary>{f.q}</summary>
@@ -31,8 +27,14 @@ export default function FaqList({ faq }) {
                 ) : null}
               </details>
             ))}
-          </div>
-        )}
+      </div>
+  );
+  if (bare) return body;
+  return (
+    <section id="faq">
+      <div className="container">
+        <h2>常見問題</h2>
+        {body}
       </div>
     </section>
   );

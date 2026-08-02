@@ -18,6 +18,22 @@
   "credits": 3,
   "courseType": "校核心選修",
   "weeksSystem": "17 週新制",
+  "en": {
+    "$comment": "AA 外籍生班（emi）英文層（重整 R5）——評分與課程定位以教學計畫_人工智慧概論AA.pdf（英文版 Syllabus）為正本；whatToBring 為中文 intro.whatToBring 的逐條對譯（教室座位句 PDF 未載、來自中文版）。只覆蓋決策卡／課前準備／評分摘要，其餘沿用中文。",
+    "tagline": "AI literacy for everyone — practical AI for learning, research, creative work, and professional tasks. No programming background required.",
+    "timeLine": "Mon 13:10–16:00 · Rm E403 (理工二館)",
+    "gradingLine": "Grading: general performance incl. attendance 10% · assignments 20% · midterm 30% · final AI-workflow project 40%",
+    "whatToBring": [
+      "Laptop or tablet (laptop recommended)",
+      "Some tools may require signing up for a free account",
+      "Classroom E403 — seats with power outlets are first come, first served"
+    ],
+    "platformUse": {
+      "課堂點名": "Attendance",
+      "交作業": "Assignments",
+      "課堂共筆": "Shared notes"
+    }
+  },
   "sections": [
     {
       "id": "AA",

@@ -53,7 +53,7 @@ function timeChip(schedule) {
 }
 
 /**
- * 6 門課併班：courses.json 的 8 筆索引依 courseDir 收成 6 組，
+ * 6 門課併班：courses.json 的 8 筆索引依 courseDir 收成 6 組（emi 外籍生班另拆獨立卡）；
  * 同一組內的班次（AA／AB）各自帶自己的課號與時間——卡面用 segmented control 切換。
  */
 export function buildCourseGroups() {
@@ -71,13 +71,17 @@ export function buildCourseGroups() {
       timeChip: timeChip(section?.schedule),
     };
 
-    if (!byDir.has(entry.courseDir)) {
+    // emi 班（外籍生）獨立成卡（重整 R5：受眾與授課語言不同，不與一般班併卡）
+    const key = entry.emi ? `${entry.courseDir}--${entry.slug}` : entry.courseDir;
+    if (!byDir.has(key)) {
       const group = {
+        key,
         courseDir: entry.courseDir,
         name: entry.name,
         nameEn: entry.nameEn ?? null,
         credits: entry.credits ?? null,
         kind: entry.kind ?? null,
+        emi: !!entry.emi,
         status: entry.status ?? 'open',
         tagline: entry.tagline ?? null,
         chips: Array.isArray(entry.chips) ? entry.chips.slice(0, 3) : [],
@@ -85,10 +89,10 @@ export function buildCourseGroups() {
         filters: Array.isArray(entry.filters) ? entry.filters : [],
         sections: [],
       };
-      byDir.set(entry.courseDir, group);
+      byDir.set(key, group);
       groups.push(group);
     }
-    byDir.get(entry.courseDir).sections.push(sec);
+    byDir.get(key).sections.push(sec);
   }
   return groups;
 }
@@ -176,7 +180,7 @@ export function buildHeroStats(groups, week) {
         : `週${week.days[0].cn}到${week.days[week.days.length - 1].cn}`
       : null;
   return {
-    courseCount: groups.length,
+    courseCount: new Set(groups.map((g) => g.courseDir)).size, // 課數以 courseDir 去重——emi 班獨立成「卡」但仍是同一門課
     sectionCount,
     dayRange,
     earliest: week?.earliest ?? null,

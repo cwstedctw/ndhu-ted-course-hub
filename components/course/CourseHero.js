@@ -19,7 +19,7 @@ function roomMapUrl(room) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`國立東華大學 ${building}`)}`;
 }
 
-export default function CourseHero({ course, section, indexEntry, sibling, enrollUrl }) {
+export default function CourseHero({ course, section, indexEntry, sibling, enrollUrl, tagline = null, chips = [], gradingLine = null, gradingLineEn = null, emi = false, en = null }) {
   const status = indexEntry?.status || 'open';
   const badge = STATUS_BADGE[status] || STATUS_BADGE.open;
   const closed = status === 'closed';
@@ -55,6 +55,11 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
     <div className="course-hero" style={heroStyle}>
       <div className="container">
         <span className={badge.className}>{badge.label}</span>
+        {emi ? (
+          <span className="badge badge-emi" style={{ marginLeft: 8 }}>
+            International Class・EMI
+          </span>
+        ) : null}
         {isLecture ? (
           <span className="badge badge-lect" style={{ marginLeft: 8 }}>
             演講課・12 場
@@ -70,6 +75,16 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
           ) : null}
         </h1>
         {isLecture ? <p className="en" style={{ margin: '4px 0 0' }}>教育部計畫・12 場系列演講</p> : null}
+        {/* 決策卡（重整 R2）：一句話定位＋關鍵字 chips；emi 班 EN 在前（正本＝英文版教學計畫） */}
+        {emi && hasText(en?.tagline) ? <p className="hero-tagline en" lang="en">{en.tagline}</p> : null}
+        {hasText(tagline) ? <p className="hero-tagline">{tagline}</p> : null}
+        {chips.length > 0 ? (
+          <ul className="hero-chips" aria-label="這門課的關鍵字">
+            {chips.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+        ) : null}
         <ul className="facts">
           {codeParts.length > 0 ? (
             <li style={closed ? { opacity: 0.55 } : undefined}>
@@ -84,6 +99,7 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
             </li>
           ) : null}
           {hasText(course?.weeksSystem) ? <li>{course.weeksSystem}</li> : null}
+          {emi && hasText(en?.timeLine) ? <li className="en" lang="en">{en.timeLine}</li> : null}
           {time ? (
             <li>
               {time}
@@ -91,6 +107,8 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
             </li>
           ) : null}
           {room ? <li>{room}</li> : null}
+          {emi && hasText(gradingLineEn) ? <li className="en" lang="en">{gradingLineEn}</li> : null}
+          {hasText(gradingLine) ? <li>{gradingLine}</li> : null}
           {!time && !room ? <li>上課時間地點開學前公布</li> : null}
           {/* 動作連結（fact-action）：anchor 撐滿藥丸、手機 44px 觸控高——見 globals .facts li.fact-action */}
           {room && roomMapUrl(room) ? (

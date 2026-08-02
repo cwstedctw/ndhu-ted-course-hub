@@ -14,7 +14,7 @@ const SEGMENT_COLORS = [
 const R = 60;
 const CIRC = 2 * Math.PI * R; // 約 376.99
 
-export default function GradingDonut({ grading, gradingNote }) {
+export default function GradingDonut({ grading, gradingNote, bare = false }) {
   const pending = isPending(grading);
   const items = asArray(grading).filter((g) => typeof g?.pct === 'number' && hasText(g?.label));
   if (!pending && items.length === 0) return null;
@@ -28,14 +28,10 @@ export default function GradingDonut({ grading, gradingNote }) {
   });
   const total = items.reduce((sum, g) => sum + g.pct, 0);
 
-  return (
-    <section id="grading">
-      <div className="container">
-        <h2>成績怎麼算</h2>
-        {pending ? (
-          <Ripple>評分方式開學前公布</Ripple>
-        ) : (
-          <>
+  const body = pending ? (
+    <Ripple>評分方式開學前公布</Ripple>
+  ) : (
+    <>
             <div className="grading">
               <svg width="170" height="170" viewBox="0 0 170 170" aria-hidden="true" focusable="false">
                 <g transform="rotate(-90 85 85)">
@@ -86,8 +82,14 @@ export default function GradingDonut({ grading, gradingNote }) {
               </ul>
             </div>
             {hasText(gradingNote) ? <p className="note">{gradingNote}</p> : null}
-          </>
-        )}
+    </>
+  );
+  if (bare) return body;
+  return (
+    <section id="grading">
+      <div className="container">
+        <h2>成績怎麼算</h2>
+        {body}
       </div>
     </section>
   );

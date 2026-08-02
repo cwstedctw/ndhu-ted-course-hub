@@ -28,6 +28,7 @@
           "kind": { "enum": ["regular", "lecture-series"] },
           "status": { "enum": ["open", "conditional", "closed"] },
           "tagline": { "type": ["string", "null"] },
+          "emi": { "type": "boolean", "description": "外籍生班（EMI）：獨立成卡＋課程頁 EN 在前雙語（2026-08-02 重整 R5）" },
           "chips": { "type": "array", "maxItems": 3, "items": { "type": "string", "minLength": 1 } },
           "order": { "type": "integer", "minimum": 1, "maximum": 8 },
           "cat": {
