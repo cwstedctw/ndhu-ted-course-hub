@@ -24,9 +24,21 @@
       "code": "CSIE35490",
       "systemId": "115108606",
       "time": "週四 第 9–11 節・14:10–17:00",
-      "timeNote": { "status": "confirmed", "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表" },
+      "timeNote": {
+        "status": "confirmed",
+        "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表"
+      },
       "room": "理工二館 E307",
-      "schedule": { "day": 4, "periods": [9, 11], "startTime": "14:10", "endTime": "17:00", "room": "理工二館 E307" },
+      "schedule": {
+        "day": 4,
+        "periods": [
+          9,
+          11
+        ],
+        "startTime": "14:10",
+        "endTime": "17:00",
+        "room": "理工二館 E307"
+      },
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-aiot/"
     }
   ],
@@ -71,29 +83,99 @@
       {
         "id": 3,
         "title": "MPU：語音、影像與整合",
-        "body": "UNO Q 上的 Debian Linux、語音辨識與合成、OpenCV 物件偵測、IoT 儀表板，最後 MCU＋MPU 橋接成完整裝置。",
-        "weeks": "W10–17"
+        "body": "UNO Q 上的 Debian Linux、語音辨識與合成、OpenCV 物件偵測、IoT 儀表板，最後 MCU＋MPU 橋接成完整裝置（W10 全校運動會停課）。",
+        "weeks": "W11–17"
       }
     ],
     "phasesNote": "雙語授課（中英並行）、Lab-based 任務導向——每週都在動手",
     "weeklyPlan": [
-      { "w": "1", "label": "課程介紹·UNO Q 雙架構", "part": 1 },
-      { "w": "2", "label": "App Lab·Git·開發板連線", "part": 1 },
-      { "w": "3", "label": "Linux·SSH·AI 輔助開發", "part": 1 },
-      { "w": "4", "label": "GPIO 與數位／類比 I/O", "part": 2 },
-      { "w": "5", "label": "感測器匯流排與資料清理", "part": 2 },
-      { "w": "6", "label": "致動器與即時反應", "part": 2 },
-      { "w": "7", "label": "多感測器控制小系統", "part": 2 },
-      { "w": "8", "label": "期中整合·除錯·彩排", "part": 2 },
-      { "w": "9", "label": "期中專題展示", "part": 2, "milestone": true },
-      { "w": "10", "label": "全校運動會停課", "part": 3 },
-      { "w": "11", "label": "MPU：Linux 與 Python 服務", "part": 3 },
-      { "w": "12", "label": "語音辨識與語音合成", "part": 3 },
-      { "w": "13", "label": "攝影機·OpenCV 物件偵測", "part": 3 },
-      { "w": "14", "label": "IoT 儀表板與 HDMI 介面", "part": 3 },
-      { "w": "15", "label": "MCU＋MPU 系統整合", "part": 3 },
-      { "w": "16", "label": "期末專題實作與諮詢", "part": 3 },
-      { "w": "17", "label": "期末專題展示", "part": 3, "milestone": true }
+      {
+        "w": "1",
+        "label": "課程介紹·UNO Q 雙架構",
+        "part": 1
+      },
+      {
+        "w": "2",
+        "label": "App Lab·Git·開發板連線",
+        "part": 1
+      },
+      {
+        "w": "3",
+        "label": "Linux·SSH·AI 輔助開發",
+        "part": 1
+      },
+      {
+        "w": "4",
+        "label": "GPIO 與數位／類比 I/O",
+        "part": 2
+      },
+      {
+        "w": "5",
+        "label": "感測器匯流排與資料清理",
+        "part": 2
+      },
+      {
+        "w": "6",
+        "label": "致動器與即時反應",
+        "part": 2
+      },
+      {
+        "w": "7",
+        "label": "多感測器控制小系統",
+        "part": 2
+      },
+      {
+        "w": "8",
+        "label": "期中整合·除錯·彩排",
+        "part": 2
+      },
+      {
+        "w": "9",
+        "label": "期中專題展示",
+        "part": 2,
+        "milestone": true
+      },
+      {
+        "w": "10",
+        "label": "全校運動會停課",
+        "part": 3
+      },
+      {
+        "w": "11",
+        "label": "MPU：Linux 與 Python 服務",
+        "part": 3
+      },
+      {
+        "w": "12",
+        "label": "語音辨識與語音合成",
+        "part": 3
+      },
+      {
+        "w": "13",
+        "label": "攝影機·OpenCV 物件偵測",
+        "part": 3
+      },
+      {
+        "w": "14",
+        "label": "IoT 儀表板與 HDMI 介面",
+        "part": 3
+      },
+      {
+        "w": "15",
+        "label": "MCU＋MPU 系統整合",
+        "part": 3
+      },
+      {
+        "w": "16",
+        "label": "期末專題實作與諮詢",
+        "part": 3
+      },
+      {
+        "w": "17",
+        "label": "期末專題展示",
+        "part": 3,
+        "milestone": true
+      }
     ],
     "weeklyPlanNote": "週次照 115-1 教學計畫（中秋、國慶、光復節、行憲紀念日皆不影響週四上課；W10 運動會停課）",
     "grading": [
@@ -225,9 +307,9 @@
       }
     },
     "whatToBring": [
-      "筆記型電腦（開發與連開發板用）",
+      "上課在 E307 電腦教室——課程開發環境用教室機，開學前已佈置好；想用自己的筆電也可以（可選、不強制）",
       "GitHub 與 Google 帳號",
-      "動手的心——這門課每週都在做東西；硬體配置方式開學第一週說明"
+      "動手的心——這門課每週都在做東西；開發板與硬體由課程準備，配置方式開學第一週說明"
     ],
     "faq": [
       {
@@ -238,7 +320,7 @@
       },
       {
         "q": "需要什麼基礎？",
-        "a": "這是資工系三年級的學程課。課程從開發環境與 Linux 基礎帶起，AI 輔助開發全程相伴——有寫程式的底子會走得比較順。",
+        "a": "這是資工系三年級的學程課，教學計畫沒有列先修課程——課程從開發環境、Linux 基礎與 AI 輔助開發帶起，有寫程式的底子會走得比較順。",
         "status": "confirmed",
         "source": "115-1 教學計畫系級欄（學三／學程）與 W1–3"
       },
@@ -253,6 +335,12 @@
         "a": "分組專題、團隊展示——系統整合本來就是團隊運動。",
         "status": "confirmed",
         "source": "115-1 教學計畫課程目標與教學策略（team demos）"
+      },
+      {
+        "status": "confirmed",
+        "q": "硬體要自己準備嗎？",
+        "a": "不用。課程備妥 Arduino UNO Q 開發板、感測器套件、USB 麥克風、喇叭、USB 攝影機與 HDMI 螢幕（教學計畫載明的課程硬體）；上課教室是電腦教室、開發環境用教室機。配置方式開學第一週說明。",
+        "source": "教學計畫_AIoT智慧裝置實作.pdf 補充說明＋arduino-q 課程重組草案v2 已核對事實（Ted 2026-08-02 拍板：教室機、30 板到位）"
       },
       {
         "q": "UNO Q 是什麼來頭？",

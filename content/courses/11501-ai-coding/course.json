@@ -24,9 +24,21 @@
       "code": "GC__68210",
       "systemId": "115189112",
       "time": "週一 第 4–6 節・09:10–12:00",
-      "timeNote": { "status": "confirmed", "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表" },
+      "timeNote": {
+        "status": "confirmed",
+        "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表"
+      },
       "room": "理工二館 E403",
-      "schedule": { "day": 1, "periods": [4, 6], "startTime": "09:10", "endTime": "12:00", "room": "理工二館 E403" },
+      "schedule": {
+        "day": 1,
+        "periods": [
+          4,
+          6
+        ],
+        "startTime": "09:10",
+        "endTime": "12:00",
+        "room": "理工二館 E403"
+      },
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-coding/"
     }
   ],
@@ -77,23 +89,93 @@
     ],
     "phasesNote": "為非資訊背景設計——不背語法、不刷題，練的是把想法說清楚、讓 AI 動手的能力",
     "weeklyPlan": [
-      { "w": "1", "label": "Vibe Coding 初體驗", "part": 1 },
-      { "w": "2", "label": "提示基本功·AI 倫理", "part": 1 },
-      { "w": "3", "label": "Colab 跑第一支 Python", "part": 1 },
-      { "w": "4", "label": "停課（教師節）", "part": 1 },
-      { "w": "5", "label": "邏輯就是生活", "part": 1 },
-      { "w": "6", "label": "Debug 不用怕", "part": 1 },
-      { "w": "7", "label": "生活小工具·分組啟動", "part": 1 },
-      { "w": "8", "label": "停課（光復節補假）", "part": 1 },
-      { "w": "9", "label": "期中小作品發表", "part": 1, "milestone": true },
-      { "w": "10", "label": "認識 AI Canvas", "part": 2 },
-      { "w": "11", "label": "動手做互動 Web App", "part": 2 },
-      { "w": "12", "label": "作品串 AI·上線分享", "part": 2 },
-      { "w": "13", "label": "VS Code 與 AI 編輯器", "part": 3 },
-      { "w": "14", "label": "命令列入門·期末啟動", "part": 3 },
-      { "w": "15", "label": "Git 與 GitHub", "part": 3 },
-      { "w": "16", "label": "AI CLI 終端代理衝刺", "part": 3 },
-      { "w": "17", "label": "期末發表與旅程回顧", "part": 3, "milestone": true }
+      {
+        "w": "1",
+        "label": "Vibe Coding 初體驗",
+        "part": 1
+      },
+      {
+        "w": "2",
+        "label": "提示基本功·AI 倫理",
+        "part": 1
+      },
+      {
+        "w": "3",
+        "label": "Colab 跑第一支 Python",
+        "part": 1
+      },
+      {
+        "w": "4",
+        "label": "停課（教師節）",
+        "part": 1
+      },
+      {
+        "w": "5",
+        "label": "邏輯就是生活",
+        "part": 1
+      },
+      {
+        "w": "6",
+        "label": "Debug 不用怕",
+        "part": 1
+      },
+      {
+        "w": "7",
+        "label": "生活小工具·分組啟動",
+        "part": 1
+      },
+      {
+        "w": "8",
+        "label": "停課（光復節補假）",
+        "part": 1
+      },
+      {
+        "w": "9",
+        "label": "期中小作品發表",
+        "part": 1,
+        "milestone": true
+      },
+      {
+        "w": "10",
+        "label": "認識 AI Canvas",
+        "part": 2
+      },
+      {
+        "w": "11",
+        "label": "動手做互動 Web App",
+        "part": 2
+      },
+      {
+        "w": "12",
+        "label": "作品串 AI·上線分享",
+        "part": 2
+      },
+      {
+        "w": "13",
+        "label": "VS Code 與 AI 編輯器",
+        "part": 3
+      },
+      {
+        "w": "14",
+        "label": "命令列入門·期末啟動",
+        "part": 3
+      },
+      {
+        "w": "15",
+        "label": "Git 與 GitHub",
+        "part": 3
+      },
+      {
+        "w": "16",
+        "label": "AI CLI 終端代理衝刺",
+        "part": 3
+      },
+      {
+        "w": "17",
+        "label": "期末發表與旅程回顧",
+        "part": 3,
+        "milestone": true
+      }
     ],
     "weeklyPlanNote": "週次與停課日照 115-1 教學計畫；工具屬活內容層，開學前依當時生態再校一次",
     "grading": [
@@ -267,8 +349,9 @@
       {
         "q": "AI 可以用到什麼程度？",
         "a": "在這門課，AI 不只可以用，根本是必修隊友。但每段程式你都要能解釋、能驗證，守住資料安全與學術誠信——AI 動手，你當導演。",
-        "status": "confirmed",
-        "source": "115-1 教學計畫課程目標與 W2"
+        "status": "deferred-w1",
+        "source": "115-1 教學計畫課程目標與 W2",
+        "deferNote": "2026-08-02 逐課 pass：課中規範細節、非選課決策，下放 W1 課程介紹投影片；資料保留"
       }
     ],
     "finale": {

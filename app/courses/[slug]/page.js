@@ -20,6 +20,7 @@ import FaqList from '@/components/course/FaqList';
 import Ripple from '@/components/course/Ripple';
 import SectionNav from '@/components/course/SectionNav';
 import Fold from '@/components/course/Fold';
+import FoldAutoOpen from '@/components/course/FoldAutoOpen';
 import { asArray, hasText, isPending } from '@/components/course/pending';
 
 // 課程頁 /courses/[slug]/（2026-08-02 課程頁重整 R1–R5：首屏決策卡＋折疊瘦身）
@@ -186,6 +187,7 @@ export default async function CoursePage({ params }) {
         emi={emi}
       />
       <SectionNav items={navItems} />
+      <FoldAutoOpen />
       {isLecture ? <TalksWall talks={talks} courseSlug={slug} /> : null}
       {introPending ? (
         <section id="intro">
