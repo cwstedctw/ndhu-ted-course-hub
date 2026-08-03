@@ -96,12 +96,13 @@ def deep_merge(base, overlay):
 # ---------------------------------------------------------------------------
 
 COVER_KICKER = "GENERAL EDUCATION · COURSE INTRO"
-DARK_PAGES = {1, 6, 7, 8, 17, 18, 19}  # render-check 用的深底節奏規格，供 parity/驗收引用
+DARK_PAGES = {1, 6, 7, 8, 17, 18, 19, 20, 21}  # render-check 用的深底節奏規格，供 parity/驗收引用；20/21＝演講課限定「講者陣容」插頁（2026-08-03）
 
 
 class Deck:
-    def __init__(self, course, section, out_dir, overlay=None):
+    def __init__(self, course, section, out_dir, overlay=None, talks=None):
         self.course = course
+        self.talks = talks or []  # 演講課（kind=lecture-series）限定：talks.json 的 12 場，與網站同源
         self.section = section
         self.intro = course.get("intro", {})
         self.instructor = course.get("instructor", {})
@@ -453,6 +454,45 @@ class Deck:
             segs.append(f'<div class="{cls}" style="flex:{counts[p]}">{esc(label_for(p, is_continuation))}</div>')
         return f'<div class="pband">{"".join(segs)}</div>'
 
+    # ------------------------------------------------------------------
+    # 模板頁 20/21：演講課限定「12 場講者陣容」（2026-08-03，Ted「演講課 need different」）
+    # 資料源＝talks.json（與網站海報牆同一份、由 pull_talks 從管理台 Sheet 出）；
+    # 講題未定照網站措辭「講題公布中」、不放推測內容（官方連結原則同源）。
+    # ------------------------------------------------------------------
+
+    def pages_talks_lineup(self):
+        talks = sorted(self.talks, key=lambda t: t.get("no") or 0)
+        half = (len(talks) + 1) // 2
+        for tpl, chunk, tag in ((20, talks[:half], "上"), (21, talks[half:], "下")):
+            if not chunk:
+                continue
+            rows = "".join(self._talk_row(t) for t in chunk)
+            inner = (
+                pb.kicker("SPEAKER LINEUP")
+                + pb.title(f"12 場講者陣容（{tag}）", big=True)
+                + f'<div style="margin-top:24px;display:flex;flex-direction:column;gap:12px">{rows}</div>'
+            )
+            self.write(tpl, inner, dark=True)
+
+    @staticmethod
+    def _talk_row(t):
+        sp = t.get("speaker") or {}
+        d = t.get("date") or ""
+        md = f"{int(d[5:7])}/{int(d[8:10])}" if len(d) == 10 else "日期公布中"
+        who = sp.get("name") or "講者邀請中"
+        seg = "・".join(x for x in (sp.get("title"), sp.get("org")) if x)
+        topic = t.get("title") or "講題公布中"
+        return (
+            '<div style="display:flex;align-items:center;gap:18px;padding:9px 16px;'
+            'background:rgba(255,255,255,0.06);border-radius:12px">'
+            f'<div style="min-width:92px"><div style="font-size:12.5px;color:var(--on-dark-dim)">第 {t.get("no", "?")} 場</div>'
+            f'<div style="font-size:19px;font-weight:800">{esc(md)}</div></div>'
+            f'<div style="flex:1.1"><div style="font-size:18px;font-weight:800">{esc(who)}</div>'
+            f'<div style="font-size:12.5px;color:var(--on-dark-dim)">{esc(seg)}</div></div>'
+            f'<div style="flex:1.3;font-size:15px">{esc(topic)}</div>'
+            '</div>'
+        )
+
     def page10_grading(self):
         grading = self.intro.get("grading", [])
         colors = [
@@ -716,6 +756,8 @@ class Deck:
         self.page07_phases()
         self.page08_destination()
         self.page09_weeks()
+        if self.course.get("kind") == "lecture-series" and self.talks:
+            self.pages_talks_lineup()
         self.page10_grading()
         self.page11_help()
         self.page12_teams()
@@ -1204,7 +1246,13 @@ def main():
     if args.lang == "bilingual":
         deck = BilingualDeck(course, section, args.out, overlay=overlay)
     else:
-        deck = Deck(course, section, args.out, overlay=overlay)
+        talks = None
+        if course.get("kind") == "lecture-series":
+            tpath = os.path.join(os.path.dirname(os.path.abspath(args.course_json)), "talks.json")
+            if os.path.exists(tpath):
+                tdata = load_json(tpath)
+                talks = tdata if isinstance(tdata, list) else tdata.get("talks") or []
+        deck = Deck(course, section, args.out, overlay=overlay, talks=talks)
     written = deck.build_all()
 
     if args.lang == "bilingual":
