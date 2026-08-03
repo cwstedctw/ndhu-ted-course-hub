@@ -39,7 +39,8 @@
         "endTime": "12:00",
         "room": "理工二館 ZT講堂 C101"
       },
-      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-future/"
+      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-future/",
+      "deckUrl": "/decks/11501-ai-future.html"
     }
   ],
   "intro": {

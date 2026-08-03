@@ -39,7 +39,8 @@
         "endTime": "12:00",
         "room": "理工二館 E403"
       },
-      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-coding/"
+      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-coding/",
+      "deckUrl": "/decks/11501-ai-coding.html"
     }
   ],
   "intro": {

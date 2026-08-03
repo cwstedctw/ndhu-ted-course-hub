@@ -24,20 +24,46 @@
       "code": "GC__1480AA",
       "systemId": "115128983",
       "time": "週一 第 11–12 節・16:10–18:00",
-      "timeNote": { "status": "confirmed", "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表" },
+      "timeNote": {
+        "status": "confirmed",
+        "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表"
+      },
       "room": "理工二館 E403",
-      "schedule": { "day": 1, "periods": [11, 12], "startTime": "16:10", "endTime": "18:00", "room": "理工二館 E403" },
-      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-it-apply-aa/"
+      "schedule": {
+        "day": 1,
+        "periods": [
+          11,
+          12
+        ],
+        "startTime": "16:10",
+        "endTime": "18:00",
+        "room": "理工二館 E403"
+      },
+      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-it-apply-aa/",
+      "deckUrl": "/decks/11501-it-apply-aa.html"
     },
     {
       "id": "AB",
       "code": "GC__1480AB",
       "systemId": "115173124",
       "time": "週二 第 11–12 節・16:10–18:00",
-      "timeNote": { "status": "confirmed", "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；教室由送件版 E402 改為 E403，與 AA 班同間；鐘點據課務組上課節次時間對照表" },
+      "timeNote": {
+        "status": "confirmed",
+        "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；教室由送件版 E402 改為 E403，與 AA 班同間；鐘點據課務組上課節次時間對照表"
+      },
       "room": "理工二館 E403",
-      "schedule": { "day": 2, "periods": [11, 12], "startTime": "16:10", "endTime": "18:00", "room": "理工二館 E403" },
-      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-it-apply-ab/"
+      "schedule": {
+        "day": 2,
+        "periods": [
+          11,
+          12
+        ],
+        "startTime": "16:10",
+        "endTime": "18:00",
+        "room": "理工二館 E403"
+      },
+      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-it-apply-ab/",
+      "deckUrl": "/decks/11501-it-apply-ab.html"
     }
   ],
   "intro": {
@@ -87,21 +113,83 @@
     ],
     "phasesNote": "課程刻意把 AI 排在學期最前面——之後每一週，你都有 24 小時待命的學習助教",
     "weeklyPlan": [
-      { "w": "1", "label": "AI 工具地圖·帳號與資安", "part": 1 },
-      { "w": "2", "label": "網頁版 AI 與提問策略", "part": 1 },
-      { "w": "3", "label": "AI 搜尋與資訊查證", "part": 1 },
-      { "w": "4", "label": "桌面 AI 與瀏覽器擴充", "part": 1 },
-      { "w": "5–6", "label": "Word／Docs 進階排版", "part": 2 },
-      { "w": "7–8", "label": "LaTeX（Overleaf＋Prism）", "part": 2 },
-      { "w": "9", "label": "期中報告繳交與互評", "part": 2, "milestone": true },
-      { "w": "10", "label": "新世代試算表函數", "part": 3 },
-      { "w": "11", "label": "Power Query 與樞紐分析", "part": 3 },
-      { "w": "12", "label": "AI 儀表板與 Apps Script", "part": 3 },
-      { "w": "13", "label": "簡報設計基礎", "part": 3 },
-      { "w": "14", "label": "AI Agent 自動生成簡報", "part": 3 },
-      { "w": "15", "label": "AI 圖像與著作權", "part": 3 },
-      { "w": "16", "label": "期末專題工作坊", "part": 3 },
-      { "w": "17", "label": "期末整合作品發表", "part": 3, "milestone": true }
+      {
+        "w": "1",
+        "label": "AI 工具地圖·帳號與資安",
+        "part": 1
+      },
+      {
+        "w": "2",
+        "label": "網頁版 AI 與提問策略",
+        "part": 1
+      },
+      {
+        "w": "3",
+        "label": "AI 搜尋與資訊查證",
+        "part": 1
+      },
+      {
+        "w": "4",
+        "label": "桌面 AI 與瀏覽器擴充",
+        "part": 1
+      },
+      {
+        "w": "5–6",
+        "label": "Word／Docs 進階排版",
+        "part": 2
+      },
+      {
+        "w": "7–8",
+        "label": "LaTeX（Overleaf＋Prism）",
+        "part": 2
+      },
+      {
+        "w": "9",
+        "label": "期中報告繳交與互評",
+        "part": 2,
+        "milestone": true
+      },
+      {
+        "w": "10",
+        "label": "新世代試算表函數",
+        "part": 3
+      },
+      {
+        "w": "11",
+        "label": "Power Query 與樞紐分析",
+        "part": 3
+      },
+      {
+        "w": "12",
+        "label": "AI 儀表板與 Apps Script",
+        "part": 3
+      },
+      {
+        "w": "13",
+        "label": "簡報設計基礎",
+        "part": 3
+      },
+      {
+        "w": "14",
+        "label": "AI Agent 自動生成簡報",
+        "part": 3
+      },
+      {
+        "w": "15",
+        "label": "AI 圖像與著作權",
+        "part": 3
+      },
+      {
+        "w": "16",
+        "label": "期末專題工作坊",
+        "part": 3
+      },
+      {
+        "w": "17",
+        "label": "期末整合作品發表",
+        "part": 3,
+        "milestone": true
+      }
     ],
     "weeklyPlanNote": "主題與工具屬活內容層，開學前依當時生態再校一次；真值＝115-1 教學計畫",
     "grading": [

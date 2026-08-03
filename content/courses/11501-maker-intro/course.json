@@ -39,7 +39,8 @@
         "endTime": "12:00",
         "room": "理工二館 D301"
       },
-      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-maker-intro/"
+      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-maker-intro/",
+      "deckUrl": "/decks/11501-maker-intro.html"
     }
   ],
   "intro": {

@@ -39,7 +39,8 @@
         "endTime": "17:00",
         "room": "理工二館 E307"
       },
-      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-aiot/"
+      "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-aiot/",
+      "deckUrl": "/decks/11501-aiot.html"
     }
   ],
   "intro": {
