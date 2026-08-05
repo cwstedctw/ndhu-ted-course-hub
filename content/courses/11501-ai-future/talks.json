@@ -13,7 +13,7 @@
       "speaker": { "name": "洪耀明", "title": "教授兼系主任", "org": "國立東華大學 自然資源與環境學系（碳中和研究中心主任）", "photo": null },
       "abstract": "碳中和不是口號，是一筆一筆算出來的帳：一棟大樓、一場活動排了多少碳，要先算得出來，才減得下去。AI 正在把這件事變快。洪耀明老師手上就有兩件事在跑：用 AI 算碳足跡的研究，還有跟資工系合作的碳盤查平台。第一場，就從東華自己的校園講起。\n洪耀明是東華自然資源與環境學系教授兼系主任，也是碳中和研究中心主任，專長環境監測、生態工法與水利工程。",
       "moe": ["b2_risk", "b2_verify"],
-      "poster": null,
+      "poster": "/images/talks/t01-announcement-example.png",
       "worksheetUrl": null,
       "materials": []
     },
