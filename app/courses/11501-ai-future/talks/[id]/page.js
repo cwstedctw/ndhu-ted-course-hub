@@ -243,6 +243,21 @@ export default async function TalkDetailPage({ params }) {
         </section>
       ) : null}
 
+      <section className="tdp-qr" aria-label="用手機接著看">
+        <img
+          className="tdp-qr-img"
+          src={`${BASE}/images/qr/talk-${talk.id}.png`}
+          alt={`第 ${no} 場頁面的 QR code`}
+          width="104"
+          height="104"
+          loading="lazy"
+        />
+        <p className="tdp-qr-cap">
+          用手機接著看
+          <span>掃描就能在手機上開這一場</span>
+        </p>
+      </section>
+
       {isDone && Array.isArray(talk.materials) && talk.materials.length > 0 ? (
         <section aria-label="演講回顧資料">
           <h2>演講回顧資料</h2>
@@ -297,6 +312,10 @@ const tdpCss = `
 .tdp-worksheet:hover { filter: brightness(1.05); }
 .tdp-note { font-size: 12.5px; color: var(--ink-40, #8B8779); margin-left: 8px; }
 .tdp-poster { display: block; width: 100%; max-width: 480px; border: 1px solid var(--line, #E5DCC3); border-radius: var(--radius, 14px); }
+.tdp-qr { display: flex; align-items: center; gap: 14px; margin: 26px 0 0; padding: 14px 16px; border: 1px solid var(--line, #E5DCC3); border-radius: var(--radius, 14px); }
+.tdp-qr-img { display: block; width: 104px; height: 104px; }
+.tdp-qr-cap { margin: 0; font-size: 14.5px; font-weight: 700; color: var(--ink-80, #3B3930); line-height: 1.7; }
+.tdp-qr-cap span { display: block; font-weight: 400; font-size: 13px; color: var(--ink-60, #5B584F); }
 .tdp-materials { margin: 0; padding-left: 20px; font-size: 15px; }
 .tdp-materials li { margin-bottom: 6px; }
 .tdp-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--line, #E5DCC3); font-size: 14.5px; }

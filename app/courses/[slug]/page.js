@@ -192,6 +192,38 @@ export default async function CoursePage({ params }) {
           <FaqList faq={intro.faq} />
         </>
       )}
+      <CourseQr slug={slug} />
     </>
+  );
+}
+
+/* 課程頁 QR：投影或列印時，讓現場的人掃了直接開這一頁。
+   圖由 scripts/build-qr.py 產生並反向解碼驗證過，不是示意圖。 */
+function CourseQr({ slug }) {
+  const bp = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  return (
+    <section className="cqr" aria-label="課程頁 QR code">
+      <style>{`
+.cqr { display: flex; align-items: center; justify-content: center; gap: 20px;
+  margin: 40px auto 8px; padding: 18px 22px; max-width: 520px;
+  border: 1px solid var(--line, #E5DCC3); border-radius: var(--radius, 14px); }
+.cqr img { display: block; width: 132px; height: 132px; }
+.cqr-t { margin: 0; font-size: 15.5px; font-weight: 700; color: var(--ink-80, #3B3930); line-height: 1.8; }
+.cqr-t span { display: block; font-weight: 400; font-size: 13px; color: var(--ink-60, #5B584F); }
+@media print { .cqr img { width: 150px; height: 150px; } }
+@media (max-width: 480px) { .cqr { flex-direction: column; text-align: center; } }
+      `}</style>
+      <img
+        src={`${bp}/images/qr/course-${slug}.png`}
+        alt="本課程頁面的 QR code"
+        width="132"
+        height="132"
+        loading="lazy"
+      />
+      <p className="cqr-t">
+        掃描開啟本課程頁
+        <span>投影或列印時，現場的人用手機掃就能看到完整課程資訊</span>
+      </p>
+    </section>
   );
 }
