@@ -34,7 +34,7 @@
         "speaker": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["name", "title", "org", "photo"],
+          "required": ["name", "title", "org", "photo", "links"],
           "properties": {
             "name": { "type": ["string", "null"] },
             "title": { "type": ["string", "null"] },
@@ -43,7 +43,8 @@
             "bio": {
               "description": "講者簡介（v3 新增，2026-07-25，optional／可 null）。缺／null＝海報牆不出簡介段",
               "type": ["string", "null"]
-            }
+            },
+            "links": { "anyOf": [ { "type": "array", "maxItems": 4, "items": { "type": "object", "additionalProperties": false, "required": ["label", "url"], "properties": { "label": { "type": "string", "minLength": 1, "maxLength": 20 }, "url": { "$ref": "_defs.schema.json#/$defs/httpsUrl" } } } }, { "type": "null" } ] }
           }
         },
         "abstract": { "type": ["string", "null"] },

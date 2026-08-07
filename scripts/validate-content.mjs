@@ -77,6 +77,10 @@ const ALLOWED_URL_HOSTS = new Set([
   "stock-portfolio-tracker-gold.vercel.app", // 學生作品：台股即時儀表板
   "ndhu-claw-machine.netlify.app", // 學生作品：虛擬娃娃機
   "ndhu-companion-hub.netlify.app", // 學生作品：ESP32 Ultimate Companion
+  // 講者本人要求放在單場頁的連結（speaker.links）——只收講者主動提供的，
+  // 不替講者到處找社群帳號掛上去（2026-08-07）
+  "drpwchen.com", // t09 陳柏威醫師的部落格（本人 2026-08-07 來信提供）
+  "www.facebook.com", // t09 陳柏威醫師的 Facebook（本人 2026-08-07 來信提供）
 ]);
 
 const failures = []; // {file, rule, msg}

@@ -170,6 +170,7 @@ def build_talks(rows: list[dict]) -> tuple[list[dict], dict[str, str]]:
                     "title": blank_to_none(cell(row, "speakerTitle")),
                     "org": blank_to_none(cell(row, "speakerOrg")),
                     "photo": None,  # 資產欄，稍後從現行 talks.json 合併
+                    "links": None,  # 資產欄（講者自己的部落格／社群），同上從現行檔合併
                 },
                 "abstract": blank_to_none(cell(row, "abstract")),
                 "moe": moe,
@@ -188,7 +189,7 @@ def build_talks(rows: list[dict]) -> tuple[list[dict], dict[str, str]]:
                 "time": None,
                 "venue": None,
                 "title": None,
-                "speaker": {"name": None, "title": None, "org": None, "photo": None},
+                "speaker": {"name": None, "title": None, "org": None, "photo": None, "links": None},
                 "abstract": None,
                 "moe": [],
                 "poster": None,
@@ -219,6 +220,9 @@ def merge_assets(new_talks: list[dict], old_by_id: dict[str, dict]) -> None:
         talk["materials"] = old.get("materials", [])
         old_speaker = old.get("speaker") or {}
         talk["speaker"]["photo"] = old_speaker.get("photo")
+        # ⚠️ links 是講者主動要求放的連結，Sheet 沒有這一欄——一定要從現行 talks.json
+        #    帶回來，否則每次重生都會把它洗掉（2026-08-07 加，t09 陳柏威的部落格/FB）。
+        talk["speaker"]["links"] = old_speaker.get("links")
 
 
 # ── 輸出排版（手寫縮排以吻合現行 talks.json——逐位元組相容） ─────────────────
@@ -238,8 +242,8 @@ def serialize_talks_json(talks: list[dict]) -> str:
             body.append(f"      {_j(k)}: {_j(t[k])}")
         sp = t["speaker"]
         body.append(
-            '      "speaker": { "name": %s, "title": %s, "org": %s, "photo": %s }'
-            % (_j(sp["name"]), _j(sp["title"]), _j(sp["org"]), _j(sp["photo"]))
+            '      "speaker": { "name": %s, "title": %s, "org": %s, "photo": %s, "links": %s }'
+            % (_j(sp["name"]), _j(sp["title"]), _j(sp["org"]), _j(sp["photo"]), _j(sp.get("links")))
         )
         for k in ("abstract", "moe", "poster", "worksheetUrl", "materials"):
             body.append(f"      {_j(k)}: {_j(t[k])}")

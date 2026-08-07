@@ -257,6 +257,23 @@ export default async function TalkDetailPage({ params }) {
                         <p className="tdp-spk-bio" key={i}>{p}</p>
                       ))
                   : null}
+                {/* 講者自己的連結（部落格、社群…）：講者主動要求放才有，沒有就整段不渲染 */}
+                {talk.speaker.links?.length ? (
+                  <ul className="tdp-spk-links">
+                    {talk.speaker.links.map((l) => (
+                      <li key={l.url}>
+                        <a
+                          href={l.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${talk.speaker.name}的${l.label}（另開新分頁）`}
+                        >
+                          {l.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </div>
             </section>
           )}
@@ -375,6 +392,9 @@ const tdpCss = `
 .tdp-spk-name { margin: 0; font-size: 18px; font-weight: 700; }
 .tdp-spk-org { margin: 2px 0 0; font-size: 14px; color: var(--ink-60, #5B584F); }
 .tdp-spk-bio { margin: 8px 0 0; font-size: 14.5px; line-height: 1.75; color: var(--ink-60, #5B584F); }
+.tdp-spk-links { display: flex; gap: 8px; flex-wrap: wrap; list-style: none; margin: 8px 0 0; padding: 0; }
+.tdp-spk-links a { display: inline-block; min-height: 32px; line-height: 24px; padding: 4px 12px; font-size: 13px; border: 1px solid var(--teal, #0E7C7B); color: var(--teal-deep, #07403F); border-radius: 999px; text-decoration: none; }
+.tdp-spk-links a:hover { background: var(--teal-tint, #E3F1F0); }
 .tdp-abstract { font-size: 15.5px; margin: 0 0 12px; }
 .tdp-past { font-size: 14.5px; color: var(--ink-60, #5B584F); background: #ECE7D8; border-radius: var(--radius, 14px); padding: 12px 16px; margin: 0 0 18px; line-height: 1.8; }
 .tdp-quiet { font-size: 14.5px; color: var(--ink-40, #8B8779); margin: 0; }
