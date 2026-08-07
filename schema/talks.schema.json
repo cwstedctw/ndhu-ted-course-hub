@@ -34,12 +34,13 @@
         "speaker": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["name", "title", "org", "photo"],
+          "required": ["name", "title", "org", "photo", "links"],
           "properties": {
             "name": { "type": ["string", "null"] },
             "title": { "type": ["string", "null"] },
             "org": { "type": ["string", "null"] },
-            "photo": { "anyOf": [ { "type": "string", "pattern": "^/images/talks/" }, { "type": "null" } ] }
+            "photo": { "anyOf": [ { "type": "string", "pattern": "^/images/talks/" }, { "type": "null" } ] },
+            "links": { "anyOf": [ { "type": "array", "maxItems": 4, "items": { "type": "object", "additionalProperties": false, "required": ["label", "url"], "properties": { "label": { "type": "string", "minLength": 1, "maxLength": 20 }, "url": { "$ref": "_defs.schema.json#/$defs/httpsUrl" } } } }, { "type": "null" } ] }
           }
         },
         "abstract": { "type": ["string", "null"] },

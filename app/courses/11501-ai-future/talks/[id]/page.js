@@ -199,6 +199,22 @@ export default async function TalkDetailPage({ params }) {
           <div>
             <p className="tdp-spk-name">{talk.speaker.name}</p>
             {speakerLine(talk.speaker) ? <p className="tdp-spk-org">{speakerLine(talk.speaker)}</p> : null}
+            {talk.speaker.links?.length ? (
+              <ul className="tdp-spk-links">
+                {talk.speaker.links.map((l) => (
+                  <li key={l.url}>
+                    <a
+                      href={l.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${talk.speaker.name}的${l.label}（另開新分頁）`}
+                    >
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
         </section>
       )}
@@ -306,6 +322,9 @@ const tdpCss = `
 .tdp-avatar { display: inline-flex; align-items: center; justify-content: center; background: var(--teal-tint, #E3F1F0); color: var(--teal-deep, #07403F); font-size: 30px; font-weight: 700; }
 .tdp-spk-name { margin: 0; font-size: 18px; font-weight: 700; }
 .tdp-spk-org { margin: 2px 0 0; font-size: 14px; color: var(--ink-60, #5B584F); }
+.tdp-spk-links { display: flex; gap: 8px; flex-wrap: wrap; list-style: none; margin: 8px 0 0; padding: 0; }
+.tdp-spk-links a { display: inline-block; min-height: 32px; line-height: 24px; padding: 4px 12px; font-size: 13px; border: 1px solid var(--teal, #0E7C7B); color: var(--teal-deep, #07403F); border-radius: 999px; text-decoration: none; }
+.tdp-spk-links a:hover { background: var(--teal-tint, #E3F1F0); }
 .tdp-abstract { font-size: 15.5px; margin: 0 0 12px; }
 .tdp-worksheet-row { margin: 26px 0 6px; }
 .tdp-worksheet { display: inline-block; background: var(--gold, #D9A441); color: #3D2E0B; font-weight: 700; text-decoration: none; padding: 12px 30px; border-radius: 999px; font-size: 16px; }
