@@ -73,8 +73,13 @@ export default function TalksWall({ talks, courseSlug }) {
                     loading="lazy"
                     style={{
                       width: '100%',
-                      aspectRatio: '2 / 3',
-                      objectFit: 'cover',
+                      // A3 直式（297×420，出血後 1400×1969）＝現行海報規格。
+                      // ⚠️ 不可用 cover：舊寫法固定 2/3＋cover，把 A3 比例的海報左右各裁掉
+                      //    約 2.4%（共 4.6–4.8%），切到左脊的直排課程名與場次序號。
+                      //    改 contain：兩種比例都完整顯示，最多留一點留白，不切設計。
+                      aspectRatio: '1400 / 1969',
+                      objectFit: 'contain',
+                      background: 'var(--paper, #FDFAF2)',
                       display: 'block',
                       ...(done ? { filter: 'grayscale(0.35)' } : null),
                     }}

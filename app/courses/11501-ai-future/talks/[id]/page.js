@@ -330,7 +330,10 @@ const tdpCss = `
 .tdp-worksheet { display: inline-block; background: var(--gold, #D9A441); color: #3D2E0B; font-weight: 700; text-decoration: none; padding: 12px 30px; border-radius: 999px; font-size: 16px; }
 .tdp-worksheet:hover { filter: brightness(1.05); }
 .tdp-note { font-size: 12.5px; color: var(--ink-40, #8B8779); margin-left: 8px; }
-.tdp-poster { display: block; width: 100%; max-width: 480px; border: 1px solid var(--line, #E5DCC3); border-radius: var(--radius, 14px); }
+/* aspect-ratio 的 auto 前綴＝「圖載進來就用它自己的比例，還沒載到才用這個備援值」。
+   沒有這行的話，lazy 圖在載入前高度是 0（只剩 2px 邊框），手機上會先看到一條縫、
+   圖到了才整頁往下跳。備援值取現行海報規格 A3 直式 1400×1969。 */
+.tdp-poster { display: block; width: 100%; max-width: 480px; height: auto; aspect-ratio: auto 1400 / 1969; border: 1px solid var(--line, #E5DCC3); border-radius: var(--radius, 14px); }
 .tdp-qr { display: flex; align-items: center; gap: 14px; margin: 26px 0 0; padding: 14px 16px; border: 1px solid var(--line, #E5DCC3); border-radius: var(--radius, 14px); }
 .tdp-qr-img { display: block; width: 104px; height: 104px; }
 .tdp-qr-cap { margin: 0; font-size: 14.5px; font-weight: 700; color: var(--ink-80, #3B3930); line-height: 1.7; }
