@@ -103,7 +103,7 @@
       "speaker": { "name": "李坤峰", "title": "內科系主任、腎臟內科主治醫師", "org": "花蓮門諾醫院", "photo": null, "links": null },
       "abstract": "我是一名腎臟科醫師，只懂高中課程中學過的 BASIC 程式語言。從好奇開始，靠著 AI、Python 與各種開發工具，一步步把臨床上的痛點變成程式、網站與 App。這一千多天裡，我踩過無數坑，也做出真正有人使用的醫療工具與題庫平台。這不是工程師轉職的故事，而是一位醫師如何在繁忙工作之外，持續學習、動手實作，讓科技成為第二專長，走出屬於自己的醫療斜槓人生。",
       "moe": ["b3_impact", "b3_account"],
-      "poster": null,
+      "poster": "/images/talks/t07-poster.webp",
       "worksheetUrl": null,
       "materials": []
     },
