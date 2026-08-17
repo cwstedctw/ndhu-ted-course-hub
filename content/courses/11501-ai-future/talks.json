@@ -1,6 +1,13 @@
 {
   "courseDir": "11501-ai-future",
-  "moeIndicators": ["b1_ethics", "b1_rights", "b2_risk", "b2_verify", "b3_impact", "b3_account"],
+  "moeIndicators": [
+    "b1_ethics",
+    "b1_rights",
+    "b2_risk",
+    "b2_verify",
+    "b3_impact",
+    "b3_account"
+  ],
   "talks": [
     {
       "id": "t01",
@@ -10,9 +17,18 @@
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
       "title": "AI在碳中和研究之應用",
-      "speaker": { "name": "洪耀明", "title": "教授兼系主任", "org": "國立東華大學 自然資源與環境學系（碳中和研究中心主任、永續發展中心副主任）", "photo": null, "links": null },
+      "speaker": {
+        "name": "洪耀明",
+        "title": "教授兼系主任",
+        "org": "國立東華大學 自然資源與環境學系（碳中和研究中心主任、永續發展中心副主任）",
+        "photo": null,
+        "links": null
+      },
       "abstract": "碳中和不是口號，是一筆一筆算出來的帳：一棟大樓、一場活動排了多少碳，要先算得出來，才減得下去。AI 正在把這件事變快。洪耀明老師手上就有兩件事在跑：用 AI 算碳足跡的研究，還有跟資工系合作的碳盤查平台。第一場，就從東華自己的校園講起。\n洪耀明是東華自然資源與環境學系教授兼系主任，也是碳中和研究中心主任、永續發展中心副主任，專長環境監測、生態工法與水利工程。",
-      "moe": ["b2_risk", "b2_verify"],
+      "moe": [
+        "b2_risk",
+        "b2_verify"
+      ],
       "poster": "/images/talks/t01-poster.webp",
       "worksheetUrl": null,
       "materials": []
@@ -25,9 +41,19 @@
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
       "title": "AI 智慧治理與智慧觀光",
-      "speaker": { "name": "余明勲", "title": "處長", "org": "花蓮縣政府觀光處", "photo": null, "links": null },
+      "speaker": {
+        "name": "余明勲",
+        "title": "處長",
+        "org": "花蓮縣政府觀光處",
+        "photo": null,
+        "links": null
+      },
       "abstract": "現代人凡事都要問問 AI，從食宿遊購行到專業的法律或科學知識等等，從生活到工作我們已經離不開 AI。你可能不知道，花蓮縣政府自己也養了一個「AI 旅遊小助理」。公部門怎麼用 AI 提升服務量能？如何成為韌性城市的中樞神經？處長會拿第一手的例子來分享。\n余明勲處長是資訊工程背景，來花蓮之前是台東縣智慧城市的推手，並舉辦過「國際熱氣球嘉年華、國際衝浪公開賽…等」，也曾在科技公司歷練過 20 多年。一個懂資訊科技的人在公部門做事，會有何不同？",
-      "moe": ["b1_rights", "b2_risk", "b3_account"],
+      "moe": [
+        "b1_rights",
+        "b2_risk",
+        "b3_account"
+      ],
       "poster": "/images/talks/t02-poster.webp",
       "worksheetUrl": null,
       "materials": []
@@ -40,9 +66,18 @@
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
       "title": "探索AI應用之刑事犯罪",
-      "speaker": { "name": "江昂軒", "title": "檢察官", "org": "臺灣花蓮地方檢察署", "photo": null, "links": null },
+      "speaker": {
+        "name": "江昂軒",
+        "title": "檢察官",
+        "org": "臺灣花蓮地方檢察署",
+        "photo": null,
+        "links": null
+      },
       "abstract": "隨著科技不斷的進步，現今終於到了 AI 急速發展的階段，然而價值與風險本就是一體兩面，當有友善的人們利用 AI 工具改善人們的生活，促進經濟與社會發展，隨之便有壞心人士利用 AI 工具，破壞人與人之信任關係，製造犯罪以獲取暴利，如假投資群組、深偽影片與語音、假資訊假新聞等等，時時刻刻都在危害我們的生命財產安全，所以要如何去發現以防範利用 AI 工具的犯罪，保護自己及所愛之人不受危害，已成為現代 AI 時代人民的重要課題，本次課程即在介紹各種利用 AI 工具之犯罪型態。",
-      "moe": ["b1_rights", "b3_impact"],
+      "moe": [
+        "b1_rights",
+        "b3_impact"
+      ],
       "poster": "/images/talks/t03-poster.webp",
       "worksheetUrl": null,
       "materials": []
@@ -54,11 +89,20 @@
       "date": "2026-10-23",
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
-      "title": "AI 洪流中的媒體素養思維與文化倫理",
-      "speaker": { "name": "洪岱郁", "title": "AI教學設計師", "org": null, "photo": null, "links": null },
-      "abstract": "AI 生成的圖、文、影片灌進每個人的手機，哪些能信、哪些能用、誰的文化被拿去餵了模型？這一場從媒體素養講到文化倫理，特別會談原住民族知識在 AI 時代的處境。\n洪岱郁打造了全台首創的原住民族知識、文化與法律系列數位課程，替全台法扶律師上課，帶隊完成 600 多門線上課程，影音作品拿過教育部 MATA 獎首獎。演講超過 50 場，平均滿意度 4.89 分（滿分 5）。",
-      "moe": ["b2_risk", "b1_rights"],
-      "poster": null,
+      "title": "AI 洪流中的素養思維",
+      "speaker": {
+        "name": "洪岱郁",
+        "title": "AI教學設計師",
+        "org": null,
+        "photo": null,
+        "links": null
+      },
+      "abstract": "面對AI浪潮，使用者需要的不只是操作技術，而是判斷力與方法論。本講座將帶領聽眾思考人機協作的本質，探討如何以專業知識與邏輯思維下達精準指令，使AI成為延伸專業能力的助力，而非取代思考的捷徑。\n洪岱郁長期受邀至各大校園擔任AIED講師，擁有多年專案管理與數位課程製作的實務經驗，曾為國立東華大學建立完整數位課程系統，從零開始打造團隊並制定數位課程製作規範，讓東華磨課師成為全國數位教育的標竿。",
+      "moe": [
+        "b2_risk",
+        "b1_rights"
+      ],
+      "poster": "/images/talks/t04-poster.webp",
       "worksheetUrl": null,
       "materials": []
     },
@@ -70,9 +114,18 @@
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
       "title": "智慧交通應用於花蓮公共事務",
-      "speaker": { "name": "林韋丞", "title": "技正", "org": "花蓮縣政府建設處交通科", "photo": null, "links": null },
+      "speaker": {
+        "name": "林韋丞",
+        "title": "技正",
+        "org": "花蓮縣政府建設處交通科",
+        "photo": null,
+        "links": null
+      },
       "abstract": "紅綠燈幾秒變燈、停車格還剩幾格、公車還有幾分鐘到，這些每天在用的服務，背後是公部門一步步導入的智慧化建置。林韋丞技正負責花蓮的智慧交通業務，從號誌時制、路口車流辨識到智慧站牌，他會講規劃、建置到管理的整段過程與成果。\n他也想帶大家從兩種角度想事情：如果你是管理者、又如果你是使用者，未來還能用科技把交通變得多方便。",
-      "moe": ["b3_impact", "b3_account"],
+      "moe": [
+        "b3_impact",
+        "b3_account"
+      ],
       "poster": null,
       "worksheetUrl": null,
       "materials": []
@@ -85,9 +138,19 @@
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
       "title": null,
-      "speaker": { "name": "郭迺鋒", "title": "副教授", "org": "世新大學財務金融學系", "photo": null, "links": null },
+      "speaker": {
+        "name": "郭迺鋒",
+        "title": "副教授",
+        "org": "世新大學財務金融學系",
+        "photo": null,
+        "links": null
+      },
       "abstract": "網路上一堆人用 AI 報明牌，能信嗎？錢的世界裡，AI 已經在做文字探勘、抓輿論風向、算投資風險。它看得到人看不到的訊號，也可能放大人本來就有的偏誤。講題確認中，方向就從這裡出發。\n郭迺鋒是世新大學財務金融學系副教授、經濟學博士，當過財金系主任，專長橫跨財務實證、社會網絡分析與資訊繪圖，是用資料把金融世界畫給你看的人。",
-      "moe": ["b2_risk", "b3_account", "b3_impact"],
+      "moe": [
+        "b2_risk",
+        "b3_account",
+        "b3_impact"
+      ],
       "poster": null,
       "worksheetUrl": null,
       "materials": []
@@ -100,9 +163,18 @@
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
       "title": "程式小白的一千多日醫療斜槓人生",
-      "speaker": { "name": "李坤峰", "title": "內科系主任、腎臟內科主治醫師", "org": "花蓮門諾醫院", "photo": null, "links": null },
+      "speaker": {
+        "name": "李坤峰",
+        "title": "內科系主任、腎臟內科主治醫師",
+        "org": "花蓮門諾醫院",
+        "photo": null,
+        "links": null
+      },
       "abstract": "我是一名腎臟科醫師，只懂高中課程中學過的 BASIC 程式語言。從好奇開始，靠著 AI、Python 與各種開發工具，一步步把臨床上的痛點變成程式、網站與 App。這一千多天裡，我踩過無數坑，也做出真正有人使用的醫療工具與題庫平台。這不是工程師轉職的故事，而是一位醫師如何在繁忙工作之外，持續學習、動手實作，讓科技成為第二專長，走出屬於自己的醫療斜槓人生。",
-      "moe": ["b3_impact", "b3_account"],
+      "moe": [
+        "b3_impact",
+        "b3_account"
+      ],
       "poster": "/images/talks/t07-poster.webp",
       "worksheetUrl": null,
       "materials": []
@@ -115,9 +187,18 @@
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
       "title": "以智慧交通來看城市治理及防災應用",
-      "speaker": { "name": "張筱雲", "title": "科長", "org": "花蓮縣政府建設處交通科", "photo": null, "links": null },
+      "speaker": {
+        "name": "張筱雲",
+        "title": "科長",
+        "org": "花蓮縣政府建設處交通科",
+        "photo": null,
+        "links": null
+      },
       "abstract": "一座城市要「變聰明」，靠的不是買一堆設備，而是讓景觀、觀光、建設、交通這些部門真的串起來。張筱雲科長的經歷剛好跨了這幾塊，她會講智慧城市裡的治理與防災應用、部門之間怎麼協調，還有公部門現在每天實際在用哪些 AI。\n張筱雲是花蓮縣政府建設處交通科科長，與 10/30 場的林韋丞技正同科——同一個科，兩種視角。",
-      "moe": ["b1_rights", "b3_impact"],
+      "moe": [
+        "b1_rights",
+        "b3_impact"
+      ],
       "poster": "/images/talks/t08-poster.webp",
       "worksheetUrl": null,
       "materials": []
@@ -130,9 +211,28 @@
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
       "title": "我怎麼跟 AI 一起工作——一位復健科醫師的半年實錄",
-      "speaker": { "name": "陳柏威", "title": "主治醫師", "org": "花蓮慈濟醫院 復健醫學部", "photo": null, "links": [{ "label": "部落格", "url": "https://drpwchen.com" }, { "label": "Facebook", "url": "https://www.facebook.com/paul.chen.pwc/" }] },
+      "speaker": {
+        "name": "陳柏威",
+        "title": "主治醫師",
+        "org": "花蓮慈濟醫院 復健醫學部",
+        "photo": null,
+        "links": [
+          {
+            "label": "部落格",
+            "url": "https://drpwchen.com"
+          },
+          {
+            "label": "Facebook",
+            "url": "https://www.facebook.com/paul.chen.pwc/"
+          }
+        ]
+      },
       "abstract": "我是花蓮慈濟的復健科醫師。今年 3 月把 AI 帶進工作和生活，像開了另一個視野，也像進了電玩世界：限制我的不是 AI 的能力，是我的想像力。\n進修學習上，兩百多本教科書接給 AI，成了隨時能問的知識庫；再架一座論文雷達，合法取得全文、自動整理成複習卡；上課與研討會的錄影，自己會變成筆記。\n醫院裡，做了一支在病人資料不外流的前提下，協助判讀 CPET 報告的程式。還有很多生活應用，歡迎來討論！",
-      "moe": ["b1_ethics", "b2_verify", "b2_risk"],
+      "moe": [
+        "b1_ethics",
+        "b2_verify",
+        "b2_risk"
+      ],
       "poster": "/images/talks/t09-poster.webp",
       "worksheetUrl": null,
       "materials": []
@@ -145,9 +245,19 @@
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
       "title": "從 AI for GIS 到 GIS for AI：日本 GeoAI 發展路徑對台灣智慧防災治理轉型之啟示",
-      "speaker": { "name": "郭俊麟", "title": "副教授兼人文創新與社會實踐研究中心主任", "org": "國立東華大學 臺灣文化學系", "photo": null, "links": null },
+      "speaker": {
+        "name": "郭俊麟",
+        "title": "副教授兼人文創新與社會實踐研究中心主任",
+        "org": "國立東華大學 臺灣文化學系",
+        "photo": null,
+        "links": null
+      },
       "abstract": "0403 之後，花蓮人都知道防災不是別人的事。地圖加上 AI（GeoAI）能做的比想像多：哪裡的坡地在動、災害來時往哪撤、資源該放哪裡。郭俊麟老師剛整理完日本 GeoAI 的發展路徑，回頭看台灣的智慧防災治理還缺什麼。\n郭俊麟是東華臺灣文化學系副教授、人文創新與社會實踐研究中心主任，日本慶應義塾大學博士，長期主持花東韌性防災與地方創生研究，是把地圖用進防災現場的人。",
-      "moe": ["b2_risk", "b3_account", "b1_rights"],
+      "moe": [
+        "b2_risk",
+        "b3_account",
+        "b1_rights"
+      ],
       "poster": "/images/talks/t10-poster.webp",
       "worksheetUrl": null,
       "materials": []
@@ -159,11 +269,20 @@
       "date": "2026-12-11",
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
-      "title": null,
-      "speaker": { "name": "高台茜", "title": "教授兼教學卓越中心主任", "org": "國立東華大學 教育與潛能開發學系", "photo": null, "links": null },
-      "abstract": "作業用 AI 寫、報告用 AI 整理、考前用 AI 畫重點——但學習有沒有真的發生？這可能是整學期最貼近你的一場：AI 對「學習」這件事本身做了什麼。講題確認中，這個方向正是我們邀請她的原因。\n高台茜是東華教學卓越中心主任、教育與潛能開發學系教授，美國普渡大學教育科技博士，從網路教學研究到行動學習，現在推動全校的生成式 AI 融入課程。東華的老師怎麼在課堂上用 AI，很多是她的團隊在幫忙想的。",
-      "moe": ["b2_verify", "b3_impact"],
-      "poster": null,
+      "title": "大學生的AI素養與AI賦能學習",
+      "speaker": {
+        "name": "高台茜",
+        "title": "教授兼教學卓越中心主任",
+        "org": "國立東華大學 教育與潛能開發學系",
+        "photo": null,
+        "links": null
+      },
+      "abstract": "作業用 AI 寫、報告用 AI 整理、考前用 AI 畫重點——但學習有沒有真的發生？AI 素養（AI Literacy）是指理解、評估及負責任地運用人工智慧的知識與技能；而 AI 賦能學習（AI-empowered Learning）則是利用 AI 作為鷹架，提升自主學習與問題解決能力的教育實踐。兩者相輔相成，是數位時代高等教育的核心關鍵，也是大學生必須具備的基本能力。\n高台茜是東華教學卓越中心主任、教育與潛能開發學系教授，美國普渡大學教育科技博士，從網路教學研究到行動學習，現在推動全校的生成式 AI 融入課程。東華的老師怎麼在課堂上用 AI，很多是她的團隊在幫忙想的。",
+      "moe": [
+        "b2_verify",
+        "b3_impact"
+      ],
+      "poster": "/images/talks/t11-poster.webp",
       "worksheetUrl": null,
       "materials": []
     },
@@ -175,9 +294,19 @@
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
       "title": "偏鄉科技應用經驗分享~遠距、智慧篩檢、無人機",
-      "speaker": { "name": "張菁育", "title": "主任", "org": "花蓮慈濟醫院醫事室", "photo": null, "links": null },
+      "speaker": {
+        "name": "張菁育",
+        "title": "主任",
+        "org": "花蓮慈濟醫院醫事室",
+        "photo": null,
+        "links": null
+      },
       "abstract": "從花蓮市區到山上的部落，一趟就醫可能要半天。5G 遠距醫療、智慧篩檢、無人機，這些科技在偏鄉醫療裡不是炫技，是把醫療送到人面前的辦法。張菁育主任會用花蓮的真實案例，講這些工具怎麼在部落與診間之間跑起來。\n張菁育是花蓮慈濟醫院醫事室主任，主導過 5G 遠距醫療、電子病歷無紙化與秀林鄉全人照護計畫，是把這些系統一個一個推上線的人。",
-      "moe": ["b3_impact", "b3_account", "b1_rights"],
+      "moe": [
+        "b3_impact",
+        "b3_account",
+        "b1_rights"
+      ],
       "poster": "/images/talks/t12-poster.webp",
       "worksheetUrl": null,
       "materials": []
