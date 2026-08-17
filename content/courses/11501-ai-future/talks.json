@@ -126,7 +126,7 @@
         "b3_impact",
         "b3_account"
       ],
-      "poster": null,
+      "poster": "/images/talks/t05-poster.webp",
       "worksheetUrl": null,
       "materials": []
     },
@@ -137,7 +137,7 @@
       "date": "2026-11-06",
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
-      "title": null,
+      "title": "AI 時代的財金提示詞素養——從市場訊號到金融教育現場",
       "speaker": {
         "name": "郭迺鋒",
         "title": "副教授",
@@ -145,13 +145,13 @@
         "photo": null,
         "links": null
       },
-      "abstract": "網路上一堆人用 AI 報明牌，能信嗎？錢的世界裡，AI 已經在做文字探勘、抓輿論風向、算投資風險。它看得到人看不到的訊號，也可能放大人本來就有的偏誤。講題確認中，方向就從這裡出發。\n郭迺鋒是世新大學財務金融學系副教授、經濟學博士，當過財金系主任，專長橫跨財務實證、社會網絡分析與資訊繪圖，是用資料把金融世界畫給你看的人。",
+      "abstract": "網路上一堆人用 AI 報明牌，能信嗎？這一場的核心不是會不會用 AI，而是能不能用提示詞把市場雜訊變成可判斷的金融訊號、再把 AI 的回答變成可檢核的判斷——從法說會逐字稿與央行聲明讀訊號，用金融知識抓 AI 的幻覺，最後用 PhotoVoice 拍下生活中的金融現場交叉驗證。AI 時代，錢的事怎麼看、怎麼學。\n郭迺鋒是世新大學財務金融學系副教授、經濟學博士，當過財金系主任，專長橫跨財務實證、社會網絡分析與資訊繪圖，是用資料把金融世界畫給你看的人。",
       "moe": [
         "b2_risk",
         "b3_account",
         "b3_impact"
       ],
-      "poster": null,
+      "poster": "/images/talks/t06-poster.webp",
       "worksheetUrl": null,
       "materials": []
     },
