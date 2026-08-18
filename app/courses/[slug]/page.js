@@ -8,6 +8,7 @@ import {
 } from '@/lib/content';
 import CourseHero from '@/components/course/CourseHero';
 import TalksWall from '@/components/course/TalksWall';
+import CoursePoster from '@/components/course/CoursePoster';
 import IntroBento from '@/components/course/IntroBento';
 import GradingDonut from '@/components/course/GradingDonut';
 import Timeline from '@/components/course/Timeline';
@@ -113,6 +114,7 @@ export default async function CoursePage({ params }) {
   // 錨點導覽：條件鏡射各元件的 return null 守門（指向 ripple 佔位 OK、指向不存在 NG）
   const navItems = [
     isLecture && talks.length > 0 ? { href: '#talks', label: '演講海報牆' } : null,
+    isLecture && hasText(hub.coursePoster) ? { href: '#course-poster', label: '課程總海報' } : null,
     { href: '#intro', label: '課程介紹' },
     !introPending &&
     (isPending(intro.grading) ||
@@ -158,6 +160,7 @@ export default async function CoursePage({ params }) {
       />
       <SectionNav items={navItems} />
       {isLecture ? <TalksWall talks={talks} courseSlug={slug} /> : null}
+      {isLecture ? <CoursePoster poster={hub.coursePoster} courseName={course.name} /> : null}
       {introPending ? (
         <section id="intro">
           <div className="container">

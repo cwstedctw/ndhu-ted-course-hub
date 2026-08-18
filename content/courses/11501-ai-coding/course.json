@@ -324,6 +324,7 @@
     "scoreUrl": null,
     "showcaseRefs": [],
     "heroImage": null,
+    "coursePoster": null,
     "showPromptButtons": false
   }
 }

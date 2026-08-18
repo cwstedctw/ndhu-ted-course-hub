@@ -255,6 +255,7 @@
     "scoreUrl": null,
     "showcaseRefs": [],
     "heroImage": null,
+    "coursePoster": "/images/courses/11501-ai-future-poster.webp",
     "showPromptButtons": false
   }
 }
