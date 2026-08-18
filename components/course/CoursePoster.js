@@ -12,16 +12,18 @@ export default function CoursePoster({ poster, courseName }) {
   return (
     <section id="course-poster">
       <style>{`
-.cposter { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 26px; }
-.cposter-fig { margin: 0; flex: 0 0 auto; width: min(340px, 100%); }
+/* 置中單欄。⚠️ 不要做成「圖左、字右」：Ted 2026-08-18 實看退回——
+   海報是直式長條，旁邊擺三行字會讓整區右半邊塌一大片空白。
+   置中之後留白變成左右對稱的邊界，看起來才是刻意的版面。 */
+.cposter { display: block; }
+.cposter-fig { margin: 0 auto 16px; width: min(560px, 100%); }
 .cposter-fig img { display: block; width: 100%; height: auto; aspect-ratio: 1400 / 1969;
   object-fit: contain; background: var(--paper, #FDFAF2);
   border: 1px solid var(--line, #E5DCC3); border-radius: var(--radius, 14px); }
 .cposter-fig a { display: block; }
-/* 文字欄要壓寬度：不壓的話在寬螢幕會拉成一行橫跨整頁，右邊留一大片空白 */
-.cposter-txt { flex: 1 1 260px; min-width: 240px; max-width: 34em; }
+.cposter-txt { max-width: 44em; margin: 0 auto; text-align: center; }
 .cposter-txt p { margin: 0 0 10px; }
-@media (max-width: 560px) { .cposter-fig { width: 100%; max-width: 340px; margin-inline: auto; } }
+@media (max-width: 560px) { .cposter-fig { width: 100%; max-width: 360px; } }
       `}</style>
       <div className="container">
         <h2>課程總海報</h2>
