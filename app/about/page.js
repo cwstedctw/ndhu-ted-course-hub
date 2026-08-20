@@ -3,6 +3,8 @@
 //         phone 一律不渲染——渲染白名單排除（IA 章 §3），site.schema.json 亦無此欄。
 // 區塊 2：AI 團隊聯名（footerCredits 原字串直出，頁尾署名的放大版）
 //         ＋團隊水彩合繪（出自團隊首作影片，2026-07-03 陳文盛老師 定調全站視覺跟影片走）。
+//         2026-08-20 換六位版（老師＋五水）：源檔＝OneDrive assets-src/20260813-liwu-team-watercolor-5f-五水合影.png
+//         （立霧 8/13 imagegen 重畫，美崙溪 7/21 入隊後補齊）；舊四位版已被同名 webp 取代。
 import { getSite } from '@/lib/content';
 
 const BP = process.env.NEXT_PUBLIC_BASE_PATH || '';
@@ -86,12 +88,12 @@ export default async function AboutPage() {
             <img
               className="about-team-art"
               src={`${BP}/images/team-watercolor.webp`}
-              alt="水彩合繪：陳文盛老師與三位溪流化身的 AI 夥伴——洄瀾、立霧、秀姑巒——在花蓮的辮狀溪床邊一同工作"
+              alt="水彩合繪：陳文盛老師與五位溪流化身的 AI 夥伴——洄瀾、立霧、秀姑巒、木瓜溪、美崙溪——在花蓮的辮狀溪床邊一同工作"
               width="1280"
               height="720"
               loading="lazy"
             />
-            <p>這個網站由 {about.name} 老師與 AI 協作團隊共同打造——團隊以花蓮的三條溪為名。</p>
+            <p>這個網站由 {about.name} 老師與 AI 協作團隊共同打造——團隊以花蓮的五條溪為名。</p>
             <p className="about-credits-line">{footerCredits}</p>
           </div>
         </div>
