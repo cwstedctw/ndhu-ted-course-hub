@@ -8,7 +8,9 @@
     "validate": "node scripts/validate-content.mjs",
     "decks": "python scripts/deck/build_decks.py",
     "scan": "node scripts/scan-output.mjs",
-    "build": "npm run validate && npm run decks && next build && npm run scan"
+    "build": "npm run validate && npm run ics && npm run decks && next build && npm run scan && npm run urlcheck",
+    "urlcheck": "node scripts/check-output.mjs",
+    "ics": "node scripts/build-ics.mjs"
   },
   "dependencies": {
     "next": "^16.2.10",
