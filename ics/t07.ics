@@ -1,0 +1,31 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//NDHU TED Course Hub//Talk Calendar 1.0//ZH-TW
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VTIMEZONE
+TZID:Asia/Taipei
+BEGIN:STANDARD
+DTSTART:19700101T000000
+TZOFFSETFROM:+0800
+TZOFFSETTO:+0800
+TZNAME:CST
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:t07@ndhu-ted-course-hub
+DTSTAMP:20260820T083917Z
+DTSTART;TZID=Asia/Taipei:20261113T093000
+DTEND;TZID=Asia/Taipei:20261113T113000
+SUMMARY:程式小白的一千多日醫療斜槓人生
+LOCATION:理工二館 ZT講堂 C101
+DESCRIPTION:講者：李坤峰・內科系主任、腎臟內科主治醫師
+ ・花蓮門諾醫院\n詳情頁：https://cwstedctw.github.io/ndhu-ted-co
+ urse-hub/courses/11501-ai-future/talks/t07/
+URL:https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-future
+ /talks/t07/
+STATUS:CONFIRMED
+SEQUENCE:0
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR

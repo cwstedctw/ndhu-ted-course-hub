@@ -1,0 +1,32 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//NDHU TED Course Hub//Talk Calendar 1.0//ZH-TW
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VTIMEZONE
+TZID:Asia/Taipei
+BEGIN:STANDARD
+DTSTART:19700101T000000
+TZOFFSETFROM:+0800
+TZOFFSETTO:+0800
+TZNAME:CST
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:t09@ndhu-ted-course-hub
+DTSTAMP:20260820T083917Z
+DTSTART;TZID=Asia/Taipei:20261127T093000
+DTEND;TZID=Asia/Taipei:20261127T113000
+SUMMARY:我怎麼跟 AI 一起工作——一位復健科醫師的半年實
+ 錄
+LOCATION:理工二館 ZT講堂 C101
+DESCRIPTION:講者：陳柏威・主治醫師・花蓮慈濟醫院 復健
+ 醫學部\n詳情頁：https://cwstedctw.github.io/ndhu-ted-course-hub/cou
+ rses/11501-ai-future/talks/t09/
+URL:https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-future
+ /talks/t09/
+STATUS:CONFIRMED
+SEQUENCE:0
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR

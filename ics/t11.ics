@@ -1,0 +1,31 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//NDHU TED Course Hub//Talk Calendar 1.0//ZH-TW
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VTIMEZONE
+TZID:Asia/Taipei
+BEGIN:STANDARD
+DTSTART:19700101T000000
+TZOFFSETFROM:+0800
+TZOFFSETTO:+0800
+TZNAME:CST
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:t11@ndhu-ted-course-hub
+DTSTAMP:20260820T083917Z
+DTSTART;TZID=Asia/Taipei:20261211T093000
+DTEND;TZID=Asia/Taipei:20261211T113000
+SUMMARY:大學生的AI素養與AI賦能學習
+LOCATION:理工二館 ZT講堂 C101
+DESCRIPTION:講者：高台茜・教授兼教學卓越中心主任・國立
+ 東華大學 教育與潛能開發學系\n詳情頁：https://cwstedctw.gi
+ thub.io/ndhu-ted-course-hub/courses/11501-ai-future/talks/t11/
+URL:https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-future
+ /talks/t11/
+STATUS:CONFIRMED
+SEQUENCE:0
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR
