@@ -131,7 +131,7 @@
       },
       {
         "w": "9",
-        "label": "期中考·範圍 Part 1",
+        "label": "期中考·範圍 W1–7",
         "part": 2,
         "milestone": true
       },
@@ -182,7 +182,7 @@
       {
         "pct": 30,
         "label": "期中考",
-        "sub": "範圍＝Part 1"
+        "sub": "範圍＝第 1–7 週：日常網頁版 AI 使用、提示策略、驗證方法、Teachable Machine、AI 搜尋與研究工具、AI 簡報工具"
       },
       {
         "pct": 40,
@@ -382,6 +382,7 @@
     "validForSemester": "115-1",
     "owner": "陳文盛（陳文盛）",
     "sources": [
+      "115-1 教學計畫正本（OneDrive 東華課程資料/11501/人工智慧概論AA｜AB/教學計畫/教學計畫_人工智慧概論AA.pdf、…AB.pdf）＝課名、學分、17 週進度、評分比例、期中範圍、AI 使用規則、工具清單真值（AA 英文版／AB 中文版，內容互為翻譯）",
       "workspace/outbox/20260610-wailan-課程介紹內容檔-人工智慧概論115-1.md",
       "20260611-wailan-設計系統補齊指示.md",
       "reviews/20260611-wailan-最終整合報告.md（四方定稿）",
