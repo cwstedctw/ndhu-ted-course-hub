@@ -4,7 +4,7 @@
 // title／description 沿用 layout 的預設（＝§4.1 SEO 規格），此處同值補 og 標籤（IA 章 §3 通則）。
 
 import { getSite, getAnnouncements, getCourses, getCourseCards } from '@/lib/content';
-import CourseCard from '@/components/CourseCard';
+import CourseWall from '@/components/CourseWall';
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
@@ -130,6 +130,13 @@ export default async function HomePage() {
         .ann-body p + p { margin-top: 6px; }
         .ann-body ul { margin: 4px 0 0; padding-left: 20px; font-size: 14px; color: var(--ink-60); }
         .ann-body li { margin: 2px 0; }
+        /* 首屏公告速覽（2026-08-20 R3 移植②）：hero 下方細帶、日期＋標題，點了跳下方完整公告 */
+        .news-brief { padding: 0; background: var(--gold-tint); border-block: 1px solid var(--line); }
+        .news-brief .container { display: flex; flex-direction: column; gap: 2px; padding-top: 10px; padding-bottom: 10px; }
+        .news-line { display: flex; align-items: baseline; gap: 12px; padding: 2px 0; text-decoration: none; }
+        .news-line time { font-size: 12.5px; font-weight: 600; color: var(--gold-deep); font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .news-line .news-title { font-size: 14px; color: var(--ink); }
+        .news-line:hover .news-title { text-decoration: underline; text-underline-offset: 3px; }
       `}</style>
 
       {/* 首頁大圖預先載入（React 19 會把 link 提升進 head；只掛首頁不掛全站） */}
@@ -158,15 +165,26 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* 區塊 2：8 班課程卡片牆（courses.json，依 order 排序；徽章三態見 CourseCard） */}
+      {/* 首屏公告速覽（R3 移植②）：最新兩則的日期＋標題，內容不重複、點了跳區塊 3 完整公告 */}
+      {announcements.length > 0 ? (
+        <section className="news-brief" aria-label="最新公告速覽">
+          <div className="container">
+            {announcements.slice(0, 2).map((item) => (
+              <a key={item.id} className="news-line" href="#announcements">
+                <time dateTime={item.date}>{item.date.slice(5).replace('-', '/')}</time>
+                <span className="news-title">{item.title}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {/* 區塊 2：8 班課程卡片牆（courses.json，依 order 排序；徽章三態見 CourseCard）
+          卡片牆含篩選列（R3 移植①）＝CourseWall client 元件 */}
       <section id="courses" aria-labelledby="courses-title">
         <div className="container">
           <h2 id="courses-title">{wallSemester} 開課清單</h2>
-          <ul className="cards">
-            {courses.map((course) => (
-              <CourseCard key={course.slug} course={course} />
-            ))}
-          </ul>
+          <CourseWall courses={courses} />
         </div>
       </section>
 

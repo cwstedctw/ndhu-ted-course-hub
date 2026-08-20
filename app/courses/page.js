@@ -3,7 +3,7 @@
 // 卡片牆與首頁共用 CourseCard；資料一律經 lib/content.js 讀 content/courses.json。
 
 import { getSite, getCourses, getCourseCards } from '@/lib/content';
-import CourseCard from '@/components/CourseCard';
+import CourseWall from '@/components/CourseWall';
 
 function sortedCourses(index) {
   return [...(index.courses || [])].sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
@@ -71,14 +71,10 @@ export default async function CoursesPage() {
         </div>
       </div>
 
-      {/* 區塊 2：8 班課程卡片牆（與首頁同元件、同排序） */}
+      {/* 區塊 2：8 班課程卡片牆（與首頁同元件、同排序；含篩選列＝R3 移植①） */}
       <section aria-labelledby="courses-title">
         <div className="container">
-          <ul className="cards">
-            {courses.map((course) => (
-              <CourseCard key={course.slug} course={course} />
-            ))}
-          </ul>
+          <CourseWall courses={courses} />
           <p className="note" style={{ marginTop: 14 }}>
             選課、上課時刻與教室請以學校教務系統公告為準。
           </p>

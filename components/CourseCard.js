@@ -6,6 +6,8 @@
 //   closed      →「本學期停開」（ink-700 on gray）＋整卡灰化、chips 隱藏——卡片仍可點入課程頁
 // kind: "lecture-series" 加「12 場系列演講」角標。
 // 整卡單一 <a>（stretched card），accessible name 自然含課名＋班別＋狀態文字。
+// 2026-08-20 設計實驗 R3 移植③：班別・學分・節次改為卡頂 kicker（MIT OCW 課程卡層級），
+// 原卡底 .meta 移除；chips 改靠卡底對齊（globals .card .chips）。
 
 import Link from 'next/link';
 
@@ -27,6 +29,12 @@ export default function CourseCard({ course }) {
       <Link className={cardClass} href={`/courses/${slug}/`}>
         {isLecture ? <span className="corner-lect">12 場系列演講</span> : null}
         <span className={badge.className}>{badge.label}</span>
+        <span className="kicker">
+          {/* timeShort＝sections[].time 的節次段（lib getCourseCards）；AA/AB 雙班卡靠它分流 */}
+          {[sectionLabel ? `${sectionLabel} 班` : '單班', `${credits} 學分`, timeShort]
+            .filter(Boolean)
+            .join('・')}
+        </span>
         <h3>
           {name}
           {sectionLabel ? ` ${sectionLabel}` : ''}
@@ -40,12 +48,6 @@ export default function CourseCard({ course }) {
             ))}
           </ul>
         ) : null}
-        <span className="meta">
-          {/* timeShort＝sections[].time 的節次段（lib getCourseCards）；AA/AB 雙班卡靠它分流 */}
-          {[sectionLabel ? `${sectionLabel} 班` : '單班', `${credits} 學分`, timeShort]
-            .filter(Boolean)
-            .join('・')}
-        </span>
       </Link>
     </li>
   );
