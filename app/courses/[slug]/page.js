@@ -5,6 +5,7 @@ import {
   getSite,
   getTalks,
   getShowcase,
+  getPosterMap,
 } from '@/lib/content';
 import CourseHero from '@/components/course/CourseHero';
 import TalksWall from '@/components/course/TalksWall';
@@ -26,7 +27,8 @@ import { asArray, hasText, isPending } from '@/components/course/pending';
 // 課程頁 /courses/[slug]/（設計書二章 §4.3 一般課程頁；§4.4 演講課變體）
 // 資料組裝：courses.json 以 slug 查 (courseDir, sectionId) → 載 course.json；
 // AA/AB 兩頁吃同一檔；單班課 sectionId=null → 取 sections[0]（lib/content.js 合約）。
-// 區塊順序＝§4.3 區塊 1–11；kind=lecture-series → hero 之後第一個主區塊改 12 場海報牆（#talks）。
+// 區塊順序＝§4.3 區塊 1–11；kind=lecture-series → hero 之後第一個主區塊＝互動總海報（#talks，
+// 點講者照片進場次頁；2026-08-20 取代原 §4.4 的 12 張海報牆——海報牆只在點擊地圖缺席時回租）。
 
 export const dynamicParams = false;
 
@@ -92,12 +94,17 @@ export default async function CoursePage({ params }) {
       }
     : null;
 
-  // 演講課：12 場海報牆資料（talks.json）
+  // 演講課：12 場資料（talks.json）＋總海報點擊地圖
   let talks = [];
   if (isLecture) {
     const data = getTalks();
     talks = Array.isArray(data) ? data : asArray(data?.talks);
   }
+  // 互動總海報（2026-08-20 Ted 拍板）：海報＋點擊地圖都在 → 總海報就是演講區唯一入口，
+  // 12 張海報牆不再上課程頁（單場海報都在各自詳情頁）。地圖還沒出（例如下學期
+  // 海報未定）→ 自動退回原本的「海報牆＋靜態總海報」兩區。
+  const posterMap = isLecture && hasText(hub.coursePoster) ? getPosterMap() : null;
+  const interactivePoster = Boolean(posterMap) && talks.length > 0;
 
   // 上學期作品：hub.showcaseRefs → showcase/114-2.json items 對照（refs 空＝整區不出現：首次開課的課沒有上學期作品）
   const refs = asArray(hub.showcaseRefs);
@@ -113,8 +120,13 @@ export default async function CoursePage({ params }) {
 
   // 錨點導覽：條件鏡射各元件的 return null 守門（指向 ripple 佔位 OK、指向不存在 NG）
   const navItems = [
-    isLecture && talks.length > 0 ? { href: '#talks', label: '演講海報牆' } : null,
-    isLecture && hasText(hub.coursePoster) ? { href: '#course-poster', label: '課程總海報' } : null,
+    isLecture && interactivePoster ? { href: '#talks', label: '十二場演講' } : null,
+    isLecture && !interactivePoster && talks.length > 0
+      ? { href: '#talks', label: '演講海報牆' }
+      : null,
+    isLecture && !interactivePoster && hasText(hub.coursePoster)
+      ? { href: '#course-poster', label: '課程總海報' }
+      : null,
     { href: '#intro', label: '課程介紹' },
     !introPending &&
     (isPending(intro.grading) ||
@@ -159,8 +171,16 @@ export default async function CoursePage({ params }) {
         enrollUrl={site?.enrollUrl}
       />
       <SectionNav items={navItems} />
-      {isLecture ? <TalksWall talks={talks} courseSlug={slug} /> : null}
-      {isLecture ? <CoursePoster poster={hub.coursePoster} courseName={course.name} /> : null}
+      {isLecture && !interactivePoster ? <TalksWall talks={talks} courseSlug={slug} /> : null}
+      {isLecture ? (
+        <CoursePoster
+          poster={hub.coursePoster}
+          courseName={course.name}
+          talks={interactivePoster ? talks : null}
+          courseSlug={slug}
+          map={interactivePoster ? posterMap : null}
+        />
+      ) : null}
       {introPending ? (
         <section id="intro">
           <div className="container">

@@ -146,7 +146,7 @@ export default async function TalkDetailPage({ params }) {
       ) : null}
 
       <p>
-        <Link className="tdp-back" href={WALL_HREF}>← 回演講海報牆</Link>
+        <Link className="tdp-back" href={WALL_HREF}>← 回十二場演講</Link>
       </p>
       <p className="tdp-course">{COURSE_FULL}——12 場系列演講</p>
 
@@ -291,7 +291,7 @@ export default async function TalkDetailPage({ params }) {
         <span>
           {prev ? <Link href={`/courses/11501-ai-future/talks/${prev.id}/`}>← 第 {talkNo(prev)} 場</Link> : null}
         </span>
-        <Link href={WALL_HREF}>回海報牆</Link>
+        <Link href={WALL_HREF}>回十二場演講</Link>
         <span>
           {next ? <Link href={`/courses/11501-ai-future/talks/${next.id}/`}>第 {talkNo(next)} 場 →</Link> : null}
         </span>
