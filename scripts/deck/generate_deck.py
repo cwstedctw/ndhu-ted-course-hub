@@ -314,7 +314,7 @@ class Deck:
 
     def _slido_event_code(self):
         code = self.section.get("slidoEvent")
-        return code if code else pb.pending("開學前待補")
+        return code if code else pb.pending("現場公布")
 
     def page06_slido1(self):
         inner = (
@@ -327,7 +327,7 @@ class Deck:
             '</div>'
             '<div class="qr-phone"><div class="qr-screen"><div class="qr-placeholder">'
             + pb.icon("qr", "var(--gold)", 48)
-            + '<div style="margin-top:10px;font-size:12px;color:var(--on-dark-dim)">QR 待補</div>'
+            + '<div style="margin-top:10px;font-size:12px;color:var(--on-dark-dim)">QR 上課現場提供</div>'
             + '</div></div></div>'
         )
         self.write(6, inner, dark=True)
@@ -642,7 +642,7 @@ class Deck:
             '</div>'
             '<div class="qr-phone"><div class="qr-screen"><div class="qr-placeholder">'
             + pb.icon("qr", "var(--gold)", 48)
-            + '<div style="margin-top:10px;font-size:12px;color:var(--on-dark-dim)">QR 待補</div>'
+            + '<div style="margin-top:10px;font-size:12px;color:var(--on-dark-dim)">QR 上課現場提供</div>'
             + '</div></div></div>'
         )
         self.write(18, inner, dark=True)

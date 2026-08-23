@@ -47,7 +47,7 @@
         },
         {
           "label": "走進真實世界",
-          "sub": "Thonny 實機體驗：接線、燒錄，感受模擬器沒有的硬體誤差"
+          "sub": "VS Code 實機連線：接線、燒錄，感受模擬器沒有的硬體誤差"
         },
         {
           "label": "Vibe Coding 完成專題",
@@ -65,7 +65,7 @@
       {
         "id": 2,
         "title": "期中與實機銜接",
-        "body": "W10 期中：Wokwi 智慧生活裝置模擬專題；W11 用 Thonny 第一次接觸真實 ESP32——接線、燒錄、硬體誤差。",
+        "body": "W10 期中：Wokwi 智慧生活裝置模擬專題；W11 用 VS Code 第一次接觸真實 ESP32——接線、燒錄、硬體誤差。",
         "weeks": "W10–11"
       },
       {
@@ -87,7 +87,7 @@
       { "w": "8", "label": "OLED 顯示整合", "part": 1 },
       { "w": "9", "label": "Wi-Fi 與物聯網模擬", "part": 1 },
       { "w": "10", "label": "期中：Wokwi 模擬專題", "part": 2, "milestone": true },
-      { "w": "11", "label": "Thonny 實機體驗", "part": 2 },
+      { "w": "11", "label": "VS Code 實機連線", "part": 2 },
       { "w": "12", "label": "Vibe Coding 入門", "part": 3 },
       { "w": "13", "label": "真實元件功能開發", "part": 3 },
       { "w": "14", "label": "VS Code＋GitHub 流程", "part": 3 },
@@ -146,7 +146,7 @@
         "group": "實機",
         "items": [
           {
-            "name": "ESP32 ＋ Thonny",
+            "name": "ESP32 ＋ VS Code",
             "sub": "接線、燒錄——模擬器沒有的真實世界"
           },
           {
@@ -236,7 +236,7 @@
         "q": "會不會一開始就要接線焊東西？",
         "a": "不會。前九週純模擬，第 11 週才第一次碰真實 ESP32——先把原理玩熟再動手，挫折感大減。",
         "status": "confirmed",
-        "source": "115-1 教學計畫進度表（W11 Thonny 實機體驗）"
+        "source": "115-1 教學計畫進度表（W11 原列 Thonny 實機體驗；本學期實際改用 VS Code）"
       },
       {
         "q": "期中、期末考什麼？",
@@ -278,7 +278,7 @@
     ]
   },
   "meta": {
-    "lastReviewed": null,
+    "lastReviewed": "2026-08-23",
     "validForSemester": "115-1",
     "owner": "陳文盛（陳文盛）",
     "sources": [

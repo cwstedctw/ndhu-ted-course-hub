@@ -84,10 +84,10 @@
       "titleEnHtml": "Grab your phone—<br>let's meet you first",
       "titleZh": "拿出手機，先認識一下你",
       "subEn": "Scan the QR to join　slido.com　·　#",
-      "subPendingEn": "TBA",
+      "subPendingEn": "shared in class",
       "noteEn": "Coming up: what AI feels like to you, your department, and which AI tools you've tried.",
       "noteZh": "等等問你：你心中的 AI 像什麼、你來自哪個系、用過哪些 AI 工具",
-      "qrPendingEn": "QR TBA"
+      "qrPendingEn": "QR shared in class"
     },
     "phases": {
       "kicker": "WHAT YOU'LL LEARN",
@@ -139,7 +139,7 @@
         "AI search & research",
         "AI slides (Gamma)",
         "AI media (Suno)",
-        "Midterm · Part 1",
+        "Midterm · Weeks 1–7",
         "Task AI & agents",
         "Desktop AI · local data",
         "Command-line AI",
@@ -164,7 +164,7 @@
       "items": [
         { "labelEn": "Participation", "labelZh": "平時成績", "subEn": "including attendance" },
         { "labelEn": "Assignments", "labelZh": "作業成績", "subEn": "" },
-        { "labelEn": "Midterm", "labelZh": "期中考", "subEn": "covers Part 1" },
+        { "labelEn": "Midterm", "labelZh": "期中考", "subEn": "covers Weeks 1–7" },
         { "labelEn": "Final", "labelZh": "期末", "subEn": "AI workflow project" }
       ],
       "noteEnHtml": "Final = an AI workflow project: combine at least two kinds of AI tools, and explain your process, verification, and reflection. <b style=\"color:var(--ink)\">The final isn't a tool-name quiz—it's showing how you solve a task with AI.</b>",
@@ -280,10 +280,10 @@
       "titleEnHtml": "Last thing—<br>tell me what you hope for",
       "titleZh": "最後，聊聊你的期待",
       "subEn": "Scan slido.com once more　·　#",
-      "subPendingEn": "TBA",
+      "subPendingEn": "shared in class",
       "noteEnHtml": "Why you're taking this, <b style=\"color:var(--gold)\">what you most want AI to help you do</b>, and one word for your hopes.",
       "noteZh": "修課動機、你最想用 AI 幫你完成什麼事、一個詞形容你的期待",
-      "qrPendingEn": "QR TBA"
+      "qrPendingEn": "QR shared in class"
     },
     "finale": {
       "kicker": "SEE YOU NEXT WEEK",
