@@ -1,14 +1,15 @@
 import Link from 'next/link';
 import { hasText, isPending, withBase } from './pending';
+import Bi from './Bi';
 
 // 區塊 1：課程頁 Hero（設計書二章 §4.3 區塊 1、§4.4 演講課變體）
 // 課名／英文名／狀態徽章／該班事實列（選課代碼・學分・週制・時間地點）／教師一句話。
 // closed → 選課代碼區灰化＋標「本學期停開」（全案統一措辭）；timeNote pending → 時間旁小字。
 
 const STATUS_BADGE = {
-  open: { className: 'badge badge-open', label: '開放選課' },
-  conditional: { className: 'badge badge-cond', label: '限量開放，速選' },
-  closed: { className: 'badge badge-gray', label: '本學期停開' },
+  open: { className: 'badge badge-open', label: '開放選課', key: 'badgeOpen' },
+  conditional: { className: 'badge badge-cond', label: '限量開放，速選', key: 'badgeConditional' },
+  closed: { className: 'badge badge-gray', label: '本學期停開', key: 'badgeClosed' },
 };
 
 // 教室 →「地圖 ↗」：取 room 第一段（建物名）組 Google Maps 搜尋連結——
@@ -19,7 +20,9 @@ function roomMapUrl(room) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`國立東華大學 ${building}`)}`;
 }
 
-export default function CourseHero({ course, section, indexEntry, sibling, enrollUrl }) {
+// L＝班別語言工具箱（lib/i18n.js）；en＝course.en 英文鏡像子樹。
+// 英文班的 hero 走「英文為主、繁中並列支援」；繁中班 L.c()／L.t() 原樣回中文，DOM 不變。
+export default function CourseHero({ course, section, indexEntry, sibling, enrollUrl, L, en = {} }) {
   const status = indexEntry?.status || 'open';
   const badge = STATUS_BADGE[status] || STATUS_BADGE.open;
   const closed = status === 'closed';
@@ -37,10 +40,14 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
   const room = hasText(section?.room) ? section.room : null;
   const timePending = isPending(section?.timeNote);
 
+  const enSection = en?.sections?.[section?.id] || {};
+  const timeS = L.t(enSection.time, time);
+  const roomS = L.t(enSection.room, room);
+
   const codeParts = [];
-  if (sectionLabel) codeParts.push(`${sectionLabel} 班`);
-  if (code) codeParts.push(`選課代碼 ${code}`);
-  if (systemId) codeParts.push(`系統編號 ${systemId}`);
+  if (sectionLabel) codeParts.push(L.isEn ? `${L.c('factSection', '班別')} ${sectionLabel}` : `${sectionLabel} 班`);
+  if (code) codeParts.push(`${L.c('factCode', '選課代碼')} ${code}`);
+  if (systemId) codeParts.push(`${L.c('factSystemId', '系統編號')} ${systemId}`);
 
   // hub.heroImage 有值才鋪主視覺；null → 預設 teal 溪谷底（全域 CSS）
   const heroStyle = hasText(course?.hub?.heroImage)
@@ -54,10 +61,10 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
   return (
     <div className="course-hero" style={heroStyle}>
       <div className="container">
-        <span className={badge.className}>{badge.label}</span>
+        <span className={badge.className}>{L.c(badge.key, badge.label)}</span>
         {isLecture ? (
           <span className="badge badge-lect" style={{ marginLeft: 8 }}>
-            演講課・12 場
+            {L.c('badgeLecture', '演講課・12 場')}
           </span>
         ) : null}
         <h1>
@@ -73,30 +80,44 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
         <ul className="facts">
           {codeParts.length > 0 ? (
             <li style={closed ? { opacity: 0.55 } : undefined}>
-              {closed ? '本學期停開・' : ''}
-              {codeParts.join('・')}
+              {closed ? L.c('factClosedPrefix', '本學期停開・') : ''}
+              {codeParts.join(L.isEn ? ' · ' : '・')}
             </li>
           ) : null}
           {credits != null ? (
             <li>
-              {credits} 學分
-              {hasText(course?.courseType) ? `・${course.courseType}` : ''}
+              <Bi
+                s={L.t(
+                  `${credits} ${L.c('factCredits', '學分')}${hasText(en?.courseType) ? ` · ${en.courseType}` : ''}`,
+                  `${credits} 學分${hasText(course?.courseType) ? `・${course.courseType}` : ''}`
+                )}
+              />
             </li>
           ) : null}
-          {hasText(course?.weeksSystem) ? <li>{course.weeksSystem}</li> : null}
+          {hasText(course?.weeksSystem) ? (
+            <li>
+              <Bi s={L.t(en?.weeksSystem, course.weeksSystem)} />
+            </li>
+          ) : null}
           {time ? (
             <li>
-              {time}
-              {timePending ? <small>（實際上課時刻開學前補）</small> : null}
+              <Bi s={timeS} />
+              {timePending ? (
+                <small>{L.c('factTimePending', '（實際上課時刻開學前補）')}</small>
+              ) : null}
             </li>
           ) : null}
-          {room ? <li>{room}</li> : null}
-          {!time && !room ? <li>上課時間地點開學前公布</li> : null}
+          {room ? (
+            <li>
+              <Bi s={roomS} />
+            </li>
+          ) : null}
+          {!time && !room ? <li>{L.c('factTbaTimeRoom', '上課時間地點開學前公布')}</li> : null}
           {/* 動作連結（fact-action）：anchor 撐滿藥丸、手機 44px 觸控高——見 globals .facts li.fact-action */}
           {room && roomMapUrl(room) ? (
             <li className="fact-action">
               <a href={roomMapUrl(room)} target="_blank" rel="noopener noreferrer">
-                地圖 ↗
+                {L.c('linkMap', '地圖 ↗')}
               </a>
             </li>
           ) : null}
@@ -104,7 +125,7 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
           {!closed && hasText(enrollUrl) ? (
             <li className="fact-action">
               <a href={enrollUrl} target="_blank" rel="noopener noreferrer">
-                怎麼選課 ↗
+                {L.c('linkEnrol', '怎麼選課 ↗')}
               </a>
             </li>
           ) : null}
@@ -112,22 +133,27 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
           {hasText(section?.deckUrl) ? (
             <li className="fact-action">
               <a href={withBase(section.deckUrl)} target="_blank" rel="noopener noreferrer">
-                課程介紹簡報 ↗
+                {L.c('linkDeck', '課程介紹簡報 ↗')}
               </a>
             </li>
           ) : null}
           {hasText(section?.deckUrlEn) ? (
             <li className="fact-action">
               <a href={withBase(section.deckUrlEn)} target="_blank" rel="noopener noreferrer">
-                簡報英文雙語版 ↗
+                {L.c('linkDeckEn', '簡報英文雙語版 ↗')}
               </a>
             </li>
           ) : null}
           {sibling ? (
             <li className="fact-action">
               <Link href={`/courses/${sibling.slug}/`}>
-                另一班：{sibling.sectionLabel}
-                {hasText(sibling.time) ? `（${sibling.time}）` : ''} →
+                {L.c('linkSibling', '另一班：')}{sibling.sectionLabel}
+                {L.isEn && hasText(sibling.timeEn)
+                  ? ` (${sibling.timeEn})`
+                  : hasText(sibling.time)
+                    ? `（${sibling.time}）`
+                    : ''}{' '}
+                →
               </Link>
             </li>
           ) : null}
@@ -141,9 +167,12 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
               instructor.promise
             ) : (
               <>
-                「{instructor.promise}」
+                {L.isEn && hasText(en?.instructorPromise) ? `“${en.instructorPromise}”` : `「${instructor.promise}」`}
                 {hasText(instructor?.name) ? (
                   <span style={{ whiteSpace: 'nowrap' }}>——{instructor.name}</span>
+                ) : null}
+                {L.isEn && hasText(en?.instructorPromise) ? (
+                  <span className="bi-zh" lang="zh-Hant-TW">「{instructor.promise}」</span>
                 ) : null}
               </>
             )}

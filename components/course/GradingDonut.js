@@ -1,4 +1,5 @@
 import Ripple from './Ripple';
+import Bi from './Bi';
 import { asArray, hasText, isPending } from './pending';
 
 // 區塊 3：評分比例環（#grading，設計書二章 §4.3 區塊 3、五章 §4.5）
@@ -14,15 +15,16 @@ const SEGMENT_COLORS = [
 const R = 60;
 const CIRC = 2 * Math.PI * R; // 約 376.99
 
-export default function GradingDonut({ grading, gradingNote }) {
+export default function GradingDonut({ grading, gradingNote, L, en = {} }) {
   const pending = isPending(grading);
   const items = asArray(grading).filter((g) => typeof g?.pct === 'number' && hasText(g?.label));
   if (!pending && items.length === 0) return null;
 
+  const enItems = asArray(en?.grading);
   let acc = 0;
   const segments = items.map((g, i) => {
     const len = (g.pct / 100) * CIRC;
-    const seg = { ...g, len, offset: -acc, color: SEGMENT_COLORS[i % SEGMENT_COLORS.length] };
+    const seg = { ...g, len, offset: -acc, color: SEGMENT_COLORS[i % SEGMENT_COLORS.length], en: enItems[i] };
     acc += len;
     return seg;
   });
@@ -31,9 +33,9 @@ export default function GradingDonut({ grading, gradingNote }) {
   return (
     <section id="grading">
       <div className="container">
-        <h2>成績怎麼算</h2>
+        <h2>{L.c('headGrading', '成績怎麼算')}</h2>
         {pending ? (
-          <Ripple>評分方式開學前公布</Ripple>
+          <Ripple>{L.c('gradingPending', '評分方式開學前公布')}</Ripple>
         ) : (
           <>
             <div className="grading">
@@ -73,11 +75,11 @@ export default function GradingDonut({ grading, gradingNote }) {
                   <li key={i}>
                     <span className="sw" style={{ background: s.color }} aria-hidden="true" />
                     <span>
-                      <b>{s.pct}%</b> {s.label}
+                      <b>{s.pct}%</b> <Bi s={L.t(s.en?.label, s.label)} />
                       {hasText(s.sub) ? (
                         <>
                           {' '}
-                          <small>{s.sub}</small>
+                          <Bi as="small" s={L.t(s.en?.sub, s.sub)} />
                         </>
                       ) : null}
                     </span>
@@ -85,7 +87,9 @@ export default function GradingDonut({ grading, gradingNote }) {
                 ))}
               </ul>
             </div>
-            {hasText(gradingNote) ? <p className="note">{gradingNote}</p> : null}
+            {hasText(gradingNote) ? (
+              <Bi as="p" className="note" s={L.t(en?.gradingNote, gradingNote)} />
+            ) : null}
           </>
         )}
       </div>

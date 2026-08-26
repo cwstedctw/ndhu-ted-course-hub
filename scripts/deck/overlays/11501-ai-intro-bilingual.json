@@ -1,5 +1,5 @@
 {
-  "$comment": "英文雙語版 overlay（deck 專屬、不上網頁；Hub 課程頁是純中文）。依 decisions.md 第六節 overlay 原則，英文內容不進 Hub course.json，放這裡。鍵對齊 course.json 結構：每個中文欄位配一個 en 值。generate_deck.py --lang bilingual --overlay <本檔> 消費。內容 1:1 抽自 v1 _v1歸檔-course-intro-deck/build/generate_aa_en.py（AA 雙語版，唯讀）。只 AA、AB 純中文不做。",
+  "$comment": "英文雙語版 overlay（deck 專屬）。⚠️2026-08-26 更正：舊註寫「Hub 課程頁是純中文」已不成立——AA 課程頁已改為 en-primary-zh-support（見 sections[].langProfile），英文課程殼在 course.json 的 en 子樹。本檔只管 deck 版面的英文文案（kicker、標題、色帶等），跟網頁那一套是兩個載體、不共用。依 decisions.md 第六節 overlay 原則，英文內容不進 Hub course.json，放這裡。鍵對齊 course.json 結構：每個中文欄位配一個 en 值。generate_deck.py --lang bilingual --overlay <本檔> 消費。內容 1:1 抽自 v1 _v1歸檔-course-intro-deck/build/generate_aa_en.py（AA 雙語版，唯讀）。只 AA、AB 純中文不做。",
   "appliesTo": "115-1-gc6753-ai-intro",
   "section": "AA",
   "lang": "bilingual",

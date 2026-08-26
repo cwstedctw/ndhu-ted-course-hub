@@ -23,6 +23,7 @@ import FaqList from '@/components/course/FaqList';
 import Ripple from '@/components/course/Ripple';
 import SectionNav from '@/components/course/SectionNav';
 import { asArray, hasText, isPending } from '@/components/course/pending';
+import { makeL, enTree } from '@/lib/i18n';
 
 // 課程頁 /courses/[slug]/（設計書二章 §4.3 一般課程頁；§4.4 演講課變體）
 // 資料組裝：courses.json 以 slug 查 (courseDir, sectionId) → 載 course.json；
@@ -72,6 +73,14 @@ export default async function CoursePage({ params }) {
   const { course, section, indexEntry } = resolved;
   const site = getSite();
 
+  // 班別語言 profile（2026-08-26，工單第 21–22 項）：
+  // AA＝en-primary-zh-support（英文為主、繁中並列支援）、AB＝zh-primary-en-terms。
+  // 英文字串缺一條，validate 規則 #20 就會 fail-closed 擋下 build，
+  // 這裡的中文 fallback 只是 runtime 防呆，正常情況不會被觸發。
+  const L = makeL(section, site);
+  const en = enTree(course);
+  const enIntro = en.intro || {};
+
   const isLecture = (course.kind || indexEntry?.kind) === 'lecture-series';
   const intro = course.intro;
   const introPending = !intro || isPending(intro); // intro 整包 pending（骨架課）→ 整塊水波
@@ -91,6 +100,8 @@ export default async function CoursePage({ params }) {
         slug: siblingEntry.slug,
         sectionLabel: siblingEntry.sectionLabel,
         time: hasText(siblingSection?.time) ? siblingSection.time : null,
+        // 英文頁面連「另一班」的上課時間也得是英文（validate #20 會要求）
+        timeEn: en?.sections?.[siblingEntry.sectionId]?.time ?? null,
       }
     : null;
 
@@ -120,48 +131,48 @@ export default async function CoursePage({ params }) {
 
   // 錨點導覽：條件鏡射各元件的 return null 守門（指向 ripple 佔位 OK、指向不存在 NG）
   const navItems = [
-    isLecture && interactivePoster ? { href: '#talks', label: '十二場演講' } : null,
+    isLecture && interactivePoster ? { href: '#talks', label: L.c('navTalks', '十二場演講') } : null,
     isLecture && !interactivePoster && talks.length > 0
-      ? { href: '#talks', label: '演講海報牆' }
+      ? { href: '#talks', label: L.c('navTalkWall', '演講海報牆') }
       : null,
     isLecture && !interactivePoster && hasText(hub.coursePoster)
-      ? { href: '#course-poster', label: '課程總海報' }
+      ? { href: '#course-poster', label: L.c('navCoursePoster', '課程總海報') }
       : null,
-    { href: '#intro', label: '課程介紹' },
+    { href: '#intro', label: L.c('navIntro', '課程介紹') },
     !introPending &&
     (isPending(intro.grading) ||
       asArray(intro.grading).some((g) => typeof g?.pct === 'number' && hasText(g?.label)))
-      ? { href: '#grading', label: '成績怎麼算' }
+      ? { href: '#grading', label: L.c('navGrading', '成績怎麼算') }
       : null,
     !introPending &&
     (isPending(intro.phases) ||
       isPending(intro.weeklyPlan) ||
       asArray(intro.phases).length > 0 ||
       asArray(intro.weeklyPlan).length > 0)
-      ? { href: '#weeks', label: '每週進度' }
+      ? { href: '#weeks', label: L.c('navWeeks', '每週進度') }
       : null,
     !introPending &&
     (asArray(intro.aiRules).length > 0 || asArray(intro.aiPolicyExamples).length > 0)
-      ? { href: '#ai-rules', label: 'AI 守則' }
+      ? { href: '#ai-rules', label: L.c('navAiRules', 'AI 守則') }
       : null,
     !introPending &&
     (asArray(intro.toolGroups).some((g) => hasText(g?.group)) ||
       asArray(intro.dailyTools).some((t) => hasText(t?.name)))
-      ? { href: '#tools', label: '會用的工具' }
+      ? { href: '#tools', label: L.c('navTools', '會用的工具') }
       : null,
-    hasText(scoreUrl) ? { href: '#score', label: '查成績' } : null,
-    showcaseItems.length > 0 ? { href: '#showcase', label: '上學期作品' } : null,
+    hasText(scoreUrl) ? { href: '#score', label: L.c('navScore', '查成績') } : null,
+    showcaseItems.length > 0 ? { href: '#showcase', label: L.c('navShowcase', '上學期作品') } : null,
     !introPending && asArray(intro.whatToBring).some(hasText)
-      ? { href: '#bring', label: '要帶什麼' }
+      ? { href: '#bring', label: L.c('navBring', '要帶什麼') }
       : null,
     !introPending &&
     (isPending(intro.faq) ||
       asArray(intro.faq).some((f) => f?.status === 'confirmed' && hasText(f?.q) && hasText(f?.a)))
-      ? { href: '#faq', label: 'FAQ' }
+      ? { href: '#faq', label: L.c('navFaq', 'FAQ') }
       : null,
   ];
 
-  return (
+  const body = (
     <>
       <CourseHero
         course={course}
@@ -169,8 +180,10 @@ export default async function CoursePage({ params }) {
         indexEntry={indexEntry}
         sibling={sibling}
         enrollUrl={site?.enrollUrl}
+        L={L}
+        en={en}
       />
-      <SectionNav items={navItems} />
+      <SectionNav items={navItems} navAria={L.c('navAria', '頁內導覽')} />
       {isLecture && !interactivePoster ? <TalksWall talks={talks} courseSlug={slug} /> : null}
       {isLecture ? (
         <CoursePoster
@@ -190,43 +203,69 @@ export default async function CoursePage({ params }) {
         </section>
       ) : (
         <>
-          <IntroBento intro={intro} />
-          <GradingDonut grading={intro.grading} gradingNote={intro.gradingNote} />
+          <IntroBento intro={intro} L={L} en={enIntro} />
+          <GradingDonut
+            grading={intro.grading}
+            gradingNote={intro.gradingNote}
+            L={L}
+            en={enIntro}
+          />
           <Timeline
             weeksSystem={course.weeksSystem}
             phases={intro.phases}
             weeklyPlan={intro.weeklyPlan}
             weekOneStart={site?.weekOneStart}
             scheduleNote={section?.scheduleNote}
+            scheduleNoteEn={en?.sections?.[section?.id]?.scheduleNote}
+            L={L}
+            en={{ ...enIntro, weeksSystem: en.weeksSystem }}
           />
-          <AiRules aiRules={intro.aiRules} aiPolicyExamples={intro.aiPolicyExamples} />
+          <AiRules
+            aiRules={intro.aiRules}
+            aiPolicyExamples={intro.aiPolicyExamples}
+            L={L}
+            en={enIntro}
+          />
           <ToolBelt
             toolGroups={intro.toolGroups}
             dailyTools={intro.dailyTools}
             toolGroupsNote={intro.toolGroupsNote}
+            L={L}
+            en={enIntro}
           />
         </>
       )}
-      <PlatformLinks hubLinks={hub.links} platforms={introPending ? [] : intro.platforms} />
-      <ScoreButton scoreUrl={scoreUrl} />
-      <ShowcaseSection items={showcaseItems} />
+      <PlatformLinks
+        hubLinks={hub.links}
+        platforms={introPending ? [] : intro.platforms}
+        L={L}
+        en={enIntro}
+        enHub={en.hub}
+      />
+      <ScoreButton scoreUrl={scoreUrl} L={L} />
+      <ShowcaseSection items={showcaseItems} L={L} />
       {introPending ? null : (
         <>
-          <WhatToBring items={intro.whatToBring} />
-          <FaqList faq={intro.faq} />
+          <WhatToBring items={intro.whatToBring} L={L} en={enIntro} />
+          <FaqList faq={intro.faq} L={L} en={enIntro} />
         </>
       )}
-      <CourseQr slug={slug} />
+      <CourseQr slug={slug} L={L} />
     </>
   );
+
+  // 英文班才包一層 lang="en"（根 <html> 是 zh-Hant-TW，不包會讓讀屏器拿中文語音念英文）。
+  // 繁中班原樣輸出、DOM 不多一層，其他七個班的版型完全不受影響。
+  return L.isEn ? <div lang="en">{body}</div> : body;
 }
 
 /* 課程頁 QR：投影或列印時，讓現場的人掃了直接開這一頁。
    圖由 scripts/build-qr.py 產生並反向解碼驗證過，不是示意圖。 */
-function CourseQr({ slug }) {
+function CourseQr({ slug, L }) {
   const bp = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  const qrAlt = L ? L.c('qrAlt', '本課程頁面的 QR code') : '本課程頁面的 QR code';
   return (
-    <section className="cqr" aria-label="課程頁 QR code">
+    <section className="cqr" aria-label={qrAlt}>
       <style>{`
 .cqr { display: flex; align-items: center; justify-content: center; gap: 20px;
   margin: 40px auto 8px; padding: 18px 22px; max-width: 520px;
@@ -239,14 +278,18 @@ function CourseQr({ slug }) {
       `}</style>
       <img
         src={`${bp}/images/qr/course-${slug}.png`}
-        alt="本課程頁面的 QR code"
+        alt={qrAlt}
         width="132"
         height="132"
         loading="lazy"
       />
       <p className="cqr-t">
-        掃描開啟本課程頁
-        <span>投影或列印時，現場的人用手機掃就能看到完整課程資訊</span>
+        {L ? L.c('qrTitle', '掃描開啟本課程頁') : '掃描開啟本課程頁'}
+        <span>
+          {L
+            ? L.c('qrSub', '投影或列印時，現場的人用手機掃就能看到完整課程資訊')
+            : '投影或列印時，現場的人用手機掃就能看到完整課程資訊'}
+        </span>
       </p>
     </section>
   );

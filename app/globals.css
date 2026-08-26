@@ -796,3 +796,22 @@ section > .container > h2 {
   .weeks .ms::before,
   .score-btn::before, .score-cta::before { display: none !important; }
 }
+
+/* ── 班別語言 profile：英文班的雙欄文字（2026-08-26，工單第 21 項） ──────────
+   AA＝en-primary-zh-support：英文為主、繁中在下方小一號支援。繁中班不會產生 .bi-zh。
+   刻意不用兩欄 grid：手機窄螢幕下英文換行後與繁中對不齊，改「主／支援」上下堆疊，
+   列印與 44px 觸控都不受影響。 */
+.bi { display: inline; }
+.bi-main { display: inline; }
+.bi-zh {
+  display: block;
+  font-size: 0.86em;
+  font-weight: 400;
+  opacity: 0.78;
+  margin-top: 2px;
+  line-height: 1.6;
+}
+h1 .bi-zh, h2 .bi-zh, h3 .bi-zh, h4 .bi-zh { font-size: 0.72em; letter-spacing: 0; }
+.facts .bi-zh, .section-nav .bi-zh, .chips .bi-zh { display: inline; margin-left: 6px; opacity: 0.7; }
+.section-nav .bi-zh::before, .facts .bi-zh::before { content: '· '; }
+@media print { .bi-zh { opacity: 1; } }

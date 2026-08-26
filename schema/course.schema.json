@@ -14,16 +14,62 @@
       "items": {
         "type": "object",
         "required": ["id"],
-        "properties": { "id": { "type": "string", "pattern": "^[A-Z]{2}$" } }
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Z]{2}$" },
+          "langProfile": { "$ref": "#/$defs/langProfile" },
+          "scheduleNote": { "type": ["string", "null"] }
+        }
       }
     },
     "intro": {
       "type": "object",
       "properties": { "internalNotes": false }
     },
+    "en": {
+      "$comment": "英文鏡像子樹（班別語言 profile 用）。形狀刻意保持開放——真正的完整性由 validate 規則 #20 的必填清單逐條把關（fail-closed），schema 只擋明顯的型別錯誤。",
+      "type": "object",
+      "properties": { "internalNotes": false }
+    },
     "hub": { "$ref": "#/$defs/hub" }
   },
   "$defs": {
+    "langProfile": {
+      "$comment": "班別語言 profile（2026-08-26，工單第 21 項）。primary＝該班主要語言；support＝並列的支援語言；mode 是兩者的組合方式。AA＝en 主＋zh-Hant-TW 支援（雙欄，不是 en-only）；AB＝zh-Hant-TW 主＋English 技術名詞。宣告了 primary=en，就必須備齊 en 子樹與 site.i18n.en 字典，缺一條 validate #20 直接擋 build。",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "support", "mode"],
+      "properties": {
+        "primary": { "enum": ["en", "zh-Hant-TW"] },
+        "support": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["en", "zh-Hant-TW"] }
+        },
+        "mode": { "enum": ["en-primary-zh-support", "zh-primary-en-terms"] },
+        "note": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "primary": { "const": "en" } }, "required": ["primary"] },
+          "then": {
+            "properties": {
+              "mode": { "const": "en-primary-zh-support" },
+              "support": { "type": "array", "contains": { "const": "zh-Hant-TW" } }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "primary": { "const": "zh-Hant-TW" } }, "required": ["primary"] },
+          "then": {
+            "properties": {
+              "mode": { "const": "zh-primary-en-terms" },
+              "support": { "type": "array", "contains": { "const": "en" } }
+            }
+          }
+        }
+      ]
+    },
     "hub": {
       "type": "object",
       "additionalProperties": false,

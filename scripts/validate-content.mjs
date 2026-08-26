@@ -23,6 +23,9 @@
  *           enum 切換、依設計書慣例表豁免）
  *       #16 announcements validUntil 不得早於 date
  *       #18 intro.grading 為真值陣列時，pct 總和必須＝100（pending 物件跳過不驗）
+ *       #20 班別語言 profile（2026-08-26）：sections[].langProfile 必填欄位齊備、
+ *           一門課不得半套；**primary=en 的班，英文課程殼與共用 chrome 字典缺一條
+ *           就 FAIL（fail-closed），不准 runtime 默默回落中文**。缺字清單逐條列印。
  *
  *   警告（印出但不擋建置）：
  *       #15 引用圖檔（/images/…）在 public/ 找不到——bootstrap 期先警告，圖檔管線
@@ -280,6 +283,240 @@ for (const [, { data, file }] of courseDataByDir) {
   });
   if (allNumeric && g.length > 0 && sum !== 100) {
     fail(file, "#18 grading 總和", `intro.grading[].pct 總和＝${sum}，必須＝100（評分環才畫得滿一圈）`);
+  }
+}
+
+/* ── 規則 #20：班別語言 profile 與英文字串完整性（fail-closed） ──
+ *
+ * 2026-08-26 加（工單第 21 項）。115-1《人工智慧概論》AA 是 EMI、AB 是繁中授課，
+ * 兩班吃同一份 course.json，語言差異靠 sections[].langProfile 宣告：
+ *   AA＝en-primary-zh-support（英文完整＋繁中並列支援，不是 en-only）
+ *   AB＝zh-primary-en-terms（繁中可獨立完成，技術名詞附英文）
+ *
+ * 這條規則的重點是 **fail-closed**：宣告了 primary=en，course.json 的 en 子樹與
+ * site.json 的 i18n.en chrome 字典就得備齊；**缺一條就 FAIL、build 一起掛**，
+ * 不准靠 runtime 默默回落中文。元件裡的中文 fallback 只是最後一道防呆，
+ * 不是「可以少寫英文」的許可——正常情況下它永遠不會被觸發。
+ *
+ * 缺字清單逐條印在 [FAIL] 行，直接就是「還要補哪幾句英文」的工單。
+ */
+
+// 課程頁自己的導覽／按鈕／狀態字（工單第 22 項刻意縮範圍：不做全站 i18n）
+const CHROME_KEYS_REQUIRED = [
+  "navIntro", "navGrading", "navWeeks", "navAiRules", "navTools", "navScore",
+  "navShowcase", "navBring", "navFaq", "navTalks", "navTalkWall", "navCoursePoster", "navAria",
+  "headIntro", "headGrading", "headWeeks", "headWeeksParts", "headAiRules", "headTools",
+  "headPlatforms", "headScore", "headShowcase", "headBring", "headFaq",
+  "cardDailyTools", "cardHomework",
+  "badgeOpen", "badgeConditional", "badgeClosed", "badgeLecture",
+  "factSection", "factCode", "factSystemId", "factCredits", "factClosedPrefix",
+  "factTimePending", "factTbaTimeRoom",
+  "linkMap", "linkEnrol", "linkDeck", "linkDeckEn", "linkSibling",
+  "scoreButton", "scoreNote", "platformNewWindow", "platformPending",
+  "faqPending", "faqExamplePending", "gradingPending", "weeksPending", "aiRulesExamplesPending",
+  "qrTitle", "qrSub", "qrAlt",
+];
+
+const isFilled = (v) => typeof v === "string" && v.trim().length > 0;
+const getPath = (obj, dotted) =>
+  dotted.split(".").reduce((acc, k) => (acc == null ? undefined : acc[k]), obj);
+
+/**
+ * 英文鏡像的必填清單。**由中文本體驅動**——中文有這一欄、英文就得有對應那一欄，
+ * 這樣以後中文加內容時英文不會靜靜漏掉（清單寫死才會漂移）。
+ *   scalar   單一字串
+ *   strList  字串陣列（長度須相同、每筆非空）
+ *   objList  物件陣列（長度須相同、每筆的 keys 都要非空）；zhKeys 只用來判斷「中文有值才要求」
+ *   deepList 巢狀物件陣列（toolGroups → items）
+ */
+const EN_MIRROR_SPEC = [
+  { kind: "scalar", zh: "courseType", en: "courseType" },
+  { kind: "scalar", zh: "weeksSystem", en: "weeksSystem" },
+  { kind: "scalar", zh: "instructor.promise", en: "instructorPromise" },
+
+  { kind: "scalar", zh: "intro.promise", en: "intro.promise" },
+  { kind: "scalar", zh: "intro.phasesNote", en: "intro.phasesNote" },
+  { kind: "scalar", zh: "intro.weeklyPlanNote", en: "intro.weeklyPlanNote" },
+  { kind: "scalar", zh: "intro.gradingNote", en: "intro.gradingNote" },
+  { kind: "scalar", zh: "intro.toolGroupsNote", en: "intro.toolGroupsNote" },
+  { kind: "scalar", zh: "intro.destination.title", en: "intro.destination.title" },
+  { kind: "scalar", zh: "intro.destination.sub", en: "intro.destination.sub" },
+
+  { kind: "strList", zh: "intro.chips", en: "intro.chips" },
+  { kind: "strList", zh: "intro.whatToBring", en: "intro.whatToBring" },
+  { kind: "strList", zh: "intro.aiPolicyExamples.structure", en: "intro.aiPolicyStructure" },
+
+  { kind: "objList", zh: "intro.destination.steps", en: "intro.destination.steps", keys: ["label", "sub"] },
+  { kind: "objList", zh: "intro.phases", en: "intro.phases", keys: ["title", "body", "weeks"] },
+  // 週次表：中文是 {w,label} 物件、英文是純字串陣列（w 是數字、不必翻）
+  { kind: "objList", zh: "intro.weeklyPlan", en: "intro.weeklyPlan", keys: [] },
+  { kind: "objList", zh: "intro.grading", en: "intro.grading", keys: ["label", "sub"] },
+  { kind: "objList", zh: "intro.dailyTools", en: "intro.dailyTools", keys: ["name", "sub"] },
+  { kind: "objList", zh: "intro.platforms", en: "intro.platforms", keys: ["use", "name"] },
+  { kind: "objList", zh: "intro.aiRules", en: "intro.aiRules", keys: ["title", "body"] },
+  { kind: "objList", zh: "intro.faq", en: "intro.faq", keys: ["q", "a"] },
+  { kind: "objList", zh: "hub.links", en: "hub.links", keys: ["use"] },
+
+  { kind: "deepList", zh: "intro.toolGroups", en: "intro.toolGroups", keys: ["group"],
+    child: { list: "items", keys: ["name", "sub"] } },
+];
+
+function collectMissingEn(course) {
+  const missing = [];
+  const en = course?.en ?? {};
+
+  for (const rule of EN_MIRROR_SPEC) {
+    const zhVal = getPath(course, rule.zh);
+    const enVal = getPath(en, rule.en);
+
+    if (rule.kind === "scalar") {
+      if (!isFilled(zhVal)) continue; // 中文本來就沒這欄 → 不強迫英文有
+      if (!isFilled(enVal)) missing.push(`en.${rule.en}（對應 ${rule.zh}）`);
+      continue;
+    }
+
+    if (!Array.isArray(zhVal) || zhVal.length === 0) continue;
+
+    if (!Array.isArray(enVal)) {
+      missing.push(`en.${rule.en}（整段缺；${rule.zh} 有 ${zhVal.length} 筆）`);
+      continue;
+    }
+    if (enVal.length !== zhVal.length) {
+      missing.push(
+        `en.${rule.en} 有 ${enVal.length} 筆、${rule.zh} 有 ${zhVal.length} 筆——` +
+          `索引對不齊，頁面會配錯行`
+      );
+      continue;
+    }
+
+    zhVal.forEach((zhItem, i) => {
+      const enItem = enVal[i];
+      if (rule.kind === "strList" || (rule.kind === "objList" && rule.keys.length === 0)) {
+        if (!isFilled(enItem)) missing.push(`en.${rule.en}[${i}]`);
+        return;
+      }
+      if (!enItem || typeof enItem !== "object") {
+        missing.push(`en.${rule.en}[${i}]（整筆缺）`);
+        return;
+      }
+      for (const k of rule.keys) {
+        // 中文那一欄有值才要求英文（例如 grading[].sub 可能為 null）
+        if (isFilled(zhItem?.[k]) && !isFilled(enItem[k])) missing.push(`en.${rule.en}[${i}].${k}`);
+      }
+      if (rule.kind === "deepList" && rule.child) {
+        const zhKids = Array.isArray(zhItem?.[rule.child.list]) ? zhItem[rule.child.list] : [];
+        const enKids = Array.isArray(enItem[rule.child.list]) ? enItem[rule.child.list] : null;
+        if (zhKids.length === 0) return;
+        if (!enKids || enKids.length !== zhKids.length) {
+          missing.push(
+            `en.${rule.en}[${i}].${rule.child.list} 應有 ${zhKids.length} 筆、實際 ` +
+              `${enKids ? enKids.length : "缺整段"}`
+          );
+          return;
+        }
+        zhKids.forEach((zhKid, j) => {
+          for (const k of rule.child.keys) {
+            if (isFilled(zhKid?.[k]) && !isFilled(enKids[j]?.[k])) {
+              missing.push(`en.${rule.en}[${i}].${rule.child.list}[${j}].${k}`);
+            }
+          }
+        });
+      }
+    });
+  }
+  return missing;
+}
+
+{
+  let anyEnPrimary = false;
+
+  for (const [dir, { data, file }] of courseDataByDir) {
+    const sections = Array.isArray(data?.sections) ? data.sections : [];
+    const withProfile = sections.filter((s) => s && s.langProfile);
+    if (withProfile.length === 0) continue; // 這門課還沒導入語言 profile——不強迫
+
+    // 一門課要嘛全班都宣告、要嘛都不宣告；半套最危險（漏掉的那班語言由誰決定？）
+    if (withProfile.length !== sections.length) {
+      const missingIds = sections.filter((s) => s && !s.langProfile).map((s) => s.id ?? "?");
+      fail(
+        file,
+        "#20 profile 全班齊備",
+        `sections[] 有 ${withProfile.length}/${sections.length} 筆宣告 langProfile，` +
+          `缺：${missingIds.join(", ")}——同一門課不得半套（漏的那班語言無人決定）`
+      );
+    }
+
+    for (const s of withProfile) {
+      const p = s.langProfile;
+      // schema 已擋型別；這裡是第二道，兼顧「schema 被改鬆」的情況
+      for (const k of ["primary", "support", "mode"]) {
+        if (p[k] == null) fail(file, "#20 profile 必填欄位", `sections[${s.id ?? "?"}].langProfile 缺 ${k}`);
+      }
+      if (p.primary !== "en") continue;
+
+      anyEnPrimary = true;
+
+      // ① 該班自己的欄位（時間、教室、行事曆註記）
+      //    順便連兵弟班一起要：英文頁的 hero 會插一行「另一班（上課時間）」，
+      //    兄弟班沒英文時間就會在英文頁面中間跳出一行中文。
+      for (const other of sections) {
+        if (!other || other.id === s.id) continue;
+        const enOther = getPath(data, `en.sections.${other.id}`);
+        if (isFilled(other.time) && !isFilled(enOther?.time)) {
+          fail(
+            file,
+            "#20 缺英文字串",
+            `en.sections.${other.id}.time——${s.id} 是英文班，它的 hero 會顯示兄弟班 ` +
+              `${other.id} 的上課時間，那一行不能只有中文`
+          );
+        }
+      }
+      const enSec = getPath(data, `en.sections.${s.id}`);
+      if (!enSec || typeof enSec !== "object") {
+        fail(file, "#20 缺英文字串", `en.sections.${s.id} 整段缺——primary=en 的班必須有英文時間與教室`);
+      } else {
+        for (const k of ["time", "room"]) {
+          if (isFilled(s[k]) && !isFilled(enSec[k])) {
+            fail(file, "#20 缺英文字串", `en.sections.${s.id}.${k}（對應 sections[].${k}）`);
+          }
+        }
+        if (isFilled(s.scheduleNote) && !isFilled(enSec.scheduleNote)) {
+          fail(file, "#20 缺英文字串", `en.sections.${s.id}.scheduleNote——行事曆註記是評量時序的一部分，不得只有中文`);
+        }
+      }
+
+      // ② 課程殼英文鏡像
+      const missing = collectMissingEn(data);
+      if (missing.length > 0) {
+        fail(
+          file,
+          "#20 缺英文字串（fail-closed）",
+          `班別 ${s.id} 宣告 primary=en，但英文課程殼缺 ${missing.length} 條，build 中止。` +
+            `缺字清單：\n         - ${missing.join("\n         - ")}`
+        );
+      }
+    }
+  }
+
+  // ③ 共用 chrome 字典（只要站上有任一 en 班就必須齊備）
+  if (anyEnPrimary) {
+    const dict = site?.i18n?.en;
+    if (!dict || typeof dict !== "object") {
+      fail(sitePath, "#20 缺英文字串", "site.json 缺 i18n.en——有 primary=en 的班就必須備齊課程頁共用 chrome 字典");
+    } else {
+      const missingKeys = CHROME_KEYS_REQUIRED.filter((k) => !isFilled(dict[k]));
+      if (missingKeys.length > 0) {
+        fail(
+          sitePath,
+          "#20 缺英文字串（fail-closed）",
+          `i18n.en 缺 ${missingKeys.length} 個 chrome 鍵，build 中止。缺字清單：\n         - ${missingKeys.join("\n         - ")}`
+        );
+      }
+      const unknown = Object.keys(dict).filter((k) => !CHROME_KEYS_REQUIRED.includes(k));
+      if (unknown.length > 0) {
+        warn(sitePath, "#20 chrome 多餘鍵", `i18n.en 有清單外的鍵（沒人用到就該刪，免得誤以為有翻）：${unknown.join(", ")}`);
+      }
+    }
   }
 }
 

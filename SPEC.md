@@ -1,6 +1,13 @@
 # NDHU_TED_Course_Hub 專案規格書 v1
 
-> 狀態：**草稿、待陳文盛老師拍板**（拍板後可派秀姑巒覆核，再開工 M0）
+> ⚠️ **歷史設計稿（不是現行真值）**——標於 2026-08-26。
+>
+> 這份是 2026-06-11 開工前的規格草稿，保留供溯源。實作已經偷離它好幾步：
+> 技術底不是「vinext＋Cloudflare」而是 **Next.js App Router＋純 JS＋GitHub Pages**；
+> 不用 Tailwind，改全域 CSS 設計 token；課程頁區塊、資料介面與建置管線以
+> **`README.md` 與 `docs/DEPLOY.md` 為準**。兩邊打架時，以 README／DEPLOY 和程式碼為真值。
+>
+> 原狀態：**草稿、待陳文盛老師拍板**（拍板後可派秀姑巒覆核，再開工 M0）
 > 作者：洄瀾｜2026-06-11｜放置：`workspace/teaching/tools/ndhu-ted-course-hub/`
 > 三項已定決策：①技術底＝**B 案（codex-site 基底：vinext＋Cloudflare）** ②格局＝**多課平台** ③名稱＝**NDHU_TED_Course_Hub**（陳文盛老師 2026-06-11 拍板）
 
