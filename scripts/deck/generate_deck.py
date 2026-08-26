@@ -946,12 +946,14 @@ class BilingualDeck:
             # band text 在 v1 是行內字面 HTML（「TASK AI & AGENTS」的 & 是裸 & 不轉義），
             # 故此處 raw 輸出、不 bb.esc()，以逐位元組對齊 v1。overlay 的 band text 純由本
             # skill 維護（非使用者輸入、無 XSS 面），raw 安全。
+            # 2026-08-26：段數改由 overlay 決定（每段自帶 cls），不再寫死「每列恰兩段」——
+            # v4 的三部曲切在 W9/W14，第二列會出現 P1續／P2／P3 三段，舊寫法會漏掉第三段。
             return '<div class="pband">' + "".join(
-                f'<div class="{cls}" style="flex:{seg["flex"]}">{seg["text"]}</div>'
-                for cls, seg in segs) + '</div>'
+                f'<div class="{seg["cls"]}" style="flex:{seg["flex"]}">{seg["text"]}</div>'
+                for seg in segs) + '</div>'
 
-        band1 = band([("p1", w["band1En"][0]), ("p2", w["band1En"][1])])
-        band2 = band([("p2", w["band2En"][0]), ("p3", w["band2En"][1])])
+        band1 = band(w["band1En"])
+        band2 = band(w["band2En"])
         inner = (
             bb.kicker(w["kicker"]) + bb.bititle(w["titleEn"], w["titleZh"])
             + '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:40px">'

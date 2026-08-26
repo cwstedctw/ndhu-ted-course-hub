@@ -16,9 +16,9 @@
     },
     "cover": {
       "kicker": "GENERAL EDUCATION · COURSE INTRO",
-      "promise": "From sharper questions and real verification, to building a complete workflow with AI",
-      "chips": ["Ask sharp questions", "Verify to the source", "Build something real"],
-      "chipsZh": "問得出來 · 查得到底 · 做得出東西",
+      "promise": "From creative AI tools to supervised AI agents",
+      "chips": ["Build something real", "Show your evidence", "Stay in control"],
+      "chipsZh": "做得出作品 · 查得到證據 · 管得住 Agent",
       "metaEn": "Fall 2026 · Semester 115-1　·　General Education Center, NDHU　·　Instructor: <b>Prof. Wen-Sheng Chen</b>",
       "metaZh": "115 學年度 第 1 學期 · 國立東華大學 通識教育中心 · 授課教師：陳文盛"
     },
@@ -93,39 +93,39 @@
       "kicker": "WHAT YOU'LL LEARN",
       "titleEn": "What you'll learn: three parts",
       "titleZh": "這門課在學什麼：三部曲",
-      "noteEnHtml": "At the core: <span class=\"em-g\">AI literacy</span>—we don't start from coding, so non-CS students keep up.",
-      "noteZh": "核心是 AI 素養（AI literacy）——不從寫程式開始，非資訊背景也跟得上",
+      "noteEnHtml": "<span class=\"em-g\">No prerequisites</span>—no programming, Git, or command line required. Every week runs Make → Test/Break → Make it yours.",
+      "noteZh": "零先修——不要求程式設計、Git 或命令列背景；每週固定走 Make → Test／Break → Make it yours。",
       "items": [
         {
-          "headEn": "AI everyone can use",
-          "headZh": "人人會用的 AI",
-          "bodyEn": "Ask good questions, break tasks down, verify answers; run one full cycle on Teachable Machine—data → label → train → test → improve.",
-          "bodyZh": "問對問題、拆解任務、查證答案；用 Teachable Machine 走一次「資料→標記→訓練→測試→改進」。"
+          "headEn": "AI foundations & making",
+          "headZh": "AI 基礎與創作",
+          "bodyEn": "Midterm scope = Weeks 1–7. Tell a tool from a teammate, a workflow, and an agent; make images, a first web app, version safety, data and bias, source-grounded research. Week 8 multimodal, Week 9 midterm gallery.",
+          "bodyZh": "期中評量範圍＝第 1–7 週。分辨 AI 是工具、隊友、工作流還是 Agent；做出圖像、第一個 web app、版本安全、資料與偏誤、來源查證。第 8 週多模態、第 9 週期中作品展。"
         },
         {
-          "headEn": "Task AI tools & agents",
-          "headZh": "任務型 AI 工具與 Agent",
-          "bodyEn": "AI search & research, AI slide-making, music and media generation, and emerging agentic tools.",
-          "bodyZh": "AI 搜尋研究、AI 簡報、音樂與多媒體生成、新興 agentic 工具。"
+          "headEn": "Agent literacy & supervision",
+          "headZh": "Agent 素養與監督",
+          "bodyEn": "What actually counts as an agent; task contracts, action previews, permissions, dry-runs, logs, read-back, and recovery; agent-assisted data work and the limits of connecting to outside systems.",
+          "bodyZh": "什麼才算真正的 Agent；任務契約、動作預覽、權限、dry-run、log、read-back 與復原；Agent 輔助的資料分析，以及連接外部系統的邊界。"
         },
         {
-          "headEn": "Desktop AI & pro workflows",
-          "headZh": "桌面 AI 與專業工作流",
-          "bodyEn": "AI on local files, less copy-paste; command-line automation that non-CS folks can pick up too.",
-          "bodyZh": "AI 處理本機資料、減少重複貼上；非資訊背景也能上手的 command-line 自動化。"
+          "headEn": "Capstone & maker festival",
+          "headZh": "期末專題與成果節",
+          "bodyEn": "Turn those skills into one piece: task contract, two iterations, sources and tests, red-team and repair, then an evidence board and your own AI-collaboration rules at the festival.",
+          "bodyZh": "把前面的能力收成一件作品：任務契約、兩次迭代、來源與測試、紅隊與修復，最後在成果節交出證據板與個人 AI 合作準則。"
         }
       ]
     },
     "destination": {
       "kicker": "COURSE DESTINATION",
-      "titleEnHtml": "Where this course leads:<br>build your own AI workflow",
-      "titleZh": "這門課的終點：做出你的 AI 工作流",
-      "subEn": "Not memorizing tool names—turning a real problem into work you can explain, verify, and show.",
-      "subZh": "不是背工具名稱，而是把一個真實問題，變成能說明、能查證、能展示的作品。",
+      "titleEnHtml": "Where this course leads:<br>an AI workflow you stay in control of",
+      "titleZh": "這門課的終點：一個你管得住的 AI 工作流",
+      "subEn": "Not memorizing tool names—turning a real problem into work you can build, evidence, and control.",
+      "subZh": "不是背工具名稱，而是把一個真實問題，變成做得出來、查得到證據、也管得住的作品。",
       "steps": [
-        { "labelEn": "Ask a real question", "labelZh": "提出真實問題" },
-        { "labelEn": "Verify & break down", "labelZh": "查證與拆解" },
-        { "labelEn": "Ship a showable piece", "labelZh": "做出可展示作品" }
+        { "labelEn": "Make something", "labelZh": "做出作品" },
+        { "labelEn": "Verify & test", "labelZh": "查證與測試" },
+        { "labelEn": "Supervise & recover", "labelZh": "監督與復原" }
       ]
     },
     "weeks": {
@@ -133,27 +133,31 @@
       "titleEn": "17-Week Roadmap",
       "titleZh": "17 週課程地圖",
       "labelsEn": [
-        "Intro · Responsible AI",
-        "Web AI: ask & plan",
-        "Teachable Machine I–II",
-        "AI search & research",
-        "AI slides (Gamma)",
-        "AI media (Suno)",
-        "Midterm · Weeks 1–7",
-        "Task AI & agents",
-        "Desktop AI · local data",
-        "Command-line AI",
-        "Workflow project",
-        "Final workshop",
-        "Final showcase"
+        "Tool, teammate, workflow, or agent?",
+        "Prompting, images, human judgment",
+        "First web app with AI",
+        "Version safety (Git-lite)",
+        "How AI learns from data",
+        "Failure, bias, retraining",
+        "Source-grounded AI research",
+        "AI sound, video, multimodal",
+        "Midterm gallery · Weeks 1–7",
+        "What makes a real AI agent?",
+        "Agent-assisted data analysis",
+        "Supervising agent actions",
+        "Agent-control web app",
+        "Connected AI systems",
+        "Capstone sprint",
+        "Red-team, repair, recovery",
+        "AI Maker Festival"
       ],
       "band1En": [
-        { "flex": 3, "text": "PART 1 · AI EVERYONE CAN USE (W1–5)" },
-        { "flex": 4, "text": "PART 2 · TASK AI & AGENTS (W6–10)" }
+        { "cls": "p1", "flex": 7, "text": "PART 1 · AI FOUNDATIONS & MAKING (W1–W9)" }
       ],
       "band2En": [
-        { "flex": 1, "text": "P2" },
-        { "flex": 5, "text": "PART 3 · DESKTOP AI & PRO WORKFLOWS (W11–17)" }
+        { "cls": "p1", "flex": 2, "text": "P1" },
+        { "cls": "p2", "flex": 5, "text": "PART 2 · AGENT LITERACY & SUPERVISION (W10–W14)" },
+        { "cls": "p3", "flex": 3, "text": "PART 3 · CAPSTONE & MAKER FESTIVAL (W15–W17)" }
       ],
       "legendEn": "●=weekly topic　<span style=\"color:var(--gold)\">●</span>=midterm/final milestone　·　bands=the three parts　｜　每週主題・里程碑・三部曲分段"
     },
@@ -162,13 +166,13 @@
       "titleEn": "How grades work",
       "titleZh": "成績怎麼算",
       "items": [
-        { "labelEn": "Participation", "labelZh": "平時成績", "subEn": "including attendance" },
-        { "labelEn": "Assignments", "labelZh": "作業成績", "subEn": "" },
-        { "labelEn": "Midterm", "labelZh": "期中考", "subEn": "covers Weeks 1–7" },
+        { "labelEn": "Participation", "labelZh": "平時成績", "subEn": "five in-class evidence cards" },
+        { "labelEn": "Assignments", "labelZh": "作業成績", "subEn": "four kinds, 5% each" },
+        { "labelEn": "Midterm", "labelZh": "期中", "subEn": "covers Weeks 1–7" },
         { "labelEn": "Final", "labelZh": "期末", "subEn": "AI workflow project" }
       ],
-      "noteEnHtml": "Final = an AI workflow project: combine at least two kinds of AI tools, and explain your process, verification, and reflection. <b style=\"color:var(--ink)\">The final isn't a tool-name quiz—it's showing how you solve a task with AI.</b>",
-      "noteZh": "期末＝AI 工作流專題：至少整合兩類 AI 工具，說明過程、查證與反思。期末不是考工具名稱，是展示你怎麼用 AI 解決任務。"
+      "noteEnHtml": "Final = an AI workflow project: combine at least one primary and one supporting AI capability, three tests, and one failure with a recovery. <b style=\"color:var(--ink)\">Brand count, technical difficulty, and public deployment earn no extra credit.</b>",
+      "noteZh": "期末＝AI 工作流專題：至少整合一項主要與一項輔助 AI 能力、三筆測試，以及一次失敗與復原。品牌數量、技術難度與公開部署本身不加分。"
     },
     "help": {
       "kicker": "GETTING HELP",
@@ -206,31 +210,34 @@
       "titleZh": "課堂會親手用到的工具",
       "groups": [
         {
-          "groupEn": "Understand AI",
-          "groupZh": "理解 AI",
-          "items": [{ "name": "Teachable Machine", "sub": "grasp AI training, no coding" }]
-        },
-        {
-          "groupEn": "Research",
-          "groupZh": "查資料",
-          "items": [{ "name": "Perplexity · Felo", "sub": "AI-driven search & research" }]
-        },
-        {
-          "groupEn": "Make content",
-          "groupZh": "做內容",
+          "groupEn": "Make something",
+          "groupZh": "做出作品",
           "items": [
-            { "name": "Gamma", "sub": "AI slides & fast layout" },
-            { "name": "Suno", "sub": "AI music & media" }
+            { "name": "Text & image generation", "sub": "a first draft you accept, revise, or reject" },
+            { "name": "Sound, video & multimodal", "sub": "captions, alt text, AI disclosure" }
           ]
         },
         {
-          "groupEn": "Tasks & automation",
-          "groupZh": "任務型與自動化",
+          "groupEn": "Evidence & data",
+          "groupZh": "查證與資料",
           "items": [
-            { "name": "Manus & agents", "sub": "autonomous task agents" },
-            { "name": "Claude Desktop", "sub": "local data & automation" },
-            { "name": "Codex · Antigravity", "sub": "workflow automation" },
-            { "name": "command-line AI", "sub": "batch processing" }
+            { "name": "Source-grounded research", "sub": "claim — source — verdict card" },
+            { "name": "Data stories", "sub": "clean, chart, check two raw values" }
+          ]
+        },
+        {
+          "groupEn": "Versions & safety",
+          "groupZh": "版本與安全",
+          "items": [
+            { "name": "Version safety (Git-lite)", "sub": "diff, approve or reject, restore" }
+          ]
+        },
+        {
+          "groupEn": "Agent supervision",
+          "groupZh": "Agent 監督",
+          "items": [
+            { "name": "Task contract", "sub": "outcome, verification, boundaries, stop" },
+            { "name": "Action preview & permissions", "sub": "dry-run, approve, log, recover" }
           ]
         }
       ],
@@ -239,27 +246,27 @@
         { "use": "Turn in", "name": "Teams" },
         { "use": "Notes", "name": "HackMD" }
       ],
-      "noteEnHtml": "<b style=\"color:var(--ink)\">Tools change, skills don't.</b> We'll use the best equivalent that week.　工具會換、能力不換。"
+      "noteEnHtml": "<b style=\"color:var(--ink)\">Tools change, skills don't.</b> You're graded on the task, the evidence, permissions, verification, and recovery—never on a product's interface. Conditional tools are not the shared core: not using one costs you nothing.　工具會換、能力不換；沒用某個產品不扣分。"
     },
     "daily": {
       "kicker": "FOR DAILY USE",
       "titleEn": "Everyday AI tools",
       "titleZh": "日常 AI 工具推薦",
       "items": [
-        { "nameEn": "Chatbots", "sub": "ChatGPT·Claude·Gemini·Grok", "zh": "聊天機器人" },
-        { "nameEn": "AI search", "sub": "Perplexity·Felo", "zh": "AI 搜尋" },
-        { "nameEn": "AI notebook", "sub": "NotebookLM", "zh": "AI 筆記本" },
-        { "nameEn": "AI playground", "sub": "Google AI Studio", "zh": "AI 實驗場" }
+        { "nameEn": "Chat AI", "sub": "ChatGPT·Claude·Gemini·Grok", "zh": "聊天型 AI" },
+        { "nameEn": "AI search", "sub": "Perplexity·Felo — leads, not proof", "zh": "AI 搜尋" },
+        { "nameEn": "AI notebook", "sub": "NotebookLM — reading tied to sources", "zh": "AI 筆記本" },
+        { "nameEn": "No-account & offline", "sub": "equivalent paths, same grade", "zh": "免帳號與離線路徑" }
       ],
-      "noteEnHtml": "Week 1, just pick <b style=\"color:var(--ink)\">one that fits you</b>—no need to install them all.　第一週先挑一個順手的就好。"
+      "noteEnHtml": "Week 1, just pick <b style=\"color:var(--ink)\">one that fits you</b>—no need to install them all, and no account is ever required.　第一週先挑一個順手的就好，也可以完全不辦帳號。"
     },
     "bring": {
       "kicker": "WHAT TO BRING",
       "titleEn": "What to bring",
       "titleZh": "上課要帶什麼",
       "items": [
-        { "enHtml": "A laptop or tablet (<b>laptop recommended</b>)", "zh": "筆電或平板（建議筆電）" },
-        { "enHtml": "Some tools need a free account", "zh": "部分工具需註冊免費帳號" },
+        { "enHtml": "A laptop or tablet (<b>laptop recommended</b>); without a device, paper and pre-generated paths carry the same weight", "zh": "筆電或平板（建議筆電）；沒有裝置也有紙本與教師預生成的等值路徑" },
+        { "enHtml": "<b>No account, no payment</b>—every core activity has a no-account path", "zh": "不用先辦任何帳號、不用付費——課堂核心一律有免帳號路徑" },
         { "enHtml": "Room E403—seats near outlets go first-come", "zh": "教室 理工二館 E403——有插座的位子先到先選" }
       ]
     },
@@ -271,8 +278,8 @@
       "subZh": "可以用 AI 學習與創作，但你要——",
       "items": [
         { "headEn": "Explain your own process", "headZh": "能解釋自己的過程", "bodyEn": "Be able to say how you asked, how you revised, and why you decided that way.", "bodyZh": "說得出你怎麼問、怎麼改、為什麼這樣決定。" },
-        { "headEn": "Verify what AI gives you", "headZh": "會查證 AI 的輸出", "bodyEn": "AI gets things wrong and makes things up; check before you hand it in.", "bodyZh": "AI 會錯也會編；交出去前你要查過。" },
-        { "headEn": "Keep academic integrity", "headZh": "守學術誠信", "bodyEn": "Honor integrity, privacy, and copyright.", "bodyZh": "遵守誠信、隱私與著作權。" }
+        { "headEn": "Verify what AI gives you", "headZh": "會查證 AI 的輸出", "bodyEn": "AI gets things wrong and makes things up; check before you hand it in. Several models agreeing only raises a hypothesis's priority—it is not evidence.", "bodyZh": "AI 會錯也會編；交出去前你要查過。多個 AI 講法一致只提高查證優先順序，不是證據。" },
+        { "headEn": "Integrity and safety limits", "headZh": "守學術誠信與安全底線", "bodyEn": "Honor integrity, privacy, and copyright. Public or synthetic data only—no personal data, real grades, private mail, or unlicensed photos and audio.", "bodyZh": "遵守誠信、隱私與著作權；只用公開或合成資料，不輸入個資、真實成績、私人信件或未授權的照片與聲音。" }
       ]
     },
     "slido2": {
@@ -289,8 +296,8 @@
       "kicker": "SEE YOU NEXT WEEK",
       "titleEnHtml": "Welcome to<br>Introduction to AI",
       "titleZh": "歡迎來到人工智慧概論",
-      "nextWeekEn": "Next week: Web AI—how to ask questions and plan a task.",
-      "nextWeekZh": "下週預告：Web AI——怎麼問問題、怎麼規劃任務",
+      "nextWeekEn": "Next week: prompting, images, and human judgment—how to ask, how to revise, when to say no.",
+      "nextWeekZh": "下週預告：提問、圖像與人的判斷——怎麼問、怎麼改、什麼時候該拒絕",
       "actionEn": "Your small task: bring one problem you'd like to solve with AI.",
       "actionZh": "下週的小任務：帶一個你想用 AI 解決的問題來",
       "materialsEn": "Course site: cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-intro-aa/",

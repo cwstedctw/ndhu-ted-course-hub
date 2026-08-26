@@ -1,6 +1,6 @@
 {
   "semester": "115-1",
-  "updated": "2026-08-20",
+  "updated": "2026-08-26",
   "courses": [
     {
       "slug": "11501-ai-intro-aa",
@@ -12,8 +12,8 @@
       "credits": 3,
       "kind": "regular",
       "status": "open",
-      "tagline": "從提問、查證，到用 AI 完成一個真實工作流",
-      "chips": ["問得出來", "查得到底", "做得出東西"],
+      "tagline": "從創意 AI 工具，到受監督的 AI Agent",
+      "chips": ["做得出作品", "查得到證據", "管得住 Agent"],
       "order": 1
     },
     {
@@ -26,8 +26,8 @@
       "credits": 3,
       "kind": "regular",
       "status": "open",
-      "tagline": "從提問、查證，到用 AI 完成一個真實工作流",
-      "chips": ["問得出來", "查得到底", "做得出東西"],
+      "tagline": "從創意 AI 工具，到受監督的 AI Agent",
+      "chips": ["做得出作品", "查得到證據", "管得住 Agent"],
       "order": 2
     },
     {

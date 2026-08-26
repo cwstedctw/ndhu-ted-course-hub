@@ -197,6 +197,7 @@ export default async function CoursePage({ params }) {
             phases={intro.phases}
             weeklyPlan={intro.weeklyPlan}
             weekOneStart={site?.weekOneStart}
+            scheduleNote={section?.scheduleNote}
           />
           <AiRules aiRules={intro.aiRules} aiPolicyExamples={intro.aiPolicyExamples} />
           <ToolBelt

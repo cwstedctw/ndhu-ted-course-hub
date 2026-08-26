@@ -10,7 +10,10 @@ import { asArray, hasText, isPending } from './pending';
 // 一行（2026-07-05 學生視角升級）。null＝休眠（SSG 靜態不變）。
 import NowWeek from './NowWeek';
 
-export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart }) {
+// scheduleNote＝該「班」專屬的行事曆註記（sections[].scheduleNote），不是全課共用：
+// AA 遇國定假日採「停課週與鄰近週合併為一週、內容序不變」（2026-08-26 Ted 拍板），
+// AB 正常 17 週故為 null。週次表本身是 AA／AB 共用正本，所以合併規則只能掛在班別層。
+export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart, scheduleNote }) {
   const phasesPending = isPending(phases);
   const planPending = isPending(weeklyPlan);
   const phaseList = asArray(phases).filter((p) => hasText(p?.title));
@@ -59,6 +62,7 @@ export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart
         ) : (
           <Ripple>週次進度規劃開學前公布</Ripple>
         )}
+        {hasText(scheduleNote) ? <p className="note">{scheduleNote}</p> : null}
       </div>
     </section>
   );
