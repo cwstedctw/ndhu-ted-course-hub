@@ -88,8 +88,11 @@ JSON Schema 實際住在 **repo 根的 `schema/`**（不在 `content/` 裡）；
   `npm run validate` 規則 #20 直接 FAIL、build 一起掛，**不會默默回落中文**。
   失敗訊息會把缺字清單逐條列出來，那就是你的待辦清單。
   元件裡那層中文 fallback 只是 runtime 防呆，不是「可以少寫英文」的許可。
-- 本輪英文承諾範圍＝**課程殼**（landing、17 週大綱、評量、FAQ、安全守則、求助、頁內導覽）。
-  **每週教材包與 showcase 學生作品不在範圍內**；全站 i18n（首頁、演講課、about、
+- 本輪英文承諾範圍＝**課程殼＋上學期作品**（landing、17 週大綱、評量、FAQ、
+  安全守則、求助、頁內導覽、showcase）。showcase 原本列為例外，**2026-08-26 陳文盛
+  拍板納回範圍**，英文住在 `course.json` 的 `en.showcase`（**以 showcase id 為鍵**，
+  不是索引，選件換人才不會整批錯位）。
+  目前只剩**每週教材包**不在範圍內；全站 i18n（首頁、演講課、about、
   site header／footer）也另開一輪，別在 `i18n.en` 裡長第二份。
 - 實作：`lib/i18n.js`（`makeL()`）、`components/course/Bi.js`（雙欄文字）。
 

@@ -243,7 +243,13 @@ export default async function CoursePage({ params }) {
         enHub={en.hub}
       />
       <ScoreButton scoreUrl={scoreUrl} L={L} />
-      <ShowcaseSection items={showcaseItems} L={L} />
+      <ShowcaseSection
+        items={showcaseItems}
+        L={L}
+        en={en.showcase}
+        note={introPending ? null : intro.showcaseNote}
+        noteEn={enIntro.showcaseNote}
+      />
       {introPending ? null : (
         <>
           <WhatToBring items={intro.whatToBring} L={L} en={enIntro} />

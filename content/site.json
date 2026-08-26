@@ -52,6 +52,8 @@
       "headPlatforms": "Platforms we use",
       "headScore": "Check your grades",
       "headShowcase": "Work from last term",
+      "showcaseViewWork": "View the work (new window)",
+      "showcaseImageAltPrefix": "Project screenshot: ",
       "headBring": "What to bring",
       "headFaq": "Frequently asked questions",
       "cardDailyTools": "Everyday AI tools",

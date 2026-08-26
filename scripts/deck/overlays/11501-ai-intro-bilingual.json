@@ -140,13 +140,13 @@
         "How AI learns from data",
         "Failure, bias, retraining",
         "Source-grounded AI research",
-        "AI sound, video, multimodal",
+        "AI sound, video, and multimodal storytelling",
         "Midterm gallery · Weeks 1–7",
         "What makes a real AI agent?",
         "Agent-assisted data analysis",
         "Supervising agent actions",
-        "Agent-control web app",
-        "Connected AI systems",
+        "Agent-controlled web app",
+        "Connecting AI to external systems",
         "Capstone sprint",
         "Red-team, repair, recovery",
         "AI Maker Festival"
@@ -266,8 +266,8 @@
       "titleZh": "上課要帶什麼",
       "items": [
         { "enHtml": "A laptop or tablet (<b>laptop recommended</b>); without a device, paper and pre-generated paths carry the same weight", "zh": "筆電或平板（建議筆電）；沒有裝置也有紙本與教師預生成的等值路徑" },
-        { "enHtml": "<b>No account, no payment</b>—every core activity has a no-account path", "zh": "不用先辦任何帳號、不用付費——課堂核心一律有免帳號路徑" },
-        { "enHtml": "Room E403—seats near outlets go first-come", "zh": "教室 理工二館 E403——有插座的位子先到先選" }
+        { "enHtml": "<b>No AI-tool account, no payment</b>—every core activity has a no-account path (your school Office 365/Teams account is the exception, for roll call and submitting work)", "zh": "不用先辦任何 AI 工具帳號、不用付費——課堂核心一律有免帳號路徑（學校 Office 365／Teams 帳號除外，用於點名與交作業）" },
+        { "enHtml": "Room E403—seats near the power outlets are first-come, first-served", "zh": "教室 理工二館 E403——有插座的位子先到先選" }
       ]
     },
     "rules": {

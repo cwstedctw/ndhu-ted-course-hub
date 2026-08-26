@@ -26,6 +26,7 @@
  *       #20 班別語言 profile（2026-08-26）：sections[].langProfile 必填欄位齊備、
  *           一門課不得半套；**primary=en 的班，英文課程殼與共用 chrome 字典缺一條
  *           就 FAIL（fail-closed），不准 runtime 默默回落中文**。缺字清單逐條列印。
+ *           範圍含 showcase 上學期作品（2026-08-26 陳文盛 拍板由例外改回範圍內）。
  *
  *   警告（印出但不擋建置）：
  *       #15 引用圖檔（/images/…）在 public/ 找不到——bootstrap 期先警告，圖檔管線
@@ -286,6 +287,119 @@ for (const [, { data, file }] of courseDataByDir) {
   }
 }
 
+/* ── talks.json（#5 對位、#6 t01–t12／id↔no、#19 警告） ───────── */
+
+const lectureDirs = new Set(
+  (coursesIdx?.courses ?? [])
+    .filter((c) => c && c.kind === "lecture-series" && typeof c.courseDir === "string")
+    .map((c) => c.courseDir)
+);
+
+const talksFiles = [];
+if (existsSync(coursesRootDir)) {
+  for (const ent of readdirSync(coursesRootDir, { withFileTypes: true })) {
+    if (!ent.isDirectory()) continue;
+    const tPath = path.join(coursesRootDir, ent.name, "talks.json");
+    if (existsSync(tPath)) talksFiles.push({ dir: ent.name, file: tPath });
+  }
+}
+for (const dir of lectureDirs) {
+  if (!talksFiles.some((t) => t.dir === dir)) {
+    fail(path.join(coursesRootDir, dir, "talks.json"), "#6 talks 必備", `kind=lecture-series 的課「${dir}」缺 talks.json（海報牆＝課程頁主區塊）`);
+  }
+}
+
+const EXPECTED_TALK_IDS = Array.from({ length: 12 }, (_, i) => `t${String(i + 1).padStart(2, "0")}`);
+
+for (const { dir, file } of talksFiles) {
+  const data = readContentFile(file);
+  if (!data) continue;
+  validateAgainst(file, data, "talks.schema.json");
+  if (typeof data.courseDir === "string" && data.courseDir !== dir) {
+    fail(file, "#5 courseDir 對位", `talks.json 的 courseDir「${data.courseDir}」≠ 所在資料夾「${dir}」`);
+  }
+  if (!Array.isArray(data.talks)) continue;
+
+  const idSeen = new Map();
+  data.talks.forEach((t, i) => {
+    if (!t || typeof t.id !== "string") return;
+    if (idSeen.has(t.id)) fail(file, "#6 talk id 唯一", `talks[${i}] id「${t.id}」與 talks[${idSeen.get(t.id)}] 重複`);
+    else idSeen.set(t.id, i);
+  });
+  for (const idWant of EXPECTED_TALK_IDS) {
+    if (!idSeen.has(idWant)) fail(file, "#6 t01–t12 全建", `缺場次 id「${idWant}」——talks 必須恰含 t01–t12 各一筆（tba 也要建占位）`);
+  }
+  for (const id of idSeen.keys()) {
+    if (!EXPECTED_TALK_IDS.includes(id)) fail(file, "#6 t01–t12 全建", `出現非法場次 id「${id}」（只允許 t01–t12）`);
+  }
+  data.talks.forEach((t, i) => {
+    if (!t || typeof t !== "object") return;
+    if (typeof t.id === "string" && typeof t.no === "number") {
+      const n = Number.parseInt(t.id.slice(1), 10);
+      if (n !== t.no) fail(file, "#6 id↔no 一致", `talks[${i}] id「${t.id}」應對序號 ${n}，但 no＝${t.no}`);
+    }
+    if (t.status === "confirmed" || t.status === "done") {
+      if (t.time === null) warn(file, "#19 time 待補", `talks[${i}]（${t.id ?? "?"}）status=${t.status} 但 time 仍為 null——聽眾不知幾點（警告不擋）`);
+      if (t.venue === null) warn(file, "#19 venue 待補", `talks[${i}]（${t.id ?? "?"}）status=${t.status} 但 venue 仍為 null——聽眾不知在哪（警告不擋）`);
+    }
+  });
+}
+
+/* ── showcase（#7 檔名、#8 consent 閘、#9 pending 禁入、#5 courseDir） ── */
+
+const showcaseDirPath = path.join(CONTENT_DIR, "showcase");
+const showcaseIdToWhere = new Map(); // item id -> "檔名 items[i]"
+const showcaseItemById = new Map(); // item id -> item（規則 #20 要拿它比中英文欄位）
+const showcaseFiles = existsSync(showcaseDirPath)
+  ? readdirSync(showcaseDirPath).filter((f) => f.endsWith(".json"))
+  : [];
+
+if (showcaseFiles.length === 0) {
+  fail(showcaseDirPath, "檔案存在", "content/showcase/ 沒有任何學期檔（V1 至少要有 114-2.json 骨架）");
+}
+
+for (const f of showcaseFiles) {
+  const file = path.join(showcaseDirPath, f);
+  const data = readContentFile(file);
+  if (!data) continue;
+  validateAgainst(file, data, "showcase.schema.json");
+  const base = f.replace(/\.json$/, "");
+  if (typeof data.semester === "string" && data.semester !== base) {
+    fail(file, "#7 檔名↔semester", `檔名「${f}」與 semester「${data.semester}」不一致（檔名＝semester）`);
+  }
+  if (!Array.isArray(data.items)) continue;
+  data.items.forEach((it, i) => {
+    if (!it || typeof it !== "object") return;
+    const label = `items[${i}]（${it.id ?? "?"}）`;
+    if (typeof it.id === "string") {
+      if (showcaseIdToWhere.has(it.id)) fail(file, "#5 showcase id 唯一", `${label} id 重複（另見 ${showcaseIdToWhere.get(it.id)}）`);
+      else showcaseIdToWhere.set(it.id, `${f} items[${i}]`);
+      showcaseItemById.set(it.id, it);
+    }
+    if (it.consent === "pending") {
+      fail(file, "#9 consent=pending 禁入", `${label} consent="pending"——未取得同意的作品不得進 content/（取得同意改 obtained 再入檔）`);
+    }
+    if (it.credit !== null && it.credit !== undefined && it.consent !== "obtained") {
+      fail(file, "#8 consent 閘", `${label} credit 非 null 但 consent=「${it.consent ?? "缺"}」——具名必須 consent="obtained"`);
+    }
+    if (typeof it.courseDir === "string" && courseDirSet.size > 0 && !courseDirSet.has(it.courseDir)) {
+      fail(file, "#5 courseDir 命中", `${label} courseDir「${it.courseDir}」未命中 courses.json（現有：${[...courseDirSet].join(", ")}）`);
+    }
+  });
+}
+
+/* ── hub.showcaseRefs → showcase id（#5） ─────────────────────── */
+
+for (const [, { data, file }] of courseDataByDir) {
+  const refs = data?.hub?.showcaseRefs;
+  if (!Array.isArray(refs)) continue;
+  refs.forEach((r, i) => {
+    if (typeof r === "string" && !showcaseIdToWhere.has(r)) {
+      fail(file, "#5 showcaseRefs 斷鏈", `hub.showcaseRefs[${i}]「${r}」不存在於 content/showcase/*.json 的 items id`);
+    }
+  });
+}
+
 /* ── 規則 #20：班別語言 profile 與英文字串完整性（fail-closed） ──
  *
  * 2026-08-26 加（工單第 21 項）。115-1《人工智慧概論》AA 是 EMI、AB 是繁中授課，
@@ -307,6 +421,7 @@ const CHROME_KEYS_REQUIRED = [
   "navShowcase", "navBring", "navFaq", "navTalks", "navTalkWall", "navCoursePoster", "navAria",
   "headIntro", "headGrading", "headWeeks", "headWeeksParts", "headAiRules", "headTools",
   "headPlatforms", "headScore", "headShowcase", "headBring", "headFaq",
+  "showcaseViewWork", "showcaseImageAltPrefix",
   "cardDailyTools", "cardHomework",
   "badgeOpen", "badgeConditional", "badgeClosed", "badgeLecture",
   "factSection", "factCode", "factSystemId", "factCredits", "factClosedPrefix",
@@ -318,6 +433,7 @@ const CHROME_KEYS_REQUIRED = [
 ];
 
 const isFilled = (v) => typeof v === "string" && v.trim().length > 0;
+const asRefs = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === "string") : []);
 const getPath = (obj, dotted) =>
   dotted.split(".").reduce((acc, k) => (acc == null ? undefined : acc[k]), obj);
 
@@ -339,6 +455,7 @@ const EN_MIRROR_SPEC = [
   { kind: "scalar", zh: "intro.weeklyPlanNote", en: "intro.weeklyPlanNote" },
   { kind: "scalar", zh: "intro.gradingNote", en: "intro.gradingNote" },
   { kind: "scalar", zh: "intro.toolGroupsNote", en: "intro.toolGroupsNote" },
+  { kind: "scalar", zh: "intro.showcaseNote", en: "intro.showcaseNote" },
   { kind: "scalar", zh: "intro.destination.title", en: "intro.destination.title" },
   { kind: "scalar", zh: "intro.destination.sub", en: "intro.destination.sub" },
 
@@ -485,7 +602,25 @@ function collectMissingEn(course) {
         }
       }
 
-      // ② 課程殼英文鏡像
+      // ② 上學期作品（hub.showcaseRefs 指到的那幾件）
+      //    英文以 **showcase id 為鍵**，不是索引——選件換人時才不會整批錯位。
+      const enShowcase = getPath(data, "en.showcase") || {};
+      for (const ref of asRefs(data?.hub?.showcaseRefs)) {
+        const item = showcaseItemById.get(ref);
+        if (!item) continue; // 斷鏈已由 #5 報過，這裡不重複喳
+        const enItem = enShowcase[ref];
+        if (!enItem || typeof enItem !== "object") {
+          fail(file, "#20 缺英文字串（fail-closed）", `en.showcase["${ref}"] 整筆缺——${s.id} 是英文班，上學期作品也在承諾範圍內`);
+          continue;
+        }
+        for (const k of ["title", "summary", "group"]) {
+          if (isFilled(item[k]) && !isFilled(enItem[k])) {
+            fail(file, "#20 缺英文字串（fail-closed）", `en.showcase["${ref}"].${k}（對應 showcase 作品的 ${k}）`);
+          }
+        }
+      }
+
+      // ③ 課程殼英文鏡像
       const missing = collectMissingEn(data);
       if (missing.length > 0) {
         fail(
@@ -518,117 +653,6 @@ function collectMissingEn(course) {
       }
     }
   }
-}
-
-/* ── talks.json（#5 對位、#6 t01–t12／id↔no、#19 警告） ───────── */
-
-const lectureDirs = new Set(
-  (coursesIdx?.courses ?? [])
-    .filter((c) => c && c.kind === "lecture-series" && typeof c.courseDir === "string")
-    .map((c) => c.courseDir)
-);
-
-const talksFiles = [];
-if (existsSync(coursesRootDir)) {
-  for (const ent of readdirSync(coursesRootDir, { withFileTypes: true })) {
-    if (!ent.isDirectory()) continue;
-    const tPath = path.join(coursesRootDir, ent.name, "talks.json");
-    if (existsSync(tPath)) talksFiles.push({ dir: ent.name, file: tPath });
-  }
-}
-for (const dir of lectureDirs) {
-  if (!talksFiles.some((t) => t.dir === dir)) {
-    fail(path.join(coursesRootDir, dir, "talks.json"), "#6 talks 必備", `kind=lecture-series 的課「${dir}」缺 talks.json（海報牆＝課程頁主區塊）`);
-  }
-}
-
-const EXPECTED_TALK_IDS = Array.from({ length: 12 }, (_, i) => `t${String(i + 1).padStart(2, "0")}`);
-
-for (const { dir, file } of talksFiles) {
-  const data = readContentFile(file);
-  if (!data) continue;
-  validateAgainst(file, data, "talks.schema.json");
-  if (typeof data.courseDir === "string" && data.courseDir !== dir) {
-    fail(file, "#5 courseDir 對位", `talks.json 的 courseDir「${data.courseDir}」≠ 所在資料夾「${dir}」`);
-  }
-  if (!Array.isArray(data.talks)) continue;
-
-  const idSeen = new Map();
-  data.talks.forEach((t, i) => {
-    if (!t || typeof t.id !== "string") return;
-    if (idSeen.has(t.id)) fail(file, "#6 talk id 唯一", `talks[${i}] id「${t.id}」與 talks[${idSeen.get(t.id)}] 重複`);
-    else idSeen.set(t.id, i);
-  });
-  for (const idWant of EXPECTED_TALK_IDS) {
-    if (!idSeen.has(idWant)) fail(file, "#6 t01–t12 全建", `缺場次 id「${idWant}」——talks 必須恰含 t01–t12 各一筆（tba 也要建占位）`);
-  }
-  for (const id of idSeen.keys()) {
-    if (!EXPECTED_TALK_IDS.includes(id)) fail(file, "#6 t01–t12 全建", `出現非法場次 id「${id}」（只允許 t01–t12）`);
-  }
-  data.talks.forEach((t, i) => {
-    if (!t || typeof t !== "object") return;
-    if (typeof t.id === "string" && typeof t.no === "number") {
-      const n = Number.parseInt(t.id.slice(1), 10);
-      if (n !== t.no) fail(file, "#6 id↔no 一致", `talks[${i}] id「${t.id}」應對序號 ${n}，但 no＝${t.no}`);
-    }
-    if (t.status === "confirmed" || t.status === "done") {
-      if (t.time === null) warn(file, "#19 time 待補", `talks[${i}]（${t.id ?? "?"}）status=${t.status} 但 time 仍為 null——聽眾不知幾點（警告不擋）`);
-      if (t.venue === null) warn(file, "#19 venue 待補", `talks[${i}]（${t.id ?? "?"}）status=${t.status} 但 venue 仍為 null——聽眾不知在哪（警告不擋）`);
-    }
-  });
-}
-
-/* ── showcase（#7 檔名、#8 consent 閘、#9 pending 禁入、#5 courseDir） ── */
-
-const showcaseDirPath = path.join(CONTENT_DIR, "showcase");
-const showcaseIdToWhere = new Map(); // item id -> "檔名 items[i]"
-const showcaseFiles = existsSync(showcaseDirPath)
-  ? readdirSync(showcaseDirPath).filter((f) => f.endsWith(".json"))
-  : [];
-
-if (showcaseFiles.length === 0) {
-  fail(showcaseDirPath, "檔案存在", "content/showcase/ 沒有任何學期檔（V1 至少要有 114-2.json 骨架）");
-}
-
-for (const f of showcaseFiles) {
-  const file = path.join(showcaseDirPath, f);
-  const data = readContentFile(file);
-  if (!data) continue;
-  validateAgainst(file, data, "showcase.schema.json");
-  const base = f.replace(/\.json$/, "");
-  if (typeof data.semester === "string" && data.semester !== base) {
-    fail(file, "#7 檔名↔semester", `檔名「${f}」與 semester「${data.semester}」不一致（檔名＝semester）`);
-  }
-  if (!Array.isArray(data.items)) continue;
-  data.items.forEach((it, i) => {
-    if (!it || typeof it !== "object") return;
-    const label = `items[${i}]（${it.id ?? "?"}）`;
-    if (typeof it.id === "string") {
-      if (showcaseIdToWhere.has(it.id)) fail(file, "#5 showcase id 唯一", `${label} id 重複（另見 ${showcaseIdToWhere.get(it.id)}）`);
-      else showcaseIdToWhere.set(it.id, `${f} items[${i}]`);
-    }
-    if (it.consent === "pending") {
-      fail(file, "#9 consent=pending 禁入", `${label} consent="pending"——未取得同意的作品不得進 content/（取得同意改 obtained 再入檔）`);
-    }
-    if (it.credit !== null && it.credit !== undefined && it.consent !== "obtained") {
-      fail(file, "#8 consent 閘", `${label} credit 非 null 但 consent=「${it.consent ?? "缺"}」——具名必須 consent="obtained"`);
-    }
-    if (typeof it.courseDir === "string" && courseDirSet.size > 0 && !courseDirSet.has(it.courseDir)) {
-      fail(file, "#5 courseDir 命中", `${label} courseDir「${it.courseDir}」未命中 courses.json（現有：${[...courseDirSet].join(", ")}）`);
-    }
-  });
-}
-
-/* ── hub.showcaseRefs → showcase id（#5） ─────────────────────── */
-
-for (const [, { data, file }] of courseDataByDir) {
-  const refs = data?.hub?.showcaseRefs;
-  if (!Array.isArray(refs)) continue;
-  refs.forEach((r, i) => {
-    if (typeof r === "string" && !showcaseIdToWhere.has(r)) {
-      fail(file, "#5 showcaseRefs 斷鏈", `hub.showcaseRefs[${i}]「${r}」不存在於 content/showcase/*.json 的 items id`);
-    }
-  });
 }
 
 /* ── 規則 #12：pending 物件形狀（遞迴掃全 content） ───────────── */

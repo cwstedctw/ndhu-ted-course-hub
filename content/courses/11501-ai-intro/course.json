@@ -37,7 +37,7 @@
         "primary": "en",
         "support": ["zh-Hant-TW"],
         "mode": "en-primary-zh-support",
-        "note": "AA 為 EMI：課程殼（landing、17 週大綱、評量、FAQ、安全守則、求助與頁內導覽）一律有完整英文，繁中並列提供理解支援——是雙欄，不是 en-only。缺任何一條英文字串，validate 規則 #20 會 fail-closed 擋下 build。每週教材包與上學期作品不在本輪英文承諾範圍。"
+        "note": "AA 為 EMI：課程殼（landing、17 週大綱、評量、FAQ、安全守則、求助、頁內導覽與**上學期作品**）一律有完整英文，繁中並列提供理解支援——是雙欄，不是 en-only。缺任何一條英文字串，validate 規則 #20 會 fail-closed 擋下 build。2026-08-26 陳文盛 拍板把 showcase 由例外改回範圍內；目前只剩每週教材包不在本輪承諾範圍。"
       },
       "slidoEvent": null,
       "deckName": "115_01 人工智慧概論AA Introduction"
@@ -346,9 +346,10 @@
         "note": "各分類的情境實例待 陳文盛 給"
       }
     },
+    "showcaseNote": "這些是上學期同學自選的挑戰方向，不是本課的及格門檻，也不是加分條件——公開 repo、上線網址與命令列都不在要求內。評分只看任務、證據、權限、驗證與復原。",
     "whatToBring": [
       "筆電或平板（建議筆電）；沒有裝置也有紙本與教師預生成的等值路徑",
-      "不用先辦任何帳號、不用付費——課堂核心一律有免帳號路徑",
+      "不用先辦任何 AI 工具帳號、不用付費——課堂核心一律有免帳號路徑（學校的 Office 365／Teams 帳號除外，開學後用於點名與交作業）",
       "教室 理工二館 E403——有插座的位子先到先選"
     ],
     "faq": [
@@ -360,7 +361,7 @@
       },
       {
         "q": "要辦帳號、付費或把作品公開嗎？",
-        "a": "都不用。這門課不要求 API key、付費方案、公開 repo、公開網址、命令列或電話驗證；課堂核心一律有免帳號與離線路徑。",
+        "a": "AI 工具都不用。這門課不要求 API key、付費方案、公開 repo、公開網址、命令列或電話驗證；課堂核心一律有免帳號與離線路徑。唯一要用的是學校發的 Office 365／Teams 帳號，用來點名與交作業，那不是額外註冊也不要錢。",
         "status": "confirmed",
         "source": "v4 課程計畫第三節、第九節第 3 點、第十四節"
       },
@@ -451,10 +452,33 @@
         "scheduleNote": "When a national holiday cancels a class, that week is merged with an adjacent week. The order of the weekly topics does not change; the instructor adjusts pacing in class (decided 2026-08-26)."
       }
     },
+    "showcase": {
+      "$comment": "上學期作品的英文鏡像（2026-08-26 陳文盛 點名納回英文承諾範圍）。**以 showcase id 為鍵**（不是索引）——作品本體住在 content/showcase/114-2.json，靠 hub.showcaseRefs 引用，用 id 對得住才不會因為選件換人就整批錯位。專有名詞（WCMD、MCP Server、Roo Code、DeepSeek、Codex、Claude、Gemini、APA）一律保留原文不譯。",
+      "1142-ai-intro-01": {
+        "group": "114-2 Section AA · Individual project",
+        "title": "WCMD: An MCP Server That Lets AI Operate Windows",
+        "summary": "Built their own MCP Server in a week with Roo Code and DeepSeek, letting an AI agent read the screen, recognise UI elements, and drive the mouse and keyboard on its own. The result is published openly on GitHub."
+      },
+      "1142-ai-intro-02": {
+        "group": "114-2 Section AA · Individual project",
+        "title": "A Feature-Story Website Built with an AI Agent: “The Terroir of a Jar of Plum Wine”",
+        "summary": "Fed 25 days of brewing journals, photos, and tasting notes to Codex, then had the AI read the files and write the pages—building from scratch the feature-story website that was due for another course, and actually putting it online with a public address."
+      },
+      "1142-ai-intro-03": {
+        "group": "114-2 Section AB · Individual project",
+        "title": "Gemini as a Thesis-Writing Assistant",
+        "summary": "Brought AI into their own real thesis research: thematic analysis of interview transcripts, translating and keeping track of English-language sources, and APA format checking—plus a one-week working schedule and a first-hand account of what held up and what did not."
+      },
+      "1142-ai-intro-04": {
+        "group": "114-2 Section AB · Individual project",
+        "title": "Smart Beverage-Shop Inventory Management and AI Forecasting System",
+        "summary": "Interviewed several real bubble-tea shops first, then used Claude to build an inventory and forecasting system from scratch in a week—a Python back end with a web front end—and finally read their own development experience back against theories of human–AI collaboration."
+      }
+    },
     "hub": {
       "links": [
         { "use": "Roll call" },
-        { "use": "Turning in work" },
+        { "use": "Submitting assignments" },
         { "use": "Shared notes" }
       ]
     },
@@ -505,13 +529,13 @@
         "How AI learns from data",
         "Failure, bias, and retraining",
         "Source-grounded AI research",
-        "AI sound, video, and multimodal story",
+        "AI sound, video, and multimodal storytelling",
         "Midterm AI maker gallery · covers Weeks 1–7",
         "What makes a real AI agent?",
         "Agent-assisted data analysis",
         "Supervising agent actions",
-        "Agent-control web app",
-        "Connected AI systems",
+        "Agent-controlled web app",
+        "Connecting AI to external systems",
         "Capstone sprint",
         "Red-team, repair, and recovery",
         "AI maker festival"
@@ -595,7 +619,7 @@
       ],
       "platforms": [
         { "use": "Roll call", "name": "Zuvio" },
-        { "use": "Turning in work", "name": "Microsoft Teams" },
+        { "use": "Submitting assignments", "name": "Microsoft Teams" },
         { "use": "Shared notes", "name": "HackMD" }
       ],
       "aiRules": [
@@ -617,10 +641,11 @@
         "Cite and explain (guided)",
         "Not allowed (restricted)"
       ],
+      "showcaseNote": "These were the directions last term's students chose to push in—they are not a pass mark for this course and they are not a way to earn extra credit. A public repository, a live URL, and the command line are all outside what is asked of you. Grading looks only at the task, the evidence, permissions, verification, and recovery.",
       "whatToBring": [
         "A laptop or tablet (laptop recommended); without a device, paper and pre-generated materials carry equal weight",
-        "No account and no payment needed in advance—every core activity has a no-account path",
-        "Room E403, Science & Engineering Building II—seats near the outlets go first-come"
+        "No AI-tool account and no payment needed in advance—every core activity has a no-account path (your university Office 365/Teams account is the exception; it is used for roll call and submitting work once term starts)",
+        "Room E403, Science & Engineering Building II—seats near the power outlets are first-come, first-served"
       ],
       "faq": [
         {
@@ -629,7 +654,7 @@
         },
         {
           "q": "Do I need an account, a paid plan, or a public portfolio?",
-          "a": "None of them. This course does not require an API key, a paid plan, a public repository, a public URL, the command line, or phone verification; every core activity has a no-account and offline path."
+          "a": "Not for AI tools. This course does not require an API key, a paid plan, a public repository, a public URL, the command line, or phone verification; every core activity has a no-account and offline path. The one account you do use is the Office 365/Teams account the university already issues you—for roll call and submitting work. That is not an extra sign-up and it costs nothing."
         },
         {
           "q": "Do I have to finish an external AI course or hand in a certificate?",
@@ -673,7 +698,7 @@
     "sources": [
       "115-1《人工智慧概論》新課程計畫 v4（2026-08-25 候選稿，Codex×Claude 整合版）＝課程殼真值：hero、三階段、共同 17 週、評量配分與期中範圍、能力型工具分級、FAQ 邊界",
       "陳文盛 2026-08-26 拍板：AA 遇假日＝停課週與鄰近週合併為一週，週次內容序不變、進度由授課教師課堂調整",
-      "115-1 開課資料＝官方限修 40 人（v4 候選稿原寫「以 50–70 人規劃」，同步 Hub 時全數改以 40 為基準）",
+      "115-1 開課資料＝官方限修 40 人；課程殼的班級規模已依官方限修 40 修正（2026-08-26），不再沿用 v4 候選稿的舊估算人數",
       "115-1 教學計畫正本（OneDrive 東華課程資料/11501/人工智慧概論AA｜AB/教學計畫/教學計畫_人工智慧概論AA.pdf、…AB.pdf）＝課名、學分、17 週新制、評分比例、期中範圍、AI 使用規則真值（AA 英文版／AB 中文版，內容互為翻譯）",
       "workspace/outbox/20260610-wailan-課程介紹內容檔-人工智慧概論115-1.md",
       "20260611-wailan-設計系統補齊指示.md",
