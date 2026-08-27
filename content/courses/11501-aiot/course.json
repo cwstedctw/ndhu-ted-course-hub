@@ -89,7 +89,7 @@
       { "w": "10", "label": "全校運動會停課", "part": 3 },
       { "w": "11", "label": "MPU：Linux 與 Python 服務", "part": 3 },
       { "w": "12", "label": "音訊·KWS·UAC2", "part": 3 },
-      { "w": "13", "label": "資料集·FOMO 訓練·eim 匯出", "part": 3 },
+      { "w": "13", "label": "資料集·FOMO 訓練·UNO Q build", "part": 3 },
       { "w": "14", "label": "App Lab 部署·板上量測·IoT 儀表板", "part": 3 },
       { "w": "15", "label": "MCU＋MPU 系統整合", "part": 3 },
       { "w": "16", "label": "期末專題實作與諮詢", "part": 3 },
@@ -160,7 +160,7 @@
         "items": [
           {
             "name": "Edge Impulse FOMO · OpenCV",
-            "sub": "資料蒐集、標註、訓練、Linux aarch64 .eim 匯出與 UNO Q 推論"
+            "sub": "資料蒐集、標註、FOMO 訓練、UNO Q build、App Lab 0.5+ 部署與板上推論"
           },
           {
             "name": "IoT 儀表板",
