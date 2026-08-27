@@ -115,7 +115,7 @@
     "weeklyPlan": [
       {
         "w": "1",
-        "label": "AI 是工具、隊友、工作流還是 Agent？",
+        "label": "課程介紹與修課導覽（活動：AI 是工具、隊友、工作流還是 Agent？）",
         "part": 1
       },
       {
@@ -522,7 +522,7 @@
       ],
       "phasesNote": "No prerequisites—no programming, Git, or command-line background required. Every week runs Make → Test/Break → Make it yours.",
       "weeklyPlan": [
-        "AI tool, teammate, workflow, or agent?",
+        "Course introduction & orientation (activity: is this AI a tool, a teammate, a workflow, or an agent?)",
         "Prompting, images, and human judgment",
         "First web app with AI",
         "Version safety with AI (Git-lite)",
