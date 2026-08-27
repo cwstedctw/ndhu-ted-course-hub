@@ -71,11 +71,11 @@
       {
         "id": 3,
         "title": "MPU：語音、影像與整合",
-        "body": "UNO Q 上的 Debian Linux、語音辨識與合成、OpenCV 物件偵測、IoT 儀表板，最後 MCU＋MPU 橋接成完整裝置。",
-        "weeks": "W10–17"
+        "body": "UNO Q 上的 Debian Linux、音訊與 KWS、Edge Impulse 自訓 FOMO 模型、App Lab 部署與 IoT 儀表板，最後 MCU＋MPU 橋接成完整裝置。",
+        "weeks": "W11–17"
       }
     ],
-    "phasesNote": "雙語授課（中英並行）、Lab-based 任務導向——每週都在動手",
+    "phasesNote": "雙語授課（中英並行）、Lab-based 任務導向；W1 為教師展示、W10 校運停課，其餘上課週以實作為主",
     "weeklyPlan": [
       { "w": "1", "label": "課程介紹·UNO Q 雙架構", "part": 1 },
       { "w": "2", "label": "App Lab·Git·開發板連線", "part": 1 },
@@ -88,9 +88,9 @@
       { "w": "9", "label": "期中專題展示", "part": 2, "milestone": true },
       { "w": "10", "label": "全校運動會停課", "part": 3 },
       { "w": "11", "label": "MPU：Linux 與 Python 服務", "part": 3 },
-      { "w": "12", "label": "語音辨識與語音合成", "part": 3 },
-      { "w": "13", "label": "攝影機·OpenCV 物件偵測", "part": 3 },
-      { "w": "14", "label": "IoT 儀表板與 HDMI 介面", "part": 3 },
+      { "w": "12", "label": "音訊·KWS·UAC2", "part": 3 },
+      { "w": "13", "label": "資料集·FOMO 訓練·eim 匯出", "part": 3 },
+      { "w": "14", "label": "App Lab 部署·板上量測·IoT 儀表板", "part": 3 },
       { "w": "15", "label": "MCU＋MPU 系統整合", "part": 3 },
       { "w": "16", "label": "期末專題實作與諮詢", "part": 3 },
       { "w": "17", "label": "期末專題展示", "part": 3, "milestone": true }
@@ -150,8 +150,8 @@
             "sub": "讓裝置感知世界、做出動作"
           },
           {
-            "name": "麥克風 · 喇叭 · 攝影機 · HDMI",
-            "sub": "語音互動與視覺辨識的硬體"
+            "name": "麥克風 · 喇叭 · USB 攝影機",
+            "sub": "音訊與視覺實作硬體；顯示結果走教室機瀏覽器"
           }
         ]
       },
@@ -159,8 +159,8 @@
         "group": "邊緣 AI",
         "items": [
           {
-            "name": "語音辨識／TTS · OpenCV",
-            "sub": "裝置端的聽與看"
+            "name": "Edge Impulse FOMO · OpenCV",
+            "sub": "資料蒐集、標註、訓練、Linux aarch64 .eim 匯出與 UNO Q 推論"
           },
           {
             "name": "IoT 儀表板",
