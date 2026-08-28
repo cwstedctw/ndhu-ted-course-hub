@@ -24,7 +24,10 @@
       "code": "GC__67570",
       "systemId": "115182437",
       "time": "週二 第 4–6 節・09:10–12:00",
-      "timeNote": { "status": "confirmed", "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；教室由送件版 D309 改為理工二館 D301；鐘點據課務組上課節次時間對照表" },
+      "timeNote": {
+        "status": "confirmed",
+        "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；教室由送件版 D309 改為理工二館 D301；鐘點據課務組上課節次時間對照表"
+      },
       "room": "理工二館 D301",
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-maker-intro/",
       "deckUrl": "/decks/11501-maker-intro.html"
@@ -77,23 +80,93 @@
     ],
     "phasesNote": "由模擬到實作、由理解到 AI 輔助開發——115-1 全新學習路徑",
     "weeklyPlan": [
-      { "w": "1", "label": "課程介紹·創客精神與學習路徑", "part": 1 },
-      { "w": "2", "label": "Wokwi 與 AI 腳本入門", "part": 1 },
-      { "w": "3", "label": "DIO 數位輸出／輸入", "part": 1 },
-      { "w": "4", "label": "按鈕互動與去彈跳", "part": 1 },
-      { "w": "5", "label": "Interrupt 中斷概念", "part": 1 },
-      { "w": "6", "label": "Timer 與非阻塞控制", "part": 1 },
-      { "w": "7", "label": "PWM 與類比感測", "part": 1 },
-      { "w": "8", "label": "OLED 顯示整合", "part": 1 },
-      { "w": "9", "label": "Wi-Fi 與物聯網模擬", "part": 1 },
-      { "w": "10", "label": "期中：Wokwi 模擬專題", "part": 2, "milestone": true },
-      { "w": "11", "label": "VS Code 實機連線", "part": 2 },
-      { "w": "12", "label": "Vibe Coding 入門", "part": 3 },
-      { "w": "13", "label": "真實元件功能開發", "part": 3 },
-      { "w": "14", "label": "VS Code＋GitHub 流程", "part": 3 },
-      { "w": "15", "label": "AI 輔助自動化開發", "part": 3 },
-      { "w": "16", "label": "期末整合與展示準備", "part": 3 },
-      { "w": "17", "label": "期末發表·實體 Demo", "part": 3, "milestone": true }
+      {
+        "w": "1",
+        "label": "課程介紹·創客精神與學習路徑",
+        "part": 1
+      },
+      {
+        "w": "2",
+        "label": "Wokwi 與 AI 腳本入門",
+        "part": 1
+      },
+      {
+        "w": "3",
+        "label": "DIO 數位輸出／輸入",
+        "part": 1
+      },
+      {
+        "w": "4",
+        "label": "按鈕互動與去彈跳",
+        "part": 1
+      },
+      {
+        "w": "5",
+        "label": "Interrupt 中斷概念",
+        "part": 1
+      },
+      {
+        "w": "6",
+        "label": "Timer 與非阻塞控制",
+        "part": 1
+      },
+      {
+        "w": "7",
+        "label": "PWM 與類比感測",
+        "part": 1
+      },
+      {
+        "w": "8",
+        "label": "OLED 顯示整合",
+        "part": 1
+      },
+      {
+        "w": "9",
+        "label": "Wi-Fi 與物聯網模擬",
+        "part": 1
+      },
+      {
+        "w": "10",
+        "label": "期中：Wokwi 模擬專題",
+        "part": 2,
+        "milestone": true
+      },
+      {
+        "w": "11",
+        "label": "VS Code 實機連線",
+        "part": 2
+      },
+      {
+        "w": "12",
+        "label": "Vibe Coding 入門",
+        "part": 3
+      },
+      {
+        "w": "13",
+        "label": "真實元件功能開發",
+        "part": 3
+      },
+      {
+        "w": "14",
+        "label": "VS Code＋GitHub 流程",
+        "part": 3
+      },
+      {
+        "w": "15",
+        "label": "AI 輔助自動化開發",
+        "part": 3
+      },
+      {
+        "w": "16",
+        "label": "期末整合與展示準備",
+        "part": 3
+      },
+      {
+        "w": "17",
+        "label": "期末發表·實體 Demo",
+        "part": 3,
+        "milestone": true
+      }
     ],
     "weeklyPlanNote": "週次照 115-1 教學計畫（OneDrive 正本）；工具屬活內容層，開學前依當時生態再校一次",
     "grading": [
@@ -182,8 +255,8 @@
         "name": "Zuvio"
       },
       {
-        "use": "交作業",
-        "name": "Microsoft Teams"
+        "use": "教材與交作業",
+        "name": "e學苑"
       },
       {
         "use": "課堂共筆",
@@ -300,9 +373,9 @@
         "urlStatus": "pending"
       },
       {
-        "platform": "teams",
-        "use": "交作業",
-        "label": "Microsoft Teams",
+        "platform": "elearn",
+        "use": "教材與交作業",
+        "label": "e學苑",
         "url": null,
         "urlStatus": "pending"
       },

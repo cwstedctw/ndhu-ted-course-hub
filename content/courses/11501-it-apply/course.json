@@ -48,169 +48,161 @@
     }
   ],
   "intro": {
-    "promise": "把 AI 變成你的 24 小時學習助教，文書、資料、簡報一路點好點滿",
+    "promise": "一套帶得走的做事方法：東西存得住、來源說得出、報告站得住。",
     "chips": [
-      "AI 當助教",
-      "報告變漂亮",
-      "表格會算數"
+      "有自己的檔案櫃",
+      "報告有來源",
+      "期末發表兩輪"
     ],
     "destination": {
-      "title": "這門課的終點：一套拿得出手的數位作品",
-      "sub": "沒有紙筆考試。期末交出「AI 幫過你、你也說得清楚」的整合作品：一份正式報告、一個會動的儀表板、一份自動生成的簡報。",
+      "title": "這門課的終點：一件你說得出怎麼做的作品",
+      "sub": "沒有紙筆考試。期末兩週發表——第一輪讓同學照清單挑毛病，第二輪帶著「我改了什麼」回來驗收。",
       "steps": [
         {
-          "label": "把 AI 帶在身邊",
-          "sub": "網頁、桌面、瀏覽器擴充三條路徑，卡關隨時有 24 小時助教可問"
+          "label": "先有自己的檔案櫃",
+          "sub": "第二週就建好，整學期的東西都存進去；改壞了救得回來，期末不必到處找檔案"
         },
         {
-          "label": "把報告寫漂亮",
-          "sub": "Word、Docs 一路練到 LaTeX——排版從此靠樣式，不靠熬夜"
+          "label": "每週長大一點",
+          "sub": "同一件作品從第六週滾到期末：縮題、查來源、寫報告、清資料、做圖表、壓成五張簡報"
         },
         {
-          "label": "讓資料自己動",
-          "sub": "新世代函數、AI 儀表板、自動化腳本，最後讓 AI 幫你長出簡報"
+          "label": "站上去交代",
+          "sub": "第一輪被同學追問，回去改，第二輪證明自己改對了"
         }
       ]
     },
     "phases": [
       {
         "id": 1,
-        "title": "AI 助教上工",
-        "body": "網頁版、桌面版、瀏覽器擴充三條路徑把 AI 帶在身邊；提問策略、資訊查證、學術誠信一次打底。",
-        "weeks": "W1–4"
+        "title": "把工具箱建起來",
+        "body": "第二週就有自己的 repo：東西存得住、看得懂差異、改壞救得回來。再練把任務講清楚、把文件排到會自動更新。",
+        "weeks": "W1–5"
       },
       {
         "id": 2,
-        "title": "文書大升級",
-        "body": "Word／Google Docs 進階排版，再解鎖 LaTeX（Overleaf＋OpenAI Prism）——報告、履歷、論文級排版都出得了手。",
-        "weeks": "W5–9"
+        "title": "把證據找齊、算對",
+        "body": "從大題目縮成查得完的問題，每個主張回得到來源；期中交一份有來源的短報告。再從髒資料一路走到一頁看得懂的資料故事。",
+        "weeks": "W6–13"
       },
       {
         "id": 3,
-        "title": "資料與簡報自動化",
-        "body": "XLOOKUP、FILTER、Power Query 玩轉資料，AI 設計儀表板、Apps Script 自動化，最後用 AI Agent 直接生成簡報。",
-        "weeks": "W10–17"
+        "title": "做出來，站上去交代",
+        "body": "五張簡報、期末製作，最後兩週發表：第一輪被同學挑毛病，第二輪帶著修正紀錄回來驗收。",
+        "weeks": "W14–17"
       }
     ],
-    "phasesNote": "課程刻意把 AI 排在學期最前面——之後每一週，你都有 24 小時待命的學習助教",
+    "phasesNote": "repo 刻意排在第二週——之後每一週的成果都存進同一個地方，期末不必臨時搬家",
     "weeklyPlan": [
       {
         "w": "1",
-        "label": "課程介紹與修課導覽（活動：AI 使用邊界與基線）",
+        "label": "課程介紹與修課導覽",
         "part": 1
       },
       {
         "w": "2",
-        "label": "網頁版 AI 與提問策略",
+        "label": "你的工作檔案櫃：repo 起步",
         "part": 1
       },
       {
         "w": "3",
-        "label": "AI 搜尋與資訊查證",
+        "label": "任務拆解與提示：問得清楚、拒絕得了",
         "part": 1
       },
       {
-        "w": "4",
-        "label": "桌面 AI 與瀏覽器擴充",
+        "w": "4–5",
+        "label": "結構化文件：樣式、目錄、圖表與引用",
         "part": 1
       },
       {
-        "w": "5–6",
-        "label": "Word／Docs 進階排版",
+        "w": "6",
+        "label": "研究問題與來源查證",
         "part": 2
       },
       {
-        "w": "7–8",
-        "label": "LaTeX（Overleaf＋Prism）",
+        "w": "7",
+        "label": "來源導向閱讀與假引用回查",
+        "part": 2
+      },
+      {
+        "w": "8",
+        "label": "複習與整理",
         "part": 2
       },
       {
         "w": "9",
-        "label": "期中報告繳交與互評",
+        "label": "期中作品組裝、走查與修正",
         "part": 2,
         "milestone": true
       },
       {
         "w": "10",
-        "label": "新世代試算表函數",
-        "part": 3
+        "label": "LaTeX 一頁成功體驗",
+        "part": 2
       },
       {
         "w": "11",
-        "label": "Power Query 與樞紐分析",
-        "part": 3
+        "label": "資料健康：先看欄列與型態",
+        "part": 2
       },
       {
         "w": "12",
-        "label": "AI 儀表板與 Apps Script",
-        "part": 3
+        "label": "必要公式、樞紐、圖表與原值回查",
+        "part": 2
       },
       {
         "w": "13",
-        "label": "簡報設計基礎",
-        "part": 3
+        "label": "AI 協作的資料故事",
+        "part": 2
       },
       {
         "w": "14",
-        "label": "AI Agent 自動生成簡報",
+        "label": "從資料到五張簡報＋期末開題",
         "part": 3
       },
       {
         "w": "15",
-        "label": "AI 圖像與著作權",
+        "label": "期末製作、範圍檢查與 AI 代理監督",
         "part": 3
       },
       {
-        "w": "16",
-        "label": "期末專題工作坊",
-        "part": 3
-      },
-      {
-        "w": "17",
-        "label": "期末整合作品發表",
+        "w": "16–17",
+        "label": "期末發表兩輪：紅隊互評與修正後驗收",
         "part": 3,
         "milestone": true
       }
     ],
-    "weeklyPlanNote": "主題與工具屬活內容層，開學前依當時生態再校一次；真值＝115-1 教學計畫",
+    "weeklyPlanNote": "AA 班（週一）9/28 教師節、10/26 光復節補假停課：第 4 週內容與第 5 週合併於 10/05 一堂上完，第 8 週停課不補。AB 班（週二）整學期 17 週全上。",
     "grading": [
       {
         "pct": 20,
         "label": "平時成績",
-        "sub": "出席、課堂實作、簡短反思與負責任 AI 使用"
+        "sub": "八張課內小卡，當堂做完當堂交——不是回家補的作業"
       },
       {
         "pct": 20,
         "label": "作業成績",
-        "sub": null
+        "sub": "兩件：一份結構化文件、一份資料故事"
       },
       {
         "pct": 25,
         "label": "期中報告",
-        "sub": "個人小型報告（Word／Docs 或 LaTeX）＋AI 使用紀錄"
+        "sub": "2–3 頁有來源的短報告＋一頁 AI 使用證據卡＋課內走查"
       },
       {
         "pct": 35,
         "label": "期末作品",
-        "sub": "報告＋儀表板＋簡報的整合發表"
+        "sub": "兩週發表：第一輪被挑毛病、第二輪帶修正紀錄驗收"
       }
     ],
-    "gradingNote": "全學期不舉行紙筆考試——期中交個人報告、期末發表整合作品。AI 可以用好用滿，但要附使用紀錄、說得出你怎麼查證。",
+    "gradingNote": "全學期不考紙筆。AI 可以用好用滿，但要交一頁「AI 使用證據卡」：哪些採用、哪些改了、哪些退回，以及你怎麼查證。這門課不猜你有沒有用 AI、也不看文風，只看你說不說得出來。",
     "toolGroups": [
       {
-        "group": "把 AI 帶在身邊",
+        "group": "把東西存住",
         "items": [
           {
-            "name": "ChatGPT · Claude · Gemini",
-            "sub": "網頁版：隨開隨問的第一站"
-          },
-          {
-            "name": "Claude Desktop · ChatGPT 桌面版",
-            "sub": "桌面版：讀得到你的本機檔案"
-          },
-          {
-            "name": "瀏覽器擴充",
-            "sub": "在網頁裡隨叫隨到的小幫手"
+            "name": "GitHub（網頁版）",
+            "sub": "免安裝、不用命令列；repo 設私有，當自己的工作檔案櫃"
           }
         ]
       },
@@ -218,8 +210,12 @@
         "group": "查資料",
         "items": [
           {
-            "name": "Perplexity · Felo",
-            "sub": "AI 搜尋、來源查核、幻覺判斷"
+            "name": "一般搜尋＋官方來源",
+            "sub": "AI 搜尋只是選配；來源要自己開來讀"
+          },
+          {
+            "name": "Zotero · NotebookLM",
+            "sub": "教師示範，不要求安裝"
           }
         ]
       },
@@ -228,11 +224,11 @@
         "items": [
           {
             "name": "Word · Google Docs",
-            "sub": "樣式、自動目錄、追蹤修訂一次學會"
+            "sub": "樣式、自動目錄、圖說與交叉引用"
           },
           {
-            "name": "Overleaf ＋ OpenAI Prism",
-            "sub": "免安裝的 LaTeX——論文級排版直接在瀏覽器"
+            "name": "Overleaf",
+            "sub": "免安裝的 LaTeX，一頁體驗就好"
           }
         ]
       },
@@ -241,11 +237,7 @@
         "items": [
           {
             "name": "Excel · Google Sheets",
-            "sub": "XLOOKUP、FILTER 動態陣列，跟老派 VLOOKUP 說再見"
-          },
-          {
-            "name": "Power Query · Apps Script",
-            "sub": "資料清理與自動化——程式讓 AI 來寫"
+            "sub": "清理、公式、樞紐與圖表；回查得到原始值才算數"
           }
         ]
       },
@@ -253,33 +245,38 @@
         "group": "做簡報",
         "items": [
           {
-            "name": "PowerPoint · Google Slides",
-            "sub": "版面、配色、講者模式打好底"
-          },
+            "name": "PowerPoint · Google Slides · Canva",
+            "sub": "五張講清楚，不是四十張"
+          }
+        ]
+      },
+      {
+        "group": "AI 助手",
+        "items": [
           {
-            "name": "AI Agent ＋ Slide Skill",
-            "sub": "Codex、Antigravity、Claude Code：從大綱直接長出簡報"
+            "name": "任一款聊天 AI",
+            "sub": "沒有帳號也有等值路徑，而且同分"
           }
         ]
       }
     ],
-    "toolGroupsNote": "工具會換、能力不換——實際以開學當週的等效工具為準",
+    "toolGroupsNote": "工具會換、能力不換——每一項都有免安裝、免帳號的等值路徑，而且同分",
     "dailyTools": [
       {
         "name": "聊天機器人",
         "sub": "ChatGPT·Claude·Gemini"
       },
       {
-        "name": "AI 搜尋",
-        "sub": "Perplexity·Felo"
-      },
-      {
         "name": "雲端辦公",
         "sub": "Microsoft 365·Google Workspace"
       },
       {
-        "name": "遠距會議",
-        "sub": "Google Meet·Teams"
+        "name": "版本工具",
+        "sub": "GitHub 網頁版"
+      },
+      {
+        "name": "課程平台",
+        "sub": "e學苑·Zuvio"
       }
     ],
     "platforms": [
@@ -288,12 +285,8 @@
         "name": "Zuvio"
       },
       {
-        "use": "交作業",
-        "name": "Microsoft Teams"
-      },
-      {
-        "use": "課堂共筆",
-        "name": "HackMD"
+        "use": "教材與交作業",
+        "name": "e學苑"
       }
     ],
     "aiRules": [
@@ -327,54 +320,54 @@
       }
     },
     "whatToBring": [
-      "筆記型電腦（建議自備——這門課每週都在動手做）",
-      "學校 @gms.ndhu.edu.tw Google 帳號（多數工具直接用它註冊）",
-      "LaTeX 免安裝：Overleaf 與 OpenAI Prism 在瀏覽器裡就能用"
+      "筆記型電腦（這門課每週都在動手做，強烈建議自備）",
+      "學校 @gms.ndhu.edu.tw 帳號（GitHub、Overleaf 都用它註冊）",
+      "第一週會當場註冊 GitHub；註冊不成也有等值路徑，不影響成績"
     ],
     "faq": [
       {
-        "q": "我不是資訊背景，跟得上嗎？",
-        "a": "這門課本來就是為非資訊背景設計的。開學第一個月先把 AI 助教帶在身邊，之後不管學文書、資料還是簡報，卡關都有 24 小時家教可以問。",
+        "q": "我不是資訊背景，也要用 GitHub？",
+        "a": "要，而且不用寫程式。這門課把 repo 當成「工作檔案櫃」——AI 現在都在 repo 上做事，看得懂它改了什麼是這個時代的基本功。全程用網頁版，不裝軟體、不打指令。",
         "status": "confirmed",
-        "source": "115-1 教學計畫課程描述"
+        "source": "115-1 課程計畫 v4.2（wailan_agent/workspace/teaching/material/it-apply-course/course-plan.md）"
       },
       {
         "q": "跟「人工智慧概論」有什麼不同？",
-        "a": "概論練的是 AI 素養與工作流；這門課練的是辦公室即戰力——文書、試算表、簡報全面升級。兩門都修也不衝突：一門練腦、一門練手。",
+        "a": "概論練的是 AI 素養與工作流；這門課練的是你自己的做事方法——東西存得住、來源查得回、報告站得住、被追問答得出來。兩門都修不衝突。",
         "status": "confirmed",
-        "source": "兩課 115-1 教學計畫對照"
+        "source": "115-1 課程計畫 v4.2（wailan_agent/workspace/teaching/material/it-apply-course/course-plan.md）"
       },
       {
         "q": "考試怎麼考？",
-        "a": "不考紙筆。期中交一份個人報告（Word、Docs 或 LaTeX 擇一），期末發表整合作品——整學期用做的，不用背的。",
+        "a": "不考紙筆。期中交一份有來源的短報告，期末兩週發表：第一輪讓同學挑毛病，第二輪帶著「我改了什麼」回來驗收。",
         "status": "confirmed",
-        "source": "115-1 教學計畫評量說明"
+        "source": "115-1 課程計畫 v4.2（wailan_agent/workspace/teaching/material/it-apply-course/course-plan.md）"
       },
       {
-        "q": "LaTeX 聽起來很可怕……",
-        "a": "以前可怕，現在不會。Overleaf 加上 OpenAI Prism，瀏覽器打開就能寫，AI 隨時幫你除錯。學會之後，你的報告會漂亮到被同學追問是怎麼做的。",
+        "q": "AI 可以用嗎？",
+        "a": "可以用好用滿，但要交一頁「AI 使用證據卡」：哪些採用、哪些改了、哪些退回，還有你怎麼查證。這門課不猜你有沒有用 AI、也不看文風，只看你說不說得出來。",
         "status": "confirmed",
-        "source": "115-1 教學計畫 W7–8＋補充說明"
+        "source": "115-1 課程計畫 v4.2（wailan_agent/workspace/teaching/material/it-apply-course/course-plan.md）"
+      },
+      {
+        "q": "沒有 AI 帳號、或註冊不了 GitHub 怎麼辦？",
+        "a": "每一項活動都有免帳號、免安裝的等值路徑，而且同分。不會因為你辦不到某個帳號就吃虧。",
+        "status": "confirmed",
+        "source": "115-1 課程計畫 v4.2（wailan_agent/workspace/teaching/material/it-apply-course/course-plan.md）"
       },
       {
         "q": "作業量大概多少？",
-        "a": "作業佔總成績 20%，以課堂實作的延伸為主；確切次數與節奏開學公告。",
+        "a": "每週一個課內就做得完的小成果；正式作業只有兩件（一份文件、一份資料故事）。課後主要是收整與期末整合。",
         "status": "confirmed",
-        "source": "115-1 教學計畫評量比例"
-      },
-      {
-        "q": "AI 可以用到什麼程度？",
-        "a": "用好用滿，而且這門課鼓勵你用。但要能解釋過程、會查證輸出、附上 AI 使用紀錄、守學術誠信。",
-        "status": "confirmed",
-        "source": "115-1 教學計畫補充說明"
+        "source": "115-1 課程計畫 v4.2（wailan_agent/workspace/teaching/material/it-apply-course/course-plan.md）"
       }
     ],
     "finale": {
-      "nextWeek": "網頁版 AI 與提問策略——先學會怎麼問",
-      "action": "帶一份你最想讓 AI 拯救的報告或表格來",
+      "nextWeek": "你的工作檔案櫃：repo 起步——第二週就把櫃子建起來",
+      "action": "先用學校信箱把 GitHub 帳號辦好（第一週課堂上也會一起辦）",
       "materialsUrl": {
         "status": "pending",
-        "note": "課程教材網址開學前補"
+        "note": "教材發布在 e學苑，課程區開學前建好"
       }
     },
     "placeholders": [
@@ -384,10 +377,11 @@
     ]
   },
   "meta": {
-    "lastReviewed": "2026-08-20",
+    "lastReviewed": "2026-08-28",
     "validForSemester": "115-1",
     "owner": "陳文盛（陳文盛）",
     "sources": [
+      "115-1 課程計畫正本 v4.2（wailan_agent workspace/teaching/material/it-apply-course/course-plan.md，2026-08-28 五路複驗後定稿）＝17 週、評量與平台真值",
       "115-1 教學計畫 GC__1480AA（教務系統 PDF；與 OneDrive 11501 正本比對一致）＝課程描述、17 週進度、評量比例真值",
       "OneDrive 11501/資訊科技與應用AA·AB/_課程資訊.json（2026-06-14 快照）＝代碼、系統編號、時段（AA 一11–12／AB 二11–12）",
       "OneDrive 11501/開課與行政/115-1校核心通識課程統計表_文盛.xlsx（送件版）＝節次複核＋教室（AA E403／AB E402）、限修 40",
@@ -406,16 +400,9 @@
         "urlStatus": "pending"
       },
       {
-        "platform": "teams",
-        "use": "交作業",
-        "label": "Microsoft Teams",
-        "url": null,
-        "urlStatus": "pending"
-      },
-      {
-        "platform": "hackmd",
-        "use": "課堂共筆",
-        "label": "HackMD",
+        "platform": "elearn",
+        "use": "教材與交作業",
+        "label": "e學苑",
         "url": null,
         "urlStatus": "pending"
       }

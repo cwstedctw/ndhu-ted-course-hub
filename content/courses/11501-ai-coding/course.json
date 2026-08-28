@@ -261,8 +261,8 @@
         "name": "Zuvio"
       },
       {
-        "use": "交作業",
-        "name": "Microsoft Teams"
+        "use": "教材與交作業",
+        "name": "e學苑"
       },
       {
         "use": "課堂共筆",
@@ -379,9 +379,9 @@
         "urlStatus": "pending"
       },
       {
-        "platform": "teams",
-        "use": "交作業",
-        "label": "Microsoft Teams",
+        "platform": "elearn",
+        "use": "教材與交作業",
+        "label": "e學苑",
         "url": null,
         "urlStatus": "pending"
       },

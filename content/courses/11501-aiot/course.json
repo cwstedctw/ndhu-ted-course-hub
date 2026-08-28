@@ -24,7 +24,10 @@
       "code": "CSIE35490",
       "systemId": "115108606",
       "time": "週四 第 9–11 節・14:10–17:00",
-      "timeNote": { "status": "confirmed", "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表" },
+      "timeNote": {
+        "status": "confirmed",
+        "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表"
+      },
       "room": "理工二館 E307",
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-aiot/",
       "deckUrl": "/decks/11501-aiot.html"
@@ -77,23 +80,93 @@
     ],
     "phasesNote": "雙語授課（中英並行）、Lab-based 任務導向；W1 為教師展示、W10 校運停課，其餘上課週以實作為主",
     "weeklyPlan": [
-      { "w": "1", "label": "課程介紹·UNO Q 雙架構", "part": 1 },
-      { "w": "2", "label": "App Lab·Git·開發板連線", "part": 1 },
-      { "w": "3", "label": "Linux·SSH·AI 輔助開發", "part": 1 },
-      { "w": "4", "label": "GPIO 與數位／類比 I/O", "part": 2 },
-      { "w": "5", "label": "感測器匯流排與資料清理", "part": 2 },
-      { "w": "6", "label": "致動器與即時反應", "part": 2 },
-      { "w": "7", "label": "多感測器控制小系統", "part": 2 },
-      { "w": "8", "label": "期中整合·除錯·彩排", "part": 2 },
-      { "w": "9", "label": "期中專題展示", "part": 2, "milestone": true },
-      { "w": "10", "label": "全校運動會停課", "part": 3 },
-      { "w": "11", "label": "MPU：Linux 與 Python 服務", "part": 3 },
-      { "w": "12", "label": "音訊·KWS·UAC2", "part": 3 },
-      { "w": "13", "label": "資料集·FOMO 訓練·UNO Q build", "part": 3 },
-      { "w": "14", "label": "App Lab 部署·板上量測·IoT 儀表板", "part": 3 },
-      { "w": "15", "label": "MCU＋MPU 系統整合", "part": 3 },
-      { "w": "16", "label": "期末專題實作與諮詢", "part": 3 },
-      { "w": "17", "label": "期末專題展示", "part": 3, "milestone": true }
+      {
+        "w": "1",
+        "label": "課程介紹·UNO Q 雙架構",
+        "part": 1
+      },
+      {
+        "w": "2",
+        "label": "App Lab·Git·開發板連線",
+        "part": 1
+      },
+      {
+        "w": "3",
+        "label": "Linux·SSH·AI 輔助開發",
+        "part": 1
+      },
+      {
+        "w": "4",
+        "label": "GPIO 與數位／類比 I/O",
+        "part": 2
+      },
+      {
+        "w": "5",
+        "label": "感測器匯流排與資料清理",
+        "part": 2
+      },
+      {
+        "w": "6",
+        "label": "致動器與即時反應",
+        "part": 2
+      },
+      {
+        "w": "7",
+        "label": "多感測器控制小系統",
+        "part": 2
+      },
+      {
+        "w": "8",
+        "label": "期中整合·除錯·彩排",
+        "part": 2
+      },
+      {
+        "w": "9",
+        "label": "期中專題展示",
+        "part": 2,
+        "milestone": true
+      },
+      {
+        "w": "10",
+        "label": "全校運動會停課",
+        "part": 3
+      },
+      {
+        "w": "11",
+        "label": "MPU：Linux 與 Python 服務",
+        "part": 3
+      },
+      {
+        "w": "12",
+        "label": "音訊·KWS·UAC2",
+        "part": 3
+      },
+      {
+        "w": "13",
+        "label": "資料集·FOMO 訓練·UNO Q build",
+        "part": 3
+      },
+      {
+        "w": "14",
+        "label": "App Lab 部署·板上量測·IoT 儀表板",
+        "part": 3
+      },
+      {
+        "w": "15",
+        "label": "MCU＋MPU 系統整合",
+        "part": 3
+      },
+      {
+        "w": "16",
+        "label": "期末專題實作與諮詢",
+        "part": 3
+      },
+      {
+        "w": "17",
+        "label": "期末專題展示",
+        "part": 3,
+        "milestone": true
+      }
     ],
     "weeklyPlanNote": "週次照 115-1 教學計畫（中秋、國慶、光復節、行憲紀念日皆不影響週四上課；W10 運動會停課）",
     "grading": [
@@ -186,8 +259,8 @@
         "name": "Zuvio"
       },
       {
-        "use": "交作業",
-        "name": "Microsoft Teams"
+        "use": "教材與交作業",
+        "name": "e學苑"
       },
       {
         "use": "課堂共筆",
@@ -308,9 +381,9 @@
         "urlStatus": "pending"
       },
       {
-        "platform": "teams",
-        "use": "交作業",
-        "label": "Microsoft Teams",
+        "platform": "elearn",
+        "use": "教材與交作業",
+        "label": "e學苑",
         "url": null,
         "urlStatus": "pending"
       },

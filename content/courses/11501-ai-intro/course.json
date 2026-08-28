@@ -35,7 +35,9 @@
       "deckUrlEn": "/decks/11501-ai-intro-aa-en.html",
       "langProfile": {
         "primary": "en",
-        "support": ["zh-Hant-TW"],
+        "support": [
+          "zh-Hant-TW"
+        ],
         "mode": "en-primary-zh-support",
         "note": "AA 為 EMI：課程殼（landing、17 週大綱、評量、FAQ、安全守則、求助、頁內導覽與**上學期作品**）一律有完整英文，繁中並列提供理解支援——是雙欄，不是 en-only。缺任何一條英文字串，validate 規則 #20 會 fail-closed 擋下 build。2026-08-26 陳文盛 拍板把 showcase 由例外改回範圍內；目前只剩每週教材包不在本輪承諾範圍。"
       },
@@ -57,7 +59,9 @@
       "deckUrl": "/decks/11501-ai-intro-ab.html",
       "langProfile": {
         "primary": "zh-Hant-TW",
-        "support": ["en"],
+        "support": [
+          "en"
+        ],
         "mode": "zh-primary-en-terms",
         "note": "AB 為繁中授課：繁中可獨立完成所有任務，技術名詞（Agent、diff、dry-run、log 等）第一次出現時附英文原文。本班不做英文並列欄。"
       },
@@ -308,8 +312,8 @@
         "name": "Zuvio"
       },
       {
-        "use": "交作業",
-        "name": "Microsoft Teams"
+        "use": "教材與交作業",
+        "name": "e學苑"
       },
       {
         "use": "課堂共筆",
@@ -477,14 +481,24 @@
     },
     "hub": {
       "links": [
-        { "use": "Roll call" },
-        { "use": "Submitting assignments" },
-        { "use": "Shared notes" }
+        {
+          "use": "Roll call"
+        },
+        {
+          "use": "Submitting assignments"
+        },
+        {
+          "use": "Shared notes"
+        }
       ]
     },
     "intro": {
       "promise": "From creative AI tools to supervised AI agents",
-      "chips": ["Build something real", "Show your evidence", "Stay in control"],
+      "chips": [
+        "Build something real",
+        "Show your evidence",
+        "Stay in control"
+      ],
       "destination": {
         "title": "Where this course leads: an AI workflow you stay in control of",
         "sub": "Not memorizing tool names—turning a real problem into work you can build, evidence, and control.",
@@ -612,15 +626,36 @@
       ],
       "toolGroupsNote": "Tools change, skills don't—you are graded on the task, the evidence, permissions, verification, and recovery, never on a product's interface or its commands. Conditional tools (school-approved chat or image tools, NotebookLM, Canva, Sheets, and the like) are not the shared core: not using one costs you nothing.",
       "dailyTools": [
-        { "name": "Chat AI", "sub": "ChatGPT · Claude · Gemini · Grok—just pick one that fits you" },
-        { "name": "AI search", "sub": "Perplexity · Felo—use it for leads, never as proof" },
-        { "name": "AI notebook", "sub": "NotebookLM and similar—reading tied back to its sources" },
-        { "name": "No-account and offline paths", "sub": "Equivalent routes if you have no account or no device; your grade is unaffected" }
+        {
+          "name": "Chat AI",
+          "sub": "ChatGPT · Claude · Gemini · Grok—just pick one that fits you"
+        },
+        {
+          "name": "AI search",
+          "sub": "Perplexity · Felo—use it for leads, never as proof"
+        },
+        {
+          "name": "AI notebook",
+          "sub": "NotebookLM and similar—reading tied back to its sources"
+        },
+        {
+          "name": "No-account and offline paths",
+          "sub": "Equivalent routes if you have no account or no device; your grade is unaffected"
+        }
       ],
       "platforms": [
-        { "use": "Roll call", "name": "Zuvio" },
-        { "use": "Submitting assignments", "name": "Microsoft Teams" },
-        { "use": "Shared notes", "name": "HackMD" }
+        {
+          "use": "Roll call",
+          "name": "Zuvio"
+        },
+        {
+          "use": "Submitting assignments",
+          "name": "Microsoft Teams"
+        },
+        {
+          "use": "Shared notes",
+          "name": "HackMD"
+        }
       ],
       "aiRules": [
         {
@@ -717,9 +752,9 @@
         "urlStatus": "pending"
       },
       {
-        "platform": "teams",
-        "use": "交作業",
-        "label": "Microsoft Teams",
+        "platform": "elearn",
+        "use": "教材與交作業",
+        "label": "e學苑",
         "url": null,
         "urlStatus": "pending"
       },
