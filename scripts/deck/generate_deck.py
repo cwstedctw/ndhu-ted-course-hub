@@ -12,7 +12,7 @@ generate.py（詳 skills/course-intro/SKILL.md「內容對照表」）。
 
 範例（用 Hub 的人工智慧概論 course.json 出 AA 班）：
     python generate_deck.py \
-        --course-json "D:/Ted_data/wailan_agent/workspace/teaching/tools/ndhu-ted-course-hub/content/courses/11501-ai-intro/course.json" \
+        --course-json "D:/Ted_data/ndhu-ted-course-hub/content/courses/11501-ai-intro/course.json" \
         --section AA --out ./out_aa
 
 輸出：<out>/01.html … 19.html（沿用 v1 的相對路徑約定：../deck.css、../assets/…，
@@ -96,12 +96,13 @@ def deep_merge(base, overlay):
 # ---------------------------------------------------------------------------
 
 COVER_KICKER = "GENERAL EDUCATION · COURSE INTRO"
-DARK_PAGES = {1, 6, 7, 8, 17, 18, 19}  # render-check 用的深底節奏規格，供 parity/驗收引用
+DARK_PAGES = {1, 6, 7, 8, 17, 18, 19, 20, 21}  # render-check 用的深底節奏規格，供 parity/驗收引用；20/21＝演講課限定「講者陣容」插頁（2026-08-03）
 
 
 class Deck:
-    def __init__(self, course, section, out_dir, overlay=None):
+    def __init__(self, course, section, out_dir, overlay=None, talks=None):
         self.course = course
+        self.talks = talks or []  # 演講課（kind=lecture-series）限定：talks.json 的 12 場，與網站同源
         self.section = section
         self.intro = course.get("intro", {})
         self.instructor = course.get("instructor", {})
@@ -248,15 +249,24 @@ class Deck:
                          f'<span style="color:var(--gold)">AI 教室</span></div>')
         else:
             room_line = f'<div style="font-size:22px;font-weight:700;margin-top:12px">{esc(room)}</div>'
-        map_note = pb.pending("【教室平面圖・開學前補】")
+        # 2026-08-31：平面圖 6/10 就備好在 OneDrive 課程介紹素材夾，只是產線沒有嵌圖的路。
+        # course.json 的 intro.floorPlans 指路徑；找不到檔就退回原本的待補佔位。
+        plan_img = pb.img_b64(self._floor_plan("classroom"), alt=f"{room} 平面圖位置",
+                              style="max-width:100%;max-height:330px;border-radius:8px")
+        if plan_img:
+            body = (plan_img
+                    + f'<div style="font-size:20px;font-weight:700;margin-top:14px;color:var(--on-dark)">'
+                    + esc(room) + ('　<span style="color:var(--gold)">AI 教室</span>' if "E403" in room else '')
+                    + '</div>')
+        else:
+            body = (pb.icon("pin", "var(--gold)", 40) + room_line
+                    + '<div class="muted" style="margin-top:6px;color:var(--on-dark-dim)">'
+                    + pb.pending("【教室平面圖・開學前補】") + '</div>')
         inner = (
             pb.kicker("WHERE WE MEET") + pb.title("上課地點")
             + '<div class="card-blueprint" style="margin-top:24px;">'
             + '<div style="text-align:center;color:var(--on-dark);z-index:2">'
-            + pb.icon("pin", "var(--gold)", 40)
-            + room_line
-            + '<div class="muted" style="margin-top:6px;color:var(--on-dark-dim)">'
-            + map_note + '</div></div></div>'
+            + body + '</div></div>'
         )
         self.write(3, inner)
 
@@ -306,11 +316,45 @@ class Deck:
             + '<div class="card-blueprint" style="margin-top:24px;">'
             + '<div style="text-align:center;color:var(--on-dark);z-index:2">'
             + pb.icon("pin", "var(--gold)", 40)
-            + f'<div style="font-size:22px;font-weight:700;margin-top:12px">{esc(instr.get("office", ""))}</div>'
-            + '<div class="muted" style="margin-top:6px;color:var(--on-dark-dim)">'
-            + pb.pending("【研究室平面圖・開學前補】") + '</div></div></div>'
+            + (lambda im, off: (
+                im + f'<div style="font-size:20px;font-weight:700;margin-top:14px;color:var(--on-dark)">{esc(off)}</div>'
+              ) if im else (
+                f'<div style="font-size:22px;font-weight:700;margin-top:12px">{esc(off)}</div>'
+                + '<div class="muted" style="margin-top:6px;color:var(--on-dark-dim)">'
+                + pb.pending("【研究室平面圖・開學前補】") + '</div>'
+              ))(pb.img_b64(self._floor_plan("office"), alt="研究室平面圖位置",
+                            style="max-width:100%;max-height:330px;border-radius:8px"),
+                 instr.get("office", ""))
+            + '</div></div>'
         )
         self.write(5, inner)
+
+    def _slido_qr_html(self):
+        """Slido 加入頁的手機框：有 event code 就畫真 QR、沒有才回佔位。
+
+        2026-08-31 加：產線本來就有 qr_svg（第 19 頁課程網站在用），
+        但 Slido 兩頁寫死「QR 上課現場提供」的佔位——event 建好後那句就過期了。
+        掃 slido.com/<code> 直接進該場次。
+        """
+        code = self.section.get("slidoEvent")
+        inner_qr = None
+        if code:
+            inner_qr = pb.qr_svg(f"https://app.sli.do/event/{code}", size=150, dark="#07403F")
+        if inner_qr:
+            body = ('<div style="background:#fff;padding:8px;border-radius:8px;display:inline-block">'
+                    + inner_qr + '</div>'
+                    + f'<div style="margin-top:10px;font-size:13px;font-weight:700;color:var(--on-dark)">#{esc(str(code))}</div>')
+        else:
+            body = (pb.icon("qr", "var(--gold)", 48)
+                    + '<div style="margin-top:10px;font-size:12px;color:var(--on-dark-dim)">'
+                    + pb.pending("QR 上課現場提供") + '</div>')
+        return ('<div class="qr-phone"><div class="qr-screen"><div class="qr-placeholder">'
+                + body + '</div></div></div>')
+
+    def _floor_plan(self, which):
+        """intro.floorPlans.{classroom,office} → 圖檔絕對路徑；沒設定回 None。"""
+        fp = (self.intro.get("floorPlans") or {})
+        return fp.get(which)
 
     def _slido_event_code(self):
         code = self.section.get("slidoEvent")
@@ -325,10 +369,7 @@ class Deck:
             '<div class="muted" style="color:var(--on-dark-dim);margin-top:22px;font-size:16px">'
             '等等問你：你心中的 AI 像什麼、你來自哪個系、用過哪些 AI 工具</div>'
             '</div>'
-            '<div class="qr-phone"><div class="qr-screen"><div class="qr-placeholder">'
-            + pb.icon("qr", "var(--gold)", 48)
-            + '<div style="margin-top:10px;font-size:12px;color:var(--on-dark-dim)">QR 上課現場提供</div>'
-            + '</div></div></div>'
+            + self._slido_qr_html()
         )
         self.write(6, inner, dark=True)
 
@@ -461,6 +502,45 @@ class Deck:
             cls = cls_map.get(p, "p2")
             segs.append(f'<div class="{cls}" style="flex:{counts[p]}">{esc(label_for(p, is_continuation))}</div>')
         return f'<div class="pband">{"".join(segs)}</div>'
+
+    # ------------------------------------------------------------------
+    # 模板頁 20/21：演講課限定「12 場講者陣容」（2026-08-03，Ted「演講課 need different」）
+    # 資料源＝talks.json（與網站海報牆同一份、由 pull_talks 從管理台 Sheet 出）；
+    # 講題未定照網站措辭「講題公布中」、不放推測內容（官方連結原則同源）。
+    # ------------------------------------------------------------------
+
+    def pages_talks_lineup(self):
+        talks = sorted(self.talks, key=lambda t: t.get("no") or 0)
+        half = (len(talks) + 1) // 2
+        for tpl, chunk, tag in ((20, talks[:half], "上"), (21, talks[half:], "下")):
+            if not chunk:
+                continue
+            rows = "".join(self._talk_row(t) for t in chunk)
+            inner = (
+                pb.kicker("SPEAKER LINEUP")
+                + pb.title(f"12 場講者陣容（{tag}）", big=True)
+                + f'<div style="margin-top:24px;display:flex;flex-direction:column;gap:12px">{rows}</div>'
+            )
+            self.write(tpl, inner, dark=True)
+
+    @staticmethod
+    def _talk_row(t):
+        sp = t.get("speaker") or {}
+        d = t.get("date") or ""
+        md = f"{int(d[5:7])}/{int(d[8:10])}" if len(d) == 10 else "日期公布中"
+        who = sp.get("name") or "講者邀請中"
+        seg = "・".join(x for x in (sp.get("title"), sp.get("org")) if x)
+        topic = t.get("title") or "講題公布中"
+        return (
+            '<div style="display:flex;align-items:center;gap:18px;padding:9px 16px;'
+            'background:rgba(255,255,255,0.06);border-radius:12px">'
+            f'<div style="min-width:92px"><div style="font-size:12.5px;color:var(--on-dark-dim)">第 {t.get("no", "?")} 場</div>'
+            f'<div style="font-size:19px;font-weight:800">{esc(md)}</div></div>'
+            f'<div style="flex:1.1"><div style="font-size:18px;font-weight:800">{esc(who)}</div>'
+            f'<div style="font-size:12.5px;color:var(--on-dark-dim)">{esc(seg)}</div></div>'
+            f'<div style="flex:1.3;font-size:15px">{esc(topic)}</div>'
+            '</div>'
+        )
 
     def page10_grading(self):
         grading = self.intro.get("grading", [])
@@ -650,10 +730,7 @@ class Deck:
             '<div class="muted" style="color:var(--on-dark-dim);margin-top:22px;font-size:16px">'
             '修課動機、<b style="color:var(--gold)">你最想用 AI 幫你完成什麼事</b>、一個詞形容你的期待</div>'
             '</div>'
-            '<div class="qr-phone"><div class="qr-screen"><div class="qr-placeholder">'
-            + pb.icon("qr", "var(--gold)", 48)
-            + '<div style="margin-top:10px;font-size:12px;color:var(--on-dark-dim)">QR 上課現場提供</div>'
-            + '</div></div></div>'
+            + self._slido_qr_html()
         )
         self.write(18, inner, dark=True)
 
@@ -726,6 +803,8 @@ class Deck:
         self.page07_phases()
         self.page08_destination()
         self.page09_weeks()
+        if self.course.get("kind") == "lecture-series" and self.talks:
+            self.pages_talks_lineup()
         self.page10_grading()
         self.page11_help()
         self.page12_elearn()
@@ -956,14 +1035,12 @@ class BilingualDeck:
             # band text 在 v1 是行內字面 HTML（「TASK AI & AGENTS」的 & 是裸 & 不轉義），
             # 故此處 raw 輸出、不 bb.esc()，以逐位元組對齊 v1。overlay 的 band text 純由本
             # skill 維護（非使用者輸入、無 XSS 面），raw 安全。
-            # 2026-08-26：段數改由 overlay 決定（每段自帶 cls），不再寫死「每列恰兩段」——
-            # v4 的三部曲切在 W9/W14，第二列會出現 P1續／P2／P3 三段，舊寫法會漏掉第三段。
             return '<div class="pband">' + "".join(
-                f'<div class="{seg["cls"]}" style="flex:{seg["flex"]}">{seg["text"]}</div>'
-                for seg in segs) + '</div>'
+                f'<div class="{cls}" style="flex:{seg["flex"]}">{seg["text"]}</div>'
+                for cls, seg in segs) + '</div>'
 
-        band1 = band(w["band1En"])
-        band2 = band(w["band2En"])
+        band1 = band([("p1", w["band1En"][0]), ("p2", w["band1En"][1])])
+        band2 = band([("p2", w["band2En"][0]), ("p3", w["band2En"][1])])
         inner = (
             bb.kicker(w["kicker"]) + bb.bititle(w["titleEn"], w["titleZh"])
             + '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:40px">'
@@ -1216,7 +1293,13 @@ def main():
     if args.lang == "bilingual":
         deck = BilingualDeck(course, section, args.out, overlay=overlay)
     else:
-        deck = Deck(course, section, args.out, overlay=overlay)
+        talks = None
+        if course.get("kind") == "lecture-series":
+            tpath = os.path.join(os.path.dirname(os.path.abspath(args.course_json)), "talks.json")
+            if os.path.exists(tpath):
+                tdata = load_json(tpath)
+                talks = tdata if isinstance(tdata, list) else tdata.get("talks") or []
+        deck = Deck(course, section, args.out, overlay=overlay, talks=talks)
     written = deck.build_all()
 
     if args.lang == "bilingual":

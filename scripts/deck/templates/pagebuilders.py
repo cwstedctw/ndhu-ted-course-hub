@@ -20,6 +20,25 @@ def esc(s):
 _QR_WARNED = False
 
 
+def img_b64(path, alt="", style=""):
+    """本機圖檔 → inline base64 <img>（deck 自足、不依賴外部檔案路徑）。
+
+    2026-08-31 加：教室與研究室平面圖本來寫死「開學前補」佔位，
+    但圖 6/10 就備好在 OneDrive 課程介紹素材夾了——只是產線沒有嵌圖的路。
+    找不到檔就回 None，呼叫端退回原本的待補佔位（別台機器沒有 OneDrive 也出得了 deck）。
+    """
+    import base64 as _b64
+    import os as _os
+    if not path or not _os.path.exists(path):
+        return None
+    ext = _os.path.splitext(path)[1].lower().lstrip('.') or 'png'
+    mime = {'jpg': 'jpeg', 'svg': 'svg+xml'}.get(ext, ext)
+    with open(path, 'rb') as f:
+        b = _b64.b64encode(f.read()).decode('ascii')
+    st = f' style="{style}"' if style else ''
+    return f'<img src="data:image/{mime};base64,{b}" alt="{esc(alt)}"{st}>'
+
+
 def qr_svg(data, size=176, dark="#07403F"):
     """URL → inline SVG QR（第 19 頁課程網站掃碼用，2026-07-05 Ted 授權設計升級）。
 
