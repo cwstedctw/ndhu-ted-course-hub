@@ -172,6 +172,7 @@ html,body{background:#333}
 .pband .p1{background:rgba(14,124,123,.14); color:var(--teal)}
 .pband .p2{background:rgba(217,164,65,.16); color:#9C7222}
 .pband .p3{background:rgba(6,37,36,.10); color:var(--ink)}
+.pband .p4{background:rgba(166,84,45,.14); color:#8A4520}
 .tlbar{
   position:absolute; left:60px; right:60px; height:4px; 
   background: linear-gradient(90deg, var(--teal) 0%, var(--gold) 50%, var(--teal) 100%);

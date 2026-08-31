@@ -235,7 +235,7 @@ class Deck:
         plats = self.intro.get("platforms", [])
         parts = [f'{p.get("use", "")} {p.get("name", "")}' for p in plats]
         line = "・".join(parts)
-        return f'<small>{esc(line)}</small><br><small>' + pb.pending("Slido #・Teams 代碼開學前補") + '</small>'
+        return f'<small>{esc(line)}</small><br><small>' + pb.pending("Slido #・e學苑課程代碼開學前補") + '</small>'
 
     def page03_location(self):
         sec = self.section
@@ -337,10 +337,14 @@ class Deck:
         cards = "".join(pb.partcard(p.get("id", ""), p.get("title", ""), p.get("body", "")) for p in phases)
         phases_note = self.intro.get("phasesNote", "")
         note_html = self._phases_note_html(phases_note)
+        # 部曲數依 phases 實際長度（2026-08-31 ai-coding v2 改四段）：三段課程輸出
+        # 與原硬編「三部曲／grid-3」逐字元相同，parity 不受影響；≥4 段走 grid-4 免折行。
+        n_word = {2: "二", 3: "三", 4: "四", 5: "五"}.get(len(phases), str(len(phases)))
+        grid_cls = "grid-4" if len(phases) >= 4 else "grid-3"
         inner = (
-            pb.kicker("WHAT YOU'LL LEARN") + pb.title("這門課在學什麼：三部曲", big=True)
+            pb.kicker("WHAT YOU'LL LEARN") + pb.title(f"這門課在學什麼：{n_word}部曲", big=True)
             + f'<div class="subtitle" style="color:var(--on-dark-dim)">{note_html}</div>'
-            + f'<div class="grid grid-3" style="margin-top:34px;margin-bottom:0">{cards}</div>'
+            + f'<div class="grid {grid_cls}" style="margin-top:34px;margin-bottom:0">{cards}</div>'
         )
         self.write(7, inner, dark=True)
 
@@ -418,9 +422,14 @@ class Deck:
             + '<div><div style="position:relative"><div class="tlbar" style="top:7px;left:0;right:0"></div>'
             + f'<div class="timeline" style="margin-top:0">{row2}</div></div>{band2}</div>'
             + '</div>'
-            + '<div class="muted">●＝每週主題　<span style="color:var(--gold)">●</span>＝期中／期末里程碑　·　色帶＝三部曲分段</div>'
+            + f'<div class="muted">●＝每週主題　<span style="color:var(--gold)">●</span>＝期中／期末里程碑　·　色帶＝{self._phase_count_word()}部曲分段</div>'
         )
         self.write(9, inner)
+
+    def _phase_count_word(self):
+        """部曲數中文字（三段課程輸出不變，維持 parity；ai-coding v2 起有四段課程）。"""
+        n = len(self.intro.get("phases", []))
+        return {2: "二", 3: "三", 4: "四", 5: "五"}.get(n, str(n))
 
     @staticmethod
     def _week_band(weeks, phase_titles, phase_weeks, variant):
@@ -435,7 +444,7 @@ class Deck:
             p = w.get("part")
             counts[p] = counts.get(p, 0) + 1
 
-        cls_map = {1: "p1", 2: "p2", 3: "p3"}
+        cls_map = {1: "p1", 2: "p2", 3: "p3", 4: "p4"}
         parts_ids = list(counts.keys())
 
         def label_for(part_id, is_continuation):
@@ -489,22 +498,23 @@ class Deck:
         inner = (
             pb.kicker("GETTING HELP") + pb.title("卡關了，怎麼找我")
             + '<div class="grid grid-2" style="margin-top:30px">'
-            + pb.linecard("msg", "Microsoft Teams", "直接發訊息給我")
+            + pb.linecard("msg", "e學苑", "課程訊息直接發給我")
             + pb.linecard("mail", "Email", f'<span style="font-family:var(--lat);font-size:20px">{esc(instr.get("email", ""))}</span>')
             + '</div>'
             + '<div class="muted" style="margin-top:28px">上 Slido，問問題不用舉手。</div>'
         )
         self.write(11, inner)
 
-    def page12_teams(self):
-        # 純模板固定文案（Office 365／桌面版建議／團隊代碼待補）——course.json 目前
-        # 未收錄這段（見 SKILL.md「模板固定」欄），故整頁沿用 v1 固定清單。
+    def page12_elearn(self):
+        # 純模板固定文案（e學苑登入／用途／課程代碼待補）——course.json 目前
+        # 未收錄這段（見 SKILL.md「模板固定」欄）。2026-08-31 由「加入 Teams 課程」
+        # 改版：115-1 六課皆已定案走 e學苑（Hub commit 4a33840），模板層跟著換。
         inner = (
-            pb.kicker("JOIN ON TEAMS") + pb.title("加入 Teams 課程")
+            pb.kicker("JOIN ON E-LEARNING") + pb.title("加入 e學苑課程")
             + '<div class="vcenter"><ul class="list list--lg" style="margin-top:0">'
-            '<li><span class="b"></span><div>用學校 Office 365 帳號（先啟用國立東華大學 Office 365）</div></li>'
-            '<li><span class="b"></span><div>建議安裝 Teams 桌面版</div></li>'
-            '<li><span class="b"></span><div>團隊代碼：' + pb.pending("【開學前待補】") + '</div></li>'
+            '<li><span class="b"></span><div>用學校帳號登入 <span style="font-family:var(--lat)">elearn4.ndhu.edu.tw</span></div></li>'
+            '<li><span class="b"></span><div>教材與交作業都在這</div></li>'
+            '<li><span class="b"></span><div>課程代碼：' + pb.pending("【開學前待補】") + '</div></li>'
             '</ul></div>'
         )
         self.write(12, inner)
@@ -718,7 +728,7 @@ class Deck:
         self.page09_weeks()
         self.page10_grading()
         self.page11_help()
-        self.page12_teams()
+        self.page12_elearn()
         self.page13_platforms()
         self.page14_tools()
         self.page15_daily()
