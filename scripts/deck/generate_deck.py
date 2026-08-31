@@ -1039,8 +1039,10 @@ class BilingualDeck:
                 f'<div class="{cls}" style="flex:{seg["flex"]}">{seg["text"]}</div>'
                 for cls, seg in segs) + '</div>'
 
-        band1 = band([("p1", w["band1En"][0]), ("p2", w["band1En"][1])])
-        band2 = band([("p2", w["band2En"][0]), ("p3", w["band2En"][1])])
+        # 段數與顏色以 overlay 資料的 cls 為準（8/26 英文化後列 1=1 段、列 2=3 段；
+        # 舊版硬取各 2 段，段數不合就 IndexError——2026-08-31 CI 炸過一次）
+        band1 = band([(seg.get("cls", "p1"), seg) for seg in w["band1En"]])
+        band2 = band([(seg.get("cls", "p2"), seg) for seg in w["band2En"]])
         inner = (
             bb.kicker(w["kicker"]) + bb.bititle(w["titleEn"], w["titleZh"])
             + '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:40px">'
