@@ -270,7 +270,8 @@ class Deck:
         if code:
             tail = f'<small>Slido #{esc(code)}・{elearn_tail}</small>'
         else:
-            slido_pending = pb.pending("Slido #")
+            # 未建 event（AB 班）：與 p06/p18 同字樣「#現場公布」——原本只印「Slido #」空殼（2026-09-01 三端查核抓到）
+            slido_pending = pb.pending("Slido #現場公布")
             tail = f'<small>{slido_pending}・{elearn_tail}</small>'
         return f'<small>{esc(line)}</small><br>' + tail
 

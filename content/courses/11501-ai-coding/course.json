@@ -340,7 +340,7 @@
       },
       {
         "q": "要買軟體或設備嗎？",
-        "a": "這門課的任何一分都不需要你付錢。課堂會點名幾個工具（聊天型 AI、Gemini Canvas、Colab、GitHub、Wokwi、Apps Script），每一樣都有替代選擇，**優先用免費開源的**。⚠️ AI 工具的免費額度常常變動，所以課程不會把任何一次作業綁死在單一工具上。另外 Google 有學生免費方案值得申請一次（免費 1 年，須在 2026-12-31 前兌換，資格與內容以官方頁 gemini.google/students 為準）——申請不成也不影響成績。沒有筆電也可以修：教室有機器，每週都有等值作法。",
+        "a": "這門課的任何一分都不需要你付錢。課堂會點名幾個工具（聊天型 AI、Gemini Canvas、Colab、GitHub、Wokwi、Apps Script），每一樣都有替代選擇，優先用免費開源的。⚠️ AI 工具的免費額度常常變動，所以課程不會把任何一次作業綁死在單一工具上。另外 Google 有學生免費方案值得申請一次（免費 1 年，須在 2026-12-31 前兌換，資格與內容以官方頁 gemini.google/students 為準）——申請不成也不影響成績。沒有筆電也可以修：教室有機器，每週都有等值作法。",
         "status": "confirmed",
         "source": "course-plan.md §六＋課前準備.md（Ted 2026-08-28 拍板工具寫法）"
       },
@@ -373,14 +373,13 @@
       "nextWeek": "面板 v0——你的名字、一顆按鈕，下課前存成帶得走的單檔",
       "action": "想一個你希望程式幫你解決的生活小麻煩，帶來上課",
       "materialsUrl": {
-        "status": "pending",
-        "note": "課程教材網址開學前補"
+        "status": "done",
+        "note": "課程網址已上線（sections[].hubUrl 為主入口；deck p19 QR 解碼驗證 2026-09-01）"
       }
     },
     "placeholders": [
       "e學苑課程代碼",
-      "TA 名字",
-      "課程教材網址"
+      "TA 名字"
     ],
     "floorPlans": {
       "$comment": "可在本機與 CI 重現的 deck 素材（同 aiot 做法）；原 OneDrive 絕對路徑 CI 讀不到、線上版第 3／5 頁退成待補佔位（2026-09-01 查核抓到後改走 repo 相對路徑）",

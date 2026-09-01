@@ -211,7 +211,7 @@
       {
         "pct": 10,
         "label": "平時成績",
-        "sub": "五張課內證據卡（第 2、4、7、10、14 週）各 2%；缺席可做同能力的等值補件"
+        "sub": "五張課內證據卡各 2%（AB＝第 2、4、7、10、14 週；AA 遇停課併週、第 4 週卡改於第 5 週合併課實施）；缺席可做同能力的等值補件"
       },
       {
         "pct": 20,
@@ -427,8 +427,8 @@
       "nextWeek": "提問、圖像與人的判斷——怎麼問、怎麼改、什麼時候該拒絕",
       "action": "下週帶一個你想用 AI 解決的問題來",
       "materialsUrl": {
-        "status": "pending",
-        "note": "課程教材網址開學前補"
+        "status": "done",
+        "note": "課程網址已上線（sections[].hubUrl 為主入口；deck 末頁 QR 解碼驗證 2026-09-01）"
       }
     },
     "heroImages": {
@@ -441,12 +441,9 @@
       "office": "assets/maps/c306-3f-zoom.png"
     },
     "placeholders": [
-      "Slido event code ×2",
+      "Slido event code（AB，AA=1321545 已定）",
       "e學苑課程代碼",
-      "TA 名字",
-      "課程教材網址",
-      "QR code",
-      "E403/C306 平面圖"
+      "TA 名字"
     ]
   },
   "en": {
@@ -568,7 +565,7 @@
       "grading": [
         {
           "label": "Participation",
-          "sub": "Five in-class evidence cards (Weeks 2, 4, 7, 10, 14), 2% each; if you miss a class you may submit equivalent work for the same skill"
+          "sub": "Five in-class evidence cards, 2% each (AB: Weeks 2, 4, 7, 10, 14; AA: the Week-4 card moves to the merged Week-5 session); if you miss a class you may submit equivalent work for the same skill"
         },
         {
           "label": "Assignments",

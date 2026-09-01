@@ -1,5 +1,5 @@
 {
-  "$comment": "課程介紹單一內容源（一份內容、多種輸出）。本檔＝洄瀾 2026-07-03 草稿：課程結構、週次、評量取自 115-1 教學計畫 GC__1480AA（OneDrive 正本同版）；AA/AB 代碼、系統編號、時段取自 OneDrive 東華課程資料/11501 各班 _課程資訊.json（2026-06-14 快照）。文案語氣待 陳文盛 過目。",
+  "$comment": "課程介紹單一內容源（一份內容、多種輸出）。真值方向 2026-09-01 換版後反轉：正本＝wailan_agent workspace/teaching/material/it-apply-course/course-plan.md（PBL 版），校方教學計畫兩班已依正本全套換版（下游副本、非真值）。AA/AB 代碼、系統編號、時段取自 OneDrive 東華課程資料/11501 各班 _課程資訊.json（2026-06-14 快照）＋AA 教師開課查詢（2026-07-03）。",
   "id": "115-1-it-apply",
   "kind": "regular",
   "name": "資訊科技與應用",
@@ -382,10 +382,9 @@
       "office": "assets/maps/c306-3f-zoom.png"
     },
     "placeholders": [
-      "Slido event code ×2",
+      "Slido event code（AB，AA=41952171 已定）",
       "e學苑課程代碼",
-      "TA 名字",
-      "課程教材網址"
+      "TA 名字"
     ]
   },
   "meta": {
@@ -393,8 +392,8 @@
     "validForSemester": "115-1",
     "owner": "陳文盛（陳文盛）",
     "sources": [
-      "115-1 課程計畫正本 v4.2（wailan_agent workspace/teaching/material/it-apply-course/course-plan.md，2026-08-28 五路複驗後定稿）＝17 週、評量與平台真值",
-      "115-1 教學計畫 GC__1480AA（教務系統 PDF；與 OneDrive 11501 正本比對一致）＝課程描述、17 週進度、評量比例真值",
+      "115-1 課程計畫正本（wailan_agent workspace/teaching/material/it-apply-course/course-plan.md，持續改版；2026-09-01 換版時為 v6.1）＝17 週、評量與平台真值",
+      "115-1 教學計畫 GC__1480AA（教務系統 PDF；2026-09-01 兩班已依 course-plan.md 全套換版）＝下游副本、非真值",
       "OneDrive 11501/資訊科技與應用AA·AB/_課程資訊.json（2026-06-14 快照）＝代碼、系統編號、時段（AA 一11–12／AB 二11–12）",
       "OneDrive 11501/開課與行政/115-1校核心通識課程統計表_文盛.xlsx（送件版）＝節次複核＋教室（AA E403／AB E402）、限修 40",
       "AA 教師開課查詢 SubjTransfer（2026-07-03 抓取）＝正式節次與教室真值：AA 一11–12 E403／AB 二11–12 E403（送件版 E402 已改）",
