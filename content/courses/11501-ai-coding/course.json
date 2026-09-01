@@ -383,8 +383,9 @@
       "課程教材網址"
     ],
     "floorPlans": {
-      "classroom": "D:/OneDrive - 國立東華大學/東華通識/東華課程資料/11501/人工智慧概論AA/課程介紹素材/e403-4f-zoom.png",
-      "office": "D:/OneDrive - 國立東華大學/東華通識/東華課程資料/11501/人工智慧概論AA/課程介紹素材/c306-3f-zoom.png"
+      "$comment": "可在本機與 CI 重現的 deck 素材（同 aiot 做法）；原 OneDrive 絕對路徑 CI 讀不到、線上版第 3／5 頁退成待補佔位（2026-09-01 查核抓到後改走 repo 相對路徑）",
+      "classroom": "assets/maps/e403-4f-zoom.png",
+      "office": "assets/maps/c306-3f-zoom.png"
     },
     "aiCategoriesBrief": [
       "🟢 可以用，不必說明——解釋、找錯、翻譯錯誤訊息",
