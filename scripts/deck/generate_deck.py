@@ -232,7 +232,7 @@ class Deck:
         cells = (
             pb.infocard("cap", "班別／課號",
                         f'{esc(sec.get("id", ""))} 班　<small style="font-family:var(--lat)">'
-                        f'{esc(sec.get("code", ""))}・系統編號 {esc(sec.get("systemId", ""))}</small><br>'
+                        f'{esc(sec.get("code", ""))}・<span style="white-space:nowrap">系統編號</span> {esc(sec.get("systemId", ""))}</small><br>'
                         f'<small>{esc(course_type)}・{esc(credits)} 學分・{esc(weeks_system)}</small>')
             + pb.infocard("clock", "上課時間", f'{esc(sec.get("time", ""))}{time_note_html}')
             + pb.infocard("pin", "教　　室", esc(sec.get("room", "")))
@@ -370,7 +370,7 @@ class Deck:
         url = self.section.get("slidoEventUrl")
         inner_qr = None
         if code and url:
-            inner_qr = pb.qr_svg(url, size=150, dark="#07403F")
+            inner_qr = pb.qr_svg(url, size=150, dark="#07403F", label="Slido 互動問答 QR code")
         if inner_qr:
             body = ('<div style="background:#fff;padding:8px;border-radius:8px;display:inline-block">'
                     + inner_qr + '</div>'
@@ -500,7 +500,9 @@ class Deck:
             + '<div><div style="position:relative"><div class="tlbar" style="top:7px;left:0;right:0"></div>'
             + f'<div class="timeline" style="margin-top:0">{row2}</div></div>{band2}</div>'
             + '</div>'
-            + f'<div class="muted">●＝每週主題　<span style="color:var(--gold)">●</span>＝期中／期末里程碑　·　色帶＝{self._phase_count_word()}部曲分段</div>'
+            + f'<div class="muted">●＝每週主題　<span style="color:var(--gold)">●</span>＝期中／期末里程碑　·　色帶＝{self._phase_count_word()}部曲分段'
+            + ("　·　17 週新制＋W18 成果發表週" if len(weekly) == 18 else "")
+            + '</div>'
         )
         self.write(9, inner)
 
@@ -527,7 +529,7 @@ class Deck:
 
         def label_for(part_id, is_continuation):
             if is_continuation:
-                return f"P{part_id} 續"
+                return f"PART {part_id}（續）"
             name = phase_titles.get(part_id, "")
             w_range = phase_weeks.get(part_id, "")
             return f"PART {part_id} · {name}（{w_range}）" if w_range else f"PART {part_id} · {name}"
@@ -566,15 +568,18 @@ class Deck:
         d = t.get("date") or ""
         md = f"{int(d[5:7])}/{int(d[8:10])}" if len(d) == 10 else "日期公布中"
         who = sp.get("name") or "講者邀請中"
+        # 陣容頁單位用短版：去掉全形括號補充（兼任主任職等），完整版留給海報牆／講者頁；
+        # 再加 nowrap 保單行——長單位折兩行會把整頁推 17px 撞頁尾（2026-09-01 複驗 #2）。
         seg = "・".join(x for x in (sp.get("title"), sp.get("org")) if x)
+        seg = re.sub(r"（[^）]*）", "", seg).strip("・ ")
         topic = t.get("title") or "講題公布中"
         return (
             '<div style="display:flex;align-items:center;gap:18px;padding:9px 16px;'
             'background:rgba(255,255,255,0.06);border-radius:12px">'
             f'<div style="min-width:92px"><div style="font-size:12.5px;color:var(--on-dark-dim)">第 {t.get("no", "?")} 場</div>'
             f'<div style="font-size:19px;font-weight:800">{esc(md)}</div></div>'
-            f'<div style="flex:1.1"><div style="font-size:18px;font-weight:800">{esc(who)}</div>'
-            f'<div style="font-size:12.5px;color:var(--on-dark-dim)">{esc(seg)}</div></div>'
+            f'<div style="flex:1.1;min-width:0"><div style="font-size:18px;font-weight:800">{esc(who)}</div>'
+            f'<div style="font-size:12.5px;color:var(--on-dark-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{esc(seg)}</div></div>'
             f'<div style="flex:1.3;font-size:15px">{esc(topic)}</div>'
             '</div>'
         )

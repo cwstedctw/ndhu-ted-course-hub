@@ -39,7 +39,7 @@ def img_b64(path, alt="", style=""):
     return f'<img src="data:image/{mime};base64,{b}" alt="{esc(alt)}"{st}>'
 
 
-def qr_svg(data, size=176, dark="#07403F"):
+def qr_svg(data, size=176, dark="#07403F", label="課程網站 QR code"):
     """URL → inline SVG QR（第 19 頁課程網站掃碼用，2026-07-05 Ted 授權設計升級）。
 
     可選依賴 `qrcode`（pip install qrcode，取矩陣不需 PIL）：沒裝回傳 None、
@@ -75,7 +75,7 @@ def qr_svg(data, size=176, dark="#07403F"):
                 run = None
     return (
         f'<svg width="{size}" height="{size}" viewBox="0 0 {n} {n}" role="img" '
-        f'aria-label="課程網站 QR code" shape-rendering="crispEdges" '
+        f'aria-label="{esc(label)}" shape-rendering="crispEdges" '
         f'xmlns="http://www.w3.org/2000/svg">'
         f'<rect width="{n}" height="{n}" fill="#FFFFFF"/>'
         f'<path d="{"".join(segs)}" fill="{dark}"/></svg>'
