@@ -312,7 +312,7 @@ html,body{background:#333}
 .em-g{color:var(--gold); font-weight:900}
 
 /* B3：工具橫帶（用途→工具）＋平台帶 */
-.tband{display:flex; align-items:center; gap:22px; padding:19px 0;
+.tband{display:flex; align-items:center; gap:22px; padding:13px 0; /* 19→13：4 組＋pstrip＋頁尾的 ai-intro p14 溢 41px、en 版 .it 折行再多 2px（2026-09-01 全量掃），4 帶共省 48 */
   border-bottom:1px solid rgba(6,37,36,.08)}
 .tband:last-of-type{border-bottom:0}
 .tband .g{flex:0 0 200px; display:flex; align-items:center; gap:12px}
@@ -323,7 +323,7 @@ html,body{background:#333}
 .tband .it{padding:8px 16px; border:1px solid rgba(6,37,36,.10); border-radius:11px; background:var(--white)}
 .tband .it b{font:700 16.5px var(--lat); color:var(--ink); display:block}
 .tband .it span{font:400 12.5px var(--zh); color:var(--mist)}
-.pstrip{display:flex; gap:12px; margin-top:18px; padding-top:14px; border-top:1.5px solid var(--teal-050)}
+.pstrip{display:flex; gap:12px; margin-top:10px; padding-top:8px; border-top:1.5px solid var(--teal-050)} /* 18/14→10/8：同上 p14 擠版帳的一部分 */
 .pstrip .p{flex:1; display:flex; align-items:baseline; gap:10px; justify-content:center;
   padding:10px 0; border-radius:10px; background:rgba(14,124,123,.06)}
 .pstrip .p .use{font:700 14px var(--zh); color:var(--teal)}

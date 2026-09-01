@@ -220,7 +220,7 @@ def tband(ic, gname, items, compact=False):
     """items = [(name, sub), ...]；compact＝工具帶 ≥5 組時的窄邊距版（19px→10px），
     防止總高超出 720px 畫布把尾註擠到頁尾上（2026-07-03 it-apply 五組實測）。"""
     its = "".join(f'<div class="it"><b>{esc(n)}</b><span>{esc(s)}</span></div>' for n, s in items)
-    style = ' style="padding:10px 0"' if compact else ''
+    style = ' style="padding:7px 0"' if compact else ''  # 10→7：六組的 it-apply p14 仍溢 27px（2026-09-01 R2），6 帶共省 36
     return (f'<div class="tband"{style}><div class="g"><div class="ic">{icon(ic)}</div>'
             f'<div class="gn">{esc(gname)}</div></div><div class="items">{its}</div></div>')
 
