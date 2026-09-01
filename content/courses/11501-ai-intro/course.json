@@ -41,8 +41,9 @@
         "mode": "en-primary-zh-support",
         "note": "AA 為 EMI：課程殼（landing、17 週大綱、評量、FAQ、安全守則、求助、頁內導覽與**上學期作品**）一律有完整英文，繁中並列提供理解支援——是雙欄，不是 en-only。缺任何一條英文字串，validate 規則 #20 會 fail-closed 擋下 build。2026-08-26 陳文盛 拍板把 showcase 由例外改回範圍內；目前只剩每週教材包不在本輪承諾範圍。"
       },
-      "slidoEvent": null,
-      "deckName": "115_01 人工智慧概論AA Introduction"
+      "slidoEvent": "1321545",
+      "deckName": "115_01 人工智慧概論AA Introduction",
+      "slidoEventUrl": "https://app.sli.do/event/4XbfTmABWkNbZnEu1cKWgn"
     },
     {
       "id": "AB",

@@ -38,6 +38,9 @@ const BINARY_EXT = new Set([
 // 學號樣式：開頭 4、連續共 8–9 位數字；前後不得緊貼英數字或底線
 const STUDENT_ID_RE = /(?<![0-9A-Za-z_])4[0-9]{7,8}(?![0-9A-Za-z_])/g;
 const INTERNAL_NOTES = "internalNotes";
+// Slido 公開入場代碼白名單（印在投影片上給學生輸入的 join code，非個資；2026-09-01 洄瀾）。
+// 掃描前先從行文字移除白名單代碼——同一行若另有 4 開頭數字照樣列滲漏。新代碼撞樣式時逐枚加列。
+const ALLOWED_SLIDO_CODES = ["41952171"];
 
 if (!existsSync(OUT_DIR)) {
   console.error(`[FAIL] ${OUT_DIR}｜out/ 不存在｜請先跑 next build（npm run build 會自動串 validate → build → scan）`);
@@ -92,9 +95,11 @@ for (const file of walk(OUT_DIR)) {
       }
     }
     if (hasIdPattern) {
+      let scanLine = line;
+      for (const code of ALLOWED_SLIDO_CODES) scanLine = scanLine.split(code).join("");
       STUDENT_ID_RE.lastIndex = 0;
       let m;
-      while ((m = STUDENT_ID_RE.exec(line)) !== null) {
+      while ((m = STUDENT_ID_RE.exec(scanLine)) !== null) {
         hits.push({
           file, line: idx + 1, rule: "學號樣式",
           msg: `疑似學號「${mask(m[0])}」（開頭 4、連續 ${m[0].length} 位數字，位於第 ${m.index + 1} 欄）`,
