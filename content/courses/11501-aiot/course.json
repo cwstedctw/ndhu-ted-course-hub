@@ -30,7 +30,9 @@
       },
       "room": "理工二館 E307",
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-aiot/",
-      "deckUrl": "/decks/11501-aiot.html"
+      "deckUrl": "/decks/11501-aiot.html",
+      "slidoEvent": "6969075",
+      "slidoEventUrl": "https://app.sli.do/event/hMPARjY5eHu1d9h8xExVSS"
     }
   ],
   "intro": {
@@ -61,24 +63,30 @@
     "phases": [
       {
         "id": 1,
-        "title": "環境與地基",
-        "body": "UNO Q 雙架構、Arduino App Lab、Git、Linux 命令列與 SSH；AI 輔助程式開發的工作流。",
+        "title": "共同底座",
+        "body": "統一環境，學會和 Linux、Git、AI 協作；連上自己的板、控制硬體並留下可重現證據。",
         "weeks": "W1–3"
       },
       {
         "id": 2,
-        "title": "MCU：感測與控制",
-        "body": "GPIO、I2C／SPI／UART 感測器、致動器與即時反應，一路做到多感測器小系統；W9 期中專題展示。",
+        "title": "MCU 與即時系統",
+        "body": "從 I/O、匯流排、狀態機走到 RTOS 與期中專題，做出能獨立運作的感測控制裝置。",
         "weeks": "W4–9"
       },
       {
         "id": 3,
-        "title": "MPU：語音、影像與整合",
-        "body": "UNO Q 上的 Debian Linux、音訊與 KWS、Edge Impulse 自訓 FOMO 模型、App Lab 部署與 IoT 儀表板，最後 MCU＋MPU 橋接成完整裝置。",
-        "weeks": "W11–17"
+        "title": "MPU 與邊緣 AI",
+        "body": "服務、App Lab、聲音、影像、自建模型與部署；在 UNO Q 上量出 FP／FN、FPS 與延遲。",
+        "weeks": "W11–14"
+      },
+      {
+        "id": 4,
+        "title": "雙腦整合",
+        "body": "把模型輸出經 Bridge 交給 MCU 致動，完成可現場驗收的 AIoT 專題。",
+        "weeks": "W15–17"
       }
     ],
-    "phasesNote": "雙語授課（中英並行）、Lab-based 任務導向；W1 為教師展示、W10 校運停課，其餘上課週以實作為主",
+    "phasesNote": "雙語授課（中英並行）、任務導向；W1 先用一小時做課程導覽，接著由教師示範；不發板，W10 校運停課",
     "weeklyPlan": [
       {
         "w": "1",
@@ -153,18 +161,19 @@
       },
       {
         "w": "15",
-        "label": "MCU＋MPU 系統整合",
-        "part": 3
+        "label": "模型→Bridge→LED 雙腦整合",
+        "part": 4
       },
       {
         "w": "16",
-        "label": "期末專題實作與諮詢",
-        "part": 3
+        "label": "期末展示與儀器驗收（一）",
+        "part": 4,
+        "milestone": true
       },
       {
         "w": "17",
-        "label": "期末專題展示",
-        "part": 3,
+        "label": "期末展示與儀器驗收（二）",
+        "part": 4,
         "milestone": true
       }
     ],
@@ -172,8 +181,8 @@
     "grading": [
       {
         "pct": 10,
-        "label": "課堂展示",
-        "sub": "平時成績（含出缺席）"
+        "label": "平時成績",
+        "sub": "課堂參與與出缺席"
       },
       {
         "pct": 20,
@@ -255,16 +264,16 @@
     ],
     "platforms": [
       {
-        "use": "課堂點名",
-        "name": "Zuvio"
-      },
-      {
         "use": "教材與交作業",
         "name": "e學苑"
       },
       {
-        "use": "課堂共筆",
-        "name": "HackMD"
+        "use": "程式與版本紀錄",
+        "name": "GitHub"
+      },
+      {
+        "use": "公開課程資訊",
+        "name": "Course Hub"
       }
     ],
     "aiRules": [
@@ -299,7 +308,7 @@
     },
     "whatToBring": [
       "筆記型電腦（開發與連開發板用）",
-      "GitHub 與 Google 帳號",
+      "GitHub 帳號（W1 課後完成第一次 clone）",
       "動手的心——這門課每週都在做東西；UNO Q 開發板由課程借用，不用自己買"
     ],
     "faq": [
@@ -348,19 +357,25 @@
     ],
     "finale": {
       "nextWeek": "基礎環境建置：App Lab、Git、開發板連線",
-      "action": "先想一個你想做的智慧裝置——期末就做它",
+      "action": "課後完成 GitHub 帳號與第一次 clone；接著看七支 Arduino App Lab 官方範例",
       "materialsUrl": {
         "status": "pending",
         "note": "課程教材網址開學前補（教學計畫掛 docs.arduino.cc UNO Q 文件）"
       }
     },
-    "placeholders": [
-      "Teams 團隊代碼",
-      "TA 名字"
-    ]
+    "heroImages": {
+      "$comment": "AIoT 專屬封面；以 Ted 提供的真實 UNO Q 照片為參考重繪，無投影片文字",
+      "intro": "intro-hero-aiot.webp"
+    },
+    "floorPlans": {
+      "$comment": "可在本機與 CI 重現的 deck 素材；E307 使用校方理工二館三樓官方圖，C306 使用既有驗證裁切圖",
+      "classroom": "assets/maps/e307-se2-3f-official.jpg",
+      "office": "assets/maps/c306-3f-zoom.png"
+    },
+    "placeholders": []
   },
   "meta": {
-    "lastReviewed": "2026-08-20",
+    "lastReviewed": "2026-09-01",
     "validForSemester": "115-1",
     "owner": "陳文盛（陳文盛）",
     "sources": [
@@ -368,31 +383,32 @@
       "OneDrive 11501/AIoT智慧裝置實作/_課程資訊.json（2026-06-05 快照）＝systemId 115108606；註：教學計畫另分學士班國際組／資工組兩版 Signed PDF（歸檔於同夾）",
       "AA 教師開課查詢 SubjTransfer（2026-07-03 抓取）＝正式節次與教室真值：四9–11 理工二館 E307",
       "課務組上課節次時間對照表（rb004.ndhu.edu.tw/p/404-1004-14620.php）＝節次→鐘點：第N節＝N+5時10分起、每節50分",
-      "洄瀾 2026-07-03 草稿：intro 文案與 FAQ 語氣待 陳文盛 過目；開課單位由骨架的通識中心更正為資訊工程學系（依教學計畫）"
+      "workspace/teaching/material/aiot-course/course-plan.md v1.4（2026-08-28）＝四部主線、W1 導覽、W10 停課、W16／W17 雙週期末發表與 10／20／30／40 評量真值",
+      "洄瀾 2026-07-03 草稿：開課單位由骨架的通識中心更正為資訊工程學系（依教學計畫）"
     ]
   },
   "hub": {
     "links": [
       {
-        "platform": "zuvio",
-        "use": "課堂點名",
-        "label": "Zuvio",
-        "url": null,
-        "urlStatus": "pending"
-      },
-      {
         "platform": "elearn",
         "use": "教材與交作業",
         "label": "e學苑",
-        "url": null,
-        "urlStatus": "pending"
+        "url": "https://elearn4.ndhu.edu.tw/moodle/",
+        "urlStatus": "confirmed"
       },
       {
-        "platform": "hackmd",
-        "use": "課堂共筆",
-        "label": "HackMD",
-        "url": null,
-        "urlStatus": "pending"
+        "platform": "other",
+        "use": "程式與版本紀錄",
+        "label": "GitHub",
+        "url": "https://github.com/",
+        "urlStatus": "confirmed"
+      },
+      {
+        "platform": "other",
+        "use": "公開課程資訊",
+        "label": "Course Hub",
+        "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-aiot/",
+        "urlStatus": "confirmed"
       }
     ],
     "scoreUrl": null,

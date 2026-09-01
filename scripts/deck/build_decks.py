@@ -67,6 +67,12 @@ def main():
                              f"但缺雙語 overlay：{overlay}")
                 gen += ["--lang", "bilingual", "--overlay", overlay]
                 pack += ["--lang", "bilingual"]
+            else:
+                # 中文 deck 也可有只影響簡報、不進 Course Hub 網頁的專屬文案，
+                # 例如 Slido 提示、TA 佔位策略與 e學苑進入方式。
+                overlay = HERE / "overlays" / f"{course_dir}-deck.json"
+                if overlay.exists():
+                    gen += ["--overlay", overlay]
             run(gen)
             run(pack)
             print(f"[decks] {name} 完成（{course_dir}／{sec_id}／{lang}）")

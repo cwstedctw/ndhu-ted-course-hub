@@ -1,0 +1,16 @@
+{
+  "$comment": "AIoT 智慧裝置實作 W1 一小時介紹 deck 專屬 overlay。課程事實仍由 Hub course.json 提供；本檔只放 deck 顯示策略與 Slido 提示語。",
+  "appliesTo": "115-1-aiot",
+  "section": "AA",
+  "taLine": "",
+  "elearnShort": "e學苑從「我的課程」進入",
+  "elearnItems": [
+    "用學校 GMS 帳號登入 elearn4.ndhu.edu.tw",
+    "登入後從「我的課程」開啟 AIoT 智慧裝置實作",
+    "教材、公告與作業都放在 e學苑"
+  ],
+  "slidoNotes": {
+    "wave1": "等等問你：做過哪些開發板、Linux／Git 熟不熟、最想碰哪一種智慧裝置",
+    "wave2": "專題方向、<b style=\"color:var(--gold)\">什麼證據才算 Demo 真的成功</b>、你想讓裝置感覺到什麼"
+  }
+}

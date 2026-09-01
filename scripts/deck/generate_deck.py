@@ -227,8 +227,15 @@ class Deck:
             else ""
         )
         # TA：course.json 目前無 TA 欄位（v1 亦為【開學前待補】佔位）——見 SKILL.md
-        # 內容對照表「TA 名字」列，標記待補、非模板固定文案。
-        ta_html = pb.pending("開學前待補")
+        # 預設沿用舊版 TA 待補；個別課程可用 overlay 的 taLine 覆寫。
+        # taLine="" 代表這門介紹 deck 不顯示未確認的 TA 佔位。
+        ta_line = self.ov("taLine", None)
+        if ta_line is None:
+            instructor_value = f'{esc(instr.get("name", ""))}　<small>TA：</small>{pb.pending("開學前待補")}'
+        elif ta_line:
+            instructor_value = f'{esc(instr.get("name", ""))}　<small>TA：</small>{esc(ta_line)}'
+        else:
+            instructor_value = esc(instr.get("name", ""))
         cells = (
             pb.infocard("cap", "班別／課號",
                         f'{esc(sec.get("id", ""))} 班　<small style="font-family:var(--lat)">'
@@ -236,7 +243,7 @@ class Deck:
                         f'<small>{esc(course_type)}・{esc(credits)} 學分・{esc(weeks_system)}</small>')
             + pb.infocard("clock", "上課時間", f'{esc(sec.get("time", ""))}{time_note_html}')
             + pb.infocard("pin", "教　　室", esc(sec.get("room", "")))
-            + pb.infocard("user", "授課教師", f'{esc(instr.get("name", ""))}　<small>TA：</small>{ta_html}')
+            + pb.infocard("user", "授課教師", instructor_value)
             + pb.infocard("msg", "聯　　絡",
                           f'<small style="font-family:var(--lat);font-size:15px">'
                           f'{esc(instr.get("contact", ""))}・{esc(instr.get("email", ""))}</small>')
@@ -257,11 +264,14 @@ class Deck:
         # Slido 活動已建就直接印編號、佔位只留還沒有的（2026-08-31 立霧終查抓到：
         # #7610459 在 p06/p18 都印了，這裡卻仍掛「開學前補」佔位，自相矛盾）。
         code = self.section.get("slidoEvent")
+        elearn_short = self.ov("elearnShort", None)
+        elearn_tail = (esc(elearn_short) if isinstance(elearn_short, str) and elearn_short
+                       else pb.pending("e學苑課程代碼開學前補"))
         if code:
-            tail = (f'<small>Slido #{esc(code)}・'
-                    + pb.pending("e學苑課程代碼開學前補") + '</small>')
+            tail = f'<small>Slido #{esc(code)}・{elearn_tail}</small>'
         else:
-            tail = '<small>' + pb.pending("Slido #・e學苑課程代碼開學前補") + '</small>'
+            slido_pending = pb.pending("Slido #")
+            tail = f'<small>{slido_pending}・{elearn_tail}</small>'
         return f'<small>{esc(line)}</small><br>' + tail
 
     def page03_location(self):
@@ -341,11 +351,13 @@ class Deck:
             pb.kicker("OFFICE") + pb.title("研究室位置")
             + '<div class="card-blueprint" style="margin-top:24px;">'
             + '<div style="text-align:center;color:var(--on-dark);z-index:2">'
-            + pb.icon("pin", "var(--gold)", 40)
+            # 有正式平面圖時不疊圖釘；它會浮在圖外、看起來像標了另一個位置。
+            # 只有沒有平面圖的佔位分支才用圖釘提示「位置待補」。
             + (lambda im, off: (
                 im + f'<div style="font-size:20px;font-weight:700;margin-top:14px;color:var(--on-dark)">{esc(off)}</div>'
               ) if im else (
-                f'<div style="font-size:22px;font-weight:700;margin-top:12px">{esc(off)}</div>'
+                pb.icon("pin", "var(--gold)", 40)
+                + f'<div style="font-size:22px;font-weight:700;margin-top:12px">{esc(off)}</div>'
                 + '<div class="muted" style="margin-top:6px;color:var(--on-dark-dim)">'
                 + pb.pending("【研究室平面圖・開學前補】") + '</div>'
               ))(pb.img_b64(self._floor_plan("office"), alt="研究室平面圖位置",
@@ -383,9 +395,18 @@ class Deck:
                 + body + '</div></div></div>')
 
     def _floor_plan(self, which):
-        """intro.floorPlans.{classroom,office} → 圖檔絕對路徑；沒設定回 None。"""
+        """intro.floorPlans.{classroom,office} → 圖檔路徑；沒設定回 None。
+
+        絕對路徑維持舊行為；相對路徑從 deck 產線根目錄解析，讓同一份
+        course.json 在 wailan 正本與 Hub CI 鏡像都能使用 assets/ 素材。
+        """
         fp = (self.intro.get("floorPlans") or {})
-        return fp.get(which)
+        value = fp.get(which)
+        if not value or not isinstance(value, str):
+            return None
+        if os.path.isabs(value):
+            return value
+        return os.path.join(HERE, value.replace("/", os.sep))
 
     def _slido_event_code(self):
         code = self.section.get("slidoEvent")
@@ -632,13 +653,22 @@ class Deck:
         # 純模板固定文案（e學苑登入／用途／課程代碼待補）——course.json 目前
         # 未收錄這段（見 SKILL.md「模板固定」欄）。2026-08-31 由「加入 Teams 課程」
         # 改版：115-1 六課皆已定案走 e學苑（Hub commit 4a33840），模板層跟著換。
+        items = self.ov("elearnItems", None)
+        if not isinstance(items, list) or not items:
+            items = [
+                '用學校帳號登入 <span style="font-family:var(--lat)">elearn4.ndhu.edu.tw</span>',
+                "教材與交作業都在這",
+                "課程代碼：" + pb.pending("【開學前待補】"),
+            ]
+        else:
+            items = [esc(item) for item in items]
+        list_html = "".join(
+            f'<li><span class="b"></span><div>{item}</div></li>' for item in items
+        )
         inner = (
             pb.kicker("JOIN ON E-LEARNING") + pb.title("加入 e學苑課程")
             + '<div class="vcenter"><ul class="list list--lg" style="margin-top:0">'
-            '<li><span class="b"></span><div>用學校帳號登入 <span style="font-family:var(--lat)">elearn4.ndhu.edu.tw</span></div></li>'
-            '<li><span class="b"></span><div>教材與交作業都在這</div></li>'
-            '<li><span class="b"></span><div>課程代碼：' + pb.pending("【開學前待補】") + '</div></li>'
-            '</ul></div>'
+            + list_html + '</ul></div>'
         )
         self.write(12, inner)
 

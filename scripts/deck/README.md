@@ -14,7 +14,8 @@ CI（`.github/workflows/deploy.yml`）與本機 build 都會走到；需要 Pyth
 
 `content/courses/*/course.json` 的 `sections[].deckUrl`（中文）／`deckUrlEn`（雙語）
 ＝開關兼檔名：值如 `/decks/11501-ai-intro-aa.html`，檔名取最後一段。
-雙語版 overlay 慣例路徑：`overlays/<courseDir>-bilingual.json`（缺檔建置直接失敗）。
+中文版選配 overlay 慣例路徑：`overlays/<courseDir>-deck.json`；有檔就載入，沒有就走
+共用模板。雙語版 overlay 路徑為 `overlays/<courseDir>-bilingual.json`（缺檔建置直接失敗）。
 課程頁 hero 讀同一欄位長出「課程介紹簡報 ↗」連結——一個欄位、兩件事一次對齊。
 
 ## 改產線怎麼同步
