@@ -433,17 +433,22 @@ class Deck:
 
     def page07_phases(self):
         phases = self.intro.get("phases", [])
-        cards = "".join(pb.partcard(p.get("id", ""), p.get("title", ""), p.get("body", "")) for p in phases)
         phases_note = self.intro.get("phasesNote", "")
         note_html = self._phases_note_html(phases_note)
         # 部曲數依 phases 實際長度（2026-08-31 ai-coding v2 改四段）：三段課程輸出
         # 與原硬編「三部曲／grid-3」逐字元相同，parity 不受影響；≥4 段走 grid-4 免折行。
+        # 2026-09-01 補：grid-4 窄欄（254px）讓 pbody 折到 10 行、頁尾疊卡（ai-coding p7
+        # 溢 46px）——≥4 段時卡片掛 .part--sm 緊湊版＋grid 上距 34→22；三段路徑兩值皆不變。
+        compact = len(phases) >= 4
+        cards = "".join(pb.partcard(p.get("id", ""), p.get("title", ""), p.get("body", ""),
+                                    compact=compact) for p in phases)
         n_word = {2: "二", 3: "三", 4: "四", 5: "五"}.get(len(phases), str(len(phases)))
-        grid_cls = "grid-4" if len(phases) >= 4 else "grid-3"
+        grid_cls = "grid-4" if compact else "grid-3"
+        grid_mt = 22 if compact else 34
         inner = (
             pb.kicker("WHAT YOU'LL LEARN") + pb.title(f"這門課在學什麼：{n_word}部曲", big=True)
             + f'<div class="subtitle" style="color:var(--on-dark-dim)">{note_html}</div>'
-            + f'<div class="grid {grid_cls}" style="margin-top:34px;margin-bottom:0">{cards}</div>'
+            + f'<div class="grid {grid_cls}" style="margin-top:{grid_mt}px;margin-bottom:0">{cards}</div>'
         )
         self.write(7, inner, dark=True)
 
@@ -1000,7 +1005,8 @@ class BilingualDeck:
         info = self.en["info"]
         inner = (
             bb.kicker(info["kicker"]) + bb.bititle(info["titleEn"], info["titleZh"])
-            + '<div class="grid grid-3" style="margin-top:24px">'
+            # 24→18（2026-09-01）：雙語標題較高＋六張卡英文行數多，p2 溢 3px
+            + '<div class="grid grid-3" style="margin-top:18px">'
             + bb.infocard("cap", info["sectionLabel"], s["codeLineEn"] + bb.zh(s["codeLineZh"]))
             + bb.infocard("clock", info["timeLabel"],
                           f'{bb.esc(s["timeEn"])} <small>{bb.pending(s["timePendingEn"])}</small>' + bb.zh(s["timeZh"]))
@@ -1131,7 +1137,8 @@ class BilingualDeck:
         inner = (
             bb.kicker(p["kicker"]) + bb.bititle(p["titleEn"], p["titleZh"], big=True)
             + f'<div class="subtitle" style="color:var(--on-dark-dim)">{p["noteEnHtml"]}' + bb.zh(p["noteZh"]) + '</div>'
-            + f'<div class="grid grid-3" style="margin-top:28px;margin-bottom:0">{cards}</div>'
+            # 28→16（2026-09-01）：雙語標題＋雙語副標各多一行中文，p7 溢 9px
+            + f'<div class="grid grid-3" style="margin-top:16px;margin-bottom:0">{cards}</div>'
         )
         self.write(7, inner, dark=True)
 
@@ -1351,7 +1358,9 @@ class BilingualDeck:
         inner = (
             bb.kicker(r["kicker"]) + bb.bititle(r["titleEn"], r["titleZh"], big=True)
             + f'<div class="subtitle" style="color:var(--on-dark-dim)">{bb.esc(r["subEn"])}' + bb.zh(r["subZh"]) + '</div>'
-            + f'<div style="margin-top:12px;max-width:900px">{items}</div>'
+            # 12→6（2026-09-01）：en p17 三條雙語守則本體 440px、整頁溢 78px 的擠版帳一角，
+            # 主刀在 bilingual_builders.ruleitem 的邊距與字級
+            + f'<div style="margin-top:6px;max-width:900px">{items}</div>'
         )
         self.write(17, inner, dark=True, no_footer=True)
 

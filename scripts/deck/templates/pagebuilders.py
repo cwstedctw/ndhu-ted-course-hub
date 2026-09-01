@@ -164,8 +164,11 @@ def infocard(ic, lab, val):
 linecard = infocard  # v1 中 linecard 與 infocard 同構，保留兩個名字方便對照 v1 呼叫點
 
 
-def partcard(num, head, body):
-    return (f'<div class="card part"><div class="pnum">PART {esc(num)}</div>'
+def partcard(num, head, body, compact=False):
+    """compact＝grid-4 四部曲的緊湊卡（.part--sm，2026-09-01 ai-coding p7 溢 46px）；
+    三部曲呼叫端不傳＝輸出與舊版逐位元組相同。"""
+    cls = "card part part--sm" if compact else "card part"
+    return (f'<div class="{cls}"><div class="pnum">PART {esc(num)}</div>'
             f'<div class="phead">{esc(head)}</div><div class="pbody">{esc(body)}</div></div>')
 
 

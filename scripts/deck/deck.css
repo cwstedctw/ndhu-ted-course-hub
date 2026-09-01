@@ -120,6 +120,12 @@ html,body{background:#333}
 .part .pnum{font-family:var(--lat); font-weight:800; font-size:40px; color:var(--teal); line-height:1}
 .part .phead{font-size:22px; font-weight:900; color:var(--ink); margin-top:10px}
 .part .pbody{font-size:16px; font-weight:400; color:var(--mist); margin-top:10px; line-height:1.55}
+/* 四部曲（grid-4）緊湊卡（2026-09-01）：254px 窄欄讓 pbody 折到 10 行、ai-coding p7 溢 46px，
+   收邊距與行距不縮字級；三部曲課不掛此 class，輸出逐位元組不變 */
+.part--sm{padding:20px 24px}
+.part--sm .pnum{font-size:34px}
+.part--sm .phead{margin-top:7px}
+.part--sm .pbody{margin-top:7px; line-height:1.45}
 
 /* 工具卡 */
 .tool{display:flex; flex-direction:column; gap:8px; align-items:flex-start}
@@ -358,12 +364,14 @@ html,body{background:#333}
 .value .zh-sub{font-size:15px}
 .part .pbody .zh-sub, .tool .tsub .zh-sub{font-size:13px}
 
-/* 雙語標題：英文（Outfit）大 + 中文 serif 小字 */
+/* 雙語標題：英文（Outfit）大 + 中文 serif 小字
+   margin 8/5→6/3（2026-09-01）：雙語標題天生比中文版高一截（多一行 .zh），
+   en 版 p2/p7/p17 全因此貼底——收 4px 是全 en 頁通用的第一刀，中文版無此 class 不受影響 */
 .bi-title{font-family:var(--lat); font-weight:800; font-size:38px; line-height:1.12;
-  color:inherit; margin-top:8px}
+  color:inherit; margin-top:6px}
 .bi-title.big{font-size:50px}
 .bi-title .zh{display:block; font-family:var(--zh-serif); font-weight:700;
-  font-size:23px; color:var(--mist); margin-top:5px; letter-spacing:.02em}
+  font-size:23px; color:var(--mist); margin-top:3px; letter-spacing:.02em}
 .slide--dark .bi-title .zh{color:var(--on-dark-dim)}
 
 /* 雙語封面標題 */

@@ -104,7 +104,9 @@ def toolcard(ic, name, sub_en, sub_zh):
 def tband(ic, gname_en, gname_zh, items):
     """items = [(name, sub), ...]"""
     its = "".join(f'<div class="it"><b>{esc(n)}</b><span>{esc(s)}</span></div>' for n, s in items)
-    return (f'<div class="tband" style="padding:14px 0"><div class="g"><div class="ic">{icon(ic)}</div>'
+    # padding 14→13（2026-09-01）：對齊 deck.css .tband 的 13px——這裡的 inline 值
+    # 蓋掉 css，p14 撞版修完後 en 版獨留 2px 溢出就是這 1px×上下×4 帶造成的
+    return (f'<div class="tband" style="padding:13px 0"><div class="g"><div class="ic">{icon(ic)}</div>'
             f'<div class="gn">{esc(gname_en)}'
             f'<span style="display:block;font-size:13px;color:var(--mist);font-weight:500">{esc(gname_zh)}</span></div></div>'
             f'<div class="items">{its}</div></div>')
@@ -114,8 +116,11 @@ def ruleitem(num, head_en, head_zh, body_en, body_zh):
     # padding 15px→10px（2026-07-03）：v1 三條雙語守則總高超出 720px 畫布，
     # 第 3 條中文行被裁出畫面（review agent 逐頁目檢抓到的 v1 既有蟲）——
     # 三條共省 30px，讓最後一行中文回到畫布內。
-    return (f'<div class="rule-item" style="padding:10px 0"><div class="num">{esc(num)}</div><div>'
+    # 2026-09-01 再收：每條雙語守則＝英標＋中標＋英文體＋中文體四行起跳、
+    # 三條本體 440px、p17 整頁溢 78px——padding 10→4、副行距 2→1、
+    # 英文體 18/1.6→16.5/1.5、中標 18→16、中文體 14→13（標題 27px 不動，層級保住）。
+    return (f'<div class="rule-item" style="padding:4px 0"><div class="num">{esc(num)}</div><div>'
             f'<div class="rt">{esc(head_en)}'
-            f'<span style="display:block;font-size:18px;color:var(--on-dark-dim);font-weight:700;margin-top:2px">{esc(head_zh)}</span></div>'
-            f'<div class="rb">{esc(body_en)}'
-            f'<span style="display:block;font-size:14px;margin-top:2px">{esc(body_zh)}</span></div></div></div>')
+            f'<span style="display:block;font-size:16px;color:var(--on-dark-dim);font-weight:700;margin-top:1px">{esc(head_zh)}</span></div>'
+            f'<div class="rb" style="margin-top:2px;font-size:16.5px;line-height:1.5">{esc(body_en)}'
+            f'<span style="display:block;font-size:13px;margin-top:1px">{esc(body_zh)}</span></div></div></div>')
