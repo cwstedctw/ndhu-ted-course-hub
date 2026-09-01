@@ -153,8 +153,26 @@ class Deck:
                 if sep in s:
                     head, tail = s.split(sep, 1)
                     if head and tail:
-                        return f'{esc(head + sep)}<br>{esc(tail)}'
+                        # 第二行縮排：Ted 2026-08-31 眼檢封面「文字把背景圖整片壓住」，
+                        # 他點名的解法是「只移第二行」——不縮字級、不左移整塊
+                        # （左移會把第二行推進圖的亮部，實測更難讀）。
+                        return (f'{esc(head + sep)}<br>'
+                                f'<span class="ln2">{esc(tail)}</span>')
         return esc(s)
+
+    def _hero(self, which):
+        """封面／終點頁的背景圖路徑。
+
+        2026-08-31：立霧替 ai-coding 重畫的兩張圖當初是**直接覆蓋共用資產**
+        `assets/intro-hero-ai.webp`——那個檔名是六門課共用的，等於一改全改，
+        另外五門課的封面在沒人看的情況下也被換掉了。改成走 `intro.heroImages`
+        指定課程專屬圖（放 `assets/heroes/`），沒指定就回落共用預設。
+        """
+        default = {"intro": "intro-hero-ai.webp", "workflow": "workflow-hero-ai.webp"}[which]
+        custom = (self.intro.get("heroImages") or {}).get(which)
+        if custom:
+            return f'../assets/heroes/{esc(custom)}'
+        return f'../assets/{default}'
 
     @staticmethod
     def _semester_display(semester):
@@ -180,7 +198,7 @@ class Deck:
         # 非通識單位（如資工系 AIoT）不得掛 GENERAL EDUCATION，退為通用 COURSE INTRO。
         kicker = COVER_KICKER if "通識" in org else "COURSE INTRO"
         inner = (
-            '<img class="hero hero-intro" src="../assets/intro-hero-ai.webp" alt="">'
+            f'<img class="hero hero-intro" src="{self._hero("intro")}" alt="">'
             '<div class="scrim"></div>'
             '<div class="inner">'
             f'<div class="kicker">{esc(kicker)}</div>'
@@ -236,7 +254,15 @@ class Deck:
         plats = self.intro.get("platforms", [])
         parts = [f'{p.get("use", "")} {p.get("name", "")}' for p in plats]
         line = "・".join(parts)
-        return f'<small>{esc(line)}</small><br><small>' + pb.pending("Slido #・e學苑課程代碼開學前補") + '</small>'
+        # Slido 活動已建就直接印編號、佔位只留還沒有的（2026-08-31 立霧終查抓到：
+        # #7610459 在 p06/p18 都印了，這裡卻仍掛「開學前補」佔位，自相矛盾）。
+        code = self.section.get("slidoEvent")
+        if code:
+            tail = (f'<small>Slido #{esc(code)}・'
+                    + pb.pending("e學苑課程代碼開學前補") + '</small>')
+        else:
+            tail = '<small>' + pb.pending("Slido #・e學苑課程代碼開學前補") + '</small>'
+        return f'<small>{esc(line)}</small><br>' + tail
 
     def page03_location(self):
         sec = self.section
@@ -337,9 +363,14 @@ class Deck:
         掃 slido.com/<code> 直接進該場次。
         """
         code = self.section.get("slidoEvent")
+        # ⚠️ QR 目標一定要用 slidoEventUrl（uuid 版連結）——
+        # `app.sli.do/event/<數字碼>` 會回「Event not found for given hash」
+        # （2026-08-31 實掃踩到：那條路吃 uuid hash、不吃數字碼；數字碼只能在
+        # slido.com 首頁手動輸入）。沒有 uuid 就不畫 QR、回佔位，寧缺勿壞。
+        url = self.section.get("slidoEventUrl")
         inner_qr = None
-        if code:
-            inner_qr = pb.qr_svg(f"https://app.sli.do/event/{code}", size=150, dark="#07403F")
+        if code and url:
+            inner_qr = pb.qr_svg(url, size=150, dark="#07403F")
         if inner_qr:
             body = ('<div style="background:#fff;padding:8px;border-radius:8px;display:inline-block">'
                     + inner_qr + '</div>'
@@ -361,13 +392,19 @@ class Deck:
         return code if code else pb.pending("現場公布")
 
     def page06_slido1(self):
+        # 提示語要對得上「這門課」實際要問的第一波題（Ted 2026-09-01：slido 題組與
+        # 投影片都要按課各自對課）——overlay 的 slidoNotes.wave1 可覆寫；沒給就用
+        # 原句（ai-intro 措辭），既有課程輸出逐字元不變。值視為本 skill 維護的
+        # 字面 HTML（同 page09 band text 慣例），可帶金色強調 <b>。
+        note1 = (self.ov("slidoNotes") or {}).get(
+            "wave1", "等等問你：你心中的 AI 像什麼、你來自哪個系、用過哪些 AI 工具")
         inner = (
             '<div class="big-center" style="height:100%;display:flex;flex-direction:column;justify-content:center;max-width:760px">'
             '<div class="kicker">JOIN AT SLIDO.COM</div>'
             '<div class="big-title" style="margin-top:14px">拿出手機，<br>先認識一下你</div>'
             f'<div class="big-sub">掃 QR Code 加入　slido.com　·　#{self._slido_event_code()}</div>'
             '<div class="muted" style="color:var(--on-dark-dim);margin-top:22px;font-size:16px">'
-            '等等問你：你心中的 AI 像什麼、你來自哪個系、用過哪些 AI 工具</div>'
+            f'{note1}</div>'
             '</div>'
             + self._slido_qr_html()
         )
@@ -414,7 +451,7 @@ class Deck:
             if i < len(steps):
                 steps_html += '<div class="step-arrow">→</div>'
         inner = (
-            '<img class="concept-hero" src="../assets/workflow-hero-ai.webp" alt="">'
+            f'<img class="concept-hero" src="{self._hero("workflow")}" alt="">'
             '<div class="concept-scrim"></div>'
             '<div class="concept-copy concept-copy--right">'
             '<div class="kicker">COURSE DESTINATION</div>'
@@ -456,7 +493,7 @@ class Deck:
         band2 = self._week_band(row2_weeks, phase_titles, phase_weeks, variant="row2")
 
         inner = (
-            pb.kicker(f"{len(weekly)}-WEEK ROADMAP") + pb.title(f"{len(weekly)} 週課程地圖")
+            pb.kicker("17-WEEK ROADMAP") + pb.title("17 週課程地圖")
             + '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:44px">'
             + '<div><div style="position:relative"><div class="tlbar" style="top:7px;left:0;right:0"></div>'
             + f'<div class="timeline" style="margin-top:0">{row1}</div></div>{band1}</div>'
@@ -653,7 +690,9 @@ class Deck:
             + pstrip_html + '</div>'
             + f'<div class="muted">{note_html}</div>'
         )
-        self.write(14, inner)
+        # ≥5 組窄版連 note 都貼到頁底，會跟 footer-org 疊字（2026-09-01 it-apply 六組
+        # 渲染眼檢抓到）→ 窄版免頁尾；4 組以下照舊（既有課程 parity 不變）
+        self.write(14, inner, no_footer=compact)
 
     @staticmethod
     def _tools_note_html(note):
@@ -714,21 +753,45 @@ class Deck:
             pb.ruleitem(f"{i:02d}", r.get("title", ""), r.get("body", ""))
             for i, r in enumerate(rules, start=1)
         )
+        # 三分類帶（2026-08-31 秀姑巒複驗抓到：deck 只印三守則，但學生真正要遵守的
+        # 🟢🟡🔴 三分類機制（course-plan §四之二、校方頁同步）整組缺席）。
+        # intro.aiCategoriesBrief 有值才渲染，沒有就維持三守則版原樣（ai-intro parity）。
+        cats = self.intro.get("aiCategoriesBrief", [])
+        if cats:
+            # 左欄三守則、右欄三分類卡並排——第一版把三分類卡直落在守則下方，
+            # 渲染眼檢直接掉出 720px 頁底、壓到頁尾（2026-08-31）。
+            rows = "".join(
+                f'<div style="font-size:16px;font-weight:700;color:var(--on-dark);'
+                f'line-height:1.55;padding:7px 0">{esc(c)}</div>' for c in cats)
+            cats_html = (
+                '<div style="width:400px;flex:none;align-self:center;padding:20px 24px;'
+                'border:1px solid rgba(217,164,65,.35);border-radius:14px;'
+                'background:rgba(6,37,36,.45)">'
+                '<div class="kicker" style="font-size:13px">三分類，怎麼用才合規</div>'
+                f'<div style="margin-top:6px">{rows}</div></div>')
+            body = (
+                '<div style="display:flex;gap:44px;margin-top:14px;align-items:stretch">'
+                f'<div style="flex:1;min-width:0">{items}</div>{cats_html}</div>')
+        else:
+            body = f'<div style="margin-top:14px;max-width:880px">{items}</div>'
         inner = (
             pb.kicker("HOW WE USE AI") + pb.title("這門課的 AI 使用守則", big=True)
             + '<div class="subtitle" style="color:var(--on-dark-dim)">可以用 AI 學習與創作，但你要——</div>'
-            + f'<div style="margin-top:14px;max-width:880px">{items}</div>'
+            + body
         )
         self.write(17, inner, dark=True)
 
     def page18_slido2(self):
+        # 同 page06：第二波提示語可由 overlay slidoNotes.wave2 按課覆寫（字面 HTML）。
+        note2 = (self.ov("slidoNotes") or {}).get(
+            "wave2", '修課動機、<b style="color:var(--gold)">你最想用 AI 幫你完成什麼事</b>、一個詞形容你的期待')
         inner = (
             '<div class="big-center" style="height:100%;display:flex;flex-direction:column;justify-content:center;max-width:760px">'
             '<div class="kicker">BACK TO SLIDO</div>'
             '<div class="big-title" style="margin-top:14px">最後，<br>聊聊你的期待</div>'
             f'<div class="big-sub">再掃一次　slido.com　·　#{self._slido_event_code()}</div>'
             '<div class="muted" style="color:var(--on-dark-dim);margin-top:22px;font-size:16px">'
-            '修課動機、<b style="color:var(--gold)">你最想用 AI 幫你完成什麼事</b>、一個詞形容你的期待</div>'
+            f'{note2}</div>'
             '</div>'
             + self._slido_qr_html()
         )
@@ -860,6 +923,15 @@ class BilingualDeck:
         self.written.append(path)
         return path
 
+    # ---- 與 zh Deck 共用的三個資料驅動掛勾（2026-09-01 補齊）----
+    # 8/31 只在中文版加了 _hero／floorPlans／Slido 真 QR，BilingualDeck 漏掉，
+    # 雙語產線因 AttributeError 整條壞掉（ai-intro AA 是 EMI、雙語版是課堂正式版）。
+    # 直接借用 Deck 的同名函式（都只讀 self.intro／self.section，兩類介面相同）。
+    _hero = Deck._hero
+    _floor_plan = Deck._floor_plan
+    _slido_qr_html = Deck._slido_qr_html
+    _slido_event_code = Deck._slido_event_code
+
     # ---- 19 頁（1:1 對齊 v1 generate_aa_en.py 版式）----
 
     def page01_cover(self):
@@ -869,7 +941,7 @@ class BilingualDeck:
         name_zh = self.course.get("name", "")
         chips_html = "".join(f"<span>{bb.esc(x)}</span>" for x in c.get("chips", []))
         inner = (
-            '<img class="hero hero-intro" src="../assets/intro-hero-ai.webp" alt="">'
+            f'<img class="hero hero-intro" src="{self._hero("intro")}" alt="">'
             '<div class="scrim"></div>'
             '<div class="inner">'
             f'<div class="kicker">{bb.esc(c["kicker"])}</div>'
@@ -913,14 +985,23 @@ class BilingualDeck:
         bb = self.bb
         loc = self.en["location"]
         s = self.en["section"]
+        # intro.floorPlans 有圖就嵌真平面圖（同 zh page03，2026-09-01 補齊）；沒圖維持原待補佔位
+        plan_img = pb.img_b64(self._floor_plan("classroom"), alt="Classroom floor plan",
+                              style="max-width:100%;max-height:330px;border-radius:8px")
+        if plan_img:
+            body = (plan_img
+                    + f'<div style="font-size:20px;font-weight:700;margin-top:14px;color:var(--on-dark);font-family:var(--lat)">{s["roomBlueprintEn"]}</div>'
+                    + f'<div style="font-size:15px;color:var(--on-dark-dim);margin-top:4px">{bb.esc(s["roomBlueprintZh"])}</div>')
+        else:
+            body = (bb.icon("pin", "var(--gold)", 40)
+                    + f'<div style="font-size:21px;font-weight:700;margin-top:12px;font-family:var(--lat)">{s["roomBlueprintEn"]}</div>'
+                    + f'<div style="font-size:17px;color:var(--on-dark-dim);margin-top:4px">{bb.esc(s["roomBlueprintZh"])}</div>'
+                    + f'<div class="muted" style="margin-top:8px;color:var(--on-dark-dim)">{bb.esc(s["roomBlueprintNote"])}</div>')
         inner = (
             bb.kicker(loc["kicker"]) + bb.bititle(loc["titleEn"], loc["titleZh"])
             + '<div class="card-blueprint" style="margin-top:22px;">'
             + '<div style="text-align:center;color:var(--on-dark);z-index:2">'
-            + bb.icon("pin", "var(--gold)", 40)
-            + f'<div style="font-size:21px;font-weight:700;margin-top:12px;font-family:var(--lat)">{s["roomBlueprintEn"]}</div>'
-            + f'<div style="font-size:17px;color:var(--on-dark-dim);margin-top:4px">{bb.esc(s["roomBlueprintZh"])}</div>'
-            + f'<div class="muted" style="margin-top:8px;color:var(--on-dark-dim)">{bb.esc(s["roomBlueprintNote"])}</div></div></div>'
+            + body + '</div></div>'
         )
         self.write(3, inner)
 
@@ -945,14 +1026,23 @@ class BilingualDeck:
     def page05_office(self):
         bb = self.bb
         o = self.en["office"]
+        # 同 page03：floorPlans.office 有圖就嵌真平面圖（2026-09-01 補齊）
+        plan_img = pb.img_b64(self._floor_plan("office"), alt="Office floor plan",
+                              style="max-width:100%;max-height:330px;border-radius:8px")
+        if plan_img:
+            body = (plan_img
+                    + f'<div style="font-size:20px;font-weight:700;margin-top:14px;color:var(--on-dark);font-family:var(--lat)">{o["blueprintEn"]}</div>'
+                    + f'<div style="font-size:15px;color:var(--on-dark-dim);margin-top:4px">{bb.esc(o["blueprintZh"])}</div>')
+        else:
+            body = (bb.icon("pin", "var(--gold)", 40)
+                    + f'<div style="font-size:21px;font-weight:700;margin-top:12px;font-family:var(--lat)">{o["blueprintEn"]}</div>'
+                    + f'<div style="font-size:17px;color:var(--on-dark-dim);margin-top:4px">{bb.esc(o["blueprintZh"])}</div>'
+                    + f'<div class="muted" style="margin-top:8px;color:var(--on-dark-dim)">{bb.esc(o["blueprintNote"])}</div>')
         inner = (
             bb.kicker(o["kicker"]) + bb.bititle(o["titleEn"], o["titleZh"])
             + '<div class="card-blueprint" style="margin-top:22px;">'
             + '<div style="text-align:center;color:var(--on-dark);z-index:2">'
-            + bb.icon("pin", "var(--gold)", 40)
-            + f'<div style="font-size:21px;font-weight:700;margin-top:12px;font-family:var(--lat)">{o["blueprintEn"]}</div>'
-            + f'<div style="font-size:17px;color:var(--on-dark-dim);margin-top:4px">{bb.esc(o["blueprintZh"])}</div>'
-            + f'<div class="muted" style="margin-top:8px;color:var(--on-dark-dim)">{bb.esc(o["blueprintNote"])}</div></div></div>'
+            + body + '</div></div>'
         )
         self.write(5, inner)
 
@@ -964,18 +1054,35 @@ class BilingualDeck:
             f'<div class="kicker">{bb.esc(s["kicker"])}</div>'
             f'<div class="big-title" style="margin-top:14px">{s["titleEnHtml"]}'
             f'<span class="zh">{bb.esc(s["titleZh"])}</span></div>'
-            f'<div class="big-sub">{bb.esc(s["subEn"])}{bb.pending(s["subPendingEn"])}</div>'
+            f'<div class="big-sub">{self._slido_sub_html(s)}</div>'
             '<div class="muted" style="color:var(--on-dark-dim);margin-top:22px;font-size:16px">'
             # noteEn raw：v1 這句「…you've tried.」直接寫進 f-string 未過 esc，' 保裸字元
             f'{s["noteEn"]}'
             f'<br><span style="font-size:14px">{bb.esc(s["noteZh"])}</span></div>'
             '</div>'
-            '<div class="qr-phone"><div class="qr-screen"><div class="qr-placeholder">'
-            + bb.icon("qr", "var(--gold)", 48)
-            + f'<div style="margin-top:10px;font-size:12px;color:var(--on-dark-dim)">{bb.esc(s["qrPendingEn"])}</div>'
-            + '</div></div></div>'
+            + self._slido_qr_or_placeholder(s)
         )
         self.write(6, inner, dark=True)
+
+    def _slido_sub_html(self, s):
+        """加入列：有 event 數字碼就印真碼（同 zh 版 2026-08-31 邏輯），沒有維持佔位字。"""
+        bb = self.bb
+        code = self.section.get("slidoEvent")
+        if code:
+            return f'{bb.esc(s["subEn"])}{bb.esc(str(code))}'
+        return f'{bb.esc(s["subEn"])}{bb.pending(s["subPendingEn"])}'
+
+    def _slido_qr_or_placeholder(self, s):
+        """手機框：有 slidoEvent＋slidoEventUrl（uuid 版）畫真 QR，否則原英文佔位。"""
+        bb = self.bb
+        code = self.section.get("slidoEvent")
+        url = self.section.get("slidoEventUrl")
+        if code and url:
+            return self._slido_qr_html()  # 借 zh Deck：真 QR＋#碼（語言中性）
+        return ('<div class="qr-phone"><div class="qr-screen"><div class="qr-placeholder">'
+                + bb.icon("qr", "var(--gold)", 48)
+                + f'<div style="margin-top:10px;font-size:12px;color:var(--on-dark-dim)">{bb.esc(s["qrPendingEn"])}</div>'
+                + '</div></div></div>')
 
     def page07_phases(self):
         bb = self.bb
@@ -1005,7 +1112,7 @@ class BilingualDeck:
             if i < len(steps):
                 steps_html += '<div class="step-arrow">→</div>'
         inner = (
-            '<img class="concept-hero" src="../assets/workflow-hero-ai.webp" alt="">'
+            f'<img class="concept-hero" src="{self._hero("workflow")}" alt="">'
             '<div class="concept-scrim"></div>'
             '<div class="concept-copy concept-copy--right">'
             f'<div class="kicker">{bb.esc(d["kicker"])}</div>'
@@ -1023,6 +1130,11 @@ class BilingualDeck:
         w = self.en["weeks"]
         weekly = self.intro.get("weeklyPlan", [])
         labels_en = w["labelsEn"]
+        if len(labels_en) != len(weekly):
+            # fail-closed：英文標籤數跟 course.json 週數對不上＝overlay 過期，
+            # 寧可當場擋下也不出「英文標到隔壁週」的 deck（美崙溪 2026-08-26 原則）
+            raise ValueError(f"overlay weeks.labelsEn 有 {len(labels_en)} 條，"
+                             f"course.json weeklyPlan 有 {len(weekly)} 週——overlay 過期，先補齊")
         cells = []
         for i, wk in enumerate(weekly):
             kind = "ms" if wk.get("milestone") else ""
@@ -1031,18 +1143,34 @@ class BilingualDeck:
         row1 = "".join(cells[:half])
         row2 = "".join(cells[half:])
 
-        def band(segs):
-            # band text 在 v1 是行內字面 HTML（「TASK AI & AGENTS」的 & 是裸 & 不轉義），
-            # 故此處 raw 輸出、不 bb.esc()，以逐位元組對齊 v1。overlay 的 band text 純由本
-            # skill 維護（非使用者輸入、無 XSS 面），raw 安全。
-            return '<div class="pband">' + "".join(
-                f'<div class="{cls}" style="flex:{seg["flex"]}">{seg["text"]}</div>'
-                for cls, seg in segs) + '</div>'
+        # 色帶改依 weeklyPlan 的 part 分布動態算（2026-09-01，鏡射 zh _week_band）：
+        # v1 寫死兩段式 band1En/band2En，v4 的 part 分布（9/5/3）在第二列會出現三段，
+        # 寫死版本裝不下。band 文案＝overlay weeks.partsEn[part id]（name＋weeks），
+        # 字面 HTML（& 不轉義）同 v1 慣例；跨列延續段印「P{id} cont.」。
+        parts_en = w.get("partsEn", {})
 
-        # 段數與顏色以 overlay 資料的 cls 為準（8/26 英文化後列 1=1 段、列 2=3 段；
-        # 舊版硬取各 2 段，段數不合就 IndexError——2026-08-31 CI 炸過一次）
-        band1 = band([(seg.get("cls", "p1"), seg) for seg in w["band1En"]])
-        band2 = band([(seg.get("cls", "p2"), seg) for seg in w["band2En"]])
+        def band(weeks_row, variant):
+            from collections import OrderedDict
+            counts = OrderedDict()
+            for wk in weeks_row:
+                p = wk.get("part")
+                counts[p] = counts.get(p, 0) + 1
+            cls_map = {1: "p1", 2: "p2", 3: "p3", 4: "p4"}
+            segs = []
+            for idx, p in enumerate(counts):
+                is_cont = (variant == "row2" and idx == 0 and len(counts) > 1)
+                info = parts_en.get(str(p), {})
+                if is_cont:
+                    text = f'P{p} cont.'
+                else:
+                    name = info.get("name", f"PART {p}")
+                    wr = info.get("weeks", "")
+                    text = f'PART {p} · {name} ({wr})' if wr else f'PART {p} · {name}'
+                segs.append(f'<div class="{cls_map.get(p, "p2")}" style="flex:{counts[p]}">{text}</div>')
+            return f'<div class="pband">{"".join(segs)}</div>'
+
+        band1 = band(weekly[:half], "row1")
+        band2 = band(weekly[half:], "row2")
         inner = (
             bb.kicker(w["kicker"]) + bb.bititle(w["titleEn"], w["titleZh"])
             + '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:40px">'
@@ -1091,9 +1219,11 @@ class BilingualDeck:
         )
         self.write(11, inner)
 
-    def page12_teams(self):
+    def page12_elearn(self):
+        # 2026-09-01 由「加入 Teams 課程」改版（同 zh page12_elearn；115-1 六課定案走
+        # e學苑，Hub commit 4a33840）——overlay 鍵名同步 teams→elearn，結構不變。
         bb = self.bb
-        t = self.en["teams"]
+        t = self.en["elearn"]
         lis = ""
         for it in t["items"]:
             if "pendingEn" in it:
@@ -1197,15 +1327,12 @@ class BilingualDeck:
             f'<div class="kicker">{bb.esc(s["kicker"])}</div>'
             f'<div class="big-title" style="margin-top:14px">{s["titleEnHtml"]}'
             f'<span class="zh">{bb.esc(s["titleZh"])}</span></div>'
-            f'<div class="big-sub">{bb.esc(s["subEn"])}{bb.pending(s["subPendingEn"])}</div>'
+            f'<div class="big-sub">{self._slido_sub_html(s)}</div>'
             '<div class="muted" style="color:var(--on-dark-dim);margin-top:22px;font-size:16px">'
             f'{s["noteEnHtml"]}'
             f'<br><span style="font-size:14px">{bb.esc(s["noteZh"])}</span></div>'
             '</div>'
-            '<div class="qr-phone"><div class="qr-screen"><div class="qr-placeholder">'
-            + bb.icon("qr", "var(--gold)", 48)
-            + f'<div style="margin-top:10px;font-size:12px;color:var(--on-dark-dim)">{bb.esc(s["qrPendingEn"])}</div>'
-            + '</div></div></div>'
+            + self._slido_qr_or_placeholder(s)
         )
         self.write(18, inner, dark=True)
 
@@ -1260,7 +1387,7 @@ class BilingualDeck:
         self.page09_weeks()
         self.page10_grading()
         self.page11_help()
-        self.page12_teams()
+        self.page12_elearn()
         self.page13_platforms()
         self.page14_tools()
         self.page15_daily()

@@ -370,8 +370,18 @@
         "note": "教材發布在 e學苑，課程區開學前建好"
       }
     },
+    "heroImages": {
+      "$comment": "課程專屬封面圖（立霧 2026-09-01 生圖，Ted 指示各課不共用）；放 skills/course-intro/assets/heroes/",
+      "intro": "intro-hero-itapply.webp"
+    },
+    "floorPlans": {
+      "$comment": "deck 產線嵌圖用（generate_deck page03/05）；本機路徑、CI 找不到檔就自動退回待補佔位——教室 E403／研究室 C306 與 ai-intro 同兩間，共用同兩張 zoom 掃描",
+      "classroom": "D:/OneDrive - 國立東華大學/東華通識/東華課程資料/11501/人工智慧概論AA/課程介紹素材/e403-4f-zoom.png",
+      "office": "D:/OneDrive - 國立東華大學/東華通識/東華課程資料/11501/人工智慧概論AA/課程介紹素材/c306-3f-zoom.png"
+    },
     "placeholders": [
-      "Teams 團隊代碼",
+      "Slido event code ×2",
+      "e學苑課程代碼",
       "TA 名字",
       "課程教材網址"
     ]

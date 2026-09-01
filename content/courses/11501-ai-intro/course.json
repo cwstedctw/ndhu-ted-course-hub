@@ -353,7 +353,7 @@
     "showcaseNote": "這些是上學期同學自選的挑戰方向，不是本課的及格門檻，也不是加分條件——公開 repo、上線網址與命令列都不在要求內。評分只看任務、證據、權限、驗證與復原。",
     "whatToBring": [
       "筆電或平板（建議筆電）；沒有裝置也有紙本與教師預生成的等值路徑",
-      "不用先辦任何 AI 工具帳號、不用付費——課堂核心一律有免帳號路徑（學校的 Office 365／Teams 帳號除外，開學後用於點名與交作業）",
+      "不用先辦任何 AI 工具帳號、不用付費——課堂核心一律有免帳號路徑（學校帳號除外：開學後用它登入 e學苑交作業、Zuvio 點名）",
       "教室 理工二館 E403——有插座的位子先到先選"
     ],
     "faq": [
@@ -365,7 +365,7 @@
       },
       {
         "q": "要辦帳號、付費或把作品公開嗎？",
-        "a": "AI 工具都不用。這門課不要求 API key、付費方案、公開 repo、公開網址、命令列或電話驗證；課堂核心一律有免帳號與離線路徑。唯一要用的是學校發的 Office 365／Teams 帳號，用來點名與交作業，那不是額外註冊也不要錢。",
+        "a": "AI 工具都不用。這門課不要求 API key、付費方案、公開 repo、公開網址、命令列或電話驗證；課堂核心一律有免帳號與離線路徑。唯一要用的是學校帳號：登入 e學苑交作業、Zuvio 點名，那不是額外註冊也不要錢。",
         "status": "confirmed",
         "source": "v4 課程計畫第三節、第九節第 3 點、第十四節"
       },
@@ -405,7 +405,7 @@
       },
       {
         "q": "開學前要先準備什麼？",
-        "a": "帶筆電或平板（建議筆電），啟用學校 Office 365 與 Teams 就夠了。AI 工具不用先裝、不用先辦帳號，第一週課堂上會帶著做。",
+        "a": "帶筆電或平板（建議筆電），確認學校帳號登得進 e學苑就夠了。AI 工具不用先裝、不用先辦帳號，第一週課堂上會帶著做。",
         "status": "confirmed",
         "source": "課程介紹定稿 12/15/16 頁＋v4 第九節第 3 點免帳號路徑"
       },
@@ -430,9 +430,18 @@
         "note": "課程教材網址開學前補"
       }
     },
+    "heroImages": {
+      "$comment": "課程專屬封面圖（立霧 2026-09-01 生圖，Ted 指示各課不共用）；放 skills/course-intro/assets/heroes/",
+      "intro": "intro-hero-aiintro.webp"
+    },
+    "floorPlans": {
+      "$comment": "deck 產線嵌圖用（generate_deck page03/05）；本機路徑、CI 找不到檔就自動退回待補佔位——與 ai-coding 同兩間（E403／C306），共用同兩張 zoom 掃描",
+      "classroom": "D:/OneDrive - 國立東華大學/東華通識/東華課程資料/11501/人工智慧概論AA/課程介紹素材/e403-4f-zoom.png",
+      "office": "D:/OneDrive - 國立東華大學/東華通識/東華課程資料/11501/人工智慧概論AA/課程介紹素材/c306-3f-zoom.png"
+    },
     "placeholders": [
       "Slido event code ×2",
-      "Teams 團隊代碼",
+      "e學苑課程代碼",
       "TA 名字",
       "課程教材網址",
       "QR code",
@@ -649,8 +658,8 @@
           "name": "Zuvio"
         },
         {
-          "use": "Submitting assignments",
-          "name": "Microsoft Teams"
+          "use": "Materials & submissions",
+          "name": "e-Learning (elearn4)"
         },
         {
           "use": "Shared notes",
@@ -679,7 +688,7 @@
       "showcaseNote": "These were the directions last term's students chose to push in—they are not a pass mark for this course and they are not a way to earn extra credit. A public repository, a live URL, and the command line are all outside what is asked of you. Grading looks only at the task, the evidence, permissions, verification, and recovery.",
       "whatToBring": [
         "A laptop or tablet (laptop recommended); without a device, paper and pre-generated materials carry equal weight",
-        "No AI-tool account and no payment needed in advance—every core activity has a no-account path (your university Office 365/Teams account is the exception; it is used for roll call and submitting work once term starts)",
+        "No AI-tool account and no payment needed in advance—every core activity has a no-account path (your university account is the exception; once term starts it signs you into e-Learning for submissions and Zuvio for roll call)",
         "Room E403, Science & Engineering Building II—seats near the power outlets are first-come, first-served"
       ],
       "faq": [
@@ -689,7 +698,7 @@
         },
         {
           "q": "Do I need an account, a paid plan, or a public portfolio?",
-          "a": "Not for AI tools. This course does not require an API key, a paid plan, a public repository, a public URL, the command line, or phone verification; every core activity has a no-account and offline path. The one account you do use is the Office 365/Teams account the university already issues you—for roll call and submitting work. That is not an extra sign-up and it costs nothing."
+          "a": "Not for AI tools. This course does not require an API key, a paid plan, a public repository, a public URL, the command line, or phone verification; every core activity has a no-account and offline path. The one account you do use is the one the university already issues you—it signs you into e-Learning for submissions and Zuvio for roll call. That is not an extra sign-up and it costs nothing."
         },
         {
           "q": "Do I have to finish an external AI course or hand in a certificate?",
@@ -713,7 +722,7 @@
         },
         {
           "q": "What should I prepare before term starts?",
-          "a": "Bring a laptop or tablet (laptop recommended) and activate your university Office 365 and Teams account. You do not need to install AI tools or create accounts in advance—we will work through it together in the first class."
+          "a": "Bring a laptop or tablet (laptop recommended) and make sure your university account signs in to e-Learning (elearn4). You do not need to install AI tools or create accounts in advance—we will work through it together in the first class."
         },
         {
           "q": "What if I did not get a place in the course?",

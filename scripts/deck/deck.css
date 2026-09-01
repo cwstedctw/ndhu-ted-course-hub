@@ -243,10 +243,15 @@ html,body{background:#333}
   background:
     radial-gradient(circle at 76% 26%, rgba(217,164,65,.16) 0%, transparent 22%),
     linear-gradient(105deg, rgba(6,37,36,.94) 0%, rgba(6,37,36,.78) 38%, rgba(6,37,36,.28) 72%, rgba(6,37,36,.12) 100%)}
+/* 遮罩壓左邊：文字在左，左側要夠暗才讀得動；右半留亮讓背景圖透出來。
+   2026-08-31 曾為立霧新畫的封面（主體在左）反轉過方向，同日 Ted 眼檢後決定
+   回用舊圖，遮罩也一併轉回。⚠️ 換背景圖務必連遮罩方向一起看渲染，
+   立霧那版就是照舊設定直接把主角蓋掉、只剩右上角一點輪廓。 */
 .cover .inner{position:relative; height:100%; padding:96px; display:flex; flex-direction:column;
   justify-content:center}
 .cover .ctitle{font-family:var(--zh-serif); font-size:88px; font-weight:900; color:#fff; line-height:1.08; letter-spacing:.01em;
   text-shadow:0 14px 34px rgba(0,0,0,.36)}
+.cover .ctitle .ln2{display:inline-block; padding-left:1.6em}
 .cover .csub{font-family:var(--lat); font-weight:600; font-size:28px; color:var(--gold); margin-top:14px}
 .cover .cover-promise{font-size:24px; font-weight:700; color:var(--on-dark); margin-top:24px}
 .cover .cover-chips{display:flex; gap:10px; margin-top:18px}
@@ -271,7 +276,7 @@ html,body{background:#333}
     linear-gradient(260deg, rgba(6,37,36,.96) 0%, rgba(6,37,36,.78) 42%, rgba(6,37,36,.24) 76%, rgba(6,37,36,.08) 100%)
 }
 .concept-copy{
-  position:relative; z-index:1; width:720px; height:100%;
+  position:relative; z-index:1; width:860px; height:100%;
   display:flex; flex-direction:column; justify-content:center
 }
 /* B1：文字右置變體（露出背景圖左側核心細節）＋金色流程箭頭 */
