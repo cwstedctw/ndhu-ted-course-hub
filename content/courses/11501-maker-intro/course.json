@@ -1,5 +1,5 @@
 {
-  "$comment": "課程介紹單一內容源（一份內容、多種輸出）。本檔＝洄瀾 2026-07-03 草稿 v2：改據 115-1 正式教學計畫 GC__67570（OneDrive 東華課程資料/11501/創客入門…/教學計畫/ 正本）重寫——115-1 課程全面改版為「Wokwi 模擬→Thonny 實機→Vibe Coding」路線，與 114-2 版（純實機、基本電學路線）不同；systemId 取自同夾 _課程資訊.json（2026-06-05 快照）。文案語氣待 陳文盛 過目。",
+  "$comment": "課程介紹單一內容源（一份內容、多種輸出）。課程週次依 Ted 2026-09-01 定案重排：W2–W8 元件與 Wokwi 基礎，W9 期中，W10 領板與 VS Code，W11 起 AI vibe coding，W16–W17 均為期末成果發表。",
   "id": "115-1-maker-intro",
   "kind": "regular",
   "name": "創客入門–智慧生活裝置實作",
@@ -34,51 +34,57 @@
     }
   ],
   "intro": {
-    "promise": "先在瀏覽器裡點亮虛擬 LED，期末端出一台真的會動的智慧生活裝置",
+    "promise": "前半學期先在 Wokwi 練熟，期中後再把作品搬到真正的 ESP32",
     "chips": [
-      "Wokwi 模擬練功",
-      "AI 幫寫腳本",
-      "期末實體 Demo"
+      "元件與 Wokwi 基礎",
+      "VS Code＋實體板",
+      "AI vibe coding"
     ],
     "destination": {
       "title": "這門課的終點：一台從模擬走到實體的智慧生活裝置",
-      "sub": "前半學期在 Wokwi 模擬器把概念玩熟，期中交出模擬專題；後半用 Vibe Coding 接上真實元件，期末發表有藍牙或感測互動的實體作品。",
+      "sub": "W2–W8 用 Wokwi 建立元件與程式基礎，W9 完成模擬作品；W10 領板並進入 VS Code，W11 起用 AI vibe coding 協助完成實體作品，W16、W17 正式發表。",
       "steps": [
         {
-          "label": "在瀏覽器裡練功",
-          "sub": "AI 產生 MicroPython 腳本，貼進 Wokwi 測試、觀察、修改"
+          "label": "先學元件與程式",
+          "sub": "在 Wokwi 接線、執行 MicroPython，練習輸入、判斷與輸出"
         },
         {
           "label": "走進真實世界",
-          "sub": "VS Code 實機連線：接線、燒錄，感受模擬器沒有的硬體誤差"
+          "sub": "W10 領取 ESP32，用 VS Code 完成連線、上傳與第一次實體測試"
         },
         {
-          "label": "Vibe Coding 完成專題",
-          "sub": "AI＋VS Code＋GitHub，做出會互動的實體裝置"
+          "label": "AI vibe coding 完成作品",
+          "sub": "讓 AI 提供候選程式，自己檢查、測試、修正並完成發表"
         }
       ]
     },
     "phases": [
       {
         "id": 1,
-        "title": "Wokwi 模擬練功",
-        "body": "用 AI 產生範例腳本、貼進 Wokwi 測試觀察：DIO、按鈕去彈跳、Interrupt、Timer、PWM、OLED、Wi-Fi——先懂原理，燒壞了也不心疼。",
-        "weeks": "W1–9"
+        "title": "課程導覽",
+        "body": "先看懂這學期怎麼從元件、Wokwi 與 MicroPython，一路走到 ESP32 實體作品。",
+        "weeks": "W1"
       },
       {
         "id": 2,
-        "title": "期中與實機銜接",
-        "body": "W10 期中：Wokwi 智慧生活裝置模擬專題；W11 用 VS Code 第一次接觸真實 ESP32——接線、燒錄、硬體誤差。",
-        "weeks": "W10–11"
+        "title": "Wokwi 與元件基礎",
+        "body": "從 LED、按鈕、感測器一路練到 PWM、I2C 與 OLED，先在模擬器完成輸入、判斷與輸出。",
+        "weeks": "W2–8"
       },
       {
         "id": 3,
-        "title": "Vibe Coding 實作",
-        "body": "用自然語言描述功能、AI 寫 MicroPython，加上藍牙與感測互動；VS Code＋GitHub 管理專題，期末實體 Demo。",
-        "weeks": "W12–17"
+        "title": "期中",
+        "body": "W9 用 Wokwi 完成一件具備輸入、狀態判斷與輸出的智慧生活裝置。",
+        "weeks": "W9"
+      },
+      {
+        "id": 4,
+        "title": "實體開發與發表",
+        "body": "W10 領板並進入 VS Code，W11 起加入 AI vibe coding；W15 完成測試與彩排，W16、W17 正式發表。",
+        "weeks": "W10–17"
       }
     ],
-    "phasesNote": "由模擬到實作、由理解到 AI 輔助開發——115-1 全新學習路徑",
+    "phasesNote": "期中前先把基礎練穩，期中後才領板、進 VS Code 與 AI vibe coding",
     "weeklyPlan": [
       {
         "w": "1",
@@ -87,180 +93,177 @@
       },
       {
         "w": "2",
-        "label": "Wokwi 與 AI 腳本入門",
-        "part": 1
-      },
-      {
-        "w": "3",
-        "label": "DIO 數位輸出／輸入",
-        "part": 1
-      },
-      {
-        "w": "4",
-        "label": "按鈕互動與去彈跳",
-        "part": 1
-      },
-      {
-        "w": "5",
-        "label": "Interrupt 中斷概念",
-        "part": 1
-      },
-      {
-        "w": "6",
-        "label": "Timer 與非阻塞控制",
-        "part": 1
-      },
-      {
-        "w": "7",
-        "label": "PWM 與類比感測",
-        "part": 1
-      },
-      {
-        "w": "8",
-        "label": "OLED 顯示整合",
-        "part": 1
-      },
-      {
-        "w": "9",
-        "label": "Wi-Fi 與物聯網模擬",
-        "part": 1
-      },
-      {
-        "w": "10",
-        "label": "期中：Wokwi 模擬專題",
-        "part": 2,
-        "milestone": true
-      },
-      {
-        "w": "11",
-        "label": "VS Code 實機連線",
+        "label": "電子元件與 Wokwi 入門",
         "part": 2
       },
       {
+        "w": "3",
+        "label": "MicroPython 程式基礎",
+        "part": 2
+      },
+      {
+        "w": "4",
+        "label": "數位輸出與燈光控制",
+        "part": 2
+      },
+      {
+        "w": "5",
+        "label": "數位輸入與按鈕互動",
+        "part": 2
+      },
+      {
+        "w": "6",
+        "label": "類比感測與 PWM 控制",
+        "part": 2
+      },
+      {
+        "w": "7",
+        "label": "感測器·I2C·OLED 顯示",
+        "part": 2
+      },
+      {
+        "w": "8",
+        "label": "Wokwi 整合與期中準備",
+        "part": 2
+      },
+      {
+        "w": "9",
+        "label": "期中：Wokwi 模擬作品",
+        "part": 3,
+        "milestone": true
+      },
+      {
+        "w": "10",
+        "label": "領取實體板·VS Code 入門",
+        "part": 4
+      },
+      {
+        "w": "11",
+        "label": "AI vibe coding 入門",
+        "part": 4
+      },
+      {
         "w": "12",
-        "label": "Vibe Coding 入門",
-        "part": 3
+        "label": "從 Wokwi 搬到實體裝置",
+        "part": 4
       },
       {
         "w": "13",
-        "label": "真實元件功能開發",
-        "part": 3
+        "label": "智慧裝置功能整合",
+        "part": 4
       },
       {
         "w": "14",
-        "label": "VS Code＋GitHub 流程",
-        "part": 3
+        "label": "期末作品開發·版本保存",
+        "part": 4
       },
       {
         "w": "15",
-        "label": "AI 輔助自動化開發",
-        "part": 3
+        "label": "作品整合·測試·彩排",
+        "part": 4
       },
       {
         "w": "16",
-        "label": "期末整合與展示準備",
-        "part": 3
+        "label": "期末成果發表（一）",
+        "part": 4,
+        "milestone": true
       },
       {
         "w": "17",
-        "label": "期末發表·實體 Demo",
-        "part": 3,
+        "label": "期末成果發表（二）",
+        "part": 4,
         "milestone": true
       }
     ],
-    "weeklyPlanNote": "週次照 115-1 教學計畫（OneDrive 正本）；工具屬活內容層，開學前依當時生態再校一次",
+    "weeklyPlanNote": "依 Ted 2026-09-01 定案與東華 115-1 行事曆重排；W9 為期中評量週，W16、W17 均為期末成果發表",
     "grading": [
       {
         "pct": 10,
         "label": "平時成績",
-        "sub": "課堂參與、Wokwi 練習、AI 腳本測試紀錄與學習反思"
+        "sub": "出缺席與課堂學習紀錄"
       },
       {
         "pct": 20,
         "label": "作業成績",
-        "sub": "元件練習、AI 提示與程式修改紀錄"
+        "sub": "依實際進度安排，不預設每週都有作業"
       },
       {
         "pct": 30,
         "label": "期中專題",
-        "sub": "Wokwi 智慧生活裝置模擬專題"
+        "sub": "W9 Wokwi 智慧生活裝置模擬作品"
       },
       {
         "pct": 40,
         "label": "期末專題",
-        "sub": "實體裝置＋GitHub 文件＋展示與口頭說明"
+        "sub": "W16、W17 實體作品展示與口頭說明"
       }
     ],
-    "gradingNote": "期中在模擬器裡驗收、期末拿實體作品說話——重視概念整合、功能測試、除錯紀錄，以及你能不能講清楚自己的開發流程。",
+    "gradingNote": "本課沒有另外的期中或期末筆試。作業內容與次數由教師依班級進度安排，期中看模擬作品，期末看實體作品與現場說明。",
     "toolGroups": [
       {
         "group": "模擬場",
         "items": [
           {
             "name": "Wokwi",
-            "sub": "瀏覽器裡的 ESP32 模擬器——燒壞一百次也不花一毛錢"
+            "sub": "期中前的主要實作環境：放元件、接線、執行與除錯"
           }
         ]
       },
       {
-        "group": "程式",
+        "group": "程式基礎",
         "items": [
           {
             "name": "MicroPython",
-            "sub": "用 Python 的親切語法直接控制硬體"
-          },
-          {
-            "name": "AI 腳本夥伴",
-            "sub": "產生範例、協助除錯——但你要看得懂、改得動"
+            "sub": "用 Python 語法控制 LED、按鈕、感測器與 OLED"
           }
         ]
       },
       {
-        "group": "實機",
+        "group": "期中後實機",
         "items": [
           {
             "name": "ESP32 ＋ VS Code",
-            "sub": "接線、燒錄——模擬器沒有的真實世界"
+            "sub": "W10 領板，完成 USB 連線、上傳與實體測試"
           },
           {
-            "name": "LED · 按鈕 · 感測器 · OLED · 藍牙",
-            "sub": "都焊在課程發的 ESP32 套件板上，零接線"
+            "name": "LED · 按鈕 · 感測器 · OLED",
+            "sub": "把 Wokwi 的功能搬到真正的硬體上"
           }
         ]
       },
       {
-        "group": "開發流程",
+        "group": "AI 輔助開發",
         "items": [
           {
-            "name": "VS Code · GitHub",
-            "sub": "版本控制、README、Issue——像開發者一樣管理專題"
+            "name": "AI vibe coding · 版本保存",
+            "sub": "W11 起用 AI 提供候選程式，自己檢查、測試與修正"
           }
         ]
       }
     ],
-    "toolGroupsNote": "工具會換、能力不換——實際以開學當週的等效工具為準",
+    "toolGroupsNote": "前半先把元件與程式基礎練穩，期中後才加入 VS Code、實體板與 AI vibe coding",
     "dailyTools": [
       {
-        "name": "Wokwi",
-        "sub": "wokwi.com——隨開隨練"
+        "name": "網頁 AI 助手",
+        "sub": "W11 起協助理解錯誤訊息、討論修改方向"
       },
       {
-        "name": "AI 程式助手",
-        "sub": "產腳本、解錯誤訊息、講到你懂"
+        "name": "VS Code＋AI 程式助手",
+        "sub": "在實體專案裡提供候選程式、修改與除錯建議"
       }
     ],
     "platforms": [
       {
-        "use": "課堂點名",
-        "name": "Zuvio"
-      },
-      {
-        "use": "教材與交作業",
+        "use": "教材／作業",
         "name": "e學苑"
       },
       {
-        "use": "課堂共筆",
-        "name": "HackMD"
+        "use": "課程資訊",
+        "name": "Course Hub"
+      },
+      {
+        "use": "課堂互動",
+        "name": "Slido"
       }
     ],
     "aiRules": [
@@ -294,97 +297,96 @@
       }
     },
     "whatToBring": [
-      "可上網的筆記型電腦（必備——模擬和實作都靠它）",
+      "可上網的筆記型電腦（Wokwi、VS Code 與實體開發都會使用）",
       "一個生活觀察：哪裡缺一個會自動亮的燈、會提醒你的小裝置？",
-      "不必帶元件——ESP32 開發套件由課程發，元件都焊在板上"
+      "不必自行購買元件——W10 由課程發放 ESP32 開發套件"
     ],
     "faq": [
       {
         "q": "完全不懂電路、沒寫過程式，可以修嗎？",
-        "a": "可以。前半學期都在 Wokwi 模擬器裡練功，AI 幫你產生範例腳本，你負責測試、觀察、修改——虛擬元件燒壞一百次也不花一毛錢。",
+        "a": "可以。W2 會從電子元件與 Wokwi 畫面開始，接著才進入 MicroPython、輸入與輸出。前半學期都在模擬器裡練習，不需要先有電路或程式基礎。",
         "status": "confirmed",
-        "source": "115-1 教學計畫課程描述與 W1–9"
+        "source": "Ted 2026-09-01 定案：W2 起從元件與 Wokwi 入門"
       },
       {
         "q": "會不會一開始就要接線焊東西？",
-        "a": "不會。前九週純模擬，第 11 週才第一次碰真實 ESP32——先把原理玩熟再動手，挫折感大減。",
+        "a": "不會。W2–W8 先用 Wokwi 練習，W9 完成期中模擬作品，W10 才領取實體 ESP32。課程套件的主要元件已裝在板上，不要求焊接。",
         "status": "confirmed",
-        "source": "115-1 教學計畫進度表（W11 原列 Thonny 實機體驗；本學期實際改用 VS Code）"
+        "source": "Ted 2026-09-01 定案：期中前不領板，W10 才領板與進 VS Code"
       },
       {
         "q": "期中、期末考什麼？",
-        "a": "都不是筆試。期中交 Wokwi 智慧生活裝置模擬專題；期末發表實體裝置，附 GitHub 文件與口頭說明——從模擬到實作的完整旅程。",
+        "a": "都不是另外的筆試。W9 以 Wokwi 模擬作品進行期中評量；W16、W17 都是期末成果發表，展示實體裝置並做現場說明。",
         "status": "confirmed",
-        "source": "115-1 教學計畫評量說明"
+        "source": "Ted 2026-09-01 定案與東華 115-1 行事曆"
       },
       {
         "q": "AI 可以幫我寫程式嗎？",
-        "a": "這門課就是這樣設計的——用 AI 產生腳本、協助除錯都歡迎。但你要能說明程式功能、測試結果與修改理由；AI 的產出要經人工檢查，在 Wokwi 或實機上驗證過才算數。",
+        "a": "可以。AI vibe coding 從 W11 正式介紹。你可以請 AI 提供或修改候選程式，但要能說明功能、檢查腳位、實際測試，並說明自己修改了什麼。",
         "status": "confirmed",
-        "source": "115-1 教學計畫補充說明"
-      },
-      {
-        "q": "跟「AIoT 智慧裝置實作」差在哪？",
-        "a": "創客入門是通識課、從零開始，用 Wokwi＋ESP32＋MicroPython 打基礎；AIoT 是資工系學程課，做語音、影像、邊緣運算的完整系統。先修創客、再挑戰 AIoT，剛剛好。",
-        "status": "confirmed",
-        "source": "兩課 115-1 教學計畫對照（GC__67570 vs CSIE35490）"
+        "source": "Ted 2026-09-01 定案：期中後導入 AI vibe coding"
       },
       {
         "q": "器材要自己買嗎？",
-        "a": "不用買。課程會發一套 ESP32 開發套件（EZ Start Kit+），LED、蜂鳴器、按鍵、光感測器、可變電阻、溫濕度、紅外線接收、繼電器、OLED 等十三種元件都已經焊在板子上——不用接線，也不用另外買零件。你只要自備一台可以上網的筆電。開學第一週會說明怎麼領。",
+        "a": "不用買。W10 會發放一套 ESP32 開發套件（EZ Start Kit+），主要元件已裝在板上。你只要準備一台可以上網並執行 VS Code 的筆記型電腦。",
         "status": "confirmed",
-        "source": "陳文盛老師 2026-08-20 確認：課程發 ESP32 開發套件；套件內容＝EZ Start Kit+ for ESP32 原廠腳位對照圖（十三種板載元件、零接線）；自備筆電＝115-1 教學計畫補充說明"
+        "source": "Ted 2026-08-20 確認提供 EZ Start Kit+；2026-09-01 定案 W10 發板"
       }
     ],
     "finale": {
-      "nextWeek": "Wokwi 與 AI 腳本入門——先讓虛擬 LED 亮起來",
-      "action": "開始觀察生活：哪裡缺一個會自己亮的燈、會提醒你的小裝置？",
+      "nextWeek": "電子元件與 Wokwi 入門——認識元件，接出第一個虛擬電路",
+      "action": "帶著一個生活中的小麻煩來：哪裡需要一盞會自動亮的燈，或一個會提醒你的小裝置？",
       "materialsUrl": {
         "status": "pending",
         "note": "課程教材網址開學前補"
       }
     },
+    "heroImages": {
+      "$comment": "Maker 課程專屬封面與終點圖；避免與其他課程共用 AI 概論視覺",
+      "intro": "intro-hero-maker.webp",
+      "workflow": "workflow-hero-maker.webp"
+    },
+    "floorPlans": {
+      "$comment": "D301 使用校方理工二館三樓官方圖；C306 使用既有驗證裁切圖",
+      "classroom": "assets/maps/d301-3f-official.jpg",
+      "office": "assets/maps/c306-3f-zoom.png"
+    },
     "placeholders": [
-      "Teams 團隊代碼",
+      "Slido event code",
+      "e學苑課程代碼",
       "TA 名字",
       "課程教材網址"
     ]
   },
   "meta": {
-    "lastReviewed": "2026-08-23",
+    "lastReviewed": "2026-09-01",
     "validForSemester": "115-1",
     "owner": "陳文盛（陳文盛）",
     "sources": [
-      "115-1 教學計畫 GC__67570（OneDrive 東華課程資料/11501/創客入門…/教學計畫/ 正本 PDF）＝課程描述、17 週進度、評量真值——115-1 改版為 Wokwi→Thonny→Vibe Coding 路線",
+      "workspace/teaching/material/maker-intro-course/course-plan.md v2.0（2026-09-01）＝本學期 17 週課程正本",
+      "Ted 2026-09-01 定案＝W2–W8 元件與 Wokwi 基礎、W9 期中、W10 領板與 VS Code、W11 起 AI vibe coding、W16–W17 期末成果發表；作業不預設每週一次",
+      "東華大學 115 學年度第 1 學期行事曆＝W9（2026-11-02 至 11-06）為期中評量週",
       "_課程資訊.json（2026-06-05 快照）＝systemId 115182437",
       "OneDrive 11501/開課與行政/115-1校核心通識課程統計表_文盛.xlsx（送件版）＝節次（週二 4–6）、教室 D309、限修 40",
       "AA 教師開課查詢 SubjTransfer（2026-07-03 抓取）＝正式節次與教室真值：二4–6 理工二館 D301（送件版 D309 已改）",
-      "課務組上課節次時間對照表（rb004.ndhu.edu.tw/p/404-1004-14620.php）＝節次→鐘點：第N節＝N+5時10分起、每節50分",
-      "洄瀾 2026-07-03 草稿 v2：v1 誤以 114-2 版為底，發現 OneDrive 正本後全篇重寫；文案待 陳文盛 過目"
+      "課務組上課節次時間對照表（rb004.ndhu.edu.tw/p/404-1004-14620.php）＝節次→鐘點：第N節＝N+5時10分起、每節50分"
     ]
   },
   "hub": {
     "links": [
       {
-        "platform": "zuvio",
-        "use": "課堂點名",
-        "label": "Zuvio",
-        "url": null,
-        "urlStatus": "pending"
-      },
-      {
         "platform": "elearn",
         "use": "教材與交作業",
         "label": "e學苑",
-        "url": null,
-        "urlStatus": "pending"
+        "url": "https://elearn4.ndhu.edu.tw/moodle/",
+        "urlStatus": "confirmed"
       },
       {
-        "platform": "hackmd",
-        "use": "課堂共筆",
-        "label": "HackMD",
-        "url": null,
-        "urlStatus": "pending"
+        "platform": "other",
+        "use": "課程介紹與週次",
+        "label": "Course Hub",
+        "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-maker-intro/",
+        "urlStatus": "confirmed"
       }
     ],
     "scoreUrl": null,
