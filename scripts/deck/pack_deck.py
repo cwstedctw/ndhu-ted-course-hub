@@ -131,7 +131,9 @@ def main():
             print(f"錯誤：{p} 找不到 <body>…</body>", file=sys.stderr)
             sys.exit(1)
         body = m.group(1)
-        body = re.sub(r"\.\./assets/([\w\-.]+)", lambda mm: data_uri(mm.group(1)), body)
+        # heroes/ 子夾支援（2026-09-01 heroImages 上線後，封面圖路徑是 ../assets/heroes/<檔>；
+        # 舊式只吃單層檔名會把目錄「heroes」當檔案開 → PermissionError）
+        body = re.sub(r"\.\./assets/((?:heroes/)?[\w\-.]+)", lambda mm: data_uri(mm.group(1)), body)
         slides.append(body)
 
     pages = []
