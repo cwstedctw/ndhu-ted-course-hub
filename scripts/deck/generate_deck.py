@@ -570,6 +570,7 @@ class Deck:
         who = sp.get("name") or "講者邀請中"
         # 陣容頁單位用短版：去掉全形括號補充（兼任主任職等），完整版留給海報牆／講者頁；
         # 再加 nowrap 保單行——長單位折兩行會把整頁推 17px 撞頁尾（2026-09-01 複驗 #2）。
+        # ⚠️ ellipsis 是保險網：真被截斷代表單位又變長了，該回 talks.json 資料層縮短，別靠切字。
         seg = "・".join(x for x in (sp.get("title"), sp.get("org")) if x)
         seg = re.sub(r"（[^）]*）", "", seg).strip("・ ")
         topic = t.get("title") or "講題公布中"
@@ -1166,7 +1167,7 @@ class BilingualDeck:
                 is_cont = (variant == "row2" and idx == 0 and len(counts) > 1)
                 info = parts_en.get(str(p), {})
                 if is_cont:
-                    text = f'P{p} cont.'
+                    text = f'PART {p} (cont.)'
                 else:
                     name = info.get("name", f"PART {p}")
                     wr = info.get("weeks", "")
