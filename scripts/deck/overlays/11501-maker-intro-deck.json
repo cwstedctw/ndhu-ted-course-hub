@@ -1,9 +1,9 @@
 {
   "$comment": "創客入門 W1 課程介紹 deck 專屬 overlay。課程事實仍由 Hub course.json 提供；本檔只放 deck 顯示策略與 Slido 提示語。",
   "appliesTo": "115-1-maker-intro",
-  "section": "AA",
+  "section": "SC",
   "taLine": "",
-  "elearnShort": "e學苑：我的課程",
+  "elearnShort": "e學苑",
   "elearnItems": [
     "用學校 GMS 帳號登入 elearn4.ndhu.edu.tw",
     "登入後從「我的課程」開啟創客入門–智慧生活裝置實作",

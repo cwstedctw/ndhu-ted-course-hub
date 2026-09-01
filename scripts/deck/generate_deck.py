@@ -765,13 +765,17 @@ class Deck:
         )
         # dailyTools 為空（如純演講課）時，固定推薦語沒有卡片可指——一併省略，
         # 讓頁面保持乾淨，而不是掛著沒有對象的說明句。
+        daily_note = self.intro.get(
+            "dailyToolsNote",
+            "第一週先挑一個順手的就好，不用全裝；之後再慢慢擴充。",
+        )
         note_html = (
-            '<div class="muted" style="margin-top:24px">第一週先挑<b style="color:var(--ink)">一個順手的</b>'
-            '就好，不用全裝；之後再慢慢擴充。</div>'
+            f'<div class="muted" style="margin-top:24px">{esc(daily_note)}</div>'
         ) if daily else ''
         # 卡片＋推薦語一起包 .vcenter（2026-07-05 設計升級，同第 13 頁理由）
         inner = (
-            pb.kicker("FOR DAILY USE") + pb.title("日常 AI 工具推薦")
+            pb.kicker("FOR DAILY USE")
+            + pb.title(self.intro.get("dailyToolsTitle", "日常 AI 工具推薦"))
             + '<div class="vcenter">'
             + f'<div class="grid grid-4" style="margin:0">{cells}</div>'
             + note_html
