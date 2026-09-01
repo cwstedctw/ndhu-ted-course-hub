@@ -46,10 +46,10 @@
       "instructorValueZh": "陳文盛・TA 開學前待補",
       "instructorTaPendingEn": "to be announced",
       "contactLabel": "Contact",
-      "contactValueEn": "e-Learning course message · wschen@gms.ndhu.edu.tw",
+      "contactValueEn": "e-Learning message · wschen@gms.ndhu.edu.tw",
       "contactValueZh": "e學苑課程訊息或 Email",
       "platformsLabel": "Class Platforms",
-      "platformsValueEn": "Roll call: Zuvio · Materials & submissions: e-Learning · Notes: HackMD",
+      "platformsValueEn": "Roll call: Zuvio · Submit: e‑Learning · Notes: HackMD",
       "platformsValueZh": "點名 Zuvio・教材與交作業 e學苑・共筆 HackMD"
     },
     "location": {
@@ -99,8 +99,8 @@
         {
           "headEn": "AI foundations & creation",
           "headZh": "AI 基礎與創作",
-          "bodyEn": "Tell tools, teammates, workflows and agents apart; make images, a web app, version safety, and source-backed research. Midterm = W1–7.",
-          "bodyZh": "分辨工具、隊友、工作流與 Agent；做出圖像、web app、版本安全與來源查證。期中範圍＝第 1–7 週。"
+          "bodyEn": "Tell tools, teammates, workflows and agents apart; make images, a web app, version safety, and source-backed research. Midterm = W2–7 skills.",
+          "bodyZh": "分辨工具、隊友、工作流與 Agent；做出圖像、web app、版本安全與來源查證。期中範圍＝W2–W7 的能力。"
         },
         {
           "headEn": "Agent literacy & supervision",
@@ -118,7 +118,7 @@
     },
     "destination": {
       "kicker": "COURSE DESTINATION",
-      "titleEnHtml": "Where this course leads:<br>an AI workflow you can keep in check",
+      "titleEnHtml": "The destination:<br>an AI workflow you can keep in check",
       "titleZh": "這門課的終點：一個你管得住的 AI 工作流",
       "subEn": "Not memorizing tool names—turning a real problem into work you can build, back with evidence, and keep under control.",
       "subZh": "不是背工具名稱，而是把一個真實問題，變成做得出來、查得到證據、也管得住的作品。",
@@ -136,12 +136,12 @@
         "Intro & course guide",
         "Prompts, images & judgment",
         "First web app with AI",
-        "Version safety (Git-lite)",
+        "Version safety (Git/GitHub)",
         "How AI learns from data",
         "Failure, bias & retraining",
         "Source-backed AI research",
         "Audio, video & multimodal",
-        "Midterm showcase · W1–7",
+        "Midterm showcase · W2–7 skills",
         "What makes a real agent?",
         "Agent-assisted data analysis",
         "Supervising agent actions",
@@ -165,7 +165,7 @@
       "items": [
         { "labelEn": "Participation", "labelZh": "平時成績", "subEn": "five in-class evidence cards" },
         { "labelEn": "Assignments", "labelZh": "作業成績", "subEn": "four categories · 5% each" },
-        { "labelEn": "Midterm", "labelZh": "期中", "subEn": "showcase · covers Weeks 1–7" },
+        { "labelEn": "Midterm", "labelZh": "期中", "subEn": "showcase · W2–7 skills" },
         { "labelEn": "Final", "labelZh": "期末", "subEn": "AI workflow project" }
       ],
       "noteEnHtml": "Final = an AI workflow project: at least one main and one supporting AI capability, three tests, and one failure-and-recovery. You may build on earlier work—<b style=\"color:var(--ink)\">brand count, technical difficulty and public deployment earn no extra points.</b>",
@@ -226,7 +226,7 @@
           "groupEn": "Versions & safety",
           "groupZh": "版本與安全",
           "items": [
-            { "name": "Version safety (Git-lite)", "sub": "diff, approve, recover—no commands" }
+            { "name": "Version safety (Git/GitHub)", "sub": "diff, approve, recover—no commands" }
           ]
         },
         {

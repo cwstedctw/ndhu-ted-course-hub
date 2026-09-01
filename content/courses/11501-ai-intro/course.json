@@ -99,7 +99,7 @@
       {
         "id": 1,
         "title": "AI 基礎與創作",
-        "body": "期中評量範圍＝第 1–7 週。分辨 AI 是工具、隊友、工作流還是 Agent；做出圖像、第一個 web app、版本安全、資料與偏誤、來源查證。第 8 週多模態、第 9 週期中作品展。",
+        "body": "期中範圍＝W2–W7 的能力。分辨 AI 是工具、隊友、工作流還是 Agent；做出圖像、第一個 web app、版本安全、資料與偏誤、來源查證。第 8 週多模態、第 9 週期中作品展。",
         "weeks": "W1–W9"
       },
       {
@@ -134,7 +134,7 @@
       },
       {
         "w": "4",
-        "label": "用 AI 做版本安全（Git-lite）",
+        "label": "用 AI 做版本安全（Git／GitHub）",
         "part": 1
       },
       {
@@ -159,7 +159,7 @@
       },
       {
         "w": "9",
-        "label": "期中 AI 作品展・範圍第 1–7 週",
+        "label": "期中 AI 作品展・範圍＝W2–W7 的能力",
         "part": 1,
         "milestone": true
       },
@@ -220,7 +220,7 @@
       {
         "pct": 30,
         "label": "期中",
-        "sub": "期中 AI 作品展・範圍＝第 1–7 週：AI 四類初判、提問與圖像判斷、第一個 web app、版本安全、資料與偏誤、來源查證。第 8 週多模態可加強展示，但不列必考"
+        "sub": "期中 AI 作品展・範圍＝W2–W7 的能力：提問與圖像判斷、第一個 web app、版本安全、資料與偏誤、來源查證。W1 導覽與第 8 週多模態都不考（多模態可加強展示）"
       },
       {
         "pct": 40,
@@ -264,7 +264,7 @@
         "group": "版本與安全",
         "items": [
           {
-            "name": "版本安全（Git-lite）",
+            "name": "版本安全（Git／GitHub）",
             "sub": "v0 → diff → 批准或拒絕 → v1；故意改壞也能復原。不背指令、不用公開 repo",
             "subShort": "diff、批准、復原"
           }
@@ -389,7 +389,7 @@
       },
       {
         "q": "期中怎麼評？範圍到哪裡？",
-        "a": "期中佔 30%，形式是期中 AI 作品展，範圍限第 1–7 週。你帶一件改良過的作品、具名可驗證的改良證據，以及一張個人判斷卡。第 8 週的多模態作品可以用來加強展示，但不是必考。",
+        "a": "期中佔 30%，形式是期中 AI 作品展，範圍＝第 2–7 週的能力；W1 導覽與第 8 週多模態都不考。你帶一件改良過的作品、具名可驗證的改良證據，以及一張個人判斷卡。第 8 週的多模態作品可以用來加強展示，但不是必考。",
         "status": "confirmed",
         "source": "v4 課程計畫第八節「期中 30%」"
       },
@@ -529,7 +529,7 @@
       "phases": [
         {
           "title": "AI foundations and making",
-          "body": "Midterm scope = Weeks 1–7. Tell an AI tool from a teammate, a workflow, and an agent; make images, a first web app, version safety, data and bias, source-grounded research. Week 8 is multimodal work, Week 9 the midterm gallery.",
+          "body": "Midterm scope = the skills of Weeks 2–7. Tell an AI tool from a teammate, a workflow, and an agent; make images, a first web app, version safety, data and bias, source-grounded research. Week 8 is multimodal work, Week 9 the midterm gallery.",
           "weeks": "W1–W9"
         },
         {
@@ -548,12 +548,12 @@
         "Course introduction & orientation (activity: is this AI a tool, a teammate, a workflow, or an agent?)",
         "Prompting, images, and human judgment",
         "First web app with AI",
-        "Version safety with AI (Git-lite)",
+        "Version safety with AI (Git/GitHub)",
         "How AI learns from data",
         "Failure, bias, and retraining",
         "Source-grounded AI research",
         "AI sound, video, and multimodal storytelling",
-        "Midterm AI maker gallery · covers Weeks 1–7",
+        "Midterm AI maker gallery · Weeks 2–7 skills",
         "What makes a real AI agent?",
         "Agent-assisted data analysis",
         "Supervising agent actions",
@@ -575,7 +575,7 @@
         },
         {
           "label": "Midterm",
-          "sub": "Midterm AI maker gallery · covers Weeks 1–7: telling the four kinds apart, prompting and image judgment, first web app, version safety, data and bias, source-grounded research. Week 8 multimodal work may strengthen your display but is not examined"
+          "sub": "Midterm AI maker gallery · scope = the skills of Weeks 2–7: prompting and image judgment, first web app, version safety, data and bias, source-grounded research. Week 1 (orientation) and Week 8 multimodal are not examined (multimodal may strengthen your display)"
         },
         {
           "label": "Final",
@@ -614,7 +614,7 @@
           "group": "Versions and safety",
           "items": [
             {
-              "name": "Version safety (Git-lite)",
+              "name": "Version safety (Git/GitHub)",
               "sub": "v0 → diff → approve or reject → v1; break it on purpose and still recover. No commands to memorise, no public repo"
             }
           ]
@@ -714,7 +714,7 @@
         },
         {
           "q": "How is the midterm assessed, and what does it cover?",
-          "a": "The midterm is 30% and takes the form of a midterm AI maker gallery covering Weeks 1–7. You bring one improved piece of work, attributable and verifiable evidence of the improvement, and a personal judgment card. Week 8 multimodal work may strengthen your display, but it is not examined."
+          "a": "The midterm is 30% and takes the form of a midterm AI maker gallery whose scope is the skills of Weeks 2–7 (Week 1 orientation and Week 8 multimodal are not examined). You bring one improved piece of work, attributable and verifiable evidence of the improvement, and a personal judgment card. Week 8 multimodal work may strengthen your display, but it is not examined."
         },
         {
           "q": "What does the final project look like?",
