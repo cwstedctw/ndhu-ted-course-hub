@@ -299,7 +299,7 @@
       }
     },
     "whatToBring": [
-      "可上網的筆記型電腦（Wokwi、VS Code 與實體開發都會使用）",
+      "課堂預設使用 D301 教室電腦；自備筆電為選用，不是課程要求",
       "一個生活觀察：哪裡缺一個會自動亮的燈、會提醒你的小裝置？",
       "不必自行購買元件——W10 由課程發放 ESP32 開發套件"
     ],
@@ -330,9 +330,9 @@
       },
       {
         "q": "器材要自己買嗎？",
-        "a": "不用買。W10 會發放一套 ESP32 開發套件（EZ Start Kit+），主要元件已裝在板上。你只要準備一台可以上網並執行 VS Code 的筆記型電腦。",
+        "a": "不用買。課堂預設使用 D301 教室電腦，W10 會發放一套 ESP32 開發套件（EZ Start Kit+）。自備筆電為選用，不是課程要求。",
         "status": "confirmed",
-        "source": "Ted 2026-08-20 確認提供 EZ Start Kit+；2026-09-01 定案 W10 發板"
+        "source": "Ted 2026-09-01 確認 D301 教室電腦為預設、自備筆電為選用；Ted 2026-08-20 確認提供 EZ Start Kit+；2026-09-01 定案 W10 發板"
       }
     ],
     "finale": {
@@ -365,7 +365,7 @@
     "validForSemester": "115-1",
     "owner": "陳文盛（陳文盛）",
     "sources": [
-      "workspace/teaching/material/maker-intro-course/course-plan.md v2.0（2026-09-01）＝本學期 17 週課程正本",
+      "workspace/teaching/material/maker-intro-course/course-plan.md v2.1（2026-09-01）＝本學期 17 週課程正本；D301 教室電腦為預設，自備筆電為選用",
       "Ted 2026-09-01 定案＝W2–W8 元件與 Wokwi 基礎、W9 期中、W10 領板與 VS Code、W11 起 AI vibe coding、W16–W17 期末成果發表；作業不預設每週一次",
       "東華大學 115 學年度第 1 學期行事曆＝W9（2026-11-02 至 11-06）為期中評量週",
       "_課程資訊.json（2026-06-05 快照）＝systemId 115182437",
