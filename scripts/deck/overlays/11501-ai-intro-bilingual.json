@@ -25,7 +25,7 @@
     "section": {
       "codeLineEn": "Section AA <small>· GC__6753AA · ID 115133850</small><br><small>General-education core elective · 3 credits · 17-week term</small>",
       "codeLineZh": "AA 班・校核心選修・3 學分・17 週新制",
-      "timeEn": "Monday, periods 8–10 · 13:10–16:00",
+      "timeEn": "Monday, periods 8‑10 · 13:10–16:00",
       "timePendingEn": "",
       "timeZh": "週一 第 8–10 節・13:10–16:00",
       "roomEn": "Science & Engineering Building II, Room E403",
@@ -252,8 +252,8 @@
       "items": [
         { "nameEn": "Chat AI", "sub": "ChatGPT·Claude·Gemini·Grok", "zh": "聊天型 AI" },
         { "nameEn": "AI search", "sub": "Perplexity·Felo — leads, not proof", "zh": "AI 搜尋" },
-        { "nameEn": "AI notebook", "sub": "NotebookLM — reading tied to sources", "zh": "AI 筆記本" },
-        { "nameEn": "No-account paths", "sub": "offline & account-free equivalents", "zh": "免帳號與離線路徑" }
+        { "nameEn": "AI notebook", "sub": "NotebookLM · read with sources", "zh": "AI 筆記本" },
+        { "nameEn": "No-account paths", "sub": "offline, no-account options", "zh": "免帳號與離線路徑" }
       ],
       "noteEnHtml": "Pick <b style=\"color:var(--ink)\">one that fits you</b>—this course never requires accounts or payment.　挑一個順手的就好，這門課不要求辦帳號、不用付費。"
     },
