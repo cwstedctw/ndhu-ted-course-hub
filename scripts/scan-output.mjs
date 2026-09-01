@@ -40,7 +40,7 @@ const STUDENT_ID_RE = /(?<![0-9A-Za-z_])4[0-9]{7,8}(?![0-9A-Za-z_])/g;
 const INTERNAL_NOTES = "internalNotes";
 // Slido 公開入場代碼白名單（印在投影片上給學生輸入的 join code，非個資；2026-09-01 洄瀾）。
 // 掃描前先從行文字移除白名單代碼——同一行若另有 4 開頭數字照樣列滲漏。新代碼撞樣式時逐枚加列。
-const ALLOWED_SLIDO_CODES = ["41952171"];
+const ALLOWED_SLIDO_CODES = ["41952171", "41952172"];
 
 if (!existsSync(OUT_DIR)) {
   console.error(`[FAIL] ${OUT_DIR}｜out/ 不存在｜請先跑 next build（npm run build 會自動串 validate → build → scan）`);

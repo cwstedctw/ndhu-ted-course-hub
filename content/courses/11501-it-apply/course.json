@@ -46,7 +46,9 @@
       },
       "room": "理工二館 E403",
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-it-apply-ab/",
-      "deckUrl": "/decks/11501-it-apply-ab.html"
+      "deckUrl": "/decks/11501-it-apply-ab.html",
+      "slidoEvent": "41952172",
+      "slidoEventUrl": "https://app.sli.do/event/84WbBLoshYUS8scDXLemgY"
     }
   ],
   "intro": {
@@ -382,7 +384,6 @@
       "office": "assets/maps/c306-3f-zoom.png"
     },
     "placeholders": [
-      "Slido event code（AB，AA=41952171 已定）",
       "e學苑課程代碼",
       "TA 名字"
     ]

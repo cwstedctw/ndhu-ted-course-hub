@@ -23,6 +23,7 @@ NOTES_PAT='internal''Notes'
 GAS_PAT='AKfy''cb'
 # Slido 公開入場代碼白名單（同 pre-commit；先移除再掃，同行其他 4 開頭數字照擋）
 SLIDO_ALLOW='41952171'
+SLIDO_ALLOW2='41952172'
 
 # 空 repo（還沒有任何 commit）沒東西可掃
 git rev-parse -q --verify HEAD >/dev/null 2>&1 || exit 0
@@ -46,7 +47,7 @@ for f in $files; do
   [ -z "$added" ] && continue
 
   # 規則 1：學號樣式——所有檔都掃；唯一豁免＝具名 Slido 公開代碼（見 SLIDO_ALLOW）
-  if printf '%s\n' "$added" | sed "s/$SLIDO_ALLOW//g" | grep -Eq "$SID_PAT"; then
+  if printf '%s\n' "$added" | sed -e "s/$SLIDO_ALLOW//g" -e "s/$SLIDO_ALLOW2//g" | grep -Eq "$SID_PAT"; then
     echo "[pre-push 擋下] $f：待推送的新增行疑似含學號（4 開頭連續 8-9 碼數字）。"
     fail=1
   fi

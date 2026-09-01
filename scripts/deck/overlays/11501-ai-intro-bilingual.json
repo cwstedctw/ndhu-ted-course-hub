@@ -255,7 +255,7 @@
         { "nameEn": "AI notebook", "sub": "NotebookLM · read with sources", "zh": "AI 筆記本" },
         { "nameEn": "No-account paths", "sub": "offline, no-account options", "zh": "免帳號與離線路徑" }
       ],
-      "noteEnHtml": "Pick <b style=\"color:var(--ink)\">one that fits you</b>—this course never requires accounts or payment.　挑一個順手的就好，這門課不要求辦帳號、不用付費。"
+      "noteEnHtml": "Pick <b style=\"color:var(--ink)\">one that fits you</b>—pre-course accounts are ungraded, and payment is never required.　挑一個順手的就好；課前辦的帳號不計分，付費一律不用。"
     },
     "bring": {
       "kicker": "WHAT TO BRING",
@@ -263,7 +263,7 @@
       "titleZh": "上課要帶什麼",
       "items": [
         { "enHtml": "A laptop or tablet (<b>laptop recommended</b>)—no device? Paper and pre-generated equivalents count the same", "zh": "筆電或平板（建議筆電）；沒有裝置也有等值路徑" },
-        { "enHtml": "No AI accounts, no payment—every core activity has an account-free path (your school account covers e-Learning &amp; Zuvio)", "zh": "不用先辦 AI 帳號、不用付費——學校帳號就夠用（e學苑交作業、Zuvio 點名）" },
+        { "enHtml": "Set up three things before term (ungraded; equivalent paths if they fall through): a GitHub account (Week 4), an agent desktop app (Antigravity or ChatGPT desktop), and a chat AI—install, sign in, then stop. Payment is never required", "zh": "課前先辦好三樣（不計分、辦不成有等值路徑）：GitHub 帳號（W4 用）、agent 桌面 app 二擇一、一個聊天型 AI——裝好登入就停手；付費一律不用" },
         { "enHtml": "Room E403—seats near outlets go first-come", "zh": "教室 理工二館 E403——有插座的位子先到先選" }
       ]
     },

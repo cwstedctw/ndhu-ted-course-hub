@@ -22,6 +22,7 @@ SID_PAT='(^|[^0-9A-Za-z_])4[0-9]{7,8}([^0-9A-Za-z_]|$)'
 # Slido 公開入場代碼白名單（印在投影片上給學生輸入的 join code，非個資；2026-09-01 洄瀾）
 # 掃描前先從行文字移除白名單代碼再比對——同一行若另有 4 開頭數字照樣擋。新代碼撞樣式時逐枚加列。
 SLIDO_ALLOW='41952171'
+SLIDO_ALLOW2='41952172'
 NOTES_PAT='internal''Notes'
 GAS_PAT='AKfy''cb'
 
@@ -37,7 +38,7 @@ for f in $files; do
   [ -z "$added" ] && continue
 
   # 規則 1：學號樣式——所有檔都掃；唯一豁免＝具名 Slido 公開代碼（先移除再掃，見 SLIDO_ALLOW）
-  if printf '%s\n' "$added" | sed "s/$SLIDO_ALLOW//g" | grep -Eq "$SID_PAT"; then
+  if printf '%s\n' "$added" | sed -e "s/$SLIDO_ALLOW//g" -e "s/$SLIDO_ALLOW2//g" | grep -Eq "$SID_PAT"; then
     echo "[pre-commit 擋下] $f：新增行疑似含學號（4 開頭連續 8-9 碼數字）。學生個資不進 repo。"
     fail=1
   fi

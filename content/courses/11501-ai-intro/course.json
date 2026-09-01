@@ -66,8 +66,9 @@
         "mode": "zh-primary-en-terms",
         "note": "AB 為繁中授課：繁中可獨立完成所有任務，技術名詞（Agent、diff、dry-run、log 等）第一次出現時附英文原文。本班不做英文並列欄。"
       },
-      "slidoEvent": null,
-      "deckName": "115_01 人工智慧概論AB Introduction"
+      "slidoEvent": "1321546",
+      "deckName": "115_01 人工智慧概論AB Introduction",
+      "slidoEventUrl": "https://app.sli.do/event/rDkfhoqi5F5ivrkGAhcmh6"
     }
   ],
   "intro": {
@@ -354,7 +355,7 @@
     "showcaseNote": "這些是上學期同學自選的挑戰方向，不是本課的及格門檻，也不是加分條件——公開 repo、上線網址與命令列都不在要求內。評分只看任務、證據、權限、驗證與復原。",
     "whatToBring": [
       "筆電或平板（建議筆電）；沒有裝置也有紙本與教師預生成的等值路徑",
-      "不用先辦任何 AI 工具帳號、不用付費——課堂核心一律有免帳號路徑（學校帳號除外：開學後用它登入 e學苑交作業、Zuvio 點名）",
+      "課前先辦好三樣（不計分、辦不成有等值路徑不扣分）：GitHub 帳號（W4 用）、agent 桌面 app 二擇一（Antigravity 或 ChatGPT 桌面版）、一個聊天型 AI——裝好登入成功就停手，先別玩掉額度；付費一律不用",
       "教室 理工二館 E403——有插座的位子先到先選"
     ],
     "faq": [
@@ -366,9 +367,9 @@
       },
       {
         "q": "要辦帳號、付費或把作品公開嗎？",
-        "a": "AI 工具都不用。這門課不要求 API key、付費方案、公開 repo、公開網址、命令列或電話驗證；課堂核心一律有免帳號與離線路徑。唯一要用的是學校帳號：登入 e學苑交作業、Zuvio 點名，那不是額外註冊也不要錢。",
+        "a": "付費一律不用：不要求 API key、付費方案、命令列或電話驗證。帳號有三個請在課前辦好——GitHub、agent 桌面 app（二擇一）、一個聊天型 AI（見「開學前要先準備什麼？」）；這些不計分，辦不成有等值路徑、不扣一分。公開作品只有第 4 週的 GitHub Pages 練習用公開 repo＋合成內容、當堂教撤下；不想公開改看教師示範站，同分。學校帳號用來登入 e學苑交作業、Zuvio 點名，不是額外註冊也不要錢。",
         "status": "confirmed",
-        "source": "v4 課程計畫第三節、第九節第 3 點、第十四節"
+        "source": "course-plan.md 定案版 v5 §9-1 課前準備＋§9-2 等值路線＋§四-1 W4 Pages（Ted 8/28 裁決；2026-09-01 對齊）"
       },
       {
         "q": "要修完外部的 AI 線上課、交證書嗎？",
@@ -406,9 +407,9 @@
       },
       {
         "q": "開學前要先準備什麼？",
-        "a": "帶筆電或平板（建議筆電），確認學校帳號登得進 e學苑就夠了。AI 工具不用先裝、不用先辦帳號，第一週課堂上會帶著做。",
+        "a": "照課前準備清單先弄四樣：能打字的環境（沒筆電可用教室機）、GitHub 帳號（W4 用）、agent 桌面 app 二擇一（Antigravity 要滿 18 歲並用個人 Google 帳號，或 ChatGPT 桌面版）、一個聊天型 AI。三個提醒：裝好登入成功就停手、先別玩掉額度；Antigravity 別用學校信箱；Gemini 學生方案值得申請一次，但要綁付款方式、一年後不取消會自動收費——不申請也能修完這門課。這些都不計分、不是入場門檻，沒做完也可以來上課。",
         "status": "confirmed",
-        "source": "課程介紹定稿 12/15/16 頁＋v4 第九節第 3 點免帳號路徑"
+        "source": "course-plan.md 定案版 v5 §9-1 課前準備四樣＋三句警語（Ted 8/28 裁決；2026-09-01 對齊）"
       },
       {
         "q": "還沒選上怎麼辦？",
@@ -441,7 +442,6 @@
       "office": "assets/maps/c306-3f-zoom.png"
     },
     "placeholders": [
-      "Slido event code（AB，AA=1321545 已定）",
       "e學苑課程代碼",
       "TA 名字"
     ]
@@ -686,7 +686,7 @@
       "showcaseNote": "These were the directions last term's students chose to push in—they are not a pass mark for this course and they are not a way to earn extra credit. A public repository, a live URL, and the command line are all outside what is asked of you. Grading looks only at the task, the evidence, permissions, verification, and recovery.",
       "whatToBring": [
         "A laptop or tablet (laptop recommended); without a device, paper and pre-generated materials carry equal weight",
-        "No AI-tool account and no payment needed in advance—every core activity has a no-account path (your university account is the exception; once term starts it signs you into e-Learning for submissions and Zuvio for roll call)",
+        "Set up three things before term (ungraded; equivalent paths cost you nothing if they fall through): a GitHub account (used in Week 4), one agent desktop app (Antigravity or the ChatGPT desktop app), and one chat AI—install, sign in, then stop; don't burn your quota early. Payment is never required",
         "Room E403, Science & Engineering Building II—seats near the power outlets are first-come, first-served"
       ],
       "faq": [
@@ -696,7 +696,7 @@
         },
         {
           "q": "Do I need an account, a paid plan, or a public portfolio?",
-          "a": "Not for AI tools. This course does not require an API key, a paid plan, a public repository, a public URL, the command line, or phone verification; every core activity has a no-account and offline path. The one account you do use is the one the university already issues you—it signs you into e-Learning for submissions and Zuvio for roll call. That is not an extra sign-up and it costs nothing."
+          "a": "Payment: never—no API key, paid plan, command line, or phone verification. Accounts: three are worth setting up before term—GitHub, one agent desktop app, and one chat AI (see \"What should I prepare before term starts?\"); none are graded, and equivalent paths cost you nothing if they fall through. The only public artifact is the Week-4 GitHub Pages exercise, done in a public repo with synthetic content and taken down in class; if you'd rather not publish, follow the instructor's demo site for the same credit. Your university account signs you into e-Learning for submissions and Zuvio for roll call—not an extra sign-up, and it costs nothing."
         },
         {
           "q": "Do I have to finish an external AI course or hand in a certificate?",
@@ -720,7 +720,7 @@
         },
         {
           "q": "What should I prepare before term starts?",
-          "a": "Bring a laptop or tablet (laptop recommended) and make sure your university account signs in to e-Learning (elearn4). You do not need to install AI tools or create accounts in advance—we will work through it together in the first class."
+          "a": "Follow the pre-course checklist and set up four things: a typing-friendly setup (classroom PCs are available if you have no laptop), a GitHub account (used in Week 4), one agent desktop app (Antigravity needs a personal Google account and age 18+; otherwise the ChatGPT desktop app), and one chat AI. Three reminders: once installed and signed in, stop—don't burn your quota early; use a personal Google account for Antigravity, not your school email; the Gemini student plan is worth one application, but it requires a payment method and auto-renews after a year—you can finish this course without it. None of this is graded or a gate; you can attend Week 1 without it."
         },
         {
           "q": "What if I did not get a place in the course?",
