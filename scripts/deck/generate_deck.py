@@ -456,7 +456,7 @@ class Deck:
         band2 = self._week_band(row2_weeks, phase_titles, phase_weeks, variant="row2")
 
         inner = (
-            pb.kicker("17-WEEK ROADMAP") + pb.title("17 週課程地圖")
+            pb.kicker(f"{len(weekly)}-WEEK ROADMAP") + pb.title(f"{len(weekly)} 週課程地圖")
             + '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:44px">'
             + '<div><div style="position:relative"><div class="tlbar" style="top:7px;left:0;right:0"></div>'
             + f'<div class="timeline" style="margin-top:0">{row1}</div></div>{band1}</div>'
