@@ -70,18 +70,20 @@ def build_lead(course_json_path, section_id, lang="zh"):
     semester = _html.escape(str(course.get("semester", "")))
     org = _html.escape(str(course.get("org", "")))
     sec = _html.escape(str(section_id))
+    is_single = len(course.get("sections") or []) == 1
+    display_name = name if is_single else f"{name} {sec}"
 
     if lang == "bilingual":
         # 對齊 v1 export_deck 部署的雙語版 lead（英文課名行＋中英並列頁尾行）
-        title = f"{name} {sec} · Introduction to AI — 課程介紹"
-        lead = (f'<div class="lead"><h1>{name} {sec}</h1>'
+        title = f"{display_name} · Introduction to AI — 課程介紹"
+        lead = (f'<div class="lead"><h1>{display_name}</h1>'
                 f'<div class="en">{name_en}</div>'
                 f'<p>{semester} 課程介紹 · Course Introduction　|　'
                 f'國立東華大學 通識教育中心 National Dong Hwa University</p></div>')
         return title, lead
 
-    title = f"{name} {sec} — 課程介紹"
-    lead = (f'<div class="lead"><h1>{name} {sec}</h1>'
+    title = f"{display_name} — 課程介紹"
+    lead = (f'<div class="lead"><h1>{display_name}</h1>'
             f'<div class="en">{name_en}</div>'
             f'<p>{semester} 課程介紹　|　{org}</p></div>')
     return title, lead

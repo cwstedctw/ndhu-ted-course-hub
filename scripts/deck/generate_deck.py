@@ -236,11 +236,19 @@ class Deck:
             instructor_value = f'{esc(instr.get("name", ""))}　<small>TA：</small>{esc(ta_line)}'
         else:
             instructor_value = esc(instr.get("name", ""))
+        is_single = len(self.course.get("sections") or []) == 1
+        course_id_label = "課　　號" if is_single else "班別／課號"
+        course_id_value = (
+            f'<small style="font-family:var(--lat)">{esc(sec.get("code", ""))}・'
+            f'<span style="white-space:nowrap">系統編號</span> {esc(sec.get("systemId", ""))}</small><br>'
+            f'<small>{esc(course_type)}・{esc(credits)} 學分・{esc(weeks_system)}</small>'
+            if is_single else
+            f'{esc(sec.get("id", ""))} 班　<small style="font-family:var(--lat)">'
+            f'{esc(sec.get("code", ""))}・<span style="white-space:nowrap">系統編號</span> {esc(sec.get("systemId", ""))}</small><br>'
+            f'<small>{esc(course_type)}・{esc(credits)} 學分・{esc(weeks_system)}</small>'
+        )
         cells = (
-            pb.infocard("cap", "班別／課號",
-                        f'{esc(sec.get("id", ""))} 班　<small style="font-family:var(--lat)">'
-                        f'{esc(sec.get("code", ""))}・<span style="white-space:nowrap">系統編號</span> {esc(sec.get("systemId", ""))}</small><br>'
-                        f'<small>{esc(course_type)}・{esc(credits)} 學分・{esc(weeks_system)}</small>')
+            pb.infocard("cap", course_id_label, course_id_value)
             + pb.infocard("clock", "上課時間", f'{esc(sec.get("time", ""))}{time_note_html}')
             + pb.infocard("pin", "教　　室", esc(sec.get("room", "")))
             + pb.infocard("user", "授課教師", instructor_value)
