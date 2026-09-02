@@ -520,9 +520,14 @@ class Deck:
         half = 7
         row1_weeks = weekly[:half]
         row2_weeks = weekly[half:]
-        row1 = "".join(pb.weekcell(w.get("w", ""), w.get("label", ""), "ms" if w.get("milestone") else "")
+        # 2026-09-02：p09 每欄只有約 130px，長標籤會擠成 4–5 行還把詞腰斬
+        # （W1「（活／動」、W9「作品／展」，兩班渲染眼檢都抓到）。
+        # course.json 可給 labelShort 當 deck 專用短版；網頁的週次表照用長版 label。
+        def _lab(w):
+            return w.get("labelShort") or w.get("label", "")
+        row1 = "".join(pb.weekcell(w.get("w", ""), _lab(w), "ms" if w.get("milestone") else "")
                         for w in row1_weeks)
-        row2 = "".join(pb.weekcell(w.get("w", ""), w.get("label", ""), "ms" if w.get("milestone") else "")
+        row2 = "".join(pb.weekcell(w.get("w", ""), _lab(w), "ms" if w.get("milestone") else "")
                         for w in row2_weeks)
 
         # 三段色帶：依 weeklyPlan 的 part 欄位算 row1/row2 內 Part1/2/3 各佔幾格（flex 比例），
@@ -1212,10 +1217,15 @@ class BilingualDeck:
             # 寧可當場擋下也不出「英文標到隔壁週」的 deck（美崙溪 2026-08-26 原則）
             raise ValueError(f"overlay weeks.labelsEn 有 {len(labels_en)} 條，"
                              f"course.json weeklyPlan 有 {len(weekly)} 週——overlay 過期，先補齊")
+        # 短版同 zh：英文可由 overlay weeks.labelsEnShort（以週次為鍵）覆寫、中文用 labelShort，
+        # 沒給就退回長版——p09 欄寬約 130px，長標籤會腰斬詞（2026-09-02 眼檢）。
+        labels_en_short = w.get("labelsEnShort", {}) or {}
         cells = []
         for i, wk in enumerate(weekly):
             kind = "ms" if wk.get("milestone") else ""
-            cells.append(bb.weekcell(wk.get("w", ""), labels_en[i], wk.get("label", ""), kind))
+            en = labels_en_short.get(str(wk.get("w"))) or labels_en[i]
+            zh = wk.get("labelShort") or wk.get("label", "")
+            cells.append(bb.weekcell(wk.get("w", ""), en, zh, kind))
         half = 7
         row1 = "".join(cells[:half])
         row2 = "".join(cells[half:])

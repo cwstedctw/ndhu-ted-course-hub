@@ -132,6 +132,10 @@
       "kicker": "17-WEEK ROADMAP",
       "titleEn": "17-Week Roadmap",
       "titleZh": "17 週課程地圖",
+      "labelsEnShort": {
+        "$comment": "p09 欄寬約 130px；只列需要短版的週次，其餘退回 labelsEn（2026-09-02 眼檢：W9 的分隔點孤立行末）",
+        "9": "Midterm showcase"
+      },
       "labelsEn": [
         "Intro & course guide",
         "Prompts, images & judgment",
