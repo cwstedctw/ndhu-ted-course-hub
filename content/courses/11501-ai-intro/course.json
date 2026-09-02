@@ -442,9 +442,9 @@
       "office": "assets/maps/c306-3f-zoom.png"
     },
     "placeholders": [
-      "e學苑課程代碼",
       "TA 名字"
-    ]
+    ],
+    "$comment_elearn": "e學苑課程代碼 2026-09-02 查到：AA=16935、AB=16936（免登入公開課程搜尋回讀，與 ai-coding 16963 同型＝校方每學期自動開的殼）。⚠️殼存在不等於教材上傳了——course/view.php 回 303 導登入，裡面有沒有東西要 Ted 的 Chrome 才看得到。已從 placeholders 移除。"
   },
   "en": {
     "$comment": "AA（en-primary-zh-support）的英文課程殼鏡像。結構逐欄對齊中文本體，陣列**索引對齊**（validate 規則 #20 會逐條比長度與空字串）。缺任何一條 → build fail-closed，不准默默回落中文。範圍＝landing／17 週大綱／評量／FAQ／安全守則／求助；每週教材包與 showcase 學生作品不在本輪。",
