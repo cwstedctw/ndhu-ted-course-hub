@@ -187,8 +187,7 @@
       "titleZh": "加入 e學苑課程",
       "items": [
         { "en": "Sign in at elearn4.ndhu.edu.tw with your school account", "zh": "用學校帳號登入 elearn4.ndhu.edu.tw" },
-        { "en": "Materials and submissions all live here", "zh": "教材與交作業都在這" },
-        { "enPrefix": "Course code: ", "pendingEn": "TBA", "zh": "課程代碼：開學前待補" }
+        { "en": "Materials and submissions all live here", "zh": "教材與交作業都在這" }
       ]
     },
     "platforms": {

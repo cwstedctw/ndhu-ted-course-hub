@@ -205,7 +205,13 @@ export default async function CoursePage({ params }) {
         <>
           <IntroBento intro={intro} L={L} en={enIntro} />
           <GradingDonut
-            grading={intro.grading}
+            grading={asArray(intro.grading).map((g) =>
+              // 一課兩班的評分說明可分班（course.json grading[].subBySection），
+              // 沒給就用共用 sub——2026-09-02 AB 頁曾把「AA 遇停課併週」印給 AB 學生看。
+              g && typeof g === 'object' && hasText(g.subBySection?.[section?.id])
+                ? { ...g, sub: g.subBySection[section.id] }
+                : g
+            )}
             gradingNote={intro.gradingNote}
             L={L}
             en={enIntro}

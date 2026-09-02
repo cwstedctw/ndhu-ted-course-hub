@@ -231,9 +231,11 @@ class Deck:
         # taLine="" 代表這門介紹 deck 不顯示未確認的 TA 佔位。
         ta_line = self.ov("taLine", None)
         if ta_line is None:
-            instructor_value = f'{esc(instr.get("name", ""))}　<small>TA：</small>{pb.pending("開學前待補")}'
+            instructor_value = (f'{esc(instr.get("name", ""))}　<span style="white-space:nowrap">'
+                                f'<small>TA：</small>{pb.pending("開學前待補")}</span>')
         elif ta_line:
-            instructor_value = f'{esc(instr.get("name", ""))}　<small>TA：</small>{esc(ta_line)}'
+            instructor_value = (f'{esc(instr.get("name", ""))}　<span style="white-space:nowrap">'
+                                f'<small>TA：</small>{esc(ta_line)}</span>')
         else:
             instructor_value = esc(instr.get("name", ""))
         is_single = len(self.course.get("sections") or []) == 1
@@ -267,21 +269,22 @@ class Deck:
         """B2 六卡「課堂平台」欄：v1 硬編『點名 Zuvio・作業 Teams・共筆 HackMD』，
         現改由 intro.platforms 動態組（use→name 併成短句），行為對齊 v1 三項固定序。"""
         plats = self.intro.get("platforms", [])
-        parts = [f'{p.get("use", "")} {p.get("name", "")}' for p in plats]
-        line = "・".join(parts)
+        parts = [f'<span style="white-space:nowrap">{esc(p.get("use", ""))} {esc(p.get("name", ""))}</span>'
+                 for p in plats]
+        line_html = "・".join(parts)
         # Slido 活動已建就直接印編號、佔位只留還沒有的（2026-08-31 立霧終查抓到：
         # #7610459 在 p06/p18 都印了，這裡卻仍掛「開學前補」佔位，自相矛盾）。
         code = self.section.get("slidoEvent")
+        # e學苑代碼 2026-09-02 Ted 拍板不印（「學生加入課程系統就看得到」）；overlay 仍可用 elearnShort 指定。
         elearn_short = self.ov("elearnShort", None)
-        elearn_tail = (esc(elearn_short) if isinstance(elearn_short, str) and elearn_short
-                       else pb.pending("e學苑課程代碼開學前補"))
+        elearn_tail = esc(elearn_short) if isinstance(elearn_short, str) and elearn_short else None
         if code:
-            tail = f'<small>Slido #{esc(code)}・{elearn_tail}</small>'
+            head = f'Slido #{esc(code)}'
         else:
-            # 未建 event（AB 班）：與 p06/p18 同字樣「#現場公布」——原本只印「Slido #」空殼（2026-09-01 三端查核抓到）
-            slido_pending = pb.pending("Slido #現場公布")
-            tail = f'<small>{slido_pending}・{elearn_tail}</small>'
-        return f'<small>{esc(line)}</small><br>' + tail
+            # 未建 event：與 p06/p18 同字樣「#現場公布」（2026-09-01 三端查核抓到只印「Slido #」空殼）
+            head = pb.pending("Slido #現場公布")
+        tail = f'<small>{head}・{elearn_tail}</small>' if elearn_tail else f'<small>{head}</small>'
+        return f'<small>{line_html}</small><br>' + tail
 
     def page03_location(self):
         sec = self.section
@@ -629,9 +632,13 @@ class Deck:
             ("var(--gold)", "#E05236"),
         ]
         cells = ""
+        sec_id = self.section.get("id")
         for i, g in enumerate(grading):
             c1, c2 = colors[i] if i < len(colors) else ("var(--teal)", "var(--gold)")
-            cells += pb.statblock(g.get("pct", 0), g.get("label", ""), g.get("sub") or "", c1, c2)
+            # 2026-09-02：一課兩班的說明可分班（subBySection），沒給就退回共用 sub——
+            # AB deck 曾把「AA 遇停課併週」印給 AB 學生看（美崙溪／木瓜溪複驗抓到）。
+            sub = (g.get("subBySection") or {}).get(sec_id) or g.get("sub") or ""
+            cells += pb.statblock(g.get("pct", 0), g.get("label", ""), sub, c1, c2)
         note = self.intro.get("gradingNote", "")
         note_html = self._grading_note_html(note)
         inner = (
@@ -669,10 +676,10 @@ class Deck:
         # 改版：115-1 六課皆已定案走 e學苑（Hub commit 4a33840），模板層跟著換。
         items = self.ov("elearnItems", None)
         if not isinstance(items, list) or not items:
+            # 2026-09-02 Ted 拍板 deck 不印 e學苑課程代碼（「學生加入課程系統就看得到」）。
             items = [
                 '用學校帳號登入 <span style="font-family:var(--lat)">elearn4.ndhu.edu.tw</span>',
                 "教材與交作業都在這",
-                "課程代碼：" + pb.pending("【開學前待補】"),
             ]
         else:
             items = [esc(item) for item in items]
@@ -708,7 +715,8 @@ class Deck:
         tool_groups = self.intro.get("toolGroups", [])
         if not tool_groups:
             return  # 純演講課等無課堂工具區——跳頁（平台已在第 13 頁呈現，2026-07-03）
-        group_icon = {"理解 AI": "bot", "查資料": "search", "做內容": "slides", "任務型與自動化": "term"}
+        group_icon = {"理解 AI": "bot", "查資料": "search", "做內容": "slides", "任務型與自動化": "term",
+                      "做出作品": "slides", "查證與資料": "search", "版本與安全": "term", "Agent 監督": "bot"}
         compact = len(tool_groups) >= 5  # 五組以上走窄邊距，防總高溢出畫布
         bands = ""
         for g in tool_groups:
@@ -742,7 +750,7 @@ class Deck:
         )
         # ≥5 組窄版連 note 都貼到頁底，會跟 footer-org 疊字（2026-09-01 it-apply 六組
         # 渲染眼檢抓到）→ 窄版免頁尾；4 組以下照舊（既有課程 parity 不變）
-        self.write(14, inner, no_footer=compact)
+        self.write(14, inner, no_footer=True)  # 2026-09-02：中文說明兩行就撞 footer，一律免頁尾
 
     @staticmethod
     def _tools_note_html(note):
