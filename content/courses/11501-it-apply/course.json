@@ -31,7 +31,7 @@
       "room": "理工二館 E403",
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-it-apply-aa/",
       "deckUrl": "/decks/11501-it-apply-aa.html",
-      "scheduleNote": "本班（AA・週一）遇國定假日停課時，停課週與鄰近週合併為一週上課：W4（9/28 教師節）主題「結構化文件（一）」與 W5 合併於 10/05 實施；W8（10/26 光復節補假）為複習整理週、無新內容故不合併。週次內容順序不變，實際進度由授課教師在課堂調整。AB 班（週二）整學期無國定假日，依正常 17 週進行。（2026-08-28 陳文盛 拍板）",
+      "scheduleNote": "本班（AA・週一）遇國定假日停課時，停課週與鄰近週合併為一週上課：W4（9/28 教師節）主題「結構化文件（一）」與 W5 合併於 10/05 實施；W8（10/26 光復節補假）為複習整理週、無新內容故不合併。週次內容順序不變，實際進度由授課教師在課堂調整。AB 班（週二）整學期無國定假日，依正常 17 週進行。",
       "slidoEvent": "41952171",
       "slidoEventUrl": "https://app.sli.do/event/3yXMYkZgHjr7L6RiiujNYM"
     },
@@ -181,7 +181,7 @@
       {
         "pct": 20,
         "label": "平時成績",
-        "sub": "八張課內小卡，當堂做完當堂交——不是回家補的作業"
+        "sub": "八張課內小卡（第 2、3、6、7、10、12、14、16 週），當堂做完當堂交——不是回家補的作業；重週交的是「今天做到哪」，誠實寫就有分"
       },
       {
         "pct": 20,
@@ -331,7 +331,7 @@
     "faq": [
       {
         "q": "我不是資訊背景，也要用 GitHub？",
-        "a": "要，而且不用寫程式。這門課把 repo 當成「工作檔案櫃」——AI 現在都在 repo 上做事，看得懂它改了什麼是這個時代的基本功。全程用網頁版，不裝軟體、不打指令。",
+        "a": "要，而且不用寫程式。這門課把 repo 當成「工作檔案櫃」——AI 現在都在 repo 上做事，看得懂它改了什麼是這個時代的基本功。全程用網頁版，不裝軟體、不打指令。 第 3 週「改自己的網站」也一樣：程式是 AI 代理改的，你負責把要什麼講清楚、驗收、不對就退回。",
         "status": "confirmed",
         "source": "115-1 課程計畫 v4.2（wailan_agent/workspace/teaching/material/it-apply-course/course-plan.md）"
       },
@@ -368,10 +368,11 @@
     ],
     "finale": {
       "nextWeek": "你的工作檔案櫃：repo 起步——第二週就把櫃子建起來",
-      "action": "先用學校信箱把 GitHub 帳號辦好（第一週課堂上也會一起辦）",
+      "action": "有空先用學校信箱辦 GitHub 帳號；沒辦也沒關係，第一週課堂上一起辦，卡住有等值路徑",
       "materialsUrl": {
-        "status": "pending",
-        "note": "教材發布在 e學苑，課程區開學前建好"
+        "status": "confirmed",
+        "url": "https://elearn4.ndhu.edu.tw/moodle/my/courses.php",
+        "note": "e學苑課程區與四個繳交入口 2026-09-02 已建（AA id 16812／AB id 16813）；教材各週上課前上"
       }
     },
     "heroImages": {
@@ -389,7 +390,7 @@
     ]
   },
   "meta": {
-    "lastReviewed": "2026-09-01",
+    "lastReviewed": "2026-09-02",
     "validForSemester": "115-1",
     "owner": "陳文盛（陳文盛）",
     "sources": [
@@ -414,10 +415,10 @@
       },
       {
         "platform": "elearn",
-        "use": "教材與交作業",
+        "use": "教材與交作業（登入後在「我的課程」點本班 GC__1480AA／AB）",
         "label": "e學苑",
-        "url": null,
-        "urlStatus": "pending"
+        "url": "https://elearn4.ndhu.edu.tw/moodle/my/courses.php",
+        "urlStatus": "confirmed"
       }
     ],
     "scoreUrl": null,
