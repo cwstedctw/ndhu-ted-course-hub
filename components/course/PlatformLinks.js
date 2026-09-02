@@ -4,7 +4,8 @@ import { asArray, hasText } from './pending';
 // 區塊 7：平台連結（#links，設計書二章 §4.3 區塊 7）
 // 名稱與用途吃 hub.links[]（有網址版）；hub.links 空 → 退回 intro.platforms[]（無網址版）。
 // url 非 null → 可點按鈕（新分頁）；url null → 只顯示平台名＋用途、絕不做假連結；
-// urlStatus pending → 小字「連結開學前補」。
+// urlStatus pending → 小字「連結開學前補」；urlStatus none → 只印平台名與用途，不印任何待補字樣
+//   （＝這個平台刻意沒有連結，例如 Zuvio：學生選上課後自己就看得到，2026-09-02 陳文盛 拍板）。
 export default function PlatformLinks({ hubLinks, platforms, L, en = {}, enHub = {} }) {
   const enHubLinks = asArray(enHub?.links);
   const enPlatforms = asArray(en?.platforms);

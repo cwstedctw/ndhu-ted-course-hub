@@ -388,7 +388,8 @@
       "classroom": "assets/maps/e403-4f-zoom.png",
       "office": "assets/maps/c306-3f-zoom.png"
     },
-    "placeholders": []
+    "placeholders": [],
+    "showcaseNote": "這四件是上學期同學做的網站專題。**本學期改做文件與資料**——期末交的是一件整合作品加五張簡報，「一頁網站」只是六種形式裡的一種。放在這裡是讓你看看學長姐做到什麼程度，不是這學期的規格。"
   },
   "meta": {
     "lastReviewed": "2026-09-02",
@@ -408,10 +409,10 @@
     "links": [
       {
         "platform": "zuvio",
-        "use": "課堂點名",
+        "use": "課堂點名（只記出勤、不計分）；選上這門課之後在 Zuvio 就看得到，不需要另外的連結",
         "label": "Zuvio",
         "url": null,
-        "urlStatus": "pending"
+        "urlStatus": "none"
       },
       {
         "platform": "elearn",

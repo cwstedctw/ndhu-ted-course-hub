@@ -86,7 +86,7 @@
               "use": { "type": "string", "minLength": 1 },
               "label": { "type": "string", "minLength": 1 },
               "url": { "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl" },
-              "urlStatus": { "enum": ["pending", "confirmed"] }
+              "urlStatus": { "enum": ["pending", "confirmed", "none"] }
             },
             "allOf": [
               {
@@ -95,7 +95,7 @@
               },
               {
                 "if": { "properties": { "url": { "type": "null" } } },
-                "then": { "properties": { "urlStatus": { "const": "pending" } } }
+                "then": { "properties": { "urlStatus": { "enum": ["pending", "none"] } } }
               }
             ]
           }
