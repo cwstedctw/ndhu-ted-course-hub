@@ -13,7 +13,11 @@
       "kind": "regular",
       "status": "open",
       "tagline": "從創意 AI 工具，到受監督的 AI Agent",
-      "chips": ["做得出作品", "查得到證據", "管得住 Agent"],
+      "chips": [
+        "做得出作品",
+        "查得到證據",
+        "管得住 Agent"
+      ],
       "order": 1
     },
     {
@@ -27,7 +31,11 @@
       "kind": "regular",
       "status": "open",
       "tagline": "從創意 AI 工具，到受監督的 AI Agent",
-      "chips": ["做得出作品", "查得到證據", "管得住 Agent"],
+      "chips": [
+        "做得出作品",
+        "查得到證據",
+        "管得住 Agent"
+      ],
       "order": 2
     },
     {
@@ -40,8 +48,12 @@
       "credits": 2,
       "kind": "regular",
       "status": "open",
-      "tagline": "把 AI 當 24 小時助教，文書、資料、簡報一次點滿",
-      "chips": ["AI 當助教", "報告變漂亮", "表格會算數"],
+      "tagline": "一套帶得走的做事方法：東西存得住、來源說得出、報告站得住",
+      "chips": [
+        "有自己的檔案櫃",
+        "報告有來源",
+        "期末發表兩輪"
+      ],
       "order": 3
     },
     {
@@ -54,8 +66,12 @@
       "credits": 2,
       "kind": "regular",
       "status": "open",
-      "tagline": "把 AI 當 24 小時助教，文書、資料、簡報一次點滿",
-      "chips": ["AI 當助教", "報告變漂亮", "表格會算數"],
+      "tagline": "一套帶得走的做事方法：東西存得住、來源說得出、報告站得住",
+      "chips": [
+        "有自己的檔案櫃",
+        "報告有來源",
+        "期末發表兩輪"
+      ],
       "order": 4
     },
     {
@@ -69,7 +85,11 @@
       "kind": "regular",
       "status": "open",
       "tagline": "先在瀏覽器點亮虛擬 LED，期末端出真的會動的裝置",
-      "chips": ["Wokwi 模擬練功", "AI 幫寫腳本", "期末實體 Demo"],
+      "chips": [
+        "Wokwi 模擬練功",
+        "AI 幫寫腳本",
+        "期末實體 Demo"
+      ],
       "order": 5
     },
     {
@@ -83,7 +103,11 @@
       "kind": "regular",
       "status": "open",
       "tagline": "用 Arduino UNO Q 做出會聽、會看、會動的智慧裝置",
-      "chips": ["會聽會看會動", "邊緣 AI 實戰", "組隊做出真裝置"],
+      "chips": [
+        "會聽會看會動",
+        "邊緣 AI 實戰",
+        "組隊做出真裝置"
+      ],
       "order": 6
     },
     {
@@ -97,7 +121,11 @@
       "kind": "regular",
       "status": "open",
       "tagline": "用聊天的方式寫程式：從第一句指令到作品上線",
-      "chips": ["不用背語法", "零基礎友善", "作品放得上網"],
+      "chips": [
+        "不用背語法",
+        "零基礎友善",
+        "作品放得上網"
+      ],
       "order": 7
     },
     {
@@ -111,7 +139,11 @@
       "kind": "lecture-series",
       "status": "open",
       "tagline": "12 場專家演講：AI 的未來、法律的邊界、花蓮的想像",
-      "chips": ["每週一位專家", "AI×法律×在地", "全國巡迴課程"],
+      "chips": [
+        "每週一位專家",
+        "AI×法律×在地",
+        "全國巡迴課程"
+      ],
       "order": 8
     }
   ]
