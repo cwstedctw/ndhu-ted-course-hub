@@ -343,21 +343,14 @@
         "title": "守學術誠信與安全底線",
         "body": "遵守誠信、隱私與著作權；只用公開或合成資料。",
         "bodyLong": "遵守誠信、隱私與著作權。課堂只用公開或合成資料，不輸入個資、真實成績、私人信件或未授權的照片與聲音。把 AI 當成一起完成作品的夥伴，而不是替你寫作業的人。"
+      },
+      {
+        "title": "不必問可不可以用",
+        "body": "這門課就是在學怎麼用 AI；要學的是用得對，課堂上帶。",
+        "bodyLong": "這是一門講 AI 的課，每一週的成果都預設你會用它，所以這裡不會有一張「可以／不可以」的清單。要學的是用得對：怎麼把要求講清楚、什麼時候要把它給的東西退回去、哪一句要自己查過才敢寫進報告。這件事在課堂上一堂一堂帶，另外三條守則就是底線。"
       }
     ],
-    "aiRulesNote": "前兩條 bodyLong＝陳文盛 核定 2026-06-12（D 案 4–6，第 6 條軟化版）；2026-08-26 依 v4 第三節資料底線與第五節「一致不等於證據」補寫第二、三條；投影片用 body、HTML 版可用 bodyLong",
-    "aiPolicyExamples": {
-      "structure": [
-        "可以使用（開放）",
-        "需註明與說明（引導）",
-        "禁止使用（限制）"
-      ],
-      "structureNote": "三分類架構 陳文盛 核定 2026-06-12（D 案 7）",
-      "examples": {
-        "status": "pending_ted",
-        "note": "各分類的情境實例待 陳文盛 給"
-      }
-    },
+    "aiRulesNote": "前兩條 bodyLong＝陳文盛 核定 2026-06-12（D 案 4–6，第 6 條軟化版）；2026-08-26 依 v4 第三節資料底線與第五節「一致不等於證據」補寫第二、三條；投影片用 body、HTML 版可用 bodyLong。2026-09-02 陳文盛 決定：本課不列「可以／需註明／禁止」三分類例子——課程本身就是在學怎麼用 AI，怎麼用得對由授課教師在課堂帶；原 aiPolicyExamples（三分類＋pending 佔位）與英文鏡像的 aiPolicyStructure 一併移除，改補第四張卡。此決定取代 2026-06-12（D 案 7）的三分類架構在本課的適用。",
     "showcaseNote": "這些是上學期同學自選的挑戰方向，不是本課的及格門檻，也不是加分條件——公開 repo、上線網址與命令列都不在要求內。評分只看任務、證據、權限、驗證與復原。",
     "whatToBring": [
       "筆電或平板（建議筆電）；沒有裝置也有紙本與教師預生成的等值路徑",
@@ -682,12 +675,11 @@
         {
           "title": "Integrity and safety limits",
           "body": "Honour academic integrity, privacy, and copyright. This course uses public or synthetic data only—no personal data, real grades, private correspondence, or unlicensed photos and audio. Treat AI as a partner in making the work, not as someone who does your assignment for you."
+        },
+        {
+          "title": "You do not need to ask whether AI is allowed",
+          "body": "This is a course about AI. Every week assumes you will use it, so there is no list here of what is and is not allowed. What you have to learn is how to use it well: how to state what you want, when to send its output back, and which sentence you must check yourself before it goes into a report. We work through that in class, week by week. The other three rules are the floor."
         }
-      ],
-      "aiPolicyStructure": [
-        "Allowed (open)",
-        "Cite and explain (guided)",
-        "Not allowed (restricted)"
       ],
       "showcaseNote": "These were the directions last term's students chose to push in—they are not a pass mark for this course and they are not a way to earn extra credit. A public repository, a live URL, and the command line are all outside what is asked of you. Grading looks only at the task, the evidence, permissions, verification, and recovery.",
       "whatToBring": [
@@ -740,7 +732,7 @@
     }
   },
   "meta": {
-    "lastReviewed": "2026-08-26",
+    "lastReviewed": "2026-09-02",
     "validForSemester": "115-1",
     "owner": "陳文盛（陳文盛）",
     "sources": [
