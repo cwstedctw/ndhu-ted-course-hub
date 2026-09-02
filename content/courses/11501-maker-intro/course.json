@@ -29,6 +29,8 @@
         "note": "節次與教室據校方教師開課查詢系統（2026-07-03）；教室由送件版 D309 改為理工二館 D301；鐘點據課務組上課節次時間對照表"
       },
       "room": "理工二館 D301",
+      "slidoEvent": "1285962",
+      "slidoEventUrl": "https://app.sli.do/event/qPA7XFy7wNntMdf4d16riX",
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-maker-intro/",
       "deckUrl": "/decks/11501-maker-intro.html"
     }
@@ -354,14 +356,13 @@
       "office": "assets/maps/c306-3f-zoom.png"
     },
     "placeholders": [
-      "Slido event code",
       "e學苑課程代碼",
       "TA 名字",
       "課程教材網址"
     ]
   },
   "meta": {
-    "lastReviewed": "2026-09-01",
+    "lastReviewed": "2026-09-02",
     "validForSemester": "115-1",
     "owner": "陳文盛（陳文盛）",
     "sources": [
@@ -376,6 +377,13 @@
   },
   "hub": {
     "links": [
+      {
+        "platform": "other",
+        "use": "W1 課堂互動",
+        "label": "Slido #1285962",
+        "url": "https://app.sli.do/event/qPA7XFy7wNntMdf4d16riX",
+        "urlStatus": "confirmed"
+      },
       {
         "platform": "elearn",
         "use": "教材與交作業",
