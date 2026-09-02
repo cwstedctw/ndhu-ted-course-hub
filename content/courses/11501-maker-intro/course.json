@@ -351,9 +351,9 @@
       "workflow": "workflow-hero-maker.webp"
     },
     "floorPlans": {
-      "$comment": "D301 使用校方理工二館三樓官方圖；C306 使用既有驗證裁切圖",
-      "classroom": "assets/maps/d301-3f-official.jpg",
-      "office": "assets/maps/c306-3f-zoom.png"
+      "$comment": "D301 依校方理工二館三樓底圖重繪；C306 沿用已驗證重繪圖；房號以真文字疊入正確房間",
+      "classroom": "assets/maps/d301-3f-maker-ng.webp",
+      "office": "assets/maps/c306-3f-maker-ng.webp"
     },
     "placeholders": [
       "e學苑課程代碼",
