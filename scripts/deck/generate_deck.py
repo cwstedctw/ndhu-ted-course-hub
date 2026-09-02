@@ -230,6 +230,7 @@ class Deck:
         # 預設沿用舊版 TA 待補；個別課程可用 overlay 的 taLine 覆寫。
         # taLine="" 代表這門介紹 deck 不顯示未確認的 TA 佔位。
         ta_line = self.ov("taLine", None)
+        # 2026-09-02 AB 中文版渲染：「TA：開學前待補」折成「開學前待／補」孤字 → 整組 nowrap
         if ta_line is None:
             instructor_value = (f'{esc(instr.get("name", ""))}　<span style="white-space:nowrap">'
                                 f'<small>TA：</small>{pb.pending("開學前待補")}</span>')
@@ -266,13 +267,17 @@ class Deck:
         """B2 六卡「課堂平台」欄：v1 硬編『點名 Zuvio・作業 Teams・共筆 HackMD』，
         現改由 intro.platforms 動態組（use→name 併成短句），行為對齊 v1 三項固定序。"""
         plats = self.intro.get("platforms", [])
+        # 2026-09-02：每組「用途 名稱」包 nowrap——AB 渲染把「e學苑」拆成「e／學苑」（秀姑巒／立霧）
         parts = [f'<span style="white-space:nowrap">{esc(p.get("use", ""))} {esc(p.get("name", ""))}</span>'
                  for p in plats]
         line_html = "・".join(parts)
         # Slido 活動已建就直接印編號、佔位只留還沒有的（2026-08-31 立霧終查抓到：
         # #7610459 在 p06/p18 都印了，這裡卻仍掛「開學前補」佔位，自相矛盾）。
         code = self.section.get("slidoEvent")
-        # e學苑代碼 2026-09-02 Ted 拍板不印（「學生加入課程系統就看得到」）；overlay 仍可用 elearnShort 指定。
+        # e學苑代碼 2026-09-02 Ted 拍板不印：「no need，the student join class system will provide」
+        # ——學生選上課之後 e學苑 的「我的課程」自然會出現，代碼對學生沒有用處。
+        # 原本這裡掛「e學苑課程代碼開學前補」佔位，是一個永遠不會被填、也不該被填的待辦。
+        # overlay 仍可用 elearnShort 明確指定要印什麼（沒設就整段不印，不再產生佔位）。
         elearn_short = self.ov("elearnShort", None)
         elearn_tail = esc(elearn_short) if isinstance(elearn_short, str) and elearn_short else None
         if code:
@@ -524,8 +529,9 @@ class Deck:
         # 沿用 v1 版式常數（band1=Part1(3):Part2(4)、band2=P2續(1):Part3(5)）——
         # v1 這兩行 flex 數字是「排版微調」而非課程內容，故仍留常數；若未來週數改變，
         # 這裡改用「依 part 實際格數算 flex」而非沿用 v1 寫死比例，兩者在 17 週不變時等價。
-        band1 = self._week_band(row1_weeks, phase_titles, phase_weeks, variant="row1")
-        band2 = self._week_band(row2_weeks, phase_titles, phase_weeks, variant="row2")
+        band1 = self._week_band(row1_weeks, phase_titles, phase_weeks, prev_last_part=None)
+        band2 = self._week_band(row2_weeks, phase_titles, phase_weeks,
+                                prev_last_part=row1_weeks[-1].get("part") if row1_weeks else None)
 
         inner = (
             pb.kicker("17-WEEK ROADMAP") + pb.title("17 週課程地圖")
@@ -547,11 +553,14 @@ class Deck:
         return {2: "二", 3: "三", 4: "四", 5: "五"}.get(n, str(n))
 
     @staticmethod
-    def _week_band(weeks, phase_titles, phase_weeks, variant):
+    def _week_band(weeks, phase_titles, phase_weeks, prev_last_part=None):
         """依實際 part 分布算色帶格數與文案；17 週、三部曲切法不變時，
         算出的 flex 比例與 v1 硬編值一致（row1: p1=3,p2=4；row2: p2=1,p3=5）。
         色帶名稱與週距一律取自 intro.phases[]（title／weeks）——SKILL.md 內容對照表
-        「三段色帶」本就標 JSON 算出，不得硬編單一課程的部名文案。"""
+        「三段色帶」本就標 JSON 算出，不得硬編單一課程的部名文案。
+        「續」判斷（2026-09-01 立霧複驗指正）：第一段是否延續＝跟上一列最後一個 part
+        比對，不是「只要是第二列第一段」——某 part 剛好從第二列開頭起算時不得誤標。
+        既有課程（延續皆為真延續）輸出逐字元不變。"""
         # 統計本列每個 part 出現幾筆（週數項目，不是實際週數）
         from collections import OrderedDict
         counts = OrderedDict()
@@ -571,8 +580,10 @@ class Deck:
 
         segs = []
         for idx, p in enumerate(parts_ids):
-            is_first_seg_of_row = (idx == 0)
-            is_continuation = (variant == "row2" and is_first_seg_of_row and len(parts_ids) > 1)
+            # len>1 條件已去除（立霧 r2）：整列都是延續段時也該標「續」，
+            # 「是否延續」只跟上一列末 part 有關（現行各課輸出不受影響、已回歸驗證）
+            is_continuation = (idx == 0 and prev_last_part is not None
+                               and p == prev_last_part)
             cls = cls_map.get(p, "p2")
             segs.append(f'<div class="{cls}" style="flex:{counts[p]}">{esc(label_for(p, is_continuation))}</div>')
         return f'<div class="pband">{"".join(segs)}</div>'
@@ -673,7 +684,8 @@ class Deck:
         # 改版：115-1 六課皆已定案走 e學苑（Hub commit 4a33840），模板層跟著換。
         items = self.ov("elearnItems", None)
         if not isinstance(items, list) or not items:
-            # 2026-09-02 Ted 拍板 deck 不印 e學苑課程代碼（「學生加入課程系統就看得到」）。
+            # 2026-09-02 Ted 拍板 deck 不印 e學苑課程代碼（「學生加入課程系統就看得到」），
+            # 原第三點「課程代碼：【開學前待補】」拿掉——它跟 p02 那個一樣是永遠不會被填的佔位。
             items = [
                 '用學校帳號登入 <span style="font-family:var(--lat)">elearn4.ndhu.edu.tw</span>',
                 "教材與交作業都在這",
@@ -713,6 +725,7 @@ class Deck:
         if not tool_groups:
             return  # 純演講課等無課堂工具區——跳頁（平台已在第 13 頁呈現，2026-07-03）
         group_icon = {"理解 AI": "bot", "查資料": "search", "做內容": "slides", "任務型與自動化": "term",
+                      # 2026-09-02 ai-intro 115-1 四組（秀姑巒眼檢：沒對到全變扳手）
                       "做出作品": "slides", "查證與資料": "search", "版本與安全": "term", "Agent 監督": "bot"}
         compact = len(tool_groups) >= 5  # 五組以上走窄邊距，防總高溢出畫布
         bands = ""
@@ -746,8 +759,9 @@ class Deck:
             + f'<div class="muted">{note_html}</div>'
         )
         # ≥5 組窄版連 note 都貼到頁底，會跟 footer-org 疊字（2026-09-01 it-apply 六組
-        # 渲染眼檢抓到）→ 窄版免頁尾；4 組以下照舊（既有課程 parity 不變）
-        self.write(14, inner, no_footer=True)  # 2026-09-02：中文說明兩行就撞 footer，一律免頁尾
+        # 渲染眼檢抓到）→ 窄版免頁尾。2026-09-02 ai-intro AB 四組、說明折兩行照樣撞
+        # footer（秀姑巒／立霧眼檢），所以這頁一律免頁尾——雙語版本來就是 no_footer=True。
+        self.write(14, inner, no_footer=True)
 
     @staticmethod
     def _tools_note_html(note):
@@ -770,12 +784,14 @@ class Deck:
         )
         # dailyTools 為空（如純演講課）時，固定推薦語沒有卡片可指——一併省略，
         # 讓頁面保持乾淨，而不是掛著沒有對象的說明句。
-        daily_note = self.intro.get(
-            "dailyToolsNote",
-            "第一週先挑一個順手的就好，不用全裝；之後再慢慢擴充。",
-        )
+        # 說明句可由 intro.dailyToolsNote 按課覆寫（2026-09-01 創客課 W11 後才裝）；
+        # 沒給就用共用預設。預設句的〔一個順手的〕保留字面 HTML 重點標，
+        # 課程自訂的那句則走 esc()（資料層不寫 HTML）。
+        daily_note = self.intro.get("dailyToolsNote")
         note_html = (
-            f'<div class="muted" style="margin-top:24px">{esc(daily_note)}</div>'
+            (f'<div class="muted" style="margin-top:24px">{esc(daily_note)}</div>' if daily_note else
+             '<div class="muted" style="margin-top:24px">第一週先挑<b style="color:var(--ink)">一個順手的</b>'
+             '就好，不用全裝；之後再慢慢擴充。</div>')
         ) if daily else ''
         # 卡片＋推薦語一起包 .vcenter（2026-07-05 設計升級，同第 13 頁理由）
         inner = (
@@ -1207,10 +1223,16 @@ class BilingualDeck:
         # 色帶改依 weeklyPlan 的 part 分布動態算（2026-09-01，鏡射 zh _week_band）：
         # v1 寫死兩段式 band1En/band2En，v4 的 part 分布（9/5/3）在第二列會出現三段，
         # 寫死版本裝不下。band 文案＝overlay weeks.partsEn[part id]（name＋weeks），
-        # 字面 HTML（& 不轉義）同 v1 慣例；跨列延續段印「P{id} cont.」。
+        # 字面 HTML（& 不轉義）同 v1 慣例；跨列延續段印「PART {id} (cont.)」。
+        # fail-closed：partsEn 缺該 part＝overlay 過期，當場擋（立霧複驗 2026-09-01 指正，
+        # 與 labelsEn 條數檢查同一原則——不靜默退化成「PART n」空週距）。
         parts_en = w.get("partsEn", {})
+        for wk in weekly:
+            if str(wk.get("part")) not in parts_en:
+                raise ValueError(f"overlay weeks.partsEn 缺 part {wk.get('part')} 的英文名——"
+                                 "overlay 過期，先補齊")
 
-        def band(weeks_row, variant):
+        def band(weeks_row, prev_last_part):
             from collections import OrderedDict
             counts = OrderedDict()
             for wk in weeks_row:
@@ -1219,8 +1241,11 @@ class BilingualDeck:
             cls_map = {1: "p1", 2: "p2", 3: "p3", 4: "p4"}
             segs = []
             for idx, p in enumerate(counts):
-                is_cont = (variant == "row2" and idx == 0 and len(counts) > 1)
-                info = parts_en.get(str(p), {})
+                # 「續」＝這一段真的是上一列最後一個 part 的延續（立霧複驗指正：
+                # 只看 row2 第一段會把「剛好從第二列開頭起算的新 part」也誤標成續）
+                is_cont = (idx == 0 and prev_last_part is not None
+                           and p == prev_last_part)  # len>1 條件已去除（立霧 r2，同 zh）
+                info = parts_en[str(p)]
                 if is_cont:
                     text = f'PART {p} (cont.)'
                 else:
@@ -1230,8 +1255,9 @@ class BilingualDeck:
                 segs.append(f'<div class="{cls_map.get(p, "p2")}" style="flex:{counts[p]}">{text}</div>')
             return f'<div class="pband">{"".join(segs)}</div>'
 
-        band1 = band(weekly[:half], "row1")
-        band2 = band(weekly[half:], "row2")
+        row1_weeks = weekly[:half]
+        band1 = band(row1_weeks, None)
+        band2 = band(weekly[half:], row1_weeks[-1].get("part") if row1_weeks else None)
         inner = (
             bb.kicker(w["kicker"]) + bb.bititle(w["titleEn"], w["titleZh"])
             + '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:40px">'
