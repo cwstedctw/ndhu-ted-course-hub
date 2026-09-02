@@ -1,7 +1,7 @@
 {
   "$comment": "AIoT 智慧裝置實作 W1 一小時介紹 deck 專屬 overlay。課程事實仍由 Hub course.json 提供；本檔只放 deck 顯示策略與 Slido 提示語。",
   "appliesTo": "115-1-aiot",
-  "section": "AA",
+  "section": "SC",
   "taLine": "",
   "elearnShort": "e學苑從「我的課程」進入",
   "elearnItems": [

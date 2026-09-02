@@ -240,13 +240,10 @@ class Deck:
             instructor_value = esc(instr.get("name", ""))
         is_single = len(self.course.get("sections") or []) == 1
         course_id_label = "課　　號" if is_single else "班別／課號"
+        section_prefix = "" if is_single else f'{esc(sec.get("id", ""))} 班　'
         course_id_value = (
-            f'<small style="font-family:var(--lat)">{esc(sec.get("code", ""))}・'
-            f'<span style="white-space:nowrap">系統編號</span> {esc(sec.get("systemId", ""))}</small><br>'
-            f'<small>{esc(course_type)}・{esc(credits)} 學分・{esc(weeks_system)}</small>'
-            if is_single else
-            f'{esc(sec.get("id", ""))} 班　<small style="font-family:var(--lat)">'
-            f'{esc(sec.get("code", ""))}・<span style="white-space:nowrap">系統編號</span> {esc(sec.get("systemId", ""))}</small><br>'
+            section_prefix + f'<small style="font-family:var(--lat)">{esc(sec.get("code", ""))}・'
+            f'<span style="white-space:nowrap">系統編號 {esc(sec.get("systemId", ""))}</span></small><br>'
             f'<small>{esc(course_type)}・{esc(credits)} 學分・{esc(weeks_system)}</small>'
         )
         cells = (
