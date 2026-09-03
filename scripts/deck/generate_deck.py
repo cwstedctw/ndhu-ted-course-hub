@@ -30,6 +30,20 @@ sys.path.insert(0, os.path.join(HERE, "templates"))
 
 import pagebuilders as pb  # noqa: E402
 
+
+def _total_weeks(weekly):
+    """週次地圖標題用的總週數：取 w 欄位裡出現過的最大整數。
+
+    不能用格數——合併週（"4–5"、"16–17"）會讓 15 格的課被寫成「15 週」。
+    抓不到數字就退回格數，至少不會炸。
+    """
+    nums = []
+    for w in weekly or []:
+        nums += [int(n) for n in re.findall(r"\d+", str(w.get("w", "")))]
+    return max(nums) if nums else len(weekly or [])
+
+
+
 TOTAL_PAGES = 19          # v1 模板頁規格總數（模板頁 id 1..19）
 SKIPPABLE_PAGES = {13, 14, 15}  # 內容為空可跳的模板頁：平台／課堂工具／日常工具
                                 # （2026-07-03 Ted 拍板：頁數依課程內容而定，如純演講課無工具區）
@@ -559,7 +573,12 @@ class Deck:
                                 prev_last_part=row1_weeks[-1].get("part") if row1_weeks else None)
 
         inner = (
-            pb.kicker("17-WEEK ROADMAP") + pb.title("17 週課程地圖")
+            # 2026-09-03：標題原本寫死「17 週」，但 AI未來畫了 W1–W18（17 週新制＋W18 彈性教學
+            # 規劃的期末成果發表會，官方教學計畫也是這樣），標題與畫面打架。
+            # ⚠️用格數會出錯——資訊應用有合併格（W4–5、W16–17），15 格其實是 17 週。
+            # 取所有 w 欄位裡的最大週次才是真的週數。
+            pb.kicker(f"{_total_weeks(weekly)}-WEEK ROADMAP")
+            + pb.title(f"{_total_weeks(weekly)} 週課程地圖")
             + '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:44px">'
             + '<div><div style="position:relative"><div class="tlbar" style="top:7px;left:0;right:0"></div>'
             + f'<div class="timeline" style="margin-top:0">{row1}</div></div>{band1}</div>'
@@ -693,29 +712,23 @@ class Deck:
 
     def page11_help(self):
         instr = self.instructor
-        # 2026-09-03：原本第三個求助管道「上 Slido，問問題不用舉手。」是一行 .muted，
-        # 位置就在頁尾校名列正上方、字級與灰度也相近——九份 deck 的渲染眼檢一致判定
-        # 它會被當成頁尾樣板字整段略過（其中一條三票全票）。升成與前兩者同級的第三張卡，
-        # 順便把版面下半那片約五成的空白補起來。沒有 Slido 代碼的課維持兩張卡。
-        code = self._slido_event_code()
+        # 2026-09-03 Ted 定：**這頁不放 Slido**。Slido 是課堂互動、而且幾乎只有 W1 問卷在用，
+        # 不是卡關時找人的管道；平常的管道就是 e學苑 課程訊息與 Email。
+        # （原本這裡有一行 .muted「上 Slido，問問題不用舉手。」，貼在頁尾校名列正上方、
+        #  字級與灰度都相近，九份 deck 的渲染眼檢一致判定會被當成頁尾略過——
+        #  但正解不是把它變大，是它本來就不該在這一頁。整句移除。）
+        # 之後若開了 Discord 之類的第三個管道再加第三張卡（待 TA 定案）。
         cards = [
             pb.linecard("msg", "e學苑", "課程訊息直接發給我"),
             pb.linecard("mail", "Email",
                         f'<span style="font-family:var(--lat);font-size:20px">'
                         f'{esc(instr.get("email", ""))}</span>'),
         ]
-        if code:
-            cards.append(pb.linecard(
-                "qr", "Slido",
-                '問問題不用舉手　'
-                f'<span style="font-family:var(--lat);color:var(--gold)">#{esc(code)}</span>'))
-        grid_cls = "grid grid-3" if len(cards) == 3 else "grid grid-2"
         # margin-top 會蓋掉 .grid 自帶的 margin auto，卡片黏在頁面上緣、下半留一大片空白
-        # （與 p12／p13／p16 的節奏不一致，眼檢九份都提到）——照 p13 的做法用 .vcenter 交還置中。
-        slido_grid = (f'<div class="vcenter"><div class="{grid_cls}" style="margin:0">'
+        # （與 p12／p13／p16 的節奏不一致）——照 p13 的做法用 .vcenter 交還置中。
+        slido_grid = ('<div class="vcenter"><div class="grid grid-2" style="margin:0">'
                       + "".join(cards) + "</div></div>")
-        tail = ("" if code else
-                '<div class="muted" style="margin-top:28px">上 Slido，問問題不用舉手。</div>')
+        tail = ""
         inner = (
             pb.kicker("GETTING HELP") + pb.title("卡關了，怎麼找我")
             + slido_grid
@@ -1368,30 +1381,19 @@ class BilingualDeck:
     def page11_help(self):
         bb = self.bb
         h = self.en["help"]
-        # 2026-09-03：與中文版 page11 同一個修法——第三個求助管道原本是頁尾正上方一行 .muted，
-        # 字級與灰度都近似頁尾校名列，會被當成頁尾略過。升成第三張卡並交還垂直置中。
-        # 同一班的中英兩份要長得一樣（Ted 2026-09-03「make all slide in same style」）。
-        code = self._slido_event_code()
+        # 2026-09-03 Ted 定：同中文版 page11——**這頁不放 Slido**。
+        # Slido 是課堂互動、幾乎只有 W1 問卷在用，不是卡關時找人的管道；
+        # 原本 overlay 的 noteEn（「On Slido you can ask without raising your hand.」）整句不印。
         cards = [
             bb.linecard("msg", h["teamsLabel"], bb.esc(h["teamsValueEn"]) + bb.zh(h["teamsValueZh"])),
             bb.linecard("mail", h["emailLabel"],
                         '<span style="font-family:var(--lat);font-size:20px">'
                         'wschen@gms.ndhu.edu.tw</span>'),
         ]
-        if code:
-            # noteEn 是「英文句　中文句」一串（全形空白分隔），拆開排成英文值＋中文小字
-            parts = str(h.get("noteEn", "")).split("　")
-            note_en = parts[0].strip()
-            note_zh = parts[1].strip() if len(parts) > 1 else ""
-            val = (f'<span style="font-family:var(--lat)">{bb.esc(note_en)}</span>'
-                   f'<span style="font-family:var(--lat);color:var(--gold)">　#{bb.esc(code)}</span>')
-            cards.append(bb.linecard("qr", "Slido", val + (bb.zh(note_zh) if note_zh else "")))
-        grid_cls = "grid grid-3" if len(cards) == 3 else "grid grid-2"
         inner = (
             bb.kicker(h["kicker"]) + bb.bititle(h["titleEn"], h["titleZh"])
-            + f'<div class="vcenter"><div class="{grid_cls}" style="margin:0">'
+            + '<div class="vcenter"><div class="grid grid-2" style="margin:0">'
             + "".join(cards) + '</div></div>'
-            + ("" if code else f'<div class="muted" style="margin-top:26px">{bb.esc(h["noteEn"])}</div>')
         )
         self.write(11, inner)
 
