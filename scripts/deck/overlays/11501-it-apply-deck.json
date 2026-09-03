@@ -1,5 +1,5 @@
 {
-  "$comment": "it-apply（資訊科技與應用）deck 專屬 overlay：只放 Slido 兩頁的提示語（slidoNotes，2026-09-01 起 generate_deck page06/18 消費；值＝本 skill 維護的字面 HTML）。課程內容一律來自 Hub course.json，不放這裡。題組定稿見 workspace/teaching/material/it-apply-course/weeks/w01/W1-slido-題組定稿.md。 2026-09-02：taLine=\"\" ——這門課 course.json 沒有 TA 欄，deck 原本會印「TA：開學前待補」給學生看（一個永遠不會被填的佔位）；正本 §一 基本資料也沒有助教這一項。若這門課真的有 TA，把名字填進 taLine 即可（見 §十二 待 Ted 那列）。",
+  "$comment": "it-apply（資訊科技與應用）deck 專屬 overlay：只放 Slido 兩頁的提示語（slidoNotes，2026-09-01 起 generate_deck page06/18 消費；值＝本 skill 維護的字面 HTML）。課程內容一律來自 Hub course.json，不放這裡。題組定稿見 workspace/teaching/material/it-apply-course/weeks/w01/W1-slido-題組定稿.md。 2026-09-02：taLine=\"\" ——這門課 course.json 沒有 TA 欄，deck 原本會印「TA：開學前待補」給學生看（一個永遠不會被填的佔位）；正本 §一 基本資料也沒有助教這一項。2026-09-02 Ted：**TA 人選 TBD**（還沒定）——定了把名字填進 taLine 即可，deck 隨 Hub build 自動重產。",
   "appliesTo": "115-1-gc1480-it-apply",
   "slidoNotes": {
     "wave1": "等等問你：你的系所、報告與試算表的手感、平常怎麼用 AI",
