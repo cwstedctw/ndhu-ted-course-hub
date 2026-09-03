@@ -167,10 +167,10 @@
       "titleEn": "How grades work",
       "titleZh": "成績怎麼算",
       "items": [
-        { "labelEn": "Participation", "labelZh": "平時成績", "subEn": "five in-class evidence cards" },
-        { "labelEn": "Assignments", "labelZh": "作業成績", "subEn": "four categories · 5% each" },
-        { "labelEn": "Midterm", "labelZh": "期中", "subEn": "showcase · W2–7 skills" },
-        { "labelEn": "Final", "labelZh": "期末", "subEn": "AI workflow project" }
+        { "labelEn": "Participation", "labelZh": "平時成績", "subEn": "attendance & in-class record" },
+        { "labelEn": "Assignments", "labelZh": "作業成績", "subEn": "set by teaching progress" },
+        { "labelEn": "Midterm", "labelZh": "期中", "subEn": "midterm AI showcase" },
+        { "labelEn": "Final", "labelZh": "期末", "subEn": "AI workflow project & presentation" }
       ],
       "noteEnHtml": "Final = an AI workflow project: at least one main and one supporting AI capability, three tests, and one failure-and-recovery. You may build on earlier work—<b style=\"color:var(--ink)\">brand count, technical difficulty and public deployment earn no extra points.</b>",
       "noteZh": "期末＝AI 工作流專題：至少一項主要與一項輔助 AI 能力、三筆測試、一次失敗與復原；可沿用深化先前作品，品牌數量、技術難度與公開部署不加分。"
