@@ -155,13 +155,59 @@ def pending(t):
 
 
 def infocard(ic, lab, val):
-    """val 允許帶 HTML（呼叫端已組好 <small> 等），沿用 v1 行為。"""
+    """val 允許帶 HTML（呼叫端已組好 <small> 等），沿用 v1 行為。
+
+    2026-09-03：.label 帶 text-transform:uppercase，是為了 EMAIL／PLATFORM 這種拉丁標籤；
+    但標籤是中文時它會把品牌名一起大寫掉——「e學苑」在 p11 印成「E學苑」，
+    與同一份 deck 其他五頁不一致（九份 deck 全中，渲染眼檢抓到）。
+    標籤含中日韓文字就改用 .label--asis（不轉大寫）。
+    """
+    cjk = any('一' <= ch <= '鿿' for ch in str(lab))
+    lab_cls = "label label--asis" if cjk else "label"
     return (f'<div class="card infocard"><div style="display:flex;gap:16px;align-items:flex-start">'
             f'<div style="flex:none;margin-top:2px">{icon(ic)}</div>'
-            f'<div><div class="label">{esc(lab)}</div><div class="value">{val}</div></div></div></div>')
+            f'<div><div class="{lab_cls}">{esc(lab)}</div><div class="value">{val}</div></div></div></div>')
 
 
 linecard = infocard  # v1 中 linecard 與 infocard 同構，保留兩個名字方便對照 v1 呼叫點
+
+
+def maplabel(text, x, y, kind="n"):
+    """樓層圖上的房名標籤——真文字疊圖，不是畫進圖裡的字。
+
+    2026-09-03 從畫布版 build_from_v2.py 的 label_span 搬進產線：立霧重繪的 -ng 地圖
+    本身不含文字（規則：圖裡的字絕不叫圖像模型畫），房名靠這一層疊上去。
+    x／y 是相對圖寬高的百分比，座標沿用畫布版已逐格對過原圖的那份。
+    text 允許帶 <br>（呼叫端自控，屬本產線自有內容）。
+    """
+    base = ("position:absolute;transform:translate(-50%,-50%);line-height:1.3;"
+            "white-space:nowrap;font-family:var(--zh);")
+    if kind == "vert":
+        style = (base + "writing-mode:vertical-rl;font-weight:700;font-size:11px;"
+                 "color:#CBE9E5;letter-spacing:.2em;"
+                 "text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 4px rgba(0,0,0,.9);")
+    elif kind == "badge":
+        style = (base + "font-family:var(--lat);font-weight:700;font-size:11px;"
+                 "letter-spacing:.08em;color:#F0CE8B;border:1px solid rgba(240,206,139,.5);"
+                 "border-radius:999px;padding:2px 9px;background:rgba(6,37,36,.6);")
+    elif kind == "target":
+        style = (base + "font-weight:900;font-size:12px;color:#33250C;text-align:center;")
+    elif kind == "gold":
+        style = (base + "font-weight:900;font-size:13px;color:#F5D48A;"
+                 "text-shadow:0 1px 8px rgba(0,0,0,.95);letter-spacing:.04em;")
+    else:
+        style = (base + "font-weight:700;font-size:11.5px;color:#CBE9E5;letter-spacing:.05em;"
+                 "text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 4px rgba(0,0,0,.9);")
+    return f'<span style="{style}left:{x}%;top:{y}%;">{text}</span>'
+
+
+def map_with_labels(img_html, labels):
+    """把 <img> 與房名標籤層包成同一個相對定位容器；沒有標籤就原樣回傳。"""
+    if not img_html or not labels:
+        return img_html
+    spans = "".join(maplabel(*lb) for lb in labels)
+    return ('<span style="position:relative;display:inline-block;line-height:0;">'
+            f'{img_html}{spans}</span>')
 
 
 def partcard(num, head, body, compact=False):

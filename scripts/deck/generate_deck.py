@@ -232,8 +232,11 @@ class Deck:
         ta_line = self.ov("taLine", None)
         # 2026-09-02 AB 中文版渲染：「TA：開學前待補」折成「開學前待／補」孤字 → 整組 nowrap
         if ta_line is None:
+            # 2026-09-03 Ted：「TA said TBD，if confirm we will update」——
+            # 原字樣「開學前待補」印在開學當天要投的那一頁上自相矛盾（五份 deck 都有），
+            # 改成中性的「另行公布」；TA 定了填 overlay 的 taLine 即可，不必再動產線。
             instructor_value = (f'{esc(instr.get("name", ""))}　<span style="white-space:nowrap">'
-                                f'<small>TA：</small>{pb.pending("開學前待補")}</span>')
+                                f'<small>TA：</small>{pb.pending("另行公布")}</span>')
         elif ta_line:
             instructor_value = (f'{esc(instr.get("name", ""))}　<span style="white-space:nowrap">'
                                 f'<small>TA：</small>{esc(ta_line)}</span>')
@@ -301,8 +304,7 @@ class Deck:
             room_line = f'<div style="font-size:22px;font-weight:700;margin-top:12px">{esc(room)}</div>'
         # 2026-08-31：平面圖 6/10 就備好在 OneDrive 課程介紹素材夾，只是產線沒有嵌圖的路。
         # course.json 的 intro.floorPlans 指路徑；找不到檔就退回原本的待補佔位。
-        plan_img = pb.img_b64(self._floor_plan("classroom"), alt=f"{room} 平面圖位置",
-                              style="max-width:100%;max-height:330px;border-radius:8px")
+        plan_img = self._plan_html("classroom", f"{room} 平面圖位置")
         if plan_img:
             body = (plan_img
                     + f'<div style="font-size:20px;font-weight:700;margin-top:14px;color:var(--on-dark)">'
@@ -374,8 +376,7 @@ class Deck:
                 + f'<div style="font-size:22px;font-weight:700;margin-top:12px">{esc(off)}</div>'
                 + '<div class="muted" style="margin-top:6px;color:var(--on-dark-dim)">'
                 + pb.pending("【研究室平面圖・開學前補】") + '</div>'
-              ))(pb.img_b64(self._floor_plan("office"), alt="研究室平面圖位置",
-                            style="max-width:100%;max-height:330px;border-radius:8px"),
+              ))(self._plan_html("office", "研究室平面圖位置"),
                  instr.get("office", ""))
             + '</div></div>'
         )
@@ -421,6 +422,25 @@ class Deck:
         if os.path.isabs(value):
             return value
         return os.path.join(HERE, value.replace("/", os.sep))
+
+    def _floor_plan_labels(self, which):
+        """intro.floorPlans.labels.{classroom,office} → [[文字, x%, y%, 樣式], ...]。
+
+        2026-09-03：立霧重繪的 -ng 樓層圖本身不含文字，房名靠這一層疊真文字上去
+        （規則：圖裡的字絕不叫圖像模型畫）。座標沿用畫布版 build_from_v2.py 那份
+        已逐格對過原掃描圖的 MAP_LABELS。沒設定就不疊、圖照舊。
+        """
+        fp = (self.intro.get("floorPlans") or {})
+        labels = (fp.get("labels") or {}).get(which)
+        if not isinstance(labels, list):
+            return []
+        return [lb for lb in labels if isinstance(lb, list) and len(lb) >= 3]
+
+    def _plan_html(self, which, alt):
+        """樓層圖 <img>（含房名標籤層）；沒有圖回 None，呼叫端退回待補佔位。"""
+        img = pb.img_b64(self._floor_plan(which), alt=alt,
+                         style="max-width:100%;max-height:330px;border-radius:8px")
+        return pb.map_with_labels(img, self._floor_plan_labels(which))
 
     def _slido_event_code(self):
         code = self.section.get("slidoEvent")
@@ -673,13 +693,33 @@ class Deck:
 
     def page11_help(self):
         instr = self.instructor
+        # 2026-09-03：原本第三個求助管道「上 Slido，問問題不用舉手。」是一行 .muted，
+        # 位置就在頁尾校名列正上方、字級與灰度也相近——九份 deck 的渲染眼檢一致判定
+        # 它會被當成頁尾樣板字整段略過（其中一條三票全票）。升成與前兩者同級的第三張卡，
+        # 順便把版面下半那片約五成的空白補起來。沒有 Slido 代碼的課維持兩張卡。
+        code = self._slido_event_code()
+        cards = [
+            pb.linecard("msg", "e學苑", "課程訊息直接發給我"),
+            pb.linecard("mail", "Email",
+                        f'<span style="font-family:var(--lat);font-size:20px">'
+                        f'{esc(instr.get("email", ""))}</span>'),
+        ]
+        if code:
+            cards.append(pb.linecard(
+                "qr", "Slido",
+                '問問題不用舉手　'
+                f'<span style="font-family:var(--lat);color:var(--gold)">#{esc(code)}</span>'))
+        grid_cls = "grid grid-3" if len(cards) == 3 else "grid grid-2"
+        # margin-top 會蓋掉 .grid 自帶的 margin auto，卡片黏在頁面上緣、下半留一大片空白
+        # （與 p12／p13／p16 的節奏不一致，眼檢九份都提到）——照 p13 的做法用 .vcenter 交還置中。
+        slido_grid = (f'<div class="vcenter"><div class="{grid_cls}" style="margin:0">'
+                      + "".join(cards) + "</div></div>")
+        tail = ("" if code else
+                '<div class="muted" style="margin-top:28px">上 Slido，問問題不用舉手。</div>')
         inner = (
             pb.kicker("GETTING HELP") + pb.title("卡關了，怎麼找我")
-            + '<div class="grid grid-2" style="margin-top:30px">'
-            + pb.linecard("msg", "e學苑", "課程訊息直接發給我")
-            + pb.linecard("mail", "Email", f'<span style="font-family:var(--lat);font-size:20px">{esc(instr.get("email", ""))}</span>')
-            + '</div>'
-            + '<div class="muted" style="margin-top:28px">上 Slido，問問題不用舉手。</div>'
+            + slido_grid
+            + tail
         )
         self.write(11, inner)
 
@@ -707,21 +747,39 @@ class Deck:
         )
         self.write(12, inner)
 
+    def _platforms_for_pages(self):
+        """p13「這門課的網路工具」與 p14 底部平台帶用的清單＝intro.platforms 再補上 Slido。
+
+        2026-09-03：九份 deck 的渲染眼檢一致抓到——p02 的課堂平台印了 Slido 代碼、
+        p06 與 p18 各有一整頁叫學生掃 Slido，唯獨 p13 的工具清單沒有它；
+        學生照 p13 抄工具就會漏掉整學期都在用的那一個。
+        這裡按 slidoEvent 動態補，不寫進 course.json 的 platforms——
+        p02 的 _platform_line_short 另外印「Slido #代碼」，兩邊都放會變成同一頁講兩次
+        （創客 p02 現況就是這樣，眼檢也抓到了）。
+        """
+        plats = list(self.intro.get("platforms", []) or [])
+        if self.section.get("slidoEvent") and not any(
+                "slido" in str(p.get("name", "")).lower() for p in plats):
+            plats.append({"use": "課堂互動", "name": "Slido"})
+        return plats
+
     def page13_platforms(self):
-        plats = self.intro.get("platforms", [])
+        plats = self._platforms_for_pages()
         if not plats:
             return  # 無平台資料——跳頁不出空頁（頁數依內容而定，2026-07-03）
-        use_to_name = {"課堂點名": "user", "交作業": "pen", "課堂共筆": "book"}
+        use_to_name = {"課堂點名": "user", "交作業": "pen", "課堂共筆": "book",
+                       "課堂互動": "qr"}
         cells = "".join(
             pb.toolcard(use_to_name.get(p.get("use", ""), "tool"), p.get("use", ""), p.get("name", ""))
             for p in plats
         )
+        grid = "grid-4" if len(plats) >= 4 else "grid-3"
         # 卡片列包 .vcenter 垂直置中（2026-07-05 設計升級）：v1 的 inline margin-top
         # 蓋掉 .grid 自帶的 margin auto 置中，單排卡片頁下半近半版留白、
         # 與 12/14/16 頁（皆置中）節奏不一致；margin:0 交還置中權給 .vcenter。
         inner = (
             pb.kicker("OUR PLATFORMS") + pb.title("這門課的網路工具")
-            + f'<div class="vcenter"><div class="grid grid-3" style="margin:0">{cells}</div></div>'
+            + f'<div class="vcenter"><div class="grid {grid}" style="margin:0">{cells}</div></div>'
         )
         self.write(13, inner)
 
@@ -740,7 +798,7 @@ class Deck:
             bands += pb.tband(group_icon.get(g.get("group", ""), "tool"), g.get("group", ""), items,
                               compact=compact)
 
-        plats = self.intro.get("platforms", [])
+        plats = self._platforms_for_pages()
         # 工具帶 ≥5 組時版高吃緊：底部平台複習帶（同資訊第 13 頁已有）省略，
         # 否則 pstrip 會被擠出 720px 畫布、裁半截疊在頁尾上
         # （2026-07-03 it-apply 五組實測溢出，review agent 抓到）。
@@ -859,7 +917,11 @@ class Deck:
             + '<div class="subtitle" style="color:var(--on-dark-dim)">可以用 AI 學習與創作，但你要——</div>'
             + body
         )
-        self.write(17, inner, dark=True)
+        # 2026-09-03：這頁有第 04 條的課程（ai-intro AA／AB、it-apply AA／AB）會被頁尾校名列
+        # 直接穿過金色大字「04」，第 04 條說明又貼死畫布最下緣（離底邊 10–13px），
+        # 投影切邊就吃掉半行（渲染眼檢四份都中、洄瀾回讀確認）。
+        # 雙語版本來就是 no_footer=True；中文版跟上，與 p14 同一個處置。
+        self.write(17, inner, dark=True, no_footer=True)
 
     def page18_slido2(self):
         # 同 page06：第二波提示語可由 overlay slidoNotes.wave2 按課覆寫（字面 HTML）。
@@ -1009,6 +1071,8 @@ class BilingualDeck:
     # 直接借用 Deck 的同名函式（都只讀 self.intro／self.section，兩類介面相同）。
     _hero = Deck._hero
     _floor_plan = Deck._floor_plan
+    _floor_plan_labels = Deck._floor_plan_labels
+    _plan_html = Deck._plan_html
     _slido_qr_html = Deck._slido_qr_html
     _slido_event_code = Deck._slido_event_code
 
@@ -1067,8 +1131,7 @@ class BilingualDeck:
         loc = self.en["location"]
         s = self.en["section"]
         # intro.floorPlans 有圖就嵌真平面圖（同 zh page03，2026-09-01 補齊）；沒圖維持原待補佔位
-        plan_img = pb.img_b64(self._floor_plan("classroom"), alt="Classroom floor plan",
-                              style="max-width:100%;max-height:330px;border-radius:8px")
+        plan_img = self._plan_html("classroom", "Classroom floor plan")
         if plan_img:
             body = (plan_img
                     + f'<div style="font-size:20px;font-weight:700;margin-top:14px;color:var(--on-dark);font-family:var(--lat)">{s["roomBlueprintEn"]}</div>'
@@ -1108,8 +1171,7 @@ class BilingualDeck:
         bb = self.bb
         o = self.en["office"]
         # 同 page03：floorPlans.office 有圖就嵌真平面圖（2026-09-01 補齊）
-        plan_img = pb.img_b64(self._floor_plan("office"), alt="Office floor plan",
-                              style="max-width:100%;max-height:330px;border-radius:8px")
+        plan_img = self._plan_html("office", "Office floor plan")
         if plan_img:
             body = (plan_img
                     + f'<div style="font-size:20px;font-weight:700;margin-top:14px;color:var(--on-dark);font-family:var(--lat)">{o["blueprintEn"]}</div>'
@@ -1306,13 +1368,30 @@ class BilingualDeck:
     def page11_help(self):
         bb = self.bb
         h = self.en["help"]
+        # 2026-09-03：與中文版 page11 同一個修法——第三個求助管道原本是頁尾正上方一行 .muted，
+        # 字級與灰度都近似頁尾校名列，會被當成頁尾略過。升成第三張卡並交還垂直置中。
+        # 同一班的中英兩份要長得一樣（Ted 2026-09-03「make all slide in same style」）。
+        code = self._slido_event_code()
+        cards = [
+            bb.linecard("msg", h["teamsLabel"], bb.esc(h["teamsValueEn"]) + bb.zh(h["teamsValueZh"])),
+            bb.linecard("mail", h["emailLabel"],
+                        '<span style="font-family:var(--lat);font-size:20px">'
+                        'wschen@gms.ndhu.edu.tw</span>'),
+        ]
+        if code:
+            # noteEn 是「英文句　中文句」一串（全形空白分隔），拆開排成英文值＋中文小字
+            parts = str(h.get("noteEn", "")).split("　")
+            note_en = parts[0].strip()
+            note_zh = parts[1].strip() if len(parts) > 1 else ""
+            val = (f'<span style="font-family:var(--lat)">{bb.esc(note_en)}</span>'
+                   f'<span style="font-family:var(--lat);color:var(--gold)">　#{bb.esc(code)}</span>')
+            cards.append(bb.linecard("qr", "Slido", val + (bb.zh(note_zh) if note_zh else "")))
+        grid_cls = "grid grid-3" if len(cards) == 3 else "grid grid-2"
         inner = (
             bb.kicker(h["kicker"]) + bb.bititle(h["titleEn"], h["titleZh"])
-            + '<div class="grid grid-2" style="margin-top:28px">'
-            + bb.linecard("msg", h["teamsLabel"], bb.esc(h["teamsValueEn"]) + bb.zh(h["teamsValueZh"]))
-            + bb.linecard("mail", h["emailLabel"], '<span style="font-family:var(--lat);font-size:20px">wschen@gms.ndhu.edu.tw</span>')
-            + '</div>'
-            + f'<div class="muted" style="margin-top:26px">{bb.esc(h["noteEn"])}</div>'
+            + f'<div class="vcenter"><div class="{grid_cls}" style="margin:0">'
+            + "".join(cards) + '</div></div>'
+            + ("" if code else f'<div class="muted" style="margin-top:26px">{bb.esc(h["noteEn"])}</div>')
         )
         self.write(11, inner)
 
@@ -1337,16 +1416,22 @@ class BilingualDeck:
     def page13_platforms(self):
         bb = self.bb
         p = self.en["platforms"]
-        icons = ["user", "pen", "book"]
+        icons = ["user", "pen", "book", "qr"]
+        # 2026-09-03：同中文版——p02 印了 Slido 代碼、p06/p18 各一整頁叫學生掃，唯獨這頁沒有。
+        items = list(p["items"])
+        code = self._slido_event_code()
+        if code and not any("slido" in str(it.get("value", "")).lower() for it in items):
+            items.append({"nameEn": "Live Q&A", "value": f"Slido #{code}", "zh": "課堂互動"})
         cells = "".join(
             bb.toolcard(icons[i] if i < len(icons) else "tool", it["nameEn"], it["value"], it["zh"])
-            for i, it in enumerate(p["items"])
+            for i, it in enumerate(items)
         )
+        grid = "grid-4" if len(items) >= 4 else "grid-3"
         # 卡片列包 .vcenter 垂直置中（2026-07-05 設計升級，同中文版第 13 頁；
         # 對 v1 slides_aa_en 為有意差異，見 PARITY.md 附錄）
         inner = (
             bb.kicker(p["kicker"]) + bb.bititle(p["titleEn"], p["titleZh"])
-            + f'<div class="vcenter"><div class="grid grid-3" style="margin:0">{cells}</div></div>'
+            + f'<div class="vcenter"><div class="grid {grid}" style="margin:0">{cells}</div></div>'
         )
         self.write(13, inner)
 

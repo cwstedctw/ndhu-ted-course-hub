@@ -108,6 +108,8 @@ html,body{background:#333}
   background:var(--teal); border-radius:4px}
 .label{font-family:var(--lat); font-weight:700; font-size:13px; letter-spacing:.12em;
   text-transform:uppercase; color:var(--mist)}
+/* 中文標籤不轉大寫（2026-09-03）：uppercase 會把「e學苑」印成「E學苑」 */
+.label--asis{text-transform:none; letter-spacing:.04em}
 .value{font-size:24px; font-weight:700; color:var(--ink); margin-top:4px}
 .value small{font-size:16px; font-weight:500; color:var(--mist)}
 
@@ -167,7 +169,12 @@ html,body{background:#333}
 }
 .wk .wnum{font-family:var(--lat); font-weight:700; font-size:13px; color:var(--mist); text-align:center}
 /* A4：週標籤 12.5→15px（投影後排可讀） */
-.wk .wlab{font-size:15px; color:var(--ink); text-align:center; margin-top:4px; line-height:1.3}
+.wk .wlab{font-size:15px; color:var(--ink); text-align:center; margin-top:4px; line-height:1.3;
+  /* 2026-09-03：中文可以在任何一字之間斷行，欄寬又只有約 130px（下排十格更窄），
+     結果常常最後一行只剩一個孤字（「幫機器命／名」「期末發表・第／一場」「服／務」「儀／器」）——
+     九份 deck 的渲染眼檢在 p09 一共抓到二十幾條同型。text-wrap:balance 讓瀏覽器把幾行的
+     長度拉平，孤字行自然消失；不支援的瀏覽器就退回原本行為，不會壞版。 */
+  text-wrap:balance}
 
 /* A4：三段色帶（Part 1／2／3 分群，淡色帶＋小標，不搶里程碑的金） */
 .pband{display:flex; gap:6px; margin-top:12px}
@@ -342,6 +349,14 @@ html,body{background:#333}
 .rule-item .num{flex:0 0 92px; font:800 54px/1 var(--lat); color:var(--gold)}
 .rule-item .rt{font:900 27px var(--zh); color:var(--on-dark)}
 .rule-item .rb{font:400 18px/1.6 var(--zh); color:var(--on-dark-dim); margin-top:6px}
+
+/* 2026-09-03：四條守則的課（AI概論 AA／AB、資訊應用 AA／AB）第 04 條會被擠到畫布最底，
+   說明行離下緣只剩 10–20px，投影機或印刷切邊就吃掉半行（渲染眼檢四份都中）。
+   拿掉 p17 頁尾之後仍嫌緊 → 只在「有第四條」時把每條的上下留白各收 7px，
+   三條的課完全不受影響、輸出一個位元組都不變。 */
+.slide:has(.rule-item:nth-of-type(4)) .rule-item{padding:17px 0}
+.slide:has(.rule-item:nth-of-type(4)) .rule-item .num{font-size:48px}
+
 
 /* A6：工具用途分組卡 */
 .tgroup{display:flex; flex-direction:column; gap:0; padding:22px 22px 18px}

@@ -95,16 +95,19 @@
       {
         "w": "1",
         "label": "課程介紹：幫你的機器命名＋當堂開好 GitHub 帳號",
+        "labelShort": "課程介紹・幫機器命名",
         "part": 1
       },
       {
         "w": "2",
         "label": "面板 v0：有你名字的網頁，下課前存成帶得走的單檔",
+        "labelShort": "面板 v0・你的名字",
         "part": 1
       },
       {
         "w": "3",
         "label": "面板 v1＋「我把它弄壞的那三次」",
+        "labelShort": "面板 v1・除錯三次",
         "part": 1
       },
       {
@@ -115,16 +118,19 @@
       {
         "w": "5",
         "label": "上線：GitHub Pages 公開網址，當堂一起等它亮起來",
+        "labelShort": "上線・GitHub Pages",
         "part": 1
       },
       {
         "w": "6",
         "label": "你的節奏：Wokwi 紅綠燈照你排的節奏閃",
+        "labelShort": "你的節奏・紅綠燈",
         "part": 2
       },
       {
         "w": "7",
         "label": "節奏產生器：你的網頁生出另一支程式（期中發題）",
+        "labelShort": "節奏產生器（期中發題）",
         "part": 2
       },
       {
@@ -135,48 +141,57 @@
       {
         "w": "9",
         "label": "期中開箱：三件同時活著、90 秒跑給大家看；下半場同儕互掃＋講評＋Colab 環境預檢（開好帳號，還不是教 Python）",
+        "labelShort": "期中開箱・90 秒展示",
         "part": 2,
         "milestone": true
       },
       {
         "w": "10",
         "label": "記憶體：試算表加自己的選單，生資料、算統計、吐公告",
+        "labelShort": "記憶體・試算表算統計",
         "part": 3
       },
       {
         "w": "11",
         "label": "機器的大腦（上）：用 Python 讀你的試算表（不必先會 Python）",
+        "labelShort": "機器的大腦（上）",
         "part": 3
       },
       {
         "w": "12",
         "label": "機器的大腦（下）：答案畫回面板；agent 算同一份資料，抓出它的錯",
+        "labelShort": "機器的大腦（下）",
         "part": 3
       },
       {
         "w": "13",
         "label": "彈一下：物理小遊戲嵌進面板；示範 AI agent 指揮 Unity",
+        "labelShort": "彈一下・物理小遊戲",
         "part": 4
       },
       {
         "w": "14",
         "label": "派工單：你寫工單、agent 照著改版（期末發題）",
+        "labelShort": "派工單（期末發題）",
         "part": 4
       },
       {
         "w": "15",
         "label": "一個被合併的 PR＋復原、secret scan、成長時間軸上傳 repo",
+        "labelShort": "合併 PR・成長時間軸",
         "part": 4
       },
       {
         "w": "16",
         "label": "期末發表・第一場：做好了就自願先上，重點短講不限時",
+        "labelShort": "期末發表・第一場",
         "part": 4,
         "milestone": true
       },
       {
         "w": "17",
         "label": "期末發表・第二場＋QR 牆與課程收束；期末書面報告當天 23:59 交 e學苑",
+        "labelShort": "期末發表・第二場",
         "part": 4,
         "milestone": true
       }
@@ -383,8 +398,23 @@
     ],
     "floorPlans": {
       "$comment": "可在本機與 CI 重現的 deck 素材（同 aiot 做法）；原 OneDrive 絕對路徑 CI 讀不到、線上版第 3／5 頁退成待補佔位（2026-09-01 查核抓到後改走 repo 相對路徑）",
-      "classroom": "assets/maps/e403-4f-zoom.png",
-      "office": "assets/maps/c306-3f-zoom.png"
+      "$comment2": "2026-09-03 換立霧重繪版（-ng）：原本指的 zoom 掃描圖在 p03／p05 右緣與底緣被硬裁，圖名只剩「理工二館4」、最右一排房間沒有右牆（九份 deck 六份中招）。重繪版鎖拓撲只換光色、目標教室金色高亮；房名不燒進圖裡，改用下面 labels 疊真文字（座標沿用畫布版已逐格對過原掃描圖的 MAP_LABELS）。研究室 C306 全課共用創客那張已驗證的版本（房名已在圖內）。",
+      "classroom": "assets/maps/e403-4f-ng.webp",
+      "office": "assets/maps/c306-3f-maker-ng.webp",
+      "labels": {
+        "classroom": [
+          ["E403<br>AI 教室", 63, 45, "target"],
+          ["教室", 24, 16, "n"],
+          ["教室", 49, 22.5, "n"],
+          ["電梯", 12.5, 29, "n"],
+          ["樓梯", 54.7, 21.6, "vert"],
+          ["光電系實驗室", 72, 15, "n"],
+          ["教授研究室", 85, 42, "n"],
+          ["光電系討論室", 34, 60, "n"],
+          ["光電系辦公室", 63, 76, "n"],
+          ["4F", 96, 6, "badge"]
+        ]
+      }
     },
     "aiCategoriesBrief": [
       "🟢 可以用，不必說明——解釋、找錯、翻譯錯誤訊息",
