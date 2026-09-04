@@ -271,7 +271,8 @@
     "toolGroupsNote": "工具會換、能力不換——每一項都有免安裝、免帳號的等值路徑，而且同分",
     "dailyTools": [
       {
-        "name": "聊天機器人",
+        "name": "聊天型 AI",
+        "icon": "bot",
         "sub": "ChatGPT·Claude·Gemini"
       },
       {
