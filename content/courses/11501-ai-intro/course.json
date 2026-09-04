@@ -720,6 +720,10 @@
         {
           "name": "No-account and offline paths",
           "sub": "Equivalent routes if you have no account or no device; your grade is unaffected"
+        },
+        {
+          "name": "Agentic AI",
+          "sub": "Manus and similar—hand over a whole task, then check what it brings back"
         }
       ],
       "platforms": [
