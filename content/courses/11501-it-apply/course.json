@@ -285,8 +285,19 @@
       {
         "name": "課程平台",
         "sub": "e學苑·Zuvio"
+      },
+      {
+        "name": "任務型 AI（Agent）",
+        "icon": "agent",
+        "sub": "Manus 等，交辦一整件事，它跑完再交回你檢查"
       }
     ],
+    "dailyToolsNote": "第一週挑一個順手的就好。Manus 掃右邊 QR 註冊可多拿 500 點免費額度（credits）——用這條連結我也會拿到點數，你想直接上官網註冊也行；帳號一律不計分，付費不用。",
+    "dailyToolsLink": {
+      "url": "https://manus.im/invitation/DBS3QXL9U6S2WOA",
+      "label": "掃碼註冊　多拿 500 點",
+      "qrAlt": "Manus 註冊連結 QR code"
+    },
     "platforms": [
       {
         "use": "課堂點名",
