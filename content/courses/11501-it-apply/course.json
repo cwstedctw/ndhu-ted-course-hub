@@ -296,7 +296,9 @@
     "dailyToolsLink": {
       "url": "https://manus.im/invitation/DBS3QXL9U6S2WOA",
       "label": "掃碼註冊　多拿 500 點",
-      "qrAlt": "Manus 註冊連結 QR code"
+      "qrAlt": "Manus 註冊連結 QR code",
+      "webLabel": "註冊 Manus，多拿 500 點",
+      "webNote": "第一週挑一個順手的就好。用這條連結註冊 Manus 可多拿 500 點免費額度（credits）——我也會拿到點數，你想直接上官網註冊也行；帳號一律不計分，付費不用。"
     },
     "platforms": [
       {

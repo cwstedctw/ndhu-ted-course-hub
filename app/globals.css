@@ -364,6 +364,21 @@ a.card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(14, 124,
 .tg-daily ul { display: flex; flex-wrap: wrap; gap: 2px 32px; }
 .tg-daily li { margin-bottom: 0; }
 
+/* 日常工具卡底下的邀請連結（intro.dailyToolsLink，2026-09-04）：
+   一顆低調的外框按鈕＋一行說明小字。用外框不用實心底，免得跟查成績主按鈕搶眼。 */
+.daily-link { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+.daily-link-cta {
+  display: inline-block; text-decoration: none; font-weight: 700; font-size: 13.5px;
+  color: var(--teal-700); background: var(--color-surface);
+  border: 1.5px solid var(--teal-500); border-radius: var(--radius-full);
+  padding: 7px 16px;
+}
+.daily-link-cta:hover { background: var(--teal-050); }
+/* ⚠️ 卡片層有 `.tg small { display: block }`，這行本來就會自己一行——
+   別再補 margin-left，會變成看起來沒對齊的縮排（2026-09-04 渲染眼檢抓到）。 */
+.daily-link-win { color: var(--ink-40); font-size: 12px; margin-top: 6px; }
+.daily-link-note { margin: 8px 0 0; max-width: 68ch; }
+
 .platforms { display: flex; gap: 10px; flex-wrap: wrap; }
 .plat { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 10px 16px; font-size: 14px; }
 .plat b { color: var(--teal-700); }

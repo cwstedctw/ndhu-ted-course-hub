@@ -458,6 +458,10 @@ const EN_MIRROR_SPEC = [
   { kind: "scalar", zh: "intro.showcaseNote", en: "intro.showcaseNote" },
   { kind: "scalar", zh: "intro.destination.title", en: "intro.destination.title" },
   { kind: "scalar", zh: "intro.destination.sub", en: "intro.destination.sub" },
+  // 日常工具卡底下的邀請連結：課程網站渲染的是 web* 這兩句（label／qrAlt 是投影片在用的，
+  // 網頁上不出現，所以不列進來強制翻譯）。中文有、英文缺＝EMI 班的頁面會漏字。
+  { kind: "scalar", zh: "intro.dailyToolsLink.webLabel", en: "intro.dailyToolsLink.webLabel" },
+  { kind: "scalar", zh: "intro.dailyToolsLink.webNote", en: "intro.dailyToolsLink.webNote" },
 
   { kind: "strList", zh: "intro.chips", en: "intro.chips" },
   { kind: "strList", zh: "intro.whatToBring", en: "intro.whatToBring" },

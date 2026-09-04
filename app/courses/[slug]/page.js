@@ -236,6 +236,8 @@ export default async function CoursePage({ params }) {
             toolGroups={intro.toolGroups}
             dailyTools={intro.dailyTools}
             toolGroupsNote={intro.toolGroupsNote}
+            dailyToolsNote={intro.dailyToolsNote}
+            dailyToolsLink={intro.dailyToolsLink}
             L={L}
             en={enIntro}
           />
