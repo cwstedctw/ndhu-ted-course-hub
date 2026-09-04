@@ -235,6 +235,25 @@ export default async function TalkDetailPage({ params }) {
         </section>
       ) : null}
 
+      {/* materials 開講前＝「講前預習資料」（講者先給的投影片／影片，2026-09-04 起：第 1 場洪耀明先寄來），
+          講完改 status=done 就變「演講回顧資料」——同一個欄位、兩個標題，不另開 schema 欄位。
+          放在摘要正下方而不是頁尾：學生來這頁是先看「講什麼」，預習資料緊接著最順手。 */}
+      {!isTba && Array.isArray(talk.materials) && talk.materials.length > 0 ? (
+        <section aria-label={isDone ? '演講回顧資料' : '講前預習資料'}>
+          <h2>{isDone ? '演講回顧資料' : '講前預習資料'}</h2>
+          {!isDone ? (
+            <p className="tdp-abstract">講者先提供的資料，開講前看過一遍，當天更聽得進去。連結另開新視窗；檔案放在校內雲端，要用東華（gms）Google 帳號登入才看得到。</p>
+          ) : null}
+          <ul className="tdp-materials">
+            {talk.materials.map((m) => (
+              <li key={m.url}>
+                <a href={m.url} target="_blank" rel="noopener noreferrer">{m.label}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       {talk.worksheetUrl ? (
         <p className="tdp-worksheet-row">
           <a className="cta tdp-worksheet" href={talk.worksheetUrl} target="_blank" rel="noopener noreferrer">
@@ -273,19 +292,6 @@ export default async function TalkDetailPage({ params }) {
           <span>掃描就能在手機上開這一場</span>
         </p>
       </section>
-
-      {isDone && Array.isArray(talk.materials) && talk.materials.length > 0 ? (
-        <section aria-label="演講回顧資料">
-          <h2>演講回顧資料</h2>
-          <ul className="tdp-materials">
-            {talk.materials.map((m) => (
-              <li key={m.url}>
-                <a href={m.url} target="_blank" rel="noopener noreferrer">{m.label}</a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
 
       <nav className="tdp-nav" aria-label="場次導覽">
         <span>

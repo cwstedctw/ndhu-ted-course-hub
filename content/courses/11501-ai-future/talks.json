@@ -31,7 +31,20 @@
       ],
       "poster": "/images/talks/t01-poster.webp",
       "worksheetUrl": null,
-      "materials": []
+      "materials": [
+        {
+          "label": "講者投影片（PDF，120 頁）",
+          "url": "https://drive.google.com/file/d/1gM9ZA0sPM6xozCRkQvS0FMFglj8uN--J/view"
+        },
+        {
+          "label": "投影片原檔（PowerPoint）",
+          "url": "https://drive.google.com/file/d/12n6aXdEsMurBS9geaZ1dNO-in-vJV_SH/view"
+        },
+        {
+          "label": "影片：碳中和研究中心簡介（3 分 53 秒，講者提供）",
+          "url": "https://drive.google.com/file/d/1HJHuAkqQWb93l51LVoR22KVmChE5bL4l/view"
+        }
+      ]
     },
     {
       "id": "t02",
