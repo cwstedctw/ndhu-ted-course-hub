@@ -1,0 +1,74 @@
+[
+  {
+    "code": "GC__68210",
+    "name": "和AI一起寫程式：創意生活應用",
+    "nameEn": "Coding with AI: Creative Everyday Projects AA",
+    "day": "星期一",
+    "clock": "09:10-12:00",
+    "room": "理工二館E403"
+  },
+  {
+    "code": "TCAI10040",
+    "name": "基礎程式設計(C++)",
+    "nameEn": "Introduction to Programming (C++)",
+    "day": "星期一",
+    "clock": "09:10-12:00",
+    "room": "理工二館D301"
+  },
+  {
+    "code": "GC__6753AA",
+    "name": "人工智慧概論AA",
+    "nameEn": "Introduction to Artificial Intelligence AA",
+    "day": "星期一",
+    "clock": "13:10-16:00",
+    "room": "理工二館E403"
+  },
+  {
+    "code": "GC__1480AA",
+    "name": "資訊科技與應用AA",
+    "nameEn": "Information Technology and its Applications AA",
+    "day": "星期一",
+    "clock": "16:10-18:00",
+    "room": "理工二館E403"
+  },
+  {
+    "code": "GC__67570",
+    "name": "創客入門–智慧生活裝置實作",
+    "nameEn": "Makers Beginning - Smart Living Device Implementation",
+    "day": "星期二",
+    "clock": "09:10-12:00",
+    "room": "理工二館D301"
+  },
+  {
+    "code": "GC__6753AB",
+    "name": "人工智慧概論AB",
+    "nameEn": "Introduction to Artificial Intelligence AB",
+    "day": "星期二",
+    "clock": "13:10-16:00",
+    "room": "理工二館E403"
+  },
+  {
+    "code": "GC__1480AB",
+    "name": "資訊科技與應用AB",
+    "nameEn": "Information Technology and its Applications AB",
+    "day": "星期二",
+    "clock": "16:10-18:00",
+    "room": "理工二館E403"
+  },
+  {
+    "code": "CSIE35490",
+    "name": "AIoT智慧裝置實作",
+    "nameEn": "AIoT Smart Device Practice",
+    "day": "星期四",
+    "clock": "14:10-17:00",
+    "room": "理工二館E307"
+  },
+  {
+    "code": "GC__68240",
+    "name": "AI未來應用與趨勢探索：洄瀾的智慧未來",
+    "nameEn": "Exploring Future AI Applications and Trends: Hualien's Smart Future AA",
+    "day": "星期五",
+    "clock": "09:10-12:00",
+    "room": "理工二館-ZT講堂C101"
+  }
+]
