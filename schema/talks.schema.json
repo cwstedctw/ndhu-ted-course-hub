@@ -4,79 +4,250 @@
   "title": "talks.json — 演講課 12 場",
   "type": "object",
   "additionalProperties": false,
-  "required": ["courseDir", "moeIndicators", "talks"],
+  "required": [
+    "courseDir",
+    "moeIndicators",
+    "talks"
+  ],
   "properties": {
-    "courseDir": { "const": "11501-ai-future" },
+    "courseDir": {
+      "const": "11501-ai-future"
+    },
     "moeIndicators": {
       "$comment": "上限＝負責任 AI 六面向的個數（2026-07-20 由三指標改六面向時漏改，補上）",
-      "type": "array", "minItems": 3, "maxItems": 6, "uniqueItems": true,
-      "items": { "$ref": "_defs.schema.json#/$defs/moeIndicator" }
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "_defs.schema.json#/$defs/moeIndicator"
+      }
     },
     "talks": {
-      "type": "array", "minItems": 12, "maxItems": 12,
-      "items": { "$ref": "#/$defs/talk" }
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "$ref": "#/$defs/talk"
+      }
     }
   },
   "$defs": {
     "talk": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "no", "status", "date", "time", "venue", "title", "speaker",
-                   "abstract", "moe", "poster", "worksheetUrl", "materials"],
+      "required": [
+        "id",
+        "no",
+        "status",
+        "date",
+        "time",
+        "venue",
+        "title",
+        "speaker",
+        "abstract",
+        "moe",
+        "poster",
+        "worksheetUrl",
+        "materials"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^t(0[1-9]|1[0-2])$" },
-        "no": { "type": "integer", "minimum": 1, "maximum": 12 },
-        "status": { "enum": ["confirmed", "tba", "done"] },
-        "date": { "$ref": "_defs.schema.json#/$defs/nullableIsoDate" },
-        "time": { "$ref": "_defs.schema.json#/$defs/nullableHhmmTime" },
-        "venue": { "type": ["string", "null"] },
-        "title": { "type": ["string", "null"] },
+        "id": {
+          "type": "string",
+          "pattern": "^t(0[1-9]|1[0-2])$"
+        },
+        "no": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "tba",
+            "done"
+          ]
+        },
+        "date": {
+          "$ref": "_defs.schema.json#/$defs/nullableIsoDate"
+        },
+        "time": {
+          "$ref": "_defs.schema.json#/$defs/nullableHhmmTime"
+        },
+        "venue": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "speaker": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["name", "title", "org", "photo", "links"],
+          "required": [
+            "name",
+            "title",
+            "org",
+            "photo",
+            "links"
+          ],
           "properties": {
-            "name": { "type": ["string", "null"] },
-            "title": { "type": ["string", "null"] },
-            "org": { "type": ["string", "null"] },
-            "photo": { "anyOf": [ { "type": "string", "pattern": "^/images/talks/" }, { "type": "null" } ] },
-            "links": { "anyOf": [ { "type": "array", "maxItems": 4, "items": { "type": "object", "additionalProperties": false, "required": ["label", "url"], "properties": { "label": { "type": "string", "minLength": 1, "maxLength": 20 }, "url": { "$ref": "_defs.schema.json#/$defs/httpsUrl" } } } }, { "type": "null" } ] }
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "org": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "photo": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^/images/talks/"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "links": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "maxItems": 4,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "label",
+                      "url"
+                    ],
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 20
+                      },
+                      "url": {
+                        "$ref": "_defs.schema.json#/$defs/httpsUrl"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
           }
         },
-        "abstract": { "type": ["string", "null"] },
-        "moe": {
-          "type": "array", "uniqueItems": true,
-          "items": { "$ref": "_defs.schema.json#/$defs/moeIndicator" }
+        "abstract": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
-        "poster": { "anyOf": [ { "type": "string", "pattern": "^/images/talks/" }, { "type": "null" } ] },
-        "worksheetUrl": { "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl" },
+        "moe": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "_defs.schema.json#/$defs/moeIndicator"
+          }
+        },
+        "poster": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^/images/talks/"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "worksheetUrl": {
+          "$ref": "_defs.schema.json#/$defs/nullableHttpsUrl"
+        },
         "materials": {
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["label", "url"],
+            "required": [
+              "label",
+              "url"
+            ],
             "properties": {
-              "label": { "type": "string", "minLength": 1 },
-              "url": { "$ref": "_defs.schema.json#/$defs/httpsUrl" }
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "url": {
+                "$ref": "_defs.schema.json#/$defs/httpsUrl"
+              }
             }
           }
+        },
+        "preread": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^/images/talks/"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "講前導讀一頁卡（站內 /images/talks/ 路徑），沒有就省略或 null"
         }
       },
       "allOf": [
         {
-          "if": { "properties": { "status": { "enum": ["confirmed", "done"] } } },
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "confirmed",
+                  "done"
+                ]
+              }
+            }
+          },
           "then": {
             "$comment": "confirmed＝『講者敲定』，不等於講題／單位都到齊。title 與 speaker.org 允許 null：顯示層本來就有 fallback（海報牆「講題公布中」、單位缺就不印那一段），硬要求會逼人先填假資料。date、speaker.name、moe 仍是硬條件。",
             "properties": {
-              "date": { "type": "string" },
+              "date": {
+                "type": "string"
+              },
               "speaker": {
                 "type": "object",
                 "properties": {
-                  "name": { "type": "string", "minLength": 1 }
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  }
                 }
               },
-              "moe": { "type": "array", "minItems": 1 }
+              "moe": {
+                "type": "array",
+                "minItems": 1
+              }
             }
           }
         }

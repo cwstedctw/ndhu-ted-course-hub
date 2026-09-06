@@ -43,8 +43,17 @@
         {
           "label": "影片：碳中和研究中心簡介（3 分 53 秒，講者提供）",
           "url": "https://drive.google.com/file/d/1HJHuAkqQWb93l51LVoR22KVmChE5bL4l/view"
+        },
+        {
+          "label": "講前導讀一頁卡（PNG 原圖，3 分鐘看完）",
+          "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/images/talks/t01-preread.webp"
+        },
+        {
+          "label": "30 秒預告短片（講者同意公開；橫式）",
+          "url": "https://drive.google.com/file/d/1DNUYG6C_U4wHIc7paejpBCboXJDJgFGy/view"
         }
-      ]
+      ],
+      "preread": "/images/talks/t01-preread.webp"
     },
     {
       "id": "t02",
