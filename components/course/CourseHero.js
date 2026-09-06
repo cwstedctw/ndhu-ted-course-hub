@@ -144,7 +144,7 @@ export default function CourseHero({ course, section, indexEntry, sibling, enrol
               </a>
             </li>
           ) : null}
-          {course?.id?.startsWith('11501-') && code ? (
+          {indexEntry?.courseDir?.startsWith('11501-') && code ? (
             <li className="fact-action">
               <a href={withBase(`/enrollment/11501/index.html?course=${encodeURIComponent(code)}${L.isEn ? '&lang=en' : ''}`)} target="_blank" rel="noopener noreferrer">
                 <Bi s={L.t('Daily enrollment changes ↗', '每日選課變化 ↗')} />
