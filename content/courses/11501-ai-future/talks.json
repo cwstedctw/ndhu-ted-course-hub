@@ -53,7 +53,11 @@
           "url": "https://drive.google.com/file/d/1DNUYG6C_U4wHIc7paejpBCboXJDJgFGy/view"
         }
       ],
-      "preread": "/images/talks/t01-preread.webp"
+      "preread": "/images/talks/t01-preread.webp",
+      "teaser": {
+        "src": "/videos/t01-teaser-720p.mp4",
+        "poster": "/images/talks/t01-teaser-poster.jpg"
+      }
     },
     {
       "id": "t02",

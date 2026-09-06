@@ -125,6 +125,7 @@ export default async function HomePage() {
         #courses, #announcements { scroll-margin-top: 76px; }
         /* 置頂公告：gold 淡底＋圖釘＋sr-only「置頂公告」（設計書 §5-4.3） */
         .ann article.pinned { background: var(--gold-tint); border-radius: 10px; padding: 12px 14px; margin: 8px 0; }
+        .ann-video { display: block; width: 100%; max-width: 640px; margin: 10px 0 4px; border-radius: 8px; background: #000; }
         .ann .pin { margin-right: 4px; }
         /* 公告 body 的少量 markdown（段落與清單） */
         .ann-body p + p { margin-top: 6px; }
@@ -209,6 +210,18 @@ export default async function HomePage() {
                     {item.title}
                   </h3>
                   <div className="ann-body">{renderBody(item.body)}</div>
+                  {item.video ? (
+                    <video
+                      className="ann-video"
+                      controls
+                      preload="none"
+                      playsInline
+                      poster={`${BASE_PATH}${item.video.poster}`}
+                      aria-label={`${item.title}（預告短片）`}
+                    >
+                      <source src={`${BASE_PATH}${item.video.src}`} type="video/mp4" />
+                    </video>
+                  ) : null}
                 </article>
               ))}
             </div>

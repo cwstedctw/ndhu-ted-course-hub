@@ -4,21 +4,64 @@
   "title": "announcements.json — 首頁公告",
   "type": "object",
   "additionalProperties": false,
-  "required": ["items"],
+  "required": [
+    "items"
+  ],
   "properties": {
     "items": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "date", "title", "body", "pinned", "validUntil"],
+        "required": [
+          "id",
+          "date",
+          "title",
+          "body",
+          "pinned",
+          "validUntil"
+        ],
         "properties": {
-          "id": { "type": "string", "pattern": "^a-\\d{8}-\\d{2}$" },
-          "date": { "$ref": "_defs.schema.json#/$defs/isoDate" },
-          "title": { "type": "string", "minLength": 1 },
-          "body": { "type": "string", "minLength": 1 },
-          "pinned": { "type": "boolean" },
-          "validUntil": { "$ref": "_defs.schema.json#/$defs/nullableIsoDate" }
+          "id": {
+            "type": "string",
+            "pattern": "^a-\\d{8}-\\d{2}$"
+          },
+          "date": {
+            "$ref": "_defs.schema.json#/$defs/isoDate"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pinned": {
+            "type": "boolean"
+          },
+          "validUntil": {
+            "$ref": "_defs.schema.json#/$defs/nullableIsoDate"
+          },
+          "video": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "src",
+              "poster"
+            ],
+            "properties": {
+              "src": {
+                "type": "string",
+                "pattern": "^/videos/.+\\.mp4$"
+              },
+              "poster": {
+                "type": "string",
+                "pattern": "^/images/.+\\.(jpg|webp|png)$"
+              }
+            },
+            "description": "站內短片（mp4 放 public/videos/、封面圖放 public/images/），沒有就省略"
+          }
         }
       }
     }

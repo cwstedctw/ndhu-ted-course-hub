@@ -244,6 +244,18 @@ export default async function TalkDetailPage({ params }) {
           {!isDone ? (
             <p className="tdp-abstract">講者先提供的資料，開講前看過一遍，當天更聽得進去。連結另開新視窗；檔案放在校內雲端，要用東華（gms）Google 帳號登入才看得到。</p>
           ) : null}
+          {!isDone && talk.teaser ? (
+            <video
+              className="tdp-teaser"
+              controls
+              preload="none"
+              playsInline
+              poster={`${BASE}${talk.teaser.poster}`}
+              aria-label={`第 ${no} 場預告短片`}
+            >
+              <source src={`${BASE}${talk.teaser.src}`} type="video/mp4" />
+            </video>
+          ) : null}
           {!isDone && talk.preread ? (
             <a href={`${BASE}${talk.preread}`} target="_blank" rel="noopener noreferrer" title="在新分頁開啟講前導讀原圖">
               <img
@@ -355,6 +367,7 @@ const tdpCss = `
 .tdp-qr-cap { margin: 0; font-size: 14.5px; font-weight: 700; color: var(--ink-80, #3B3930); line-height: 1.7; }
 .tdp-qr-cap span { display: block; font-weight: 400; font-size: 13px; color: var(--ink-60, #5B584F); }
 .tdp-materials { margin: 0; padding-left: 20px; font-size: 15px; }
+.tdp-teaser { display: block; width: 100%; max-width: 720px; margin: 4px 0 14px; border-radius: 6px; background: #000; }
 .tdp-preread { display: block; width: 100%; max-width: 720px; height: auto; margin: 4px 0 14px; border: 1px solid #e3ded4; border-radius: 6px; }
 .tdp-materials li { margin-bottom: 6px; }
 .tdp-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--line, #E5DCC3); font-size: 14.5px; }

@@ -215,6 +215,25 @@
             }
           ],
           "description": "講前導讀一頁卡（站內 /images/talks/ 路徑），沒有就省略或 null"
+        },
+        "teaser": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "src",
+            "poster"
+          ],
+          "properties": {
+            "src": {
+              "type": "string",
+              "pattern": "^/videos/.+\\.mp4$"
+            },
+            "poster": {
+              "type": "string",
+              "pattern": "^/images/.+\\.(jpg|webp|png)$"
+            }
+          },
+          "description": "站內短片（mp4 放 public/videos/、封面圖放 public/images/），沒有就省略"
         }
       },
       "allOf": [
