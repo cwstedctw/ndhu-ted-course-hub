@@ -31,9 +31,24 @@
       "room": "理工二館 E403",
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-it-apply-aa/",
       "deckUrl": "/decks/11501-it-apply-aa.html",
-      "scheduleNote": "本班（AA・週一）遇國定假日停課時，停課週與鄰近週合併為一週上課：W4（9/28 教師節）主題「結構化文件（一）」與 W5 合併於 10/05 實施；W8（10/26 光復節補假）**停課、不補課、不必到校**；當週沒有新內容、也沒有要交的東西（AB 班同一週在教室做複習整理）。週次內容順序不變，實際進度由授課教師在課堂調整。AB 班（週二）整學期無國定假日，依正常 17 週進行。",
+      "scheduleNote": "9/28（W4）教師節停課，結構化文件內容與W5合併於10/05上課。10/26（W8）補假停課，當週僅為複習整理，沒有新內容，不合併、不補課、不要求繳交；週次編號不變。",
       "slidoEvent": "41952171",
-      "slidoEventUrl": "https://app.sli.do/event/3yXMYkZgHjr7L6RiiujNYM"
+      "slidoEventUrl": "https://app.sli.do/event/3yXMYkZgHjr7L6RiiujNYM",
+      "weeklyOverrides": {
+        "4–5": {
+          "label": "9/28（W4）教師節停課；10/05（W5）合併上課：結構化文件、樣式、目錄、圖表與引用",
+          "labelShort": "9/28 停課；10/05 結構化文件",
+          "labelEn": "Sep 28 (W4): no class. Oct 5 (W5): combined session on structured documents, styles, contents, figures and citations.",
+          "labelEnShort": "9/28 No class; 10/05 Documents"
+        },
+        "8": {
+          "label": "10/26 補假停課；複習整理週無新內容，不合併、不補課、不要求繳交",
+          "labelShort": "10/26 補假停課",
+          "labelEn": "Oct 26: no class (substitute holiday). No new content, merged session, make-up class or submission.",
+          "labelEnShort": "10/26 No class",
+          "holiday": true
+        }
+      }
     },
     {
       "id": "AB",
