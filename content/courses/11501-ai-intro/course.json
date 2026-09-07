@@ -29,7 +29,7 @@
         "note": "節次與教室據 AA 教師開課查詢（2026-07-03）；鐘點據課務組上課節次時間對照表（第N節＝N+5時10分起）"
       },
       "room": "理工二館 E403",
-      "scheduleNote": "本班遇國定假日停課時，停課週與鄰近週合併為一週上課；週次內容順序不變，實際進度由授課教師在課堂調整（2026-08-26 陳文盛 拍板）。",
+      "scheduleNote": "9/28（W4）教師節、10/26（W8）補假停課。W4＋W5 於10/05合併上課；W7＋W8 於10/19合併上課。放假日不補課、不加作業，週次編號不變。",
       "hubUrl": "https://cwstedctw.github.io/ndhu-ted-course-hub/courses/11501-ai-intro-aa/",
       "deckUrl": "/decks/11501-ai-intro-aa.html",
       "deckUrlEn": "/decks/11501-ai-intro-aa-en.html",
@@ -43,7 +43,35 @@
       },
       "slidoEvent": "1321545",
       "deckName": "115_01 人工智慧概論AA Introduction",
-      "slidoEventUrl": "https://app.sli.do/event/4XbfTmABWkNbZnEu1cKWgn"
+      "slidoEventUrl": "https://app.sli.do/event/4XbfTmABWkNbZnEu1cKWgn",
+      "weeklyOverrides": {
+        "4": {
+          "label": "9/28 教師節停課；版本安全（Git／GitHub）併入10/05（W5）",
+          "labelShort": "9/28 教師節停課",
+          "labelEn": "Sep 28: Teachers’ Day — no class. Version safety (Git/GitHub) moves to Oct 5 (W5).",
+          "labelEnShort": "9/28 No class",
+          "holiday": true
+        },
+        "5": {
+          "label": "10/05 合併W4＋W5：版本安全（Git／GitHub）＋AI如何從資料學習",
+          "labelShort": "W4＋W5 版本＋學習",
+          "labelEn": "Oct 5: W4 + W5 combined — version safety (Git/GitHub) and how AI learns from data.",
+          "labelEnShort": "10/05 Git + AI learning"
+        },
+        "7": {
+          "label": "10/19 合併W7＋W8：有來源的AI研究＋聲音、影片與多模態",
+          "labelShort": "W7＋W8 查證＋多模態",
+          "labelEn": "Oct 19: W7 + W8 combined — source-grounded research and audio, video, and multimodal storytelling.",
+          "labelEnShort": "10/19 Sources + media"
+        },
+        "8": {
+          "label": "10/26 補假停課；多模態內容提前併入10/19（W7）",
+          "labelShort": "10/26 補假停課",
+          "labelEn": "Oct 26: substitute holiday — no class. Multimodal content is covered on Oct 19 (W7).",
+          "labelEnShort": "10/26 No class",
+          "holiday": true
+        }
+      }
     },
     {
       "id": "AB",
@@ -534,7 +562,7 @@
       "AA": {
         "time": "Monday, periods 8–10 · 13:10–16:00",
         "room": "Science & Engineering Building II, Room E403",
-        "scheduleNote": "When a national holiday cancels a class, that week is merged with an adjacent week. The order of the weekly topics does not change; the instructor adjusts pacing in class (decided 2026-08-26)."
+        "scheduleNote": "No class on Sep 28 (W4, Teachers’ Day) or Oct 26 (W8, substitute holiday). W4 + W5 meet together on Oct 5; W7 + W8 meet together on Oct 19. No make-up classes or extra holiday assignments; week numbers stay unchanged."
       }
     },
     "showcase": {

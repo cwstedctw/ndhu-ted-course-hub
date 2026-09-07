@@ -404,3 +404,6 @@ html,body{background:#333}
 /* 修：概念頁步驟箭頭別被 .concept-steps div 框成空盒 */
 .concept-steps .step-arrow{width:auto; min-height:0; padding:0 4px; border:0;
   background:none; backdrop-filter:none; align-self:center}
+
+/* Explicit no-class weeks are distinct from milestones. */
+.wk .dot.holiday{border-color:#bd5260;background:#ffe4e7;box-shadow:none}

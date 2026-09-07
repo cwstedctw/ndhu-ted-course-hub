@@ -221,6 +221,7 @@ export default async function CoursePage({ params }) {
             phases={intro.phases}
             weeklyPlan={intro.weeklyPlan}
             weekOneStart={site?.weekOneStart}
+            weeklyOverrides={section?.weeklyOverrides}
             scheduleNote={section?.scheduleNote}
             scheduleNoteEn={en?.sections?.[section?.id]?.scheduleNote}
             L={L}

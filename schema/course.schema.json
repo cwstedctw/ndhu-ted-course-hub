@@ -17,7 +17,44 @@
         "properties": {
           "id": { "type": "string", "pattern": "^[A-Z]{2}$" },
           "langProfile": { "$ref": "#/$defs/langProfile" },
-          "scheduleNote": { "type": ["string", "null"] }
+          "scheduleNote": { "type": ["string", "null"] },
+          "weeklyOverrides": {
+            "type": "object",
+            "patternProperties": {
+              "^[0-9]+$": {
+                "type": "object",
+                "required": [
+                  "label",
+                  "labelShort",
+                  "labelEn",
+                  "labelEnShort"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "labelShort": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "labelEn": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "labelEnShort": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "holiday": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "additionalProperties": false
+          }
         }
       }
     },

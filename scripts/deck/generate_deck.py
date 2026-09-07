@@ -547,7 +547,8 @@ class Deck:
         return esc(title_text)
 
     def page09_weeks(self):
-        weekly = self.intro.get("weeklyPlan", [])
+        weekly = [{**wk, **self.section.get("weeklyOverrides", {}).get(str(wk.get("w")), {})}
+                  for wk in self.intro.get("weeklyPlan", [])]
         phases = self.intro.get("phases", [])
         phase_titles = {p.get("id"): p.get("title", "") for p in phases}
         phase_weeks = {p.get("id"): p.get("weeks", "") for p in phases}
@@ -559,9 +560,9 @@ class Deck:
         # course.json 可給 labelShort 當 deck 專用短版；網頁的週次表照用長版 label。
         def _lab(w):
             return w.get("labelShort") or w.get("label", "")
-        row1 = "".join(pb.weekcell(w.get("w", ""), _lab(w), "ms" if w.get("milestone") else "")
+        row1 = "".join(pb.weekcell(w.get("w", ""), _lab(w), "holiday" if w.get("holiday") else "ms" if w.get("milestone") else "")
                         for w in row1_weeks)
-        row2 = "".join(pb.weekcell(w.get("w", ""), _lab(w), "ms" if w.get("milestone") else "")
+        row2 = "".join(pb.weekcell(w.get("w", ""), _lab(w), "holiday" if w.get("holiday") else "ms" if w.get("milestone") else "")
                         for w in row2_weeks)
 
         # 三段色帶：依 weeklyPlan 的 part 欄位算 row1/row2 內 Part1/2/3 各佔幾格（flex 比例），
@@ -1285,7 +1286,8 @@ class BilingualDeck:
     def page09_weeks(self):
         bb = self.bb
         w = self.en["weeks"]
-        weekly = self.intro.get("weeklyPlan", [])
+        weekly = [{**wk, **self.section.get("weeklyOverrides", {}).get(str(wk.get("w")), {})}
+                  for wk in self.intro.get("weeklyPlan", [])]
         labels_en = w["labelsEn"]
         if len(labels_en) != len(weekly):
             # fail-closed：英文標籤數跟 course.json 週數對不上＝overlay 過期，
@@ -1297,8 +1299,8 @@ class BilingualDeck:
         labels_en_short = w.get("labelsEnShort", {}) or {}
         cells = []
         for i, wk in enumerate(weekly):
-            kind = "ms" if wk.get("milestone") else ""
-            en = labels_en_short.get(str(wk.get("w"))) or labels_en[i]
+            kind = "holiday" if wk.get("holiday") else "ms" if wk.get("milestone") else ""
+            en = wk.get("labelEnShort") or wk.get("labelEn") or labels_en_short.get(str(wk.get("w"))) or labels_en[i]
             zh = wk.get("labelShort") or wk.get("label", "")
             cells.append(bb.weekcell(wk.get("w", ""), en, zh, kind))
         half = 7

@@ -219,7 +219,7 @@ def partcard(num, head, body, compact=False):
 
 
 def weekcell(num, lab, kind):
-    dotc = "dot ms" if kind == "ms" else "dot"
+    dotc = "dot " + kind if kind in {"ms", "holiday"} else "dot"
     return (f'<div class="wk"><div class="{dotc}"></div>'
             f'<div class="wnum">W{esc(num)}</div><div class="wlab">{esc(lab)}</div></div>')
 

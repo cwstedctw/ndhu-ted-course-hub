@@ -13,12 +13,12 @@ import NowWeek from './NowWeek';
 
 // scheduleNote＝該「班」專屬的行事曆註記（sections[].scheduleNote），不是全課共用：
 // AA 遇國定假日採「停課週與鄰近週合併為一週、內容序不變」（2026-08-26 Ted 拍板），
-// AB 正常 17 週故為 null。週次表本身是 AA／AB 共用正本，所以合併規則只能掛在班別層。
-export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart, scheduleNote, scheduleNoteEn, L, en = {} }) {
+// AB 正常 17 週故為 null。共用主題不改；weeklyOverrides只覆寫該班停課與合併週的顯示。
+export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart, scheduleNote, scheduleNoteEn, weeklyOverrides = {}, L, en = {} }) {
   const phasesPending = isPending(phases);
   const planPending = isPending(weeklyPlan);
   const phaseList = asArray(phases).filter((p) => hasText(p?.title));
-  const rows = asArray(weeklyPlan).filter((r) => hasText(r?.label));
+  const rows = asArray(weeklyPlan).filter((r) => hasText(r?.label)).map(r => ({...r, ...weeklyOverrides[String(r.w)]}));
 
   if (!phasesPending && !planPending && phaseList.length === 0 && rows.length === 0) return null;
 
@@ -38,7 +38,7 @@ export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart
   const weekChip = (r) => (
     <span key={`${r.w}-${r.label}`} className={r.milestone ? 'ms' : undefined} data-w={String(r.w ?? '')}>
       {hasText(String(r.w ?? '')) ? `W${r.w} ` : ''}
-      <Bi s={L.t(enWeeks[rowIndexOf(r)], r.label)} />
+      <Bi s={L.t(r.labelEn || enWeeks[rowIndexOf(r)], r.label)} />
     </span>
   );
 
