@@ -95,6 +95,10 @@ Save v1. Check whether the requested change happened and whether anything else c
 
 ## Make it yours / 做成自己的版本
 
+Return to the tool or offline-studio tab you were just using and continue with your own v1. Do not open a fresh studio for this step: it starts again with mockup A. In Gemini, use the conversation for your image; if needed, find the image in Library and choose Chat. Keep the title BOOK SWAP. After your change, save the revised image and update your notes.
+
+回到剛才的工具或工作室分頁，接著自己的 v1 修改，不重開素材。保留 BOOK SWAP；改完再保存圖像與紀錄。
+
 Choose a more specific reader, such as international freshmen or graphic-novel readers. Change one tagline, color choice or visual emphasis while keeping the event facts. Avoid stereotypes.
 
 選一種讀者，改一個視覺決定，保留活動事實。
