@@ -462,6 +462,11 @@
       }
     ],
     "finale": {
+      "practiceLink": {
+        "url": "https://ndhu-campus-agent-lab.tedc.chatgpt.site",
+        "label": "校園生活實作｜整理資料夾、做個小工具",
+        "labelEn": "Campus Agent Lab | Open, then select EN"
+      },
       "nextWeek": "提問、圖像與人的判斷——怎麼問、怎麼改、什麼時候該拒絕",
       "action": "下週帶一個你想用 AI 解決的問題來",
       "materialsUrl": {

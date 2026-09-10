@@ -57,6 +57,24 @@ def esc(s):
     return pb.esc(s)
 
 
+def practice_link_html(intro, *, english=False):
+    """Optional shared lab entry on the finale; the URL stays in course.json."""
+    link = intro.get("finale", {}).get("practiceLink")
+    if not link:
+        return ""
+    url = link["url"]
+    if not url.startswith("https://"):
+        raise ValueError("finale.practiceLink.url must use HTTPS")
+    label = link["labelEn"] if english else link["label"]
+    return (
+        '<a class="practice-link" target="_blank" rel="noopener noreferrer" '
+        f'href="{esc(url)}" style="align-self:flex-start;margin-top:18px;'
+        'padding:10px 16px;border:1px solid #D9A441;border-radius:10px;'
+        'background:#123D3A;color:#FAF8F2;font-size:18px;font-weight:700;'
+        f'line-height:24px;text-decoration:none">{esc(label)} ↗</a>'
+    )
+
+
 # ---------------------------------------------------------------------------
 # 載入與防呆
 # ---------------------------------------------------------------------------
@@ -986,6 +1004,7 @@ class Deck:
         # hubUrl 掃碼卡（2026-07-05 設計升級）：教室裡學生拍投影幕、文字網址抄不了，
         # 白底 QR 卡讓 deck→Hub 這座橋真的走得通。qrcode 套件沒裝或無 hubUrl →
         # 退回原單欄純文字版（輸出與升級前 identical）。
+        col_body += practice_link_html(self.intro)
         qr_html = pb.qr_svg(hub_url) if hub_url else None
         if qr_html:
             inner = (
@@ -1543,6 +1562,7 @@ class BilingualDeck:
         # hubUrl 掃碼卡（2026-07-05 設計升級，同中文版第 19 頁）：overlay 文字層不動、
         # QR 直接吃 section.hubUrl；無 hubUrl 或沒裝 qrcode → 原單欄版（與 v1 一致）
         hub_url = self.section.get("hubUrl")
+        col_body += practice_link_html(self.intro, english=True)
         qr_html = pb.qr_svg(hub_url) if hub_url else None
         if qr_html:
             inner = (

@@ -399,6 +399,11 @@
       }
     ],
     "finale": {
+      "practiceLink": {
+        "url": "https://ndhu-campus-agent-lab.tedc.chatgpt.site",
+        "label": "校園生活實作｜整理資料夾、做個小工具",
+        "labelEn": "Campus Agent Lab | Open, then select EN"
+      },
       "nextWeek": "面板 v0——你的名字、一顆按鈕，下課前存成帶得走的單檔",
       "action": "想一個你希望程式幫你解決的生活小麻煩，帶來上課",
       "materialsUrl": {

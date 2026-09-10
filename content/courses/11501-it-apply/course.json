@@ -393,6 +393,11 @@
       }
     ],
     "finale": {
+      "practiceLink": {
+        "url": "https://ndhu-campus-agent-lab.tedc.chatgpt.site",
+        "label": "校園生活實作｜整理資料夾、做個小工具",
+        "labelEn": "Campus Agent Lab | Open, then select EN"
+      },
       "nextWeek": "你的工作檔案櫃：repo 起步——第二週就把櫃子建起來",
       "action": "有空先用學校信箱辦 GitHub 帳號；沒辦也沒關係，第一週課堂上一起辦，卡住有等值路徑",
       "materialsUrl": {
