@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>當堂卡①（E1）・第二週｜和AI一起寫程式：創意生活應用</title>
+<style>
+@page { size: A4; margin: 12mm; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #fff; }
+body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', sans-serif; color: #132525; font-size: 11pt; line-height: 1.45; }
+.page { width: 186mm; height: 273mm; margin: 0 auto; padding: 0; display: flex; flex-direction: column; gap: 3.5mm; page-break-after: always; overflow: hidden; }
+.page:last-child { page-break-after: auto; }
+header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #0E7C7B; padding-bottom: 2mm; }
+h1 { font-size: 16pt; font-weight: 900; color: #0E7C7B; letter-spacing: .02em; }
+h1 small { font-size: 10pt; font-weight: 500; color: #5E7676; margin-left: 3mm; }
+.meta { font-size: 9pt; color: #5E7676; text-align: right; line-height: 1.35; }
+.who { display: flex; gap: 8mm; font-size: 10.5pt; }
+.who span { border-bottom: 1px solid #132525; min-width: 38mm; display: inline-block; padding: 0 2mm; }
+.box { border: 1.2px solid #132525; border-radius: 3mm; padding: 2.5mm 4mm 3mm; }
+.box h2 { font-size: 11.5pt; font-weight: 700; color: #0E7C7B; margin-bottom: 1.5mm; }
+.box h2 .hint { font-size: 9pt; font-weight: 400; color: #5E7676; margin-left: 2mm; }
+.line { border-bottom: 1px dotted #9FBDBC; height: 8mm; }
+.four { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm; }
+.cell { border: 1px solid #9FBDBC; border-radius: 2mm; padding: 1.5mm 2.5mm; min-height: 29mm; }
+.cell b { display: block; font-size: 9.5pt; color: #0E7C7B; margin-bottom: .5mm; }
+.cell i { display: block; font-size: 8.5pt; color: #5E7676; font-style: normal; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+th, td { border: 1px solid #132525; padding: 1.8mm 2.2mm; vertical-align: top; font-size: 10.5pt; }
+th { background: #E6F2F2; text-align: left; width: 30mm; font-weight: 700; }
+td.tall { height: 17mm; }
+.chk { display: inline-block; width: 4mm; height: 4mm; border: 1.2px solid #132525; border-radius: 1mm; vertical-align: -0.5mm; margin-right: 1.5mm; }
+.tick { display: flex; flex-wrap: wrap; gap: 3mm 7mm; margin-top: 1mm; font-size: 10.5pt; }
+.note { font-size: 9.5pt; color: #5E7676; margin-top: 1mm; }
+.big { font-size: 12pt; font-weight: 700; }
+footer { margin-top: auto; font-size: 8.5pt; color: #5E7676; display: flex; justify-content: space-between; border-top: 1px solid #E6F2F2; padding-top: 1.5mm; }
+@media screen { body { background: #e9ecec; padding: 8mm 0; } .page { background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.12); padding: 12mm; height: auto; min-height: 297mm; width: 210mm; margin-bottom: 8mm; } }
+</style>
+</head>
+<body>
+
+<!-- 正面 -->
+<section class="page">
+  <header>
+    <h1>當堂卡①<small>第二週・面板 v0（成績單代號 E1）</small></h1>
+    <div class="meta">平時成績六張取五張，這是第一張<br>當堂寫、當堂交，不帶回家</div>
+  </header>
+  <div class="who">姓名 <span></span> 學號 <span></span> 日期 <span>2026 / 9 / 14</span></div>
+
+  <div class="box">
+    <h2>第零版：我隨口跟 AI 講的那一句<span class="hint">照你打的原樣抄下來，不用修</span></h2>
+    <div class="line"></div>
+    <div class="line"></div>
+  </div>
+
+  <div class="box">
+    <h2>需求卡・第一版</h2>
+    <div class="four">
+      <div class="cell"><b>目標</b><i>我要它幫我做什麼</i></div>
+      <div class="cell"><b>背景</b><i>為什麼要做、給誰用</i></div>
+      <div class="cell"><b>輸出</b><i>我預期在畫面上看到什麼</i></div>
+      <div class="cell"><b>界線</b><i>不放什麼（例：不放學號或電話、不要登入）</i></div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h2>需求卡・第二版<span class="hint">改過的地方畫底線</span></h2>
+    <div class="four">
+      <div class="cell"><b>目標</b></div>
+      <div class="cell"><b>背景</b></div>
+      <div class="cell"><b>輸出</b></div>
+      <div class="cell"><b>界線</b></div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h2>停手判斷<span class="hint">今天一定會遇到一次</span></h2>
+    <div>AI 自作主張多做了一件我沒要的事：<span class="hint">（沒有的話，勾最後一格）</span></div>
+    <div class="line"></div>
+    <div class="line"></div>
+    <div class="tick">
+      <span>我決定：</span>
+      <span><i class="chk"></i>採用</span>
+      <span><i class="chk"></i>修改</span>
+      <span><i class="chk"></i>拒絕</span>
+      <span>因為 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿</span>
+      <span><i class="chk"></i>它沒多做什麼，這版夠了，先存</span>
+    </div>
+  </div>
+
+  <footer><span>國立東華大學 通識教育中心・和AI一起寫程式：創意生活應用（115-1）</span><span>正面 1／2</span></footer>
+</section>
+
+<!-- 背面 -->
+<section class="page">
+  <header>
+    <h1>它跑起來了，不等於它做對了<small>當堂卡① 背面</small></h1>
+    <div class="meta">三行小表：改一輪之後再填一次<br>「我沒辦法判斷」也是一個答案</div>
+  </header>
+
+  <div class="box">
+    <h2>三行小表・第一次做出來的</h2>
+    <table>
+      <tr><th>我預期</th><td class="tall"></td></tr>
+      <tr><th>實際上</th><td class="tall"></td></tr>
+      <tr><th>一樣嗎</th><td><span class="chk"></span>一樣　<span class="chk"></span>不一樣　<span class="chk"></span>我沒辦法判斷</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h2>三行小表・改一輪之後<span class="hint">一次只改一處</span></h2>
+    <table>
+      <tr><th>我改了哪一處</th><td class="tall"></td></tr>
+      <tr><th>我預期</th><td class="tall"></td></tr>
+      <tr><th>實際上</th><td class="tall"></td></tr>
+      <tr><th>一樣嗎</th><td><span class="chk"></span>一樣　<span class="chk"></span>不一樣　<span class="chk"></span>我沒辦法判斷</td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h2>四件事<span class="hint">跟期末報告同一套，平時練的就是期末要交的</span></h2>
+    <div class="four">
+      <div class="cell"><b>① AI 幫了哪一段</b></div>
+      <div class="cell"><b>② 我採用、修改，還是拒絕</b></div>
+      <div class="cell"><b>③ 為什麼</b></div>
+      <div class="cell"><b>④ 我怎麼確認它是對的</b></div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h2>下課前打勾</h2>
+    <div class="tick">
+      <span><i class="chk"></i>單檔已存進自己的雲端硬碟，或已寄一封給自己</span>
+      <span><i class="chk"></i>手機打開，看到我的名字和那顆按鈕</span>
+      <span><i class="chk"></i>這張當堂卡交給老師</span>
+    </div>
+    <div class="note">下載夾不算存好：教室電腦每次開機都會清掉。</div>
+  </div>
+
+  <footer><span class="big">填不完也交，證據完整就有分。</span><span>背面 2／2</span></footer>
+</section>
+
+</body>
+</html>

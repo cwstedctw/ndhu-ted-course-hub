@@ -34,6 +34,7 @@ export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart
   const enWeeks = asArray(en?.weeklyPlan);
   const enPhases = asArray(en?.phases);
   const rowIndexOf = (r) => rows.indexOf(r);
+  const materialRows = rows.filter((r) => hasText(r.materialsUrl));
 
   const weekChip = (r) => (
     <span key={`${r.w}-${r.label}`} className={r.milestone ? 'ms' : undefined} data-w={String(r.w ?? '')}>
@@ -49,6 +50,16 @@ export default function Timeline({ weeksSystem, phases, weeklyPlan, weekOneStart
       <div className="container">
         <h2>{title}</h2>
         {nowEnabled ? <NowWeek weekOneStart={weekOneStart} /> : null}
+        {materialRows.length > 0 ? (
+          <nav className="weekly-materials" aria-label={L.isEn ? 'Weekly learning materials' : '每週教材'}>
+            {materialRows.map((r) => (
+              <a key={String(r.w)} href={L.isEn && hasText(r.materialsUrlEn) ? r.materialsUrlEn : r.materialsUrl}>
+                <Bi s={L.t(`W${r.w} slides & practice`, `W${r.w} 投影片與練習`)} />
+                <span aria-hidden="true">↗</span>
+              </a>
+            ))}
+          </nav>
+        ) : null}
         {phaseList.length > 0 ? (
           <>
             <div className="phases">
