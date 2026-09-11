@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fcourses\u002F11501-ai-future\u002Ftalks\u002F[id]","\u002Fcourses\u002F[slug]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
