@@ -674,11 +674,11 @@
       "grading": [
         {
           "label": "Participation",
-          "sub": "Five in-class evidence cards, 2% each (AB: Weeks 2, 4, 7, 10, 14; AA: the Week-4 card moves to the merged Week-5 session); if you miss a class you may submit equivalent work for the same skill"
+          "sub": "Based on attendance and in-class learning records (Zuvio roll call)"
         },
         {
           "label": "Assignments",
-          "sub": "Four kinds at 5% each: creative media, models and evidence, data and agent supervision, interaction and versions"
+          "sub": "Set according to teaching progress and materials; not every week has one. Content and submission route are announced in class and on e-learning"
         },
         {
           "label": "Midterm",
@@ -824,7 +824,7 @@
         },
         {
           "q": "How much homework is there?",
-          "a": "Assignments are 20% of the grade, in four kinds at 5% each: creative media, models and evidence, data and agent supervision, interaction and versions. You choose one piece per kind from the listed weeks. On top of that, five in-class evidence cards make up the 10% participation grade and are completed during class."
+          "a": "Assignments are 20% of the grade. They are set according to teaching progress and materials, so not every week has one; the content, the number of pieces and the submission route are announced in class and on e-learning. Participation is 10% and is based on attendance and in-class learning records."
         },
         {
           "q": "How is the midterm assessed, and what does it cover?",
