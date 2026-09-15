@@ -1,0 +1,833 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>課前準備：四樣必備</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+
+<style>
+/* ── 沿用 git-ai-workshop / Course Hub 既有配色，不另立一套 ── */
+:root{
+  --teal:#0E7C7B; --teal-deep:#0A5958; --teal-soft:#DCEFED;
+  --gold:#D9A441; --gold-soft:#F3E3C3;
+  --bg:#F4ECD8; --card:#FDFAF2; --card-2:#F8F1DF;
+  --ink:#1A1A1A; --ink-soft:#4a463d; --ink-faint:#6f6a5c;
+  --line:#e2d8bf; --line-soft:#ece3cc;
+  --bad:#b3441e; --bad-soft:#f7e2da; --warn:#8a5a00;
+  --shadow:0 1px 3px rgba(26,26,26,.06), 0 6px 20px rgba(26,26,26,.05);
+  --radius:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --teal:#3aa6a1; --teal-deep:#7fd0cb; --teal-soft:#173937;
+    --gold:#d9a441; --gold-soft:#3a3220;
+    --bg:#151d1c; --card:#1d2726; --card-2:#222d2c;
+    --ink:#ece6d6; --ink-soft:#b7b0a0; --ink-faint:#8d8677;
+    --line:#33403e; --line-soft:#2a3634;
+    --bad:#ff967a; --bad-soft:#3a2019; --warn:#f0bc58;
+    --shadow:0 1px 3px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --teal:#3aa6a1; --teal-deep:#7fd0cb; --teal-soft:#173937;
+  --gold:#d9a441; --gold-soft:#3a3220;
+  --bg:#151d1c; --card:#1d2726; --card-2:#222d2c;
+  --ink:#ece6d6; --ink-soft:#b7b0a0; --ink-faint:#8d8677;
+  --line:#33403e; --line-soft:#2a3634;
+  --bad:#ff967a; --bad-soft:#3a2019; --warn:#f0bc58;
+  --shadow:0 1px 3px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:16px; line-height:1.8; -webkit-text-size-adjust:100%;
+}
+h1,h2,h3{font-family:"Noto Serif TC",Georgia,serif; text-wrap:balance; line-height:1.4; margin:0}
+code,.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:.88em}
+a{color:var(--teal-deep); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--teal); outline-offset:2px; border-radius:4px}
+
+/* ── 頂列 ── */
+.bar{
+  position:sticky; top:0; z-index:20; background:var(--card);
+  border-bottom:1px solid var(--line); box-shadow:var(--shadow);
+}
+.bar-in{max-width:760px; margin:0 auto; padding:10px 18px; display:flex; align-items:center; gap:14px}
+.prog{flex:1 1 auto; min-width:0; display:flex; align-items:center; gap:10px}
+.prog-track{flex:1 1 auto; height:7px; background:var(--line-soft); border-radius:99px; overflow:hidden}
+.prog-fill{height:100%; width:0%; background:var(--teal); border-radius:99px; transition:width .35s ease}
+@media (prefers-reduced-motion:reduce){.prog-fill{transition:none}}
+.prog-txt{font-size:.83rem; color:var(--ink-soft); white-space:nowrap; font-variant-numeric:tabular-nums}
+.homelink{flex:none; color:var(--ink-soft); text-decoration:none; font-size:.83rem; white-space:nowrap}
+.homelink:hover{color:var(--teal-deep); text-decoration:underline}
+.langbtn{
+  flex:none; border:1px solid var(--line); background:var(--card-2); color:var(--ink);
+  border-radius:99px; padding:5px 13px; font:inherit; font-size:.83rem; font-weight:500; cursor:pointer;
+}
+.langbtn:hover{background:var(--teal-soft); border-color:var(--teal)}
+
+/* ── 版心 ── */
+main{max-width:760px; margin:0 auto; padding:0 18px 80px}
+header.top{padding:40px 0 8px}
+header.top .eyebrow{
+  font-size:.78rem; letter-spacing:.14em; font-weight:700; color:var(--teal);
+  text-transform:uppercase; margin:0 0 12px;
+}
+header.top h1{font-size:clamp(1.7rem,5.4vw,2.35rem); color:var(--teal-deep)}
+header.top .sub{margin:14px 0 0; color:var(--ink-soft); font-size:1.02rem}
+.stamp{
+  margin:22px 0 0; font-size:.83rem; color:var(--ink-faint);
+  border-top:1px solid var(--line-soft); padding-top:14px;
+}
+
+section{margin-top:44px}
+h2{font-size:1.3rem; color:var(--teal-deep); margin-bottom:6px}
+h2 .h2n{color:var(--gold); font-family:"Noto Sans TC",sans-serif; font-weight:700; font-size:.72em; margin-right:.5em}
+h3{font-size:1.02rem; color:var(--teal-deep); margin:20px 0 4px}
+p{margin:10px 0}
+
+/* ── 通用卡 ── */
+.panel{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:18px 20px; box-shadow:var(--shadow);
+}
+.panel + .panel{margin-top:14px}
+
+/* ── 綠底安心區 ── */
+.calm{background:var(--teal-soft); border-color:var(--teal); border-left-width:4px}
+.calm ul{margin:6px 0 0; padding-left:1.2em}
+.calm li{margin:4px 0}
+
+/* ── 信箱對照（最會搞錯的一件事）── */
+.mailkey{display:grid; gap:12px; margin-top:14px}
+@media(min-width:620px){.mailkey{grid-template-columns:1fr 1fr}}
+.mailcol{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px}
+.mailcol.school{border-top:4px solid var(--teal)}
+.mailcol.personal{border-top:4px solid var(--gold)}
+.mailcol h4{margin:0 0 8px; font-size:.95rem; font-family:"Noto Sans TC",sans-serif}
+.mailcol ul{margin:0; padding-left:1.15em; font-size:.93rem; color:var(--ink-soft)}
+.mailcol li{margin:3px 0}
+
+/* ── 帳號卡 ── */
+.acct{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:var(--shadow); overflow:hidden; margin-top:16px;
+}
+.acct-hd{display:flex; gap:14px; align-items:flex-start; padding:16px 18px; background:var(--card-2); border-bottom:1px solid var(--line)}
+.acct-no{
+  flex:none; width:30px; height:30px; border-radius:50%; background:var(--teal); color:#F4ECD8;
+  display:grid; place-items:center; font-weight:700; font-size:.95rem; margin-top:1px;
+}
+.acct-tt{flex:1 1 auto; min-width:0}
+.acct-tt h3{margin:0; font-size:1.1rem}
+.chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
+.chip{
+  font-size:.75rem; padding:2px 9px; border-radius:99px; border:1px solid var(--line);
+  background:var(--bg); color:var(--ink-soft); white-space:nowrap;
+}
+.chip.must{background:var(--bad-soft); border-color:var(--bad); color:var(--bad); font-weight:700}
+.chip.rec{background:var(--gold-soft); border-color:var(--gold); color:var(--warn); font-weight:700}
+.chip.opt{background:var(--card)}
+.chip.school{background:var(--teal-soft); border-color:var(--teal); color:var(--teal-deep); font-weight:500}
+.chip.personal{background:var(--gold-soft); border-color:var(--gold); color:var(--warn); font-weight:500}
+.acct-bd{padding:6px 18px 18px}
+
+/* ── 勾選 ── */
+.tick{display:flex; gap:10px; align-items:flex-start; padding:11px 13px; margin-top:12px;
+  background:var(--bg); border:1px dashed var(--line); border-radius:10px; cursor:pointer}
+.tick:hover{border-color:var(--teal)}
+.tick input{margin:4px 0 0; width:17px; height:17px; accent-color:var(--teal); flex:none; cursor:pointer}
+.tick span{font-size:.93rem; color:var(--ink-soft)}
+.tick.done{background:var(--teal-soft); border-style:solid; border-color:var(--teal)}
+.tick.done span{color:var(--teal-deep); font-weight:500}
+
+/* ── 步驟 ── */
+ol.steps{margin:10px 0; padding-left:1.4em}
+ol.steps > li{margin:9px 0}
+ol.steps ul{margin:5px 0; padding-left:1.1em; color:var(--ink-soft); font-size:.94rem}
+
+/* ── 提示條 ── */
+.note{border-left:4px solid var(--gold); background:var(--gold-soft); border-radius:0 10px 10px 0;
+  padding:12px 15px; margin:14px 0; font-size:.94rem}
+.note.stop{border-left-color:var(--bad); background:var(--bad-soft)}
+.note.ok{border-left-color:var(--teal); background:var(--teal-soft)}
+.note b{color:var(--ink)}
+.note-t{display:block; font-weight:700; margin-bottom:3px}
+
+/* ── 表 ── */
+.tw{overflow-x:auto; margin:14px 0; border:1px solid var(--line); border-radius:12px}
+table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:440px}
+th,td{padding:9px 12px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line-soft)}
+th{background:var(--card-2); font-weight:700; font-size:.86rem}
+tr:last-child td{border-bottom:0}
+
+/* ── 領不到區（刻意壓低）── */
+.dim{opacity:.85}
+.dim .panel{background:var(--card-2)}
+.no-list{list-style:none; margin:0; padding:0}
+.no-list li{padding:12px 0; border-bottom:1px solid var(--line-soft)}
+.no-list li:last-child{border-bottom:0}
+.no-list b{color:var(--ink)}
+.no-why{display:block; color:var(--ink-soft); font-size:.92rem; margin-top:2px}
+
+footer{margin-top:52px; padding-top:20px; border-top:1px solid var(--line);
+  font-size:.85rem; color:var(--ink-faint)}
+
+/* ── 語言切換 ── */
+[data-lang]{display:none}
+:root[data-ui="zh"] [data-lang="zh"]{display:revert}
+:root[data-ui="en"] [data-lang="en"]{display:revert}
+</style>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="prog">
+      <div class="prog-track"><div class="prog-fill" id="pf"></div></div>
+      <span class="prog-txt" id="pt">0 / 4</span>
+    </div>
+    <a class="homelink" href="https://cwstedctw.github.io/ndhu-ted-course-hub/" data-lang="zh">課程網</a>
+    <a class="homelink" href="https://cwstedctw.github.io/ndhu-ted-course-hub/" data-lang="en">Courses</a>
+    <button class="langbtn" id="lang" type="button">English</button>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════ 中文 ══════════ -->
+<div data-lang="zh">
+
+<header class="top">
+  <p class="eyebrow">東華大學・陳文盛老師 115-1</p>
+  <h1>課前準備：四樣必備</h1>
+  <p class="sub">GitHub 帳號、GitHub Student Developer Pack、ChatGPT 桌面版、Antigravity 桌面版，四樣都要。演講課《AI未來應用與趨勢探索》除外。</p>
+  <p class="stamp">查核日 2026-09-15｜各家條件隨時會變；跟這頁對不上時，請以官方頁為準。</p>
+</header>
+
+<section>
+  <h2><span class="h2n">〇</span>先講兩件事</h2>
+  <div class="panel calm">
+    <h3 style="margin-top:0">工具會換，能力不會</h3>
+    <ol class="steps">
+      <li>先用免費、開源的。</li>
+      <li>免費的做不到，再考慮有免費額度的商業工具。</li>
+      <li>付費方案永遠是選配——課程的任何一分都不需要你付錢。</li>
+    </ol>
+    <h3>辦不成不扣分，但要處理</h3>
+    <p>審核由對方公司決定。因年齡、帳號種類或審核等條件辦不成，不影響成績；但「辦不成」和「沒去辦」不同。卡住就在第一週跟老師講，別放著。</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">一</span>四樣必備，先看這張表</h2>
+  <div class="tw"><table>
+    <tr><th>#</th><th>要辦的</th><th>用哪個信箱</th><th>花多久</th><th>審核</th></tr>
+    <tr><td>①</td><td><b>GitHub 帳號</b></td><td>🏫 東華信箱</td><td>5 分鐘</td><td>不用</td></tr>
+    <tr><td>②</td><td><b>GitHub Student Developer Pack</b></td><td>🏫 東華信箱</td><td>15 分鐘</td><td><b>要，時間不一定</b></td></tr>
+    <tr><td>③</td><td><b>ChatGPT 帳號＋桌面版</b></td><td>哪個都行</td><td>10 分鐘</td><td>不用</td></tr>
+    <tr><td>④</td><td><b>Antigravity 桌面版</b></td><td>👤 個人 Gmail</td><td>20 分鐘</td><td>不用</td></tr>
+  </table></div>
+  <p><b>建議順序：</b>①②一起做，先送需要審核的②，再做③與④。</p>
+  <div class="mailkey">
+    <div class="mailcol school">
+      <h4>🏫 用東華信箱</h4>
+      <ul>
+        <li>GitHub 帳號與 Student Pack</li>
+        <li>免費 Gemini（學校帳號本來就有）</li>
+      </ul>
+    </div>
+    <div class="mailcol personal">
+      <h4>👤 要用個人 Gmail</h4>
+      <ul>
+        <li>Antigravity</li>
+        <li>選配的 Google 學生方案</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note ok">
+    <span class="note-t">哪個都行</span>
+    ChatGPT 可用東華信箱或個人信箱。Antigravity 與 Google 學生方案不能用學校發的帳號；沒有個人 Gmail，先到 <a href="https://accounts.google.com/signup">Google 帳號申請頁</a>辦一個。
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">二</span>① GitHub 帳號</h2>
+  <div class="acct">
+    <div class="acct-hd">
+      <div class="acct-no">1</div>
+      <div class="acct-tt">
+        <h3>GitHub 帳號</h3>
+        <div class="chips">
+          <span class="chip must">必備</span><span class="chip">5 分鐘</span>
+          <span class="chip school">🏫 東華信箱</span><span class="chip">不用審核</span>
+        </div>
+      </div>
+    </div>
+    <div class="acct-bd">
+      <p>每一門課都會教 Git 與 GitHub，重點是三件能力：<b>存得住、看得懂差異、救得回來</b>。這跟會不會寫程式無關。</p>
+      <ol class="steps">
+        <li>開 <a href="https://github.com/signup">github.com/signup</a>。</li>
+        <li>Email 用東華信箱 <span class="mono">@gms.ndhu.edu.tw</span>。</li>
+        <li>設密碼，選一個適合放進網址、日後不必急著更換的 Username。</li>
+        <li>完成驗證題，到信箱收驗證信，把 8 位數字填回網頁。</li>
+        <li>後面的使用問卷可以按 Skip。</li>
+      </ol>
+      <div class="note">
+        <span class="note-t">開兩步驟驗證</span>
+        頭像 → <b>Settings</b> → <b>Password and authentication</b> → <b>Two-factor authentication</b>。用驗證器 App 掃 QR，並把 recovery codes 存在手機、自己的雲端或印出帶走。
+      </div>
+      <div class="note stop">
+        <span class="note-t">公用電腦注意</span>
+        不要註冊 passkey／Windows Hello，不要讓瀏覽器記住密碼；把復原碼下載到公用電腦也不算存好，機器重新開機後可能全部清空。
+      </div>
+      <div class="note ok"><b>辦不成怎麼辦：</b>收不到信或驗證一直過不了，第一週帶著手機來現場處理。</div>
+      <label class="tick"><input type="checkbox" data-k="a1"><span>GitHub 帳號能登入、東華信箱已驗證、2FA 已開、復原碼已帶走</span></label>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">三</span>② GitHub Student Developer Pack</h2>
+  <div class="acct">
+    <div class="acct-hd">
+      <div class="acct-no">2</div>
+      <div class="acct-tt">
+        <h3>GitHub Student Developer Pack</h3>
+        <div class="chips">
+          <span class="chip must">必備</span><span class="chip rec">要審核，最先送</span>
+          <span class="chip school">🏫 東華信箱</span><span class="chip">15 分鐘</span>
+        </div>
+      </div>
+    </div>
+    <div class="acct-bd">
+      <p>Pack 包含 GitHub Pro、每月 180 核心小時 Codespaces、20 GB Codespaces 儲存空間、每月 3,000 分鐘 Actions、2 GB Packages 儲存空間，以及可申請的 GitHub Copilot Student。</p>
+      <p>Codespaces 是瀏覽器裡的完整開發環境。沒有筆電、共用家中電腦，或機器被鎖住不能裝軟體，都能靠它完成課堂工作。2 核機器的 180 核心小時約等於 90 小時。</p>
+      <div class="note">
+        <span class="note-t">Copilot 但書</span>
+        GitHub 曾在 2026-04-20 暫停新申辦，並於 2026-06-17 宣布分批重新開放，包括 Student。值得申請，但不要當成一定取得；課程沒有作業需要 Copilot。<a href="https://github.blog/changelog/2026-06-17-copilot-individual-plan-sign-ups-are-reopening/">官方公告</a>
+      </div>
+      <h3>先準備</h3>
+      <ul>
+        <li>已辦好的 GitHub 帳號，以及已加入並驗證的東華信箱。</li>
+        <li>學生證照片、這學期課表、成績單或在學證明書，四擇一。</li>
+        <li>學生證最好正反面都拍，讓註冊章與文字清楚可見。</li>
+      </ul>
+      <h3>步驟</h3>
+      <ol class="steps">
+        <li>若 GitHub 還沒有東華信箱：Settings → Emails → Add email address，收信驗證。</li>
+        <li>開 <a href="https://github.com/education/students">GitHub Education Students</a>，按 <b>Get verified</b>；頁面也可能顯示 Join GitHub Education，或從 Billing and licensing → Education benefits → Start an application 進入。</li>
+        <li>學術信箱選東華信箱；學校填 <span class="mono">National Dong Hwa University</span>；用途用英文照實寫兩三句。</li>
+        <li>上傳在學證明並送出。</li>
+      </ol>
+      <p>審核時間不一定。送出、仍在等待就算完成；退件通常會說明缺什麼，補件重送即可。申請說明見 <a href="https://docs.github.com/en/education/about-github-education/github-education-for-students/apply-to-github-education-as-a-student">GitHub 官方文件</a>。</p>
+      <div class="note ok">
+        <span class="note-t">辦不成怎麼辦</span>
+        免費 GitHub 帳號仍可做課堂練習，也有每月 120 核心小時 Codespaces；Pack 只是提高到 180 並加入 Pro。沒有筆電先用教室電腦或備用機，不影響成績。
+      </div>
+      <label class="tick"><input type="checkbox" data-k="a2"><span>Student Pack 已送出申請（還在等待審核也算）</span></label>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">四</span>③ ChatGPT 帳號＋桌面版</h2>
+  <div class="acct">
+    <div class="acct-hd">
+      <div class="acct-no">3</div>
+      <div class="acct-tt">
+        <h3>ChatGPT 帳號＋桌面版</h3>
+        <div class="chips">
+          <span class="chip must">必備</span><span class="chip">10 分鐘，含下載</span>
+          <span class="chip">任何信箱</span><span class="chip">不用審核</span>
+        </div>
+      </div>
+    </div>
+    <div class="acct-bd">
+      <p>桌面版除了聊天，還有會開檔、改檔與跑指令的 <b>Codex</b>。要安裝的是 <b>2026-07-09 起的新版 ChatGPT</b>，把 Chat、Work、Codex 放在同一個 App 裡；<b>它不等於 ChatGPT Classic</b>，Classic 沒有 Codex。</p>
+      <ol class="steps">
+        <li>到 <a href="https://chatgpt.com">chatgpt.com</a> 註冊；免費帳號即可，東華或個人信箱都可以。13 歲以上可使用，未滿 18 歲需家長同意。</li>
+        <li>到 <a href="https://chatgpt.com/download">ChatGPT 下載頁</a>下載桌面版。</li>
+        <li><b>Windows：</b>從 Microsoft Store 安裝「ChatGPT」，不要裝「ChatGPT Classic」。最不容易拿錯的是<a href="https://apps.microsoft.com/detail/9PLM9XGG6VKS">官方 Microsoft Store 連結</a>。需要 Windows 10 64 位元、版本 17763 以上，支援 x64 與 ARM64。</li>
+        <li><b>macOS：</b>需要 macOS 14 Sonoma 以上。官方說明中心稱 Apple Silicon 與 Intel 都可用，但新版下載按鈕只標 Apple Silicon；Intel Mac 先試裝，不行就用網頁版。</li>
+        <li><b>Linux：</b>支援 Ubuntu 24.04／26.04、Debian 13、Fedora 43／44、Arch，並有 x64 與 ARM64。</li>
+        <li>登入後開新對話測試一次，再從左上角選單找到 Codex；先不要叫它做事，第一次操作留到課堂。</li>
+      </ol>
+      <div class="note">
+        <span class="note-t">三件先知道</span>
+        <b>一、</b>不要等到上課才下載；公用電腦可能每次開機還原。<br>
+        <b>二、</b>免費版可以有限額使用 Codex，但官方沒有公布額度數字。把它當成現在能用、額度不保證；課程作業不會押在它的額度上。<br>
+        <b>三、</b>練習把需求說成四塊：目標、背景、輸出、邊界。
+      </div>
+      <div class="note ok">
+        <span class="note-t">辦不成怎麼辦</span>
+        桌面版若因電腦太舊或系統版本不足而裝不上，<a href="https://chatgpt.com">網頁版</a>仍能完成大部分課堂內容；需要 Codex 的幾週用教室電腦或跟老師說，不扣分。
+      </div>
+      <label class="tick"><input type="checkbox" data-k="a3"><span>ChatGPT 能登入、桌面版已裝好，而且找得到左上角的 Codex</span></label>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">五</span>④ Antigravity 桌面版</h2>
+  <div class="acct">
+    <div class="acct-hd">
+      <div class="acct-no">4</div>
+      <div class="acct-tt">
+        <h3>Antigravity 桌面版</h3>
+        <div class="chips">
+          <span class="chip must">必備</span><span class="chip">20 分鐘，含下載</span>
+          <span class="chip personal">👤 個人 Gmail</span><span class="chip">不用審核</span>
+        </div>
+      </div>
+    </div>
+    <div class="acct-bd">
+      <p>Google 的 AI agent 桌面工具，會開檔、改檔、跑指令、安裝東西，再列出做過的事。課堂用它與 Codex 練四件判斷：</p>
+      <div class="tw"><table>
+        <tr><th>#</th><th>判斷</th><th>你要做得到</th></tr>
+        <tr><td>A1</td><td>看懂它打算做什麼</td><td>動手前先看計畫</td></tr>
+        <tr><td>A2</td><td>看懂它做了什麼</td><td>動手後看差異，不只相信「完成了」</td></tr>
+        <tr><td>A3</td><td>破壞性動作先問</td><td>刪除、覆蓋、對外發送、動別人的東西前先確認</td></tr>
+        <tr><td>A4</td><td>拒絕越界</td><td>至少退回一次，並說得出原因</td></tr>
+      </table></div>
+      <ol class="steps">
+        <li>先辦個人 Gmail；東華 Workspace 帳號常無法登入。</li>
+        <li>到 <a href="https://antigravity.google/download">antigravity.google/download</a>。Windows 需要 Windows 10 64 位元以上；macOS 需要 macOS 12 Monterey 以上；Linux 也有。</li>
+        <li>安裝後用<b>個人 Gmail</b>登入。官方 FAQ 稱目前開放給 personal Google accounts，遇到問題也建議改用 <span class="mono">@gmail.com</span>。</li>
+        <li>先找到計畫與修改結果顯示的位置，不要先把額度玩掉。</li>
+      </ol>
+      <div class="note stop">
+        <span class="note-t">登入資格</span>
+        Antigravity 會看帳號種類、登記國家與年齡；台灣在支援範圍內，但官方不開放未滿 18 歲者。未滿 18 歲先跳過，用 ChatGPT 桌面版的 Codex 練同樣四件事，第一週跟老師說，不扣分。<a href="https://antigravity.google/docs/faq/">官方 FAQ</a>
+      </div>
+      <div class="note">
+        <span class="note-t">額度與版本</span>
+        免費額度目前每週刷新，不是隔天恢復。版本更新很快，因此本頁不指定版本號；畫面不同時查看<a href="https://antigravity.google/changelog/">官方更新紀錄</a>。
+      </div>
+      <div class="note ok"><b>辦不成怎麼辦：</b>帳號種類、年齡與地區由 Google 決定。走不通就用 Codex 練習，並在第一週告訴老師，不扣分。</div>
+      <label class="tick"><input type="checkbox" data-k="a4"><span>個人 Gmail 已備妥、Antigravity 已安裝並登入（未滿 18 歲者已跟老師說）</span></label>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">六</span>選配：Google 學生方案</h2>
+  <div class="acct">
+    <div class="acct-hd">
+      <div class="acct-no">＋</div>
+      <div class="acct-tt">
+        <h3>Google AI Plus 一年</h3>
+        <div class="chips">
+          <span class="chip opt">選配</span><span class="chip personal">👤 個人 Gmail</span>
+          <span class="chip" style="border-color:var(--bad);color:var(--bad)">⚠️ 綁付款方式</span>
+        </div>
+      </div>
+    </div>
+    <div class="acct-bd">
+      <p>台灣學生可領一年 Google AI Plus；截止日 2026-12-31。需滿 18 歲、大專在學，並由 SheerID 驗證。家庭群組成員、受監護帳號，以及透過第三方訂閱 Google One 的既有會員不能領。</p>
+      <div class="note stop">
+        <span class="note-t">一年後會自動扣款</span>
+        領取時必須綁有效付款方式；一年到期若未取消，會按台灣學生頁所列的每月 NT$165 自動續訂。要領就立刻設 11 個月後的行事曆提醒，並記下綁了哪張卡。
+      </div>
+      <p><b>必須用個人 Gmail 領，不能用東華信箱。</b>學生身分另外用學校信箱或在學證明交給 SheerID 驗證。</p>
+      <ol class="steps">
+        <li>登入個人 Gmail。</li>
+        <li>開 <a href="https://gemini.google.com/students">Google 學生中心</a>或<a href="https://one.google.com/ai-student">領取頁</a>。</li>
+        <li>由 SheerID 驗證學生身分，學校搜尋 National Dong Hwa University。</li>
+        <li>通過後綁付款方式並完成領取。<a href="https://one.google.com/offer/studentoffer8">完整條款</a></li>
+      </ol>
+      <div class="note">
+        <span class="note-t">尚未實測</span>
+        還沒有用真實學生帳號確認 SheerID 是否認得東華。條款排除名單沒有台灣，但台灣學生頁 FAQ 與條款頁的適用地區說法互有矛盾；若成功或失敗，請告訴老師更新本頁。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">七</span>選配：其他聊天型 AI</h2>
+  <p>ChatGPT 已經是聊天型 AI。想多用一個可以，但多辦不會學得比較快。</p>
+  <div class="tw"><table>
+    <tr><th>工具</th><th>註冊頁</th><th>備註</th></tr>
+    <tr><td>Google Gemini</td><td><a href="https://gemini.google.com">gemini.google.com</a></td><td>東華信箱可直接登入；管理員可能關閉服務</td></tr>
+    <tr><td>Claude</td><td><a href="https://claude.ai">claude.ai</a></td><td></td></tr>
+    <tr><td>Microsoft Copilot</td><td><a href="https://copilot.microsoft.com">copilot.microsoft.com</a></td><td>可用學校 Microsoft 帳號</td></tr>
+  </table></div>
+  <div class="note ok">免費 Gemini 是 Google Workspace for Education 的核心服務，教育帳號各年齡層都能用，部分功能限 18 歲以上。這和第六節需要個人帳號的一年 AI Plus 不同。</div>
+</section>
+
+<section class="dim">
+  <h2><span class="h2n">八</span>這幾個先不用花時間</h2>
+  <div class="tw"><table>
+    <tr><th>方案</th><th>狀況</th><th>查核日</th></tr>
+    <tr><td><b>OpenAI Codex 學生額度（$100 credits）</b></td><td>只限美國與加拿大大學在學生，領取時也須人在美加；12 個月到期</td><td>2026-09-15</td></tr>
+    <tr><td><b>ChatGPT 開學檔（4 個月 Plus）</b></td><td>只限美國大專院校在學生；2026-10-31 前領，之後每月 US$20 自動續訂</td><td>2026-09-15</td></tr>
+    <tr><td><b>Cursor 學生一年免費</b></td><td>2026-06-25 停收新申請；官方頁只剩免費開始使用與秋季活動優惠</td><td>2026-09-15</td></tr>
+    <tr><td><b>Claude 學生優惠</b></td><td>沒有個人學生方案；Claude for Education 由學校購買</td><td>2026-09-15</td></tr>
+  </table></div>
+  <div class="note">領不到 Codex 的 $100 學生額度，不代表不能用 Codex；免費 ChatGPT 可有限額使用，只是官方未公布額度。這四項都可能改變，看到新消息先查官方頁。</div>
+</section>
+
+<section>
+  <h2><span class="h2n">九</span>檢查清單</h2>
+  <div class="panel">
+    <ul>
+      <li>① GitHub 能登入，東華信箱已驗證，2FA 已開，復原碼已帶走。</li>
+      <li>② Student Pack 已送出；仍在等審核也算。</li>
+      <li>③ ChatGPT 能登入，桌面版已裝好，找得到 Codex。</li>
+      <li>④ 個人 Gmail 已辦好，Antigravity 已安裝並登入；未滿 18 歲者已告知老師。</li>
+      <li>選配 Google 學生方案若已領，11 個月後的提醒已設定。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">十</span>遇到問題</h2>
+  <div class="panel">
+    <ol class="steps">
+      <li>先重看卡住步驟的說明。</li>
+      <li>把完整錯誤訊息複製給 ChatGPT 問一次。</li>
+      <li>仍不行，第一週帶著裝置來，現場處理。</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  本頁是所有課程共用的正本（演講課除外）。內容更新時，各課課程頁會指到這裡，不各自維護一份。<br>
+  Contact: <a href="mailto:wschen@gms.ndhu.edu.tw">wschen@gms.ndhu.edu.tw</a>
+</footer>
+
+</div>
+
+<!-- ══════════ English ══════════ -->
+<div data-lang="en">
+
+<header class="top">
+  <p class="eyebrow">National Dong Hwa University · Prof. Wen-Sheng Chen · 115-1</p>
+  <h1>Before Class: Four Things Everyone Sets Up</h1>
+  <p class="sub">A GitHub account, the GitHub Student Developer Pack, the ChatGPT desktop app, and the Antigravity desktop app are all required—except for the lecture series <i>AI Future Applications and Trends</i>.</p>
+  <p class="stamp">Verified on 2026-09-15｜Offers and requirements change. If this page and an official page disagree, follow the official page.</p>
+</header>
+
+<section>
+  <h2><span class="h2n">0</span>Two things first</h2>
+  <div class="panel calm">
+    <h3 style="margin-top:0">Tools change; the skills do not</h3>
+    <ol class="steps">
+      <li>Use free and open-source tools first.</li>
+      <li>If they cannot do the job, consider commercial tools with a free tier.</li>
+      <li>Paid plans are always optional. No part of your grade requires spending money.</li>
+    </ol>
+    <h3>Failing to get one costs no marks, but it must be dealt with</h3>
+    <p>The vendor decides eligibility and approval. If age, account type, or review prevents you from completing an item, your grade is unaffected. “Could not get it” is different from “did not try”: tell the instructor in week 1 if you are stuck.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">1</span>The four required items</h2>
+  <div class="tw"><table>
+    <tr><th>#</th><th>What to set up</th><th>Address</th><th>Time</th><th>Approval</th></tr>
+    <tr><td>①</td><td><b>GitHub account</b></td><td>🏫 NDHU address</td><td>5 min</td><td>No</td></tr>
+    <tr><td>②</td><td><b>GitHub Student Developer Pack</b></td><td>🏫 NDHU address</td><td>15 min</td><td><b>Yes; time varies</b></td></tr>
+    <tr><td>③</td><td><b>ChatGPT account + desktop app</b></td><td>Either</td><td>10 min</td><td>No</td></tr>
+    <tr><td>④</td><td><b>Antigravity desktop app</b></td><td>👤 Personal Gmail</td><td>20 min</td><td>No</td></tr>
+  </table></div>
+  <p><b>Suggested order:</b> do ① and ② together and submit ② first, then do ③ and ④.</p>
+  <div class="mailkey">
+    <div class="mailcol school">
+      <h4>🏫 Use your NDHU address</h4>
+      <ul>
+        <li>GitHub account and Student Pack</li>
+        <li>Free Gemini already provided through the school account</li>
+      </ul>
+    </div>
+    <div class="mailcol personal">
+      <h4>👤 Requires a personal Gmail</h4>
+      <ul>
+        <li>Antigravity</li>
+        <li>The optional Google student offer</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note ok"><b>Either address works for ChatGPT.</b> Google does not accept school-issued accounts for Antigravity or the student offer. If needed, create a personal Gmail at <a href="https://accounts.google.com/signup">accounts.google.com/signup</a>.</div>
+</section>
+
+<section>
+  <h2><span class="h2n">2</span>① GitHub account</h2>
+  <div class="acct">
+    <div class="acct-hd">
+      <div class="acct-no">1</div>
+      <div class="acct-tt">
+        <h3>GitHub account</h3>
+        <div class="chips"><span class="chip must">Required</span><span class="chip">5 min</span><span class="chip school">🏫 NDHU address</span><span class="chip">No review</span></div>
+      </div>
+    </div>
+    <div class="acct-bd">
+      <p>Every course teaches Git and GitHub through three abilities: <b>keeping your work, reading what changed, and recovering when something breaks</b>. None depends on already knowing how to code.</p>
+      <ol class="steps">
+        <li>Go to <a href="https://github.com/signup">github.com/signup</a>.</li>
+        <li>Use your <span class="mono">@gms.ndhu.edu.tw</span> address.</li>
+        <li>Set a password and choose a username suitable for your public URL.</li>
+        <li>Complete the verification puzzle, then enter the 8-digit code from your email.</li>
+        <li>The following survey may be skipped.</li>
+      </ol>
+      <div class="note"><b>Turn on 2FA:</b> profile picture → Settings → Password and authentication → Two-factor authentication. Save the recovery codes on your phone, personal cloud storage, or paper.</div>
+      <div class="note stop"><b>Shared computers:</b> do not register a passkey or Windows Hello, let the browser remember your password, or leave recovery codes in the Downloads folder. Lab computers may erase everything when restarted.</div>
+      <div class="note ok"><b>If it does not work out:</b> bring your phone in week 1 if mail or verification keeps failing.</div>
+      <label class="tick"><input type="checkbox" data-k="b1"><span>GitHub works, NDHU address verified, 2FA enabled, and recovery codes taken with me</span></label>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">3</span>② GitHub Student Developer Pack</h2>
+  <div class="acct">
+    <div class="acct-hd">
+      <div class="acct-no">2</div>
+      <div class="acct-tt">
+        <h3>GitHub Student Developer Pack</h3>
+        <div class="chips"><span class="chip must">Required</span><span class="chip rec">Needs review—submit first</span><span class="chip school">🏫 NDHU address</span><span class="chip">15 min</span></div>
+      </div>
+    </div>
+    <div class="acct-bd">
+      <p>The Pack includes GitHub Pro, 180 Codespaces core hours per month, 20 GB of Codespaces storage, 3,000 Actions minutes per month, 2 GB of Packages storage, and access to apply for GitHub Copilot Student.</p>
+      <p>Codespaces is a full development environment in a browser. It removes the barrier for students without a laptop, using a shared computer, or unable to install software. On a 2-core machine, 180 core hours is about 90 hours.</p>
+      <div class="note"><b>Copilot note:</b> new sign-ups were paused on 2026-04-20 and announced as reopening in stages on 2026-06-17, explicitly including Student. Apply, but do not assume it is guaranteed; no assignment requires it. <a href="https://github.blog/changelog/2026-06-17-copilot-individual-plan-sign-ups-are-reopening/">Official announcement</a></div>
+      <h3>Prepare first</h3>
+      <ul>
+        <li>Your GitHub account with your verified NDHU address.</li>
+        <li>One proof of enrolment: student ID, current timetable, transcript, or enrolment letter.</li>
+        <li>For a student ID, photograph both sides clearly so the current registration date or stamp is visible.</li>
+      </ul>
+      <ol class="steps">
+        <li>If necessary, add the NDHU address under Settings → Emails → Add email address and verify it.</li>
+        <li>Open <a href="https://github.com/education/students">GitHub Education Students</a> and choose <b>Get verified</b>. The wording may instead be Join GitHub Education, or use Billing and licensing → Education benefits → Start an application.</li>
+        <li>Select the NDHU address; enter <span class="mono">National Dong Hwa University</span>; describe your intended use honestly in two or three English sentences.</li>
+        <li>Upload proof and submit.</li>
+      </ol>
+      <p>Review time varies. A submitted application counts as complete while pending. If rejected, correct the requested item and resubmit. See the <a href="https://docs.github.com/en/education/about-github-education/github-education-for-students/apply-to-github-education-as-a-student">official application guide</a>.</p>
+      <div class="note ok"><b>If it does not work out:</b> a free GitHub account still covers class exercises and includes 120 Codespaces core hours per month. The Pack raises this to 180 and adds Pro. Use a classroom or spare machine if needed; no marks are lost.</div>
+      <label class="tick"><input type="checkbox" data-k="b2"><span>Student Pack application submitted; waiting for review counts</span></label>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">4</span>③ ChatGPT account + desktop app</h2>
+  <div class="acct">
+    <div class="acct-hd">
+      <div class="acct-no">3</div>
+      <div class="acct-tt">
+        <h3>ChatGPT account + desktop app</h3>
+        <div class="chips"><span class="chip must">Required</span><span class="chip">10 min incl. download</span><span class="chip">Any address</span><span class="chip">No review</span></div>
+      </div>
+    </div>
+    <div class="acct-bd">
+      <p>The desktop app includes <b>Codex</b>, which can open and edit files and run commands. Install the <b>new ChatGPT released from 2026-07-09 onward</b>, combining Chat, Work, and Codex. It is <b>not ChatGPT Classic</b>; Classic does not include Codex.</p>
+      <ol class="steps">
+        <li>Sign up at <a href="https://chatgpt.com">chatgpt.com</a>. A free account and either email address are enough. Users must be at least 13; those under 18 need parental permission.</li>
+        <li>Open the <a href="https://chatgpt.com/download">ChatGPT download page</a>.</li>
+        <li><b>Windows:</b> install “ChatGPT,” not “ChatGPT Classic,” from the <a href="https://apps.microsoft.com/detail/9PLM9XGG6VKS">Microsoft Store</a>. It requires 64-bit Windows 10 build 17763 or later and supports x64 and ARM64.</li>
+        <li><b>macOS:</b> requires macOS 14 Sonoma or later. The help centre says Apple Silicon and Intel are supported, while the new download button says Apple Silicon only. Try the Intel install; use the web version if it fails.</li>
+        <li><b>Linux:</b> Ubuntu 24.04/26.04, Debian 13, Fedora 43/44, and Arch are supported, on x64 and ARM64.</li>
+        <li>Sign in, test one chat, and locate Codex in the top-left menu. Do not run it yet; the first run happens in class.</li>
+      </ol>
+      <div class="note"><b>Three things:</b><br>
+        <b>One:</b> install before class; reset-on-boot lab machines may erase it.<br>
+        <b>Two:</b> Free includes limited Codex usage, but OpenAI publishes no numerical quota. No assignment depends on it.<br>
+        <b>Three:</b> practise expressing a request as goal, context, output, and boundaries.
+      </div>
+      <div class="note ok"><b>If it does not work out:</b> if the app will not install because the machine or OS is too old, <a href="https://chatgpt.com">the web version</a> covers most class work. Use a classroom machine in Codex weeks or tell the instructor. No marks lost.</div>
+      <label class="tick"><input type="checkbox" data-k="b3"><span>ChatGPT works, the desktop app is installed, and I can find Codex in the top-left menu</span></label>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">5</span>④ Antigravity desktop app</h2>
+  <div class="acct">
+    <div class="acct-hd">
+      <div class="acct-no">4</div>
+      <div class="acct-tt">
+        <h3>Antigravity desktop app</h3>
+        <div class="chips"><span class="chip must">Required</span><span class="chip">20 min incl. download</span><span class="chip personal">👤 Personal Gmail</span><span class="chip">No review</span></div>
+      </div>
+    </div>
+    <div class="acct-bd">
+      <p>Google's desktop AI agent opens and edits files, runs commands, installs things, and reports what it did. Alongside Codex, class uses it to practise four judgements:</p>
+      <div class="tw"><table>
+        <tr><th>#</th><th>Judgement</th><th>You should be able to</th></tr>
+        <tr><td>A1</td><td>See what it intends to do</td><td>Read its plan before it acts</td></tr>
+        <tr><td>A2</td><td>See what it actually did</td><td>Read the diff rather than trust “done”</td></tr>
+        <tr><td>A3</td><td>Confirm destructive actions</td><td>Confirm deletion, overwriting, external sending, or touching others' work</td></tr>
+        <tr><td>A4</td><td>Refuse overreach</td><td>Push back at least once and explain why</td></tr>
+      </table></div>
+      <ol class="steps">
+        <li>Create a personal Gmail first. NDHU Workspace accounts frequently cannot sign in.</li>
+        <li>Download from <a href="https://antigravity.google/download">antigravity.google/download</a>. It requires 64-bit Windows 10 or later, macOS 12 Monterey or later, or a supported Linux system.</li>
+        <li>Sign in with a <b>personal Gmail</b>. The official FAQ says it is available for personal Google accounts and recommends an <span class="mono">@gmail.com</span> address when problems occur.</li>
+        <li>Find where plans and resulting changes appear. Do not spend the quota yet.</li>
+      </ol>
+      <div class="note stop"><b>Eligibility:</b> Antigravity checks account type, registered country, and age. Taiwan is supported, but it is officially unavailable to users under 18. If under 18, skip it, practise the same four judgements in Codex, and tell the instructor in week 1. <a href="https://antigravity.google/docs/faq/">Official FAQ</a></div>
+      <div class="note"><b>Quota and versions:</b> the free allowance now refreshes weekly, not daily. Releases move quickly, so this page names no version; consult the <a href="https://antigravity.google/changelog/">official changelog</a> when screens differ.</div>
+      <div class="note ok"><b>If it does not work out:</b> account type, age, and region are Google's conditions. Use Codex instead and tell the instructor in week 1. No marks lost.</div>
+      <label class="tick"><input type="checkbox" data-k="b4"><span>Personal Gmail ready and Antigravity installed and signed in, or under-18 exception reported</span></label>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">6</span>Optional: Google student offer</h2>
+  <div class="acct">
+    <div class="acct-hd">
+      <div class="acct-no">＋</div>
+      <div class="acct-tt">
+        <h3>One year of Google AI Plus</h3>
+        <div class="chips"><span class="chip opt">Optional</span><span class="chip personal">👤 Personal Gmail</span><span class="chip" style="border-color:var(--bad);color:var(--bad)">⚠️ Payment method required</span></div>
+      </div>
+    </div>
+    <div class="acct-bd">
+      <p>Students in Taiwan can claim one year of Google AI Plus by 2026-12-31. You must be 18 or older, enrolled in higher education, and verified through SheerID. Family-group members, supervised accounts, and existing Google One members billed through a third party are ineligible.</p>
+      <div class="note stop"><b>It renews automatically:</b> a valid payment method is required. Unless cancelled after the free year, it renews at the Taiwan student page's listed NT$165 per month. Set an 11-month reminder immediately and record which card you used.</div>
+      <p><b>Claim it with a personal Gmail, never the NDHU account.</b> SheerID separately uses your school address or proof of enrolment to verify student status.</p>
+      <ol class="steps">
+        <li>Sign in to a personal Gmail.</li>
+        <li>Open the <a href="https://gemini.google.com/students">student centre</a> or <a href="https://one.google.com/ai-student">claim page</a>.</li>
+        <li>Complete SheerID verification; search for National Dong Hwa University.</li>
+        <li>After approval, add a payment method and finish. See the <a href="https://one.google.com/offer/studentoffer8">full terms</a>.</li>
+      </ol>
+      <div class="note"><b>Not yet tested:</b> no real NDHU student account has confirmed whether SheerID recognises the institution. Taiwan is absent from the terms' exclusion list, while wording on the Taiwan FAQ and terms conflicts. Tell the instructor whether you succeed or fail.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">7</span>Optional: other chat AIs</h2>
+  <p>ChatGPT already provides a chat AI. You may add another, but more accounts do not make you learn faster.</p>
+  <div class="tw"><table>
+    <tr><th>Tool</th><th>Sign-up page</th><th>Note</th></tr>
+    <tr><td>Google Gemini</td><td><a href="https://gemini.google.com">gemini.google.com</a></td><td>Your NDHU address signs in directly; an administrator may disable it</td></tr>
+    <tr><td>Claude</td><td><a href="https://claude.ai">claude.ai</a></td><td></td></tr>
+    <tr><td>Microsoft Copilot</td><td><a href="https://copilot.microsoft.com">copilot.microsoft.com</a></td><td>Your school Microsoft account can sign in</td></tr>
+  </table></div>
+  <div class="note ok">Free Gemini is a Google Workspace for Education core service available to education accounts of all ages, with some features restricted to 18+. It is separate from the one-year AI Plus offer, which requires a personal account.</div>
+</section>
+
+<section class="dim">
+  <h2><span class="h2n">8</span>Do not spend time on these</h2>
+  <div class="tw"><table>
+    <tr><th>Offer</th><th>Status</th><th>Checked</th></tr>
+    <tr><td><b>OpenAI Codex student credits ($100)</b></td><td>US and Canadian university students only; claimant must also be in the US or Canada; expires after 12 months</td><td>2026-09-15</td></tr>
+    <tr><td><b>ChatGPT Back-to-School (4 months Plus)</b></td><td>US higher-education students only; claim by 2026-10-31, then renews at US$20/month</td><td>2026-09-15</td></tr>
+    <tr><td><b>Cursor free year for students</b></td><td>New applications closed on 2026-06-25; the official page now mentions free access and autumn event offers</td><td>2026-09-15</td></tr>
+    <tr><td><b>Claude student discount</b></td><td>No individual student plan; Claude for Education is purchased by institutions</td><td>2026-09-15</td></tr>
+  </table></div>
+  <div class="note">Being unable to claim the $100 Codex student credits does not mean Codex is unavailable. Free ChatGPT has limited Codex usage, but the quota is unpublished. These offers can change; check the official page before relying on new reports.</div>
+</section>
+
+<section>
+  <h2><span class="h2n">9</span>Checklist</h2>
+  <div class="panel">
+    <ul>
+      <li>① GitHub signs in, NDHU address verified, 2FA enabled, recovery codes safely removed from any shared computer.</li>
+      <li>② Student Pack submitted; pending review counts.</li>
+      <li>③ ChatGPT signed in, desktop app installed, Codex located.</li>
+      <li>④ Personal Gmail ready and Antigravity installed and signed in; under-18 students have told the instructor.</li>
+      <li>If the optional Google offer was claimed, the 11-month reminder is set.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2><span class="h2n">10</span>If you get stuck</h2>
+  <div class="panel">
+    <ol class="steps">
+      <li>Re-read the section for the step where you are stuck.</li>
+      <li>Copy the entire error message and ask ChatGPT once.</li>
+      <li>If it still fails, bring the device in week 1 and handle it in person.</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  This page is the shared source for all courses except the lecture series. When updated, course pages link here instead of maintaining separate copies.<br>
+  Contact: <a href="mailto:wschen@gms.ndhu.edu.tw">wschen@gms.ndhu.edu.tw</a>
+</footer>
+
+</div>
+</main>
+
+<script>
+(function(){
+  var root = document.documentElement;
+
+  /* 語言：預設中文，記住選擇 */
+  var memLang = null;
+  function readLang(){
+    if (memLang) return memLang;
+    try { return localStorage.getItem('prep-lang') || 'zh'; } catch(e){ return 'zh'; }
+  }
+  function setLang(l){
+    root.setAttribute('data-ui', l);
+    var b = document.getElementById('lang');
+    if (b) b.textContent = (l === 'zh') ? 'English' : '繁體中文';
+    document.title = (l === 'zh') ? '課前準備：四樣必備' : 'Before Class: Four Things Everyone Sets Up';
+    memLang = l;
+    try { localStorage.setItem('prep-lang', l); } catch(e){}
+    countTicks();
+  }
+  setLang(readLang());
+  document.getElementById('lang').addEventListener('click', function(){
+    setLang(root.getAttribute('data-ui') === 'zh' ? 'en' : 'zh');
+  });
+
+  /* 勾選：兩種語言的同一項共用同一個狀態 */
+  var PAIR = { a1:'1', b1:'1', a2:'2', b2:'2', a3:'3', b3:'3', a4:'4', b4:'4' };
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.tick input[type=checkbox]'));
+
+  /* 記憶體副本：localStorage 不能用時照樣可勾選 */
+  var mem = null;
+
+  function load(){
+    if (mem) return mem;
+    var s = {};
+    try { s = JSON.parse(localStorage.getItem('prep-done') || '{}') || {}; } catch(e){ s = {}; }
+    mem = s;
+    return mem;
+  }
+  function save(s){
+    mem = s;
+    try { localStorage.setItem('prep-done', JSON.stringify(s)); } catch(e){}
+  }
+
+  function paint(){
+    var s = load();
+    boxes.forEach(function(b){
+      var id = PAIR[b.getAttribute('data-k')];
+      b.checked = !!s[id];
+      b.closest('.tick').classList.toggle('done', b.checked);
+    });
+  }
+
+  function countTicks(){
+    var s = load(), n = 0, ids = ['1','2','3','4'];
+    ids.forEach(function(i){ if (s[i]) n++; });
+    var pct = Math.round(n / ids.length * 100);
+    document.getElementById('pf').style.width = pct + '%';
+    var zh = root.getAttribute('data-ui') === 'zh';
+    document.getElementById('pt').textContent = zh
+      ? (n + ' / ' + ids.length + ' 完成')
+      : (n + ' / ' + ids.length + ' done');
+  }
+
+  boxes.forEach(function(b){
+    b.addEventListener('change', function(){
+      var s = load();
+      s[PAIR[b.getAttribute('data-k')]] = b.checked;
+      save(s); paint(); countTicks();
+    });
+  });
+
+  paint(); countTicks();
+})();
+</script>
