@@ -478,6 +478,13 @@
         "label": "HackMD",
         "url": null,
         "urlStatus": "pending"
+      },
+      {
+        "platform": "other",
+        "use": "跨課共用教材：讀懂 AI 使用率的數字",
+        "label": "多少人在用 AI？",
+        "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/shared/how-many-people-use-ai.html",
+        "urlStatus": "confirmed"
       }
     ],
     "scoreUrl": null,

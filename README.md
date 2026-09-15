@@ -48,6 +48,12 @@ npm run build      # 一條龍：validate → ics → decks → next build → s
 
 正式建置模擬 CI 子路徑：`BASE_PATH=/ndhu-ted-course-hub npm run build`，輸出在 `out/`。
 
+⚠️ **Windows 的 Git Bash 不能這樣下**：MSYS 會把 `/ndhu-ted-course-hub` 當成路徑轉成
+`C:/Program Files/Git/ndhu-ted-course-hub`，next build 直接報
+`Specified basePath has to start with a /`。改用 PowerShell
+（`$env:BASE_PATH="/ndhu-ted-course-hub"; npm run build`）或在 bash 前面加 `MSYS_NO_PATHCONV=1`。
+**而且別把 build 接管線**（`| tail`）——管線的退出碼是 tail 的，build 掛了你還是看到 exit 0。
+
 ## content/ 填寫指引
 
 資料都在 `content/`（詳設計書第三章）：
