@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>多少人在用 AI？How many people use AI?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF2F1; --sheet:#FFFFFF; --ink:#15304A; --muted:#566676; --line:#C9D2D8;
+  --never:#C3CCD2; --free:#2A9A8A; --paid:#E09E0E; --agent:#CF2F67; --offline:#7D8B97;
+  --ok:#2A9A8A; --warn:#E09E0E; --bad:#CF2F67;
+  --font:"IBM Plex Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.65;font-variant-numeric:tabular-nums}
+body.lang-zh [lang="en"]{display:none!important}
+body.lang-en [lang="zh"]{display:none!important}
+a{color:var(--ink)}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--agent);outline-offset:2px}
+
+.topbar{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.6rem clamp(1rem,4vw,2.5rem);background:rgba(238,242,241,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.topbar nav{display:flex;margin-right:auto;gap:.25rem;flex-wrap:wrap}
+.topbar nav a{text-decoration:none;font-size:.85rem;padding:.2rem .55rem;border-radius:99px;color:var(--muted)}
+.topbar nav a:hover{background:var(--sheet);color:var(--ink)}
+.langtoggle{margin-left:auto;border:1.5px solid var(--ink);background:none;border-radius:99px;padding:.2rem .8rem;cursor:pointer;font-size:.85rem;white-space:nowrap}
+
+main{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem) 4rem}
+section{padding:3.5rem 0;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+.step{display:flex;align-items:baseline;gap:.9rem;margin-bottom:.4rem}
+.step b{flex:none;display:grid;place-items:center;width:2.1rem;height:2.1rem;border-radius:50%;background:var(--ink);color:var(--paper);font-size:1rem}
+h1{font-size:clamp(2rem,4.4vw,3.1rem);line-height:1.12;font-weight:900;margin:.2rem 0 1rem;letter-spacing:-.01em}
+h2{font-size:clamp(1.5rem,3.2vw,2.1rem);line-height:1.25;font-weight:900;margin:0}
+p{max-width:40em}
+.lede{color:var(--muted);margin:.4rem 0 1.6rem}
+.small{font-size:.85rem;color:var(--muted)}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(1.5rem,4vw,3.5rem);align-items:start;padding-top:2.5rem}
+.guess{background:var(--sheet);border-radius:14px;padding:1.2rem 1.3rem;margin:1rem 0}
+.guess label{display:block;font-weight:700;line-height:1.4}
+.guess .row{display:flex;align-items:center;gap:1rem;margin-top:.5rem}
+.guess input[type=range]{flex:1;accent-color:var(--ink);height:2rem}
+.guess output{min-width:4.2rem;text-align:right;font-size:1.6rem;font-weight:700}
+.btn{display:inline-flex;align-items:center;gap:.5rem;border:0;background:var(--ink);color:var(--paper);padding:.75rem 1.4rem;border-radius:99px;font-weight:700;cursor:pointer}
+.btn:hover{background:#0c2135}
+.btn.ghost{background:none;color:var(--ink);border:1.5px solid var(--ink)}
+.result{margin-top:1.2rem;display:none}
+.result.show{display:block}
+.scale{position:relative;height:46px;margin:.3rem 0 1rem}
+.scale .track{position:absolute;left:0;right:0;top:22px;height:2px;background:var(--line)}
+.scale .mark{position:absolute;top:0;transform:translateX(-50%);text-align:center;font-size:.78rem;line-height:1.2;white-space:nowrap;transition:left .8s cubic-bezier(.2,.7,.2,1)}
+.scale .mark i{display:block;width:14px;height:14px;border-radius:50%;margin:16px auto 0}
+.scale .mark.you i{background:var(--sheet);border:3px solid var(--ink)}
+.scale .mark.real i{background:var(--agent)}
+.scale .mark span{position:absolute;left:50%;transform:translateX(-50%);top:-2px}
+.scale .mark.real span{top:34px}
+
+.gridwrap{background:var(--sheet);border-radius:14px;padding:1rem}
+.dots{display:grid;grid-template-columns:repeat(50,1fr);gap:2px;touch-action:manipulation}
+.dot{aspect-ratio:1;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);transition:background-color .35s,opacity .3s,transform .3s}
+.dot.c-never{background:var(--never);box-shadow:none}
+.dot.c-free{background:var(--free);box-shadow:none}
+.dot.c-paid{background:var(--paid);box-shadow:none}
+.dot.c-agent{background:var(--agent);box-shadow:none}
+.dots.show-offline .dot.offline{background:var(--sheet);box-shadow:inset 0 0 0 1.5px var(--offline)}
+.dots.focus .dot{opacity:.13}
+.dots.focus-never .dot.c-never,.dots.focus-free .dot.c-free,.dots.focus-paid .dot.c-paid,.dots.focus-agent .dot.c-agent{opacity:1}
+.dots.focus-agent .dot.c-agent,.dots.focus-paid .dot.c-paid{transform:scale(1.6)}
+.gridcap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:.8rem;color:var(--muted);margin:.6rem 0 0}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem;margin-top:.9rem}
+.legend button{display:flex;align-items:flex-start;gap:.6rem;text-align:left;background:none;border:1.5px solid transparent;border-radius:10px;padding:.45rem .6rem;cursor:pointer;line-height:1.3}
+.legend button:hover{background:var(--paper)}
+.legend button[aria-pressed="true"]{border-color:var(--ink);background:var(--paper)}
+.legend i{flex:none;width:14px;height:14px;border-radius:50%;margin-top:.2rem}
+.legend strong{display:block;font-size:1.15rem}
+.legend small{color:var(--muted);font-size:.8rem}
+.switch{display:flex;align-items:center;gap:.5rem;margin-top:.8rem;font-size:.9rem;cursor:pointer}
+.switch input{width:1.1rem;height:1.1rem;accent-color:var(--offline)}
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--ink);color:var(--paper);font-size:.8rem;padding:.35rem .6rem;border-radius:6px;opacity:0;transition:opacity .15s;line-height:1.35}
+.locked{position:relative}
+.locked::after{content:attr(data-msg);position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:2rem;font-weight:700;color:var(--muted);pointer-events:none}
+.locked.open::after{display:none}
+
+/* Overlap */
+.two{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:clamp(1.5rem,4vw,3rem);margin-top:1.5rem;align-items:start}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chip{border:1.5px solid var(--line);background:var(--sheet);border-radius:10px;padding:.4rem .7rem;cursor:pointer;text-align:left;line-height:1.25}
+.chip strong{display:block}
+.chip small{color:var(--muted);font-size:.75rem}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.chip[aria-pressed="true"] small{color:#b9c7d3}
+.chipctl{display:flex;gap:.5rem;margin-top:.8rem}
+.chipctl button{font-size:.85rem;padding:.35rem .9rem}
+.barbox{background:var(--sheet);border-radius:14px;padding:1.3rem}
+.bigsum{font-size:clamp(2.2rem,5vw,3.2rem);font-weight:700;line-height:1}
+.bar{position:relative;height:56px;margin:2.8rem 0 3.4rem;background:var(--paper);border-radius:6px}
+.bar .fill{position:absolute;left:0;top:0;bottom:0;background:var(--ink);border-radius:6px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+.bar .fill.over{background:repeating-linear-gradient(135deg,var(--ink) 0 8px,#3b5670 8px 12px)}
+.bar .ref{position:absolute;top:-12px;bottom:-12px;width:0;border-left:2px dashed var(--agent)}
+.bar .ref>span{position:absolute;left:6px;font-size:.78rem;line-height:1.25;white-space:nowrap}
+.bar .ref.up>span{top:-8px;transform:translateY(-100%)}
+.bar .ref.down>span{top:calc(100% + 4px)}
+.bar .ref.online{border-color:var(--free)}
+.bar .ref.world{border-color:var(--muted)}
+.bar .ref.world>span{left:auto;right:6px}
+.bar .ref.online>span{left:auto;right:6px}
+.flags{display:grid;gap:.5rem}
+.flag{display:flex;gap:.6rem;align-items:flex-start;padding:.6rem .8rem;border-radius:10px;background:var(--paper);font-size:.92rem;line-height:1.45}
+.flag i{flex:none;width:10px;height:10px;border-radius:50%;margin-top:.45rem}
+.flag.bad i{background:var(--bad)}
+.flag.warn i{background:var(--warn)}
+.flag.ok i{background:var(--ok)}
+
+/* Measurement */
+.tabs{display:flex;gap:.5rem;margin:1.5rem 0 1rem;flex-wrap:wrap}
+.tab{border:1.5px solid var(--ink);background:none;border-radius:99px;padding:.4rem 1.1rem;cursor:pointer;font-weight:700}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.ladder{position:relative;height:150px;background:var(--sheet);border-radius:14px;margin-bottom:1rem}
+.ladder .axis{position:absolute;left:4%;right:4%;top:66px;height:2px;background:var(--line)}
+.ladder .tick{position:absolute;top:72px;font-size:.72rem;color:var(--muted);transform:translateX(-50%)}
+.ladder .pt{position:absolute;top:54px;transform:translateX(-50%);text-align:center;transition:left .6s cubic-bezier(.2,.7,.2,1)}
+.ladder .pt i{display:block;width:26px;height:26px;border-radius:50%;margin:0 auto;border:3px solid var(--sheet);box-shadow:0 0 0 2px currentColor;background:currentColor}
+.ladder .pt span{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:700;font-size:1.05rem;line-height:1.1}
+.ladder .pt span small{display:block;font-weight:400;font-size:.72rem;color:var(--muted)}
+.mtable{width:100%;border-collapse:separate;border-spacing:0;background:var(--sheet);border-radius:14px;overflow:hidden;font-size:.93rem}
+.mtable th,.mtable td{padding:.7rem .9rem;text-align:left;vertical-align:top;border-bottom:1px solid var(--paper)}
+.mtable thead th{font-size:1rem}
+.mtable thead th .num{display:block;font-size:1.8rem;line-height:1.1}
+.mtable tbody th{color:var(--muted);font-weight:500;width:7.5rem}
+.mtable tr.diff td{background:#FFF6E0}
+.why{margin-top:1rem}
+details{background:var(--sheet);border-radius:12px;padding:.8rem 1.1rem}
+summary{cursor:pointer;font-weight:700}
+details ul{margin:.6rem 0 .2rem;padding-left:1.2rem}
+details li{margin:.3rem 0}
+
+/* Headlines */
+.heads{display:grid;gap:.9rem;margin-top:1.5rem}
+.head{background:var(--sheet);border-radius:14px;padding:1.1rem 1.2rem}
+.head q{display:block;font-size:1.15rem;font-weight:700;quotes:"「" "」" "“" "”";line-height:1.45}
+.votes{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.8rem}
+.vote{border:1.5px solid var(--line);background:none;border-radius:99px;padding:.3rem .9rem;cursor:pointer;font-size:.9rem}
+.vote:hover{border-color:var(--ink)}
+.vote.picked{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.vote.answer{box-shadow:0 0 0 3px var(--ok)}
+.fb{display:none;max-width:46em;margin-top:.8rem;padding-left:.9rem;border-left:4px solid var(--line);font-size:.95rem}
+.fb.show{display:block}
+.fb.right{border-color:var(--ok)}
+.fb.wrong{border-color:var(--bad)}
+.score{margin-top:1rem;font-weight:700}
+
+/* Discuss */
+.qs{counter-reset:q;list-style:none;padding:0;margin:1.5rem 0 0;display:grid;gap:.8rem}
+.qs li{counter-increment:q;background:var(--sheet);border-radius:14px;padding:1rem 1.2rem 1rem 3.4rem;position:relative}
+.qs li::before{content:counter(q);position:absolute;left:1.1rem;top:1rem;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--paper);display:grid;place-items:center;font-weight:700;font-size:.9rem}
+.sources{columns:2 320px;column-gap:2rem;font-size:.85rem;color:var(--muted);padding-left:1.1rem;margin-top:1.2rem}
+.sources li{break-inside:avoid;margin-bottom:.4rem}
+
+@media (max-width:860px){
+  .hero,.two{grid-template-columns:1fr}
+  .topbar nav{display:none}
+  .dots{gap:1px}
+  .legend{grid-template-columns:1fr}
+  .mtable tbody th{width:5.5rem}
+  .mtable th,.mtable td{padding:.55rem .6rem;font-size:.85rem}
+  .mtable thead th .num{font-size:1.35rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body class="lang-zh">
+
+<header class="topbar">
+  <nav aria-label="Sections">
+    <a href="#predict"><span lang="zh">預測</span><span lang="en">Predict</span></a>
+    <a href="#overlap"><span lang="zh">加總陷阱</span><span lang="en">Adding trap</span></a>
+    <a href="#measure"><span lang="zh">同國不同數</span><span lang="en">One country, many numbers</span></a>
+    <a href="#headlines"><span lang="zh">標題判讀</span><span lang="en">Judge headlines</span></a>
+    <a href="#discuss"><span lang="zh">討論</span><span lang="en">Discuss</span></a>
+  </nav>
+  <button class="langtoggle" id="langBtn" type="button" aria-label="Switch language">EN / 中</button>
+</header>
+
+<main>
+
+<!-- 1 Predict + reveal -->
+<section id="predict" class="hero">
+  <div>
+    <div class="step"><b>1</b><span class="small"><span lang="zh">先猜，再看答案</span><span lang="en">Guess first, then reveal</span></span></div>
+    <h1><span lang="zh">地球上每 100 個人，有幾個在用生成式 AI？</span><span lang="en">Out of every 100 people on Earth, how many use generative AI?</span></h1>
+    <p class="lede"><span lang="zh">不要查資料，憑你的感覺拉滑桿。你身邊的人，可能不是全世界的樣子。</span><span lang="en">No searching. Go with your gut. The people around you may not look like the rest of the world.</span></p>
+
+    <div class="guess">
+      <label for="gUse"><span lang="zh">活躍使用 generative AI 的人占世界人口</span><span lang="en">Share of the world actively using generative AI</span></label>
+      <div class="row"><input id="gUse" type="range" min="0" max="100" step="1" value="50"><output id="oUse">50%</output></div>
+    </div>
+    <div class="guess">
+      <label for="gPay"><span lang="zh">付費訂閱 AI 服務的人占世界人口</span><span lang="en">Share of the world paying for an AI subscription</span></label>
+      <div class="row"><input id="gPay" type="range" min="0" max="30" step="0.5" value="10"><output id="oPay">10%</output></div>
+    </div>
+    <button class="btn" id="revealBtn" type="button"><span lang="zh">揭曉答案</span><span lang="en">Reveal the answer</span></button>
+
+    <div class="result" id="result" aria-live="polite">
+      <p class="small"><span lang="zh">使用率</span><span lang="en">Usage</span></p>
+      <div class="scale" id="scaleUse"><div class="track"></div></div>
+      <p class="small"><span lang="zh">付費率（0–30% 尺度）</span><span lang="en">Paying (0–30% scale)</span></p>
+      <div class="scale" id="scalePay"><div class="track"></div></div>
+      <p id="resultText"></p>
+    </div>
+  </div>
+
+  <div>
+    <div class="gridwrap locked" id="gridwrap" data-msg="">
+      <div class="dots" id="dots" role="img" aria-label="2,500 dots representing world population by most advanced AI use"></div>
+      <div class="gridcap">
+        <span><span lang="zh">1 點 ≈ 330 萬人，2,500 點 = 83 億人</span><span lang="en">1 dot ≈ 3.3M people, 2,500 dots = 8.3B</span></span>
+        <span><span lang="zh">每人只算在最進階的一類</span><span lang="en">Each person counted once, in their most advanced group</span></span>
+      </div>
+      <div class="legend" id="legend" hidden>
+        <button type="button" data-k="never" aria-pressed="false"><i style="background:var(--never)"></i><span><strong>~5.9B · 71%</strong><small><span lang="zh">從未用過 generative AI</span><span lang="en">Never used generative AI</span></small></span></button>
+        <button type="button" data-k="free" aria-pressed="false"><i style="background:var(--free)"></i><span><strong>~2.3B · 28%</strong><small><span lang="zh">使用免費 chatbot</span><span lang="en">Use free chatbots</span></small></span></button>
+        <button type="button" data-k="paid" aria-pressed="false"><i style="background:var(--paid)"></i><span><strong>~80M · 1%</strong><small><span lang="zh">付費訂閱</span><span lang="en">Pay for a subscription</span></small></span></button>
+        <button type="button" data-k="agent" aria-pressed="false"><i style="background:var(--agent)"></i><span><strong>~30M · 0.36%</strong><small><span lang="zh">使用 AI coding agent（估算）</span><span lang="en">Use AI coding agents (estimate)</span></small></span></button>
+      </div>
+      <label class="switch" id="offlineSwitch" hidden><input type="checkbox" id="offlineChk"><span><span lang="zh">標出完全離線的 2.2B 人（ITU，2025 年底）</span><span lang="en">Mark the 2.2B people fully offline (ITU, end of 2025)</span></span></label>
+    </div>
+    <p class="small" id="gridNote" hidden><span lang="zh">點圖例可以只看某一群。資料：DataReportal（2026/4）、OpenAI（2026/2）、ITU；圖表分類與付費、coding agent 人數為 Gradually AI 的估算（2026/8）。</span><span lang="en">Tap a legend item to isolate a group. Data: DataReportal (Apr 2026), OpenAI (Feb 2026), ITU. Grouping and the paying and coding-agent counts are Gradually AI estimates (Aug 2026).</span></p>
+  </div>
+</section>
+
+<!-- 2 Overlap trap -->
+<section id="overlap">
+  <div class="step"><b>2</b><h2><span lang="zh">把各家 chatbot 用戶數加起來，會發生什麼事？</span><span lang="en">What happens if you add up every chatbot's users?</span></h2></div>
+  <p class="lede"><span lang="zh">點選下面的 chatbot，看加總跟「去重後的真實人數」差多少。注意每個數字底下的指標和日期。</span><span lang="en">Select chatbots below and compare the total with the deduplicated number of real people. Watch the metric and date under each figure.</span></p>
+  <div class="two">
+    <div>
+      <div class="chips" id="chips"></div>
+      <div class="chipctl">
+        <button class="btn ghost" type="button" id="chipAll"><span lang="zh">全選</span><span lang="en">Select all</span></button>
+        <button class="btn ghost" type="button" id="chipNone"><span lang="zh">清除</span><span lang="en">Clear</span></button>
+      </div>
+      <p class="small"><span lang="zh">WAU = 每週活躍用戶，MAU = 每月活躍用戶。來源：各家官方公布、QuestMobile、SpaceX S-1，經 Gradually AI 整理。</span><span lang="en">WAU = weekly active users, MAU = monthly active users. Sources: official company figures, QuestMobile, SpaceX S-1, compiled by Gradually AI.</span></p>
+    </div>
+    <div class="barbox">
+      <div class="small"><span lang="zh">你選的加總</span><span lang="en">Your total</span></div>
+      <div class="bigsum" id="sumNum">0</div>
+      <div class="bar" id="bar">
+        <div class="fill" id="fill" style="width:0"></div>
+        <div class="ref up" style="left:29.16%"><span><span lang="zh">去重後 2.42B 人</span><span lang="en">Deduplicated 2.42B</span></span></div>
+        <div class="ref online down" style="left:73.49%"><span><span lang="zh">上網人口 ≈ 6.1B（推算）</span><span lang="en">Online ≈ 6.1B (derived)</span></span></div>
+        <div class="ref world up" style="left:100%"><span><span lang="zh">世界 8.3B</span><span lang="en">World 8.3B</span></span></div>
+      </div>
+      <div class="flags" id="flags" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 Measurement -->
+<section id="measure">
+  <div class="step"><b>3</b><h2><span lang="zh">同一個國家，為什麼有好幾個「使用率」？</span><span lang="en">Why does one country have several “usage rates”?</span></h2></div>
+  <p class="lede"><span lang="zh">選一個國家，比較不同單位量出來的數字。黃色列是定義不一樣的地方。</span><span lang="en">Pick a country and compare numbers from different organizations. Yellow rows are where the definitions differ.</span></p>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="ladder" id="ladder"><div class="axis"></div></div>
+  <div style="overflow-x:auto"><table class="mtable" id="mtable"></table></div>
+  <div class="why">
+    <details id="whyBox">
+      <summary><span lang="zh">先自己想：差距可能從哪裡來？想好再打開</span><span lang="en">Think first: where could the gap come from? Open when ready</span></summary>
+      <ul>
+        <li><span lang="zh"><b>算誰</b>：年齡範圍不同（16+、16–74、15–64），分母就不同。</span><span lang="en"><b>Who counts</b>: different age ranges (16+, 16–74, 15–64) mean different denominators.</span></li>
+        <li><span lang="zh"><b>算什麼</b>：「任何 AI」包含導航、推薦系統；「生成式 AI」「chatbot」範圍比較窄。</span><span lang="en"><b>What counts</b>: “any AI” can include maps and recommendations; “generative AI” and “chatbots” are narrower.</span></li>
+        <li><span lang="zh"><b>時間窗</b>：「曾經用過」一定比「過去 3 個月用過」高。</span><span lang="en"><b>Time window</b>: “ever used” will always be higher than “used in the last 3 months.”</span></li>
+        <li><span lang="zh"><b>怎麼量</b>：問卷靠受訪者自己回答；Microsoft 用匿名化的系統資料，再依裝置市占、上網率和人口結構調整推估。兩種方法各有盲點。</span><span lang="en"><b>How it's measured</b>: surveys rely on self-report; Microsoft uses anonymized system data adjusted for device share, internet access and demographics. Each has blind spots.</span></li>
+        <li><span lang="zh"><b>什麼時候量</b>：AI 使用率一年內可以翻倍，差半年就可能差很多。</span><span lang="en"><b>When</b>: usage can double within a year, so six months apart matters.</span></li>
+      </ul>
+    </details>
+  </div>
+</section>
+
+<!-- 4 Headlines -->
+<section id="headlines">
+  <div class="step"><b>4</b><h2><span lang="zh">你是編輯：這些標題可以直接刊嗎？</span><span lang="en">You're the editor: can these headlines run?</span></h2></div>
+  <p class="lede"><span lang="zh">用前面看到的資料判斷。每則選一個，選完會顯示理由。</span><span lang="en">Use what you've seen above. Pick one verdict per headline to see the reasoning.</span></p>
+  <div class="heads" id="heads"></div>
+  <p class="score" id="score" aria-live="polite"></p>
+</section>
+
+<!-- 5 Discuss -->
+<section id="discuss">
+  <div class="step"><b>5</b><h2><span lang="zh">小組討論</span><span lang="en">Group discussion</span></h2></div>
+  <ol class="qs">
+    <li><span lang="zh">回到第 1 題：你猜的數字比實際高還是低？如果你身邊 100 個人畫成點陣圖，顏色分布會像全球嗎？為什麼？</span><span lang="en">Back to step 1: did you guess high or low? If you drew the 100 people around you as dots, would the colors look like the world's? Why?</span></li>
+    <li><span lang="zh">如果要設計一份「東華學生 AI 使用率」問卷，你會怎麼定義「使用」？時間窗要設多長？只問一題夠嗎？</span><span lang="en">If you designed a survey on AI use among our students, how would you define “use”? What time window? Is one question enough?</span></li>
+    <li><span lang="zh">全球有 2.2B 人完全離線。生成式 AI 會縮小還是擴大數位落差？花蓮的偏鄉和都市之間呢？</span><span lang="en">2.2B people are fully offline. Will generative AI narrow or widen the digital divide? What about rural and urban Hualien?</span></li>
+    <li><span lang="zh">請 AI 幫你查「台灣 AI 使用率」，它給的數字是哪個單位、哪一年、哪種定義？它有主動告訴你嗎？</span><span lang="en">Ask an AI for “Taiwan's AI usage rate.” Which organization, which year, which definition does its number use? Did it tell you without being asked?</span></li>
+  </ol>
+
+  <h3 style="margin-top:2.5rem"><span lang="zh">資料來源</span><span lang="en">Sources</span></h3>
+  <ul class="sources">
+    <li>Gradually AI, <a href="https://www.gradually.ai/en/how-many-people-use-ai/">How Many People Use AI? Facts &amp; Figures 2026</a> <span lang="zh">（2026/8/23 更新；二手整理，含作者估算）</span><span lang="en">(updated 23 Aug 2026; secondary compilation incl. author estimates)</span></li>
+    <li>DataReportal, <a href="https://datareportal.com/reports/digital-2026-mid-year-global-update-report">Digital 2026 Mid-Year Global Update</a></li>
+    <li>OpenAI, <a href="https://openai.com/index/scaling-ai-for-everyone/">Scaling AI for everyone</a></li>
+    <li>ITU, <a href="https://www.itu.int/en/mediacentre/Pages/PR-2025-11-17-Facts-and-Figures.aspx">Facts and Figures 2025</a></li>
+    <li>Eurostat, <a href="https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20251216-3">Generative AI use, 2025</a></li>
+    <li>Bitkom, <a href="https://www.bitkom.org/Presse/Presseinformation/Ein-Drittel-nutzt-KI-mindestens-einmal-pro-Woche">KI-Nutzung 2026</a></li>
+    <li>Pew Research Center, <a href="https://www.pewresearch.org/internet/2026/06/17/americans-and-ai-2026-chatbots-smart-devices-and-views-on-impact/">Americans and AI 2026</a></li>
+    <li>TWNIC, <a href="https://report.twnic.tw/2025/">2025 台灣網路報告</a></li>
+    <li>Microsoft AI Economy Institute, Global AI Diffusion Q1 2026 <span lang="zh">（報導：</span><span lang="en">(coverage: </span><a href="https://technews.tw/2026/05/08/taiwan-ranks-among-top-20-globally-in-ai-diffusion/">TechNews</a>, <a href="https://news.nextapple.com/aitech/20260509/955623B51F6078FC3019161DEFEE06BE">壹蘋新聞網</a>)</li>
+  </ul>
+  <p class="small"><span lang="zh">整理：2026 年 9 月。數字會持續變動，上課前建議回原始來源確認。</span><span lang="en">Compiled September 2026. Figures change quickly; check the original sources before class.</span></p>
+</section>
+
+</main>
+<div class="tip" id="tip"></div>
+
+<script>
+(function(){
+  let lang = 'zh';
+  const T = (zh, en) => lang === 'zh' ? zh : en;
+  const $ = id => document.getElementById(id);
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Language ---------- */
+  $('langBtn').addEventListener('click', () => {
+    lang = lang === 'zh' ? 'en' : 'zh';
+    document.body.className = 'lang-' + lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : 'en';
+    renderLock(); renderResult(); renderChips(); renderSum(); renderMeasure(); renderHeads();
+  });
+
+  /* ---------- 1. Predict & dots ---------- */
+  const CATS = [
+    {k:'never', n:1771, zh:'從未用過 generative AI', en:'Never used generative AI'},
+    {k:'free',  n:696,  zh:'使用免費 chatbot', en:'Uses free chatbots'},
+    {k:'paid',  n:24,   zh:'付費訂閱 AI', en:'Pays for AI'},
+    {k:'agent', n:9,    zh:'使用 AI coding agent', en:'Uses AI coding agents'}
+  ];
+  const OFFLINE = 663; // 2.2B / 8.3B * 2500
+  const dotsEl = $('dots');
+  const cats = [];
+  CATS.forEach(c => { for (let i = 0; i < c.n; i++) cats.push(c.k); });
+  const frag = document.createDocumentFragment();
+  cats.forEach((k, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.dataset.k = k;
+    if (k === 'never' && i < OFFLINE) d.classList.add('offline');
+    frag.appendChild(d);
+  });
+  dotsEl.appendChild(frag);
+
+  const gUse = $('gUse'), gPay = $('gPay');
+  const upd = () => { $('oUse').textContent = gUse.value + '%'; $('oPay').textContent = gPay.value + '%'; };
+  gUse.addEventListener('input', upd); gPay.addEventListener('input', upd);
+
+  let revealed = false;
+  function renderLock(){ $('gridwrap').dataset.msg = revealed ? '' : T('按「揭曉答案」後顯示', 'Press “Reveal the answer” to show'); }
+  renderLock();
+
+  function scale(el, you, real, max, youLabel, realLabel){
+    el.querySelectorAll('.mark').forEach(m => m.remove());
+    const a = document.createElement('div'); a.className = 'mark you';
+    a.innerHTML = '<span>' + youLabel + '</span><i></i>';
+    const b = document.createElement('div'); b.className = 'mark real';
+    b.innerHTML = '<i></i><span>' + realLabel + '</span>';
+    a.style.left = '0%'; b.style.left = '0%';
+    el.appendChild(a); el.appendChild(b);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      a.style.left = Math.min(100, you / max * 100) + '%';
+      b.style.left = Math.min(100, real / max * 100) + '%';
+    }));
+  }
+
+  function renderResult(){
+    if (!revealed) return;
+    const u = +gUse.value, p = +gPay.value;
+    scale($('scaleUse'), u, 29.2, 100, T('你猜 ', 'You ') + u + '%', T('估計 29%', 'Est. 29%'));
+    scale($('scalePay'), p, 1, 30, T('你猜 ', 'You ') + p + '%', T('約 1%', '≈1%'));
+    const du = u - 29.2;
+    let msg;
+    if (Math.abs(du) <= 5) msg = T('使用率你猜得很準。', 'Your usage guess was close.');
+    else if (du > 0) msg = T('你高估了約 ' + Math.round(du) + ' 個百分點。', 'You overestimated by about ' + Math.round(du) + ' points.');
+    else msg = T('你低估了約 ' + Math.round(-du) + ' 個百分點。', 'You underestimated by about ' + Math.round(-du) + ' points.');
+    const ratio = p > 0 ? Math.round(p / 1) : 0;
+    const payMsg = p > 2
+      ? T('付費率你猜了 ' + p + '%，約是實際的 ' + ratio + ' 倍：每 30 個 AI 使用者大約只有 1 個付費。', 'You guessed ' + p + '% paying, about ' + ratio + '× the estimate: only about 1 in 30 AI users pays.')
+      : T('付費率猜得很準：每 30 個 AI 使用者大約只有 1 個付費。', 'Close on paying: only about 1 in 30 AI users pays.');
+    $('resultText').textContent = [msg, payMsg, T('另外，71% 的人從未用過，其中很大一部分根本沒有網路。', 'Also, 71% have never used it, and a large share of them have no internet at all.')].join(lang === 'zh' ? '' : ' ');
+  }
+
+  $('revealBtn').addEventListener('click', () => {
+    const first = !revealed;
+    revealed = true;
+    $('gridwrap').classList.add('open');
+    renderLock();
+    $('result').classList.add('show');
+    $('legend').hidden = false; $('offlineSwitch').hidden = false; $('gridNote').hidden = false;
+    renderResult();
+    if (first && window.innerWidth < 860) setTimeout(() => $('gridwrap').scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'start'}), 400);
+    if (first) {
+      const dots = dotsEl.children;
+      for (let i = 0; i < dots.length; i++) {
+        const d = dots[i];
+        if (reduce) d.classList.add('c-' + d.dataset.k);
+        else setTimeout(() => d.classList.add('c-' + d.dataset.k), Math.floor(i / 50) * 28 + (i % 50) * 2);
+      }
+    }
+  });
+
+  let focusK = null;
+  $('legend').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const k = b.dataset.k;
+    focusK = focusK === k ? null : k;
+    dotsEl.classList.remove('focus','focus-never','focus-free','focus-paid','focus-agent');
+    if (focusK) dotsEl.classList.add('focus', 'focus-' + focusK);
+    $('legend').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.k === focusK));
+  });
+  $('offlineChk').addEventListener('change', e => dotsEl.classList.toggle('show-offline', e.target.checked));
+
+  const tip = $('tip');
+  function showTip(e){
+    const d = e.target.closest('.dot');
+    if (!d || !revealed) { tip.style.opacity = 0; return; }
+    const c = CATS.find(x => x.k === d.dataset.k);
+    let label = T(c.zh, c.en);
+    if (d.classList.contains('offline') && dotsEl.classList.contains('show-offline')) label += T('（且完全離線）', ' (and fully offline)');
+    tip.textContent = T('這一點 ≈ 330 萬人：', 'This dot ≈ 3.3M people: ') + label;
+    const x = Math.min(window.innerWidth - tip.offsetWidth - 8, e.clientX + 12);
+    tip.style.left = x + 'px'; tip.style.top = (e.clientY + 14) + 'px'; tip.style.opacity = 1;
+  }
+  dotsEl.addEventListener('mousemove', showTip);
+  dotsEl.addEventListener('click', showTip);
+  dotsEl.addEventListener('mouseleave', () => tip.style.opacity = 0);
+
+  /* ---------- 2. Overlap ---------- */
+  const BOTS = [
+    {n:'Meta AI', v:1000, m:'MAU', d:'2025/05', y:2025},
+    {n:'Gemini', v:950, m:'MAU', d:'2026/07', y:2026},
+    {n:'ChatGPT', v:900, m:'WAU', d:'2026/02', y:2026},
+    {n:'Doubao', v:382, m:'MAU', d:'2026/06', y:2026},
+    {n:'Ernie Bot', v:200, m:'MAU', d:'2026', y:2026, self:true},
+    {n:'Qwen', v:167, m:'MAU', d:'2026/06', y:2026},
+    {n:'Copilot', v:150, m:'MAU', d:'2025/10', y:2025},
+    {n:'DeepSeek', v:130, m:'MAU', d:'2026/06', y:2026},
+    {n:'Grok', v:117, m:'MAU', d:'2026/03', y:2026}
+  ];
+  const sel = new Set();
+  const fmt = v => v >= 1000 ? (v / 1000).toFixed(2).replace(/0$/, '') + 'B' : v + 'M';
+
+  function renderChips(){
+    $('chips').innerHTML = BOTS.map((b, i) =>
+      '<button type="button" class="chip" data-i="' + i + '" aria-pressed="' + sel.has(i) + '"><strong>' + b.n + ' ' + fmt(b.v) + '</strong><small>' + b.m + '，' + b.d + (b.self ? T('，自行公布', ', self-reported') : '') + '</small></button>'
+    ).join('');
+  }
+  $('chips').addEventListener('click', e => {
+    const c = e.target.closest('.chip'); if (!c) return;
+    const i = +c.dataset.i; sel.has(i) ? sel.delete(i) : sel.add(i);
+    renderChips(); renderSum();
+  });
+  $('chipAll').addEventListener('click', () => { BOTS.forEach((_, i) => sel.add(i)); renderChips(); renderSum(); });
+  $('chipNone').addEventListener('click', () => { sel.clear(); renderChips(); renderSum(); });
+
+  function renderSum(){
+    const picked = [...sel].map(i => BOTS[i]);
+    const sum = picked.reduce((a, b) => a + b.v, 0);
+    $('sumNum').textContent = sum ? fmt(sum) : '0';
+    const fill = $('fill');
+    fill.style.width = Math.min(100, sum / 8300 * 100) + '%';
+    fill.classList.toggle('over', sum > 2420);
+    const flags = [];
+    if (!picked.length) flags.push(['ok', T('先選幾個 chatbot。建議從 Meta AI、Gemini、ChatGPT 開始。', 'Start by picking a few. Try Meta AI, Gemini and ChatGPT.')]);
+    if (sum > 2420) flags.push(['bad', T('加總已超過 2.42B 這個去重後的真實人數。同時用 ChatGPT 和 Gemini 的人被算了兩次。', 'The total is above the deduplicated 2.42B. Someone using both ChatGPT and Gemini is counted twice.')]);
+    else if (picked.length >= 2) flags.push(['warn', T('還沒超過 2.42B，但這不代表沒有重複：同時用兩個 chatbot 的人一樣被算兩次。', 'Still under 2.42B, but overlap is already there: anyone using two chatbots is counted twice.')]);
+    const ms = new Set(picked.map(b => b.m));
+    if (ms.size > 1) flags.push(['warn', T('你把 WAU 和 MAU 混在一起了。每週活躍和每月活躍是不同的尺，不能直接相加。', 'You are mixing WAU and MAU. Weekly and monthly actives are different rulers and cannot be added directly.')]);
+    const ys = new Set(picked.map(b => b.y));
+    if (ys.size > 1) flags.push(['warn', T('日期不一致：有 2025 年的數字，也有 2026 年的。Meta AI 的 1B 是 2025 年 5 月的最新公開數字。', 'Dates don’t match: you have 2025 and 2026 figures. Meta AI’s 1B is its latest public figure, from May 2025.')]);
+    if (picked.some(b => b.self)) flags.push(['warn', T('Ernie Bot 的數字是百度自行公布，沒有第三方驗證。', 'The Ernie Bot figure is self-reported by Baidu, with no third-party check.')]);
+    if (sum > 6100) flags.push(['bad', T('加總甚至超過全球上網人口，這在現實中不可能。', 'The total even exceeds the online population, which is impossible.')]);
+    $('flags').innerHTML = flags.map(f => '<div class="flag ' + f[0] + '"><i></i><span>' + f[1] + '</span></div>').join('');
+  }
+
+  /* ---------- 3. Measurement ---------- */
+  const COUNTRIES = [
+    {k:'tw', zh:'台灣', en:'Taiwan', rows:[
+      {v:43.19, col:'var(--free)', src:'TWNIC', who:['台灣民眾，全國調查 n=2,142','Taiwan residents, national survey n=2,142'], what:['生成式 AI','Generative AI'], win:['過去 3 個月','Last 3 months'], how:['問卷（委託陽明交大）','Survey (by NYCU)'], when:['2025/7–9','Jul–Sep 2025']},
+      {v:31.8, col:'var(--agent)', src:'Microsoft', who:['15–64 歲','Ages 15–64'], what:['生成式 AI','Generative AI'], win:['報告期間內','Within the report period'], how:['匿名化系統資料推估','Estimated from anonymized system data'], when:['2026 Q1','Q1 2026']}
+    ]},
+    {k:'de', zh:'德國', en:'Germany', rows:[
+      {v:58, col:'var(--paid)', src:'Bitkom', who:['16 歲以上','Ages 16+'], what:['任何 AI','Any AI'], win:['未限定（任何使用）','Not limited (any use)'], how:['代表性調查','Representative survey'], when:['2026','2026']},
+      {v:32.2, col:'var(--free)', src:'Eurostat', who:['16–74 歲','Ages 16–74'], what:['生成式 AI','Generative AI'], win:['過去 3 個月','Last 3 months'], how:['官方統計問卷','Official statistical survey'], when:['2025','2025']},
+      {v:31.1, col:'var(--agent)', src:'Microsoft', who:['15–64 歲','Ages 15–64'], what:['生成式 AI','Generative AI'], win:['報告期間內','Within the report period'], how:['匿名化系統資料推估','Estimated from anonymized system data'], when:['2026 Q1','Q1 2026']}
+    ]},
+    {k:'us', zh:'美國', en:'USA', rows:[
+      {v:49, col:'var(--paid)', src:'Pew', who:['成年人','Adults'], what:['AI chatbot','AI chatbots'], win:['曾經用過','Ever used'], how:['問卷','Survey'], when:['2026/2','Feb 2026']},
+      {v:31.3, col:'var(--agent)', src:'Microsoft', who:['15–64 歲','Ages 15–64'], what:['生成式 AI','Generative AI'], win:['報告期間內','Within the report period'], how:['匿名化系統資料推估','Estimated from anonymized system data'], when:['2026 Q1','Q1 2026']}
+    ]}
+  ];
+  let country = 0;
+
+  function renderMeasure(){
+    $('tabs').innerHTML = COUNTRIES.map((c, i) =>
+      '<button type="button" role="tab" class="tab" data-i="' + i + '" aria-selected="' + (i === country) + '">' + T(c.zh, c.en) + '</button>').join('');
+    const c = COUNTRIES[country];
+    const lad = $('ladder');
+    lad.querySelectorAll('.pt,.tick').forEach(n => n.remove());
+    const pos = v => 'calc(4% + ' + (v / 100 * 92) + '%)';
+    [0, 25, 50, 75, 100].forEach(t => { const s = document.createElement('div'); s.className = 'tick'; s.style.left = pos(t); s.textContent = t + '%'; lad.appendChild(s); });
+    const sorted = [...c.rows].sort((a, b) => a.v - b.v);
+    sorted.forEach((r, idx) => {
+      const p = document.createElement('div'); p.className = 'pt'; p.style.color = r.col;
+      p.style.left = pos(r.v);
+      const near = idx > 0 && (lad.clientWidth * 0.92 * Math.abs(r.v - sorted[idx - 1].v) / 100) < 100;
+      p.innerHTML = '<span style="color:var(--ink)' + (near ? ';bottom:auto;top:44px' : '') + '">' + r.v + '%<small>' + r.src + '</small></span><i></i>';
+      lad.appendChild(p);
+    });
+    const keys = [['who','算誰','Who'],['what','算什麼','What'],['win','時間窗','Window'],['how','怎麼量','Method'],['when','調查時間','When']];
+    let html = '<thead><tr><th></th>' + c.rows.map(r => '<th><span class="num" style="color:' + r.col + '">' + r.v + '%</span>' + r.src + '</th>').join('') + '</tr></thead><tbody>';
+    keys.forEach(k => {
+      const vals = c.rows.map(r => T(r[k[0]][0], r[k[0]][1]));
+      const diff = new Set(vals).size > 1;
+      html += '<tr class="' + (diff ? 'diff' : '') + '"><th>' + T(k[1], k[2]) + '</th>' + vals.map(v => '<td>' + v + '</td>').join('') + '</tr>';
+    });
+    $('mtable').innerHTML = html + '</tbody>';
+  }
+  $('tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (!b) return; country = +b.dataset.i; renderMeasure(); });
+
+  /* ---------- 4. Headlines ---------- */
+  const VERDICTS = [['ok','可以刊','Run it'],['caveat','要加註','Needs a caveat'],['over','過度推論','Overclaim']];
+  const HEADS = [
+    {a:'over', zh:'ChatGPT、Gemini、Meta AI 合計近 3B 用戶，全球三分之一人口都在用', en:'ChatGPT, Gemini and Meta AI total nearly 3B users: a third of humanity uses them',
+     fzh:'同一個人可能三個都用，被算三次；而且 WAU 和 MAU 混加、日期差了一年多。去重後的全球生成式 AI 使用者約 2.42B。', fen:'One person using all three is counted three times, WAU and MAU are mixed, and the dates are over a year apart. The deduplicated global figure is about 2.42B.'},
+    {a:'ok', zh:'DataReportal 估計：2026 年 4 月全球約 29% 人口活躍使用生成式 AI', en:'DataReportal estimates about 29% of the world actively used generative AI in April 2026',
+     fzh:'有來源、有時間、用「估計」而不是斷言。可以刊，內文最好補一句：DataReportal 沒有完整公開方法。', fen:'Source, date and “estimates” instead of a flat claim. Fine to run; ideally add that DataReportal does not fully disclose its method.'},
+    {a:'over', zh:'台灣人付費用 AI 的比例，是全世界的 8 倍', en:'Taiwanese pay for AI at 8 times the global rate',
+     fzh:'8.54% 來自 TWNIC 問卷，媒體對題目有「願意付費」和「已付費」兩種寫法；約 1% 是 Gradually AI 以全球人口（含離線者）估算的。題目、分母、方法都不同，不能相除。', fen:'The 8.54% is from the TWNIC survey, and coverage disagrees on whether it means “willing to pay” or “paying”; the ~1% is a Gradually AI estimate over the whole world population, offline people included. Different question, denominator and method: you cannot divide one by the other.'},
+    {a:'caveat', zh:'台灣 AI 普及率超越美國', en:'Taiwan overtakes the US in AI adoption',
+     fzh:'只在 Microsoft 同一套指標下成立（31.8% 對 31.3%，差 0.5 個百分點）。換成 TWNIC 對 Pew 就不能比，因為定義不同。標題要寫出是哪份報告。', fen:'True only on Microsoft’s single metric (31.8% vs 31.3%, a 0.5-point gap). TWNIC vs Pew is not comparable. The headline should name the report.'},
+    {a:'caveat', zh:'全球 AI coding agent 使用者達 3,000 萬人', en:'AI coding agents reach 30 million users worldwide',
+     fzh:'3,000 萬是部落格作者自己估的 25–35M 區間中間值，不是任何廠商公布的數字；Claude Code 甚至沒有公布絕對人數。要寫明「估算」和出處。', fen:'30M is the midpoint of a 25–35M range estimated by a blog author, not a figure any company published; Claude Code has no public absolute count. Say “estimate” and name the source.'}
+  ];
+  const picks = {};
+  function renderHeads(){
+    $('heads').innerHTML = HEADS.map((h, i) => {
+      const p = picks[i];
+      const btns = VERDICTS.map(v => {
+        let cls = 'vote';
+        if (p === v[0]) cls += ' picked';
+        if (p && v[0] === h.a) cls += ' answer';
+        return '<button type="button" class="' + cls + '" data-i="' + i + '" data-v="' + v[0] + '">' + T(v[1], v[2]) + '</button>';
+      }).join('');
+      const fb = p ? '<div class="fb show ' + (p === h.a ? 'right' : 'wrong') + '"><b>' + (p === h.a ? T('判斷正確。', 'Correct. ') : T('再想想：比較適合「' + VERDICTS.find(v => v[0] === h.a)[1] + '」。', 'Closer to “' + VERDICTS.find(v => v[0] === h.a)[2] + '”. ')) + '</b>' + T(h.fzh, h.fen) + '</div>' : '';
+      return '<div class="head"><q>' + T(h.zh, h.en) + '</q><div class="votes">' + btns + '</div>' + fb + '</div>';
+    }).join('');
+    const n = Object.keys(picks).length;
+    const right = Object.entries(picks).filter(([i, v]) => HEADS[i].a === v).length;
+    $('score').textContent = n ? T('已判斷 ' + n + ' / ' + HEADS.length + ' 則，答對 ' + right + ' 則', 'Judged ' + n + ' of ' + HEADS.length + ', ' + right + ' correct') : '';
+  }
+  $('heads').addEventListener('click', e => {
+    const b = e.target.closest('.vote'); if (!b) return;
+    picks[b.dataset.i] = b.dataset.v; renderHeads();
+  });
+
+  renderChips(); renderSum(); renderMeasure(); renderHeads();
+})();
+</script>
+</body>
+</html>
