@@ -1,0 +1,84 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W3 學生步驟｜把它弄壞三次</title><style>
+:root{font-family:system-ui,'Microsoft JhengHei',sans-serif;color:#153d36;background:#f4f6ed;line-height:1.8}body{margin:0}main{max-width:880px;margin:auto;padding:30px 24px 90px}nav{display:flex;gap:18px;flex-wrap:wrap}a{color:#09695b;text-underline-offset:4px}header{padding:44px 0 28px;border-bottom:2px solid #1f6153}h1{font-size:clamp(30px,5vw,54px);line-height:1.25;max-width:650px}h2{font-size:26px;line-height:1.4;margin:44px 0 14px}h3{font-size:20px;margin:24px 0 8px}.eyebrow{letter-spacing:.09em;font-weight:700;color:#577565}.lead{font-size:21px}section{scroll-margin-top:20px}.note{padding:14px 20px;border-left:4px solid #c9963b;background:#fff9e8}.src{padding:12px 20px;border-left:4px solid #79958a;background:#eef2e7;font-size:15px;color:#3d574d}table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid #bbc9bf;padding:10px;text-align:left;vertical-align:top}th{background:#e0ece2}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#133e34;color:#f4f6ed;padding:18px;border-radius:8px;font:15px/1.7 ui-monospace,monospace}code{background:#e6ece5;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;font:15px ui-monospace,monospace}ol,ul{padding-left:1.4em}li{margin:6px 0}.small{font-size:14px;color:#51695f}.steps{counter-reset:s;list-style:none;padding:0}.steps li{background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:12px 16px;margin:10px 0}.steps li b{color:#09695b}@media print{nav,.no-print{display:none}main{max-width:none;padding:0}h1{font-size:30px}h2{break-after:avoid}pre,table,.note,.steps li{break-inside:avoid}}
+</style></head><body><main>
+<nav><a href="deck.html">投影片</a><a href="deck.pdf">下載投影片 PDF</a><a href="w03-E2卡-正反面.html">列印當堂卡</a><a href="evidence-card.pdf">下載當堂卡 PDF</a><a href="starter.zip">起步包（zip）</a></nav>
+
+<header><p class="eyebrow">和 AI 一起寫程式　WEEK 3</p><h1>把它弄壞三次，<br>然後修成 v1</h1><p class="lead">今天不做新東西。先把上週那一頁讀懂、故意弄壞三次，再只加一件事變成 v1。</p><p>弄壞不是失敗，是最快看懂的方法。猜錯了最值錢——那代表你以為它這樣運作，其實不是。</p></header>
+
+<section><h2>1　今天交什麼</h2>
+<table><tr><th>東西</th><th>怎麼處理</th></tr>
+<tr><td><b>當堂卡②（E2）</b></td><td><b>當堂寫、當堂交</b>，不帶回家。正面是 trace 四行，背面是三次弄壞加四件事。</td></tr>
+<tr><td><code>panel-v0.html</code></td><td>自己帶走，不交。<b>不要覆蓋掉</b>，W5 要拿它跟 v1 比差異。</td></tr>
+<tr><td><code>panel-v1.html</code></td><td>自己帶走，不交。今天新存的那一份。</td></tr></table>
+<p class="small">沒改好也交。這張卡看的是證據完整不完整，不是做得漂不漂亮。</p></section>
+
+<section><h2>2　先拿出 v0</h2>
+<ol><li>從自己的雲端硬碟或信箱，把上週存的單檔找出來，放到桌面。</li>
+<li>用瀏覽器打開它，確認名字和按鈕還會動。</li>
+<li>把檔名改成 <code>panel-v0.html</code>（等一下才分得出哪個是舊的）。</li></ol>
+<p class="note"><b>檔不見了、上週沒來、或帳號進不去？</b>下載老師的範例當成你的 v0：<a href="starter/v0-sample.html">v0-sample.html</a>（在瀏覽器上按右鍵「另存新檔」）。用範例做今天全部的事，<b>跟自己做的同分</b>。整包也可以直接抓 <a href="starter.zip">starter.zip</a>。</p></section>
+
+<section><h2>3　讀懂它：trace 四行</h2>
+<p><b>trace（追蹤）</b>就是當一次電腦：一行一行念下去，每念一行就寫下「變數現在是多少」。</p>
+<h3>怎麼在記事本打開 <code>.html</code></h3>
+<ol><li>在檔案上按<b>右鍵</b> → 開啟檔案 → 選「記事本」。（直接點兩下會用瀏覽器開，那樣看不到程式。）</li>
+<li>找到 <code>&lt;script&gt;</code> 和 <code>&lt;/script&gt;</code> 中間那幾行，那就是程式。</li></ol>
+<h3>挑哪四行</h3>
+<ul><li><b>名字那行</b>——把你的名字放進畫面的那一行。</li>
+<li><b>按鈕那行</b>——寫著「按下去要做什麼」的那一行。</li>
+<li><b>加一那行</b>——數字變多的那一行。</li>
+<li><b>顯示那行</b>——把結果寫回畫面的那一行。</li></ul>
+<p>四行找到之後，填在卡的正面。三欄長這樣：</p>
+<table><tr><th>這一行做什麼</th><th>變數現在是多少</th><th>畫面會變嗎</th></tr>
+<tr><td>把數字加一</td><td><code>count</code> 從 0 變成 1</td><td>還不會，下一行才會</td></tr></table>
+<p class="small">這一列是示範，不要照抄。「變數現在是多少」看不出來就寫「我看不出來」——那也是誠實的答案，比亂填有用。</p></section>
+
+<section><h2>4　弄壞三次，各一種</h2>
+<p><b>每一次都照這六步走：</b>先寫預期 → 改 → <b>存檔</b> → 回瀏覽器<b>重新整理</b> → 寫實際 → <b>改回來</b>。一次只弄壞一處，改回來了才弄下一個。</p>
+<ol class="steps">
+<li><b>第一次：改一個數字。</b>把加一的那個 <code>1</code> 改成 <code>10</code>（或把一開始的 <code>0</code> 改成 <code>5</code>）。先寫：你猜按一下會變多少？</li>
+<li><b>第二次：刪一行。</b>把「顯示那行」整行刪掉。先寫：你猜按下去會發生什麼？畫面會不會動？</li>
+<li><b>第三次：改一個名字。</b>把 <code>count</code> 這個字<b>只改其中一處</b>，改成 <code>counter</code>，其他地方不動。先寫：你猜它會停在哪裡？</li></ol>
+<p class="note"><b>最常卡的兩件：</b>①改完忘了存檔就去重新整理——畫面當然沒變，那不是程式的問題。②改到的是 AI 對話裡的預覽，不是桌面上那個檔——請確認記事本標題列上的檔名，跟你在瀏覽器打開的是同一個。</p>
+<p>第三次多半會出現紅字，或是按了完全沒反應。<b>那正好</b>——那就是下一段要貼給 AI 的原文。</p></section>
+
+<section><h2>5　出錯了，先做這四步</h2>
+<p class="src">以下四步照抄自共用教材 <b>P9〈電腦出錯了，先做這四步〉</b>（<code>background-knowledge/P9-電腦出錯先做的四步.md</code>），各科共用同一份，本週不另寫版本。</p>
+<ol class="steps">
+<li><b>複製錯誤訊息的原文，整段。</b>不要截圖、不要濃縮成「它壞了」。從第一個字到最後一個字，包括看不懂的那些。</li>
+<li><b>貼給 AI，前面加一句情況。</b>例如：「我在做 ___ 的時候出現這段，請先解釋這是什麼意思，再說你會怎麼查。」——先解釋，不是先修。</li>
+<li><b>看它的計畫，不要照單全收。</b>它會列出幾個可能的原因和要做的事。挑最像你情況的那一個；會動到檔案的，先備份再試。</li>
+<li><b>自己驗一次結果，記下四格。</b>原文寫了什麼／它說是什麼／我做了什麼／結果如何。沒解掉也記——下一次問的時候，這四格就是你的問題描述。</li></ol>
+<p><b>沒有紅字的</b>（按了沒反應、畫面不動）：第一步的「原文」改寫成三句——我做了什麼、我預期看到什麼、實際看到什麼。</p>
+<p class="note"><b>貼之前先遮掉個資：</b>姓名、學號、密碼，還有檔案路徑裡有你名字的那一段（例如 <code>C:\Users\王小明</code> 換成 <code>C:\Users\me</code>，路徑其他部分留著，AI 要靠它判斷）。</p>
+<p class="small">附帶一句 P9 也寫著的：它說「已修好」不算數。你自己重新整理一次、按一次那顆按鈕，看到對的結果才算。</p></section>
+
+<section><h2>6　修成 v1：只加一件事</h2>
+<p>回頭看上週的需求卡，從「想再往前」挑<b>一件</b>——一顆歸零按鈕、換個顏色、多顯示一句話都好。<b>一次只加一件，看一次結果。</b></p>
+<p>用 Gemini 的 Canvas，或任何一個你打得開的網頁版 AI，都可以。把下面這段跟你的需求卡、v0 全文一起貼進去：</p>
+<pre>這是我的需求卡和 v0 全文。
+只加「___」這一件，其他不要動。
+先講你打算改哪裡，我說好再動手。</pre>
+<p><b>驗收就看需求卡「輸出」那一欄：</b>多出來的那一件有沒有出現？原本就有的那些，還在不在？兩個都要看。</p>
+<p class="small">它多做了你沒要的事，就說「這個我沒要，拿掉」——那一次退回，寫進卡背面的四件事裡。</p></section>
+
+<section><h2>7　存成單檔帶走</h2>
+<ol><li>把改好的完整程式碼存成 <code>panel-v1.html</code>。用記事本「另存新檔」時，<b>存檔類型要先改成「所有檔案」</b>、編碼選 UTF-8，不然它會偷偷存成 <code>panel-v1.html.txt</code>。存完看一眼檔名有沒有多出 <code>.txt</code>。</li>
+<li><b><code>panel-v0.html</code> 不要覆蓋。</b>兩個檔名不一樣，W5 才有兩版可以比差異。</li>
+<li>兩個檔都存進自己的雲端硬碟，或寄一封給自己。</li>
+<li>驗收分兩件：自己的裝置<b>拿得到檔案</b>；用瀏覽器<b>打得開、按得動</b>。</li></ol>
+<p class="note"><b>下載夾不算。</b>教室電腦會重置，留在下載夾的東西下次就不在了。手機打不開或只看到一堆程式文字，就登記卡關、改用其他瀏覽器驗功能——手機不必一定跑得動。</p></section>
+
+<section><h2>8　沒有帳號、Canvas 被擋怎麼辦</h2>
+<ul><li><b>換一個你打得開的網頁版 AI</b>，任何一個都行，<b>同分</b>。</li>
+<li><b>完全沒有 AI 可以用</b>：用老師給的 <a href="starter/v1-sample.html">v1-sample.html</a> 當成你的 v1，把今天的 trace 與三次弄壞做完，<b>同分</b>。卡上照實寫「這次沒用 AI」。</li>
+<li>不要為了繞過帳號或年齡限制去借別人的帳號。做不到就登記卡關，當堂用老師範例或看同學示範完成 E2，把「我親自測的」和「我看到的」分開寫。</li></ul>
+<p class="small">今天的計分看的是 trace 與三次弄壞的證據，不是你用了哪一家 AI。</p></section>
+
+<section><h2>9　下週停課，10/05 見</h2>
+<ul><li><b>9/28（W4）教師節停課</b>：不補課、不繳交、不計分。</li>
+<li><b>10/05（W5）</b>：帶著 <code>panel-v0.html</code> 和 <code>panel-v1.html</code> 兩個檔來，那天要把它放上網。</li>
+<li>兩個檔在雲端或信箱裡放好，中間這兩週不要刪。</li></ul></section>
+
+<footer class="small"><p>國立東華大學　和 AI 一起寫程式：創意生活應用<br>W3 學生步驟，2026-09-16。這一頁沒有接 AI，也不收集你填的任何東西；離線打得開。<br>出錯四步引自共用教材 P9；表格中的示例為教學設計，不是工具實際產生的成果。</p></footer>
+</main></body></html>

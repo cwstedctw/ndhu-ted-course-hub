@@ -1,0 +1,135 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W3 學生步驟｜一切皆檔案</title><style>
+:root{font-family:system-ui,'Microsoft JhengHei',sans-serif;color:#153d36;background:#f4f6ed;line-height:1.8}body{margin:0}main{max-width:880px;margin:auto;padding:30px 24px 90px}nav{display:flex;gap:18px;flex-wrap:wrap}a{color:#09695b;text-underline-offset:4px}header{padding:44px 0 28px;border-bottom:2px solid #1f6153}h1{font-size:clamp(30px,5vw,54px);line-height:1.25;max-width:650px}h2{font-size:26px;line-height:1.4;margin:44px 0 14px}h3{font-size:20px;margin:24px 0 8px}.eyebrow{letter-spacing:.09em;font-weight:700;color:#577565}.lead{font-size:21px}section{scroll-margin-top:20px}.note{padding:14px 20px;border-left:4px solid #c9963b;background:#fff9e8}.src{padding:12px 20px;border-left:4px solid #79958a;background:#eef2e7;font-size:15px;color:#3d574d}table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid #bbc9bf;padding:10px;text-align:left;vertical-align:top}th{background:#e0ece2}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#133e34;color:#f4f6ed;padding:18px;border-radius:8px;font:15px/1.7 ui-monospace,monospace}code{background:#e6ece5;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;font:15px ui-monospace,monospace}ol,ul{padding-left:1.4em}li{margin:6px 0}.small{font-size:14px;color:#51695f}.steps{counter-reset:s;list-style:none;padding:0}.steps li{background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:12px 16px;margin:10px 0}.steps li b{color:#09695b}@media print{nav,.no-print{display:none}main{max-width:none;padding:0}h1{font-size:30px}h2{break-after:avoid}pre,table,.note,.steps li{break-inside:avoid}}
+</style></head><body><main>
+<nav><a href="deck.html">投影片</a><a href="deck.pdf">下載投影片 PDF</a><a href="w03-當堂卡-正反面.html">列印當堂卡</a><a href="evidence-card.pdf">下載當堂卡 PDF</a><a href="starter.zip">起步包（zip）</a></nav>
+
+<header><p class="eyebrow">AIoT 智慧裝置實作　WEEK 3</p><h1>在 Linux 裡，<br>什麼都是檔案</h1><p class="lead">今天不學新語言。只學一句話：這塊板上的東西——包括那顆燈——在系統眼裡都是一個可以讀、可以寫的檔案。</p><p>三件事：走進板子、用檔案把燈點亮、寫一支讓燈自己閃的腳本。最後十分鐘用手機看一眼它。</p></header>
+
+<section><h2>1　今天交什麼</h2>
+<table><tr><th>東西</th><th>怎麼處理</th><th>什麼時候</th></tr>
+<tr><td><b>當堂卡</b></td><td><b>當堂寫、當堂交</b>，不帶回家。正面是走一趟，背面是「AI 說／真機做」對照表。</td><td>下課前</td></tr>
+<tr><td><code>marquee.sh</code></td><td>你的跑馬燈腳本。自己帶走，上傳 e學苑。</td><td><b>10/01（三）14:10 上課前</b></td></tr>
+<tr><td>對照表<b>第 1 條</b></td><td>貼在 e學苑 Week 3 的「線上文字」那一格。五欄要寫滿。</td><td>同上</td></tr>
+<tr><td>手機 BLE 掃描截圖</td><td><b>選附</b>。今天有做到才交，沒做到不扣分。</td><td>同上</td></tr></table>
+<p class="note"><b>檔案格式要注意：</b>e學苑收 <code>.sh</code>、<code>.txt</code>、<code>.png</code>、<code>.jpg</code>、<code>.jpeg</code>、<code>.pdf</code>。<b>它不收 <code>.md</code></b>，腳本存成 <code>marquee.sh</code>，純文字的東西存成 <code>.txt</code>。</p>
+<p class="small">當堂卡看的是證據完整不完整，不是做得漂不漂亮。沒點亮也交，把「卡在哪裡」寫清楚一樣有分。</p>
+<p class="small">下面會提到兩個檔：<code>marquee.sh</code>（跑馬燈範本）和 <code>對照表.txt</code>。<b>兩個都在 <a href="starter.zip">starter.zip</a> 裡</b>，抓那一包解開就有；個別連結點不開時就用這一包。</p></section>
+
+<section><h2>2　兩條路，你今天走哪一條</h2>
+<p>老師會在上課一開始宣布走哪一條。<b>兩條路的分數一樣。</b></p>
+<table><tr><th></th><th>路線 A</th><th>路線 B</th></tr>
+<tr><th>情況</th><td>你有一塊自己的板，而且連得上</td><td>板子不夠、或只有老師那幾塊</td></tr>
+<tr><th>怎麼做</th><td>全程自己連、自己敲</td><td>一組一塊<b>輪流敲</b>，每個人都要親手跑完一次三件事</td></tr>
+<tr><th>點燈那步</th><td>在自己的板上點</td><td>輪到你就在共用板上點；只有老師那塊時，看老師示範，卡上寫「看教師板」</td></tr>
+<tr><th>跑馬燈</th><td>在板上寫、在板上跑</td><td>在自己電腦上寫，輪到板子時跑一次；沒輪到就用螢幕版（第 4 節），<b>同分</b></td></tr></table>
+<h3>怎麼連上板子</h3>
+<p><b>照 W2 那天連上的方式連</b>——用那條 USB-C 線把板子接到電腦，它就會像一張網路卡一樣出現，然後用 SSH 連進去。</p>
+<p>實際要打的那一串（帳號、位址）<b>老師會寫在白板上</b>，這一頁不印。原因是它會因為板子、映像、教室而不一樣，<b>照抄舊的比不抄還糟</b>。你要記住的是「為什麼位址是固定的」：那串位址是板子自己設好的，不經過路由器，所以換哪間教室都一樣。</p>
+<p class="note"><b>連不上的三個最常見原因：</b>①線只供電不傳資料——換一條線試。②電腦沒認到那張「USB 網路卡」——到網路設定看一眼有沒有多一個介面。③打錯位址或帳號——回白板對一次，一個字一個字對。<br>
+三個都不是，<b>就照第 7 節的出錯四步做，然後舉手</b>。別一個人卡二十分鐘。</p>
+<p class="small">第一次連可能會跳出一段關於「金鑰不一樣」的警告。<b>先別急著照 AI 說的刪東西</b>——舉手叫老師，這正好是今天要練的判斷。</p></section>
+
+<section><h2>3　一切皆檔案：三件事</h2>
+
+<h3>① 走一趟</h3>
+<p>三個指令就夠：<code>ls</code> 看這裡有什麼、<code>cd</code> 走進去、<code>cat</code> 把一個檔的內容倒出來。</p>
+<pre>ls /                 # 最外層有哪些資料夾
+cd /sys/class        # 走進去
+ls                   # 這裡每一個名字，都是一類硬體
+cat /etc/os-release  # 這塊板跑的是什麼系統</pre>
+<p>最後一行印出來的東西，<b>抄一句到卡的正面</b>。你剛剛做的事，就是用「讀檔案」的方式問了系統一個問題。</p>
+
+<h3>② 找到那顆燈，把它點亮</h3>
+<p><b>節點的名字要你自己查，這一頁不給答案。</b>不同的板、不同的映像，名字會不一樣；你查出來的才作數。</p>
+<pre>ls /sys/class/leds/                          # 先看有哪幾顆，把名字抄到卡上
+cat /sys/class/leds/&lt;你抄到的名字&gt;/brightness  # 現在是 0 還是 1</pre>
+<p>然後把 1 寫進去。<b>注意寫法</b>——下一節專門講這件事。</p>
+<p class="note"><b><code>ls /sys/class/leds/</code> 出來是空的？</b>不是你做錯了。舉手告訴老師，然後直接跳到第 4 節的<b>螢幕版</b>，用它做完今天全部的事，<b>同分</b>。卡上照實寫「這塊板沒有 leds 節點」。</p>
+
+<h3>③ 寫成一支腳本</h3>
+<p>把剛才手打的那幾行存成一個檔，讓它自己跑十次——這就是第 4 節。</p>
+</section>
+
+<section><h2>4　跑馬燈腳本</h2>
+<p>起步包裡的 <a href="starter/marquee.sh">marquee.sh</a> 長這樣（12 行，註解都是中文）：</p>
+<pre>#!/bin/bash
+# 跑馬燈：讓一顆燈自己亮、暗、亮、暗，跑十次。
+LED="$1"                          # 第一個參數就是那個檔
+for i in 1 2 3 4 5 6 7 8 9 10; do # 跑十次
+  echo 1 &gt; "$LED"                 # 寫 1 ＝ 亮
+  sleep 0.3                       # 等 0.3 秒
+  echo 0 &gt; "$LED"                 # 寫 0 ＝ 暗
+  sleep 0.3
+done</pre>
+<h3>怎麼跑</h3>
+<ol class="steps">
+<li><b>先讓它可以被執行。</b><code>chmod +x marquee.sh</code>　——這一步在做什麼？<b>它就是把那個檔的「可執行」那一格打開。</b>又一次：連「這個檔能不能跑」也是寫在檔案上的一個屬性。</li>
+<li><b>真的點燈</b>（要 <code>sudo</code>，密碼老師會給）：<br><code>sudo ./marquee.sh /sys/class/leds/&lt;你抄到的名字&gt;/brightness</code></li>
+<li><b>沒有板子、或 leds 是空的——螢幕版：</b><br><code>./marquee.sh /dev/stdout</code><br>畫面上會輪流跑出 1 和 0。<b>這不是安慰獎</b>：<code>/dev/stdout</code>（你的螢幕）也是一個檔案，所以同一支腳本不用改一個字就能寫進去。這正好是今天那句話的最後一塊拼圖。</li>
+</ol>
+<p class="note"><b><code>sleep 0.3</code> 說錯誤？</b>有些系統的 <code>sleep</code> 不吃小數，把兩個 <code>0.3</code> 都改成 <code>1</code>，燈會閃得慢一點，一樣算完成。</p>
+<p class="small">腳本可以自己從頭寫，也可以從範本改。<b>但十行以內</b>——AI 給你一支三十行的，退回去（第 5 節第三道門）。</p></section>
+
+<section><h2>5　AI 三道閘門</h2>
+<p class="src">以下三道門對應共用教材 <b>P2b〈用會自己動手的 AI，你要做的四件事〉</b>（<code>background-knowledge/P2b-四件判斷-學生版一頁.md</code>）的 <b>A1、A3、A4</b>，各科共用同一份，本週不另寫版本。</p>
+<h3>開工前，先貼這段（照抄自 P2b）</h3>
+<pre>接下來請你幫我做事，整個過程守四條規矩：
+1. 做任何「刪除、覆蓋既有檔案、寄出訊息、上傳到網路或放到 GitHub 公開、花錢」的事之前，先停下來講你要做什麼，等我回「可以」再做。
+2. 不確定我的意思、或有兩種以上做法，先問我，不要自己選。
+3. 我說「先解釋，別動手」時，只說明、不執行。
+4. 動到我重要的檔案之前，先複製一份備份（檔名加 _backup）再動原檔。
+先回我一句「收到」，我們再開始。</pre>
+<ol class="steps">
+<li><b>第一道：先寫預期，再看它的計畫。</b>把事情丟給 AI <b>之前</b>，先在卡上寫一句「我預期它會做什麼」。<b>寫完才准按送出。</b>拿到回覆先讀它的計畫，不要先跑。<br><span class="small">猜不到就寫「我猜不到」——那也是誠實的答案，比空白有用。</span></li>
+<li><b>第二道：它要 <code>rm</code>、<code>sudo</code>、或動到你沒指定的檔，先停下來問。</b>尤其是 <code>rm</code>（刪除）和寫進 <code>/etc</code> 這種系統資料夾的動作——<b>那些收不回來</b>。問它「這一行為什麼需要？不做會怎樣？」</li>
+<li><b>第三道：退回它一次，理由要寫得出來。</b>多做了你沒要的、腳本超過十行、用了你看不懂的寫法，都可以退回。說「這個我沒要，拿掉」或「用我看得懂的寫法重寫」。<br><span class="small">理由不能是「我不喜歡」。要寫成「因為它會刪掉原本的檔」「因為我看不懂第 6 行，之後壞了我修不了」。</span></li>
+</ol>
+<h3>對照表怎麼填</h3>
+<p>起步包裡有 <a href="starter/對照表.txt">對照表.txt</a>，五欄：</p>
+<table><tr><th>欄</th><th>填什麼</th></tr>
+<tr><td>① 我要它做什麼</td><td>一句話。例如「寫一支讓板上的燈閃十次的 shell 腳本」</td></tr>
+<tr><td>② 我預期它會做什麼</td><td><b>動手前先寫</b></td></tr>
+<tr><td>③ AI 說</td><td>抄它計畫裡的一兩句<b>原文</b>，不要濃縮成「它說可以」</td></tr>
+<tr><td>④ 真機做</td><td>我照著跑，<b>實際</b>看到什麼（燈閃了／Permission denied／路徑不存在／沒反應）</td></tr>
+<tr><td>⑤ 一樣嗎</td><td>我改了什麼、退回了什麼，為什麼</td></tr></table>
+<p class="small">③ 和 ④ 一樣的時候也要寫。「這次它說對了」本身就是一筆資料。<b>第 1 條當堂要寫滿五欄</b>，缺一欄會被退回去補。</p>
+<p class="note"><b>貼給 AI 之前先遮個資：</b>姓名、學號、密碼，還有路徑裡有你名字的那一段（例如 <code>C:\Users\王小明</code> 換成 <code>C:\Users\me</code>，路徑其他部分留著，AI 要靠它判斷）。<b>板子的位址和密碼也不要貼。</b></p></section>
+
+<section><h2>6　權限：它擋你，是對的</h2>
+<p>你大概會先寫成這樣，然後看到 <code>Permission denied</code>：</p>
+<pre>sudo echo 1 &gt; /sys/class/leds/&lt;名字&gt;/brightness   ← 這樣不會成功</pre>
+<p><b>為什麼？</b>因為 <code>&gt;</code> 這個「寫進檔案」的動作，是<b>你的殼</b>先做的，那一刻還輪不到 <code>sudo</code>。<code>sudo</code> 只把後面那個 <code>echo</code> 變成管理員，沒有把 <code>&gt;</code> 變成管理員。</p>
+<p>兩種正確寫法，挑一種：</p>
+<pre>echo 1 | sudo tee /sys/class/leds/&lt;名字&gt;/brightness   # 讓 tee 用管理員身分去寫
+sudo ./marquee.sh /sys/class/leds/&lt;名字&gt;/brightness   # 整支腳本用管理員跑，裡面的 &gt; 才是管理員</pre>
+<p class="small">這是今天<b>唯一一個刻意安排的失敗</b>。看到那行紅字不是你笨——是系統在保護一個不該被隨便寫的地方。</p></section>
+
+<section><h2>7　出錯了，先做這四步</h2>
+<p class="src">以下四步照抄自共用教材 <b>P9〈電腦出錯了，先做這四步〉</b>（<code>background-knowledge/P9-電腦出錯先做的四步.md</code>），各科共用同一份，本週不另寫版本。</p>
+<ol class="steps">
+<li><b>複製錯誤訊息的原文，整段。</b>不要截圖、不要濃縮成「它壞了」。從第一個字到最後一個字，包括看不懂的那些。</li>
+<li><b>貼給 AI，前面加一句情況。</b>例如：「我在做 ___ 的時候出現這段，請先解釋這是什麼意思，再說你會怎麼查。」——先解釋，不是先修。</li>
+<li><b>看它的計畫，不要照單全收。</b>它會列出幾個可能的原因和要做的事。挑最像你情況的那一個；會動到檔案的，先備份再試。</li>
+<li><b>自己驗一次結果，記下四格。</b>原文寫了什麼／它說是什麼／我做了什麼／結果如何。沒解掉也記——下一次問的時候，這四格就是你的問題描述。</li>
+</ol>
+<h3>終端機怎麼複製文字</h3>
+<p>黑色的終端機視窗裡，用滑鼠選取文字後按<b>右鍵</b>，或按 <code>Ctrl＋Shift＋C</code>。</p>
+<p><b>沒有紅字的</b>（燈不亮、指令跑完沒反應）：第一步的「原文」改寫成三句——我做了什麼、我預期看到什麼、實際看到什麼。</p>
+<p class="small">附帶一句 P9 也寫著的：<b>它說「已修好」不算數。</b>你自己重跑一次那個指令、自己看一眼那顆燈，看到對的結果才算。這就是今天對照表第 ④ 欄的意思。</p></section>
+
+<section><h2>8　沒有板子怎麼辦</h2>
+<ul><li><b>輪到你才有板子（路線 B）：</b>沒輪到的時間不是等待。先把腳本寫好、把對照表的 ①②③ 三欄填好，輪到板子時只要跑一次、把 ④⑤ 補上就完成。</li>
+<li><b>整堂都沒輪到、或只有老師那塊：</b>用 <code>./marquee.sh /dev/stdout</code> 在自己電腦上把腳本跑起來，卡上「我今天用的是哪一塊板」勾「教師板」，對照表 ④ 那欄寫「看教師板」。<b>同分。</b></li>
+<li><b>自己的電腦沒有 <code>bash</code>：</b>Windows 上用 Git Bash 或 WSL 都可以；兩個都沒有就跟同學共用一台，卡上寫清楚是誰的機器跑的。</li>
+<li><b>板子中途壞掉、連線一直斷：</b>照第 7 節做四步、記下四格，然後換共用板。<b>那四格本身就是證據</b>，不是損失。</li>
+</ul>
+<p class="note"><b>今天計分看的不是你有沒有一塊自己的板</b>，而是：你有沒有自己走過一遍，有沒有誠實寫下「AI 說的」跟「真機做的」差在哪。</p></section>
+
+<section><h2>9　下週</h2>
+<ul><li><b>10/01（W4）</b>：MCU 基礎——腳位、數位／類比 I/O、序列監控。今天玩的是會跑 Linux 的那顆腦，下週換另一顆。</li>
+<li><b>本週作業到期：10/01 14:10 上課前</b>。上 e學苑 Week 3，交 <code>marquee.sh</code> ＋對照表第 1 條。</li>
+<li>兩樣東西先存好：腳本存自己的雲端或寄給自己；<b>板子上的檔不算存好</b>，板子會被重刷。</li>
+</ul></section>
+
+<footer class="small"><p>國立東華大學　AIoT 智慧裝置實作（115-1）<br>W3 學生步驟，2026-09-16。這一頁沒有接 AI，也不收集你填的任何東西；離線打得開。<br>出錯四步引自共用教材 P9，三道閘門引自 P2b。表格與對照表中的示例為教學設計，不是工具或板子實際產生的輸出。<br>板子的節點名稱、位址與帳號因板而異，一律以課堂上查到的為準。</p></footer>
+</main></body></html>

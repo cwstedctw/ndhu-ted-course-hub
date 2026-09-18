@@ -1,0 +1,98 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W3 學生頁｜讓燈聽懂你的順序</title><style>
+:root{font-family:system-ui,'Microsoft JhengHei',sans-serif;color:#153d36;background:#f4f6ed;line-height:1.8}body{margin:0}main{max-width:880px;margin:auto;padding:30px 24px 90px}nav{display:flex;gap:18px;flex-wrap:wrap}a{color:#09695b;text-underline-offset:4px}header{padding:44px 0 28px;border-bottom:2px solid #1f6153}h1{font-size:clamp(30px,5vw,54px);line-height:1.25;max-width:650px}h2{font-size:26px;line-height:1.4;margin:44px 0 14px}h3{font-size:20px;margin:24px 0 8px}.eyebrow{letter-spacing:.09em;font-weight:700;color:#577565}.lead{font-size:21px}section{scroll-margin-top:20px}.note{padding:14px 20px;border-left:4px solid #c9963b;background:#fff9e8}.src{padding:12px 20px;border-left:4px solid #79958a;background:#eef2e7;font-size:15px;color:#3d574d}table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid #bbc9bf;padding:10px;text-align:left;vertical-align:top}th{background:#e0ece2}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#133e34;color:#f4f6ed;padding:18px;border-radius:8px;font:15px/1.7 ui-monospace,monospace}code{background:#e6ece5;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;font:15px ui-monospace,monospace}pre code{background:none;padding:0;color:inherit}ol,ul{padding-left:1.4em}li{margin:6px 0}.small{font-size:14px;color:#51695f}.steps{counter-reset:s;list-style:none;padding:0}.steps li{background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:12px 16px;margin:10px 0}.steps li b{color:#09695b}.term{background:#000;color:#e8e8e8;padding:12px 16px;border-radius:8px;font:15px/1.7 ui-monospace,monospace;white-space:pre-wrap}@media print{nav,.no-print{display:none}main{max-width:none;padding:0}h1{font-size:30px}h2{break-after:avoid}pre,table,.note,.steps li{break-inside:avoid}}
+</style></head><body><main>
+<nav><a href="deck.html">投影片</a><a href="deck.pdf">下載投影片 PDF</a><a href="w03-當堂卡-我的閃爍節奏.html">列印當堂卡</a><a href="starter.zip">起步包（zip）</a><a href="starter/blink-v0.py">blink-v0.py</a><a href="starter/blink-v1.py">blink-v1.py</a></nav>
+
+<header><p class="eyebrow">創客入門　WEEK 3　2026-09-22</p><h1>讓燈聽懂你的順序</h1><p class="lead">上週把線接對，今天把程式讀懂。同一顆紅燈，一行都不多：看它一行一行跑、給數字取名字、叫它回頭再做一次。</p><p>今天唯一的新觀念：<b>燈不是在閃，是程式一直回頭。</b></p></header>
+
+<section><h2>1　今天交什麼</h2>
+<table><tr><th>東西</th><th>怎麼處理</th></tr>
+<tr><td><b>當堂卡「我的閃爍節奏」</b></td><td><b>當堂寫、當堂交</b>。「我猜」那一欄一定在按播放之前寫；猜錯的劃掉重寫，不要擦掉。</td></tr>
+<tr><td><b>Wokwi 專案連結</b></td><td>貼到 e學苑 本週作業的「線上文字」格，<b>12:10 前</b>。要看得到有 <code>for</code> 和 <code>if</code> 的那支（<code>blink-v1.py</code> 改過的那份）。</td></tr>
+<tr><td>存不了檔的</td><td>Wokwi 要登入（Google 帳號即可）才存得了。存不了就<b>截圖</b>（最多 2 張）＋把程式碼整段貼進文字框，一樣算交。</td></tr></table>
+<p class="small">上週的「裝好四樣」還沒交的，下課前補交，不扣分。</p></section>
+
+<section><h2>2　拿出上週那顆燈</h2>
+<ol><li>打開你上週存的 Wokwi 專案。沒存到、或上週沒來：開老師接好線的那份 <a href="https://wokwi.com/projects/472945134593421313" target="_blank" rel="noopener">wokwi.com/projects/472945134593421313</a>（紅燈 16、綠燈 13 都接好了）。</li>
+<li>把 <a href="starter/blink-v0.py">blink-v0.py</a> 整段貼進寫程式的那一格（分頁上寫著 <code>main.py</code>），蓋掉原本的。</li>
+<li>按播放（右上那格的綠色圓鈕）。<b>紅燈一亮一滅＝可以往下。</b>綠燈不會動，那是正常的——這支程式只叫了 16 號。</li></ol>
+<p class="note"><b>燈不亮？</b>先看兩件：腳位是不是 <b>16</b>、短腳後面有沒有串 <b>220Ω</b> 再回到 GND。還是不亮，開〈<a href="../w02/why-not-lit.html" target="_blank" rel="noopener">這條線為什麼不亮</a>〉五題對一遍；想看電流怎麼走的，開〈<a href="../w04/esp32-pin-xray.html?preset=basic" target="_blank" rel="noopener">腳位透視鏡</a>〉。</p>
+<p class="small">硬事實（跟上週一樣）：紅燈 GPIO16、綠燈 GPIO13、限流電阻 220Ω、<code>wait = 0.5</code>。</p></section>
+
+<section><h2>3　順序：程式是一行一行跑的</h2>
+<p>電腦不會跳著看。它從第一行開始，一行做完才做下一行。你看不到它在哪一行——<b>所以我們讓它自己講</b>。</p>
+<ol class="steps">
+<li><b>加兩行。</b>在 <code>red.value(1)</code> 那行的下面加 <code>print('亮')</code>，在 <code>red.value(0)</code> 那行的下面加 <code>print('滅')</code>。<b>前面的四格空白要跟上下行一樣。</b></li>
+<li><b>按播放。</b>右下角那格黑底面板（序列埠終端機）會一行一行印出：</li></ol>
+<div class="term">亮
+滅
+亮
+滅</div>
+<p>字跟燈對得上嗎？印「亮」的時候燈亮、印「滅」的時候燈滅——那就是它現在跑到哪一行。</p>
+<h3>先猜，再跑</h3>
+<ul><li>把兩行 <code>print</code> 對調（<code>print('滅')</code> 放到 <code>red.value(1)</code> 下面）。先寫你猜會印出什麼，再按。</li>
+<li>把 <code>print('亮')</code> 搬到 <code>time.sleep(wait)</code> 的下面。字會晚出現嗎？晚多久？</li></ul>
+<p class="small">找不到那格黑底面板：它在畫面右下角，字是<b>白的</b>不是紅的，夾在開機那幾行中間。改完程式要<b>重按播放</b>，它不會自己重跑。</p></section>
+
+<section><h2>4　變數：一個名字，裝一個數字</h2>
+<p><code>wait = 0.5</code> 這一行，是把 <code>0.5</code> 裝進一個叫 <code>wait</code> 的名字裡。這種會裝東西的名字叫<b>變數</b>（variable）。下面兩行 <code>time.sleep(wait)</code> 用的都是這個名字——<b>改一次，兩行一起變</b>。</p>
+<ol class="steps">
+<li><b>改 0.5。</b>改成 2、改成 0.05，每次先猜再按。</li>
+<li><b>再加一個名字。</b>在 <code>wait = 0.5</code> 下面加一行 <code>off_wait = 0.1</code>，然後把<b>第二個</b> <code>time.sleep(wait)</code> 改成 <code>time.sleep(off_wait)</code>。先猜：燈會變成怎樣？</li></ol>
+<p class="small">答案是亮久、滅短——因為兩個「等」現在各用各的名字。這就是為什麼要取名字：想讓誰不一樣，就給誰一個新名字。</p></section>
+
+<section><h2>5　迴圈：燈不是在閃，是程式一直回頭</h2>
+<p><code>while True:</code> 那一行的意思是「底下縮排的那幾行，做完就回到我這裡再做一次」。這叫<b>迴圈</b>（loop）。前面那四格空白叫<b>縮排</b>（indent），它在說「這幾行是屬於迴圈的」。</p>
+<h3>弄壞一次看縮排</h3>
+<p>把最後一行 <code>time.sleep(wait)</code> 前面的四格空白刪掉，讓它頂到最左邊。先猜燈會怎樣，再按播放。</p>
+<p class="small">它看起來會一直亮——因為滅完馬上回頭又亮，中間沒有等。那一行不再屬於迴圈，程式永遠走不到它。看完改回來。</p>
+<h3>要它數幾次就停：for</h3>
+<p>把 <a href="starter/blink-v1.py">blink-v1.py</a> 整段貼進去，蓋掉原本的，按播放。</p>
+<pre><code>times = 5                    # 一共閃幾次
+
+for n in range(times):       # n 會從 0 數到 4，剛好 5 次
+    ...
+print('閃完了，燈停在滅')</code></pre>
+<p>右下角會印五行 <code>n = 0</code> … <code>n = 4</code>，然後印「閃完了」，燈停在滅。<b><code>while True</code> 是一直回頭，<code>for</code> 是數幾次就停。</b></p>
+<p class="note"><b>今天最多人猜錯的：</b>第一個印出來的是 <code>0</code>，不是 <code>1</code>。電腦從 0 開始數。把 <code>times</code> 改成 8，先猜最後一行的 <code>n =</code> 是多少，再按。</p></section>
+
+<section><h2>6　條件：如果…就…，不然就…</h2>
+<p><code>blink-v1.py</code> 裡還有四行：</p>
+<pre><code>    if n &lt; 3:                # n 還小於 3 的時候（0、1、2）
+        wait = 0.2           # 快
+    else:                    # 其他時候（3、4）
+        wait = 1.0           # 慢</code></pre>
+<p><code>if</code> 就是問一句「現在的 n 小於 3 嗎」。是，就走上面那行；不是，就走 <code>else</code> 那行。這叫<b>條件</b>（if／else）。所以前三次快、後兩次慢。右下角每一行都印了 <code>n</code> 和 <code>wait</code>：</p>
+<div class="term">n = 0  wait = 0.2
+n = 1  wait = 0.2
+n = 2  wait = 0.2
+n = 3  wait = 1.0
+n = 4  wait = 1.0
+閃完了，燈停在滅</div>
+<ol class="steps">
+<li><b>把 3 改成 1。</b>先猜前幾次會快，再按，看右下角印的對不對得上燈。</li>
+<li><b>把 3 改成 5。</b>再猜一次。</li></ol></section>
+
+<section><h2>7　弄壞一次：沒有訊息也要會寫</h2>
+<p>上週說過「沒報錯不等於做對」。今天教你怎麼把它寫下來。</p>
+<ol class="steps">
+<li><b>把 16 改成 25，按播放。</b>沒有任何訊息，燈也不亮。這種<b>沒有紅字的</b>，用三句寫：<b>我做了什麼／我預期看到什麼／實際看到什麼</b>。寫進卡的背面，然後改回 16、跑一次確認。</li>
+<li><b>把 <code>import time</code> 那一行刪掉，按播放。</b>這次右下角會有訊息，最後一行開頭是 <code>NameError</code>。認的是<b>最後那一行開頭那個 ○○Error</b>，不用整段看懂。</li></ol>
+<p class="src">三句的寫法照抄自共用教材 <b>P9〈電腦出錯了，先做這四步〉</b>（<code>background-knowledge/P9-電腦出錯先做的四步.md</code>）：「沒有紅字的（燈不亮、畫面沒反應、按了沒事）：第一步的『原文』改寫成三句——我做了什麼、我預期看到什麼、實際看到什麼。」各科同一份，本週不另寫版本。</p></section>
+
+<section><h2>8　看不懂的那一行，貼去另一個分頁問</h2>
+<p>今天的 AI 開在瀏覽器<b>另一個分頁</b>（任何一個網頁版都可以）。它碰不到你的 Wokwi，也碰不到板子，給你的是文字；<b>搬運的人是你</b>。</p>
+<ul><li>把看不懂的那一行貼過去，問：「這一行在做什麼？」</li>
+<li>把第 7 節那段錯誤訊息貼過去，問：「這段訊息是什麼意思？先解釋，不要先幫我改。」</li>
+<li>它說要改哪裡，你<b>自己回 Wokwi 改</b>，改完自己按播放看結果。它說「已修好」不算數。</li></ul>
+<p class="note"><b>貼之前先遮掉個資：</b>姓名、學號、密碼。程式裡沒有這些就直接貼。</p>
+<p class="small">會自己開檔案、改檔案的那種 AI（Codex、Antigravity）是 W11 的事；到時候要練的四件事在共用教材〈用會自己動手的 AI，你要做的四件事〉（P2b）。今天不用。</p></section>
+
+<section><h2>9　存檔、貼連結、交卡</h2>
+<ol><li><b>存檔要登入。</b>右上角 SIGN IN，用 Google 帳號就可以。登入後按 SAVE，網址列那串就是你的專案連結。</li>
+<li>連結貼到 e學苑 本週作業的線上文字格，<b>12:10 前</b>。存不了的：截圖（最多 2 張）＋程式碼整段貼進文字框。</li>
+<li>當堂卡下課前交回，往這一排最後一位傳。</li></ol>
+<p class="small">下週 W4（9/29）：GPIO、高低電位、多顆燈。今天做完的人可以先試：加一行 <code>green = Pin(13, Pin.OUT)</code>，讓紅亮綠滅、再換過來——先在卡上寫要改哪幾行，再動手。</p></section>
+
+<footer class="small"><p>國立東華大學　創客入門–智慧生活裝置實作<br>W3 學生頁，2026-09-16。這一頁沒有接 AI，也不收集你填的任何東西；離線打得開（Wokwi 與互動頁的連結需要網路）。<br>三句寫法引自共用教材 P9；終端機示例是教學設計，實際印出的內容以你自己的畫面為準。</p></footer>
+</main></body></html>

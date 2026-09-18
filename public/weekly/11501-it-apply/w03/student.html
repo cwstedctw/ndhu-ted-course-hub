@@ -1,0 +1,63 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W3 學生步驟 · 資訊科技與應用</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f5f1;color:#152e49;font-family:'Segoe UI','Microsoft JhengHei',sans-serif;line-height:1.9}header{background:#152e49;color:white;padding:18px max(20px,calc((100vw - 940px)/2));font-size:15px}header a{color:white;margin-right:24px}main{max-width:940px;margin:0 auto;padding:34px 30px 90px}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.3;margin-bottom:35px}h2{font-size:1.65rem;line-height:1.5;border-top:3px solid #b66505;padding-top:27px;margin-top:55px;scroll-margin-top:25px}h3{font-size:1.2rem;margin-top:30px}p,li,td{font-size:18px}li{padding-left:5px;margin:12px 0}a{color:#174c78;text-underline-offset:4px;overflow-wrap:anywhere}a:focus-visible{outline:3px solid #b66505;outline-offset:4px}code{font-size:.92em;background:#e9e9e3;padding:2px 5px;overflow-wrap:anywhere}pre{background:#e9e9e3;padding:14px 16px;overflow-x:auto;font-size:15px;line-height:1.6;white-space:pre-wrap}pre code{background:none;padding:0}table{border-collapse:collapse;width:100%;min-width:500px}td,th{border-bottom:1px solid #bec7ce;padding:13px 16px;text-align:left;vertical-align:top}th{background:#e3e7e9}.table-scroll{overflow-x:auto}nav.jump{display:flex;gap:16px;flex-wrap:wrap;padding:20px 0;border-bottom:1px solid #bcc6ce;font-size:16px}.download{display:inline-block;background:#152e49;color:white;padding:11px 18px;text-decoration:none;margin:14px 14px 14px 0}.appendix{margin-top:70px;border-top:3px solid #152e49;padding-top:20px}.appendix h1{font-size:1.9rem}.appendix blockquote{background:#eef0ee;border-left:4px solid #b66505;padding:8px 14px;margin:12px 0}.appendix blockquote p{margin:4px 0}@media(max-width:600px){main{padding:24px 21px 60px}p,li,td{font-size:17px}h2{font-size:1.45rem}header a{display:inline-block;margin:4px 17px 4px 0}}@media print{@page{size:A4;margin:17mm}body{background:white}header,.jump,.download{display:none}main{max-width:none;margin:0;padding:0}h1{font-size:26pt}h2{font-size:18pt;break-after:avoid;margin-top:24pt}p,li,td{font-size:11pt}a{color:inherit}table{min-width:0}.table-scroll{overflow:visible}tr{break-inside:avoid}}</style></head><body><header><a href="deck.html">課堂投影片</a><a href="deck.pdf" download>下載投影片 PDF</a><a href="starter.zip" download>下載起步檔</a><a href="evidence-card.html">離堂證據卡</a></header><main><nav class="jump" aria-label="學生步驟章節"><a href="#section-2">建 repo 與網址</a><a href="#section-3">任務契約</a><a href="#section-4">叫 AI 改</a><a href="#section-5">貼回看 diff</a><a href="#section-6">退回一項</a><a href="#section-8">卡關備援</a><a href="#appendix-repo">附錄：第一個 repo</a></nav><h1>AI 幫你做網站，你決定收不收</h1>
+<p>資訊科技與應用 W3。AA：2026/09/21；AB：2026/09/22。兩節課共 100 分鐘，休息另計 10 分鐘。</p>
+<p>今天做三件事：把一頁網站放上網、寫一份給 AI 的任務契約、叫 AI 改網站然後<strong>至少退回它一項</strong>。你會用到瀏覽器和一個 AI（ChatGPT 桌面版的 Codex，或任一網頁版 AI），不必裝 Git、不用命令列。</p>
+<h2 id="section-1">1. 今天交什麼</h2>
+<ul><li>課內最低（下課前）：一個打得開的網址、任務契約五格填好、AI 至少跑過一輪。</li><li>完整版（<strong>AB 9/29 上課前、AA 10/05 上課前</strong>——AA 9/28 停課）：網址；repo 裡的 <code>index.html</code> 至少兩個 commit（原版、AI 改版）；<code>任務契約.txt</code>（含採用／修改／拒絕）。交到 e學苑 Week 3 作業：線上文字填網址，<code>任務契約.txt</code> 當附檔；也可以一起放進 repo。</li><li>證據卡當堂填，老師巡場勾記或依課堂指示拍照上傳 e學苑。帳號卡關當堂登記，不扣分。</li></ul>
+<h2 id="section-2">2. 先把家蓋好：一個 repo、一個網址（15 分鐘）</h2>
+<p>完整步驟在共用指南〈我的第一個 repo〉（本頁最下面附了全文；之後也會放在 e學苑「一般」區塊）。以下合計 40 分鐘的實作，濃縮成三步：</p>
+<ol><li>開 &lt;https://github.com/new?name=my-site&amp;visibility=public&gt;，名稱 <code>my-site</code>、<strong>Public</strong>、勾 Add a README，Create repository。</li><li>先按頁首「下載起步檔」→ 在下載夾對 <code>starter.zip</code> 按右鍵「全部解壓縮」。回 repo 按 <strong>Add file → Upload files</strong>，從解壓出來的資料夾把 <code>index.html</code>（或你自己做的那一頁）拖進去，<strong>只放這一個檔、放最外層、不要拖整包 ZIP</strong>。Commit changes 寫一句「放入自我介紹首頁」。</li><li><strong>Settings → Pages</strong>，Deploy from a branch、<strong>main</strong>、<strong>/ (root)</strong>、Save。通常等一兩分鐘（官方說最久可到 10 分鐘）重新整理，出現「Your site is live at …」，<strong>用手機打開那個網址</strong>。還沒亮就先往下做第 3 節，回頭再看。</li></ol>
+<p>公開 repo 任何人看得到：不放學號、電話、地址，任何地方都不放密碼。</p>
+<h2 id="section-3">3. 寫任務契約（5 分鐘）</h2>
+<p>課內直接把五格填在證據卡第 2 節（或紙上）；起步包的 <code>任務契約.txt</code> 是下次上課前要交的檔（純文字，記事本雙擊就開），填完存到自己的雲端或寄給自己（教室電腦重開會清空），交到 e學苑 Week 3 作業當附檔。今天的題目是「請 AI 把我的 index.html 弄好看」：</p>
+<div class="table-scroll"><table><tr><th>格</th><th>寫什麼</th><th>今天可以這樣寫</th></tr><tr><td>成果</td><td>要拿到什麼</td><td>一頁比現在好看的 index.html</td></tr><tr><td>背景</td><td>現在是什麼情況</td><td>一頁自我介紹，有一顆會回話的按鈕</td></tr><tr><td>限制</td><td>什麼不能動</td><td>不改我寫的字；按鈕要照樣能按；不加彈出視窗；只改 <code>&lt;style&gt;</code> 區塊、不要重排其他行</td></tr><tr><td>例子</td><td>像什麼樣子</td><td>清爽、海洋感、好閱讀；藍綠為主、米白底</td></tr><tr><td>驗收</td><td>怎樣才算對</td><td>保留現有文字不改字；文字與背景對比加深；手機上不橫向捲動；連結都能點</td></tr></table></div>
+<p>「驗收」那四句就是你等一下檢查它的清單。寫不出驗收，就還沒準備好叫它做。</p>
+<h2 id="section-4">4. 叫 AI 改（8 分鐘）</h2>
+<p>用 ChatGPT 桌面版的 Codex 模式（W2 作業裝好的那個），或任一網頁版 AI（Gemini、ChatGPT 網頁版），<strong>同分</strong>。</p>
+<ol><li>先貼這段當開場白，等它回「收到」：</li></ol>
+<pre><code>接下來請你幫我做事，整個過程守四條規矩：
+1. 做任何「刪除、覆蓋既有檔案、寄出訊息、上傳到網路或放到 GitHub 公開、花錢」的事之前，先停下來講你要做什麼，等我回「可以」再做。
+2. 不確定我的意思、或有兩種以上做法，先問我，不要自己選。
+3. 我說「先解釋，別動手」時，只說明、不執行。
+4. 動到我重要的檔案之前，先複製一份備份（檔名加 _backup）再動原檔。
+先回我一句「收到」，我們再開始。</code></pre>
+<ol><li>拿 <code>index.html</code> 的原始碼：回 repo 點開 <code>index.html</code>，按右上角 <strong>Raw</strong> 旁邊的複製圖示（Copy raw file）——不要用瀏覽器打開那一頁再複製，那樣拿到的是畫面不是原始碼。把原始碼和契約五格貼給它，最後加一句：<strong>「先用白話講你打算改哪些地方，我說好你再動手。改完告訴我你動了哪幾處。」</strong></li><li>看它列的計畫。有一項你不要（例如它說要改你的自我介紹文字），就先說「不要那一項」。</li><li>說「好」，拿到改好的整份 <code>index.html</code>。它回的是「說明文字＋程式碼區塊」，只複製程式碼區塊（區塊右上角有 Copy 鈕）；它只給片段、說「其餘不變」的，要它「給我完整的整份」。用 ChatGPT 桌面版 Codex 的人：它會直接改你電腦上那個檔，先開一個只放 <code>index.html</code> 的乾淨資料夾給它。</li></ol>
+<h2 id="section-5">5. 貼回 GitHub、看它改了什麼（7 分鐘）</h2>
+<ol><li>在 repo 點開 <code>index.html</code>，按鉛筆，先點進編輯框再 Ctrl＋A 全選、貼上 AI 改好的版本，Commit changes 寫「AI 改版：對比與手機版」。</li><li>等一到兩分鐘再重新整理你的網址（手機看不到新版就關掉分頁重開）。看到新版了嗎？手機上會不會橫向捲動？按鈕還能按嗎？——這就是拿契約的「驗收」四句去對。</li><li>點 <code>index.html</code> 的 <strong>History</strong>，點最上面那一筆：紅色 <code>−</code> 是拿掉的，綠色 <code>+</code> 是加上的。<strong>它說的「動了哪幾處」跟這裡對得上嗎？</strong> 整頁都是紅綠＝它把整份重寫了，這本身就可以是你退回的一項。</li></ol>
+<h2 id="section-6">6. 採用、修改、拒絕：至少退回一項（5 分鐘）</h2>
+<p>它給的不是全收。在證據卡寫三欄，每欄至少一項：</p>
+<ul><li><strong>採用</strong>：這項我要，為什麼。</li><li><strong>修改</strong>：這項我改了，改成什麼。</li><li><strong>拒絕</strong>：這項我不要，為什麼——例如它改了我的字（限制寫了不改）、它加了我沒要的東西。</li></ul>
+<p>退回不是跟它吵架，是講清楚：「不要 X，改成 Y」，再要一次。<strong>理由寫得出來才算退回</strong>。</p>
+<h2 id="section-7">7. 改壞了，貼回上一版</h2>
+<p>網頁被改壞（字不見了、按鈕不動了）：<strong>History</strong> → 找到改壞前那一筆 → 按那一列右邊的 <strong><code>&lt;&gt;</code></strong>（View code at this point）→ 按 <strong>Raw</strong> 旁的複製圖示（或按 Raw 後全選複製）→ 按左上角 repo 名稱回到 <strong>main</strong> → 打開 <code>index.html</code> → 鉛筆 → 全選貼上 → Commit changes 寫「救回上一版」。改壞和救回都留在歷史裡，這是正常的；舊版畫面的鉛筆按不了也是正常的。</p>
+<h2 id="section-8">8. 沒有帳號、沒有 Codex、卡住了</h2>
+<ul><li><strong>沒有 Codex</strong>：任一網頁版 AI 做同一件事，同分。</li><li><strong>GitHub 帳號還沒好</strong>：今天照樣做第 3、4、6 節（契約、叫 AI 改、退回一項）；把 AI 改好、你驗收過的 <code>index.html</code> 交到 e學苑 或當堂給老師，老師在自己的示範 repo 幫你開一頁，下次上課前給你網址。證據卡「網址」填卡在哪一步、「看得懂差異」寫「下次前補」。一樣有網址、一樣的分數。</li><li><strong>卡住、看到紅字</strong>：複製錯誤訊息整段原文 → 貼給 AI 加一句「我在做 ___ 時出現這段，先解釋、再說你會怎麼查」→ 看它的計畫、不照單全收 → 自己驗一次。四格（原文／它說／我做／結果）記在證據卡。</li></ul>
+<h2 id="section-9">9. 下課前</h2>
+<ul><li><a href="evidence-card.html">離堂證據卡</a>：網址、契約五格、退回一項、diff 一句。</li><li>手機互開網址。</li><li>下一堂：AB 9/29「改一個標題，目錄全亂了」；AA 9/28 停課，10/05 合併週。今天的網址留著，願意公開的成果往這裡放；作業與草稿交 e學苑。</li></ul>
+<p>操作文件核對日：2026/09/10（GitHub 官方文件）。按鈕位置可能調整；畫面對不上時，以官方文件與老師示範為準。</p><div class="appendix" id="appendix-repo"><p class="hint">附錄：共用指南〈我的第一個 repo〉全文（由 background-knowledge/P7 產生，改內容改那裡）</p><h1>我的第一個 repo：一個網址，放你這學期的作品</h1>
+<blockquote><p>全程在瀏覽器做，不裝任何東西、不用命令列。需要一樣：你的 GitHub 帳號（W2 作業辦好的那個）。<br>大約 15 分鐘。做完你會有一個網址，手機打得開，整學期的東西都放這裡。</p></blockquote>
+<h2>先講三個詞</h2>
+<ul><li><strong>repo</strong>（repository，儲存庫）：把檔案和它的修改歷史放在一起的櫃子。裝的不只程式——筆記、圖、報告、網頁都可以放。</li><li><strong>Git</strong>：記錄版本的工具。你今天不會直接碰它。</li><li><strong>GitHub</strong>：放 repo 的網站，順便給你一個網址。今天全部在這個網站上按按鈕。</li></ul>
+<p>你要練的不是背指令，是三件事：<strong>存得住</strong>（東西留得下來）、<strong>看得懂差異</strong>（這次改了什麼）、<strong>救得回來</strong>（改壞了能復原）。AI 幫你產東西的時候，這三件就是你驗收它的方法。</p>
+<h2>1. 建一個公開的 repo（3 分鐘）</h2>
+<ol><li>登入 GitHub，開 &lt;https://github.com/new?name=my-site&amp;visibility=public&gt;。名稱沒有自動填上就自己填 <code>my-site</code>，並確認選的是 <strong>Public</strong>。</li><li>勾 <strong>Add a README file</strong>，按 <strong>Create repository</strong>。</li><li>看到 repo 首頁就好了。它的網址是 <code>github.com/你的帳號名/my-site</code>。</li></ol>
+<p>⚠️ <strong>公開＝任何人都看得到。</strong> 這個 repo 只放願意給任何人看的東西：不放學號、電話、地址，任何地方都不放密碼。作業、報告草稿交 e學苑，不放這裡。</p>
+<p>名稱被用過就加尾碼（例如 <code>my-site-2</code>），不要刪掉舊的重來。</p>
+<h2>2. 放進第一個檔案 index.html（3 分鐘）</h2>
+<ol><li>拿到一個 <code>index.html</code>：老師給的範本（起步包裡那份），或你自己做的那一頁（任何 AI 幫你生的那一頁也可以，先存到電腦上）。</li><li>回 repo 首頁，按 <strong>Add file</strong> → <strong>Upload files</strong>，把 <code>index.html</code> 拖進去（老師給的起步包是 ZIP，先在下載夾對它按右鍵「全部解壓縮」，再從解壓出來的資料夾拖）。<strong>只放這一個檔、放在最外層</strong>，不要多包一層資料夾，也不要整包 ZIP 拖進去。</li><li>下面「Commit changes」的框裡寫一句這次做了什麼，例如「放入自我介紹首頁」，按 <strong>Commit changes</strong>。</li><li>回到檔案清單，點開 <code>index.html</code>，確認內容在裡面、檔名是<strong>小寫</strong>的 <code>index.html</code>。</li></ol>
+<p>每一次留版（commit）都要寫一句「改了什麼」。這句是給三個月後的你看的。</p>
+<h2>3. 開網址（3 分鐘，加一兩分鐘等它）</h2>
+<ol><li>進 <strong>Settings</strong>（看不到 Settings 就按分頁列最右邊的「…」再選），左邊選 <strong>Pages</strong>。</li><li>「Build and deployment」下面，Source 選 <strong>Deploy from a branch</strong>；Branch 選 <strong>main</strong>、資料夾 <strong>/ (root)</strong>，按 <strong>Save</strong>。</li><li>通常等一兩分鐘（官方說最久可到 10 分鐘），重新整理這一頁，上面會出現「Your site is live at <code>https://你的帳號名.github.io/my-site/</code>」。還沒亮就先做第 4 節，回頭再重新整理。</li><li><strong>用手機打開那個網址。</strong> 隔壁同學的手機也打得開，才算數。</li></ol>
+<p>看到 404：先再等一下；還是 404 就核對三件事——檔名是小寫 <code>index.html</code>、它在最外層、來源是 main 和 / (root)。網址開了、但畫面只有一行 my-site（那是 README 的內容）：代表它找不到你的 <code>index.html</code>，同樣核對這三件。</p>
+<p>免費帳號的 GitHub Pages 要用公開 repo（私有 repo 開網址要付費方案，這門課不需要）。</p>
+<h2>4. 改一行，看得懂差異（3 分鐘）</h2>
+<ol><li>點開 <code>index.html</code>，按右上角的鉛筆（Edit）。</li><li>改一句——例如把興趣那一句換掉。按 <strong>Commit changes</strong>，寫「改興趣那一句」。</li><li>回到檔案頁，按 <strong>History</strong>，點最上面那一筆。畫面會分兩色：紅色、前面有 <code>−</code> 的是拿掉的；綠色、前面有 <code>+</code> 的是加上的。</li></ol>
+<p>指著畫面說「我把哪一句改成哪一句」——這就是<strong>看得懂差異</strong>。之後 AI 幫你改網頁，你驗收它的地方就是這個畫面。</p>
+<h2>5. 改壞了，貼回上一版（3 分鐘）</h2>
+<ol><li>先把剛才那一句故意改壞（例如刪掉半句）並 <strong>Commit changes</strong>，寫「練習：故意改壞」。</li><li>按 <strong>History</strong>，找到改壞<strong>之前</strong>那一筆，按那一列右邊的 <strong><code>&lt;&gt;</code></strong>（View code at this point）——這就是那一版的 <code>index.html</code>。右上角按 <strong>Raw</strong> 旁邊的複製圖示（Copy raw file），或按 Raw 之後全選、複製。舊版畫面的鉛筆按不了，是正常的。</li><li>按左上角的 repo 名稱回到首頁（<strong>main</strong>），打開現在的 <code>index.html</code>，按鉛筆，全選、貼上，按 <strong>Commit changes</strong>，寫「救回上一版」。</li><li>再打開 <code>index.html</code> 看一次，確認內容回來了。</li></ol>
+<p>改壞的那一筆和救回的那一筆都留在歷史裡。這叫<strong>救得回來</strong>，不是把歷史刪掉。</p>
+<h2>6. 之後每週怎麼用</h2>
+<p>每週做完的東西放進來、寫一句 commit。到期末，整學期的作品都在同一個地方，而且每一步都有紀錄。</p>
+<h2>卡在帳號怎麼辦</h2>
+<p>帳號還沒辦好、驗證信一直收不到的人：把願意公開的 <code>index.html</code> 交到 e學苑，或當堂交給老師。老師在自己的示範 repo 幫你開一頁，下一次上課前給你網址。<strong>一樣有網址、一樣的分數。</strong></p>
+<hr>
+<p>按鈕與網址沿資訊科技與應用 W2 於 2026-09-10 對過的 GitHub 官方文件；本頁 2026-09-16 改寫處（等候時間、History 那一列的 <code>&lt;&gt;</code>、README 被當首頁的症狀）開課前再點一輪。官方文件：<a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository" target="_blank" rel="noopener">建立 repo</a>、<a href="https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository" target="_blank" rel="noopener">上傳檔案</a>、<a href="https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files" target="_blank" rel="noopener">編輯檔案</a>、<a href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site" target="_blank" rel="noopener">設定 Pages 來源</a>、<a href="https://docs.github.com/en/pages/getting-started-with-github-pages/troubleshooting-404-errors-for-github-pages-sites" target="_blank" rel="noopener">Pages 404 排查</a>、<a href="https://docs.github.com/en/repositories/working-with-files/using-files/viewing-and-understanding-files" target="_blank" rel="noopener">看歷史版本與 Raw</a>。按鈕位置可能調整；畫面對不上時，以官方文件和老師示範為準。</p></div></main></body></html>
