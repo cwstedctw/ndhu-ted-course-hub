@@ -13,7 +13,7 @@
 <p class="small">上週的「裝好四樣」還沒交的，下課前補交，不扣分。</p></section>
 
 <section><h2>2　拿出上週那顆燈</h2>
-<ol><li>打開你上週存的 Wokwi 專案。沒存到、或上週沒來：開老師接好線的那份 <a href="https://wokwi.com/projects/472945134593421313" target="_blank" rel="noopener">wokwi.com/projects/472945134593421313</a>（紅燈 16、綠燈 13 都接好了）。</li>
+<ol><li>打開你上週存的 Wokwi 專案（<b>連結就在 e學苑 Week 2 你自己交的那一格</b>，點進去就是）。沒存到、或上週沒來：開老師接好線的那份 <a href="https://wokwi.com/projects/472945134593421313" target="_blank" rel="noopener">wokwi.com/projects/472945134593421313</a>（紅燈 16、綠燈 13 都接好了）。</li>
 <li>把 <a href="starter/blink-v0.py">blink-v0.py</a> 整段貼進寫程式的那一格（分頁上寫著 <code>main.py</code>），蓋掉原本的。</li>
 <li>按播放（右上那格的綠色圓鈕）。<b>紅燈一亮一滅＝可以往下。</b>綠燈不會動，那是正常的——這支程式只叫了 16 號。</li></ol>
 <p class="note"><b>燈不亮？</b>先看兩件：腳位是不是 <b>16</b>、短腳後面有沒有串 <b>220Ω</b> 再回到 GND。還是不亮，開〈<a href="../w02/why-not-lit.html" target="_blank" rel="noopener">這條線為什麼不亮</a>〉五題對一遍；想看電流怎麼走的，開〈<a href="../w04/esp32-pin-xray.html?preset=basic" target="_blank" rel="noopener">腳位透視鏡</a>〉。</p>
@@ -44,7 +44,7 @@
 <section><h2>5　迴圈：燈不是在閃，是程式一直回頭</h2>
 <p><code>while True:</code> 那一行的意思是「底下縮排的那幾行，做完就回到我這裡再做一次」。這叫<b>迴圈</b>（loop）。前面那四格空白叫<b>縮排</b>（indent），它在說「這幾行是屬於迴圈的」。</p>
 <h3>弄壞一次看縮排</h3>
-<p>把最後一行 <code>time.sleep(wait)</code> 前面的四格空白刪掉，讓它頂到最左邊。先猜燈會怎樣，再按播放。</p>
+<p>把<b>最後一行</b> <code>time.sleep(...)</code> 前面的四格空白刪掉（你剛剛可能已經把它改成 <code>off_wait</code>，就是那一行），讓它頂到最左邊。先猜燈會怎樣，再按播放。</p>
 <p class="small">它看起來會一直亮——因為滅完馬上回頭又亮，中間沒有等。那一行不再屬於迴圈，程式永遠走不到它。看完改回來。</p>
 <h3>要它數幾次就停：for</h3>
 <p>把 <a href="starter/blink-v1.py">blink-v1.py</a> 整段貼進去，蓋掉原本的，按播放。</p>
@@ -89,7 +89,8 @@ n = 4  wait = 1.0
 <p class="small">會自己開檔案、改檔案的那種 AI（Codex、Antigravity）是 W11 的事；到時候要練的四件事在共用教材〈用會自己動手的 AI，你要做的四件事〉（P2b）。今天不用。</p></section>
 
 <section><h2>9　存檔、貼連結、交卡</h2>
-<ol><li><b>存檔要登入。</b>右上角 SIGN IN，用 Google 帳號就可以。登入後按 SAVE，網址列那串就是你的專案連結。</li>
+<ol><li><b>存檔前先按一次播放</b>：燈要會閃、右下角要有 <code>n = 0</code> 數到最後——剛才改壞的 25 與刪掉的 <code>import time</code> 都改回來了才算。</li>
+<li><b>存檔要登入。</b>右上角 SIGN IN，用 Google 帳號就可以。登入後按 SAVE，網址列那串就是你的專案連結。</li>
 <li>連結貼到 e學苑 本週作業的線上文字格，<b>12:10 前</b>。存不了的：截圖（最多 2 張）＋程式碼整段貼進文字框。</li>
 <li>當堂卡下課前交回，往這一排最後一位傳。</li></ol>
 <p class="small">下週 W4（9/29）：GPIO、高低電位、多顆燈。今天做完的人可以先試：加一行 <code>green = Pin(13, Pin.OUT)</code>，讓紅亮綠滅、再換過來——先在卡上寫要改哪幾行，再動手。</p></section>
