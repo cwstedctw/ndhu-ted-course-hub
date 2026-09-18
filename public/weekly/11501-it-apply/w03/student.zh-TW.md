@@ -14,7 +14,7 @@
 
 完整步驟在共用指南〈我的第一個 repo〉（本頁最下面附了全文；之後也會放在 e學苑「一般」區塊）。以下合計 40 分鐘的實作，濃縮成三步：
 
-1. 開 <https://github.com/new?name=my-site&visibility=public>，名稱 `my-site`、**Public**、勾 Add a README，Create repository。
+1. **先登入 GitHub**，再開 <https://github.com/new?name=my-site&visibility=public>，名稱 `my-site`、**Public**、勾 Add a README，Create repository。
 2. 先按頁首「下載起步檔」→ 在下載夾對 `starter.zip` 按右鍵「全部解壓縮」。回 repo 按 **Add file → Upload files**，從解壓出來的資料夾把 `index.html`（或你自己做的那一頁）拖進去，**只放這一個檔、放最外層、不要拖整包 ZIP**。Commit changes 寫一句「放入自我介紹首頁」。
 3. **Settings → Pages**，Deploy from a branch、**main**、**/ (root)**、Save。通常等一兩分鐘（官方說最久可到 10 分鐘）重新整理，出現「Your site is live at …」，**用手機打開那個網址**。還沒亮就先往下做第 3 節，回頭再看。
 
