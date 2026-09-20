@@ -1,85 +1,97 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W3 學生步驟｜把它弄壞三次</title><style>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W3 學生步驟｜你上週那頁，今天有一個網址</title><style>
+
 :root{font-family:system-ui,'Microsoft JhengHei',sans-serif;color:#153d36;background:#f4f6ed;line-height:1.8}body{margin:0}main{max-width:880px;margin:auto;padding:30px 24px 90px}nav{display:flex;gap:18px;flex-wrap:wrap}a{color:#09695b;text-underline-offset:4px}header{padding:44px 0 28px;border-bottom:2px solid #1f6153}h1{font-size:clamp(30px,5vw,54px);line-height:1.25;max-width:650px}h2{font-size:26px;line-height:1.4;margin:44px 0 14px}h3{font-size:20px;margin:24px 0 8px}.eyebrow{letter-spacing:.09em;font-weight:700;color:#577565}.lead{font-size:21px}section{scroll-margin-top:20px}.note{padding:14px 20px;border-left:4px solid #c9963b;background:#fff9e8}.src{padding:12px 20px;border-left:4px solid #79958a;background:#eef2e7;font-size:15px;color:#3d574d}table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid #bbc9bf;padding:10px;text-align:left;vertical-align:top}th{background:#e0ece2}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#133e34;color:#f4f6ed;padding:18px;border-radius:8px;font:15px/1.7 ui-monospace,monospace}code{background:#e6ece5;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;font:15px ui-monospace,monospace}ol,ul{padding-left:1.4em}li{margin:6px 0}.small{font-size:14px;color:#51695f}.steps{counter-reset:s;list-style:none;padding:0}.steps li{background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:12px 16px;margin:10px 0}.steps li b{color:#09695b}@media print{nav,.no-print{display:none}main{max-width:none;padding:0}h1{font-size:30px}h2{break-after:avoid}pre,table,.note,.steps li{break-inside:avoid}}
 </style></head><body><main>
-<nav><a href="deck.html">投影片</a><a href="deck.pdf">下載投影片 PDF</a><a href="w03-E2卡-正反面.html">列印當堂卡</a><a href="evidence-card.pdf">下載當堂卡 PDF</a><a href="starter.zip">起步包（zip）</a></nav>
+<nav><a href="deck.html">投影片</a><a href="deck.pdf">下載投影片 PDF</a><a href="starter.zip">起步包（zip）</a><a href="starter/v0-sample.html">範例面板</a></nav>
 
-<header><p class="eyebrow">和 AI 一起寫程式　WEEK 3</p><h1>把它弄壞三次，<br>然後修成 v1</h1><p class="lead">今天不做新東西。先把上週那一頁讀懂、故意弄壞三次，再只加一件事變成 v1。</p><p>弄壞不是失敗，是最快看懂的方法。猜錯了最值錢——那代表你以為它這樣運作，其實不是。</p></header>
+<header><p class="eyebrow">和 AI 一起寫程式　WEEK 3</p><h1>你上週那頁，<br>今天有一個網址</h1><p class="lead">上週你做的那頁，現在只活在你的電腦裡。今天下課前，它會有一個網址——你家人用手機也打得開。</p><p><b>做完這三件就夠了：</b>建一個公開的櫃子、把面板放進去、打開網址。其餘是往前，不是門檻。</p></header>
 
 <section><h2>1　今天交什麼</h2>
-<table><tr><th>東西</th><th>怎麼處理</th></tr>
-<tr><td><b>當堂卡②（E2）</b></td><td><b>當堂寫、當堂交</b>，不帶回家。正面是 trace 四行，背面是三次弄壞加四件事。</td></tr>
-<tr><td><code>panel-v0.html</code></td><td>自己帶走，不交。<b>不要覆蓋掉</b>，W5 要拿它跟 v1 比差異。</td></tr>
-<tr><td><code>panel-v1.html</code></td><td>自己帶走，不交。今天新存的那一份。</td></tr></table>
-<p class="small">沒改好也交。這張卡看的是證據完整不完整，不是做得漂不漂亮。</p></section>
+<p><b>不交紙、不交檔案。下課前在 e學苑 本週作業的文字框貼兩行：</b></p>
+<pre>網站：https://你的帳號名.github.io/my-panel/
+倉庫：https://github.com/你的帳號名/my-panel</pre>
+<p class="note"><b>網站那一行一定要用複製的，不要用手打。</b>從 GitHub 的 <b>Settings → Pages</b> 把它整行複製起來。名字被用過的人，repo 會叫 <code>my-panel-2</code> 之類的，手打一定打錯。</p>
+<p class="small">Pages 還沒亮的人：先貼倉庫那一行，後面寫一句「Pages 還在等」，亮了再回來補。貼完自己點一次，確認打得開。</p></section>
 
-<section><h2>2　先拿出 v0</h2>
-<ol><li>從自己的雲端硬碟或信箱，把上週存的單檔找出來，放到桌面。</li>
-<li>用瀏覽器打開它，確認名字和按鈕還會動。</li>
-<li>把檔名改成 <code>panel-v0.html</code>（等一下才分得出哪個是舊的）。</li></ol>
-<p class="note"><b>檔不見了、上週沒來、或帳號進不去？</b>下載老師的範例當成你的 v0：<a href="starter/v0-sample.html">v0-sample.html</a>（在瀏覽器上按右鍵「另存新檔」）。用範例做今天全部的事，<b>跟自己做的同分</b>。整包也可以直接抓 <a href="starter.zip">starter.zip</a>。</p></section>
-
-<section><h2>3　讀懂它：trace 四行</h2>
-<p><b>trace（追蹤）</b>就是當一次電腦：一行一行念下去，每念一行就寫下「變數現在是多少」。</p>
-<h3>怎麼在記事本打開 <code>.html</code></h3>
-<ol><li>在檔案上按<b>右鍵</b> → 開啟檔案 → 選「記事本」。（直接點兩下會用瀏覽器開，那樣看不到程式。）</li>
-<li>找到 <code>&lt;script&gt;</code> 和 <code>&lt;/script&gt;</code> 中間那幾行，那就是程式。</li></ol>
-<h3>挑哪四行</h3>
-<ul><li><b>名字那行</b>——把你的名字放進畫面的那一行。</li>
-<li><b>按鈕那行</b>——寫著「按下去要做什麼」的那一行。</li>
-<li><b>加一那行</b>——數字變多的那一行。</li>
-<li><b>顯示那行</b>——把結果寫回畫面的那一行。</li></ul>
-<p>四行找到之後，填在卡的正面。三欄長這樣：</p>
-<table><tr><th>這一行做什麼</th><th>變數現在是多少</th><th>畫面會變嗎</th></tr>
-<tr><td>把數字加一</td><td><code>count</code> 從 0 變成 1</td><td>還不會，下一行才會</td></tr></table>
-<p class="small">這一列是示範，不要照抄。「變數現在是多少」看不出來就寫「我看不出來」——那也是誠實的答案，比亂填有用。</p></section>
-
-<section><h2>4　弄壞三次，各一種</h2>
-<p><b>每一次都照這六步走：</b>先寫預期 → 改 → <b>存檔</b> → 回瀏覽器<b>重新整理</b> → 寫實際 → <b>改回來</b>。一次只弄壞一處，改回來了才弄下一個。</p>
+<section><h2>2　先進得去 GitHub</h2>
+<p>打開 <a href="https://github.com" target="_blank" rel="noopener">github.com</a>，<b>登得進去的做 A，登不進去的做 B。兩邊都是今天的正課，不是補救。</b></p>
+<h3>A・已經有帳號</h3>
+<p>先去練習台把概念跑一次，10 分鐘：<a href="https://cwstedctw.github.io/git-ai-workshop/sim.html" target="_blank" rel="noopener">從建檔到 commit</a>。照畫面走完一個檔案的四種狀態，走完做頁尾那組小測驗。做完了就去幫旁邊還在辦帳號的同學。</p>
+<h3>B・還沒有帳號（這就是上週那份作業）</h3>
 <ol class="steps">
-<li><b>第一次：改一個數字。</b>把加一的那個 <code>1</code> 改成 <code>10</code>（或把一開始的 <code>0</code> 改成 <code>5</code>）。先寫：你猜按一下會變多少？</li>
-<li><b>第二次：刪一行。</b>把「顯示那行」整行刪掉。先寫：你猜按下去會發生什麼？畫面會不會動？</li>
-<li><b>第三次：改一個名字。</b>把 <code>count</code> 這個字<b>只改其中一處</b>，改成 <code>counter</code>，其他地方不動。先寫：你猜它會停在哪裡？</li></ol>
-<p class="note"><b>最常卡的兩件：</b>①改完忘了存檔就去重新整理——畫面當然沒變，那不是程式的問題。②改到的是 AI 對話裡的預覽，不是桌面上那個檔——請確認記事本標題列上的檔名，跟你在瀏覽器打開的是同一個。</p>
-<p>第三次多半會出現紅字，或是按了完全沒反應。<b>那正好</b>——那就是下一段要貼給 AI 的原文。</p></section>
+<li>開 <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a>，Email 填<b>你的東華信箱</b>（<code>@gms.ndhu.edu.tw</code>）。</li>
+<li><b>這一步錯了後面全錯</b>：Student Pack 要靠學校信箱驗你是學生。用個人信箱辦的人之後領不到 Pack，還得回頭補加信箱再驗一次。</li>
+<li>設密碼，取一個 Username。<b>這個名字會出現在你的網址裡</b>，用英文名或英文名加數字就好，取一個三年後不尷尬的。</li>
+<li>過一題驗證題 → 去東華信箱收信 → 把信裡的 <b>8 位數字</b>填回網頁 → 後面的問卷按 Skip。</li>
+<li>辦好了順手把 Username 填進 e學苑 上週那份作業的文字格，一起交掉。</li></ol>
+<p class="note"><b>兩步驟驗證（2FA）今天不做。</b>它要手機驗證器 App、還要存復原碼，今天的時間跑不完，而且在教室公用電腦上做，復原碼會留在那台機器上。回宿舍再做，步驟在上週那份作業的指南裡。</p>
+<p class="small"><b>卡住怎麼辦</b>：驗證信沒來→看垃圾信匣、等兩分鐘再按重寄。Username 被用過→後面加數字。真的辦不成→跟旁邊同學共用他的帳號做完今天全部步驟，在交件那行註明「與某某共用」，<b>同分</b>。</p></section>
 
-<section><h2>5　出錯了，先做這四步</h2>
-<p class="src">以下四步照抄自共用教材 <b>P9〈電腦出錯了，先做這四步〉</b>（<code>background-knowledge/P9-電腦出錯先做的四步.md</code>），各科共用同一份，本週不另寫版本。</p>
+<section><h2>3　建一個公開的櫃子</h2>
 <ol class="steps">
-<li><b>複製錯誤訊息的原文，整段。</b>不要截圖、不要濃縮成「它壞了」。從第一個字到最後一個字，包括看不懂的那些。</li>
-<li><b>貼給 AI，前面加一句情況。</b>例如：「我在做 ___ 的時候出現這段，請先解釋這是什麼意思，再說你會怎麼查。」——先解釋，不是先修。</li>
-<li><b>看它的計畫，不要照單全收。</b>它會列出幾個可能的原因和要做的事。挑最像你情況的那一個；會動到檔案的，先備份再試。</li>
-<li><b>自己驗一次結果，記下四格。</b>原文寫了什麼／它說是什麼／我做了什麼／結果如何。沒解掉也記——下一次問的時候，這四格就是你的問題描述。</li></ol>
-<p><b>沒有紅字的</b>（按了沒反應、畫面不動）：第一步的「原文」改寫成三句——我做了什麼、我預期看到什麼、實際看到什麼。</p>
-<p class="note"><b>貼之前先遮掉個資：</b>姓名、學號、密碼，還有檔案路徑裡有你名字的那一段（例如 <code>C:\Users\王小明</code> 換成 <code>C:\Users\me</code>，路徑其他部分留著，AI 要靠它判斷）。</p>
-<p class="small">附帶一句 P9 也寫著的：它說「已修好」不算數。你自己重新整理一次、按一次那顆按鈕，看到對的結果才算。</p></section>
+<li>開 <a href="https://github.com/new?name=my-panel&visibility=public" target="_blank" rel="noopener">github.com/new?name=my-panel&amp;visibility=public</a>。名稱沒自動填就打 <code>my-panel</code>，確認選的是 <b>Public</b>。</li>
+<li>勾 <b>Add a README file</b>，按 <b>Create repository</b>。</li>
+<li>準備你的 <code>index.html</code>：有上週面板單檔的，把檔名改成 <code>index.html</code>（<b>全小寫</b>）；沒有的用 <a href="starter/v0-sample.html">範例那份</a>，<b>同分</b>。</li>
+<li>起步包是 ZIP 的人：<b>先在下載夾按右鍵「全部解壓縮」</b>再用。在壓縮檔裡直接雙擊，改了會存到暫存資料夾，關掉就不見。</li>
+<li>回 repo 首頁 → <b>Add file</b> → <b>Upload files</b> → 把 <code>index.html</code> 拖進去。拖不進去的人按框裡的 <b>choose your files</b>。<b>只放那一個檔、放在最外層</b>，不要多包一層資料夾。</li>
+<li>下面 <b>Commit message</b> 欄寫一句<b>這次做了什麼</b>，例如「放進我的喝水面板」，按 <b>Commit changes</b>。</li></ol>
+<p class="note"><b>這個 repo 任何人都看得到。</b>不放學號、電話、地址，任何地方都不放密碼。作業跟報告交 e學苑，不放這裡。</p></section>
 
-<section><h2>6　修成 v1：只加一件事</h2>
-<p><b>上週的需求卡交回去了，不用去找。</b>現在用一句話重寫你的目標，再挑<b>一件</b>想往前的——一顆歸零按鈕、換個顏色、多顯示一句話都好。<b>一次只加一件，看一次結果。</b></p>
-<p>用 Gemini 的 Canvas，或任何一個你打得開的網頁版 AI，都可以。把下面這段跟你的 v0 全文一起貼進去：</p>
-<pre>這是我的 v0 全文，它現在做的是「___」。
-只加「___」這一件，其他不要動。
-先講你打算改哪裡，我說好再動手。</pre>
-<p><b>驗收看兩件：</b>新加的那一件有沒有出現？原本會動的，還動不動？兩個都要看。</p>
-<p class="small">它多做了你沒要的事，就說「這個我沒要，拿掉」——那一次退回，寫進卡背面的四件事裡。</p></section>
+<section><h2>4　打開你的網址</h2>
+<ol class="steps">
+<li>repo 上方 <b>Settings</b>（看不到就按分頁列最右邊的「…」）。</li>
+<li>左邊選 <b>Pages</b>。</li>
+<li>Source 選 <b>Deploy from a branch</b>；Branch 選 <b>main</b>、資料夾 <b>/ (root)</b>，按 <b>Save</b>。</li>
+<li>等一兩分鐘，重新整理這一頁，上面會出現「Your site is live at …」。</li>
+<li><b>拿手機打開那個網址。</b></li>
+<li><b>給隔壁同學掃一次</b>——別人的手機也打得開，才算數。</li></ol>
+<table><tr><th>看到什麼</th><th>先查這三件</th></tr>
+<tr><td>404</td><td>①檔名是小寫 <code>index.html</code> 嗎 ②它在最外層嗎 ③來源是 main ＋ /(root) 嗎</td></tr>
+<tr><td>畫面只有一行 <code>my-panel</code></td><td>那是 README 的內容——代表它找不到你的 <code>index.html</code>，查同樣三件</td></tr>
+<tr><td>還是沒亮</td><td>先往下做第 5 節，回頭再重新整理。它有時候要久一點</td></tr></table>
+<p class="small">免費帳號的 GitHub Pages 要用<b>公開</b> repo。設成私有的話網址開不出來。</p></section>
 
-<section><h2>7　存成單檔帶走</h2>
-<ol><li><b>下載 <code>starter.zip</code> 之後先解壓縮</b>（在壓縮檔裡直接雙擊，改了會存到暫存資料夾，關掉就不見）。</li>
-<li><b>先把程式碼複製出來</b>：在 Canvas 切到<b>程式碼（Code）</b>那一面 → 點進去按 <kbd>Ctrl</kbd>+<kbd>A</kbd> 全選 → <kbd>Ctrl</kbd>+<kbd>C</kbd> 複製 → 開記事本 <kbd>Ctrl</kbd>+<kbd>V</kbd> 貼上。</li><li>存成 <code>panel-v1.html</code>。用記事本「另存新檔」時，<b>存檔類型要先改成「所有檔案」</b>、編碼選 UTF-8，不然它會偷偷存成 <code>panel-v1.html.txt</code>。存完看一眼檔名有沒有多出 <code>.txt</code>。</li>
-<li><b><code>panel-v0.html</code> 不要覆蓋。</b>兩個檔名不一樣，W5 才有兩版可以比差異。</li>
-<li>兩個檔都存進自己的雲端硬碟，或寄一封給自己。</li>
-<li>驗收分兩件：自己的裝置<b>拿得到檔案</b>；用瀏覽器<b>打得開、按得動</b>。</li></ol>
-<p class="note"><b>下載夾不算。</b>教室電腦會重置，留在下載夾的東西下次就不在了。手機打不開或只看到一堆程式文字，就登記卡關、改用其他瀏覽器驗功能——手機不必一定跑得動。</p></section>
+<section><h2>5　改一行，看紅綠</h2>
+<ol class="steps">
+<li>repo 裡點開 <code>index.html</code>，按右上角的<b>鉛筆</b>。</li>
+<li>改一句——把名字改成自己的，或換一句文字。</li>
+<li>按 <b>Commit changes…</b>（<b>字尾有三個點</b>）→ <b>跳出來的框</b>裡寫「改成我的名字」→ 再按 <b>Commit changes</b>。</li>
+<li>回檔案頁，按最近一次留版那一列右邊的<b>時鐘圖示</b>（旁邊有數字，那就是 History），點最上面那一筆。</li>
+<li>畫面會分兩色：<b>紅色、前面有 <code>−</code> 的是拿掉的；綠色、前面有 <code>+</code> 的是加上的。</b></li>
+<li>重新整理你的網址，確認線上真的變了。</li></ol>
+<p class="note"><b>每一次留版都要寫一句改了什麼。</b>這句話不是寫給老師看的，是寫給三個月後的你——那時候你完全不記得今天做了什麼。</p></section>
 
-<section><h2>8　沒有帳號、Canvas 被擋怎麼辦</h2>
-<ul><li><b>換一個你打得開的網頁版 AI</b>，任何一個都行，<b>同分</b>。</li>
-<li><b>完全沒有 AI 可以用</b>：用老師給的 <a href="starter/v1-sample.html">v1-sample.html</a> 當成你的 v1，把今天的 trace 與三次弄壞做完，<b>同分</b>。卡上照實寫「這次沒用 AI」。</li>
-<li>不要為了繞過帳號或年齡限制去借別人的帳號。做不到就登記卡關，當堂用老師範例或看同學示範完成 E2，把「我親自測的」和「我看到的」分開寫。</li></ul>
-<p class="small">今天的計分看的是 trace 與三次弄壞的證據，不是你用了哪一家 AI。</p></section>
+<section><h2>6　先弄壞它，才敢動它</h2>
+<p>今天的重頭戲。<b>全班只弄壞同一個地方</b>，不要各弄各的。</p>
+<ol class="steps">
+<li>點開 <code>index.html</code>，按鉛筆。</li>
+<li><b>把 <code>&lt;script&gt;</code> 那一行整行刪掉。</b>刪這一行一定看得到後果；刪別的地方（像 <code>&lt;/body&gt;</code>）瀏覽器會自己補起來，畫面常常一點事都沒有。</li>
+<li>按 <b>Commit changes…</b>，訊息寫「故意弄壞：刪掉 script，預期按鈕會沒反應」，再按 <b>Commit changes</b>。</li>
+<li>重新整理你的網址——<b>按鈕按下去沒反應了</b>。</li>
+<li>回頭看你剛剛寫的那句訊息：<b>預期跟實際一樣嗎？</b></li></ol>
+<h3>救回來（四步）</h3>
+<ol class="steps">
+<li>按 History（最近一次留版那列右邊的<b>時鐘圖示</b>）。</li>
+<li>找到<b>弄壞之前</b>那一筆，按那一列右邊的 <b><code>&lt;&gt;</code></b>（View code at this point）——這就是那一版的 <code>index.html</code>。</li>
+<li>右上角按 <b>Raw</b> 旁邊的<b>複製圖示</b>（Copy raw file），或按 Raw 之後全選複製。<b>這個舊版畫面上的鉛筆按不動，那是正常的</b>——舊版不能直接編輯，只能複製走。</li>
+<li>按左上角 repo 名稱回到首頁（<b>main</b>）→ 打開現在的 <code>index.html</code> → 鉛筆 → 全選、貼上 → <b>Commit changes…</b>，訊息寫「救回來：把 script 補回去」。</li></ol>
+<p>重新整理網址，<b>確認按鈕又會動了</b>。</p>
+<p class="note"><b>救回來的方法不是「把剛剛那次刪掉」，是「再加一筆，把它改回去」。</b>壞掉那一筆跟救回來那一筆都還留在歷史裡——這就是為什麼它安全。</p>
+<p class="src">這一節的做法照抄自共用教材 <b>P7〈我的第一個 repo〉</b>第 5 節（<code>background-knowledge/P7-我的第一個repo/</code>）。各科同一份，本週不另寫版本。</p></section>
 
-<section><h2>9　下週停課，10/05 見</h2>
-<ul><li><b>9/28（W4）教師節停課</b>：不補課、不繳交、不計分。</li>
-<li><b>10/05（W5）</b>：帶著 <code>panel-v0.html</code> 和 <code>panel-v1.html</code> 兩個檔來，那天要把它放上網。</li>
-<li>兩個檔在雲端或信箱裡放好，中間這兩週不要刪。</li></ul></section>
+<section><h2>7　出錯了，先做這四步</h2>
+<ol class="steps">
+<li><b>複製原文整段</b>——紅字、錯誤訊息，整段複製，不要用打的、不要只講「它壞了」。</li>
+<li><b>貼給 AI，先請它解釋</b>：「這段訊息是什麼意思？」先看懂，再談怎麼改。</li>
+<li><b>看它給的計畫，不要照單全收</b>：它說要改哪裡？那個地方是你想改的嗎？</li>
+<li><b>自己驗一次</b>：照它說的做完，重新整理，真的好了嗎？</li></ol>
+<p><b>沒有紅字的那種</b>（按了沒反應、畫面沒變、燈不亮）：第一步的「原文」改寫成三句——<b>我做了什麼／我預期看到什麼／實際看到什麼</b>。</p>
+<p class="note">貼之前<b>把名字、學號、信箱、任何一串登入用的亂碼遮掉</b>。還有：教室電腦重開機會還原，東西要帶走。</p>
+<p class="src">四步照抄自共用教材 <b>P9〈電腦出錯了，先做這四步〉</b>（<code>background-knowledge/P9-電腦出錯先做的四步.md</code>）。從這週起，每一門課都這樣做。</p></section>
 
-<footer class="small"><p>國立東華大學　和 AI 一起寫程式：創意生活應用<br>W3 學生步驟，2026-09-16。這一頁沒有接 AI，也不收集你填的任何東西；離線打得開。<br>出錯四步引自共用教材 P9；表格中的示例為教學設計，不是工具實際產生的成果。</p></footer>
+<section><h2>8　下週停課，再下一堂見</h2>
+<p><b>9/28 教師節停課</b>，不補課、不交作業。</p>
+<p>再下一堂回來，我們把兩個人配成一組，互相看對方改了什麼、提出修改、再決定要不要收——就是真正在用 GitHub 的人每天在做的那件事。</p>
+<p class="small">你今天建的那個 repo 留著，之後每一週都會用到它。</p></section>
+
 </main></body></html>
