@@ -33,7 +33,7 @@
       "worksheetUrl": null,
       "materials": [
         {
-          "label": "講者投影片（PDF，120 頁）",
+          "label": "講者投影片（PDF，128 頁）",
           "url": "https://drive.google.com/file/d/1gM9ZA0sPM6xozCRkQvS0FMFglj8uN--J/view"
         },
         {
@@ -82,7 +82,16 @@
       ],
       "poster": "/images/talks/t02-poster.webp",
       "worksheetUrl": null,
-      "materials": []
+      "materials": [
+        {
+          "label": "講者投影片（PDF，49 頁）",
+          "url": "https://drive.google.com/file/d/1kPJnR1EYyMIgtwSAZd__C9ghe031fOGv/view"
+        },
+        {
+          "label": "投影片原檔（PowerPoint）",
+          "url": "https://drive.google.com/file/d/1Ut5LR6iHbSZjDl7pmU4J3bBoUo7h9RXd/view"
+        }
+      ]
     },
     {
       "id": "t03",
