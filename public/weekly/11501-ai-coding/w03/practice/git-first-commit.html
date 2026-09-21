@@ -290,7 +290,7 @@ footer.foot .wrap{display:grid; gap:8px}
 
 <header class="top" data-lang="en">
   <div class="wrap">
-    <p class="eyebrow">General education · Git basics · Five minutes to start with</p>
+    <p class="eyebrow">General education · Git basics · Start here: five minutes</p>
     <h1>From new file to commit</h1>
     <p class="lede">
       Click through it once: how one file goes from just created to saved in the version history.
@@ -422,7 +422,7 @@ footer.foot .wrap{display:grid; gap:8px}
       <table class="states">
         <thead><tr><th>State</th><th>What you just did</th><th>What Git means</th><th>What usually comes next</th></tr></thead>
         <tbody>
-          <tr><td><span class="pill untracked">untracked</span><span class="en">未追蹤</span></td><td>You created a new file</td><td>&ldquo;There is a new file here and I am not looking after it yet&rdquo;</td><td>Put it in the staging area (add)</td></tr>
+          <tr><td><span class="pill untracked">untracked</span><span class="en">未追蹤</span></td><td>You created a new file</td><td>&ldquo;There is a new file here, but Git is not tracking it yet&rdquo;</td><td>Put it in the staging area (add)</td></tr>
           <tr><td><span class="pill modified">modified</span><span class="en">已修改</span></td><td>You edited a file that already has a version</td><td>&ldquo;This file is not the same as the latest version&rdquo;</td><td>Read the diff first, check it is what you wanted, then add</td></tr>
           <tr><td><span class="pill staged">staged</span><span class="en">已暫存</span></td><td>You pressed add</td><td>&ldquo;The next version will include this content&rdquo;</td><td>Save the version (commit)</td></tr>
           <tr><td><span class="pill clean">clean / committed</span><span class="en">乾淨</span></td><td>You pressed commit</td><td>&ldquo;Your desk matches the latest version. Nothing pending&rdquo;</td><td>Carry on working; to back it up on GitHub, push</td></tr>
@@ -451,9 +451,9 @@ footer.foot .wrap{display:grid; gap:8px}
       <p class="eyebrow">The five things people mix up most</p>
       <h2 id="mythTitleEn">These are not the same thing</h2>
       <ul class="myths">
-        <li><p class="no">Saving the file (Ctrl+S) is a commit? No.</p><p class="yes">Saving only writes the content to disk. Git keeps a version of this moment only when you commit.</p></li>
-        <li><p class="no">add means upload? No.</p><p class="yes">add only puts the content in the box. Nothing has been sent anywhere, and no version exists yet.</p></li>
-        <li><p class="no">commit means uploaded to GitHub? Also no.</p><p class="yes">A commit is stored in the repository on your own computer. Getting it to GitHub takes one more step, push. This page does not cover push, because that is another journey.</p></li>
+        <li><p class="no">Does saving the file (Ctrl+S) create a commit? No.</p><p class="yes">Saving only writes the content to disk. Git keeps a version of this moment only when you commit.</p></li>
+        <li><p class="no">Does add mean upload? No.</p><p class="yes">add only puts the content in the box. Nothing has been sent anywhere, and no version exists yet.</p></li>
+        <li><p class="no">Does a commit upload the file to GitHub? Also no.</p><p class="yes">A commit is stored in the repository on your own computer. Getting it to GitHub takes one more step, push. This page does not cover push, because that is another journey.</p></li>
         <li><p class="no">Once you edit the file, is the old version gone? No.</p><p class="yes">Every commit stays. You can go back and read any version at any time, and that is exactly what version control is for.</p></li>
         <li><p class="no">If you edit after add, does commit take the newest content? No.</p><p class="yes">The box holds what you put in at the moment you pressed add. Later edits go in only if you add again. There is a small experiment at the end of the practice bench where you can watch it happen.</p></li>
       </ul>
@@ -728,7 +728,7 @@ footer.foot .wrap{display:grid; gap:8px}
       dc.innerHTML = S.step===8
         ? L(`<h3>你走完了一整輪</h3><p>兩個 commit、一次 diff、一次翻歷史。真正要記住的只有一件事：<strong>存檔不是存版。</strong>桌面上的檔案隨時會變，版本庫裡的每一格都不會。</p>
            <p>下一步在真實世界會是 <code>git push</code>：把這些版本送到 GitHub 備份。那是另一趟旅程，教材裡的 P5 關會帶你走。</p>`,
-            `<h3>You have been round once</h3><p>Two commits, one diff, one look at the history. There is really only one thing to remember: <strong>saving a file is not saving a version.</strong> The file on your desk changes all the time; every drawer in the repository does not.</p>
+            `<h3>You have been round once</h3><p>Two commits, one diff, one look at the history. There is really only one thing to remember: <strong>saving a file is not saving a version.</strong> The file on your desk can keep changing, but each snapshot in the repository stays exactly as it was.</p>
            <p>In the real world the next step is <code>git push</code>: sending these versions to GitHub as a backup. That is another journey, and the course material takes you through it.</p>`)
         : L(`<h3>小實驗：add 之後又改檔案</h3><p>${S.exp===0?'先按下面「幫我加一行」或自己改幾個字，再按「改好了」。':S.exp===1?'看到了嗎？<strong>暫存區裡還是舊內容</strong>，桌面上的檔案卻已經不一樣。現在 commit 的話，收進去的是紙箱裡的舊版。':'再 add 一次之後，紙箱裡的內容才跟上桌面。這就是為什麼看 status 時要分清楚「已暫存」和「尚未暫存」兩段。'}</p>`,
             `<h3>Small experiment: editing after add</h3><p>${S.exp===0?'Press &ldquo;Add a line for me&rdquo; below, or change a few words yourself, then press &ldquo;Done editing&rdquo;.':S.exp===1?'See it? <strong>The staging area still holds the old content</strong>, while the file on your desk has already moved on. If you commit now, what goes in is the older version sitting in the box.':'Only after a second add does the box catch up with your desk. That is why, when you read status, you have to tell the &ldquo;staged&rdquo; part from the &ldquo;not staged&rdquo; part.'}</p>`);
@@ -769,7 +769,7 @@ footer.foot .wrap{display:grid; gap:8px}
         } else {
           say(L('檔案建好了，Git 看到它了嗎？','The file exists. Has Git noticed it?'),
             L('有。檔案一出現在資料夾裡，Git 就看得到，但它會標成<strong>「未追蹤」（untracked）</strong>：意思是「有個新東西，我還沒開始管」。<br>按「請 Git 回報現況」看它怎麼說。',
-              'Yes. The moment a file appears in the folder Git can see it, but it labels it <strong>untracked</strong>: &ldquo;there is something new here and I am not looking after it yet&rdquo;.<br>Press &ldquo;Ask Git for a status report&rdquo; and read what it says.'),
+              'Yes. The moment a file appears in the folder Git can see it, but it labels the file <strong>untracked</strong>: &ldquo;there is something new here, but I am not tracking it yet&rdquo;.<br>Press &ldquo;Ask Git for a status report&rdquo; and read what it says.'),
             null);
           term([{html:`<span class="dim">${L('# report.md 已存檔。接下來問 Git 現在的狀況。','# report.md is saved. Now ask Git how things stand.')}</span>`}]);
           A.innerHTML = btn(L('請 Git 回報現況','Ask Git for a status report'),'git status','btnStatus') + '<span class="spacer"></span>' + reset;
@@ -778,7 +778,7 @@ footer.foot .wrap{display:grid; gap:8px}
 
       case 2:
         lit('w');
-        say(L('Git 說：有個新檔，還沒開始管','Git says: a new file, not looked after yet'),
+        say(L('Git 說：有個新檔，還沒開始管','Git says: a new file, not tracked yet'),
           L('看右邊的回報：<code>Untracked files: report.md</code>。這是 Git 的「現況報告」（status），<strong>只是看，什麼都不會改</strong>。<br>它同時提示你：想讓下一版收進這個檔，用 <code>git add</code>。',
             'Read the report: <code>Untracked files: report.md</code>. This is Git&rsquo;s status report — <strong>it only looks, it changes nothing</strong>.<br>It also tells you what to do next: to include this file in the next version, use <code>git add</code>.'),
           L('養成習慣：每做完一件事就問一次 status。它是免費的，也永遠不會弄壞東西。',
@@ -1005,6 +1005,7 @@ footer.foot .wrap{display:grid; gap:8px}
     ];
   }
   const quizEl = $('quiz');
+  const quizPicked = {};   // 記住每題選過哪個，換語言重畫時補回來
   function renderQuiz(){
     const QUIZ = quizItems();
     quizEl.innerHTML = QUIZ.map((it,qi)=>`<div class="q" data-q="${qi}">
@@ -1014,14 +1015,19 @@ footer.foot .wrap{display:grid; gap:8px}
       </div>`).join('');
     quizEl.querySelectorAll('.q').forEach(q=>{
       const qi = +q.dataset.q; const it = QUIZ[qi];
-      q.querySelectorAll('.opt').forEach(b=>b.addEventListener('click', ()=>{
-        const oi = +b.dataset.o;
+      const mark = (oi)=>{
         q.querySelectorAll('.opt').forEach(x=>x.classList.remove('right','wrong'));
-        b.classList.add(oi===it.ans?'right':'wrong');
+        q.querySelector(`.opt[data-o="${oi}"]`).classList.add(oi===it.ans?'right':'wrong');
         if(oi!==it.ans) q.querySelector(`.opt[data-o="${it.ans}"]`).classList.add('right');
         const fb = q.querySelector('.fb');
         fb.innerHTML = (oi===it.ans ? L('答對了。','Correct.') : L('不是這個。','Not this one.')) + ' ' + it.fb[oi];
         fb.className = 'fb ' + (oi===it.ans?'ok':'ng');
+      };
+      if(quizPicked[qi] !== undefined) mark(quizPicked[qi]);
+      q.querySelectorAll('.opt').forEach(b=>b.addEventListener('click', ()=>{
+        const oi = +b.dataset.o;
+        quizPicked[qi] = oi;
+        mark(oi);
       }));
     });
   }
@@ -1030,6 +1036,9 @@ footer.foot .wrap{display:grid; gap:8px}
   function setLang(l){
     const from = LANG==='en' ? 1 : 0;
     const to   = l==='en' ? 1 : 0;
+    if(S.editing) readEditor();       // 正在打字的內容先收下來，換語言不會吃掉
+    const warn = $('msgWarn');        // 提醒句留在原語言會很怪，換語言就收掉
+    if(warn){ warn.hidden = true; warn.textContent=''; delete warn.dataset.nudged; }
     if(from !== to){
       S.work  = swapLines(S.work, from, to);
       S.index = swapLines(S.index, from, to);
@@ -1039,6 +1048,8 @@ footer.foot .wrap{display:grid; gap:8px}
     ROOT.setAttribute('data-ui', l);
     ROOT.lang = (l==='en') ? 'en' : 'zh-Hant';
     document.title = (l==='en') ? 'Practice bench: from new file to commit' : '練習台：從建檔到 commit';
+    const stepper = $('stepper');
+    if(stepper) stepper.setAttribute('aria-label', (l==='en') ? 'Progress' : '進度');
     const b = $('lang');
     if(b) b.textContent = (l==='en') ? '繁體中文' : 'English';
     try{ localStorage.setItem('gitsim-lang', l); }catch(e){}
