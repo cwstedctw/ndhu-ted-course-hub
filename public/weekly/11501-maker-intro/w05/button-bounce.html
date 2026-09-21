@@ -244,9 +244,11 @@
   .seg button:last-child { border-right: 0; }
   .seg button[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; }
   .seg button small { display: block; font-size: 10px; font-weight: 600; opacity: .85; }
-  .field { display: grid; grid-template-columns: 4.6em 1fr; align-items: center; gap: 6px; font-size: 13px; }
+  .field { display: grid; grid-template-columns: 3.4em minmax(0, 1fr); align-items: center; gap: 6px; font-size: 13px; }
   .field label { color: var(--c-ink-soft); font-weight: 600; }
-  .field select, .field input[type="range"] { width: 100%; min-width: 0; }
+  .field select, .field input[type="range"] { width: 100%; min-width: 0; max-width: 100%; }
+  .field select { text-overflow: ellipsis; }
+  .field.wide { grid-template-columns: minmax(0, 1fr); gap: 2px; }
   select { padding: 5px 8px; border-radius: 8px; border: 2px solid var(--c-line); background: var(--c-surface-2); font-weight: 600; font-size: 13px; }
   .check { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--c-ink-soft); cursor: pointer; }
   .check input { width: 16px; height: 16px; accent-color: var(--c-primary); }
@@ -303,6 +305,9 @@
   .ln { font-family: var(--font-zh); font-size: 11px; font-weight: 700; fill: var(--c-ink); }
   .ln2 { font-family: var(--font-zh); font-size: 10px; fill: var(--c-ink-faint); }
   .lnum { font-family: var(--font-mono); font-size: 9px; fill: var(--c-ink-faint); }
+  #scope.sm .ln { font-size: 16px; }
+  #scope.sm .ln2 { font-size: 14px; }
+  #scope.sm .lnum { font-size: 14px; }
   .trace { fill: none; stroke: var(--c-primary); stroke-width: 2; stroke-linejoin: round; }
   .trace.b { stroke: var(--c-violet-deep); }
   .trace.c { stroke: var(--c-mint-deep); }
@@ -531,27 +536,29 @@ while True:
       </div>
 
       <div class="tabpanel" id="tp-hw1" role="tabpanel" aria-labelledby="tb-hw1" hidden>
-        <p class="lead">不改程式，改接法：在腳位旁邊加一顆電容，電壓就不能說變就變，得慢慢爬（電阻乘電容，RC）。但光是爬得慢還不夠——電壓爬到中間那段灰色地帶時，晶片<b>不保證</b>讀到什麼，值會亂跳。再加一顆<b>施密特觸發器</b>（Schmitt trigger，例如 74HC14 這類零件）就穩了：它往上要超過 2.475 V 才肯翻成 1，往下要低過 0.825 V 才肯翻成 0，中間怎麼晃都不理，所以一次按下只翻一次。</p>
+        <p class="lead">不改程式，改接法：在腳位旁邊加一顆電容，電壓就不能說變就變，得慢慢爬（電阻乘電容，RC）。圖上有兩顆 10 kΩ：上面那顆負責充電、下面那顆負責放電——<b>兩顆電阻讓充電、放電都慢慢來</b>，少了下面那顆，按鈕一按下去電容會被直接短路、瞬間放光，就白加了。但光是爬得慢還不夠——電壓爬到中間那段灰色地帶時，晶片<b>不保證</b>讀到什麼，值會亂跳。再加一顆<b>施密特觸發器</b>（Schmitt trigger，例如 74HC14 這類零件）就穩了：它往上要超過 2.475 V 才肯翻成 1，往下要低過 0.825 V 才肯翻成 0，中間怎麼晃都不理，所以一次按下只翻一次。</p>
         <div class="hwbox">
-          <svg viewBox="0 0 390 124" width="390" height="124" role="img" aria-label="電路圖：3.3 V 經 10 kΩ 接到節點，節點下方接 100 奈法電容到接地，右邊接按鈕到接地，節點再接到施密特觸發器後進 GPIO5">
+          <svg viewBox="0 0 390 124" width="390" height="124" role="img" aria-label="電路圖：3.3 V 經 10 kΩ 接到節點，節點下方接 100 奈法電容到接地，節點右邊再經一顆 10 kΩ 接按鈕到接地，節點也接到施密特觸發器後進 GPIO5">
             <text class="lbl-b" x="8" y="34">3.3 V</text>
             <path class="wire" d="M44 30 H60"/>
             <path class="res" d="M60 30 L66 22 L78 38 L90 22 L102 38 L108 30 H112"/>
             <path class="wire" d="M112 30 H150"/>
             <text class="lbl" x="86" y="16" text-anchor="middle">10 kΩ</text>
             <circle class="node" cx="150" cy="30" r="3.4"/>
-            <path class="wire" d="M150 30 V66 M150 66 H104 M104 66 V80 M104 88 V104 M150 66 H196"/>
+            <path class="wire" d="M150 30 V66 M150 66 H104 M104 66 V80 M104 88 V104 M150 66 H166"/>
+            <path class="res" d="M166 66 L172 58 L184 74 L196 58 L208 74 L214 66 H222"/>
+            <text class="lbl" x="192" y="88" text-anchor="middle">10 kΩ</text>
             <path class="plate" d="M88 80 H120 M88 88 H120"/>
             <text class="lbl" x="84" y="92" text-anchor="end">100 nF</text>
             <path class="gndsym" d="M84 104 H124 M90 109 H118 M96 114 H112"/>
-            <circle class="node" cx="200" cy="66" r="3"/>
-            <circle class="node" cx="240" cy="66" r="3"/>
-            <path class="plate" d="M192 56 H248"/>
-            <path class="wire" d="M220 56 V48"/>
-            <rect class="box" x="208" y="38" width="24" height="10" rx="5"/>
-            <path class="wire" d="M240 66 V98"/>
-            <path class="gndsym" d="M216 98 H264 M224 104 H256 M232 110 H248"/>
-            <text class="lbl" x="258" y="70">按鈕</text>
+            <circle class="node" cx="226" cy="66" r="3"/>
+            <circle class="node" cx="266" cy="66" r="3"/>
+            <path class="plate" d="M218 56 H274"/>
+            <path class="wire" d="M246 56 V48"/>
+            <rect class="box" x="234" y="38" width="24" height="10" rx="5"/>
+            <path class="wire" d="M266 66 V98"/>
+            <path class="gndsym" d="M242 98 H290 M250 104 H282 M258 110 H274"/>
+            <text class="lbl" x="296" y="70">按鈕</text>
             <path class="wire" d="M150 30 H268"/>
             <path class="gate" d="M268 14 V46 L302 30 Z"/>
             <path class="res" d="M276 36 H281 V24 H287"/>
@@ -586,7 +593,7 @@ while True:
       </div>
 
       <div class="tabpanel" id="tp-hw2" role="tabpanel" aria-labelledby="tb-hw2" hidden>
-        <p class="lead">換一種開關：三隻腳的<b>撥動開關</b>（單刀雙擲，SPDT），中間那隻腳固定接地，動片一次只碰左邊或右邊。關鍵在這裡——<b>彈跳只發生在正要碰上的那一邊，碰不到另一邊</b>。再用兩顆 NAND 閘交叉接成<b>閂鎖</b>（SR latch）：它會記住「第一次碰到」是哪一邊，之後那一邊再怎麼抖，它都不理。圖上<b>直接接的那條線接在 A 側</b>，所以離開 A 和回到 A 都會抖；閂鎖只認第一次碰到。點圖上的開關撥撥看，每個輸入輸出的 1／0 會即時標出來。</p>
+        <p class="lead">換一種開關：三隻腳的<b>撥動開關</b>（單刀雙擲，SPDT），中間那隻腳固定接地，動片一次只碰左邊或右邊。關鍵在這裡——<b>彈跳發生在動片正在碰上、或正要離開的那一邊；動片在空中的時候碰不到另一邊</b>。再用兩顆 NAND 閘交叉接成<b>閂鎖</b>（SR latch）：它會記住「第一次碰到」是哪一邊，之後那一邊再怎麼抖，它都不理。圖上<b>直接接的那條線接在 A 側</b>，所以離開 A 和回到 A 都會抖；閂鎖只認第一次碰到。點圖上的開關撥撥看，每個輸入輸出的 1／0 會即時標出來。</p>
         <div class="hwbox">
           <svg id="latchSvg" viewBox="0 0 520 276" width="520" height="276" role="img" aria-label="互動電路圖：撥動開關接兩顆 10 千歐姆上拉電阻，兩顆 NAND 閘交叉接成閂鎖，輸出 Q 接 ESP32 的 GPIO5，開關那一腳另外直接接 GPIO4">
             <path class="rail-vdd" d="M140 26 H230"/>
@@ -628,8 +635,6 @@ while True:
             <circle class="node hi" cx="372" cy="140" r="3.4"/>
             <text class="lbl-b" x="346" y="84">Q</text>
             <text class="digit" id="vQ" x="362" y="84">1</text>
-            <text class="digit" id="vQb" x="346" y="262">0</text>
-            <text class="lbl-s" x="360" y="262">另一個輸出（跟 Q 相反）</text>
             <text class="digit" id="vN1B" x="277" y="104" text-anchor="end">0</text>
             <text class="digit" id="vN2A" x="277" y="210" text-anchor="end">1</text>
             <path class="wire hi" id="wRaw" d="M180 88 V12 H410 V104 H420"/>
@@ -644,7 +649,7 @@ while True:
           </svg>
           <div class="hwside">
             <button class="btn" id="btnFlip">撥到另一邊</button>
-            <p class="when">彈跳只發生在<b>正要碰上的那一邊</b>；閂鎖只認第一次碰到，之後那一邊再怎麼抖，它都不理。</p>
+            <p class="when">彈跳只發生在<b>動片碰得到的那一邊</b>，另一邊在空中；閂鎖只認第一次碰到，之後再怎麼抖，它都不理。</p>
             <p class="tiny">橘線是高電位（1），灰線是低電位（0）；線上的圓點表示接在一起，跨過去的小橋表示沒接。兩顆 10 kΩ 電阻平常把兩邊都拉到 1，動片碰到哪一邊，哪一邊才變 0。</p>
             <details class="adv"><summary><span>想看邏輯推導</span></summary><div class="inner">
               <table class="truth">
@@ -714,11 +719,11 @@ while True:
           <button data-b="mid" aria-pressed="true">中<small>約 5 ms</small></button>
           <button data-b="heavy" aria-pressed="false">重<small>約 20 ms</small></button>
         </div>
-        <div class="field">
+        <div class="field wide">
           <label for="selWiring">接法</label>
           <select id="selWiring">
-            <option value="up">內建上拉＋按鈕接地（按下＝0）</option>
-            <option value="down">外接下拉＋按鈕接 3.3 V（按下＝1）</option>
+            <option value="up">上拉，按鈕接地（按下＝0）</option>
+            <option value="down">下拉，按鈕接 3.3 V（按下＝1）</option>
           </select>
         </div>
         <label class="check"><input type="checkbox" id="chkTh" checked>顯示門檻線 2.475 V／0.825 V</label>
@@ -893,8 +898,8 @@ while True:
       </div>
       <div class="card">
         <h3>等 5 ms 夠嗎？</h3>
-        <p>要看你的開關。實測 18 顆開關，閉合時平均約 1.6 ms，去掉兩顆極端值之後最長 6.2 ms——等 5 ms 對大部分開關夠，對那幾顆比較會抖的就不夠。把彈跳程度調到「重」，5 ms 馬上破功。</p>
-        <button class="try" data-preset="short">試試看：只等 5 ms</button>
+        <p>要看你的開關。實測 18 顆開關，閉合時平均約 1.6 ms，去掉兩顆極端值之後最長 6.2 ms，最壞的那一顆甚至 157 ms。這張卡把彈跳調到「重」、等待只留 5 ms，連按三下給你看：同樣的設定，<b>有的擋得住、有的擋不住</b>，治法算到的次數會比你按的多。想看「剛好夠」的樣子，把彈跳調回「中」再按一次。</p>
+        <button class="try" data-preset="short">試試看：重彈跳只等 5 ms</button>
       </div>
       <div class="card">
         <h3>等太久會怎樣？</h3>
@@ -908,7 +913,7 @@ while True:
       </div>
       <div class="card">
         <h3>閂鎖為什麼不會抖？</h3>
-        <p>動片離開 A 側的時候，接點會先斷開、再碰一下才真的走（放開時的彈跳通常比閉合短），所以<b>直接接的那一腳兩個方向都會抖</b>。可是那一刻 B 側還是 1，閂鎖記得「上一次碰到的是 A」，輸出動都不動；直到真的碰上 B 側才翻過去，B 側再怎麼彈回 1 也不理。<b>閂鎖只認第一次碰到</b>，這就是它能治的原因。</p>
+        <p>動片離開 A 側的時候，接點會先斷開、再碰一下才真的走（放開時的彈跳通常比閉合短），所以<b>直接接的那一腳兩個方向都會抖</b>。可是那一刻 B 側還是 1，閂鎖記得「上一次碰到的是 A」，輸出動都不動；直到真的碰上 B 側才翻過去，B 側再怎麼彈回 1 也不理。<b>閂鎖只認第一次碰到</b>，另一邊在空中怎麼樣它都看不到，這就是它能治的原因。</p>
         <button class="try" data-preset="latch">試試看：撥一下開關</button>
       </div>
     </div>
@@ -930,6 +935,9 @@ while True:
           <tr><td>內建上拉電阻</td><td class="num">約 45 kΩ</td><td>同上，表 5-3 的 RPU。</td></tr>
           <tr><td>只能當輸入的腳位</td><td class="num">GPIO34–39</td><td>這幾支沒有內建上拉、下拉電阻，接按鈕一定要外接一顆。出處：ESP32 手冊腳位表附註、MicroPython ESP32 quickref。</td></tr>
           <tr><td>套件上的按鍵</td><td class="num">按鍵 A ＝ GPIO5（板面印 IO11）</td><td>原廠 EZ Start Kit+ 腳位對照圖。<span class="tiny">⚠️ 板子上有沒有另外接電阻還沒核對，這一頁只講 GPIO5 這一支。按鍵 B 是 GPIO36（板面印 IO15），那一支沒有內建上拉。</span></td></tr>
+          <tr><td>紅燈接哪一支腳</td><td class="num">GPIO16</td><td>沿用燈會閃那一支的接法；01、02 兩個專案的 diagram.json 就是這樣接。</td></tr>
+          <tr><td>紅燈串的限流電阻</td><td class="num">220 Ω</td><td>同上，沿用閃爍那支的值。<span class="tiny">⚠️ 一般指示燈的常見值，不是唯一解。</span></td></tr>
+          <tr><td>閂鎖示範直接接的那一腳</td><td class="num">GPIO4</td><td>03 的 diagram.json：撥動開關的 A 側（sw:1）同時接 NAND 1 的輸入與 esp:4，所以那一腳讀到的就是沒治過的訊號。</td></tr>
           <tr><td>程式用到的東西</td><td class="num">Pin(5, Pin.IN, Pin.PULL_UP)、time.sleep_ms()、time.ticks_ms()、time.ticks_diff()、Pin.irq()</td><td>MicroPython 官方文件 machine.Pin 與 time。</td></tr>
           <tr><td>電阻乘電容的例子</td><td class="num">10 kΩ × 100 nF ＝ 1 ms</td><td>乘出來的。<span class="tiny">⚠️ 這是範例值不是規格，實際要配合你的開關有多會抖。</span></td></tr>
           <tr><td>NAND 閘</td><td class="num">兩個輸入都是 1 才輸出 0</td><td>基本邏輯；其餘三種組合都輸出 1。</td></tr>
@@ -959,6 +967,7 @@ var VDD = 3.3, VIH = 0.75 * VDD, VIL = 0.25 * VDD;      /* 2.475 V／0.825 V */
 var B_US = { ideal: 0, light: 1000, mid: 5000, heavy: 20000 };
 var B_TXT = { ideal: '理想開關、不會彈', light: '輕、約 1 ms', mid: '中、約 5 ms', heavy: '重、約 20 ms' };
 var DT = 10;          /* 模擬步長 0.01 ms */
+var MIN_HOLD = 60000; /* 每次按下在電路時間裡至少算 60 ms：畫面按一下只有零點幾秒，換算成電路時間太短，治法會看起來沒作用 */
 var SAMPLE = 100;     /* 程式每 0.1 ms 讀一次 */
 var S2DT = 5000;      /* 軟體②每 5 ms 讀一次 */
 var WIN = 60000;      /* 示波器一個畫面 60 ms */
@@ -1026,7 +1035,7 @@ function reset() {
     vc: v ? VDD : 0, schV: v, plainV: v, lastSample: v,
     s1state: v, s1wait: -1, winStart: 0,
     s2state: v, s2same: 0,
-    down: false, side: 'A', Q: 1, Qb: 0, lastA: 0, lastQ: 1,
+    down: false, pressT: -MIN_HOLD, side: 'A', Q: 1, Qb: 0, lastA: 0, lastQ: 1,
     n: { user: 0, raw: 0, s1: 0, s2: 0, plain: 0, sch: 0, flips: 0, swraw: 0, swq: 0 },
     base: null, flipBase: null
   };
@@ -1039,9 +1048,11 @@ function setPress(down) {
   var L = M.btn, t0 = Math.max(M.t, L.busy), B = B_US[S.bounce];
   if (down) {
     M.n.user++;
+    M.pressT = t0;
     M.base = { raw: M.n.raw, s1: M.n.s1, s2: M.n.s2, plain: M.n.plain, sch: M.n.sch };
     addBounce(L, t0, actV(), B ? rr(B / 2, B) : 0, B ? ri(3, 12) : 0);
   } else {
+    t0 = Math.max(t0, (M.pressT || 0) + MIN_HOLD);      /* 畫面上按鈕先彈起來，電路裡的接點晚一點才斷開 */
     addBounce(L, t0, idleV(), L.span ? L.span / 2 : 0, B ? ri(1, 5) : 0);
   }
   var b = $('btnPress');
@@ -1179,8 +1190,10 @@ function volt2y(y, v) { return y.lo - (v / VDD) * (y.lo - y.hi); }
 
 function buildScope() {
   var L = lanes(), n = L.length, i, y;
-  SW = window.innerWidth < 640 ? 420 : 680;
-  LEFT = window.innerWidth < 640 ? 58 : 66;
+  var narrow = window.innerWidth < 640;
+  SW = narrow ? 420 : 680;
+  LEFT = narrow ? 84 : 66;
+  scope.setAttribute('class', narrow ? 'sm' : '');
   PW = SW - LEFT - RIGHT;
   var yLast = laneY(n - 1), ax = yLast.top + yLast.h + 12, H = ax + 24, s = '';
   for (i = 0; i < n; i++) {
@@ -1307,7 +1320,7 @@ function updMini() {
 function updLatch() {
   var a = M.swA[M.swA.length - 1].v, b = M.swB[M.swB.length - 1].v;
   var set = function (id, v) { var e = $(id); e.textContent = String(v); e.setAttribute('class', 'digit ' + (v ? 'dig1' : 'dig0')); };
-  set('vA', a); set('vB', b); set('vQ', M.Q); set('vQb', M.Qb); set('vN1B', M.Qb); set('vN2A', M.Q);
+  set('vA', a); set('vB', b); set('vQ', M.Q); set('vN1B', M.Qb); set('vN2A', M.Q);
   $('wA').setAttribute('class', 'wire ' + (a ? 'hi' : 'lo'));
   $('wRaw').setAttribute('class', 'wire ' + (a ? 'hi' : 'lo'));
   $('nA').setAttribute('class', 'node ' + (a ? 'hi' : 'lo'));
@@ -1370,6 +1383,7 @@ function updState() {
       warn = n2 > 1;
     } else hint = '按住左邊那顆按鈕試試';
   }
+  if (S.tab !== 'hw2') parts.push('<span class="tiny">（模擬把每次按下至少算 60 ms）</span>');
   $('stateLine').innerHTML = parts.join('；') + '<span class="look' + (warn ? ' alert' : '') + '">' + hint + '</span>';
   if (S.tab === 'hw1') $('capLine').textContent = '電容上的電壓：' + M.vc.toFixed(2) + ' V。電阻乘電容 ＝ ' + S.tau.toFixed(1) + ' ms（10 kΩ × 100 nF 就是 1 ms）。';
 }
@@ -1457,7 +1471,7 @@ $('rngTau').addEventListener('input', function (e) { S.tau = parseInt(e.target.v
 $('btnReset').addEventListener('click', function () { resetAll(); });
 $('btnAuto').addEventListener('click', function () {
   if (S.tab === 'hw2') { var i, t = 3000; for (i = 0; i < 3; i++) { schedule(M.t + t, flipSwitch); t += 60000; } }
-  else autoPress(5, 25000, 20000);
+  else autoPress(5, 60000, 60000);
 });
 $('btnDouble').addEventListener('click', function () { autoPress(2, 60000, 100000); });
 $('btnFlip').addEventListener('click', flipSwitch);
@@ -1514,7 +1528,7 @@ Array.prototype.forEach.call(document.querySelectorAll('.copy'), function (b) {
 /* ===== 試試看 ===== */
 var PRESETS = {
   count: { tab: 'none', bounce: 'mid', go: function () { autoPress(1, 60000, 0); } },
-  short: { tab: 'soft1', bounce: 'mid', wait: 5, go: function () { autoPress(1, 60000, 0); } },
+  short: { tab: 'soft1', bounce: 'heavy', wait: 5, go: function () { autoPress(3, 60000, 60000); } },
   long: { tab: 'soft1', bounce: 'mid', wait: 200, go: function () { autoPress(2, 60000, 100000); } },
   schmitt: { tab: 'hw1', bounce: 'mid', tau: 1, focus: 'plain', go: function () { autoPress(1, 60000, 0); } },
   latch: { tab: 'hw2', bounce: 'mid', go: function () { autoFlip(3000); } }
