@@ -56,7 +56,7 @@ ol.steps>li::before{content:counter(s) "．";font-weight:700;color:#09695b}
 <div class="tw"><table><tr><th></th><th>在教室（E307）</th><th>在線上</th></tr>
 <tr><td><b>用哪台電腦</b></td><td>教室的 Ubuntu 電腦。W2 在上面裝過 App Lab 和 adb，也有 <code>ssh</code> 和瀏覽器。</td><td>自己的筆電。Windows 用 PowerShell，Mac 用「終端機」。</td></tr>
 <tr><td><b>課前先做</b></td><td>找位子坐下，接好板子</td><td>裝好 App Lab（等一下要用它附的 adb），課前接上板子開一次，確定它認得板子</td></tr>
-<tr><td><b>板子的網路</b></td><td>連教室給板子用的 Wi-Fi（W2 連過）</td><td>連家裡的 Wi-Fi，跟筆電同一個</td></tr>
+<tr><td><b>板子的網路</b></td><td>連教室給板子用的 Wi-Fi（W2 連過）</td><td>連家裡的 Wi-Fi，跟筆電同一個（怎麼換：第 11 節 <code>wlan0</code> 那一列）</td></tr>
 <tr><td><b>卡住了</b></td><td>舉手</td><td>把<b>整段錯誤訊息</b>貼到 Meet 聊天室，別只打「不行」</td></tr></table></div>
 <p>不管在哪裡，都要準備好：</p>
 <ul>
@@ -133,7 +133,7 @@ exit</pre>
 <p>電腦跟板子不在同一個網路，SSH 就過不去。這時用 adb 在 USB 線上開一條通道：把第 2 節你打的那行最後的 <code>shell</code>，換成 <code>forward tcp:2222 tcp:22</code>，在<b>自己的電腦</b>上打。</p>
 <p>教室 E307（Ubuntu）：</p>
 <pre>"$ADB" forward tcp:2222 tcp:22</pre>
-<p>Windows（⚠️ 這條還沒在 Windows 上實測，不行叫老師）：</p>
+<p>Windows（PowerShell）：</p>
 <pre>&amp; "$env:LOCALAPPDATA\Arduino15\packages\arduino\tools\adb\32.0.0\adb.exe" forward tcp:2222 tcp:22</pre>
 <p>Mac（⚠️ 路徑跟第 2 節一樣，還沒實查）：</p>
 <pre>~/Library/Arduino15/packages/arduino/tools/adb/*/adb forward tcp:2222 tcp:22</pre>
@@ -165,6 +165,7 @@ agy --version</pre>
 <h3>看到這些，別緊張</h3>
 <ul>
 <li>好幾行 <code>ERROR: logging before google.Init</code> 開頭的字：正常，只是紀錄的格式，不是出錯。最後有 <code>✅ Antigravity CLI binary placed successfully</code> 就是成功。</li>
+<li>最後還會跳一段 <code>Warning: … is not present in your active PATH</code>，叫你自己加一行 <code>echo 'export PATH=…' &gt;&gt; ~/.bashrc</code>：<b>不用照做</b>，安裝程式已經幫你寫進 <code>~/.bashrc</code> 了，照上面打 <code>source ~/.bashrc</code> 就好。</li>
 <li>下載大約 56 MB，全班同時抓會慢。<b>等的時候再開一個終端機視窗</b>，重新 <code>ssh</code> 進板子，先做第 7 節。</li>
 <li>要重裝：先 <code>rm ~/.local/bin/agy</code>，不然安裝程式會直接結束。</li>
 </ul></section>
@@ -173,13 +174,14 @@ agy --version</pre>
 <p>你是從 SSH 連進板子的，板子沒辦法替你開瀏覽器。所以登入要繞一下：板子給你一個網址，你在電腦的瀏覽器登入，再把網頁給你的授權碼（authorization code）貼回板子。</p>
 <pre>agy</pre>
 <ol class="steps">
-<li><b>在 SSH 視窗打 <code>agy</code>。</b>它發現你是從 SSH 連進來的，會印出一個網址。</li>
-<li><b>把網址複製到你電腦的瀏覽器打開。</b>教室電腦請用<b>無痕視窗</b>，下課前登出、關掉。</li>
+<li><b>在 SSH 視窗打 <code>agy</code>。</b>畫面出現 <code>Select login method:</code>，游標停在 <code>1. Google OAuth</code>，直接按 Enter。</li>
+<li><b>畫面印出 <code>Open the URL below in your browser:</code> 和一長串網址</b>（會折成好幾行）。按住 <code>Ctrl</code> 點那串網址（或下面的 <code>→ Click here to authenticate</code>），電腦的瀏覽器就會打開。點不動的話，把整串網址選起來複製，貼到瀏覽器的網址列。教室電腦請用<b>無痕視窗</b>，下課前登出、關掉。</li>
 <li><b>用個人 Gmail 登入</b>，東華帳號不行。</li>
 <li><b>網頁會給你一串授權碼</b>，複製它。</li>
-<li><b>貼回 SSH 視窗</b>，按 Enter。</li>
+<li><b>貼回 SSH 視窗</b>（畫面寫 <code>authorization code...</code> 那一格），按 Enter。</li>
 </ol>
-<p class="note">⚠️ 畫面上的字可能跟這裡不完全一樣。登入畫面長什麼樣、登入後怎麼離開 agy，以老師課堂示範為準。還不會離開也沒關係，另開一個 SSH 視窗做下一步就好。</p>
+<p><b>要離開 agy：連按兩次 <code>Ctrl＋C</code>。</b></p>
+<p class="note">⚠️ 登入成功之後的畫面，以老師課堂示範為準。</p>
 <h3>終端機裡怎麼複製貼上</h3>
 <p>Ubuntu 的終端機用 <code>Ctrl＋Shift＋C</code> 複製、<code>Ctrl＋Shift＋V</code> 貼上。少了 Shift 的 <code>Ctrl＋C</code> 在終端機裡是「中斷」，會把正在跑的程式停掉，登入就得重來。Mac 用 <code>⌘C</code>／<code>⌘V</code>；Windows 的 PowerShell 按右鍵就能貼上。</p>
 <h3>休息前，對一下這三個勾</h3>
@@ -221,6 +223,7 @@ agy --version</pre>
 echo 1 &gt; /sys/class/leds/green:user/brightness   # 綠燈亮
 echo 0 &gt; /sys/class/leds/green:user/brightness   # 滅</pre>
 <p><code>ls</code> 會列出好幾顆燈，今天只碰名字裡有 <code>user</code> 的三顆：<code>red:user</code>、<code>green:user</code>、<code>blue:user</code>。</p>
+<p><b>名字跟這裡不一樣？</b>系統比較新的板子，燈叫 <code>unoq:user-green1</code> 這種名字。那就把上面兩行的 <code>green:user</code> 換成你 <code>ls</code> 看到的那個——以你的板子為準。</p>
 <p>這幾顆燈不用 <code>sudo</code> 就寫得進去：它們開放給 <code>gpiod</code> 群組寫，而你（<code>arduino</code>）就在這個群組裡，第 7 節 <code>id</code> 那行看得到。</p>
 <h3>換一個你沒有權限的檔</h3>
 <pre>echo test &gt;&gt; /etc/hostname</pre>
@@ -270,8 +273,8 @@ agy</pre>
 <p>agy 改完後，另開一個 SSH 視窗（或先離開 agy），打：</p>
 <pre>arduino-app-cli app start ~/ArduinoApps/my-matrix</pre>
 <ul>
-<li>等大約 30 秒：板子要編譯程式，再燒進另一顆晶片（W2 講過的 STM32）。</li>
-<li>中間出現紅字 <code>verify failed in bank at 0x08000000</code> 是正常的。</li>
+<li>等 30 秒到 2 分鐘（第一次最久）：板子要編譯程式，再燒進另一顆晶片（W2 講過的 STM32）。別重按。</li>
+<li>中間出現紅字 <code>verify failed in bank at 0x08000000</code>，或 <code>level=error msg="Stopped decode loop: EOF"</code>，都是正常的。</li>
 <li>最後一行是 <code>✓ App "my-matrix" started successfully</code> 才算跑起來。</li>
 <li><b>然後看板子。</b>畫面說成功不算數，點陣真的亮出你要的圖案才算。拍照（最多 2 張）交 e學苑。</li>
 <li>agy 最後告訴你的指令，如果跟這一頁不一樣（例如叫你用 <code>app restart</code>），照這一頁的做。</li>
@@ -299,7 +302,7 @@ agy</pre>
 <div class="tw"><table><tr><th>看到什麼</th><th>先做這個</th></tr>
 <tr><td><code>"$ADB" devices -l</code> 沒列出板子，或 <code>no devices/emulators found</code></td><td>跟 W2 一樣：確認是資料線、直接接電腦不經過 hub、換一個 USB 埠。</td></tr>
 <tr><td><code>$ADB</code> 是空的、<code>"$ADB"</code> 打了沒反應</td><td>這個視窗沒跑過第 2 節那段，重跑一次。</td></tr>
-<tr><td><code>ip -4 -o addr show wlan0</code> 什麼都沒印</td><td>板子還沒連上 Wi-Fi，叫老師。</td></tr>
+<tr><td><code>ip -4 -o addr show wlan0</code> 什麼都沒印</td><td>板子還沒連上 Wi-Fi。在家的：在板子裡打 <code>nmcli --ask dev wifi connect "你家的Wi-Fi名稱"</code>，照提示打 Wi-Fi 密碼（不會顯示），再查一次 IP。在教室的叫老師。</td></tr>
 <tr><td><code>ssh</code> 等很久，最後 <code>Connection timed out</code></td><td>電腦跟板子在同一個網路嗎？線上的：板子和筆電要連同一個 Wi-Fi。還是不通，就走 USB（第 4 節後半）。</td></tr>
 <tr><td><code>Connection refused</code></td><td>板子的 SSH 還沒修好。回第 3 節，<code>systemctl is-active ssh</code> 要回 <code>active</code>。</td></tr>
 <tr><td><code>Permission denied (publickey,password)</code></td><td>密碼打錯。打密碼時畫面不會出現任何字，慢慢打完再按 Enter；帳號要是 <code>arduino</code>。</td></tr>
@@ -310,9 +313,10 @@ agy</pre>
 <tr><td><code>agy: command not found</code></td><td>打 <code>source ~/.bashrc</code>，或關掉這個 SSH 視窗重新連進去。</td></tr>
 <tr><td>agy 登入卡住</td><td>告訴老師（休息時間處理），先往下做第 7、8 節。</td></tr>
 <tr><td>卡在 vim 出不去</td><td>按幾下 <code>Esc</code>，打 <code>:q!</code> 再按 Enter。</td></tr>
+<tr><td><code>echo 1 &gt; /sys/class/leds/green:user/brightness</code> 說 <code>No such file or directory</code></td><td>你的板子燈的名字不一樣。<code>ls /sys/class/leds/</code> 看一下，換成名字裡有 <code>user</code> 和 <code>green</code> 的那個（例如 <code>unoq:user-green1</code>）。</td></tr>
 <tr><td>一 SSH 進去就出現 <code>setlocale</code> 或 <code>cannot change locale</code> 的警告</td><td>不影響操作：你的電腦把自己的中文語系帶進了板子，但板子還沒生成中文語系。先打 <code>export LANG=en_US.UTF-8</code> 就安靜了；做完第 9 節也會好。</td></tr>
 <tr><td><code>Stat /Data/Local/Tmp</code></td><td>你在 <code>adb shell</code> 裡跑了 <code>app start</code>。改用 SSH 跑；非用 adb 不可，先打 <code>export TMPDIR=/tmp</code>。</td></tr>
-<tr><td><code>app start</code> 最後沒有 <code>✓ … started successfully</code></td><td>往上找第一個 <code>error</code>，把那一段整段貼給 agy，請它照提示詞的規則修。</td></tr>
+<tr><td><code>app start</code> 最後沒有 <code>✓ … started successfully</code></td><td>往上找第一個 <code>error</code>（<code>Stopped decode loop: EOF</code> 那種是正常的，跳過），把那一段整段貼給 agy，請它照提示詞的規則修。</td></tr>
 <tr><td><code>app start</code> 說成功，點陣卻沒亮</td><td>再看一次最後一行是不是 <code>✓ App "my-matrix" started successfully</code>；打 <code>ls ~/ArduinoApps/my-matrix/python/</code>，確認 <code>main.py</code> 還在。</td></tr></table></div></section>
 
 <section id="s12"><h2>12　下週</h2>
