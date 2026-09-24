@@ -1,163 +1,322 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W3 學生步驟｜一切皆檔案</title><style>
-:root{font-family:system-ui,'Microsoft JhengHei',sans-serif;color:#153d36;background:#f4f6ed;line-height:1.8}body{margin:0}main{max-width:880px;margin:auto;padding:30px 24px 90px}nav{display:flex;gap:18px;flex-wrap:wrap}a{color:#09695b;text-underline-offset:4px}header{padding:44px 0 28px;border-bottom:2px solid #1f6153}h1{font-size:clamp(30px,5vw,54px);line-height:1.25;max-width:650px}h2{font-size:26px;line-height:1.4;margin:44px 0 14px}h3{font-size:20px;margin:24px 0 8px}.eyebrow{letter-spacing:.09em;font-weight:700;color:#577565}.lead{font-size:21px}section{scroll-margin-top:20px}.note{padding:14px 20px;border-left:4px solid #c9963b;background:#fff9e8}.src{padding:12px 20px;border-left:4px solid #79958a;background:#eef2e7;font-size:15px;color:#3d574d}table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid #bbc9bf;padding:10px;text-align:left;vertical-align:top}th{background:#e0ece2}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#133e34;color:#f4f6ed;padding:18px;border-radius:8px;font:15px/1.7 ui-monospace,monospace}code{background:#e6ece5;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;font:15px ui-monospace,monospace}ol,ul{padding-left:1.4em}li{margin:6px 0}.small{font-size:14px;color:#51695f}.steps{counter-reset:s;list-style:none;padding:0}.steps li{background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:12px 16px;margin:10px 0}.steps li b{color:#09695b}@media print{nav,.no-print{display:none}main{max-width:none;padding:0}h1{font-size:30px}h2{break-after:avoid}pre,table,.note,.steps li{break-inside:avoid}}
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W3 學生步驟｜走進板子，請 AI 點亮點陣</title><style>
+:root{font-family:system-ui,'Microsoft JhengHei','PingFang TC','Noto Sans CJK TC',sans-serif;color:#153d36;background:#f4f6ed;line-height:1.8;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:#f4f6ed}
+main{max-width:880px;margin:auto;padding:30px 24px 90px}
+nav{display:flex;gap:6px 18px;flex-wrap:wrap}
+a{color:#09695b;text-underline-offset:4px}
+header{padding:44px 0 28px;border-bottom:2px solid #1f6153}
+h1{font-size:clamp(28px,5vw,54px);line-height:1.25;max-width:650px}
+h2{font-size:26px;line-height:1.4;margin:44px 0 14px}
+h3{font-size:20px;margin:24px 0 8px}
+.eyebrow{letter-spacing:.09em;font-weight:700;color:#577565}
+.lead{font-size:21px}
+section{scroll-margin-top:20px}
+.toc{margin:22px 0 0;font-size:15px;gap:4px 16px}
+.note{padding:14px 20px;border-left:4px solid #c9963b;background:#fff9e8}
+.tw{overflow-x:auto}
+.nw{white-space:nowrap}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{border:1px solid #bbc9bf;padding:10px;text-align:left;vertical-align:top}
+th{background:#e0ece2}
+pre{white-space:pre;overflow-x:auto;background:#133e34;color:#f4f6ed;padding:18px;border-radius:8px;font:15px/1.7 ui-monospace,Consolas,'DejaVu Sans Mono',Menlo,monospace}
+pre.prompt{white-space:pre-wrap;overflow-wrap:anywhere;background:#fff;color:#153d36;border:2px dashed #09695b;font:16px/1.9 system-ui,'Microsoft JhengHei','PingFang TC','Noto Sans CJK TC',sans-serif}
+code{background:#e6ece5;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;font:15px ui-monospace,Consolas,'DejaVu Sans Mono',Menlo,monospace}
+ol,ul{padding-left:1.4em}
+li{margin:6px 0}
+.small{font-size:14px;color:#51695f}
+.steps{counter-reset:s;list-style:none;padding:0}
+.steps li{background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:12px 16px;margin:10px 0}
+.steps li b{color:#09695b}
+ol.steps>li{counter-increment:s}
+ol.steps>li::before{content:counter(s) "．";font-weight:700;color:#09695b}
+@media (max-width:520px){main{padding:18px 16px 70px}header{padding:28px 0 20px}h2{font-size:23px;margin-top:36px}.lead{font-size:19px}pre{padding:14px;font-size:14px}th,td{padding:8px}.note{padding:12px 14px}}
+@media print{nav,.no-print{display:none}main{max-width:none;padding:0}h1{font-size:30px}h2{break-after:avoid}pre,table,.note,.steps li{break-inside:avoid}pre{white-space:pre-wrap;overflow-wrap:anywhere}}
 </style></head><body><main>
-<nav><a href="deck.html">投影片</a><a href="deck.pdf">下載投影片 PDF</a><a href="w03-當堂卡-正反面.html">列印當堂卡</a><a href="evidence-card.pdf">下載當堂卡 PDF</a><a href="starter.zip">起步包（zip）</a></nav>
+<nav><a href="deck.html">投影片</a><a href="deck.pdf">下載投影片 PDF</a></nav>
 
-<header><p class="eyebrow">AIoT 智慧裝置實作　WEEK 3</p><h1>在 Linux 裡，<br>什麼都是檔案</h1><p class="lead">今天不學新語言。只學一句話：這塊板上的東西——包括那顆燈——在系統眼裡都是一個可以讀、可以寫的檔案。</p><p>三件事：走進板子、用檔案把燈點亮、寫一支讓燈自己閃的腳本。最後十分鐘用手機看一眼它。</p></header>
+<header><p class="eyebrow">AIoT 智慧裝置實作　WEEK 3</p><h1>走進板子，<br>請 AI 點亮點陣</h1><p class="lead">今天四件事：連進板子、在板子上裝 AI 助手、學幾個 Linux 指令、請 AI 點亮板子上的點陣。</p><p>9/24（四）14:10–17:00。老師在 E307 上課，同時開 Google Meet 分享螢幕；教室和線上的同學走同一份步驟。大約 15:10 休息，16:10 開始做點陣，16:45 收尾交作業。</p><p>規矩跟 W2 一樣：畫面說成功不算，你親眼看到才算。</p></header>
 
-<section><h2>1　今天交什麼</h2>
-<table><tr><th>東西</th><th>怎麼處理</th><th>什麼時候</th></tr>
-<tr><td><b>當堂卡</b></td><td><b>當堂寫、當堂交</b>，不帶回家。正面是走一趟，背面是「AI 說／真機做」對照表。</td><td>下課前</td></tr>
-<tr><td><code>marquee.sh</code></td><td>你的跑馬燈腳本。自己帶走，上傳 e學苑。</td><td><b>10/01（四）14:10 上課前</b></td></tr>
-<tr><td>對照表<b>第 1 條</b></td><td>貼在 e學苑 Week 3 的「線上文字」那一格。五欄要寫滿。</td><td>同上</td></tr>
-<tr><td>手機 BLE 掃描截圖</td><td><b>選附</b>。今天有做到才交，沒做到不扣分。</td><td>同上</td></tr></table>
-<p class="note"><b>檔案格式要注意：</b>e學苑收 <code>.sh</code>、<code>.txt</code>、<code>.png</code>、<code>.jpg</code>、<code>.jpeg</code>、<code>.pdf</code>。<b>它不收 <code>.md</code></b>，腳本存成 <code>marquee.sh</code>，純文字的東西存成 <code>.txt</code>。</p>
-<p class="small">當堂卡看的是證據完整不完整，不是做得漂不漂亮。沒點亮也交，把「卡在哪裡」寫清楚一樣有分。</p>
-<p class="small">下面會提到兩個檔：<code>marquee.sh</code>（跑馬燈範本）和 <code>對照表.txt</code>。<b>兩個都在 <a href="starter.zip">starter.zip</a> 裡</b>，抓那一包解開就有；個別連結點不開時就用這一包。</p></section>
+<nav class="toc" aria-label="這一頁的段落"><a href="#s0">0 交什麼</a><a href="#s1">1 課前準備</a><a href="#s2">2 進板子</a><a href="#s3">3 修好 SSH</a><a href="#s4">4 SSH 連進去</a><a href="#s5">5 裝 agy</a><a href="#s6">6 登入 agy</a><a href="#s7">7 指令＋vim</a><a href="#s8">8 燈是檔案</a><a href="#s9">9 語系（選做）</a><a href="#s10">10 點陣</a><a href="#s11">11 卡住了</a><a href="#s12">12 下週</a></nav>
 
-<section><h2>2　先進到板子裡</h2>
-<p><b>今天用的就是你 W2 那天接的那塊板</b>，一人一塊。進去的方式也跟 W2 同一條：<b>App Lab 附的 <code>adb</code></b>。</p>
-<h3>怎麼連上板子</h3>
+<p class="note"><b>怎麼讀這一頁</b><br>
+深色框框裡是指令。一次打（或貼）一行，按 Enter，看完它回什麼再打下一行；有 <code>sudo</code> 的行會停下來問密碼，一次貼一整段會亂掉。<code>#</code> 後面是寫給你看的說明，不用打。<br>
+<code>&lt;板子IP&gt;</code> 這種尖括號，要連 <code>&lt;</code> <code>&gt;</code> 一起換成你自己的值。<br>
+標 ⚠️ 的地方還在確認，照做不行就叫老師（線上的貼 Meet 聊天室）。</p>
+
+<section id="s0"><h2>0　今天交什麼</h2>
+<p>e學苑 Week 3 的當堂作業「W3 當堂：SSH 進板子＋請 AI 點亮點陣」，<b>17:00 前</b>交。三樣文字貼在作業的「線上文字」那一格，照片另外上傳。</p>
+<div class="tw"><table><tr><th></th><th>交什麼</th><th>在哪一節拿到</th></tr>
+<tr><td><b>1</b></td><td>SSH 進去後的提示字元那一行（例：<code>arduino@unoq-xxx:~$</code>）</td><td>第 4 節</td></tr>
+<tr><td><b>2</b></td><td><code>agy --version</code> 的輸出</td><td>第 5 節</td></tr>
+<tr><td><b>3</b></td><td>你給 agy 的提示詞（整段）＋一句話：點陣最後顯示了什麼</td><td>第 10 節</td></tr>
+<tr><td class="nw"><b>照片</b></td><td>最多 2 張，點陣亮起來的樣子</td><td>第 10 節</td></tr></table></div>
+<p class="small">哪一樣卡住沒做到，那一格就照實寫卡在哪一步、看到什麼訊息。板子密碼、登入 agy 時拿到的授權碼，都不要貼進作業。</p></section>
+
+<section id="s1"><h2>1　上課前準備</h2>
+<div class="tw"><table><tr><th></th><th>在教室（E307）</th><th>在線上</th></tr>
+<tr><td><b>用哪台電腦</b></td><td>教室的 Ubuntu 電腦。W2 在上面裝過 App Lab 和 adb，也有 <code>ssh</code> 和瀏覽器。</td><td>自己的筆電。Windows 用 PowerShell，Mac 用「終端機」。</td></tr>
+<tr><td><b>課前先做</b></td><td>找位子坐下，接好板子</td><td>裝好 App Lab（等一下要用它附的 adb），課前接上板子開一次，確定它認得板子</td></tr>
+<tr><td><b>板子的網路</b></td><td>連教室給板子用的 Wi-Fi（W2 連過）</td><td>連家裡的 Wi-Fi，跟筆電同一個</td></tr>
+<tr><td><b>卡住了</b></td><td>舉手</td><td>把<b>整段錯誤訊息</b>貼到 Meet 聊天室，別只打「不行」</td></tr></table></div>
+<p>不管在哪裡，都要準備好：</p>
+<ul>
+<li><b>你的板子</b>（W2 那塊）和 USB-C 資料線。</li>
+<li><b>板子密碼</b>：W2 用 App Lab 設定板子時，你自己設的那組。等一下 <code>sudo</code> 和 SSH 登入都要用。忘了就先跟老師說。</li>
+<li><b>個人 Gmail</b>：登入 agy 用。東華的學校帳號不行，這是 Google 的規定。官方也不開放未滿 18 歲使用，未滿 18 的同學先跟老師說一聲。</li>
+<li><b>板子要能上網</b>：等一下要在板子上下載 agy。</li>
+</ul>
+<p class="small">線上的同學：Meet 連結在 e學苑 Week 3，這一頁不放。</p></section>
+
+<section id="s2"><h2>2　找到 adb、進板子</h2>
+<p>SSH 的門要先從板子裡面修好（第 3 節），所以第一次進板子還是走 USB，用 W2 那個 <code>adb</code>。</p>
 <ol class="steps">
-<li><b>接線、等心跳。</b>用 USB-C <b>資料線</b>把板子直接接到電腦（先不要經過 hub），等 LED 點陣從旋轉圖案變成心跳動畫。</li>
-<li><b>把 <code>$ADB</code> 找出來。</b>跟 W2 同一段，整段照抄貼進終端機：</li>
+<li><b>接線、等心跳。</b>用 USB-C 資料線把板子直接接到電腦（先不要經過 hub），等點陣從旋轉圖案變成心跳動畫，通常要 30～60 秒。</li>
+<li><b>照你用的電腦，挑下面其中一段打。</b></li>
 </ol>
+<h3>教室 E307（Ubuntu）</h3>
+<p>跟 W2 同一段。前兩行是同一個指令（第一行最後的 <code>\</code> 代表「接到下一行」），要一起貼：</p>
 <pre>ADB=$(find "$HOME/.arduino15/packages/arduino/tools/adb" \
     -type f -name adb -perm -u+x -print 2&gt;/dev/null | sort -V | tail -n 1)
-"$ADB" devices -l</pre>
-<p>最後一行應該列出<b>剛好一塊板</b>，狀態是 <code>device</code>。</p>
-<ol class="steps" start="3">
-<li><b>進互動殼。</b><br><code>"$ADB" shell</code><br>提示字元會變成板子的，之後每一個 <code>ls</code>、<code>cd</code>、<code>cat</code> 都是在<b>板子裡面</b>跑，不是在你自己的電腦上跑。</li>
-</ol>
-<p class="note"><b>換一個終端機視窗，上面那段要重跑一次。</b><code>$ADB</code> 只在跑過那段的那個視窗裡有值；換視窗、或關掉再開，都要重來一次。這不是壞掉。</p>
-<p class="small">後面每一次用到 adb，都是打 <code>"$ADB"</code> 這四個字加引號，不是打 <code>adb</code>。<br>
-想離開板子的殼回到自己的電腦，打 <code>exit</code>。</p>
-<p class="note"><b><code>"$ADB" devices -l</code> 是空的？依序查三件：</b>①<b>這個視窗</b>有沒有跑過上面那段找 <code>$ADB</code> 的指令——換視窗要重跑。②線是不是只供電不傳資料——換一條資料線試。③換一個 USB 埠（先不要經過 hub）。<br>
-三個都不是，<b>就照第 7 節的出錯四步做，然後舉手</b>。別一個人卡二十分鐘。跟老師借備板還是連不上，就直接走第 4 節的<b>螢幕版</b>，<b>同分</b>。</p></section>
+"$ADB" devices -l
+"$ADB" shell</pre>
+<p><code>devices -l</code> 要列出剛好一塊板、狀態是 <code>device</code>，再打最後一行進去。</p>
+<h3>Windows（PowerShell）</h3>
+<pre>&amp; "$env:LOCALAPPDATA\Arduino15\packages\arduino\tools\adb\32.0.0\adb.exe" shell</pre>
+<p>說找不到？<code>32.0.0</code> 這個資料夾名在你的電腦上可能不一樣。先看一下是哪個，再把上面那行的 <code>32.0.0</code> 換掉：</p>
+<pre>dir "$env:LOCALAPPDATA\Arduino15\packages\arduino\tools\adb"</pre>
+<h3>Mac（終端機）</h3>
+<pre>~/Library/Arduino15/packages/arduino/tools/adb/*/adb shell</pre>
+<p class="note">⚠️ 這條 Mac 路徑還沒在 Mac 上實際查過。Mac 同學照這行試，不行叫老師。</p>
+<p>進去之後，提示字元（shell prompt，游標前面那串字）會變成板子的。第 3 節的指令都在這裡打。</p>
+<p class="small">E307 的 <code>$ADB</code> 只在跑過上面那段的視窗裡有值，換視窗要重跑。Windows 和 Mac 打的是完整路徑，沒有這個問題。</p></section>
 
-<section><h2>3　一切皆檔案：三件事</h2>
-
-<h3>① 走一趟</h3>
-<p>三個指令就夠：<code>ls</code> 看這裡有什麼、<code>cd</code> 走進去、<code>cat</code> 把一個檔的內容倒出來。</p>
-<pre>ls /                 # 最外層有哪些資料夾
-cd /sys/class        # 走進去
-ls                   # 這裡每一個名字，都是一類硬體
-cat /etc/os-release  # 這塊板跑的是什麼系統</pre>
-<p>最後一行印出來的東西，<b>抄一句到卡的正面</b>。你剛剛做的事，就是用「讀檔案」的方式問了系統一個問題。</p>
-
-<h3>② 找到那顆燈，把它點亮</h3>
-<p><b>節點的名字要你自己查，這一頁不給答案。</b>不同的板、不同的映像，名字會不一樣；你查出來的才作數。</p>
-<pre>ls /sys/class/leds/                          # 先看有哪幾顆，把名字抄到卡上
-cat /sys/class/leds/&lt;你抄到的名字&gt;/brightness  # 現在是 0 還是 1</pre>
-<p>然後把 1 寫進去。<b>注意寫法</b>——下一節專門講這件事。</p>
-<p class="note"><b><code>ls /sys/class/leds/</code> 出來是空的？</b>不是你做錯了。舉手告訴老師，然後直接跳到第 4 節的<b>螢幕版</b>，用它做完今天全部的事，<b>同分</b>。卡上照實寫「這塊板沒有 leds 節點」。</p>
-
-<h3>③ 寫成一支腳本</h3>
-<p>把剛才手打的那幾行存成一個檔，讓它自己跑十次——這就是第 4 節。</p>
-</section>
-
-<section><h2>4　跑馬燈腳本</h2>
-<p>起步包裡的 <a href="starter/marquee.sh">marquee.sh</a> 長這樣（12 行，註解都是中文）：</p>
-<pre>#!/bin/bash
-# 跑馬燈：讓一顆燈自己亮、暗、亮、暗，跑十次。
-LED="$1"                          # 第一個參數就是那個檔
-for i in 1 2 3 4 5 6 7 8 9 10; do # 跑十次
-  echo 1 &gt; "$LED"                 # 寫 1 ＝ 亮
-  sleep 0.3                       # 等 0.3 秒
-  echo 0 &gt; "$LED"                 # 寫 0 ＝ 暗
-  sleep 0.3
-done</pre>
-<h3>腳本在哪裡寫、怎麼進到板子裡</h3>
-<p>你剛剛是用 <code>"$ADB" shell</code> 進到板子裡面，但 <code>marquee.sh</code> 在<b>你自己電腦</b>的起步包裡。兩邊要接起來，挑一條做就好。</p>
-<p><b>做法一：從電腦推過去。</b>這三行要在<b>你自己電腦</b>的終端機打（<b>不是</b>板子的殼裡——如果你還在殼裡，先打 <code>exit</code> 出來）：</p>
-<pre>"$ADB" push marquee.sh /tmp/     # 把檔案推到板子的 /tmp
-"$ADB" shell                     # 再進去一次
-cd /tmp                          # 走到檔案在的地方</pre>
-<p><b>做法二：直接在板子的殼裡打出來。</b>不必找編輯器，也不必管板上有沒有 <code>nano</code> 或 <code>vi</code>——<b>用 <code>cat</code> 把接下來打的東西倒進一個檔</b>：</p>
-<pre>cd /tmp
-cat &gt; marquee.sh &lt;&lt;'EOF'
-（把上面那 12 行，一行一行貼進來或打進來）
-EOF</pre>
-<p class="small">最後那個 <code>EOF</code> 要<b>自己單獨一行、頂著左邊</b>，打完按 Enter 才會收工。<code>&lt;&lt;'EOF'</code> 的單引號有用意：它叫殼「中間這段一個字都別自己解釋」，所以腳本裡的 <code>$LED</code> 才不會在這一步就被吃掉。</p>
-<p class="note"><b>為什麼放 <code>/tmp</code>？</b>因為它一定寫得進去。<b>也因為它重開機就沒了</b>——所以<b>交作業的那一份要留在你自己的電腦上</b>，別只存在板子裡。</p>
-<h3>怎麼跑</h3>
-<ol class="steps">
-<li><b>先讓它可以被執行。</b><code>chmod +x marquee.sh</code>　——這一步在做什麼？<b>它就是把那個檔的「可執行」那一格打開。</b>又一次：連「這個檔能不能跑」也是寫在檔案上的一個屬性。</li>
-<li><b>真的點燈。</b>先直接跑一次：<br><code>./marquee.sh /sys/class/leds/&lt;你抄到的名字&gt;/brightness</code><br>
-<b>被擋下來（<code>Permission denied</code>）就在前面加 <code>sudo</code></b>，要不要密碼、密碼是什麼，老師會在課堂上說。<b>沒被擋、燈直接就閃了，也是正常的</b>——那代表你進去的身分本來就寫得動它，第 6 節會講這件事。</li>
-<li><b>沒有板子、或 leds 是空的——螢幕版：</b><br><code>./marquee.sh /dev/stdout</code><br>畫面上會輪流跑出 1 和 0。<b>這不是安慰獎</b>：<code>/dev/stdout</code>（你的螢幕）也是一個檔案，所以同一支腳本不用改一個字就能寫進去。這正好是今天那句話的最後一塊拼圖。</li>
-</ol>
-<p class="note"><b><code>sleep 0.3</code> 說錯誤？</b>有些系統的 <code>sleep</code> 不吃小數，把兩個 <code>0.3</code> 都改成 <code>1</code>，燈會閃得慢一點，一樣算完成。</p>
-<p class="small">腳本可以自己從頭寫，也可以從範本改。<b>但十行以內</b>——AI 給你一支三十行的，退回去（第 5 節第三道門）。</p></section>
-
-<section><h2>5　AI 三道閘門</h2>
-<p class="src">以下三道門對應共用教材 <b>P2b〈用會自己動手的 AI，你要做的四件事〉</b>（<code>background-knowledge/P2b-四件判斷-學生版一頁.md</code>）的 <b>A1、A3、A4</b>，各科共用同一份，本週不另寫版本。</p>
-<h3>開工前，先貼這段（照抄自 P2b）</h3>
-<pre>接下來請你幫我做事，整個過程守四條規矩：
-1. 做任何「刪除、覆蓋既有檔案、寄出訊息、上傳到網路或放到 GitHub 公開、花錢」的事之前，先停下來講你要做什麼，等我回「可以」再做。
-2. 不確定我的意思、或有兩種以上做法，先問我，不要自己選。
-3. 我說「先解釋，別動手」時，只說明、不執行。
-4. 動到我重要的檔案之前，先複製一份備份（檔名加 _backup）再動原檔。
-先回我一句「收到」，我們再開始。</pre>
-<ol class="steps">
-<li><b>第一道：先寫預期，再看它的計畫。</b>把事情丟給 AI <b>之前</b>，先在卡上寫一句「我預期它會做什麼」。<b>寫完才准按送出。</b>拿到回覆先讀它的計畫，不要先跑。<br><span class="small">猜不到就寫「我猜不到」——那也是誠實的答案，比空白有用。</span></li>
-<li><b>第二道：它要 <code>rm</code>、<code>sudo</code>、或動到你沒指定的檔，先停下來問。</b>尤其是 <code>rm</code>（刪除）和寫進 <code>/etc</code> 這種系統資料夾的動作——<b>那些收不回來</b>。問它「這一行為什麼需要？不做會怎樣？」</li>
-<li><b>第三道：退回它一次，理由要寫得出來。</b>多做了你沒要的、腳本超過十行、用了你看不懂的寫法，都可以退回。說「這個我沒要，拿掉」或「用我看得懂的寫法重寫」。<br><span class="small">理由不能是「我不喜歡」。要寫成「因為它會刪掉原本的檔」「因為我看不懂第 6 行，之後壞了我修不了」。</span></li>
-</ol>
-<h3>對照表怎麼填</h3>
-<p>起步包裡有 <a href="starter/對照表.txt">對照表.txt</a>，五欄：</p>
-<table><tr><th>欄</th><th>填什麼</th></tr>
-<tr><td>① 我要它做什麼</td><td>一句話。例如「寫一支讓板上的燈閃十次的 shell 腳本」</td></tr>
-<tr><td>② 我預期它會做什麼</td><td><b>動手前先寫</b></td></tr>
-<tr><td>③ AI 說</td><td>抄它計畫裡的一兩句<b>原文</b>，不要濃縮成「它說可以」</td></tr>
-<tr><td>④ 真機做</td><td>我照著跑，<b>實際</b>看到什麼（燈閃了／Permission denied／路徑不存在／沒反應）</td></tr>
-<tr><td>⑤ 一樣嗎</td><td>我改了什麼、退回了什麼，為什麼</td></tr></table>
-<p class="small">③ 和 ④ 一樣的時候也要寫。「這次它說對了」本身就是一筆資料。<b>第 1 條當堂要寫滿五欄</b>，缺一欄會被退回去補。</p>
-<p class="note"><b>貼給 AI 之前先遮個資：</b>姓名、學號、密碼，還有路徑裡有你名字的那一段（例如 <code>C:\Users\王小明</code> 換成 <code>C:\Users\me</code>，路徑其他部分留著，AI 要靠它判斷）。<b>板子的位址和密碼也不要貼。</b></p></section>
-
-<section><h2>6　權限：誰有資格寫這個檔</h2>
-<p>你想直接寫 1 進去的時候，會遇到兩種情況之一。<b>兩種都正常，先看你是哪一種：</b></p>
-<pre>id            # 我現在是誰
-which sudo    # 這台板子上有沒有 sudo 這個指令</pre>
-<h3>情況一：它擋你（看到 <code>Permission denied</code>）</h3>
-<p>那代表你現在的身分沒有資格寫這個檔。這時候多數人會改成這樣，然後發現<b>還是不成功</b>：</p>
-<pre>sudo echo 1 &gt; /sys/class/leds/&lt;名字&gt;/brightness   ← 這樣還是不會成功</pre>
-<p><b>為什麼？</b>因為 <code>&gt;</code> 這個「寫進檔案」的動作，是<b>你的殼</b>先做的，那一刻還輪不到 <code>sudo</code>。<code>sudo</code> 只把後面那個 <code>echo</code> 變成管理員，沒有把 <code>&gt;</code> 變成管理員。</p>
-<p>兩種正確寫法，挑一種：</p>
-<pre>echo 1 | sudo tee /sys/class/leds/&lt;名字&gt;/brightness   # 讓 tee 用管理員身分去寫
-sudo ./marquee.sh /sys/class/leds/&lt;名字&gt;/brightness   # 整支腳本用管理員跑，裡面的 &gt; 才是管理員</pre>
-<h3>情況二：它沒擋你（燈直接就閃了）</h3>
-<p>那代表你進去的身分本來就寫得動它——<code>id</code> 那行大概會印出 <code>uid=0(root)</code>。<b>這不是你運氣好，也不是系統壞了</b>，是這塊板讓你用管理員的身分進來。</p>
-<p>這時候換一個問題問自己：<b>「既然沒人擋我，那我打錯一個字的時候，誰來擋？」</b>——答案是沒有人。所以第 5 節那三道閘門，在這種情況下比被擋的人更重要。</p>
-<p class="note"><b>不管你是哪一種，<code>&gt;</code> 是殼先做的這件事都成立。</b>這是今天真正要帶走的那一句，不是那行紅字。</p>
-<p class="small">看到那行紅字不是你笨——是系統在保護一個不該被隨便寫的地方。看不到那行紅字也不是你比較厲害——是保護剛好不在那裡。</p></section>
-
-<section><h2>7　出錯了，先做這四步</h2>
-<p class="src">以下四步照抄自共用教材 <b>P9〈電腦出錯了，先做這四步〉</b>（<code>background-knowledge/P9-電腦出錯先做的四步.md</code>），各科共用同一份，本週不另寫版本。</p>
-<ol class="steps">
-<li><b>複製錯誤訊息的原文，整段。</b>不要截圖、不要濃縮成「它壞了」。從第一個字到最後一個字，包括看不懂的那些。</li>
-<li><b>貼給 AI，前面加一句情況。</b>例如：「我在做 ___ 的時候出現這段，請先解釋這是什麼意思，再說你會怎麼查。」——先解釋，不是先修。</li>
-<li><b>看它的計畫，不要照單全收。</b>它會列出幾個可能的原因和要做的事。挑最像你情況的那一個；會動到檔案的，先備份再試。</li>
-<li><b>自己驗一次結果，記下四格。</b>原文寫了什麼／它說是什麼／我做了什麼／結果如何。沒解掉也記——下一次問的時候，這四格就是你的問題描述。</li>
-</ol>
-<h3>終端機怎麼複製文字</h3>
-<p>黑色的終端機視窗裡，用滑鼠選取文字後按<b>右鍵</b>，或按 <code>Ctrl＋Shift＋C</code>。</p>
-<p><b>沒有紅字的</b>（燈不亮、指令跑完沒反應）：第一步的「原文」改寫成三句——我做了什麼、我預期看到什麼、實際看到什麼。</p>
-<p class="small">附帶一句 P9 也寫著的：<b>它說「已修好」不算數。</b>你自己重跑一次那個指令、自己看一眼那顆燈，看到對的結果才算。這就是今天對照表第 ④ 欄的意思。</p></section>
-
-<section><h2>8　板子連不上怎麼辦</h2>
-<ul><li><b>先別停下來等。</b>連不上的時間不是等待。先把腳本寫好、把對照表的 ①②③ 三欄填好，板子一通就只要跑一次、把 ④⑤ 補上就完成。</li>
-<li><b>借備板還是不通、或 <code>leds</code> 是空的：</b>用 <code>./marquee.sh /dev/stdout</code> 在自己電腦上把腳本跑起來，對照表 ④ 那欄照實寫「板子連不上，跑螢幕版」或「看教師板」。<b>同分。</b></li>
-<li><b>自己的電腦沒有 <code>bash</code>：</b>Windows 上用 Git Bash 或 WSL 都可以；兩個都沒有就跟同學共用一台，卡上寫清楚是誰的機器跑的。</li>
-<li><b>板子中途壞掉、<code>adb</code> 一直掉：</b>照第 7 節做四步、記下四格，然後舉手借備板。<b>那四格本身就是證據</b>，不是損失。</li>
+<section id="s3"><h2>3　修好 SSH</h2>
+<p>SSH（Secure Shell）是一條加密的遠端連線：你在自己的電腦打字，指令送到板子上執行。今天之後，進板子主要走這條路。</p>
+<p>問題是這批板子的 SSH 門是壞的。SSH 服務（service）開門前，要先拿出板子自己的主機金鑰（host key），證明「我就是這塊板」。這批板子出廠時，六個金鑰檔<b>全是 0 位元組</b>，也就是空的；服務一啟動找不到金鑰，就自己退出了。補上金鑰就好。</p>
+<p>在第 2 節進去的板子裡，一行一行打：</p>
+<pre>systemctl is-active ssh              # failed 或 inactive → 門壞了
+journalctl -u ssh -n 3 --no-pager    # 看到 no hostkeys available
+ls -l /etc/ssh/ssh_host_*            # 六個檔都是 0 → 鑰匙是空的
+sudo ssh-keygen -A                   # 補鑰匙（會問板子密碼）
+sudo systemctl enable ssh
+sudo systemctl restart ssh
+systemctl is-active ssh              # active 才算修好
+ip -4 -o addr show wlan0             # 抄下 inet 後面那串（斜線前）＝板子 IP
+exit</pre>
+<div class="tw"><table><tr><th>這一行</th><th>在做什麼</th></tr>
+<tr><td><code>systemctl is-active ssh</code></td><td>問 SSH 服務現在有沒有在跑</td></tr>
+<tr><td><code>journalctl -u ssh -n 3 --no-pager</code></td><td>看 SSH 服務最後 3 行紀錄，找它倒下的原因</td></tr>
+<tr><td><code>ls -l /etc/ssh/ssh_host_*</code></td><td>列出六個金鑰檔，看檔案大小那一欄</td></tr>
+<tr><td><code>sudo ssh-keygen -A</code></td><td>把不存在或空的金鑰重新產生</td></tr>
+<tr><td><code>sudo systemctl enable ssh</code></td><td>設成開機自動啟動</td></tr>
+<tr><td><code>sudo systemctl restart ssh</code></td><td>現在就重新啟動一次</td></tr>
+<tr><td><code>systemctl is-active ssh</code></td><td>再問一次，這次要回 <code>active</code></td></tr>
+<tr><td><code>ip -4 -o addr show wlan0</code></td><td>查板子在 Wi-Fi 上的位址（IP）</td></tr>
+<tr><td><code>exit</code></td><td>離開板子，回到你自己的電腦</td></tr></table></div>
+<ul>
+<li><b><code>sudo</code> 問密碼時</b>，打板子密碼。打的時候畫面不會出現任何字，連星號都沒有，這是正常的；打完按 Enter。</li>
+<li><b>抄 IP</b>：<code>ip</code> 那行印出來的一長串裡找 <code>inet</code>，後面那串數字抄到斜線 <code>/</code> 前為止，像 <code>192.168.…</code> 這樣四段數字。每塊板都不一樣。</li>
+<li>別用 <code>hostname -I</code> 查 IP，它會混進板子內部用的位址（<code>docker0</code>），抄錯就連不上。用 <code>板名.local</code> 連也別指望，學校網路把這種名字擋掉了。</li>
 </ul>
-<p class="note"><b>今天計分看的不是你的板子通不通</b>，而是：你有沒有自己走過一遍，有沒有誠實寫下「AI 說的」跟「真機做的」差在哪。</p></section>
+<p class="small">網路上或 AI 可能叫你跑 <code>arduino-app-cli system network-mode enable</code>。這塊板用它修不好：它只補「不存在」的金鑰，碰到「存在但是空的」金鑰會直接跳過。照上面這幾行做就好。</p></section>
 
-<section><h2>9　下週</h2>
-<ul><li><b>10/01（W4）</b>：MCU 基礎——腳位、數位／類比 I/O、序列監控。今天玩的是會跑 Linux 的那顆腦，下週換另一顆。</li>
-<li><b>本週作業到期：10/01 14:10 上課前</b>。上 e學苑 Week 3，交 <code>marquee.sh</code> ＋對照表第 1 條。</li>
-<li>兩樣東西先存好：腳本存自己的雲端或寄給自己；<b>板子上的檔不算存好</b>，板子會被重刷。</li>
+<section id="s4"><h2>4　SSH 連進去</h2>
+<p>回到你自己的電腦（提示字元不再是 <code>arduino@</code> 開頭），打：</p>
+<pre>ssh arduino@&lt;板子IP&gt;</pre>
+<p><code>&lt;板子IP&gt;</code> 整個換成第 3 節抄的 IP，尖括號也拿掉。Windows 一樣在 PowerShell 打 <code>ssh</code>，Windows 10／11 內建。</p>
+<ol class="steps">
+<li><b>第一次連</b>會問 <code>Are you sure you want to continue connecting</code>，打完整的 <code>yes</code>，按 Enter。</li>
+<li><b>輸入板子密碼</b>，一樣不會顯示，打完按 Enter。</li>
+<li><b>提示字元變成 <code>arduino@&lt;板名&gt;:~$</code></b> 就是進去了。把這一行抄下來，這是要交的第 1 樣。</li>
+</ol>
+<h3>等很久然後逾時：改走 USB</h3>
+<p>電腦跟板子不在同一個網路，SSH 就過不去。這時用 adb 在 USB 線上開一條通道：把第 2 節你打的那行最後的 <code>shell</code>，換成 <code>forward tcp:2222 tcp:22</code>，在<b>自己的電腦</b>上打。</p>
+<p>教室 E307（Ubuntu）：</p>
+<pre>"$ADB" forward tcp:2222 tcp:22</pre>
+<p>Windows（⚠️ 這條還沒在 Windows 上實測，不行叫老師）：</p>
+<pre>&amp; "$env:LOCALAPPDATA\Arduino15\packages\arduino\tools\adb\32.0.0\adb.exe" forward tcp:2222 tcp:22</pre>
+<p>Mac（⚠️ 路徑跟第 2 節一樣，還沒實查）：</p>
+<pre>~/Library/Arduino15/packages/arduino/tools/adb/*/adb forward tcp:2222 tcp:22</pre>
+<p>然後連：</p>
+<pre>ssh -p 2222 arduino@127.0.0.1</pre>
+<ul>
+<li>要打 <code>127.0.0.1</code>，<b>不要打 <code>localhost</code></b>，有些電腦打 localhost 會連不上。</li>
+<li>E307 的 <code>"$ADB"</code> 要在跑過第 2 節那段的視窗裡才有值，換了視窗先重跑那段。SSH 本身不需要 <code>$ADB</code>。</li>
+<li>這條通道只負責讓你連進板子。板子要下載 agy，還是靠它自己的 Wi-Fi。</li>
 </ul></section>
 
-<footer class="small"><p>國立東華大學　AIoT 智慧裝置實作（115-1）<br>W3 學生步驟，2026-09-18（2026-09-18 改：進板子改用 <code>adb</code>）。這一頁沒有接 AI，也不收集你填的任何東西；離線打得開。<br>出錯四步引自共用教材 P9，三道閘門引自 P2b。表格與對照表中的示例為教學設計，不是工具或板子實際產生的輸出。<br>板子的 LED 節點名稱因板而異，一律以你自己在課堂上 <code>ls</code> 出來的為準。</p></footer>
+<section id="s5"><h2>5　在板子上裝 Antigravity CLI</h2>
+<p>W2 你在電腦上裝的是有視窗的 Antigravity；今天在板子上裝它的命令列版 Antigravity CLI，指令叫 <code>agy</code>。裝在板子上，它就能直接讀板子裡的檔、幫你改程式。</p>
+<p>以下都在 SSH 視窗裡打（提示字元是 <code>arduino@</code> 開頭）：</p>
+<pre>curl -fsSL https://antigravity.google/cli/install.sh -o /tmp/agy-install.sh
+head -1 /tmp/agy-install.sh          # 一定要看到 #!/bin/bash
+bash /tmp/agy-install.sh
+source ~/.bashrc
+agy --version</pre>
+<ol class="steps">
+<li><b><code>curl … -o /tmp/agy-install.sh</code></b>：把安裝程式下載成一個檔，先不執行。</li>
+<li><b><code>head -1</code></b>：看它的第一行。是 <code>#!/bin/bash</code> 才往下；不是就重跑一次 <code>curl</code> 那行。</li>
+<li><b><code>bash /tmp/agy-install.sh</code></b>：真的安裝。<code>agy</code> 會放在 <code>~/.local/bin/agy</code>。</li>
+<li><b><code>source ~/.bashrc</code></b>：安裝程式把 <code>agy</code> 的位置寫進了 <code>~/.bashrc</code>，這行讓目前這個視窗重讀一次，才找得到它。</li>
+<li><b><code>agy --version</code></b>：印出版本號就是裝好了（9/23 實裝是 1.2.9，你的可能比較新）。這行的輸出是要交的第 2 樣。</li>
+</ol>
+<h3>為什麼不用一行裝完</h3>
+<p>很多安裝說明會寫成 <code>curl … | bash</code>，下載下來直接交給 bash 跑。9/23 實測時，第一次就收到一串亂碼，bash 報語法錯誤。先存成檔、看一眼第一行、確定是腳本再執行，比較穩，你也知道自己要跑的是什麼。</p>
+<h3>看到這些，別緊張</h3>
+<ul>
+<li>好幾行 <code>ERROR: logging before google.Init</code> 開頭的字：正常，只是紀錄的格式，不是出錯。最後有 <code>✅ Antigravity CLI binary placed successfully</code> 就是成功。</li>
+<li>下載大約 56 MB，全班同時抓會慢。<b>等的時候再開一個終端機視窗</b>，重新 <code>ssh</code> 進板子，先做第 7 節。</li>
+<li>要重裝：先 <code>rm ~/.local/bin/agy</code>，不然安裝程式會直接結束。</li>
+</ul></section>
+
+<section id="s6"><h2>6　登入 agy</h2>
+<p>你是從 SSH 連進板子的，板子沒辦法替你開瀏覽器。所以登入要繞一下：板子給你一個網址，你在電腦的瀏覽器登入，再把網頁給你的授權碼（authorization code）貼回板子。</p>
+<pre>agy</pre>
+<ol class="steps">
+<li><b>在 SSH 視窗打 <code>agy</code>。</b>它發現你是從 SSH 連進來的，會印出一個網址。</li>
+<li><b>把網址複製到你電腦的瀏覽器打開。</b>教室電腦請用<b>無痕視窗</b>，下課前登出、關掉。</li>
+<li><b>用個人 Gmail 登入</b>，東華帳號不行。</li>
+<li><b>網頁會給你一串授權碼</b>，複製它。</li>
+<li><b>貼回 SSH 視窗</b>，按 Enter。</li>
+</ol>
+<p class="note">⚠️ 畫面上的字可能跟這裡不完全一樣。登入畫面長什麼樣、登入後怎麼離開 agy，以老師課堂示範為準。還不會離開也沒關係，另開一個 SSH 視窗做下一步就好。</p>
+<h3>終端機裡怎麼複製貼上</h3>
+<p>Ubuntu 的終端機用 <code>Ctrl＋Shift＋C</code> 複製、<code>Ctrl＋Shift＋V</code> 貼上。少了 Shift 的 <code>Ctrl＋C</code> 在終端機裡是「中斷」，會把正在跑的程式停掉，登入就得重來。Mac 用 <code>⌘C</code>／<code>⌘V</code>；Windows 的 PowerShell 按右鍵就能貼上。</p>
+<h3>休息前，對一下這三個勾</h3>
+<p>大約 15:10 休息前，老師會問你這三件做到哪了：</p>
+<ol class="steps">
+<li>SSH 進去了（第 4 節）</li>
+<li><code>agy --version</code> 印得出版本（第 5 節）</li>
+<li>agy 登入成功（這一節）</li>
+</ol>
+<p class="small">登入卡住的，老師休息時間處理；你先往下做第 7、8 節，不要停在原地等。線上的把卡住的訊息貼到 Meet 聊天室。</p></section>
+
+<section id="s7"><h2>7　十個常用指令＋vim 四個鍵</h2>
+<p>命令列（command line）一開始先會這十個就夠用。在 SSH 視窗裡，每個都照「試試看」那欄打一次。</p>
+<div class="tw"><table><tr><th>想做</th><th>指令</th><th>試試看</th></tr>
+<tr><td>我在哪</td><td><code>pwd</code></td><td>回 <code>/home/arduino</code></td></tr>
+<tr><td>有什麼</td><td><code>ls -la</code></td><td>看到 <code>.bashrc</code> 這種藏起來的檔</td></tr>
+<tr><td>走過去</td><td><code>cd</code>／<code>cd ..</code>／<code>cd ~</code></td><td><code>cd /sys/class/leds</code></td></tr>
+<tr><td>看內容</td><td><code>cat</code>、<code>less</code>（<code>q</code> 離開）</td><td><code>cat /etc/os-release</code></td></tr>
+<tr><td>開資料夾</td><td><code>mkdir</code></td><td><code>mkdir ~/w03</code></td></tr>
+<tr><td>複製／搬</td><td><code>cp</code>、<code>mv</code></td><td><code>cp /etc/os-release ~/w03/</code></td></tr>
+<tr><td>找字</td><td><code>grep</code></td><td><code>grep PRETTY /etc/os-release</code></td></tr>
+<tr><td>空間夠嗎</td><td><code>df -h</code>、<code>free -m</code></td><td>看還剩幾 G</td></tr>
+<tr><td>我是誰</td><td><code>whoami</code>、<code>id</code>、<code>hostname</code></td><td>看到 <code>sudo</code> 群組</td></tr>
+<tr><td>查說明</td><td><code>--help</code>、<code>man</code></td><td><code>ls --help</code>，太長就在後面接 <code>| less</code></td></tr></table></div>
+<p class="small"><code>man</code> 跟 <code>less</code> 一樣，看完按 <code>q</code> 離開。</p>
+<h3>vim：四個鍵，先活下來</h3>
+<p>vim 是板子上的文字編輯器。先用上面表裡的 <code>mkdir ~/w03</code> 建好資料夾，再打：</p>
+<pre>vim ~/w03/hello.txt</pre>
+<div class="tw"><table><tr><th>按</th><th>做什麼</th></tr>
+<tr><td><code>i</code></td><td>開始打字</td></tr>
+<tr><td><code>Esc</code></td><td>停止打字</td></tr>
+<tr><td><code>:wq</code> 再按 Enter</td><td>存檔（write）並離開（quit）</td></tr>
+<tr><td><code>:q!</code> 再按 Enter</td><td>打錯了不想存，直接離開</td></tr></table></div>
+<p>卡在 vim 裡出不去：先按幾下 <code>Esc</code>，再打 <code>:q!</code> 按 Enter。回家可以練 <code>vimtutor</code>，板子上就有。</p></section>
+
+<section id="s8"><h2>8　燈也是一個檔案</h2>
+<p>在 Linux 裡，很多硬體也被做成檔案。板子上的小燈就在 <code>/sys/class/leds/</code> 底下：寫 1 進去就亮，寫 0 就滅。</p>
+<pre>ls /sys/class/leds/
+echo 1 &gt; /sys/class/leds/green:user/brightness   # 綠燈亮
+echo 0 &gt; /sys/class/leds/green:user/brightness   # 滅</pre>
+<p><code>ls</code> 會列出好幾顆燈，今天只碰名字裡有 <code>user</code> 的三顆：<code>red:user</code>、<code>green:user</code>、<code>blue:user</code>。</p>
+<p>這幾顆燈不用 <code>sudo</code> 就寫得進去：它們開放給 <code>gpiod</code> 群組寫，而你（<code>arduino</code>）就在這個群組裡，第 7 節 <code>id</code> 那行看得到。</p>
+<h3>換一個你沒有權限的檔</h3>
+<pre>echo test &gt;&gt; /etc/hostname</pre>
+<p>會看到 <code>Permission denied</code>（沒有權限）。<code>/etc/hostname</code> 存的是板子的名字，只有管理員（root）能改。這才是 <code>sudo</code> 的用途：借管理員的權限，去動整台機器的設定。</p>
+<p class="note">今天不要真的改 <code>/etc/hostname</code>。看到 <code>Permission denied</code> 就好，<b>別加 <code>sudo</code> 再試一次</b>。</p>
+<h3>延伸（早做完的人）</h3>
+<ul>
+<li><code>red:user</code>、<code>blue:user</code> 一起開，看混出什麼顏色。</li>
+<li>寫一個 <code>for</code> 迴圈，讓三顆輪流亮。提示：<code>sleep 1</code> 會等一秒。</li>
+</ul></section>
+
+<section id="s9"><h2>9　改語系（選做）</h2>
+<p>語系（locale）決定程式用哪一種語言、日期格式跟你說話。這塊板現在只有英文（<code>en_US.UTF-8</code>）。中文的定義檔其實已經在板子裡，只是還沒「生成」。</p>
+<pre>locale                                    # 現在是 en_US.UTF-8
+sudo vim /etc/locale.gen                  # 找 "# zh_TW.UTF-8 UTF-8"，刪掉開頭的 # 和空白（順便練 vim）
+sudo locale-gen                           # 看到 zh_TW.UTF-8... done
+locale -a | grep zh                       # 有 zh_TW.utf8 了
+export LANG=zh_TW.UTF-8                   # 只換這個視窗
+date                                      # 星期幾變中文</pre>
+<p><b>在 vim 裡找那一行</b>：打 <code>/zh_TW.UTF-8</code> 按 Enter，游標會跳過去；按 <code>0</code> 回到行首，按兩下 <code>x</code> 刪掉 <code>#</code> 和後面的空白，再 <code>:wq</code> 存檔離開。</p>
+<ul>
+<li><b>只換這個視窗</b>，不改整台（不用 <code>update-locale</code>），免得動到 App 的執行環境。</li>
+<li>板子的時區是 UTC，<code>date</code> 顯示的時間會比台灣慢 8 小時。想讓時間對：<code>sudo timedatectl set-timezone Asia/Taipei</code>（⚠️ 選做，這行改的是整台板子的時區）。</li>
+<li>一句話帶走：<b>語系是「生成」出來的，不是「安裝」的。</b></li>
+</ul>
+<p class="note">⚠️ 這一段還在確認。跟你看到的不一樣就停手，把畫面給老師看。它是選做，不影響今天要交的三樣。</p></section>
+
+<section id="s10"><h2>10　請 AI 寫點陣（主菜）</h2>
+<p>板子上那片 8 列×13 行的小燈，叫 LED 點陣（LED matrix）。今天請 agy 寫程式，讓它顯示你想要的圖案。你負責三件事：把規矩講清楚、讀過它要做的事再按、最後親眼看板子。</p>
+<h3>① 建一個 App，叫 agy 進來</h3>
+<pre>arduino-app-cli app new my-matrix
+cd ~/ArduinoApps/my-matrix
+agy</pre>
+<p><code>app new</code> 會建出 <code>~/ArduinoApps/my-matrix/</code>，裡面有 <code>app.yaml</code>、<code>python/main.py</code>、<code>sketch/sketch.ino</code>、<code>sketch/sketch.yaml</code>。今天只改 <code>sketch/sketch.ino</code>。<code>python/main.py</code> 一定要留著，官方把它標成必要的檔。</p>
+<h3>② 貼這段提示詞</h3>
+<p>先把下面這段貼到任何能打字的地方（記事本、文字編輯器都行），把 ＿＿＿＿ 換成你要的圖案，括號裡的例子一起刪掉，再整段貼進 agy。改好的這段就是要交的第 3 樣，記得留一份。</p>
+<pre class="prompt">這是 Arduino UNO Q 的 App 資料夾。請只改 `sketch/sketch.ino`，用 `Arduino_LED_Matrix` 在 8×13 的 LED 點陣上顯示＿＿＿＿（例：一顆會跳的愛心、我學號的最後兩碼）。規則：`uint8_t frame[104]`，第 r 列第 c 行是 `frame[r*13+c]`，亮度 0–7；`setup()` 先 `matrix.begin(); matrix.setGrayscaleBits(3);`，用 `matrix.draw(frame)` 顯示。不要改 `python/main.py`、`app.yaml`，不要動網路、SSH、sudo 相關設定，不要用 ArduinoGraphics。改完告訴我要跑哪一行指令。</pre>
+<p>這段提示詞（prompt）分三塊：第一句講要它做什麼；「規則」那句告訴它這塊板的點陣怎麼排（104 格，每格亮度 0 到 7）、該用哪幾個函式，這些 AI 不一定知道；最後一句是不准碰的東西。</p>
+<p class="small">⚠️ 哪一個角是 <code>frame[0]</code>（第 0 列第 0 行）還在確認。圖案上下或左右反了，就請 agy 翻過來。</p>
+<h3>③ 讀過再按</h3>
+<p>agy 要寫檔、跑指令、上網之前，都會先停下來問你。每一次都讀過它要做什麼再按：</p>
+<ul>
+<li>要改 <code>sketch/sketch.ino</code>：可以。</li>
+<li>要改 <code>python/main.py</code> 或 <code>app.yaml</code>、要用 <code>sudo</code>、要裝 ArduinoGraphics 或其他函式庫：不要按允許，請它照提示詞的規則重來。</li>
+</ul>
+<h3>④ 上板，看板子</h3>
+<p>agy 改完後，另開一個 SSH 視窗（或先離開 agy），打：</p>
+<pre>arduino-app-cli app start ~/ArduinoApps/my-matrix</pre>
+<ul>
+<li>等大約 30 秒：板子要編譯程式，再燒進另一顆晶片（W2 講過的 STM32）。</li>
+<li>中間出現紅字 <code>verify failed in bank at 0x08000000</code> 是正常的。</li>
+<li>最後一行是 <code>✓ App "my-matrix" started successfully</code> 才算跑起來。</li>
+<li><b>然後看板子。</b>畫面說成功不算數，點陣真的亮出你要的圖案才算。拍照（最多 2 張）交 e學苑。</li>
+<li>agy 最後告訴你的指令，如果跟這一頁不一樣（例如叫你用 <code>app restart</code>），照這一頁的做。</li>
+</ul>
+<h3>⑤ 改第二版</h3>
+<pre>arduino-app-cli app stop ~/ArduinoApps/my-matrix</pre>
+<p>等 3 秒，請 agy 改，改完再打一次上面那行 <code>app start</code>。<b>不要用 <code>app restart</code></b>，它會卡住。</p>
+<h3>別踩的雷</h3>
+<ul>
+<li><code>python/main.py</code> 一定要留著。</li>
+<li>別清空 App 資料夾。裡面有個藏起來的 <code>.cache/</code>，刪了 App 就停不掉。</li>
+<li>一次只能跑一支 App。</li>
+<li>要捲動文字得另裝 ArduinoGraphics（要上網下載），今天別碰。</li>
+<li><code>app start</code> 在 SSH 裡跑。在 <code>adb shell</code> 裡跑會失敗（見第 11 節）。</li>
+</ul>
+<h3>三條底線</h3>
+<ol class="steps">
+<li><b>agy 要動檔、跑指令前會問你：讀過再按。</b></li>
+<li><b>板子密碼不給 AI。</b>不要打進 agy，也不要寫進提示詞。</li>
+<li><b>不准加 <code>--dangerously-skip-permissions</code>。</b>這個選項會讓 agy 不問你就直接動手。</li>
+</ol></section>
+
+<section id="s11"><h2>11　卡住了怎麼辦</h2>
+<p>先把<b>整段錯誤訊息</b>複製下來（線上的貼到 Meet 聊天室），再對這張表。表上找不到，就叫老師。</p>
+<div class="tw"><table><tr><th>看到什麼</th><th>先做這個</th></tr>
+<tr><td><code>"$ADB" devices -l</code> 沒列出板子，或 <code>no devices/emulators found</code></td><td>跟 W2 一樣：確認是資料線、直接接電腦不經過 hub、換一個 USB 埠。</td></tr>
+<tr><td><code>$ADB</code> 是空的、<code>"$ADB"</code> 打了沒反應</td><td>這個視窗沒跑過第 2 節那段，重跑一次。</td></tr>
+<tr><td><code>ip -4 -o addr show wlan0</code> 什麼都沒印</td><td>板子還沒連上 Wi-Fi，叫老師。</td></tr>
+<tr><td><code>ssh</code> 等很久，最後 <code>Connection timed out</code></td><td>電腦跟板子在同一個網路嗎？線上的：板子和筆電要連同一個 Wi-Fi。還是不通，就走 USB（第 4 節後半）。</td></tr>
+<tr><td><code>Connection refused</code></td><td>板子的 SSH 還沒修好。回第 3 節，<code>systemctl is-active ssh</code> 要回 <code>active</code>。</td></tr>
+<tr><td><code>Permission denied (publickey,password)</code></td><td>密碼打錯。打密碼時畫面不會出現任何字，慢慢打完再按 Enter；帳號要是 <code>arduino</code>。</td></tr>
+<tr><td><code>REMOTE HOST IDENTIFICATION HAS CHANGED</code></td><td>叫老師。這代表這台電腦記得的板子金鑰跟現在的不一樣（例如同一個位址換了一塊板）。<b>不要自己亂刪 <code>known_hosts</code></b>。</td></tr>
+<tr><td>裝 agy 時出現 <code>syntax error</code></td><td>你是不是用了 <code>curl … | bash</code>？照第 5 節：先存成檔、看第一行，再 <code>bash</code> 它。</td></tr>
+<tr><td><code>head -1</code> 看到的不是 <code>#!/bin/bash</code></td><td>下載壞了，重跑一次 <code>curl</code> 那行。</td></tr>
+<tr><td>下載一直不動，或失敗</td><td>全班一起抓會慢。先開另一個 SSH 視窗做第 7 節；真的失敗，把整段訊息給老師。</td></tr>
+<tr><td><code>agy: command not found</code></td><td>打 <code>source ~/.bashrc</code>，或關掉這個 SSH 視窗重新連進去。</td></tr>
+<tr><td>agy 登入卡住</td><td>告訴老師（休息時間處理），先往下做第 7、8 節。</td></tr>
+<tr><td>卡在 vim 出不去</td><td>按幾下 <code>Esc</code>，打 <code>:q!</code> 再按 Enter。</td></tr>
+<tr><td>一 SSH 進去就出現 <code>setlocale</code> 或 <code>cannot change locale</code> 的警告</td><td>不影響操作：你的電腦把自己的中文語系帶進了板子，但板子還沒生成中文語系。先打 <code>export LANG=en_US.UTF-8</code> 就安靜了；做完第 9 節也會好。</td></tr>
+<tr><td><code>Stat /Data/Local/Tmp</code></td><td>你在 <code>adb shell</code> 裡跑了 <code>app start</code>。改用 SSH 跑；非用 adb 不可，先打 <code>export TMPDIR=/tmp</code>。</td></tr>
+<tr><td><code>app start</code> 最後沒有 <code>✓ … started successfully</code></td><td>往上找第一個 <code>error</code>，把那一段整段貼給 agy，請它照提示詞的規則修。</td></tr>
+<tr><td><code>app start</code> 說成功，點陣卻沒亮</td><td>再看一次最後一行是不是 <code>✓ App "my-matrix" started successfully</code>；打 <code>ls ~/ArduinoApps/my-matrix/python/</code>，確認 <code>main.py</code> 還在。</td></tr></table></div></section>
+
+<section id="s12"><h2>12　下週</h2>
+<p>點陣作品留著，下週接著改。板子上的 <code>~/ArduinoApps/my-matrix</code> 別刪。</p></section>
+
+<footer class="small"><p>國立東華大學　AIoT 智慧裝置實作（115-1）<br>W3 學生步驟，2026-09-24 上課用（9/23 改版：SSH、板上 agy、LED 點陣）。這一頁沒有接 AI，也不收集你填的任何東西；離線打得開。<br>標 ⚠️ 的地方還在確認，照做不行就叫老師。板子的 IP、板名、版本號每塊不一樣，以你自己查到的為準。</p></footer>
 </main></body></html>
