@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="zh-Hant" data-ui="zh">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>commit 三次，push 一次｜Three Commits, One Push</title>
+<meta name="description" content="用 Antigravity 裝好 git 與 GitHub CLI，一支 Python 小程式改三次、commit 三次、最後 push 一次到 GitHub，交歷史頁截圖。互動作業頁，中英同一頁。">
+
+<script>
+/* 語言先決定再畫版面。?lang=en 直接開英文；選擇存在瀏覽器裡。 */
+(function(){try{
+  var q = new URLSearchParams(location.search).get('lang');
+  var l = (q==='en'||q==='zh') ? q : (localStorage.getItem('p10-lang') || 'zh');
+  document.documentElement.setAttribute('data-ui', l);
+  document.documentElement.lang = (l==='en') ? 'en' : 'zh-Hant';
+}catch(e){}})();
+</script>
+
+<style>
+:root{
+  --teal:#0E7C7B; --teal-deep:#0A5958; --teal-soft:#DCEFED;
+  --gold:#D9A441; --gold-deep:#8a6218; --gold-soft:#F3E3C3;
+  --slate:#4F7FA6; --slate-soft:#DCE7F0;
+  --bg:#F4ECD8; --card:#FDFAF2; --card-2:#F8F1DF;
+  --ink:#1A1A1A; --ink-soft:#4a463d; --ink-faint:#6f6a5c;
+  --line:#e2d8bf; --line-soft:#ece3cc;
+  --add:#2E7D4F; --add-soft:#DDEFE2;
+  --del:#B5533C; --del-soft:#F5DFD8;
+  --term-bg:#1f2523; --term-ink:#e7e2d3;
+  --shadow:0 1px 3px rgba(26,26,26,.06), 0 6px 20px rgba(26,26,26,.05);
+  --cta-ink:#F4ECD8; --focus:#0E7C7B;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --teal:#3aa6a1; --teal-deep:#7fd0cb; --teal-soft:#173937;
+    --gold:#d9a441; --gold-deep:#e6bd6a; --gold-soft:#3a3220;
+    --slate:#7fa9cc; --slate-soft:#1f2e3a;
+    --bg:#151d1c; --card:#1d2726; --card-2:#222d2c;
+    --ink:#ece6d6; --ink-soft:#b7b0a0; --ink-faint:#8d8677;
+    --line:#33403e; --line-soft:#2a3634;
+    --add:#6cc08b; --add-soft:#1c3327;
+    --del:#e08b73; --del-soft:#3d241d;
+    --term-bg:#0f1514; --term-ink:#e7e2d3;
+    --shadow:0 1px 3px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+    --cta-ink:#0f1817; --focus:#7fd0cb;
+  }
+}
+:root[data-theme="dark"]{
+  --teal:#3aa6a1; --teal-deep:#7fd0cb; --teal-soft:#173937;
+  --gold:#d9a441; --gold-deep:#e6bd6a; --gold-soft:#3a3220;
+  --slate:#7fa9cc; --slate-soft:#1f2e3a;
+  --bg:#151d1c; --card:#1d2726; --card-2:#222d2c;
+  --ink:#ece6d6; --ink-soft:#b7b0a0; --ink-faint:#8d8677;
+  --line:#33403e; --line-soft:#2a3634;
+  --add:#6cc08b; --add-soft:#1c3327;
+  --del:#e08b73; --del-soft:#3d241d;
+  --term-bg:#0f1514; --term-ink:#e7e2d3;
+  --shadow:0 1px 3px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+  --cta-ink:#0f1817; --focus:#7fd0cb;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 -apple-system,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",Roboto,Helvetica,Arial,sans-serif;overflow-x:hidden}
+a{color:var(--teal-deep)}
+code,pre,kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans Mono CJK TC",monospace}
+code{background:var(--card-2);border:1px solid var(--line-soft);border-radius:4px;padding:0 .3em;font-size:.92em}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+:root[data-ui="zh"] [data-lang="en"]{display:none !important}
+:root[data-ui="en"] [data-lang="zh"]{display:none !important}
+
+.bar{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.bar .wrap{display:flex;align-items:center;gap:12px;min-height:52px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px}
+.bar .name{font-weight:700;color:var(--teal-deep);white-space:nowrap}
+.bar .sp{flex:1}
+.homelink{font-size:.9em;text-decoration:none;color:var(--ink-faint)}
+.langbtn,.btn{background:var(--teal);color:var(--cta-ink);border:0;border-radius:999px;padding:6px 14px;font:inherit;font-size:.92em;cursor:pointer;flex:0 0 auto}
+.btn.ghost{background:transparent;color:var(--teal-deep);border:1px solid var(--teal)}
+.btn.small{padding:3px 10px;font-size:.85em}
+.langbtn:focus-visible,.btn:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.prog{flex:1 1 100%;display:flex;align-items:center;gap:10px;font-size:.85em;color:var(--ink-faint)}
+.prog .track{flex:1;height:8px;border-radius:999px;background:var(--line-soft);overflow:hidden}
+.prog .fill{height:100%;width:0;background:var(--teal);transition:width .4s}
+
+header.top{padding:34px 0 18px}
+.eyebrow{margin:0 0 6px;color:var(--gold-deep);font-weight:700;font-size:.9em;letter-spacing:.04em}
+h1{margin:0 0 10px;font-size:clamp(1.5rem,4vw,2.2rem);line-height:1.25}
+.lead{margin:0;color:var(--ink-soft);font-size:1.05em}
+nav.toc{margin:16px 0 0;display:flex;flex-wrap:wrap;gap:8px}
+nav.toc a{font-size:.88em;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 12px;color:var(--ink-soft)}
+
+section{margin:26px 0}
+h2{font-size:1.35em;margin:0 0 6px;padding-top:10px;border-top:3px solid var(--gold);display:inline-block}
+.goal{margin:0 0 12px;color:var(--ink-faint);font-size:.92em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);margin:12px 0;min-width:0}
+.card h3{margin:0 0 8px;font-size:1.1em}
+.card p{margin:.4em 0}
+ul,ol{padding-left:1.4em;margin:.4em 0}
+li{margin:.25em 0}
+.note{background:var(--gold-soft);border-left:4px solid var(--gold);padding:10px 14px;border-radius:0 10px 10px 0;margin:10px 0}
+.ok{background:var(--add-soft);border-left:4px solid var(--add);padding:10px 14px;border-radius:0 10px 10px 0;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:.95em;margin:8px 0}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--card-2)}
+.tbl{overflow-x:auto}
+
+/* 路線挑選 */
+.routes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:10px 0}
+.route{border:2px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card);cursor:pointer;text-align:left;font:inherit;color:var(--ink)}
+.route.on{border-color:var(--teal);background:var(--teal-soft)}
+.route b{display:block;margin-bottom:4px}
+.route small{color:var(--ink-faint)}
+:root[data-route="A"] .only-a2,:root[data-route="A"] .only-b{display:none}
+:root[data-route="A2"] .only-b{display:none}
+:root[data-route="B"] .only-a2{display:none}
+
+/* 提示詞卡 */
+.stepcard{border-left:6px solid var(--slate)}
+.stepcard.done{border-left-color:var(--add)}
+.stepcard .head{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.stepcard .num{flex:0 0 auto;background:var(--slate);color:#fff;border-radius:999px;min-width:2.2em;height:2.2em;display:inline-flex;align-items:center;justify-content:center;font-weight:700}
+.stepcard.done .num{background:var(--add)}
+.stepcard .head h3{flex:1 1 200px;margin:0;align-self:center;min-width:0}
+.stepcard label.chk{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;font-size:.9em;color:var(--ink-soft);cursor:pointer;background:var(--card-2);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.stepcard label.chk input{width:18px;height:18px;flex:0 0 auto}
+.who{display:inline-block;font-size:.8em;padding:1px 8px;border-radius:999px;background:var(--slate-soft);color:var(--ink-soft);margin-left:6px;vertical-align:middle}
+.who.you{background:var(--gold-soft);color:var(--gold-deep)}
+.block{margin:10px 0}
+.block h4{margin:0 0 4px;font-size:.92em;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.04em}
+.prompt{position:relative;background:var(--teal-soft);border:1px dashed var(--teal);border-radius:10px;padding:12px 84px 12px 14px;white-space:pre-wrap;word-break:break-word}
+@media (max-width:640px){.prompt{padding:40px 14px 12px}}
+.prompt .copy{position:absolute;top:8px;right:8px}
+.prompt .copy.did{background:var(--add)}
+
+/* 三次 commit、一次 push 時間軸 */
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.tl{border:2px dashed var(--line);border-radius:12px;padding:12px;text-align:center;background:var(--card);transition:all .4s;min-width:0}
+.tl .dot{width:18px;height:18px;border-radius:50%;background:var(--line);margin:0 auto 6px;transition:background .4s}
+.tl.lit{border-style:solid;border-color:var(--add);background:var(--add-soft)}
+.tl.lit .dot{background:var(--add)}
+.tl.push{border-color:var(--gold)}
+.tl.push.lit{border-color:var(--teal);background:var(--teal-soft)}
+.tl.push.lit .dot{background:var(--teal)}
+.tl b{display:block}
+.tl small{color:var(--ink-faint);display:block;word-break:break-word}
+.tlnote{text-align:center;color:var(--ink-faint);font-size:.9em;margin:0}
+@media (max-width:640px){.timeline{grid-template-columns:1fr 1fr}}
+@media (max-width:400px){.timeline{grid-template-columns:1fr}}
+
+/* diff 練習 */
+.diff{border:1px solid var(--line);border-radius:10px;overflow:hidden;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em}
+.diff .ln{display:flex;gap:10px;padding:3px 10px;cursor:pointer;border-bottom:1px solid var(--line-soft);user-select:none;white-space:pre-wrap;word-break:break-word}
+.diff .ln:last-child{border-bottom:0}
+.diff .ln .sg{flex:0 0 1em;color:var(--ink-faint)}
+.diff .ln.pick{outline:2px solid var(--gold);outline-offset:-2px}
+.diff.reveal .ln[data-t="add"]{background:var(--add-soft);color:var(--add)}
+.diff.reveal .ln[data-t="del"]{background:var(--del-soft);color:var(--del)}
+.diff.reveal .ln.pick[data-t="ctx"]{background:var(--del-soft)}
+.fb{margin:8px 0;font-weight:600}
+
+/* 自測 */
+.q{margin:12px 0}
+.q .opts{display:grid;gap:6px;margin-top:6px}
+.q button{text-align:left;font:inherit;background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;color:var(--ink)}
+.q button.right{border-color:var(--add);background:var(--add-soft)}
+.q button.wrong{border-color:var(--del);background:var(--del-soft)}
+.q .why{display:none;color:var(--ink-soft);font-size:.92em;margin-top:6px}
+.q.answered .why{display:block}
+
+footer{margin:40px 0 30px;color:var(--ink-faint);font-size:.85em;border-top:1px solid var(--line);padding-top:14px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--term-bg);color:var(--term-ink);padding:8px 16px;border-radius:999px;font-size:.9em;opacity:0;pointer-events:none;transition:opacity .3s;z-index:30}
+.toast.show{opacity:1}
+@media print{.bar,.copy,nav.toc,.toast{display:none !important}.card{box-shadow:none;break-inside:avoid}}
+</style>
+
+<div class="bar">
+  <div class="wrap">
+    <span class="name" data-lang="zh">commit 三次，push 一次</span>
+    <span class="name" data-lang="en">Three Commits, One Push</span>
+    <span class="sp"></span>
+    <a class="homelink" href="https://cwstedctw.github.io/ndhu-ted-course-hub/" data-lang="zh">課程網</a>
+    <a class="homelink" href="https://cwstedctw.github.io/ndhu-ted-course-hub/" data-lang="en">Course site</a>
+    <button class="langbtn" id="lang" type="button">English</button>
+    <div class="prog">
+      <span id="progtext"></span>
+      <div class="track"><div class="fill" id="progfill"></div></div>
+      <button class="btn ghost small" id="reset" type="button"></button>
+    </div>
+  </div>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow" data-lang="zh">全課共用 · 本週作業 · 用會自己動手的 AI</p>
+    <p class="eyebrow" data-lang="en">Shared across courses · This week's homework · With an AI that acts</p>
+    <h1 data-lang="zh">叫 Antigravity 替你裝好 git 與 GitHub CLI，一支 Python 小程式改三次、commit 三次、最後 push 一次到 GitHub</h1>
+    <h1 data-lang="en">Have Antigravity install git and GitHub CLI, change a small Python script three times, commit three times, then push once to GitHub</h1>
+    <p class="lead" data-lang="zh">大部分的活是 AI 替你做的。你負責三件事：講清楚要它做什麼、每一步執行前看一眼再按同意、做完自己去 GitHub 看到三筆歷史，截一張圖交上來。三個版本各改什麼，你自己決定。</p>
+    <p class="lead" data-lang="en">The AI does most of the work. You do three things: say clearly what you want, look at each step before you approve it, and check on GitHub yourself that three commits are there, then hand in a screenshot. What changes in each of the three versions is up to you.</p>
+    <nav class="toc" id="toc"></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main"></main>
+
+<footer class="wrap" id="foot"></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+var ROOT=document.documentElement;
+var LANG=(ROOT.getAttribute('data-ui')==='en')?'en':'zh';
+var STORE='p10-';
+function get(k){try{return localStorage.getItem(STORE+k);}catch(e){return null;}}
+function set(k,v){try{localStorage.setItem(STORE+k,v);}catch(e){}}
+function del(k){try{localStorage.removeItem(STORE+k);}catch(e){}}
+function L(zh,en){return LANG==='en'?en:zh;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function h(tag,attrs,inner){var e=document.createElement(tag);if(attrs)for(var k in attrs){e.setAttribute(k,attrs[k]);}if(inner!=null)e.innerHTML=inner;return e;}
+
+/* ───────────────────────── 內容：文字（中／英） ───────────────────────── */
+var REPO='hello-python';
+
+var SECTIONS=[
+ {id:'s0',zh:'0　交什麼',en:'0　What to hand in'},
+ {id:'s1',zh:'1　開工前',en:'1　Before you start'},
+ {id:'s2',zh:'2　六張卡，照順序',en:'2　Six cards, in order'},
+ {id:'s3',zh:'3　三次 commit、一次 push 長什麼樣',en:'3　Three commits and one push'},
+ {id:'s4',zh:'4　卡住怎麼辦',en:'4　When you get stuck'},
+ {id:'s5',zh:'5　自測四題',en:'5　Four self-check questions'},
+ {id:'s6',zh:'6　提示詞總表',en:'6　All prompts on one page'}
+];
+
+/* 六張卡。who: 'ai' 代理做 / 'you' 你自己做。v: 點亮時間軸第幾格（1–3＝commit，4＝push） */
+var CARDS=[
+ {n:'1',who:'ai',
+  zh:{t:'查缺什麼、讓它裝',
+      one:'讓它查這台電腦缺什麼、替你裝。每一條指令執行前你看一眼再按同意。',
+      prompt:'我已經在這裡打開了資料夾 '+REPO+'。先只查看、不要修改：告訴我這個資料夾的完整路徑，以及這台電腦有沒有裝 git、gh（GitHub CLI）跟 python，各是什麼版本。缺的請幫我裝：Windows 用 winget（Git.Git、GitHub.cli、Python.Python.3.13），Mac 用 Homebrew（git、gh、python）。每一條指令執行前先告訴我它會做什麼，等我同意再跑。裝完告訴我要不要重開這個程式。不要幫我登入 GitHub，登入我自己來。',
+      steps:['在電腦上建一個空資料夾 <code>'+REPO+'</code>，用 Antigravity 的「開啟資料夾」打開它。','貼上面那段，送出。每個跳出來的指令看一眼（套件名對不對）再按同意；安裝要等一兩分鐘，別按取消。','裝完把 Antigravity 整個關掉重開，再問一次「git、gh、python 各是什麼版本」。三個都報得出，這張卡才算過。']},
+  en:{t:'Check what is missing, let it install',
+      one:'Let it find what this computer lacks and install it. Read each command before you approve.',
+      prompt:'I have opened the folder '+REPO+' here. First only look, do not modify: tell me the full path of this folder, and whether this computer has git, gh (GitHub CLI) and python installed, with versions. Install whatever is missing: on Windows use winget (Git.Git, GitHub.cli, Python.Python.3.13); on Mac use Homebrew (git, gh, python). Before running each command, tell me what it will do and wait for my approval. When done, tell me whether I need to restart this app. Do not log me in to GitHub; I will do that myself.',
+      steps:['Create an empty folder named <code>'+REPO+'</code> and open it in Antigravity with "Open Folder".','Paste the prompt, send. Read each command that pops up (are the package names right?) and approve; installing takes a minute or two, do not cancel.','Quit Antigravity completely, reopen, and ask again "what versions of git, gh and python do we have". All three must answer before this card counts.']}},
+ {n:'2',who:'you',
+  zh:{t:'登入 GitHub（你自己做，AI 不碰）',
+      one:'登入是把「代表你」的鑰匙放進電腦。AI 不需要你的密碼，也不該知道。',
+      prompt:null,
+      steps:['自己開終端機（Windows 開始鍵打「終端機」；Mac 開「終端機」），打 <code>gh auth login</code>。','照它問的選：GitHub.com → HTTPS → Yes → Login with a web browser。','記下那組 8 碼、按 Enter，瀏覽器貼碼 → Authorize。終端機出現 <code>Logged in as 你的帳號</code> 就好。⚠️ 8 碼不要貼進 AI。']},
+  en:{t:'Log in to GitHub (you do it, not the AI)',
+      one:'Logging in puts a key that represents you on this computer. The AI does not need your password and should not have it.',
+      prompt:null,
+      steps:['Open a terminal yourself (Windows: Start, type "Terminal"; Mac: open "Terminal") and type <code>gh auth login</code>.','Answer its questions: GitHub.com → HTTPS → Yes → Login with a web browser.','Note the 8-character code, press Enter, paste it in the browser → Authorize. The terminal shows <code>Logged in as your-username</code>. ⚠️ Never paste the code into the AI.']}},
+ {n:'3',who:'ai',v:1,
+  zh:{t:'第一版：寫一支小程式，commit 1（先不推）',
+      one:'請它寫一支很短的 Python 程式、跑一次、存第一筆。只存本機，GitHub 上還沒有東西，這是正常的。',
+      prompt:'請在這個資料夾建立 hello.py，寫一支很短的 Python 程式（例如印一句自我介紹，用我的 GitHub 帳號名、不要放真名）。先用 python 跑一次給我看。然後：①替這個資料夾加上 Git 版本控制，分支叫 main；②如果 git 還沒設作者名字與信箱，用我的 GitHub 帳號名和 GitHub 的 noreply 信箱設定；③先列出要收進第一版的檔案給我看，我確認後再 commit，訊息寫「v1：第一版」；④顯示 git log。每個會改東西的步驟執行前先告訴我，等我同意。先不要建 GitHub repo、不要 push。',
+      steps:['貼上、送出。它會先寫程式、跑一次給你看。','每一條 git 指令跳框時看一眼再按同意。「要收進第一版的檔案」清單上只該有 hello.py（跟 .gitignore）。','它顯示 <code>git log</code>：一筆。']},
+  en:{t:'Version 1: a tiny script, commit 1 (no push yet)',
+      one:'Ask it for a very short Python script, run it once, save the first commit. Local only; GitHub still shows nothing, which is normal.',
+      prompt:'Please create hello.py in this folder with a very short Python script (for example, print a one-line introduction using my GitHub username, not my real name). Run it once with python and show me. Then: ① put this folder under Git version control with the branch named main; ② if git has no author name and email yet, set them to my GitHub username and GitHub\'s noreply email; ③ list the files that will go into the first version and wait for my confirmation before committing with the message "v1: first version"; ④ show git log. Before every step that changes something, tell me and wait for my approval. Do not create a GitHub repo and do not push yet.',
+      steps:['Paste, send. It writes the script and runs it once for you.','Read each git command before approving. The "files for the first version" list should contain only hello.py (and .gitignore).','It shows <code>git log</code>: one commit.']}},
+ {n:'4',who:'ai',v:2,
+  zh:{t:'第二版：你決定改什麼，commit 2',
+      one:'你決定改什麼，請它改、跑一次、給你看 diff（紅色減號＝拿掉，綠色加號＝新加），再存第二筆。',
+      prompt:'請修改 hello.py：＿＿＿＿（你自己填，例如：加一行印今天日期／加一個倒數／改成英文）。改完先跑一次給我看，然後顯示 git diff，用白話解釋紅色減號和綠色加號各是什麼；等我說「好」再 commit（訊息寫「v2：＿＿」）並顯示 git log。不要 push。',
+      steps:['填好底線再貼。一句話講清楚要改什麼。','看 diff 對不對得上你講的，對就回「好」。','按同意 commit。<code>git log</code>：兩筆。']},
+  en:{t:'Version 2: your change, commit 2',
+      one:'You decide the change. It edits, runs once, shows you the diff (red minus = removed, green plus = added), then saves the second commit.',
+      prompt:'Please modify hello.py: ________ (fill in yourself, e.g. add a line that prints today\'s date / add a countdown / translate it). Run it once and show me, then show git diff and explain in plain words what the red minus and green plus lines are; wait until I say "ok", then commit (message "v2: ____") and show git log. Do not push.',
+      steps:['Fill in the blank before pasting. One clear sentence.','Check that the diff matches what you asked; if so, reply "ok".','Approve the commit. <code>git log</code>: two commits.']}},
+ {n:'5',who:'ai',v:3,
+  zh:{t:'第三版：再改一次，commit 3',
+      one:'再改一次、再存一筆。這次 commit 訊息請它先擬、你看過再同意。',
+      prompt:'請再修改 hello.py：＿＿＿＿（你自己填）。改完跑一次給我看，顯示 git diff 並解釋，等我說「好」再 commit（commit 訊息你先擬一句給我看過）並顯示 git log。不要 push、不要動其他檔案。',
+      steps:['填好底線再貼。','看 diff 對不對得上、它擬的訊息清不清楚，再回「好」。','按同意 commit。<code>git log</code>：三筆，v3、v2、v1。']},
+  en:{t:'Version 3: one more change, commit 3',
+      one:'Change it once more, save once more. This time let it draft the commit message and approve it after reading.',
+      prompt:'Please modify hello.py again: ________ (fill in yourself). Run it once and show me, show git diff and explain, wait until I say "ok", then commit (draft the commit message first and show it to me) and show git log. Do not push and do not touch other files.',
+      steps:['Fill in the blank before pasting.','Check the diff and the drafted message, then reply "ok".','Approve the commit. <code>git log</code>: three commits, v3, v2, v1.']}},
+ {n:'6',who:'ai',v:4,
+  zh:{t:'push 一次：建公開 repo、三筆一起上 GitHub、截圖',
+      one:'三筆都在你電腦裡，現在一次推上 GitHub。自己打開網址看到三筆，截圖交上來。',
+      prompt:'請在我的 GitHub 建一個公開 repo 叫 '+REPO+'，把本機的 main 推上去（三筆一起）。執行前先把指令給我看，等我同意。推完顯示 git log --oneline 與 git status --short --branch，確認本機跟 GitHub 一致，給我 repo 網址，並告訴我在 GitHub 網頁上哪裡看得到這三筆歷史。',
+      steps:['看一眼指令：repo 名 <code>'+REPO+'</code>、Public。按同意。','打開它給的網址，點檔案清單旁的時鐘圖示（寫著 3），三筆都在。','<b>截圖這一頁</b>（看得到三筆訊息），交上來。順便想一次：它有沒有哪一步做的跟說的不一樣？']},
+  en:{t:'Push once: create the public repo, send all three, screenshot',
+      one:'All three commits are still on your computer. Push them to GitHub in one go, open the URL, see three commits, screenshot.',
+      prompt:'Please create a public repo named '+REPO+' on my GitHub and push the local main branch to it (all three commits together). Show me the command before running it and wait for my approval. After pushing, show git log --oneline and git status --short --branch to confirm local matches GitHub, give me the repo URL, and tell me where on the GitHub website I can see these three commits.',
+      steps:['Check the command: repo name <code>'+REPO+'</code>, Public. Approve.','Open the URL it gives you, click the clock icon next to the file list (it says 3), all three are there.','<b>Screenshot this page</b> (three messages visible) and hand it in. Think back once: did it do anything different from what it said?']}}
+];
+
+var STUCK=[
+ {zh:['Antigravity 登不進（學校信箱／未滿 18）','改用 ChatGPT 桌面版切到 Codex，提示詞一字不改；都不行就走路線 B，同分'],
+  en:['Cannot sign in to Antigravity (school email / under 18)','Use the ChatGPT desktop app switched to Codex with the same prompts; if that fails too, take route B, same credit']},
+ {zh:['winget 說找不到／被擋','自己去官網下載安裝檔（<a href="https://git-scm.com/download/win" target="_blank" rel="noopener">git-scm.com</a>、<a href="https://cli.github.com/" target="_blank" rel="noopener">cli.github.com</a>、<a href="https://www.python.org/downloads/" target="_blank" rel="noopener">python.org</a>），一路下一步；Mac 沒有 Homebrew 先裝 <a href="https://brew.sh/" target="_blank" rel="noopener">brew.sh</a>'],
+  en:['winget not found / blocked','Download installers from the official sites (<a href="https://git-scm.com/download/win" target="_blank" rel="noopener">git-scm.com</a>, <a href="https://cli.github.com/" target="_blank" rel="noopener">cli.github.com</a>, <a href="https://www.python.org/downloads/" target="_blank" rel="noopener">python.org</a>) and click through; Mac without Homebrew, install it from <a href="https://brew.sh/" target="_blank" rel="noopener">brew.sh</a> first']},
+ {zh:['裝完還是「找不到 gh／python」','新裝的指令要重開整個程式才讀得到：把 Antigravity 整個關掉重開'],
+  en:['Still "gh / python not found" after installing','New commands appear only after a full restart: quit Antigravity completely and reopen']},
+ {zh:['AI 說「請給我你的密碼／token」','不給。回它「登入我自己做，你只要跑 gh auth status 確認」'],
+  en:['The AI asks for your password or token','Do not give it. Reply "I log in myself; you only run gh auth status to confirm"']},
+ {zh:['它在卡 3／4／5 就想 push 或建 repo','回「還不要，最後一次推」。今天 commit 三次、push 一次'],
+  en:['It wants to push or create the repo on cards 3/4/5','Reply "not yet, one push at the end". Today: three commits, one push']},
+ {zh:['repo 名字被用過（Name already exists）','改叫 '+REPO+'-2；網址會跟著變，交件時用複製的'],
+  en:['Repo name already exists','Call it '+REPO+'-2; the URL changes too, copy it when handing in']},
+ {zh:['push 被拒／GitHub 只有 1、2 筆','叫它先跑 gh auth status、git status --short --branch 解釋差在哪，再 git push；絕不 force'],
+  en:['Push rejected / GitHub shows only 1 or 2','Ask it to run gh auth status and git status --short --branch, explain, then git push; never force']},
+ {zh:['它提議 reset、rebase 或 force push','回「不要，今天不准改寫歷史」。改壞還沒 commit 的用 git restore 救回'],
+  en:['It proposes reset, rebase or force push','Reply "no, no rewriting history today". An uncommitted mistake is recovered with git restore']},
+ {zh:['程式改壞跑不動','把錯誤原文整段貼回給它，請它先解釋再修；修不好就 git restore hello.py 回上一版'],
+  en:['The script broke and no longer runs','Paste the exact error back, ask it to explain first and then fix; if that fails, git restore hello.py to go back']}
+];
+
+var QUIZ=[
+ {zh:{q:'卡 5 做完，本機 git log 有三筆。現在 GitHub 上看得到這三筆嗎？',o:['看得到，commit 就是上傳','還看不到，卡 6 push 一次才會上去','要等一兩分鐘才會出現'],a:1,why:'commit 是本機動作，只在你的電腦裡多一筆歷史；push 才把它送到 GitHub。今天故意存三次、最後只推一次，就是要你親眼看到這兩件事是分開的。'},
+  en:{q:'After card 5, the local git log shows three commits. Can you see them on GitHub now?',o:['Yes, commit means upload','Not yet, they appear after the single push on card 6','Wait a minute or two and they appear'],a:1,why:'A commit is local: it adds one entry to the history on your computer. Push is what sends it to GitHub. Today you save three times and push once on purpose, so you can see with your own eyes that these are two different things.'}},
+ {zh:{q:'diff 畫面裡，前面有綠色加號的那幾行是什麼？',o:['被拿掉的','新加上的','有錯誤的'],a:1,why:'綠色加號＝新加的，紅色減號＝拿掉的。AI 幫你改東西，你驗收它的地方就是這個畫面。'},
+  en:{q:'In the diff view, what are the lines with a green plus sign?',o:['Lines that were removed','Lines that were added','Lines with errors'],a:1,why:'Green plus means added, red minus means removed. When an AI changes something for you, this is where you check its work.'}},
+ {zh:{q:'AI 說「我需要你的 GitHub 密碼才能 push」。你該？',o:['貼給它，不然做不完','不給；登入用 gh auth login 自己做，它只要跑 gh auth status 確認','把密碼改簡單一點再給'],a:1,why:'鑰匙不經過 AI。登入是你在終端機自己做的那一步，做完它用鑰匙 push，不需要密碼。'},
+  en:{q:'The AI says "I need your GitHub password to push". You should:',o:['Give it, otherwise you cannot finish','Refuse; you log in yourself with gh auth login, it only runs gh auth status to confirm','Make the password simpler and then give it'],a:1,why:'The key never passes through the AI. Logging in is the step you do yourself in the terminal; afterwards it pushes with the key and needs no password.'}},
+ {zh:{q:'第三版改壞了、程式跑不起來，但還沒 commit。最省事的一招是？',o:['git reset --hard 回到最早','git restore hello.py 回到 v2，重來','把資料夾刪掉重建 repo'],a:1,why:'還沒 commit 的錯，restore 一秒回到上一版，歷史不動。reset 會改寫歷史，這份作業全程禁用。'},
+  en:{q:'Version 3 broke the script and it no longer runs, but you have not committed yet. The easiest move?',o:['git reset --hard back to the beginning','git restore hello.py back to v2 and try again','Delete the folder and recreate the repo'],a:1,why:'For an uncommitted mistake, restore brings the file back to the last version in one second, history untouched. reset rewrites history and is banned throughout this homework.'}}
+];
+
+/* diff 練習（一個例子：第二版加一行日期）；t: ctx／add／del */
+var DIFF_ZH=[
+ {t:'del',s:'# hello.py — 第一版'},
+ {t:'add',s:'# hello.py — 第二版'},
+ {t:'add',s:'from datetime import date'},
+ {t:'ctx',s:'name = "你的GitHub帳號"'},
+ {t:'ctx',s:'print(f"你好，我是 {name}。")'},
+ {t:'add',s:'print(f"今天是 {date.today()}。")'}
+];
+var DIFF_EN=[
+ {t:'del',s:'# hello.py — version 1'},
+ {t:'add',s:'# hello.py — version 2'},
+ {t:'add',s:'from datetime import date'},
+ {t:'ctx',s:'name = "your-github-username"'},
+ {t:'ctx',s:'print(f"Hi, I am {name}.")'},
+ {t:'add',s:'print(f"Today is {date.today()}.")'}
+];
+
+/* ───────────────────────── 畫版面 ───────────────────────── */
+var main=document.getElementById('main');
+function sec(id,title,goal){var s=h('section',{id:id});s.appendChild(h('h2',null,esc(title)));if(goal)s.appendChild(h('p',{'class':'goal'},goal));main.appendChild(s);return s;}
+function cardEl(inner,cls){return h('div',{'class':'card'+(cls?' '+cls:'')},inner);}
+function copyBtn(text){
+  var b=h('button',{'class':'btn small copy',type:'button'},L('複製','Copy'));
+  b.addEventListener('click',function(){
+    var done=function(){b.classList.add('did');b.textContent=L('複製了','Copied');toast(L('已複製，去 Antigravity 貼上','Copied. Paste it into Antigravity'));setTimeout(function(){b.classList.remove('did');b.textContent=L('複製','Copy');},1800);};
+    var fail=function(){toast(L('複製失敗，請手動選取','Copy failed; select the text by hand'));};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,function(){legacy(text)?done():fail();});}
+    else{legacy(text)?done():fail();}
+  });
+  return b;
+}
+function legacy(text){try{var ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();var ok=document.execCommand('copy');document.body.removeChild(ta);return ok;}catch(e){return false;}}
+var toastT;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},1600);}
+
+function render(){
+  main.innerHTML='';
+  var toc=document.getElementById('toc');toc.innerHTML='';
+  SECTIONS.forEach(function(s){var a=h('a',{href:'#'+s.id},esc(L(s.zh,s.en)));toc.appendChild(a);});
+
+  /* §0 交什麼 */
+  var s0=sec('s0',L(SECTIONS[0].zh,SECTIONS[0].en));
+  s0.appendChild(cardEl(L(
+   '<p>交到 e學苑 本週作業（到期時間看那裡）。</p><p><b>線上文字</b>：① repo 網址 <code>https://github.com/你的帳號/'+REPO+'</code>（<b>用複製的，別手打</b>）② 三筆 commit 的訊息 ③ 你貼給 AI 的話（原文，至少三段）④ 一句：它做的跟它說的有沒有不一樣？或你退回它的那一次是什麼？</p><p><b>檔案</b>（.png／.jpg／.pdf）：<b>GitHub 歷史頁截圖，看得到三筆 commit</b>。必交。</p><div class="ok">夠了線：repo 網址活著、上面有三筆 commit、截圖交了。做到一半卡住的，交上做到的、寫明卡在哪一張卡，一樣有分。</div>',
+   '<p>Hand in on e-learning under this week\'s assignment (the due time is there).</p><p><b>Online text</b>: ① your repo URL <code>https://github.com/your-username/'+REPO+'</code> (<b>copy it, do not type it</b>) ② the three commit messages ③ the prompts you gave the AI (verbatim, at least three) ④ one sentence: did it do anything different from what it said, or what was the one time you said no to it?</p><p><b>File</b> (.png / .jpg / .pdf): <b>a screenshot of the GitHub history page showing three commits</b>. Required.</p><div class="ok">The bar: a live repo URL, three commits on it, and the screenshot. Stuck halfway: hand in what you have and say which card you reached; it still counts.</div>')));
+
+  /* §1 開工前 */
+  var s1=sec('s1',L(SECTIONS[1].zh,SECTIONS[1].en));
+  s1.appendChild(cardEl(L(
+   '<h3>這份作業在練三件事</h3><ul><li><b>會自己動手的 AI 會替你裝工具</b>——但每一條指令的「同意」是你的。</li><li><b>commit 是本機快照，push 才上 GitHub</b>——今天存三次、推一次，你會親眼看到兩件事是分開的。</li><li><b>看得懂 diff，才驗收得了 AI</b>——它動了哪幾行、跟它說的一不一樣。</li></ul>',
+   '<h3>Three things this homework trains</h3><ul><li><b>An AI that acts will install tools for you</b>, but every approval is yours.</li><li><b>A commit is a local snapshot; push is what reaches GitHub.</b> Three commits and one push today, so you see the two are separate.</li><li><b>Reading a diff is how you check an AI</b>: which lines it touched, and whether that matches what it said.</li></ul>')));
+  var routes=h('div',{'class':'routes'});
+  [['A',L('<b>路線 A：Antigravity</b><small>自己的筆電、Antigravity 登得進、有 GitHub 帳號。主線。</small>','<b>Route A: Antigravity</b><small>Your own laptop, Antigravity signs in, you have a GitHub account. The main route.</small>')],
+   ['A2',L('<b>路線 A′：Codex</b><small>Antigravity 進不去（未滿 18、學校信箱）。ChatGPT 桌面版切到 Codex，提示詞一字不改。</small>','<b>Route A′: Codex</b><small>Antigravity will not sign in (under 18, school email). Switch the ChatGPT desktop app to Codex; same prompts.</small>')],
+   ['B',L('<b>路線 B：全程瀏覽器</b><small>沒筆電、裝不了東西。在 github.com 網頁上建檔、改三次。同分。</small>','<b>Route B: browser only</b><small>No laptop, nothing can be installed. Create and edit the file three times on github.com. Same credit.</small>')]
+  ].forEach(function(r){var b=h('button',{'class':'route',type:'button','data-r':r[0]},r[1]);b.addEventListener('click',function(){setRoute(r[0]);});routes.appendChild(b);});
+  var c1=cardEl('<h3>'+L('對號入座：先選一條','Pick your route first')+'</h3>');c1.appendChild(routes);s1.appendChild(c1);
+  s1.appendChild(cardEl(L(
+   '<ul><li><b>Antigravity 要在 Request Review</b>（每條指令先問你）。切到 Always Proceed 你什麼都看不到，這份作業就沒東西可學。</li><li><b>公開 repo 誰都看得到</b>：程式裡不放真名、學號、電話；<code>name</code> 放 GitHub 帳號名。</li><li><b>全程禁止 reset、rebase、force push</b>。AI 提議就回「不要」。</li><li>還沒裝 Antigravity、沒有 GitHub 帳號：先照〈<a href="https://cwstedctw.github.io/ndhu-ted-course-hub/basics/course-setup.html" target="_blank" rel="noopener">裝好四樣</a>〉辦；想先親手按一次 commit：<a href="https://cwstedctw.github.io/ndhu-ted-course-hub/shared/git-first-commit.html" target="_blank" rel="noopener">練習台</a>五分鐘。</li></ul>',
+   '<ul><li><b>Antigravity must be in Request Review</b> (asks before every command). In Always Proceed you see nothing and learn nothing.</li><li><b>A public repo is visible to everyone</b>: no real name, student ID or phone number in the script; <code>name</code> holds your GitHub username.</li><li><b>No reset, rebase or force push, ever.</b> If the AI proposes one, say no.</li><li>No Antigravity or GitHub account yet: finish <a href="https://cwstedctw.github.io/ndhu-ted-course-hub/basics/course-setup.html" target="_blank" rel="noopener">Course setup: four things</a> first; want to press commit yourself once: five minutes on the <a href="https://cwstedctw.github.io/ndhu-ted-course-hub/shared/git-first-commit.html?lang=en" target="_blank" rel="noopener">practice bench</a>.</li></ul>'),'only-a'));
+
+  /* §2 六張卡 */
+  var s2=sec('s2',L(SECTIONS[2].zh,SECTIONS[2].en),L('裝好工具（1–2）→ commit 三次（3–5）→ push 一次（6）。做完一張勾一張。','Tools (1–2) → three commits (3–5) → one push (6). Tick each card when done.'));
+  s2.appendChild(h('div',{'class':'note only-b'},L('<b>路線 B 的人：</b>卡 1–2 跳過。到 <a href="https://github.com/new?name='+REPO+'&visibility=public" target="_blank" rel="noopener">github.com/new</a> 建公開 repo <code>'+REPO+'</code>（勾 Add a README）。Add file → Create new file，檔名 <code>hello.py</code>，貼幾行 Python，Commit changes…（訊息 v1）。再用鉛筆編輯兩次、各 Commit changes… 一次（v2、v3）。點時鐘圖示看到三筆，截圖。第 ③ 點寫「路線 B，沒有提示詞」。','<b>Route B:</b> skip cards 1–2. Go to <a href="https://github.com/new?name='+REPO+'&visibility=public" target="_blank" rel="noopener">github.com/new</a>, create a public repo <code>'+REPO+'</code> (tick Add a README). Add file → Create new file, name it <code>hello.py</code>, paste a few lines of Python, Commit changes… (message v1). Edit with the pencil twice more, Commit changes… each time (v2, v3). Click the clock icon, see three commits, screenshot. For item ③ write "route B, no prompts".')));
+  s2.appendChild(h('div',{'class':'note only-a2'},L('<b>路線 A′（Codex）：</b>提示詞一字不改。ChatGPT 桌面版左上角切到 Codex，用「開啟資料夾」指到 <code>'+REPO+'</code>。','<b>Route A′ (Codex):</b> same prompts. Switch the ChatGPT desktop app to Codex (top left) and "Open Folder" to <code>'+REPO+'</code>.')));
+  CARDS.forEach(function(c,i){
+    var d=c[LANG];var key='c'+i;var done=get(key)==='1';
+    var el=h('div',{'class':'card stepcard'+(done?' done':''),id:'card'+i});
+    var head=h('div',{'class':'head'});
+    head.appendChild(h('span',{'class':'num'},esc(c.n)));
+    var t=h('h3',null,esc(d.t));t.appendChild(h('span',{'class':'who'+(c.who==='you'?' you':'')},c.who==='you'?L('你自己做','You do it'):L('AI 做、你按同意','AI does it, you approve')));
+    head.appendChild(t);
+    var lab=h('label',{'class':'chk'});var cb=h('input',{type:'checkbox'});cb.checked=done;
+    cb.addEventListener('change',function(){if(cb.checked){set(key,'1');el.classList.add('done');}else{del(key);el.classList.remove('done');}progress();timeline();});
+    lab.appendChild(cb);lab.appendChild(document.createTextNode(L('這張卡過了','Card done')));head.appendChild(lab);
+    el.appendChild(head);
+    el.appendChild(h('p',{'class':'goal'},d.one));
+    if(d.prompt){var pb=h('div',{'class':'block'},'<h4>'+L('貼這句','Paste this')+'</h4>');var pr=h('div',{'class':'prompt'});pr.appendChild(document.createTextNode(d.prompt));pr.appendChild(copyBtn(d.prompt));pb.appendChild(pr);el.appendChild(pb);}
+    el.appendChild(h('div',{'class':'block'},'<h4>'+L('關鍵步驟','Key steps')+'</h4><ol>'+d.steps.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ol>'));
+    s2.appendChild(el);
+  });
+
+  /* §3 時間軸＋diff 練習 */
+  var s3=sec('s3',L(SECTIONS[3].zh,SECTIONS[3].en));
+  var c3=cardEl('<h3>'+L('時間軸：勾掉卡 3、4、5、6，這裡會亮','Timeline: lights up as you tick cards 3, 4, 5 and 6')+'</h3>');
+  var tl=h('div',{'class':'timeline',id:'timeline'});
+  [[L('v1','v1'),L('本機 commit 1','local commit 1'),''],[L('v2','v2'),L('本機 commit 2','local commit 2'),''],[L('v3','v3'),L('本機 commit 3','local commit 3'),''],[L('push ×1','push ×1'),L('三筆一起上 GitHub','all three to GitHub'),'push']
+  ].forEach(function(x){tl.appendChild(h('div',{'class':'tl'+(x[2]?' '+x[2]:'')},'<div class="dot"></div><b>'+x[0]+'</b><small>'+x[1]+'</small>'));});
+  c3.appendChild(tl);c3.appendChild(h('p',{'class':'tlnote',id:'tlnote'}));
+  s3.appendChild(c3);
+  var c3b=cardEl('<h3>'+L('讀 diff 小練習：點出「新加的」那幾行','Diff practice: click the lines that were added')+'</h3><p class="goal">'+L('一個例子：第二版加了一行日期。先點你認為是新加的行，再按「對答案」。','One example: version 2 adds a date line. Click the lines you think were added, then press "Check".')+'</p>');
+  var dv=h('div',{'class':'diff',id:'diff'});
+  (LANG==='en'?DIFF_EN:DIFF_ZH).forEach(function(l){var r=h('div',{'class':'ln','data-t':l.t});r.appendChild(h('span',{'class':'sg'},'&nbsp;'));r.appendChild(document.createTextNode(l.s||' '));r.addEventListener('click',function(){if(dv.classList.contains('reveal'))return;r.classList.toggle('pick');});dv.appendChild(r);});
+  c3b.appendChild(dv);
+  var fb=h('p',{'class':'fb',id:'difffb'});
+  var row=h('p');var chk=h('button',{'class':'btn',type:'button'},L('對答案','Check'));var again=h('button',{'class':'btn ghost',type:'button'},L('再來一次','Try again'));
+  chk.addEventListener('click',function(){
+    var lines=dv.querySelectorAll('.ln');var addN=0,hit=0,miss=0,wrong=0;
+    lines.forEach(function(r){var isAdd=r.getAttribute('data-t')==='add';var p=r.classList.contains('pick');if(isAdd){addN++;if(p)hit++;else miss++;}else if(p)wrong++;r.querySelector('.sg').textContent=(r.getAttribute('data-t')==='add'?'+':r.getAttribute('data-t')==='del'?'−':' ');});
+    dv.classList.add('reveal');
+    fb.textContent=(miss===0&&wrong===0)?L('全對。綠色加號的 '+addN+' 行是新加的；紅色減號那一行是被換掉的註解。','All correct. The '+addN+' green plus lines were added; the red minus line is the comment that was replaced.'):L('新加的有 '+addN+' 行，你點中 '+hit+' 行、漏了 '+miss+' 行、點錯 '+wrong+' 行。綠色加號＝新加，紅色減號＝拿掉。','There are '+addN+' added lines; you got '+hit+', missed '+miss+', picked '+wrong+' wrongly. Green plus = added, red minus = removed.');
+  });
+  again.addEventListener('click',function(){dv.classList.remove('reveal');dv.querySelectorAll('.ln').forEach(function(r){r.classList.remove('pick');r.querySelector('.sg').innerHTML='&nbsp;';});fb.textContent='';});
+  row.appendChild(chk);row.appendChild(document.createTextNode(' '));row.appendChild(again);c3b.appendChild(row);c3b.appendChild(fb);
+  s3.appendChild(c3b);
+
+  /* §4 卡住 */
+  var s4=sec('s4',L(SECTIONS[4].zh,SECTIONS[4].en),L('電腦出錯了先做四步：複製錯誤原文 → 貼給 AI 請它先解釋 → 看它的計畫、不照單全收 → 自己驗一次。','When the computer errors: copy the exact message → paste it to the AI and ask it to explain first → read its plan, do not accept blindly → verify yourself.'));
+  var tb='<div class="tbl"><table><tr><th>'+L('狀況','Situation')+'</th><th>'+L('怎麼辦','What to do')+'</th></tr>'+STUCK.map(function(r){var x=r[LANG];return '<tr><td>'+x[0]+'</td><td>'+x[1]+'</td></tr>';}).join('')+'</table></div>';
+  s4.appendChild(cardEl(tb));
+
+  /* §5 自測 */
+  var s5=sec('s5',L(SECTIONS[5].zh,SECTIONS[5].en),L('答錯沒關係，看解釋。','Wrong answers are fine; read the explanation.'));
+  var c5=cardEl('');
+  QUIZ.forEach(function(q,qi){var d=q[LANG];var qe=h('div',{'class':'q'});qe.appendChild(h('p',null,'<b>Q'+(qi+1)+'.</b> '+esc(d.q)));var opts=h('div',{'class':'opts'});
+    d.o.forEach(function(o,oi){var b=h('button',{type:'button'},esc(o));b.addEventListener('click',function(){if(qe.classList.contains('answered'))return;qe.classList.add('answered');b.classList.add(oi===d.a?'right':'wrong');if(oi!==d.a)opts.children[d.a].classList.add('right');});opts.appendChild(b);});
+    qe.appendChild(opts);qe.appendChild(h('p',{'class':'why'},esc(d.why)));c5.appendChild(qe);});
+  s5.appendChild(c5);
+
+  /* §6 提示詞總表 */
+  var s6=sec('s6',L(SECTIONS[6].zh,SECTIONS[6].en),L('同一組提示詞，一次看全部。卡 2 沒有提示詞，那一步你自己做。','The same prompts, all on one page. Card 2 has no prompt; you do that step yourself.'));
+  var c6=cardEl('');var all=[];
+  CARDS.forEach(function(c){var d=c[LANG];if(!d.prompt)return;all.push(L('卡 ','Card ')+c.n+'｜'+d.t+'\n'+d.prompt);var pr=h('div',{'class':'prompt'});pr.appendChild(h('b',null,esc(L('卡 ','Card ')+c.n+'｜'+d.t)));pr.appendChild(h('br'));pr.appendChild(document.createTextNode(d.prompt));pr.appendChild(copyBtn(d.prompt));c6.appendChild(pr);});
+  var allb=copyBtn(all.join('\n\n'));allb.className='btn';allb.textContent=L('全部複製','Copy all');c6.appendChild(h('p',null,'')).appendChild(allb);
+  s6.appendChild(c6);
+
+  /* footer */
+  document.getElementById('foot').innerHTML=L(
+   '<p>提示詞措辭沿用本學期寫程式課 W3 已實跑過的卡；winget 套件 ID（Git.Git、GitHub.cli、Python.Python.3.13）2026-09-22 在 Windows 11 實查存在。Antigravity 與 GitHub 的畫面會改版，對不上時以現場與老師示範為準。官方文件：<a href="https://cli.github.com/manual/gh_auth_login" target="_blank" rel="noopener">gh auth login</a>、<a href="https://cli.github.com/manual/gh_repo_create" target="_blank" rel="noopener">gh repo create</a>、<a href="https://antigravity.google/docs/faq/" target="_blank" rel="noopener">Antigravity FAQ</a>。本頁不寄任何資料出去；進度只存在你這台瀏覽器裡。</p>',
+   '<p>Prompt wording follows the cards already run in this semester\'s coding course W3; the winget package IDs (Git.Git, GitHub.cli, Python.Python.3.13) were verified on Windows 11 on 2026-09-22. Antigravity and GitHub change their screens; when they differ from this page, follow what is on screen and the teacher\'s demo. Official docs: <a href="https://cli.github.com/manual/gh_auth_login" target="_blank" rel="noopener">gh auth login</a>, <a href="https://cli.github.com/manual/gh_repo_create" target="_blank" rel="noopener">gh repo create</a>, <a href="https://antigravity.google/docs/faq/" target="_blank" rel="noopener">Antigravity FAQ</a>. This page sends nothing anywhere; your progress is stored only in this browser.</p>');
+
+  document.getElementById('reset').textContent=L('清除進度','Reset');
+  progress();timeline();setRoute(get('route')||'A',true);
+}
+
+function progress(){var n=0;CARDS.forEach(function(c,i){if(get('c'+i)==='1')n++;});var pct=Math.round(n/CARDS.length*100);document.getElementById('progfill').style.width=pct+'%';document.getElementById('progtext').textContent=L('進度 ','Progress ')+n+'/'+CARDS.length;}
+function timeline(){var els=document.getElementById('timeline').children;var commits=0,pushed=false;
+  CARDS.forEach(function(c,i){if(!c.v||!els[c.v-1])return;var on=get('c'+i)==='1';els[c.v-1].classList.toggle('lit',on);if(on){if(c.v<=3)commits++;else pushed=true;}});
+  document.getElementById('tlnote').textContent=(commits===3&&pushed)?L('三筆都存了、也推上去了。GitHub 時鐘圖示那裡該是 3，截圖交上來。','Three commits saved and pushed. The clock icon on GitHub should say 3; hand in the screenshot.'):(commits===3?L('三筆都在本機了，GitHub 上還是空的——卡 6 推一次。','All three commits are local; GitHub is still empty. Card 6 pushes once.'):L('本機已存 '+commits+' 筆，還沒推。','Saved locally: '+commits+'. Not pushed yet.'));}
+function setRoute(r,silent){ROOT.setAttribute('data-route',r);set('route',r);document.querySelectorAll('.route').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-r')===r);});if(!silent)toast(L('已選路線 ','Route ')+(r==='A2'?'A′':r));}
+function setLang(l){LANG=l;ROOT.setAttribute('data-ui',l);ROOT.lang=(l==='en')?'en':'zh-Hant';document.getElementById('lang').textContent=(l==='en')?'中文':'English';document.title=(l==='en')?'Three Commits, One Push | commit 三次，push 一次':'commit 三次，push 一次｜Three Commits, One Push';set('lang',l);render();}
+document.getElementById('lang').addEventListener('click',function(){setLang(LANG==='en'?'zh':'en');});
+document.getElementById('reset').addEventListener('click',function(){if(!confirm(L('清除這台瀏覽器裡的勾選進度？','Clear the ticked progress stored in this browser?')))return;CARDS.forEach(function(c,i){del('c'+i);});render();});
+setLang(LANG);
+})();
+</script>
+</html>

@@ -1,0 +1,428 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W3 學生步驟｜上週裝的四樣，今天全部用上</title><style>
+
+:root{font-family:system-ui,'Microsoft JhengHei',sans-serif;color:#153d36;background:#f4f6ed;line-height:1.8}
+body{margin:0}
+main{max-width:880px;margin:auto;padding:30px 20px 90px}
+nav{display:flex;gap:16px;flex-wrap:wrap}
+a{color:#09695b;text-underline-offset:4px}
+header{padding:40px 0 26px;border-bottom:2px solid #1f6153}
+h1{font-size:clamp(28px,5vw,50px);line-height:1.25;max-width:650px;margin:.3em 0}
+h2{font-size:25px;line-height:1.4;margin:48px 0 6px;padding-top:8px;border-top:2px solid #1f6153}
+h3{font-size:20px;margin:26px 0 8px}
+h4{font-size:17px;margin:16px 0 4px;color:#09695b}
+.eyebrow{letter-spacing:.09em;font-weight:700;color:#577565}
+.lead{font-size:20px}
+.gain{background:#e6efe4;border-left:4px solid #1f6153;padding:8px 16px;margin:10px 0 18px;font-weight:700}
+section{scroll-margin-top:16px}
+.note{padding:12px 18px;border-left:4px solid #c9963b;background:#fff9e8}
+.src{padding:10px 18px;border-left:4px solid #79958a;background:#eef2e7;font-size:15px;color:#3d574d}
+table{width:100%;border-collapse:collapse;background:#fff;table-layout:fixed}
+th,td{border:1px solid #bbc9bf;padding:9px 8px;text-align:left;vertical-align:top;overflow-wrap:anywhere;word-break:break-word}
+th{background:#e0ece2}
+pre{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;background:#133e34;color:#f4f6ed;padding:16px;border-radius:8px;font:15px/1.75 ui-monospace,'Microsoft JhengHei',monospace;max-width:100%;box-sizing:border-box}
+code{background:#e6ece5;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;word-break:break-word;font:15px ui-monospace,'Microsoft JhengHei',monospace}
+ol,ul{padding-left:1.3em}
+li{margin:6px 0}
+.small{font-size:14px;color:#51695f}
+.steps{counter-reset:s;list-style:none;padding:0}
+.steps li{background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:11px 15px;margin:9px 0}
+.steps li b{color:#09695b}
+.card{background:#fff;border:1px solid #9fb6a8;border-left:6px solid #1f6153;border-radius:10px;padding:4px 18px 16px;margin:26px 0}
+.card h3{margin-top:16px;font-size:21px}
+.card .tag{display:inline-block;background:#1f6153;color:#fff;border-radius:6px;padding:1px 9px;font-size:15px;margin-right:6px}
+.f{margin:12px 0}
+.f>b.k{display:inline-block;background:#e0ece2;border-radius:5px;padding:1px 8px;margin-right:6px;color:#0b4a3e}
+.do{background:#f4f6ed;border:1px dashed #9fb6a8;border-radius:8px;padding:6px 16px 12px;margin:12px 0}
+.do h4{margin-top:12px}
+.alt{background:#f2f0fa;border-left:4px solid #6c5fa6;padding:10px 16px;margin:14px 0 4px;font-size:15px}
+.two{display:flex;flex-wrap:wrap;gap:18px}
+.two>div{flex:1 1 300px;min-width:0;background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:2px 18px 14px}
+.toc{background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:10px 18px;margin:18px 0}
+.toc ol{margin:6px 0}
+@media (max-width:560px){
+ main{padding:24px 16px 70px}
+ th,td{padding:7px 5px;font-size:14px}
+ pre{font-size:13.5px;padding:12px}
+ code{font-size:13.5px}
+ .card{padding:4px 12px 14px}
+ .two>div{padding:2px 12px 12px}
+}
+@media print{nav,.no-print{display:none}main{max-width:none;padding:0}h1{font-size:28px}h2{break-after:avoid}pre,table,.note,.steps li,.card{break-inside:avoid}}
+</style></head><body><main>
+<nav><a href="deck.html">投影片</a><a href="deck.pdf">下載投影片 PDF</a><a href="starter.zip">起步包（zip）</a><a href="starter/v0-sample.html">v0 範例面板</a><a href="starter/v1-sample.html">v1 對照版</a></nav>
+
+<header><p class="eyebrow">和 AI 一起寫程式　WEEK 3</p><h1>上週裝的四樣，<br>今天全部用上</h1>
+<p class="lead">上週你裝了四樣：GitHub 帳號、Student Pack、ChatGPT 桌面版、Antigravity。今天每一樣都要用——讓 AI 替你裝工具、建倉庫、上線、把面板做成真的 app、弄壞再救回、加你自己的功能。</p>
+<p><b>你負責的六件</b>：看計畫、按同意、自己登入、測試、退回它一次、寫一句理由。</p>
+<div class="toc"><b>這一頁怎麼用</b>
+<ol>
+<li><a href="#s0">今天交什麼</a>——先看夠了線在哪</li>
+<li><a href="#s1">上週那四樣，今天各做什麼＋對號入座</a></li>
+<li><a href="#s1b">先動手五分鐘：練習台</a>——一坐下就開，做到第一筆 commit</li>
+<li><a href="#s2">今天會碰到的工具與觀念</a>——名詞在這裡查</li>
+<li><a href="#s3">路線 A：八張提示詞卡</a>（路線 A′ 差異寫在每張卡末）</li>
+<li><a href="#s4">路線 B：全程瀏覽器</a></li>
+<li><a href="#s5">出錯了，先做這四步</a></li>
+<li><a href="#s6">今天 AI 做的／你做的</a></li>
+<li><a href="#s7">下週</a>｜<a href="#app">附錄：提示詞總表</a></li>
+</ol></div>
+</header>
+
+<section id="s0"><h2>0　今天交什麼</h2>
+<p class="gain">這節做完你會有什麼：知道今天下課前要拿到哪兩行網址、哪一句話。</p>
+<p><b>不交紙、不交檔案。下課前在 e學苑 本週作業的文字框貼三行：</b></p>
+<pre>網站：https://你的帳號名.github.io/my-panel/
+倉庫：https://github.com/你的帳號名/my-panel
+我退回它的那一次：我不要＿＿＿，因為＿＿＿。</pre>
+<p class="note"><b>夠了線＝網址活著就是今天 100%。</b>前兩行有了就滿分，第三行是「你退回它那一次」的理由——第 8 段會做到。做不完的人先貼前兩行，第三行回家補。</p>
+<p class="note"><b>網站那一行一定要用複製的，不要用手打。</b>repo 名字被用過的人會變成 <code>my-panel-2</code> 之類的，手打一定打錯。</p>
+<p><b>三條路線同分。</b>用 agent 的、用 Codex 的、全程用瀏覽器的，成品長得一樣（網址＋倉庫＋看得懂的歷史），分數一樣。</p>
+<p class="small">Pages 還沒亮的人：先貼倉庫那一行，後面寫一句「Pages 還在等」，亮了再回來補。貼完自己點一次，確認打得開。</p></section>
+
+<section id="s1"><h2>1　上週那四樣，今天各做什麼</h2>
+<p class="gain">這節做完你會有什麼：知道自己走哪一條路線，而且知道少了什麼可以補。</p>
+<table>
+<tr><th>上週裝的</th><th>今天做什麼</th></tr>
+<tr><td><b>GitHub 帳號</b></td><td>你作品的倉庫與網址都掛在它下面。今天建的 <code>my-panel</code> 之後每一週都會用到。</td></tr>
+<tr><td><b>Student Developer Pack</b></td><td>今天不一定用得到，但它給你瀏覽器裡的雲端電腦（Codespaces）與 Pro；還在審核不影響今天。</td></tr>
+<tr><td><b>ChatGPT 桌面版（裡面的 Codex）</b></td><td><b>路線 A′</b> 用它。Antigravity 進不去的人走這條，八張卡的提示詞一字不改。</td></tr>
+<tr><td><b>Antigravity</b></td><td><b>路線 A</b>（主線）用它。今天所有指令都由它跑，你負責看計畫、按同意。</td></tr>
+</table>
+
+<h3>對號入座：開場五分鐘自己選</h3>
+<table>
+<tr><th>你手上有</th><th>走</th><th>用哪個 AI</th></tr>
+<tr><td>自己的筆電＋Antigravity 登得進＋GitHub 帳號</td><td><b>路線 A</b>（主線）</td><td>Antigravity</td></tr>
+<tr><td>自己的筆電，但 Antigravity 進不去（未滿 18、用了學校信箱、地區）</td><td><b>路線 A′</b></td><td>ChatGPT 桌面版切到 Codex。八張卡的提示詞<b>一字不改</b></td></tr>
+<tr><td>沒帶筆電／用教室機／什麼都沒裝</td><td><b>路線 B</b></td><td>github.com 網頁版＋任一 AI 網頁版（ChatGPT／Gemini）</td></tr>
+<tr><td>還沒有 GitHub 帳號</td><td colspan="2">先辦 10 分鐘，Email <b>一定填東華信箱</b>（<code>@gms.ndhu.edu.tw</code>，Student Pack 靠它驗你是學生），辦好再回自己那一條</td></tr>
+<tr><td>沒有上週那個單檔</td><td colspan="2">用起步包的 <a href="starter/v0-sample.html">v0-sample.html</a> 改名 <code>index.html</code>，<b>同分</b></td></tr>
+</table>
+<p class="note"><b>兩步驟驗證（two-factor authentication，2FA）今天不做。</b>它要手機驗證器 App、還要存復原碼，今天的時間跑不完；在教室公用電腦上做，復原碼會留在那台機器上。回宿舍再做。</p>
+<p class="small"><b>現場辦帳號卡住</b>：驗證信沒來→看垃圾信匣、等兩分鐘再按重寄。帳號名被用過→後面加數字。真的辦不成→跟旁邊同學共用他的帳號做完今天全部步驟，在交件那行註明「與某某共用」，<b>同分</b>。</p></section>
+
+<section id="s1b"><h2>2　先動手五分鐘：練習台</h2>
+<p class="gain">這節做完你會有什麼：親手做出第一筆 commit——不用裝任何東西，教室電腦的瀏覽器就能做。</p>
+<p>一坐下就開這個（本週資料夾裡的練習台，用 Chrome 或 Edge）：<a href="practice/git-first-commit.html"><b>練習台〈從建檔到 commit〉</b></a>。它把等一下 AI 會替你做的事，縮成一個可以自己按的小畫面。</p>
+<ol class="steps">
+<li>新增一個檔案，隨便寫一行字。</li>
+<li>存檔——它現在在<b>工作區</b>。</li>
+<li>按 <code>add</code>——放進<b>暫存區</b>（準備要收進這一版的東西）。</li>
+<li>按 <code>commit</code>，寫一句為什麼——存成一版，進<b>版本庫</b>。</li>
+<li>看歷史：多了一筆。再改一次、再 commit 一次，看它變兩筆。</li>
+</ol>
+<p><b>看什麼</b>：檔案怎麼從「工作區」走到「暫存區」再進「版本庫」。今天卡 4 讓 AI 做的就是這三步；卡 7 的 restore、revert 也是在這三個區之間把東西搬回來。</p>
+<p class="note">做完的人幫旁邊還沒做完的；五分鐘到了就抬頭。沒做完沒關係，等一下第 3 節會再講一次。</p>
+<p class="small">改寫自老師替經濟系老師做的公開教材〈跟 AI 一起用 Git——不背指令的版本控制〉第一階段（CC BY-NC-SA 4.0，© 陳文盛 × AI 協作團隊）。原站還有<a href="https://cwstedctw.github.io/git-ai-workshop/material.html" target="_blank" rel="noopener">完整手冊</a>（觀念與操作、故障排除、自然語言速查）與<a href="https://cwstedctw.github.io/git-ai-workshop/start.html" target="_blank" rel="noopener">開始之前</a>，卡住可以查。</p></section>
+
+<section id="s2"><h2>3　今天會碰到的工具與觀念</h2>
+<p class="gain">這節做完你會有什麼：今天出現的每個名詞，你都查得到它是什麼、在哪一步用到。</p>
+<p>這一節不用背，<b>當字典用</b>——做到哪一步聽不懂，回來查那一列。關鍵詞都是先一句白話，再附英文原文。</p>
+<table>
+<tr><th style="width:26%">名詞</th><th>一句白話</th><th style="width:22%">今天哪一步</th></tr>
+<tr><td>終端機（terminal）</td><td>用打字跟電腦講話的黑框；AI 替你打的指令就是在這裡跑</td><td>卡 2½ 你自己開一次登入</td></tr>
+<tr><td>Git</td><td>替一個資料夾記歷史的工具：每存一版就是一筆 commit，隨時能看差異、回到任一版</td><td>卡 4 起全部</td></tr>
+<tr><td>版本庫／倉庫（repository，簡稱 repo）</td><td>被 Git 管起來的那個資料夾（本機一份、GitHub 一份）</td><td>卡 4</td></tr>
+<tr><td>commit（存一版）</td><td>把現在的樣子拍一張快照、寫一句為什麼；本機動作</td><td>卡 4、6b、7c、8</td></tr>
+<tr><td>push（推上去）</td><td>把本機的快照送到 GitHub；<b>commit ≠ push</b></td><td>同上</td></tr>
+<tr><td>diff（差異）</td><td>兩版之間哪幾行變了：紅減號＝拿掉、綠加號＝新加</td><td>卡 6b、7a</td></tr>
+<tr><td>History／log（歷史）</td><td>所有 commit 排成一列，每筆可點開看那一版</td><td>卡 7d、GitHub 的時鐘圖示</td></tr>
+<tr><td>restore（還沒存的錯，救回）</td><td>把改壞、還沒 commit 的檔拉回上一版</td><td>卡 7b</td></tr>
+<tr><td>revert（已經出去的錯，撤銷）</td><td>再加一筆「反向」commit，原本那筆留著；歷史不改寫</td><td>卡 7d</td></tr>
+<tr><td>reset／rebase／force push</td><td>三個會<b>改寫歷史</b>的動作，今天全禁；AI 提議就回「不要」</td><td>全程</td></tr>
+<tr><td>GitHub</td><td>放 repo 的網站；Public repo 誰都看得到</td><td>卡 4 起</td></tr>
+<tr><td>GitHub Pages</td><td>GitHub 免費把 repo 裡的 <code>index.html</code> 變成公開網址；通常一兩分鐘亮</td><td>卡 5</td></tr>
+<tr><td>GitHub CLI（<code>gh</code>）</td><td>在終端機操作 GitHub 的指令；有了它，AI 才能替你「建 repo、開 Pages」而不用你去網站點</td><td>卡 2、2½、4、5</td></tr>
+<tr><td><code>gh auth login</code></td><td>把「代表你」的鑰匙放進這台電腦；之後 push 用鑰匙、不用密碼；<b>人自己做</b></td><td>卡 2½</td></tr>
+<tr><td>winget／Homebrew</td><td>Windows／Mac 的「用一行指令裝軟體」；AI 就是用它替你裝 git 與 gh</td><td>卡 2</td></tr>
+<tr><td>AI agent（代理）</td><td>會自己開檔、改檔、跑指令的 AI（W2 作業說的「會自己動手的 AI」）；今天兩台：Antigravity、Codex</td><td>全程</td></tr>
+<tr><td>Antigravity</td><td>Google 的 agent 桌面版；<b>個人 Gmail、18 歲以上、免費額度每週重算</b>；只能碰你開的那個資料夾</td><td>路線 A</td></tr>
+<tr><td>Implementation Plan（實作計畫）</td><td>它動手前給你看的計畫；讀完再按 <b>Proceed</b>，不同意按 <b>Review</b> 留意見</td><td>卡 4、6、8</td></tr>
+<tr><td>Walkthrough／diff 面板</td><td>做完後的「我改了什麼、怎麼驗」＋逐行差異</td><td>卡 6b</td></tr>
+<tr><td>Terminal Command Auto Execution</td><td>三種：<b>Request Review</b>（每條指令先問你，今天要的）／Proceed in Sandbox／Always Proceed（不問，今天不准）</td><td>開場檢查那道閘</td></tr>
+<tr><td>Permissions（Deny ＞ Ask ＞ Allow）</td><td>七種動作各自可設「一律拒絕／先問／一律允許」；<code>sudo</code> 這種放 Deny</td><td>開場檢查那道閘</td></tr>
+<tr><td>規則檔</td><td>先把要交代的事寫下來：Antigravity 讀 <code>.agents/rules/</code>、Codex 讀 <code>AGENTS.md</code>；<b>沒生效也沒關係，工單裡的界線才是主力</b></td><td>起步包</td></tr>
+<tr><td>Codex（路線 A′）</td><td>ChatGPT 桌面版左上角切過去的 agent；免費方案含、額度沒公布數字；沙箱模式擋到指令時先讀錯誤訊息再決定</td><td>路線 A′</td></tr>
+<tr><td>localStorage</td><td>瀏覽器裡的小抽屜，網頁可以把數字存進去、重新整理還在；v1 app 靠它「記得住」</td><td>卡 6</td></tr>
+<tr><td>工單／需求卡</td><td>目標／背景／輸出／界線四欄（W2 那張）；<b>界線那欄最常被漏</b></td><td>卡 6、8</td></tr>
+<tr><td>A1–A4</td><td>看得懂它打算做什麼／看得懂它做了什麼／破壞性動作先問／拒絕得了越界</td><td>全程</td></tr>
+</table>
+
+<h3>稍微長一點的三件事</h3>
+
+<h4>一、Git 三個動作，今天只用這三個</h4>
+<p>Git 是一套替<b>一個資料夾</b>記歷史的工具。不是整台電腦、也不是雲端硬碟自動備份——你指定哪個資料夾，它就只管那個資料夾。今天全部動作都發生在 <code>my-panel</code> 裡面，所以卡 1 的第一句話才是「只看、不動，告訴我你站在哪」。</p>
+<ol class="steps">
+<li><b>commit（存一版）</b>：把資料夾現在的樣子拍一張快照，附一句「我為什麼改」。這是<b>本機</b>動作——做完你的電腦裡多一筆歷史，網路上還沒有。</li>
+<li><b>push（推上去）</b>：把本機累積的快照送到 GitHub。<b>commit 不等於 push</b>。「我存了」跟「網路上有了」是兩件事，很多人半夜就卡在這裡：自己看得到、同學打開卻是舊的。</li>
+<li><b>回去</b>：分兩種。還沒 commit 的錯，用 <code>restore</code> 一秒拉回上一版；已經 push 出去的錯，<b>不能抹掉</b>，只能再加一筆改回去（<code>revert</code>）。原本那筆錯的留在歷史裡。</li>
+</ol>
+<p>為什麼全程禁止 <code>reset</code>、<code>rebase</code>、<code>force push</code>：這三個會<b>改寫歷史</b>。在「兩個人一起改一份東西」的場合，改寫歷史等於把別人手上的版本弄丟。AI 提議用它們的時候，回一句「不要」——這是今天最容易做到的一次 A4。</p>
+
+<h4>二、Antigravity 畫面上四個位置，跟那道閘</h4>
+<p>這四個位置你要<b>指得出來</b>，比記得住名字有用。按鈕名稱以現場為準，跟這裡寫的對不上很正常（它改版很快）——對不上就看它旁邊的說明，或直接問它「這顆是什麼」。</p>
+<table>
+<tr><th style="width:18%">要練的</th><th style="width:40%">在畫面的哪裡</th><th>你要做的動作</th></tr>
+<tr><td><b>A1</b> 看得懂它打算做什麼</td><td><b>Implementation Plan</b>（實作計畫）那一份</td><td>讀完再按 <b>Proceed</b>。讀不懂就別按</td></tr>
+<tr><td><b>A2</b> 看得懂它做了什麼</td><td>程式碼 <b>diff</b> 與 <b>Walkthrough</b>（做完的變更摘要與怎麼驗）</td><td>對照 diff 跟計畫：<b>它做的跟它說要做的一樣嗎</b></td></tr>
+<tr><td><b>A3</b> 破壞性動作先問</td><td><b>Permissions</b>：Deny ＞ Ask ＞ Allow 三層，動作分七種（讀檔／寫檔／讀網頁／操作網頁／終端機指令／離開沙箱執行／外掛工具）</td><td>確認自己在 <b>Request Review</b>；把 <code>sudo</code> 這種丟進 Deny</td></tr>
+<tr><td><b>A4</b> 拒絕得了越界</td><td>計畫上可以<b>留意見</b>，標頭有一顆 <b>Review</b> 按鈕——不按 Proceed，改把意見送回去</td><td>今天<b>至少做一次</b>：留一句具體的理由、按 Review 退回、看它改了什麼</td></tr>
+</table>
+<p class="note"><b>那道閘：Terminal Command Auto Execution。</b>它有三種模式——<b>Request Review</b>（每條指令先問你）、<b>Proceed in Sandbox</b>（在沙箱裡自動跑，要離開沙箱才問）、<b>Always Proceed</b>（不問）。<b>今天全班要在 Request Review。</b>切到 Always Proceed 之後，它做什麼你都看不到，A1 跟 A3 這兩件就再也練不到了，<b>而且畫面上看不出來</b>。開場時打開設定，跟旁邊的人互相看一眼。</p>
+<p>還有一條它自己畫的線：<b>它預設只能碰你開的那個專案資料夾</b>，碰不到你電腦上別的地方。這不是我們加的限制，是工具設計者也知道「agent 亂跑到專案外面」是主要風險。看得懂這條線為什麼存在，比背四個名詞有用。</p>
+
+<h4>三、<code>gh</code> 是什麼，為什麼 AI 需要它</h4>
+<p>GitHub 是一個網站，你平常用滑鼠在上面點。<code>gh</code>（GitHub CLI，command line interface，命令列介面）是<b>同一套功能的打字版</b>：在終端機打一行字，等於在網站上點好幾下。</p>
+<p>關鍵在這裡：<b>AI agent 沒有手，也沒有滑鼠，它會的是打字。</b>所以你叫它「幫我建一個公開 repo」「幫我開網址」，它靠的就是 <code>gh</code>。沒裝 <code>gh</code>，它只能教你怎麼點，不能替你點——這就是卡 2 要先裝它的原因，也是今天跟前幾週最大的差別。</p>
+<p>而 <code>gh</code> 要先知道「你是誰」才動得了你的帳號，這就是卡 2½ 的 <code>gh auth login</code>：把一把代表你的鑰匙放進這台電腦。<b>鑰匙不經過 AI</b>——它不需要知道你的密碼，也不該知道。之後它下 <code>git push</code>，用的是這把鑰匙。</p>
+<h3>工作坊第一階段的名詞，用我們的例子講一次</h3>
+<p>這張是上面那本字典的<b>續篇</b>：經濟系那套公開教材第一階段 P1–P9 出現過、而上表還沒收的名詞，全部換成今天的例子（資料夾 <code>my-panel</code>、檔案 <code>index.html</code>、喝水計數面板）再講一次。一樣不用背，卡住回來查那一列。</p>
+<table>
+<tr><th style="width:26%">名詞</th><th>一句白話（用今天的例子）</th><th style="width:18%">今天哪張卡</th></tr>
+<tr><td>工作資料夾（working folder）</td><td>你現在開著、準備讓 AI 動手的那個資料夾——今天是 <code>my-panel</code></td><td>卡 1</td></tr>
+<tr><td>完整路徑（full path）</td><td>這個資料夾在電腦裡的完整地址；兩個同名資料夾靠它分辨</td><td>卡 1</td></tr>
+<tr><td>根目錄（root）</td><td>這個專案<b>最上層</b>那一層，不是整顆硬碟的最上層；<code>index.html</code> 要放在這裡</td><td>卡 1、5</td></tr>
+<tr><td>main（主線）</td><td>今天唯一那條正式的版本主線；不開別條</td><td>卡 4、6b、7d</td></tr>
+<tr><td>remote／origin（遠端）</td><td>remote 是網路上那一份版本庫；<code>origin</code> 是本機替主要那個網址取的慣用名字</td><td>卡 4</td></tr>
+<tr><td><code>.gitignore</code></td><td>寫明哪些「還沒收進歷史」的檔不要收進來。它救不了<b>已經</b> commit 出去的東西，也不是保密工具</td><td>卡 4</td></tr>
+<tr><td>git add（放進暫存區）</td><td>把東西排進下一版而已，沒有存版、也沒有上傳</td><td>卡 4、6b</td></tr>
+<tr><td>暫存區（staging area，也叫 index）</td><td>下一筆 commit 要收的那份清單</td><td>卡 4、6b</td></tr>
+<tr><td>staged diff（暫存區差異）</td><td>commit 之前最後一次逐行核對；卡 4 停下來等你確認的就是它</td><td>卡 4、6b</td></tr>
+<tr><td>工作區（working tree）</td><td>你眼前實際看到、正在編輯的那份 <code>index.html</code></td><td>卡 6、7a</td></tr>
+<tr><td>status（現況報告）</td><td>問 Git「現在有什麼變動」；只是看，不會改也不會存</td><td>卡 6、7b</td></tr>
+<tr><td>未追蹤（untracked）</td><td>檔案已經在了，但從來沒被收進任何一版——它多生出來的檔會長這樣</td><td>卡 6</td></tr>
+<tr><td>尚未提交（uncommitted）</td><td>改動還留在工作區或暫存區，還沒成為 commit，所以還退得回去</td><td>卡 6、7a</td></tr>
+<tr><td>Markdown（<code>.md</code>）</td><td>好讀的純文字格式，Git 逐行比得出差異；起步包那張 <code>工單-v1.md</code> 就是</td><td>卡 6</td></tr>
+<tr><td>紅色減號（−）</td><td>改之前有、現在被移除的那一行；<b>不代表</b>那行內容一定錯</td><td>卡 6b、7a</td></tr>
+<tr><td>綠色加號（＋）</td><td>改完才出現的那一行；<b>不代表</b>那行內容一定對</td><td>卡 6b</td></tr>
+<tr><td>commit 訊息（commit message）</td><td>寫給三個月後的你看的說明：改了什麼、為什麼改，不是寫檔名</td><td>卡 4、6b、7c、8</td></tr>
+<tr><td>origin/main</td><td>你這台電腦記著的「GitHub 上那條 main 現在到哪一筆」</td><td>卡 4、6b、7d</td></tr>
+<tr><td>同步（in sync）</td><td>本機 main 與 origin/main 指向<b>同一筆</b>最新的 commit</td><td>卡 4、6b、7d</td></tr>
+<tr><td>本機歷史／遠端歷史</td><td>只存在這台電腦的 commit ／ 已經 push 到 GitHub 的 commit；差一筆，同學打開就是舊的</td><td>卡 6b</td></tr>
+<tr><td>雜湊值（hash）</td><td>Git 給每筆 commit 的身分證號，畫面上通常只顯示前幾碼</td><td>卡 7c、7d</td></tr>
+<tr><td>HEAD</td><td>指向你現在所在的那一筆 commit，不包含還沒 commit 的修改</td><td>卡 7</td></tr>
+<tr><td>HEAD~1</td><td>HEAD 的前一筆；今天是一條直線的歷史，所以就是上一版</td><td>卡 7</td></tr>
+<tr><td>show（只讀舊版）</td><td>直接讀出某一筆 commit 裡的檔案內容，不切換版本、不動 HEAD、不動工作區</td><td>卡 7（只想看、不想改的時候）</td></tr>
+</table>
+<p class="small">這張表改寫自那套公開教材第一階段 P1–P9 的名詞表（CC BY-NC-SA 4.0）。上面那張表收過的（Git、commit、push、diff、restore、revert、reset、版本庫…）這裡不再列一次。</p>
+
+<p class="src">這一節的事實來源：共用教材 <b>P1〈GitHub 共用基礎版〉</b>、<b>P2〈AI Agent 共用基礎版〉</b>與 <b>W2 作業指南</b>。本頁不寫版本號、不拿介面截圖當唯一依據——它們改版很快。</p></section>
+
+<section id="s3"><h2>4　路線 A：八張提示詞卡</h2>
+<p class="gain">這節做完你會有什麼：一個公開倉庫、一個手機打得開的網址、五筆看得懂的歷史。</p>
+<p class="note">這八張卡改寫自那套教材第一階段 P1–P9；原版闖關頁在<a href="https://cwstedctw.github.io/git-ai-workshop/quest.html" target="_blank" rel="noopener">這裡</a>，回家想用它再走一遍也行（它的例子叫 <code>research-practice-project</code>，<b>別跟 <code>my-panel</code> 做在同一個資料夾</b>）。</p>
+<p>每張卡六欄：<b>為什麼／貼這句／它會做什麼／你要看什麼再按同意／幕後指令／卡住怎麼辦</b>，再加一段<b>一步一步做</b>。「幕後指令」是給想看的人，<b>學生不用打</b>——那些是 AI 替你跑的。</p>
+<p class="note"><b>三條全課通用的規矩，每張卡都適用：</b><br>
+① <b>密碼、驗證碼永遠不貼進 AI 的對話框</b>（W2 作業「三件別做的事」第 2 條）。<br>
+② <b>它要跑的每條指令你先看一眼再按同意</b>——看不懂就問它「這條指令會做什麼」。<br>
+③ <b>卡住就把整段錯誤訊息貼給它</b>，再讀它的解釋（第 5 節的出錯四步）。</p>
+<p class="small"><b>路線 A′（Codex）</b>的差異寫在每張卡最後一格紫色方塊裡。多半是「一樣」，只有登入、規則檔、沙箱三處不同。</p>
+
+<div class="card"><h3 id="c1"><span class="tag">卡 1</span>只查看（工作坊 P1）</h3><p class="f"><b class="k">為什麼</b>Git 管理的不是整台電腦，是「一個資料夾」。AI 站錯資料夾，後面每一步都會做在別的地方——動作全對、位置全錯。所以第一句話永遠是「只看、不動」，替後面畫出邊界。這也是 A1（看得懂它打算做什麼）的第一次練習：它連查看都會先告訴你要跑什麼。</p><p class="f"><b class="k">觀念與名詞</b>（改寫自工作坊第一階段 P1）Git 的範圍不是整台電腦，是你<b>現在開著的那個資料夾</b>。AI 站錯路徑，指令本身全對，東西卻做到別的專案去了。所以第一步只讀不寫：把完整路徑、最上層有哪些檔案、這裡是不是版本庫先核對一次，等於替今天後面所有動作先畫好界線。</p><ul class="small"><li><b>工作資料夾</b>（working folder）：你現在開著、準備讓 AI 動手的那個資料夾——今天就是 <code>my-panel</code>。</li><li><b>完整路徑</b>（full path）：這個資料夾在電腦裡的完整地址；兩個同名資料夾靠它分辨。</li><li><b>根目錄</b>（root）：這個專案<b>最上層</b>那一層，不是整顆硬碟的最上層；等一下 <code>index.html</code> 要放在這裡。</li><li><b>版本庫</b>（repository，簡稱 repo）：資料夾加上 Git 替它記的那份歷史；現在還沒有，卡 4 才會建。</li></ul><p class="f"><b class="k">貼這句</b></p><pre>我已經在這裡打開了資料夾 my-panel。請只查看、不要修改任何東西：告訴我這個資料夾的完整路徑、裡面有哪些檔案、這裡現在是不是 Git 版本庫，以及這台電腦有沒有裝 git 跟 gh（GitHub CLI），各是什麼版本。</pre><div class="do"><h4>一步一步做</h4><ol><li>在 Antigravity 用「開啟資料夾」打開你新建的空資料夾 <code>my-panel</code>。畫面左邊會列出這個資料夾裡的東西——現在多半是空的。</li><li>找到可以打字送出的那一格（通常在畫面下方或右側的對話面板），把上面那段話整段貼進去，送出。</li><li>它會在對話裡先列出要跑的幾條指令，畫面上跳出一個黑框問你要不要執行。看一眼指令，按同意。</li><li>跑完它用白話回報四件事：資料夾完整路徑、裡面有哪些檔案、是不是 Git 版本庫、git 與 gh 裝了沒。</li><li>對著它回報的那條路徑念一次，確認結尾真的是 <code>my-panel</code>。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">它會做什麼</b>跑幾條只讀的指令，回報路徑、檔案清單、「not a git repository」、git／gh 有沒有裝。<b>它的計畫應該只有四件事</b>：回報完整路徑、列出根目錄的檔案、檢查有沒有 Git、全程不修改任何檔案——多出第五件就是越界。</p><p class="f"><b class="k">你要看什麼再按同意</b>回報的路徑是不是你剛建的那個 <code>my-panel</code>。「not a git repository」是<b>正常的</b>，還沒開始。三個地方一起對一次：<b>資料夾名稱是 <code>my-panel</code>、Git 顯示「尚未建立」、commit 數是 0</b>。</p><p class="f"><b class="k">幕後指令</b><code>pwd</code>（Windows：<code>Get-Location</code>）、<code>ls</code>、<code>git status</code>、<code>git --version</code>、<code>gh --version</code></p><p class="f"><b class="k">卡住怎麼辦</b>路徑不是你的資料夾 → 停，用「開啟資料夾」重開對的那個。它說「找不到 git」→ 正常，卡 2 就是裝它。</p><div class="alt"><b>路線 A′（Codex）</b>：<b>一樣</b>，提示詞一字不改。差別只在怎麼開：ChatGPT 桌面版<b>左上角</b>的切換器切到 Codex（切對了左上角會顯示 Codex），再用新對話或「開啟資料夾」指到 <code>my-panel</code>。</div></div>
+<div class="card"><h3 id="c2"><span class="tag">卡 2</span>讓它替你裝工具（接 W2 作業）</h3><p class="f"><b class="k">為什麼</b>agent 不只會寫程式——它會查版本、裝工具、讀錯誤訊息、告訴你下一步。這就是 W2 說的「會自己動手的 AI」。但「同意」那一下是你的：Request Review 模式下，每一條會改動這台電腦的指令都會停下來等你按（A3，破壞性動作先問）。今天你會按十幾次同意，<b>每一次都要看得懂它要跑什麼</b>——這比背指令重要。</p><p class="f"><b class="k">貼這句</b></p><pre>這台電腦如果沒有 git 或 gh（GitHub CLI），請幫我安裝：Windows 用 winget（套件 Git.Git 與 GitHub.cli），Mac 用 Homebrew（git 與 gh）。每一條指令執行前先告訴我它會做什麼，等我同意再跑。裝完後告訴我要不要重開終端機或重開這個程式才找得到新指令。不要幫我登入 GitHub，登入我自己來。</pre><div class="do"><h4>一步一步做</h4><ol><li>把那段話貼進去送出。它會先列一張清單：要檢查什麼、要裝什麼、分幾條指令。</li><li>每一條會動到這台電腦的指令，都會跳出一個「要不要執行」的框。<b>看清楚套件名再按同意</b>——今天你會按十幾次。</li><li>安裝時黑框裡會跑進度條，有時候要等一兩分鐘。不要按取消，也不要以為當掉了。</li><li>裝完它會回報版本，並提醒你重開。<b>把 Antigravity 整個關掉再打開</b>，重新用「開啟資料夾」打開 <code>my-panel</code>。</li><li>重開後貼一句「請再確認一次 git 與 gh 的版本」。兩個都報得出版本，這張卡才算過。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">它會做什麼</b>一條一條列出安裝指令，等你按同意；裝完回報版本；提醒你重開。</p><p class="f"><b class="k">你要看什麼再按同意</b>指令裡的套件名是不是 <code>Git.Git</code>、<code>GitHub.cli</code>；有沒有多裝你沒要的東西。</p><p class="f"><b class="k">幕後指令</b><code>winget install --id Git.Git -e</code>、<code>winget install --id GitHub.cli -e</code>；Mac：<code>brew install git gh</code></p><p class="f"><b class="k">卡住怎麼辦</b><code>winget</code> 說找不到 → 去 <a href="https://git-scm.com/download/win" target="_blank" rel="noopener">git-scm.com/download/win</a> 與 <a href="https://cli.github.com" target="_blank" rel="noopener">cli.github.com</a> 下載安裝檔，一路下一步。裝完它還是說「找不到 gh」→ <b>把 Antigravity（或 ChatGPT）整個關掉重開</b>，新裝的指令要重開程式才讀得到。Mac 沒有 Homebrew → 官網的 <code>.pkg</code>。教室網路慢到裝不完 → 今天改走路線 B，<b>同分</b>，回家裝好下週接上。</p><div class="alt"><b>路線 A′（Codex）</b>：<b>提示詞一字不改</b>，但有兩件事不一樣：①Codex 若開著<b>沙箱模式</b>（Sandbox Mode），安裝指令可能被擋——先把錯誤訊息整段讀一次，<b>確定真的是沙箱擋的</b>，才去設定裡把它關掉；沙箱是保護機制，不要一遇到錯誤就先關。②Windows 裝完命令列工具，要把<b>所有</b>終端機關掉重開，新指令才找得到。</div></div>
+<div class="card"><h3 id="c2h"><span class="tag">卡 2½</span>登入 GitHub——這一步人自己做，AI 不碰</h3><p class="f"><b class="k">為什麼</b>登入＝把一把「代表你」的鑰匙放進這台電腦。鑰匙不經過 AI：它不需要知道你的密碼，也不該知道。之後它下 <code>git push</code> 時，用的是這把鑰匙，不是你的密碼。</p><div class="do"><h4>你做的四下（自己開一個終端機：Windows 開始鍵打「終端機」或「PowerShell」；Mac 開「終端機」）</h4><ol><li>打 <code>gh auth login</code>，Enter。</li><li>問你在哪用 GitHub → <b>GitHub.com</b>；問協定 → <b>HTTPS</b>；問要不要用 GitHub 帳號替 Git 認證 → <b>Yes</b>；問怎麼登入 → <b>Login with a web browser</b>。</li><li>畫面給你一組 <b>8 碼</b>（像 <code>ABCD-1234</code>），記下來，按 Enter，瀏覽器會開。</li><li>瀏覽器貼那 8 碼 → <b>Authorize</b>。回到終端機看到 <code>Logged in as 你的帳號</code> 就好了。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">幕後指令</b><code>gh auth login</code></p><p class="note">⚠️ 畫面上的字句以現場為準（<code>gh</code> 版本會變）；順序對不上就一題一題讀。<br>⚠️ 那組 8 碼跟密碼一樣，<b>不要貼進 AI 的對話框</b>。</p><div class="alt"><b>路線 A′（Codex）</b>：<b>一樣</b>。這一步本來就在終端機由你自己做，跟你用哪一台 agent 無關。</div></div>
+<div class="card"><h3 id="c3"><span class="tag">卡 3</span>驗證登入、設定作者名字（工作坊 P2 前置）</h3><p class="f"><b class="k">為什麼</b>每一筆 commit 都會刻著「誰、什麼時候」。這個 repo 等一下會公開，所以信箱用 GitHub 給的 noreply 位址（形如 <code>數字+帳號@users.noreply.github.com</code>），真信箱不上網——這是「公開之前先想個資」的第一次。順便讓 AI 示範一件它很會的事：<b>查資料再幫你設定</b>。</p><p class="f"><b class="k">觀念與名詞</b>（改寫自工作坊第一階段 P2 的前置）Git 跟 GitHub 是<b>兩層</b>：Git 在你這台電腦上記歷史，GitHub 是網路上那一份連得上、看得到的副本。這張卡做的就是兩層之間的對齊——先確認 GitHub 那一層認得你，再把「本機記歷史時要刻誰的名字」設好。名字與信箱會跟著每一筆 commit 一起公開，所以先想個資、再動手。</p><ul class="small"><li><b>Git／GitHub</b>：Git 是本機記歷史的工具；GitHub 是保存遠端那一份、給人看與協作的網站。兩件事，別混成一件。</li><li>其餘 P2 的名詞（<code>main</code>、<code>origin</code>、<code>.gitignore</code>）在<b>卡 4</b>才用得到，到那裡再講。</li></ul><p class="f"><b class="k">貼這句</b></p><pre>請確認我已經登入 GitHub：執行 gh auth status，用白話告訴我結果。接著幫我設定 git 的作者名字與信箱：名字用我的 GitHub 帳號名；信箱請先用 gh api user 查出我的帳號 id 與 login，設成 GitHub 的 noreply 格式「id+login@users.noreply.github.com」，因為這個 repo 會公開、每一筆 commit 都帶著信箱。設定前先把要執行的指令列給我看，等我同意。</pre><div class="do"><h4>一步一步做</h4><ol><li>貼那段話送出。它會先跑 <code>gh auth status</code>，黑框裡出現一段英文。</li><li>它把那段英文翻成白話——你只要找 <code>Logged in to github.com account</code> 後面那個名字是不是你。</li><li>接著它列出兩條設定指令等你同意。看一眼信箱像不像 <code>數字+帳號@users.noreply.github.com</code>。</li><li>按同意，跑完它回報設定好的名字與信箱。這張卡就過了。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">它會做什麼</b>跑 <code>gh auth status</code>；查你的 id 與帳號；列出兩條 <code>git config</code>，等你同意。動手前它應該先再確認一次工作路徑，並提醒你這個 repo 等一下會公開。</p><p class="f"><b class="k">你要看什麼再按同意</b><code>Logged in to github.com account 你的帳號</code>；名字是你的帳號名；信箱是 noreply 那種。另外自己確認一次：<b>路徑沒跑掉、等一下要公開的檔案裡沒有真名與學號</b>，再說「同意執行」。</p><p class="f"><b class="k">幕後指令</b><code>gh auth status</code>、<code>gh api user --jq '.id, .login'</code>、<code>git config --global user.name "帳號"</code>、<code>git config --global user.email "id+帳號@users.noreply.github.com"</code></p><p class="f"><b class="k">卡住怎麼辦</b>說沒登入 → 回卡 2½ 再做一次。noreply 弄不出來 → 先用東華信箱也行（公開的是信箱，不是密碼），下週再改。</p><div class="alt"><b>路線 A′（Codex）</b>：<b>一樣</b>，提示詞一字不改。</div></div>
+<div class="card"><h3 id="c4"><span class="tag">卡 4</span>第一版進倉庫、上 GitHub（工作坊 P2＋P4＋P5）</h3><p class="note"><b>先做一件手動的事</b>：把上週存的單檔複製進 <code>my-panel</code>，改名 <b><code>index.html</code></b>（全小寫）。沒有那個檔 → 起步包 <a href="starter/v0-sample.html">v0-sample.html</a> 改名 <code>index.html</code>，<b>同分</b>。</p><p class="f"><b class="k">為什麼</b>三個動作，三個意思——<code>init</code> 是「這個資料夾從現在起有歷史」；<code>commit</code> 是「存一版、寫一句為什麼」；<code>push</code> 是「把這版放到 GitHub」。<b>commit 不等於 push</b>：「我存了」跟「網路上有了」是兩件事，很多人半夜就卡在這裡。公開 repo 任何人都看得到，所以個資檢查在你這一邊，不在 AI 那一邊。</p><p class="f"><b class="k">觀念與名詞</b>（改寫自工作坊第一階段 P2＋P4＋P5）Git 存一版其實分<b>三層</b>：工作區是你眼前那份 <code>index.html</code>；暫存區是「下一版要收哪些東西」；commit 才是正式的存檔點。<code>add</code> 只是把東西排進暫存區，既沒存版、更沒上網。最後 <code>push</code> 才把已經存好的版本送上 GitHub——<b>還沒 commit 的修改一律不會跟著上去</b>。本機的 main 跟 origin/main 指到同一筆，兩邊才算同步。</p><ul class="small"><li><b>main</b>：今天唯一那條正式的版本主線。</li><li><b>remote／origin</b>（遠端）：remote 是網路上那一份版本庫；<code>origin</code> 是本機替主要那個網址取的慣用名字。</li><li><b>.gitignore</b>：寫明哪些「還沒收進歷史」的檔不要收進來。它救不了<b>已經</b> commit 出去的東西，也不是保密工具。</li><li><b>git add</b>（放進暫存區）：只是排進下一版，沒有存版、也沒有上傳。</li><li><b>暫存區</b>（staging area，也叫 index）：下一筆 commit 要收的那份清單。</li><li><b>staged diff</b>（暫存區差異）：commit 之前最後一次逐行核對——這張卡停下來等你確認的就是它。</li><li><b>origin/main</b>：你這台電腦記著的「GitHub 上那條 main 現在到哪一筆」。</li><li><b>同步</b>：本機 main 與 origin/main 指向<b>同一筆</b>最新的 commit。</li></ul><p class="f"><b class="k">貼這句</b></p><pre>資料夾裡現在有 index.html，是我上週做的面板。請照順序做，每個會改東西的步驟執行前先列出來等我同意：
+1. 替這個資料夾加上 Git 版本控制，分支叫 main。
+2. 建一個 .gitignore，排除 .DS_Store 與 Thumbs.db。
+3. 先把要收進第一版的檔案列給我看，等我確認再 commit，訊息寫「v0：上週的面板放進版本控制」。
+4. 在我的 GitHub 建一個公開 repo 叫 my-panel，把本機的 main 推上去。
+5. 完成後給我 repo 網址與那筆 commit 的網址，我要自己打開確認。
+公開之前提醒我檢查 index.html 裡有沒有真名、學號、電話。</pre><div class="do"><h4>一步一步做</h4><ol><li>先用檔案總管（Mac 是 Finder）把單檔複製進 <code>my-panel</code>、改名 <code>index.html</code>。起步包是 ZIP 的人<b>先解壓縮</b>再用。</li><li>回 Antigravity 貼那段話送出。它會先給一份<b>實作計畫</b>（Implementation Plan），列出打算分幾步做。</li><li>讀完計畫按 <b>Proceed</b>（同意往下）。接著每一條 git 指令都會跳框問你，一條一條看、一條一條按。</li><li>走到「列出要收進第一版的檔案」那一步它會停下來等你確認——清單上<b>只該有</b> <code>index.html</code> 跟 <code>.gitignore</code>。</li><li>全部跑完它給你兩個網址。<b>自己點開</b>，在 GitHub 上看到 <code>index.html</code>、1 筆 commit、Public。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">它會做什麼</b>列計畫 → init → 建 .gitignore → 列檔案等你確認 → commit → <code>gh repo create</code> → push → 回報兩個網址。<b>計畫裡該看得到這幾步</b>：再確認一次路徑、檢查有沒有不該公開的資料、建立 Git 與 <code>.gitignore</code>、<b>列出將納入的檔案並顯示 staged diff 等你確認</b>、才 commit、建立公開 repo 並設定 <code>origin</code>、推送 main、回報網址；全程<b>不改寫遠端歷史</b>。</p><p class="f"><b class="k">你要看什麼再按同意</b>要收的檔案只有 <code>index.html</code> 與 <code>.gitignore</code>；repo 名 <code>my-panel</code>、<b>Public</b>；親自打開網址看到 <code>index.html</code> 與 <b>1 筆 commit</b>。儀表板上四件事一起對：<b>Git 已建立、分支是 main、remote 已連接、commit 數從 0 變成 1</b>，而且工作資料夾是乾淨的（沒有漏在外面沒存到的東西）。</p><p class="f"><b class="k">幕後指令</b><code>git init</code>、<code>git branch -M main</code>、<code>git add index.html .gitignore</code>、<code>git diff --cached --stat</code>、<code>git commit -m "v0：上週的面板放進版本控制"</code>、<code>gh repo create my-panel --public --source=. --push</code>、<code>git remote -v</code></p><p class="f"><b class="k">卡住怎麼辦</b><code>Name already exists</code> → 改叫 <code>my-panel-2</code>（⚠️網址會跟著變，交件時<b>用複製的</b>）。push 被拒 → 叫它先跑 <code>gh auth status</code> 解釋，<b>絕不 force</b>。它把不相關的檔一起加進去 → 「先列檔、拿掉不相關的，再顯示 staged diff」。</p><div class="alt"><b>路線 A′（Codex）</b>：<b>一樣</b>，提示詞一字不改。Codex 動工前讀的規則檔是起步包裡的 <code>AGENTS.md</code>，不是 <code>.agents/rules/</code> 那一份——兩份內容相同，放著就好。</div></div>
+<div class="card"><h3 id="c5"><span class="tag">卡 5</span>開網址（GitHub Pages）</h3><p class="f"><b class="k">為什麼</b>Pages＝GitHub 免費把你 repo 裡的 <code>index.html</code> 放到一個公開網址上。它要把檔案搬到 GitHub 自己的伺服器，通常一兩分鐘，<b>跟你的電腦快不快無關</b>。這一步做完就是今天的夠了線。</p><p class="f"><b class="k">貼這句</b></p><pre>請替 GitHub 上的 my-panel 開啟 GitHub Pages，來源用 main 分支的根目錄。用 gh api 做，執行前先把指令給我看。開好後查詢並回報網站網址（html_url），並告訴我 GitHub 通常要等一兩分鐘才會亮。</pre><div class="do"><h4>一步一步做</h4><ol><li>貼那段話送出。它會列一條 <code>gh api</code> 指令等你同意。</li><li>按同意。黑框會回一大段機器讀的資料（JSON），不用看懂——它會挑出網址用白話告訴你。</li><li><b>拿手機打開那個網址。</b>沒亮就先往下做第 6 段，回頭再重新整理。</li><li>亮了就把那一行網址<b>複製</b>起來，等一下交件要貼。不要用手打。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">它會做什麼</b>一條 POST 開 Pages、一條 GET 查網址；回報 <code>https://帳號.github.io/my-panel/</code>。</p><p class="f"><b class="k">你要看什麼再按同意</b>網址長得像上面那樣；<b>用手機打開</b>看到自己的面板（沒亮就先往下做，回頭重新整理）。</p><p class="f"><b class="k">幕後指令</b><code>gh api -X POST repos/帳號/my-panel/pages -f 'source[branch]=main' -f 'source[path]=/'</code>、<code>gh api repos/帳號/my-panel/pages --jq .html_url</code></p><p class="f"><b class="k">卡住怎麼辦</b>API 回錯 → 改走瀏覽器：repo → <b>Settings → Pages → Build and deployment → Deploy from a branch → main、/(root) → Save</b>。網址開了只看到一行字 → 那是 README，代表找不到 <code>index.html</code>：檔名是不是全小寫、是不是在最外層。一直 404 → 先做第 6 段，回頭 <b>Ctrl＋Shift＋R</b> 強制重新整理。</p><div class="alt"><b>路線 A′（Codex）</b>：<b>一樣</b>，提示詞一字不改。⚠️沙箱模式下「要連出去」的動作會被攔下來請你核准，看到就按同意。</div></div>
+<div class="card"><h3 id="c6"><span class="tag">卡 6</span>讓它做成真的 app（工單 v1）</h3><p class="f"><b class="k">為什麼</b>這是 P5「六件新事」第 ⑤ 件——<b>交出去驗收</b>的姿勢：工單寫清楚 → 看它的計畫 → 讓它做 → 你驗收 → 不對就退回。agent 很強，一張工單能寫出兩百行；但<b>它做得對不對，只有你測得出來</b>（W2 那張三行小表：我預期／實際上／一樣嗎）。工單用的是 W2 的需求卡格式，「界線（不放什麼）」那欄最重要——P5 第 ④ 件：它做錯，先看你少交代了什麼。</p><p class="f"><b class="k">觀念與名詞</b>（改寫自工作坊第一階段 P3＋P6）它說「做完了」只是<b>回報</b>，證據在檔案狀態裡。它改完 <code>index.html</code>，改動還停在<b>工作區</b>——檔案變了，但還沒存成任何一版，所以這一步測壞了不可怕、退得回去。<code>status</code> 是 Git 的現況報告，只是看、不會動到任何東西；它要是多生一個工單沒寫的檔，<code>status</code> 會把那個檔列成「未追蹤」，那就是越界最直接的證據。</p><ul class="small"><li><b>工作區</b>（working tree）：你眼前實際看到、正在編輯的那份檔案狀態。</li><li><b>status</b>（現況報告）：問 Git「現在有什麼變動」；查看它不會修改也不會存檔。</li><li><b>未追蹤</b>（untracked）：檔案已經在了，但從來沒被收進任何一版——多出來的檔會長這樣。</li><li><b>尚未提交</b>（uncommitted）：改動還留在工作區或暫存區，還沒成為 commit。</li><li><b>Markdown（.md）</b>：好讀的純文字格式，Git 逐行比得出差異；起步包那張 <code>工單-v1.md</code> 就是。</li></ul><p class="f"><b class="k">貼這句</b>（起步包 <code>工單-v1.md</code> 就是這段）</p><pre>請照下面這張工單改 index.html。改之前先列出實作計畫（會改哪些檔、分幾步、哪裡你不確定），等我按同意再動手；做完給我改了什麼的摘要，以及我可以怎麼測。
+
+【任務】把 v0 面板做成「我的一週小面板」
+【輸出（我預期看到什麼）】
+1. 最上面顯示今天日期，格式 YYYY-MM-DD。
+2. 原本那顆按鈕還在；按下去的計數重新整理後還在（存在瀏覽器裡）。
+3. 每天自動從 0 開始，但保留最近 7 天的數字，畫成 7 根長條圖，今天那根標出來。
+4. 右上角一顆「深色／淺色」切換，重新整理後記得我的選擇。
+5. 手機直式（寬 360px）不破版、不用左右捲。
+6. 一顆「清除全部資料」按鈕，按下去先在畫面上問我一次再清（不用 alert）。
+【界線（不放什麼）】
+單檔 index.html，CSS 與 JavaScript 都寫在裡面；不連網、不用任何外部套件或字型；不用 alert／confirm／prompt；不放真名、學號、電話；不加動畫與音效；只改 index.html、不新增其他檔案。</pre><div class="do"><h4>一步一步做</h4><ol><li>打開起步包裡的 <code>工單-v1.md</code>（或直接用這裡這段），<b>整段</b>複製貼進對話框送出。</li><li>它會先出一份實作計畫。<b>先別按</b>——數一數它說要改幾個檔，看看有沒有工單界線外的東西（多一個檔、加動畫、連網）。</li><li>沒問題按 <b>Proceed</b>；有問題按 <b>Review</b>，把你不要的那一條寫下來送回去。</li><li>它改完會給你摘要與怎麼測。用瀏覽器打開 <code>index.html</code>，照下面「測五個邊角」逐項試。</li><li>有錯就把錯誤整段貼回去給它修，修完<b>再測一次</b>。它說「好了」不算數，你看到對的結果才算。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">它會做什麼</b>先出一份實作計畫（Antigravity 叫 Implementation Plan）等你按 Proceed；然後改 <code>index.html</code>；最後給摘要與測法。<b>計畫裡要講清楚三件</b>：只會動 <code>index.html</code> 的哪些地方、等你同意才動手、改完<b>先不 commit</b>（存版是下一張卡的事）。</p><p class="f"><b class="k">你要看什麼再按同意</b>計畫只動 <code>index.html</code>；沒有「順便重做整頁」。<b>做完測五個邊角</b>：①連按兩次→加 2？②重新整理→數字還在？③切深色再重新整理→還是深色？④視窗縮到手機寬→不用左右捲？⑤日期是 <code>2026-09-21</code>、不是 <code>Sep 21</code>？再看一次狀態：<b>有「尚未提交的修改」、commit 數跟卡 4 一樣沒變</b>（它不該偷偷幫你存版），而且檔案清單裡沒有工單沒寫的新檔。</p><p class="f"><b class="k">卡住怎麼辦</b>它一次改了三個檔 → 退回：「工單寫只改 index.html，請只改那一個」。跑起來壞了 → 瀏覽器按 F12 → Console 的紅字整段貼給它。它問你要不要用某個套件 → 回「不要，工單寫不連網」。</p><div class="alt"><b>路線 A′（Codex）</b>：<b>一樣</b>，提示詞一字不改。Codex 沒有一個叫 Implementation Plan 的面板，它把計畫寫在對話裡——一樣是<b>讀完再讓它動手</b>。</div></div>
+<div class="card"><h3 id="c6b"><span class="tag">卡 6b</span>讀 diff、存 v1、push（工作坊 P6＋P7）</h3><p class="f"><b class="k">為什麼</b>diff 是你<b>唯一能親眼看見它做了什麼</b>的地方（A2）——紅色減號是拿掉的、綠色加號是新加的。commit 訊息是寫給三個月後的你，那時你完全不記得今天做了什麼。這一版存成一筆，之後才有東西可以回去。</p><p class="f"><b class="k">觀念與名詞</b>（改寫自工作坊第一階段 P6＋P7）紅色減號那幾行是改之前有、現在被拿掉的；綠色加號那幾行是改完才有的。紅綠只告訴你「哪裡不一樣」，<b>不代表對或錯</b>——你要對的是「它動的範圍，跟它先前說要動的一不一樣」。看完就把這一版存起來、推上去，日常的循環才算走完一圈：改 → 看 diff → 放進暫存區 → commit → push。commit 訊息寫「<b>為什麼改</b>」，不是寫檔名。</p><ul class="small"><li><b>紅色減號（−）</b>：改之前有、現在被移除的那一行；不代表那行內容一定錯。</li><li><b>綠色加號（＋）</b>：改完才出現的那一行；不代表那行內容一定對。</li><li><b>commit 訊息</b>（commit message）：寫給三個月後的你看的說明，要看得懂改了什麼、為什麼改。</li><li><b>本機歷史／遠端歷史</b>：只存在這台電腦的 commit ／ 已經 push 到 GitHub 的 commit。兩邊差一筆，同學打開看到的就是舊的。</li></ul><p class="f"><b class="k">貼這句</b></p><pre>測過了，功能正確。請把這次修改的 diff 逐段列給我看，用白話解釋紅色減號與綠色加號各是什麼；然後只把 index.html 存成第二個版本，commit 訊息寫「v1：記得住、七天長條圖、深色模式」，推上 GitHub。推完確認本機 main 跟 origin/main 一致。</pre><div class="do"><h4>一步一步做</h4><ol><li>貼那段話送出。它會把這次改動的 diff 逐段列在對話裡：紅色前面是減號、綠色前面是加號。</li><li>對著看一遍——它動的地方是不是都在你要的範圍裡，有沒有你沒要求的東西混進去。</li><li>接著它列 commit 與 push 的指令等你同意，一條一條按。</li><li>跑完它回報本機跟 GitHub 一致。去 GitHub 看到 <b>2 筆 commit</b>，手機重新整理看到 v1（可能要等一兩分鐘）。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">它會做什麼</b>逐段列出 diff 並用白話解釋紅綠；只把 <code>index.html</code> 存成第二版、推上 GitHub；推完確認本機 main 跟 origin/main 一致。存版前它該先<b>列出全部已暫存的檔案</b>（結果必須只有 <code>index.html</code>）、顯示 staged diff、跟你核對 commit 訊息，再 commit 與 push。</p><p class="f"><b class="k">你要看什麼再按同意</b>GitHub 上 <b>2 筆 commit</b>；手機重新整理看到 v1（可能要等一兩分鐘）。歷史圖多出<b>第二個節點</b>、本機與 GitHub 同步（狀態不再說「領先 1 筆」）。</p><p class="f"><b class="k">幕後指令</b><code>git diff -- index.html</code>、<code>git add index.html</code>、<code>git diff --cached --stat</code>、<code>git commit -m "v1：記得住、七天長條圖、深色模式"</code>、<code>git push origin main</code>、<code>git status --short --branch</code></p><p class="f"><b class="k">卡住怎麼辦</b>GitHub 看不到第二版 → 先分辨是<b>還沒 commit</b>、還是 <b>commit 了沒 push</b>（叫它跑 <code>git status --short --branch</code>）。</p><div class="alt"><b>路線 A′（Codex）</b>：<b>一樣</b>，提示詞一字不改。</div></div>
+<div class="card"><h3 id="c7"><span class="tag">卡 7</span>改壞再救回（工作坊 P9 精簡成四段）</h3><p class="f"><b class="k">為什麼</b>這是全部關卡裡最不該砍的一關——你半夜真正會遇到的就是它。兩種「回去」要分清楚：<b>還沒 commit 的錯</b>，<code>restore</code> 一秒回來；<b>已經 push 出去的錯</b>，不能抹掉、只能「再加一筆改回去」（<code>revert</code>）。歷史不會被改寫——所以三個月後的你、還有 W5 要審你作品的同學，永遠追得到發生了什麼。這也是為什麼全程<b>禁止 reset、rebase、force push</b>。</p><p class="f"><b class="k">觀念與名詞</b>（改寫自工作坊第一階段 P8＋P9）「回去」其實是<b>三個</b>不同動作，處理的是不同狀態：只想看舊版長什麼樣，<code>show</code> 讀出來就好，什麼都不會被改動；<b>還沒 commit</b> 的錯，<code>restore</code> 把工作區那份蓋回上一版（沒存過的內容就這樣沒了）；<b>已經推出去</b>的錯不能抹掉，<code>revert</code> 是再加一筆反向的 commit，原本那筆留在歷史裡。要挑哪一筆，先用 <code>log</code> 看歷史：每筆 commit 都有一組雜湊值當身分證，HEAD 指著你現在站在哪一筆。<b>查歷史只是看</b>，不會移動 HEAD、也不會改到 <code>index.html</code>。</p><ul class="small"><li><b>雜湊值</b>（hash）：Git 給每筆 commit 的身分證號，畫面上通常只顯示前幾碼；7c 要你抄下來的就是它。</li><li><b>HEAD</b>：指向你目前所在的那一筆 commit，不包含還沒 commit 的修改。</li><li><b>HEAD~1</b>：HEAD 的前一筆；今天是一條直線的歷史，所以就是上一版。</li><li><b>show</b>（只讀舊版）：直接讀出某一筆 commit 裡的檔案內容，不切換版本、不動 HEAD、不動工作區。</li><li><b>reset</b>（今天禁用）：把分支重新指到別筆；再加 <code>--hard</code> 還會蓋掉暫存區與工作檔。今天完全用不到，它提議就回「不要」。</li></ul><p class="f"><b class="k">7a 貼這句</b></p><pre>請把 index.html 裡整段 &lt;script&gt;…&lt;/script&gt; 刪掉並存檔，但不要 commit。然後顯示 git diff，告訴我現在工作區有什麼變化。</pre><p class="small">→ 看紅：一整段減號。瀏覽器重開 <code>index.html</code>：按鈕沒反應了。</p><div class="do"><h4>7a 一步一步做</h4><ol><li>貼 7a 那段送出。它會列出要改哪個檔、等你同意。</li><li>同意後它刪掉那一段、存檔，再把 <code>git diff</code> 的結果貼在對話裡——整段紅色減號。</li><li>用瀏覽器打開資料夾裡的 <code>index.html</code>，按那顆按鈕：<b>沒反應了</b>。這是你親手做出來的壞掉。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">7b 貼這句</b></p><pre>我不要這個修改。請用 git restore 把 index.html 救回上一版，然後證明 diff 已經是空的、工作區乾淨。不要用 reset。</pre><p class="small">→ 幕後：<code>git restore -- index.html</code>、<code>git diff</code>、<code>git status --short</code>。</p><div class="do"><h4>7b 一步一步做</h4><ol><li>貼 7b 那段送出。它會列 <code>git restore</code> 那一條等你同意。</li><li>同意後它再跑一次 <code>git diff</code>，這次是空的；<code>git status</code> 說工作區乾淨。</li><li>重新整理瀏覽器裡的 <code>index.html</code>：按鈕又會動了。<b>這一種錯，一秒就回得來。</b></li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">7c 貼這句</b></p><pre>請再把 &lt;script&gt; 那一段刪掉一次，這次 commit（訊息寫「練習：故意刪掉 script」）並推上 GitHub。推完告訴我這筆 commit 的 hash。</pre><p class="small">→ 等一兩分鐘，<b>手機重新整理：網址壞了</b>（按鈕沒反應，但頁面沒有消失——這是「跑得起來但不對」的實體版）。</p><div class="do"><h4>7c 一步一步做</h4><ol><li>貼 7c 那段送出。這次多兩條：commit 跟 push，一樣一條一條按同意。</li><li>它會回報這筆 commit 的 hash（一串英數字，等於這一版的身分證號）。抄下來。</li><li>等一兩分鐘，拿手機重新整理你的網址——<b>壞了</b>：頁面還在，按鈕沒反應。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">7d 貼這句</b></p><pre>剛剛那筆是故意弄壞的。請用 git log 找到它，用 git revert 撤銷它（會新增一筆撤銷 commit，原本那筆留在歷史裡），然後推上 GitHub。全程不准 reset、rebase、force push。做完顯示最近四筆歷史，並確認本機與 origin/main 一致。</pre><p class="small">→ 幕後：<code>git log --oneline -3</code>、<code>git revert --no-edit &lt;hash&gt;</code>、<code>git push origin main</code>、<code>git log --oneline -4</code>、<code>git status --short --branch</code></p><div class="do"><h4>7d 一步一步做</h4><ol><li>貼 7d 那段送出。它先跑 <code>git log</code> 把最近幾筆列出來，指出哪一筆是你故意弄壞的那筆。</li><li>接著列 <code>git revert</code> 與 <code>git push</code> 等你同意。它若提議 reset 或 force push，回一句「<b>不要</b>，今天不准改寫歷史」。</li><li>跑完它顯示最近四筆歷史。手機重新整理：<b>活了</b>。GitHub 的 History 也是四筆。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">你要看什麼</b>四筆歷史 <code>v0／v1／練習：故意刪掉 script／Revert "練習…"</code>；手機重新整理：<b>活了</b>。GitHub 的 History 也是四筆。<br><b>四段各有一個停點</b>，它動手前要先讓你核對：①路徑對、<code>origin</code> 是你自己建的 <code>my-panel</code>、分支是 <code>main</code>；②只讀那一段做完，分支、HEAD、工作區都沒變；③<code>restore</code> 只拿掉你指定的那一段，沒順手動別的；④故意弄壞那筆仍留在歷史裡，<code>revert</code> 是<b>另外新增</b>的一筆，最後本機與 origin/main 同步。證據對不上就回一句「<b>停</b>」。</p><p class="f"><b class="k">卡住怎麼辦</b>revert 說有衝突 → <b>停</b>，不要讓它自己選，舉手。push 被拒 → 叫它 fetch 後解釋差在哪，<b>絕不 force</b>。手機沒變 → 快取，Ctrl＋Shift＋R 或等一下。</p><div class="alt"><b>路線 A′（Codex）</b>：<b>一樣</b>，四段提示詞一字不改。</div></div>
+<div class="card"><h3 id="c8"><span class="tag">卡 8</span>你的功能＋退回它一次（A4）</h3><p class="f"><b class="k">為什麼</b>拒絕得了它，你才是導演。「按一下 Review」不算，<b>寫得出理由</b>才算——這一句就是今天 e學苑 的第三行。這也是快的人的第四關：功能自己出，agent 再強，需求是你的。</p><p class="f"><b class="k">貼這句</b>（底線自己填；例：在面板上加一個「今天一句話」的輸入框，重新整理後還在）</p><pre>我想加一個功能：＿＿＿。請先列實作計畫，不要動手。</pre><p class="small">→ 讀計畫 → <b>一定要退回一次</b>：找一個你不要的（它多加的、或你想改的），按 Review 留一句「<b>我不要 X，因為 Y</b>」→ 它改計畫 → Proceed → 測 →</p><pre>可以了。請只把這次修改 commit，訊息寫「v2：＿＿＿」，推上 GitHub。</pre><div class="do"><h4>一步一步做</h4><ol><li>把底線填成你自己的一句需求，貼進去送出。它<b>只出計畫、不動手</b>。</li><li>讀計畫，挑一件你不要的，按 <b>Review</b>，在意見裡寫「我不要 X，因為 Y」送回去。</li><li>它給你第二版計畫。<b>確認你不要的那件真的拿掉了</b>，才按 Proceed。</li><li>測完沒問題，貼下面第二段話請它 commit 並推上去。GitHub 上會變成五筆歷史。</li></ol><p class="small">字對不上就看它旁邊的說明，或問它「這顆是什麼」。</p></div><p class="f"><b class="k">你要看什麼</b>計畫第二版真的拿掉了你不要的 X；GitHub 五筆歷史。</p><p class="f"><b class="k">沒點子的人</b>從三個裡挑——「今天一句話」欄位（重新整理後還在）／「本週總杯數」一行字／把七天長條圖換成七個圓點。</p><div class="alt"><b>路線 A′（Codex）</b>：<b>一樣</b>，提示詞一字不改。Codex 沒有 Review 按鈕——你直接回一句「我不要 X，因為 Y，請改計畫」，那就是退回。</div></div>
+
+</section>
+
+<section id="s4"><h2>5　路線 B：全程瀏覽器</h2>
+<p class="gain">這節做完你會有什麼：跟路線 A <b>一模一樣</b>的成品——網址、倉庫、看得懂的歷史。<b>分數一樣。</b></p>
+<p>沒帶筆電、用教室機、什麼都沒裝的人走這條。<b>全部在 github.com 的網頁上按</b>；要 AI 幫忙時，另開一個分頁用 ChatGPT 或 Gemini 的網頁版，把工單貼過去，把它產的整份 <code>index.html</code> 貼回 GitHub 的編輯器。</p>
+<table>
+<tr><th style="width:16%">段</th><th>路線 A</th><th>路線 B</th></tr>
+<tr><td>3　裝工具與登入</td><td>裝 git／gh、<code>gh auth login</code></td><td>登入 github.com；沒帳號現場辦（東華信箱）</td></tr>
+<tr><td>4　第一版進倉庫</td><td>卡 4：agent 跑 init／commit／<code>gh repo create</code></td><td>New repository → <code>my-panel</code>、Public、勾 README → Add file → Upload → <code>index.html</code> → Commit</td></tr>
+<tr><td>5　開網址</td><td>卡 5：<code>gh api</code> 開 Pages</td><td>Settings → Pages → Deploy from a branch → main、/(root) → Save</td></tr>
+<tr><td>6　做成真的 app</td><td>卡 6／6b：agent 改、讀 diff、commit</td><td>工單貼給 AI 網頁版 → 複製整份 → 鉛筆編輯 <code>index.html</code> 全選貼上 → Commit changes… 寫訊息 → commit 頁面看紅綠</td></tr>
+<tr><td>7　改壞再救回</td><td>卡 7：restore／revert</td><td>鉛筆 → 刪 <code>&lt;script&gt;</code> 那行 → commit → 手機壞了 → History → 點上一筆 → <code>&lt;&gt;</code> → Raw → 全選複製 → 回 main 鉛筆貼回 → commit「救回」</td></tr>
+<tr><td>8　你的功能</td><td>卡 8：退回一次</td><td>對 AI 網頁版說「我不要 X，因為 Y」再要一版 → 貼回 → commit</td></tr>
+</table>
+
+<h3>B-1　建一個公開的櫃子</h3>
+<ol class="steps">
+<li>開 <a href="https://github.com/new?name=my-panel&amp;visibility=public" target="_blank" rel="noopener">github.com/new</a>。名稱打 <code>my-panel</code>，確認選的是 <b>Public</b>。</li>
+<li>勾 <b>Add a README file</b>，按 <b>Create repository</b>。</li>
+<li>準備你的 <code>index.html</code>：有上週單檔的，把檔名改成 <code>index.html</code>（<b>全小寫</b>）；沒有的用 <a href="starter/v0-sample.html">v0 範例</a>，<b>同分</b>。</li>
+<li>起步包是 ZIP 的人：<b>先在下載夾按右鍵「全部解壓縮」</b>再用。在壓縮檔裡直接雙擊，改了會存到暫存資料夾，關掉就不見。</li>
+<li>回 repo 首頁 → <b>Add file</b> → <b>Upload files</b> → 把 <code>index.html</code> 拖進去。拖不進去的人按框裡的 <b>choose your files</b>。<b>只放那一個檔、放在最外層</b>，不要多包一層資料夾。</li>
+<li>下面 <b>Commit message</b> 欄寫一句<b>這次做了什麼</b>，例如「v0：上週的面板放進版本控制」，按 <b>Commit changes</b>。</li></ol>
+<p class="note"><b>這個 repo 任何人都看得到。</b>不放真名、學號、電話、地址，任何地方都不放密碼。作業跟報告交 e學苑，不放這裡。</p>
+
+<h3>B-2　打開你的網址</h3>
+<ol class="steps">
+<li>repo 上方 <b>Settings</b>（看不到就按分頁列最右邊的「…」）。</li>
+<li>左邊選 <b>Pages</b>。</li>
+<li>Source 選 <b>Deploy from a branch</b>；Branch 選 <b>main</b>、資料夾 <b>/ (root)</b>，按 <b>Save</b>。</li>
+<li>等一兩分鐘，重新整理這一頁，上面會出現「Your site is live at …」。</li>
+<li><b>拿手機打開那個網址</b>——這就是今天的夠了線。</li>
+<li><b>給隔壁同學掃一次</b>，別人的手機也打得開，才算數。</li></ol>
+<table>
+<tr><th style="width:32%">看到什麼</th><th>先查這三件</th></tr>
+<tr><td>404</td><td>①檔名是小寫 <code>index.html</code> 嗎 ②它在最外層嗎 ③來源是 main ＋ /(root) 嗎</td></tr>
+<tr><td>畫面只有一行 <code>my-panel</code></td><td>那是 README 的內容——代表它找不到你的 <code>index.html</code>，查同樣三件</td></tr>
+<tr><td>還是沒亮</td><td>先往下做，回頭再重新整理。它有時候要久一點</td></tr></table>
+<p class="small">免費帳號的 GitHub Pages 要用<b>公開</b> repo。設成私有的話網址開不出來。</p>
+
+<h3>B-3　改一行，看紅綠</h3>
+<ol class="steps">
+<li>repo 裡點開 <code>index.html</code>，按右上角的<b>鉛筆</b>。</li>
+<li>改一句——把名字改成自己的，或換一句文字。</li>
+<li>按 <b>Commit changes…</b>（<b>字尾有三個點</b>）→ <b>跳出來的框</b>裡寫「改成我的名字」→ 再按 <b>Commit changes</b>。</li>
+<li>回檔案頁，按最近一次留版那一列右邊的<b>時鐘圖示</b>（旁邊有數字，那就是 History），點最上面那一筆。</li>
+<li>畫面會分兩色：<b>紅色、前面有 <code>−</code> 的是拿掉的；綠色、前面有 <code>+</code> 的是加上的。</b></li>
+<li>重新整理你的網址，確認線上真的變了。</li></ol>
+<p class="note"><b>每一次留版都要寫一句改了什麼。</b>這句話不是寫給老師看的，是寫給三個月後的你——那時候你完全不記得今天做了什麼。</p>
+
+<h3>B-4　做成真的 app（工單 v1）</h3>
+<ol class="steps">
+<li>把<a href="#app">附錄</a>裡卡 6 那整段工單複製，貼進 ChatGPT 或 Gemini 的網頁版。</li>
+<li>它會回一整份 <code>index.html</code>。<b>先讀它說要做什麼</b>，再往下捲看程式碼。</li>
+<li>把整份複製起來，回 GitHub 點開 <code>index.html</code> → 鉛筆 → <b>全選、貼上</b>（Ctrl＋A 再 Ctrl＋V）。</li>
+<li><b>Commit changes…</b> → 訊息寫「v1：記得住、七天長條圖、深色模式」 → Commit changes。</li>
+<li>重新整理你的網址，照下面五個邊角逐項測：①連按兩次→加 2？②重新整理→數字還在？③切深色再重新整理→還是深色？④手機直式→不用左右捲？⑤日期是 <code>2026-09-21</code>、不是 <code>Sep 21</code>？</li>
+<li>有錯就把狀況三句話（我做了什麼／我預期／實際上）貼回去要它改，再貼一次。</li></ol>
+<p class="small">真的來不及或 AI 網頁版不能用：起步包裡的 <a href="starter/v1-sample.html">v1-sample.html</a> 就是照同一張工單做出來的對照版，貼它也<b>同分</b>——但請先自己試一次，答案看了就不是你的了。</p>
+
+<h3>B-5　先弄壞它，才敢動它</h3>
+<p>今天的重頭戲。<b>全班只弄壞同一個地方</b>，不要各弄各的。</p>
+<ol class="steps">
+<li>點開 <code>index.html</code>，按鉛筆。</li>
+<li><b>把 <code>&lt;script&gt;</code> 那一行整行刪掉。</b>刪這一行一定看得到後果；刪別的地方（像 <code>&lt;/body&gt;</code>）瀏覽器會自己補起來，畫面常常一點事都沒有。</li>
+<li>按 <b>Commit changes…</b>，訊息寫「練習：故意刪掉 script」，再按 <b>Commit changes</b>。</li>
+<li>重新整理你的網址——<b>按鈕按下去沒反應了</b>。頁面還在，但不對——這就是「跑得起來但不對」。</li>
+<li>回頭看你剛剛寫的那句訊息：<b>預期跟實際一樣嗎？</b></li></ol>
+<h4>救回來（四步）</h4>
+<ol class="steps">
+<li>按 History（最近一次留版那列右邊的<b>時鐘圖示</b>）。</li>
+<li>找到<b>弄壞之前</b>那一筆，按那一列右邊的 <b><code>&lt;&gt;</code></b>（View code at this point）——這就是那一版的 <code>index.html</code>。</li>
+<li>右上角按 <b>Raw</b> 旁邊的<b>複製圖示</b>，或按 Raw 之後全選複製。<b>舊版畫面上的鉛筆按不動，那是正常的</b>——舊版不能直接編輯，只能複製走。</li>
+<li>按左上角 repo 名稱回到首頁（<b>main</b>）→ 打開現在的 <code>index.html</code> → 鉛筆 → 全選、貼上 → <b>Commit changes…</b>，訊息寫「救回來：把 script 補回去」。</li></ol>
+<p>重新整理網址，<b>確認按鈕又會動了</b>。</p>
+<p class="note"><b>救回來的方法不是「把剛剛那次刪掉」，是「再加一筆，把它改回去」。</b>壞掉那一筆跟救回來那一筆都還留在歷史裡——這就是為什麼它安全，也是路線 A 的 <code>revert</code> 在做的同一件事。</p>
+<p class="src">這一節的做法照抄自共用教材 <b>P7〈我的第一個 repo〉</b>（<code>background-knowledge/P7-我的第一個repo/</code>）。各科同一份，本週不另寫版本。</p>
+
+<h3>B-6　你的功能＋退回它一次</h3>
+<ol class="steps">
+<li>對 AI 網頁版說：「我想加一個功能：＿＿＿。<b>請先列實作計畫，不要給我程式碼。</b>」</li>
+<li>讀它的計畫，挑一件你不要的，回一句「<b>我不要 X，因為 Y</b>，請改計畫」。</li>
+<li>第二版計畫確認你不要的真的拿掉了，才要它給整份程式碼。</li>
+<li>貼回 GitHub、commit，訊息寫「v2：＿＿＿」。那句「我不要 X，因為 Y」就是交件的第三行。</li></ol></section>
+
+<section id="s5"><h2>6　出錯了，先做這四步</h2>
+<p class="gain">這節做完你會有什麼：下次看到紅字，你知道第一下要做什麼。</p>
+<ol class="steps">
+<li><b>複製錯誤訊息的原文，整段。</b>不要截圖、不要濃縮成「它壞了」。從第一個字到最後一個字，包括看不懂的那些。</li>
+<li><b>貼給 AI，前面加一句情況。</b>例如：「我在做 ___ 的時候出現這段，請先解釋這是什麼意思，再說你會怎麼查。」——先解釋，不是先修。</li>
+<li><b>看它的計畫，不要照單全收。</b>它會列出幾個可能的原因和要做的事。挑最像你情況的那一個；會動到檔案的，先備份再試。</li>
+<li><b>自己驗一次結果，記下四格。</b>原文寫了什麼／它說是什麼／我做了什麼／結果如何。沒解掉也記——下一次問的時候，這四格就是你的問題描述。</li></ol>
+<p><b>沒有紅字的</b>（燈不亮、畫面沒反應、按了沒事）：第一步的「原文」改寫成三句——我做了什麼、我預期看到什麼、實際看到什麼。</p>
+<p><b>怎麼複製</b>：黑色的終端機視窗裡，用滑鼠選取文字後按右鍵（或 Ctrl＋Shift＋C）；Windows 的錯誤對話框按一下再按 Ctrl＋C，會複製整段文字。</p>
+<h4>一個例子</h4>
+<p class="small">原文：<code>404 There isn't a GitHub Pages site here.</code><br>
+它說：這個網址還沒有站——多半是 Pages 還沒發布完，再等一下；如果是檔名或位置錯，看到的會是另一句 File not found。<br>
+我做了：等兩分鐘重新整理；確認檔名是小寫 <code>index.html</code>、在最外層。<br>
+結果：重新整理後就開了。</p>
+<h4>三個常踩的</h4>
+<ul>
+<li><b>貼錯誤訊息之前，先把裡面的個資遮掉</b>：學號、姓名、密碼、token（網站或 AI 發給你的一串登入用亂碼）。檔案路徑裡有你名字的那一段（例如 <code>C:\Users\王小明</code>）換成 <code>C:\Users\me</code>，路徑其他部分留著，AI 要靠它判斷。</li>
+<li><b>上課教室的電腦重開機多半會還原。</b>在教室機器上裝的東西、存的檔案，下次都不在。要留的存自己的雲端或寄給自己。</li>
+<li><b>它說「已修好」不算數。</b>你自己重跑一次、重新整理一次、按一次那顆按鈕，看到對的結果才算。</li>
+</ul>
+<p class="src">四步照抄自共用教材 <b>P9〈電腦出錯了，先做這四步〉</b>（<code>background-knowledge/P9-電腦出錯先做的四步.md</code>）。從這週起，每一門課都這樣做。</p></section>
+
+<section id="s6"><h2>7　今天 AI 做的／你做的</h2>
+<p class="gain">這節做完你會有什麼：講得出今天為什麼要這樣分工。</p>
+<div class="two">
+<div><h3>AI 替你做的 12 件</h3>
+<ol>
+<li>查這台電腦裝了什麼、什麼版本</li>
+<li>裝 git 與 gh</li>
+<li>把資料夾變成版本庫</li>
+<li>寫 <code>.gitignore</code></li>
+<li>寫 commit 訊息</li>
+<li>在 GitHub 建一個公開 repo</li>
+<li>把本機推上去</li>
+<li>開 GitHub Pages、回報網址</li>
+<li>照一張工單寫出一個 app</li>
+<li>把 diff 逐段解釋給你聽</li>
+<li>從歷史裡找到弄壞的那一筆</li>
+<li>用 revert 把它救回來</li>
+</ol></div>
+<div><h3>只有你能做的 6 件</h3>
+<ol>
+<li><b>看計畫</b>——它打算做什麼，你讀得懂嗎（A1）</li>
+<li><b>按同意</b>——每一條指令，你看過才按（A3）</li>
+<li><b>自己登入</b>——鑰匙不經過 AI</li>
+<li><b>測試</b>——它說「完成了」不算，你看到對的結果才算（A2）</li>
+<li><b>退回它一次</b>——拒絕得了，你才是導演（A4）</li>
+<li><b>寫一句理由</b>——為什麼退回。這句收進作業</li>
+</ol></div>
+</div>
+<p class="note">左邊那 12 件，三年前要一個人學半年才做得完；右邊那 6 件，三年後還是只有你做得了。<b>今天練的是右邊那一欄。</b></p></section>
+
+<section id="s7"><h2>8　下週</h2>
+<p class="gain">這節做完你會有什麼：知道今天這個 repo 之後還會怎麼用。</p>
+<p><b>9/28 教師節停課</b>，不補課、不交作業。</p>
+<p><b>10/05 回來做配對互審</b>：兩個人一組，互相打開對方今天建的 repo，<b>對他的東西提出修改</b>，他決定要不要收——就是真正在用 GitHub 的人每天在做的那件事。</p>
+<p class="note"><b>所以今天那幾筆 commit 訊息要寫得像人話。</b>下週來看你 repo 的不是老師，是你同學。他看得懂你為什麼那樣改，才提得出修改。</p>
+<p class="small">你今天建的那個 repo 留著，之後每一週都會用到它。</p></section>
+
+<section id="app"><h2>附錄　八張卡的提示詞總表</h2>
+<p class="gain">這節做完你會有什麼：一頁抄完全部提示詞，落後的人可以直接從這裡追。</p>
+<p>照順序放，跟上面卡片裡的一模一樣。起步包裡的 <code>提示詞.md</code> 也是這一份（純文字，好複製）。</p>
+<h4>卡 1｜只查看</h4><pre>我已經在這裡打開了資料夾 my-panel。請只查看、不要修改任何東西：告訴我這個資料夾的完整路徑、裡面有哪些檔案、這裡現在是不是 Git 版本庫，以及這台電腦有沒有裝 git 跟 gh（GitHub CLI），各是什麼版本。</pre>
+<h4>卡 2｜讓它替你裝工具</h4><pre>這台電腦如果沒有 git 或 gh（GitHub CLI），請幫我安裝：Windows 用 winget（套件 Git.Git 與 GitHub.cli），Mac 用 Homebrew（git 與 gh）。每一條指令執行前先告訴我它會做什麼，等我同意再跑。裝完後告訴我要不要重開終端機或重開這個程式才找得到新指令。不要幫我登入 GitHub，登入我自己來。</pre>
+<h4>卡 3｜驗證登入、設定作者名字</h4><pre>請確認我已經登入 GitHub：執行 gh auth status，用白話告訴我結果。接著幫我設定 git 的作者名字與信箱：名字用我的 GitHub 帳號名；信箱請先用 gh api user 查出我的帳號 id 與 login，設成 GitHub 的 noreply 格式「id+login@users.noreply.github.com」，因為這個 repo 會公開、每一筆 commit 都帶著信箱。設定前先把要執行的指令列給我看，等我同意。</pre>
+<h4>卡 4｜第一版進倉庫、上 GitHub</h4><pre>資料夾裡現在有 index.html，是我上週做的面板。請照順序做，每個會改東西的步驟執行前先列出來等我同意：
+1. 替這個資料夾加上 Git 版本控制，分支叫 main。
+2. 建一個 .gitignore，排除 .DS_Store 與 Thumbs.db。
+3. 先把要收進第一版的檔案列給我看，等我確認再 commit，訊息寫「v0：上週的面板放進版本控制」。
+4. 在我的 GitHub 建一個公開 repo 叫 my-panel，把本機的 main 推上去。
+5. 完成後給我 repo 網址與那筆 commit 的網址，我要自己打開確認。
+公開之前提醒我檢查 index.html 裡有沒有真名、學號、電話。</pre>
+<h4>卡 5｜開網址（GitHub Pages）</h4><pre>請替 GitHub 上的 my-panel 開啟 GitHub Pages，來源用 main 分支的根目錄。用 gh api 做，執行前先把指令給我看。開好後查詢並回報網站網址（html_url），並告訴我 GitHub 通常要等一兩分鐘才會亮。</pre>
+<h4>卡 6｜讓它做成真的 app（工單 v1）</h4><pre>請照下面這張工單改 index.html。改之前先列出實作計畫（會改哪些檔、分幾步、哪裡你不確定），等我按同意再動手；做完給我改了什麼的摘要，以及我可以怎麼測。
+
+【任務】把 v0 面板做成「我的一週小面板」
+【輸出（我預期看到什麼）】
+1. 最上面顯示今天日期，格式 YYYY-MM-DD。
+2. 原本那顆按鈕還在；按下去的計數重新整理後還在（存在瀏覽器裡）。
+3. 每天自動從 0 開始，但保留最近 7 天的數字，畫成 7 根長條圖，今天那根標出來。
+4. 右上角一顆「深色／淺色」切換，重新整理後記得我的選擇。
+5. 手機直式（寬 360px）不破版、不用左右捲。
+6. 一顆「清除全部資料」按鈕，按下去先在畫面上問我一次再清（不用 alert）。
+【界線（不放什麼）】
+單檔 index.html，CSS 與 JavaScript 都寫在裡面；不連網、不用任何外部套件或字型；不用 alert／confirm／prompt；不放真名、學號、電話；不加動畫與音效；只改 index.html、不新增其他檔案。</pre>
+<h4>卡 6b｜讀 diff、存 v1、push</h4><pre>測過了，功能正確。請把這次修改的 diff 逐段列給我看，用白話解釋紅色減號與綠色加號各是什麼；然後只把 index.html 存成第二個版本，commit 訊息寫「v1：記得住、七天長條圖、深色模式」，推上 GitHub。推完確認本機 main 跟 origin/main 一致。</pre>
+<h4>卡 7a｜故意刪掉 script，先別 commit</h4><pre>請把 index.html 裡整段 &lt;script&gt;…&lt;/script&gt; 刪掉並存檔，但不要 commit。然後顯示 git diff，告訴我現在工作區有什麼變化。</pre>
+<h4>卡 7b｜用 restore 救回來</h4><pre>我不要這個修改。請用 git restore 把 index.html 救回上一版，然後證明 diff 已經是空的、工作區乾淨。不要用 reset。</pre>
+<h4>卡 7c｜再刪一次，這次 commit 並推上去</h4><pre>請再把 &lt;script&gt; 那一段刪掉一次，這次 commit（訊息寫「練習：故意刪掉 script」）並推上 GitHub。推完告訴我這筆 commit 的 hash。</pre>
+<h4>卡 7d｜用 revert 撤銷，網址救活</h4><pre>剛剛那筆是故意弄壞的。請用 git log 找到它，用 git revert 撤銷它（會新增一筆撤銷 commit，原本那筆留在歷史裡），然後推上 GitHub。全程不准 reset、rebase、force push。做完顯示最近四筆歷史，並確認本機與 origin/main 一致。</pre>
+<h4>卡 8｜你的功能（先出計畫）</h4><pre>我想加一個功能：＿＿＿。請先列實作計畫，不要動手。</pre>
+<h4>卡 8｜退回一次、改好之後存 v2</h4><pre>可以了。請只把這次修改 commit，訊息寫「v2：＿＿＿」，推上 GitHub。</pre>
+<p class="src">本頁內容來自 W3 設計正本；路線 B 那幾節沿用前一版學生頁與共用教材 P7。八張卡改寫自經濟系 Git 工作坊 P1–P9，在真的班上跑過。</p></section>
+
+</main></body></html>

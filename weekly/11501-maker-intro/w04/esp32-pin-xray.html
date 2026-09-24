@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESP32 腳位透視鏡</title>
+<meta name="description" content="互動模擬 ESP32 數位腳位：輸出時兩顆電晶體怎麼開關、電流怎麼走；輸入時腳位電壓怎麼經另外兩顆電晶體讀成 1 或 0、為什麼會浮接。創客入門第 4 週補充教材。">
+</head>
+<body>
+<style>
+  :root {
+    --c-primary: #D13B00;
+    --c-primary-deep: #A32E00;
+    --c-primary-bright: #FF8A5C;
+    --c-primary-tint: #FFE3D6;
+    --c-primary-pale: #FFF1E8;
+    --c-mint: #7FD8BE;
+    --c-mint-deep: #2F8A6F;
+    --c-mint-tint: #DFF5EE;
+    --c-yellow: #FFD66B;
+    --c-yellow-deep: #9A6B00;
+    --c-yellow-tint: #FFF2CE;
+    --c-violet: #B9A7E0;
+    --c-violet-deep: #6B5BA0;
+    --c-violet-tint: #EFEAFA;
+    --c-alert: #B00020;
+    --c-alert-tint: #FDE7EA;
+    --c-bg: #FFF9F2;
+    --c-surface: #FFFFFF;
+    --c-surface-2: #FBF3EA;
+    --c-line: #EAD8C8;
+    --c-line-soft: #F3E4D8;
+    --c-ink: #2D3142;
+    --c-ink-soft: #4A4F63;
+    --c-ink-faint: #8A8FA3;
+    --c-code-bg: #F4F1FB;
+    --c-code-line: #E4DDF5;
+    --c-code-ink: #3B3457;
+    --c-wire: #2D3142;
+    --c-wire-off: #C9BFB8;
+    --c-chip: #FFFDF9;
+    --c-particle: #FF8A5C;
+    --c-particle-core: #D13B00;
+    --c-electron: #7FD8BE;
+    --c-electron-core: #1F6B54;
+    --c-meter-bg: #1E2230;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #8A8FA3;
+    --c-halo: rgba(45, 49, 66, 0.06);
+    --font-zh: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-primary: #FFA57D;
+      --c-primary-deep: #FFC0A0;
+      --c-primary-bright: #C9532A;
+      --c-primary-tint: #4A2A1C;
+      --c-primary-pale: #33211A;
+      --c-mint: #2A7D63;
+      --c-mint-deep: #7FD8BE;
+      --c-mint-tint: #1E3A33;
+      --c-yellow: #8A6B1E;
+      --c-yellow-deep: #FFD66B;
+      --c-yellow-tint: #3A3220;
+      --c-violet: #6B5BA0;
+      --c-violet-deep: #B9A7E0;
+      --c-violet-tint: #2A2440;
+      --c-alert: #FF6B7A;
+      --c-alert-tint: #4A1F26;
+      --c-bg: #1A1614;
+      --c-surface: #241E1B;
+      --c-surface-2: #2C2522;
+      --c-line: #3A302A;
+      --c-line-soft: #332A25;
+      --c-ink: #F2EAE4;
+      --c-ink-soft: #C9BFB8;
+      --c-ink-faint: #8C817A;
+      --c-code-bg: #1F1B2E;
+      --c-code-line: #332C4A;
+      --c-code-ink: #D6CFEA;
+      --c-wire: #F2EAE4;
+      --c-wire-off: #5E534C;
+      --c-chip: #201B18;
+      --c-particle: #FFB38A;
+      --c-particle-core: #FF7A3D;
+      --c-electron: #9FE8D0;
+      --c-electron-core: #2F8A6F;
+      --c-meter-bg: #12151E;
+      --c-meter-ink: #F4ECD8;
+      --c-meter-dim: #7E8398;
+      --c-halo: rgba(242, 234, 228, 0.07);
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-primary: #FFA57D;
+    --c-primary-deep: #FFC0A0;
+    --c-primary-bright: #C9532A;
+    --c-primary-tint: #4A2A1C;
+    --c-primary-pale: #33211A;
+    --c-mint: #2A7D63;
+    --c-mint-deep: #7FD8BE;
+    --c-mint-tint: #1E3A33;
+    --c-yellow: #8A6B1E;
+    --c-yellow-deep: #FFD66B;
+    --c-yellow-tint: #3A3220;
+    --c-violet: #6B5BA0;
+    --c-violet-deep: #B9A7E0;
+    --c-violet-tint: #2A2440;
+    --c-alert: #FF6B7A;
+    --c-alert-tint: #4A1F26;
+    --c-bg: #1A1614;
+    --c-surface: #241E1B;
+    --c-surface-2: #2C2522;
+    --c-line: #3A302A;
+    --c-line-soft: #332A25;
+    --c-ink: #F2EAE4;
+    --c-ink-soft: #C9BFB8;
+    --c-ink-faint: #8C817A;
+    --c-code-bg: #1F1B2E;
+    --c-code-line: #332C4A;
+    --c-code-ink: #D6CFEA;
+    --c-wire: #F2EAE4;
+    --c-wire-off: #5E534C;
+    --c-chip: #201B18;
+    --c-particle: #FFB38A;
+    --c-particle-core: #FF7A3D;
+    --c-electron: #9FE8D0;
+    --c-electron-core: #2F8A6F;
+    --c-meter-bg: #12151E;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #7E8398;
+    --c-halo: rgba(242, 234, 228, 0.07);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--c-bg); color: var(--c-ink); font-family: var(--font-zh); font-size: 14px; line-height: 1.6; }
+  button, select, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--c-primary); outline-offset: 2px; }
+
+  .wrap { padding: 12px 16px 40px; display: flex; justify-content: center; }
+  .col { width: 100%; max-width: 1400px; display: flex; flex-direction: column; gap: 14px; }
+
+  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--c-primary); white-space: nowrap; }
+  .kicker .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c-primary-bright); }
+  h1 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 800; letter-spacing: .01em; }
+  .appbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 2px 4px 0; }
+  .appbar-title { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .about { font-size: 13px; color: var(--c-ink-soft); max-width: 46em; }
+  .about summary { cursor: pointer; font-weight: 700; color: var(--c-primary); list-style: none; }
+  .about summary::-webkit-details-marker { display: none; }
+  .about summary::before { content: "＋ "; }
+  .about[open] summary::before { content: "－ "; }
+  .about p { margin: 6px 0 0; line-height: 1.6; }
+  .about b { color: var(--c-ink); }
+  h2 { margin: 0; font-size: 18px; font-weight: 800; line-height: 1.3; text-wrap: balance; }
+  h3 { margin: 0; font-size: 14px; font-weight: 800; }
+  .sect { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 14px; padding: 0 16px; }
+  .sect > summary { cursor: pointer; font-size: 16px; font-weight: 800; padding: 12px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  .sect > summary::-webkit-details-marker { display: none; }
+  .sect > summary::after { content: "展開 ＋"; font-size: 12px; font-weight: 600; color: var(--c-ink-faint); }
+  .sect[open] > summary::after { content: "收起 －"; }
+  .sect[open] > summary { border-bottom: 2px solid var(--c-line-soft); margin-bottom: 14px; }
+  .sect > section { padding-bottom: 16px; }
+  .sect .cards, .sect .tablewrap { border: 0; }
+  .sect .card { border-color: var(--c-line-soft); }
+  p { margin: 0; }
+  .muted { color: var(--c-ink-soft); }
+  .tiny { font-size: 13px; color: var(--c-ink-faint); }
+  .term { white-space: nowrap; }
+
+  /* ===== 工作台 ===== */
+  .bench { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 12px; align-items: start; }
+  @media (max-width: 960px) { .bench { grid-template-columns: 1fr; } }
+
+  .stage { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 16px; padding: 8px 12px 8px; display: flex; flex-direction: column; gap: 6px; }
+  .stage svg { width: auto; max-width: 100%; height: auto; max-height: calc(100vh - 300px); min-height: 300px; display: block; margin: 0 auto; }
+  .statebar { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 6px 16px; align-items: center; padding: 2px 4px 6px; border-bottom: 2px solid var(--c-line-soft); }
+  @media (max-width: 1400px) { .statebar { grid-template-columns: auto auto; } .statebar .statehint { grid-column: 1 / -1; } }
+  @media (max-width: 640px) { .statebar { grid-template-columns: 1fr; } }
+  .statebar-left, .statebar-right { display: flex; align-items: center; gap: 8px; }
+  .statebar-lbl { font-size: 13px; font-weight: 700; color: var(--c-ink-soft); white-space: nowrap; }
+  .statebar .seg { min-width: 220px; }
+  .statebar .seg button { padding: 5px 8px; font-size: 14px; }
+  .statebar .seg button small { font-size: 11px; }
+  .statebar select { padding: 5px 8px; font-size: 13px; max-width: 220px; }
+  .check.small { font-size: 13px; }
+  .check.small input { width: 15px; height: 15px; }
+  .statehint { margin: 0; font-size: 13px; line-height: 1.5; color: var(--c-ink); }
+  .statehint b { color: var(--c-primary); }
+  .statehint .look { display: inline-block; margin-left: 6px; padding: 0 8px; border-radius: 10px; background: var(--c-yellow-tint); color: var(--c-ink); font-size: 12px; font-weight: 700; }
+  .statehint .look.alert { background: var(--c-alert-tint); }
+  .why { border-top: 2px solid var(--c-line-soft); padding-top: 4px; }
+  .why > summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); list-style: none; display: flex; align-items: center; gap: 8px; padding: 4px 6px; }
+  .why > summary::-webkit-details-marker { display: none; }
+  .why > summary::before { content: "＋"; color: var(--c-ink-faint); }
+  .why[open] > summary::before { content: "－"; }
+  .why[open] > summary { margin-bottom: 8px; }
+  .why .strip { margin-bottom: 8px; }
+  .badge-alert:empty { display: none; }
+  .badge-alert { font-size: 12px; font-weight: 800; color: var(--c-alert); background: var(--c-alert-tint); padding: 0 8px; border-radius: 10px; }
+  figcaption { font-size: 13px; line-height: 1.55; color: var(--c-ink-soft); padding: 0 6px; }
+  figcaption b { color: var(--c-ink); }
+  figure { margin: 0; }
+
+  .meters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 640px) { .meters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .meter { background: var(--c-meter-bg); color: var(--c-meter-ink); border-radius: 10px; padding: 6px 10px 6px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .meter .lbl { font-size: 11px; letter-spacing: .08em; color: var(--c-meter-dim); }
+  .meter .val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 700; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meter .val small { font-size: 12px; font-weight: 600; margin-left: 4px; color: var(--c-meter-dim); }
+  .meter .sub { font-size: 11px; color: var(--c-meter-dim); min-height: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meter.hot .val { color: #FF6B7A; }
+  .meter.warm .val { color: #FFD66B; }
+
+  .strip { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 300px); gap: 12px; align-items: stretch; }
+  @media (max-width: 720px) { .strip { grid-template-columns: 1fr; } }
+  .formula { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 4px; }
+  .formula .eq { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 16px; font-weight: 700; overflow-x: auto; white-space: nowrap; }
+  .formula .why { font-size: 13px; color: var(--c-ink-soft); }
+
+  .gauge { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
+  .gauge .row { display: flex; justify-content: space-between; font-size: 13px; color: var(--c-ink-soft); }
+  .gauge .bar { position: relative; height: 12px; border-radius: 6px; background: var(--c-line-soft); overflow: hidden; }
+  .gauge .fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--c-mint-deep); border-radius: 6px; transition: width .25s ease, background .25s ease; }
+  .gauge.warm .fill { background: var(--c-yellow-deep); }
+  .gauge.hot .fill { background: var(--c-alert); }
+  .gauge .mark { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--c-ink); opacity: .5; }
+  .gauge .mark-lbl { font-size: 12px; color: var(--c-ink-faint); }
+
+  .notes { display: flex; flex-direction: column; gap: 6px; }
+  .note { font-size: 14px; line-height: 1.55; padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--c-line-soft); background: var(--c-surface-2); color: var(--c-ink-soft); }
+  .note.alert { background: var(--c-alert-tint); border-color: var(--c-alert); color: var(--c-ink); }
+  .note.warn { background: var(--c-yellow-tint); border-color: var(--c-yellow); color: var(--c-ink); }
+  .note.info { background: var(--c-mint-tint); border-color: var(--c-mint); color: var(--c-ink); }
+
+  /* ===== 控制板 ===== */
+  .panel { display: flex; flex-direction: column; gap: 8px; position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; padding-right: 2px; }
+  @media (max-width: 960px) { .panel { position: static; max-height: none; } }
+  .group { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 12px; padding: 8px 12px 10px; display: flex; flex-direction: column; gap: 7px; }
+  .group h3 { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .group h3 .hint { font-size: 12px; font-weight: 600; color: var(--c-ink-faint); letter-spacing: .04em; }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 0; border: 2px solid var(--c-line); border-radius: 12px; overflow: hidden; background: var(--c-surface-2); }
+  .seg button { border: 0; background: transparent; padding: 6px 6px; font-weight: 700; font-size: 13px; line-height: 1.3; color: var(--c-ink-soft); border-right: 2px solid var(--c-line); transition: background .15s, color .15s; }
+  .seg button:last-child { border-right: 0; }
+  .seg button[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; }
+  .seg.mint button[aria-pressed="true"] { background: var(--c-mint-deep); color: #F2FBF7; }
+  .seg.violet button[aria-pressed="true"] { background: var(--c-violet-deep); color: #F6F2FF; }
+  .seg button small { display: block; font-size: 11px; font-weight: 600; opacity: .85; }
+  .seg.big button { padding: 8px 8px; font-size: 18px; font-family: var(--font-mono); }
+  .seg.big button small { font-family: var(--font-zh); font-size: 11px; }
+  .field { display: grid; grid-template-columns: 4.5em 1fr; align-items: center; gap: 6px; font-size: 13px; }
+  .field label { color: var(--c-ink-soft); font-weight: 600; }
+  .field select, .field input[type="range"] { width: 100%; min-width: 0; }
+  select { padding: 5px 8px; border-radius: 8px; border: 2px solid var(--c-line); background: var(--c-surface-2); font-weight: 600; font-size: 13px; }
+  .check { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--c-ink-soft); cursor: pointer; }
+  .check input { width: 18px; height: 18px; accent-color: var(--c-primary); }
+  input[type="range"] { accent-color: var(--c-primary); }
+  .speedrow { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
+  .speedrow .spd { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; min-width: 4em; text-align: right; font-size: 13px; }
+  .btn { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 8px; padding: 4px 10px; font-weight: 700; font-size: 13px; }
+  .btn[aria-pressed="true"] { background: var(--c-ink); color: var(--c-bg); border-color: var(--c-ink); }
+  .adv summary { cursor: pointer; font-weight: 800; font-size: 14px; list-style: none; display: flex; justify-content: space-between; align-items: baseline; }
+  .adv summary::-webkit-details-marker { display: none; }
+  .adv summary .hint { font-size: 12px; font-weight: 600; color: var(--c-ink-faint); }
+  .adv summary::after { content: "＋"; font-weight: 400; color: var(--c-ink-faint); margin-left: 8px; }
+  .adv[open] summary::after { content: "－"; }
+  .adv .inner { display: flex; flex-direction: column; gap: 10px; padding-top: 10px; }
+
+  .code { margin: 0; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 10px 12px; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; color: var(--c-code-ink); overflow-x: auto; white-space: pre; }
+  .code .cm { opacity: .6; }
+  .code .hl { background: var(--c-primary-tint); border-radius: 4px; padding: 0 3px; margin: 0 -3px; }
+
+  /* ===== SVG 元素 ===== */
+  .chip-box { fill: var(--c-chip); stroke: var(--c-line); stroke-width: 2; stroke-dasharray: 8 6; }
+  .lbl { font-family: var(--font-zh); font-size: 12px; fill: var(--c-ink-soft); }
+  .lbl-b { font-family: var(--font-zh); font-size: 12px; font-weight: 700; fill: var(--c-ink); }
+  .lbl-t { font-family: var(--font-zh); font-size: 13px; font-weight: 800; fill: var(--c-ink-faint); letter-spacing: .06em; }
+  .lbl-s { font-family: var(--font-zh); font-size: 11px; fill: var(--c-ink-faint); }
+  .lbl-s2 { font-family: var(--font-zh); font-size: 12px; fill: var(--c-ink-soft); }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .wire { stroke: var(--c-wire); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .wire.off { stroke: var(--c-wire-off); }
+  .wire.thin { stroke-width: 1.8; }
+  .rail-vdd { stroke: var(--c-primary); stroke-width: 3; }
+  .rail-gnd { stroke: var(--c-ink); stroke-width: 3; }
+  .node { fill: var(--c-wire); }
+  .box { fill: var(--c-surface-2); stroke: var(--c-line); stroke-width: 2; }
+  .box-val { fill: var(--c-surface); stroke: var(--c-primary); stroke-width: 2.5; }
+  .digit { font-family: var(--font-mono); font-size: 32px; font-weight: 800; fill: var(--c-primary); }
+  .plate { stroke: var(--c-wire); stroke-width: 3.5; fill: none; }
+  .seg-ch { stroke: var(--c-wire); stroke-width: 3.5; stroke-linecap: butt; }
+  .chan { rx: 3; opacity: 0; transition: opacity .25s; }
+  .chan.p { fill: var(--c-violet-deep); }
+  .chan.n { fill: var(--c-mint-deep); }
+  .chan.on { opacity: .9; }
+  .glow { opacity: 0; transition: opacity .25s; }
+  .glow.p { fill: var(--c-violet); }
+  .glow.n { fill: var(--c-mint); }
+  .glow.on { opacity: .35; }
+  .bodyhead { fill: var(--c-wire); }
+  .chipst { rx: 10; stroke-width: 0; }
+  .chipst.on { fill: var(--c-mint-deep); }
+  .chipst.off { fill: var(--c-wire-off); }
+  .chipst-t { font-family: var(--font-zh); font-size: 11px; font-weight: 800; fill: #FFFFFF; }
+  .res { stroke: var(--c-wire); stroke-width: 2.5; fill: none; stroke-linejoin: round; }
+  .res.off { stroke: var(--c-wire-off); }
+  .sw { stroke: var(--c-wire); stroke-width: 2.5; stroke-linecap: round; transform-box: fill-box; transform-origin: bottom center; transition: transform .3s; }
+  .sw.open { transform: rotate(-38deg); }
+  .sw-dot { fill: var(--c-wire); }
+  .diode { fill: var(--c-surface-2); stroke: var(--c-wire); stroke-width: 2; }
+  .diode-bar { stroke: var(--c-wire); stroke-width: 2.5; }
+  .pad { fill: var(--c-yellow); stroke: var(--c-yellow-deep); stroke-width: 2; }
+  .vpin { font-family: var(--font-mono); font-size: 13px; font-weight: 800; fill: var(--c-ink); }
+  .led-body { stroke: var(--c-wire); stroke-width: 2; }
+  .led-halo { transition: opacity .3s, r .3s; }
+  .ray { stroke: var(--c-yellow-deep); stroke-width: 2; fill: none; transition: opacity .3s; }
+  .rayhead { fill: var(--c-yellow-deep); }
+  .gnd { stroke: var(--c-ink); stroke-width: 2.5; }
+  .term { fill: var(--c-surface); stroke: var(--c-primary); stroke-width: 2.5; }
+  .arrowhead { fill: var(--c-ink-faint); }
+  .chev { fill: var(--c-ink-faint); opacity: .8; }
+  .chev-sig { fill: none; stroke: var(--c-ink-faint); stroke-width: 1.8; stroke-linejoin: round; }
+  .swh { stroke: var(--c-wire); stroke-width: 2.5; stroke-linecap: round; transform-box: fill-box; transform-origin: right center; transition: transform .3s; }
+  .swh.open { transform: rotate(38deg); }
+  .pt { fill: var(--c-particle); }
+  .pt-core { fill: var(--c-particle-core); }
+  .pt.e { fill: var(--c-electron); }
+  .pt-core.e { fill: var(--c-electron-core); }
+  .warnbadge { font-family: var(--font-zh); font-size: 12px; font-weight: 800; fill: var(--c-alert); }
+
+  /* 剖面圖 */
+  .xs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); gap: 18px; }
+  .xs { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .xs h3 { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .xs h3 .tag { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
+  .tag.p { background: var(--c-violet-tint); color: var(--c-violet-deep); border: 1.5px solid var(--c-violet); }
+  .tag.n { background: var(--c-mint-tint); color: var(--c-mint-deep); border: 1.5px solid var(--c-mint); }
+  .xs svg { width: 100%; height: auto; display: block; }
+  .xs .ctl { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; font-size: 14px; font-weight: 600; color: var(--c-ink-soft); }
+  .xs .ctl .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 800; color: var(--c-ink); min-width: 3.6em; text-align: right; }
+  .xs .st { font-size: 14px; padding: 8px 12px; border-radius: 10px; background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); color: var(--c-ink-soft); }
+  .xs .st b { color: var(--c-ink); }
+  .sub-p { fill: var(--c-primary-pale); stroke: var(--c-line); stroke-width: 1.5; }
+  .well-n { fill: var(--c-mint-tint); stroke: var(--c-line); stroke-width: 1.5; }
+  .dop-n { fill: var(--c-mint); stroke: var(--c-mint-deep); stroke-width: 1.5; }
+  .dop-p { fill: var(--c-primary-tint); stroke: var(--c-primary-bright); stroke-width: 1.5; }
+  .oxide { fill: var(--c-yellow); stroke: var(--c-yellow-deep); stroke-width: 1; }
+  .gate { fill: var(--c-ink); }
+  .gate-t { font-family: var(--font-zh); font-size: 12px; font-weight: 800; fill: var(--c-bg); }
+  .metal { fill: var(--c-ink-soft); }
+  .xlbl { font-family: var(--font-zh); font-size: 12px; fill: var(--c-ink-soft); }
+  .xlbl-b { font-family: var(--font-zh); font-size: 12px; font-weight: 800; fill: var(--c-ink); }
+  .xlbl-s { font-family: var(--font-zh); font-size: 11px; fill: var(--c-ink-faint); }
+  .xchan.n { fill: var(--c-mint-deep); }
+  .xchan.p { fill: var(--c-primary); }
+  .field-arrow { stroke: var(--c-yellow-deep); stroke-width: 1.5; fill: none; }
+  .dep { fill: none; stroke: var(--c-ink-faint); stroke-width: 1.3; stroke-dasharray: 4 3; }
+  .carrier.e { fill: var(--c-electron-core); }
+  .carrier.h { fill: var(--c-particle-core); }
+  .carrier-t { font-family: var(--font-mono); font-size: 9px; font-weight: 800; fill: #FFFFFF; }
+  .xs-lead { stroke: var(--c-wire); stroke-width: 2.5; }
+  .xsw { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  /* 疑問卡與數字表 */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 16px; }
+  .card { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 18px; padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .card h3 { font-size: 17px; line-height: 1.4; }
+  .card p { font-size: 14px; color: var(--c-ink-soft); text-wrap: pretty; }
+  .card p b { color: var(--c-ink); }
+  .card .try { margin-top: auto; align-self: flex-start; border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 10px; padding: 6px 12px; font-weight: 700; font-size: 14px; }
+  .card .try:hover { background: var(--c-primary-tint); }
+
+  .tablewrap { overflow-x: auto; background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 18px; }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1.5px solid var(--c-line-soft); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: .08em; color: var(--c-ink-faint); font-weight: 700; background: var(--c-surface-2); }
+  tr:last-child td { border-bottom: 0; }
+  td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+  td .src { color: var(--c-ink-faint); font-size: 13px; }
+
+  .foot { font-size: 12px; color: var(--c-ink-faint); border-top: 2px solid var(--c-line-soft); padding-top: 10px; display: flex; flex-direction: column; gap: 2px; }
+  .foot a { color: var(--c-primary); }
+
+  /* 輸入模式 */
+  [hidden] { display: none !important; }
+  .buf { fill: var(--c-surface-2); stroke: var(--c-wire); stroke-width: 2; stroke-linejoin: round; }
+  .buf.on { fill: var(--c-yellow); stroke: var(--c-yellow-deep); }
+  .digit-s { font-family: var(--font-mono); font-size: 18px; font-weight: 800; fill: var(--c-primary); }
+  .btn-bar { stroke: var(--c-wire); stroke-width: 3.5; stroke-linecap: round; }
+  .btn-cap { fill: var(--c-ink-soft); }
+  .field.off { opacity: .4; pointer-events: none; }
+  .btn.big { width: 100%; padding: 8px; font-size: 15px; }
+  .bubble2 { fill: var(--c-surface); stroke: var(--c-wire); stroke-width: 2; }
+  .chan.on.half { opacity: .45; }
+  .shoot { stroke: var(--c-alert); stroke-width: 6; stroke-linecap: round; opacity: .55; stroke-dasharray: 2 8; animation: shoot 1s linear infinite; }
+  @keyframes shoot { to { stroke-dashoffset: -10; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chan, .glow, .sw, .gauge .fill, .led-halo, .ray { transition: none; }
+    .shoot { animation: none; }
+  }
+</style>
+
+<div class="wrap"><div class="col">
+
+  <header class="appbar">
+    <div class="appbar-title">
+      <span class="kicker"><span class="dot"></span><span>創客入門 · 數位輸出補充</span></span>
+      <h1>一行程式，兩顆開關：ESP32 腳位透視鏡</h1>
+    </div>
+    <details class="about">
+      <summary>這一頁在做什麼</summary>
+      <p>你在 Wokwi 寫 <b>led.value(1)</b>，燈就亮。這一頁把那支腳位切開給你看：晶片裡面其實是<b>上下兩顆電晶體在輪流當開關</b>，電流從哪裡進、往哪裡走、有多大，全部照你的設定即時算給你看。把速度調慢，看電一格一格地流。切到<b>輸入</b>，同一支腳位變成讀按鈕的耳朵，你會看到為什麼沒接電阻時讀到的值會飄。</p>
+    </details>
+  </header>
+
+  <!-- ===== 工作台 ===== -->
+  <section class="bench" aria-label="互動模擬工作台">
+    <div class="stage">
+      <div class="statebar">
+        <div class="statebar-left">
+          <span class="statebar-lbl">這支腳位現在當</span>
+          <div class="seg" role="group" aria-label="腳位方向" id="segIO">
+            <button data-io="out" aria-pressed="true">輸出<small>點燈、驅動東西</small></button>
+            <button data-io="in" aria-pressed="false">輸入<small>讀按鈕、讀訊號</small></button>
+          </div>
+        </div>
+        <div class="statebar-right">
+          <label class="statebar-lbl" for="selPreset">情境</label>
+          <select id="selPreset" aria-label="情境快速切換">
+            <option value="">自己調…</option>
+            <option value="basic">紅燈亮（預設）</option>
+            <option value="noR">拿掉電阻</option>
+            <option value="blue">換成藍燈</option>
+            <option value="sink">燈接 3.3 V、寫 0</option>
+            <option value="od">開汲極＋內建上拉</option>
+            <option value="pullup">讀按鈕：內建上拉</option>
+            <option value="float">讀按鈕：沒接電阻（浮接）</option>
+          </select>
+          <label class="check small"><input type="checkbox" id="chkLegend" checked> 圖例</label>
+        </div>
+        <p class="statehint" id="stateHint" aria-live="polite"></p>
+      </div>
+      <figure>
+        <svg id="schOut" viewBox="0 0 1120 600" role="img" aria-label="ESP32 一支數位腳位當輸出時的內部結構：輸出暫存器的值經一個反相閘控制上方 P 型與下方 N 型兩顆電晶體，接到腳位；腳位外面串電阻與 LED。" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"></path></marker>
+            <marker id="ahRay" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="rayhead"></path></marker>
+            <marker id="ahB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="bodyhead"></path></marker>
+          </defs>
+
+          <!-- 晶片邊界 -->
+          <rect class="chip-box" x="24" y="24" width="720" height="552" rx="18"></rect>
+          <text class="lbl-t" x="44" y="54">ESP32 晶片裡面 · 這一支腳位的單元（手冊叫 pad），這張是「當輸出」：訊號由左往右出去</text>
+          <text class="lbl-t" x="920" y="54" text-anchor="middle">晶片外面（麵包板上）</text>
+
+          <!-- 電源軌 -->
+          <text class="lbl-b" x="84" y="105" text-anchor="end">3.3 V</text>
+          <line class="rail-vdd" x1="92" y1="100" x2="600" y2="100"></line>
+          <text class="lbl-b" x="84" y="525" text-anchor="end">地 0 V</text>
+          <line class="rail-gnd" x1="92" y1="520" x2="600" y2="520"></line>
+
+          <!-- 程式寫的值 → 前級驅動 -->
+          <rect class="box-val" x="40" y="268" width="90" height="74" rx="10"></rect>
+          <text class="lbl-b" x="85" y="286" text-anchor="middle" font-size="11">輸出暫存器</text>
+          <text class="lbl-s" x="85" y="299" text-anchor="middle" font-size="10">程式寫進來的值</text>
+          <text id="valDigit" class="digit" x="85" y="334" text-anchor="middle">1</text>
+
+          <!-- 暫存器 → NOT 閘 → 兩顆電晶體的閘極 -->
+          <line class="wire" x1="130" y1="305" x2="190" y2="305"></line>
+          <text class="lbl-s2" x="160" y="322" text-anchor="middle">訊號切換器</text>
+          <polygon class="buf" points="190,290 190,320 220,305"></polygon>
+          <circle class="bubble2" cx="226" cy="305" r="5"></circle>
+          <text class="lbl-s2" x="205" y="280" text-anchor="middle">反相（NOT）</text>
+          <text id="oeTxt" class="lbl-s2" x="205" y="338" text-anchor="middle">輸出致能（OE）：開</text>
+          <line class="wire thin" x1="231" y1="305" x2="260" y2="305"></line>
+          <circle class="node" cx="260" cy="305" r="4"></circle>
+          <line class="wire thin" x1="260" y1="305" x2="260" y2="200"></line>
+          <line class="wire thin" x1="260" y1="200" x2="300" y2="200"></line>
+          <circle class="sw-dot" cx="300" cy="200" r="3"></circle>
+          <circle class="sw-dot" cx="322" cy="200" r="3"></circle>
+          <line id="odSw" class="swh" x1="322" y1="200" x2="301" y2="200"></line>
+          <line class="wire thin" x1="322" y1="200" x2="386" y2="200"></line>
+          <text id="odTxt" class="lbl-s2" x="311" y="176" text-anchor="middle" font-size="10" style="display:none">開汲極：P 型閘極固定 3.3 V → 永遠關</text>
+          <line class="wire thin" x1="260" y1="305" x2="260" y2="420"></line>
+          <line class="wire thin" x1="260" y1="420" x2="386" y2="420"></line>
+          <text id="gP" class="lbl-s2 mono" x="352" y="194" text-anchor="middle">0 V</text>
+          <text id="gN" class="lbl-s2 mono" x="352" y="414" text-anchor="middle">0 V</text>
+          <!-- 閘極板 -->
+          <line class="plate" x1="386" y1="184" x2="386" y2="216"></line>
+          <line class="plate" x1="386" y1="404" x2="386" y2="436"></line>
+
+          <!-- 上開關 P 型：源極在上接 3.3 V、汲極在下接腳位、基體箭頭朝外並接回源極 -->
+          <rect id="pGlow" class="glow p" x="384" y="168" width="44" height="64" rx="10"></rect>
+          <line class="wire" x1="400" y1="100" x2="400" y2="180"></line>
+          <line class="seg-ch" x1="400" y1="180" x2="400" y2="192"></line>
+          <line class="seg-ch" x1="400" y1="194" x2="400" y2="206"></line>
+          <line class="seg-ch" x1="400" y1="208" x2="400" y2="220"></line>
+          <rect id="pChan" class="chan p" x="394" y="178" width="12" height="44"></rect>
+          <line class="wire thin" x1="400" y1="200" x2="420" y2="200" marker-end="url(#ahB)"></line>
+          <polyline class="wire thin" points="420,200 420,160 400,160"></polyline>
+          <circle class="node" cx="400" cy="160" r="3.5"></circle>
+          <line class="wire" x1="400" y1="220" x2="400" y2="305"></line>
+          <text class="lbl-s mono" x="393" y="146" text-anchor="end">S</text>
+          <text class="lbl-s mono" x="378" y="196" text-anchor="end">G</text>
+          <text class="lbl-s mono" x="393" y="250" text-anchor="end">D</text>
+          <text class="lbl-s mono" x="426" y="182">B</text>
+          <text class="lbl-b" x="434" y="190">上開關（P 型）</text>
+          <rect id="pChip" class="chipst on" x="434" y="197" width="44" height="20"></rect>
+          <text id="pChipT" class="chipst-t" x="456" y="211" text-anchor="middle">開</text>
+          <text id="pNote" class="lbl-s" x="484" y="211">通道相連</text>
+
+          <!-- 下開關 N 型：汲極在上接腳位、源極在下接地、基體箭頭朝內並接回源極 -->
+          <rect id="nGlow" class="glow n" x="384" y="388" width="44" height="64" rx="10"></rect>
+          <line class="wire" x1="400" y1="305" x2="400" y2="400"></line>
+          <line class="seg-ch" x1="400" y1="400" x2="400" y2="412"></line>
+          <line class="seg-ch" x1="400" y1="414" x2="400" y2="426"></line>
+          <line class="seg-ch" x1="400" y1="428" x2="400" y2="440"></line>
+          <rect id="nChan" class="chan n" x="394" y="398" width="12" height="44"></rect>
+          <line class="wire thin" x1="420" y1="420" x2="402" y2="420" marker-end="url(#ahB)"></line>
+          <polyline class="wire thin" points="420,420 420,460 400,460"></polyline>
+          <circle class="node" cx="400" cy="460" r="3.5"></circle>
+          <line class="wire" x1="400" y1="440" x2="400" y2="520"></line>
+          <text class="lbl-s mono" x="393" y="360" text-anchor="end">D</text>
+          <text class="lbl-s mono" x="378" y="416" text-anchor="end">G</text>
+          <text class="lbl-s mono" x="393" y="486" text-anchor="end">S</text>
+          <text class="lbl-s mono" x="426" y="446">B</text>
+          <text class="lbl-b" x="434" y="410">下開關（N 型）</text>
+          <rect id="nChip" class="chipst off" x="434" y="417" width="44" height="20"></rect>
+          <text id="nChipT" class="chipst-t" x="456" y="431" text-anchor="middle">關</text>
+          <text id="nNote" class="lbl-s" x="484" y="431">通道斷開</text>
+          <text class="lbl-s legend" x="44" y="538" font-size="10">手冊圖 6.1-2 的腳位單元＝焊墊、輸出致能 OE、上拉 WPU、下拉 WPD、輸入致能 IE（見「輸入」那張圖），全部在晶片裡；電晶體層是教科書畫法，Espressif 沒公開電路</text>
+          <text class="lbl-s legend" x="44" y="550" font-size="10">符號：G 閘極、S 源極、D 汲極、B 基體（有箭頭的腳，接回源極；箭頭朝內＝N 型、朝外＝P 型）</text>
+          <text class="lbl-s legend" x="44" y="562" font-size="10">暫存器＝程式跟硬體交換值的小格子；訊號切換器＝GPIO 矩陣（決定暫存器接到哪支腳位）；圖中只畫概念，省略 IO_MUX 等細節</text>
+
+          <!-- 腳位節點線 -->
+          <line class="wire" x1="400" y1="305" x2="733" y2="305"></line>
+          <circle class="node" cx="400" cy="305" r="4.5"></circle>
+          <circle class="node" cx="548" cy="305" r="4.5"></circle>
+          <circle class="node" cx="590" cy="305" r="4.5"></circle>
+
+          <!-- 內建上拉 -->
+          <g id="puG">
+            <line class="wire thin" x1="548" y1="100" x2="548" y2="160"></line>
+            <path id="puRes" class="res" d="M548,160 l-8,5 l16,10 l-16,10 l16,10 l-16,10 l16,10 l-16,10 l8,5"></path>
+            <line class="wire thin" x1="548" y1="230" x2="548" y2="240"></line>
+            <circle class="sw-dot" cx="548" cy="240" r="3"></circle>
+            <circle class="sw-dot" cx="548" cy="262" r="3"></circle>
+            <line id="puSw" class="sw open" x1="548" y1="262" x2="548" y2="241"></line>
+            <line class="wire thin" x1="548" y1="262" x2="548" y2="305"></line>
+            <text class="lbl-s" x="536" y="150" text-anchor="end">內建上拉 45 kΩ</text>
+          </g>
+          <!-- 內建下拉 -->
+          <g id="pdG">
+            <line class="wire thin" x1="548" y1="305" x2="548" y2="340"></line>
+            <circle class="sw-dot" cx="548" cy="340" r="3"></circle>
+            <circle class="sw-dot" cx="548" cy="362" r="3"></circle>
+            <line id="pdSw" class="sw open" x1="548" y1="362" x2="548" y2="341"></line>
+            <line class="wire thin" x1="548" y1="362" x2="548" y2="385"></line>
+            <path id="pdRes" class="res" d="M548,385 l-8,5 l16,10 l-16,10 l16,10 l-16,10 l16,10 l-16,10 l8,5"></path>
+            <line class="wire thin" x1="548" y1="455" x2="548" y2="520"></line>
+            <text class="lbl-s" x="536" y="480" text-anchor="end">內建下拉 45 kΩ</text>
+          </g>
+
+          <!-- 保護二極體 -->
+          <line class="wire thin" x1="590" y1="100" x2="590" y2="195"></line>
+          <line class="diode-bar" x1="580" y1="195" x2="600" y2="195"></line>
+          <polygon class="diode" points="580,215 600,215 590,195"></polygon>
+          <line class="wire thin" x1="590" y1="215" x2="590" y2="305"></line>
+          <line class="wire thin" x1="590" y1="305" x2="590" y2="400"></line>
+          <line class="diode-bar" x1="580" y1="400" x2="600" y2="400"></line>
+          <polygon class="diode" points="580,420 600,420 590,400"></polygon>
+          <line class="wire thin" x1="590" y1="420" x2="590" y2="520"></line>
+          <text class="lbl-s" x="610" y="215" text-anchor="middle" transform="rotate(-90 610 215)">保護二極體</text>
+
+          <!-- 腳位焊墊 -->
+          <rect class="pad" x="733" y="294" width="22" height="22" rx="3"></rect>
+          <text id="padLabel" class="lbl-b" x="744" y="280" text-anchor="middle">GPIO16 腳位</text>
+          <text id="vPin" class="vpin" x="744" y="262" text-anchor="middle">3.12 V</text>
+          <g id="oInStub" opacity=".6">
+            <line class="wire thin" x1="672" y1="305" x2="672" y2="240" stroke-dasharray="4 3"></line>
+            <circle class="node" cx="672" cy="305" r="4.5"></circle>
+            <rect class="box" x="622" y="200" width="100" height="40" rx="8"></rect>
+            <text class="lbl-s" x="672" y="214" text-anchor="middle" font-size="10">輸入暫存器也在讀</text>
+            <text id="o_inDigit" class="digit-s" x="672" y="233" text-anchor="middle">1</text>
+            <text class="lbl-s" x="672" y="330" text-anchor="middle" font-size="10">輸入端怎麼讀：切到「輸入」</text>
+          </g>
+
+          <!-- 外部電路 -->
+          <line class="wire" x1="755" y1="305" x2="810" y2="305"></line>
+          <line id="rWire" class="wire" x1="810" y1="305" x2="880" y2="305" style="display:none"></line>
+          <line class="wire" x1="880" y1="305" x2="920" y2="305"></line>
+          <line class="wire" x1="920" y1="305" x2="935" y2="305"></line>
+          <line class="wire" x1="965" y1="305" x2="980" y2="305"></line>
+          <line id="wireEnd" class="wire" x1="980" y1="305" x2="1050" y2="305"></line>
+
+          <!-- 輸出模式：限流電阻＋LED -->
+          <g id="extOut">
+            <path id="rRes" class="res" d="M810,305 l5,-8 l10,16 l10,-16 l10,16 l10,-16 l10,16 l10,-16 l5,8"></path>
+            <text class="lbl" x="845" y="284" text-anchor="middle">限流電阻</text>
+            <text id="rLabel" class="lbl-b mono" x="845" y="336" text-anchor="middle">220 Ω</text>
+            <circle id="ledHalo" class="led-halo" cx="950" cy="305" r="30" fill="#E5322D" opacity="0"></circle>
+            <polygon id="ledTri" class="led-body" points="935,290 935,320 965,305" fill="#E5322D"></polygon>
+            <line id="ledBar" class="diode-bar" x1="965" y1="290" x2="965" y2="320"></line>
+            <g id="ledRays" opacity="0">
+              <line class="ray" x1="956" y1="286" x2="970" y2="270" marker-end="url(#ahRay)"></line>
+              <line class="ray" x1="966" y1="294" x2="982" y2="280" marker-end="url(#ahRay)"></line>
+            </g>
+            <text id="ledLabel" class="lbl-b" x="950" y="346" text-anchor="middle">LED（紅）</text>
+            <text id="ledVf" class="lbl-s" x="950" y="363" text-anchor="middle">順向電壓 1.8 V</text>
+            <text id="ledWarn" class="warnbadge" x="950" y="262" text-anchor="middle" style="display:none">⚠️ 超過 LED 額定</text>
+          </g>
+
+          <g id="endGnd">
+            <line class="wire" x1="1050" y1="305" x2="1050" y2="380"></line>
+            <line class="gnd" x1="1030" y1="380" x2="1070" y2="380"></line>
+            <line class="gnd" x1="1038" y1="390" x2="1062" y2="390"></line>
+            <line class="gnd" x1="1046" y1="400" x2="1054" y2="400"></line>
+            <text class="lbl" x="1050" y="422" text-anchor="middle">地（0 V）</text>
+          </g>
+          <g id="endVdd" style="display:none">
+            <line class="wire" x1="1050" y1="305" x2="1050" y2="158"></line>
+            <circle class="term" cx="1050" cy="152" r="6"></circle>
+            <text class="lbl-b" x="1050" y="140" text-anchor="middle">3.3 V</text>
+            <text class="lbl-s" x="1050" y="126" text-anchor="middle">開發板的 3V3 腳位</text>
+          </g>
+
+          <!-- 方向箭與電流粒子（程式產生） -->
+          <g id="chevronsOut"></g>
+          <g id="particlesOut"></g>
+        </svg>
+        <svg id="schIn" viewBox="0 0 1120 600" role="img" aria-label="ESP32 一支數位腳位當輸入時的內部結構：外面的按鈕或電壓接到腳位，經輸入致能開關到兩顆電晶體組成的輸入緩衝，再送進輸入暫存器讓程式讀到；訊號由右往左。" xmlns="http://www.w3.org/2000/svg" style="display:none">
+          <defs>
+            <marker id="i_ahB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="bodyhead"></path></marker>
+          </defs>
+          <rect class="chip-box" x="24" y="24" width="720" height="552" rx="18"></rect>
+          <text class="lbl-t" x="44" y="54">ESP32 晶片裡面 · 同一支腳位單元，這張是「當輸入」：訊號由右往左讀進來（為了看清楚輸入路徑，輸出級先省略不畫）</text>
+          <text class="lbl-t" x="920" y="54" text-anchor="middle">晶片外面（麵包板上）</text>
+          <text class="lbl-b" x="84" y="105" text-anchor="end">3.3 V</text>
+          <line class="rail-vdd" x1="92" y1="100" x2="700" y2="100"></line>
+          <text class="lbl-b" x="84" y="525" text-anchor="end">地 0 V</text>
+          <line class="rail-gnd" x1="92" y1="520" x2="700" y2="520"></line>
+
+          <!-- 輸入暫存器（訊號終點） -->
+          <rect class="box-val" x="40" y="268" width="110" height="74" rx="10"></rect>
+          <text class="lbl-b" x="95" y="286" text-anchor="middle" font-size="11">輸入暫存器</text>
+          <text class="lbl-s" x="95" y="299" text-anchor="middle" font-size="10">程式讀到的值</text>
+          <text id="i_digit" class="digit" x="95" y="334" text-anchor="middle">1</text>
+          <text id="i_floatBadge" class="warnbadge" x="95" y="256" text-anchor="middle" font-size="11" style="display:none">⚠️ 浮接：值在飄，這是故意的</text>
+          <text class="lbl-s" x="95" y="360" text-anchor="middle" font-size="10">再經訊號切換器給程式</text>
+
+          <!-- 輸入端：用兩顆 FET 示意腳位電壓如何控制輸入緩衝；不展開內部級數（Ted 2026-09-09 拍板） -->
+          <text class="lbl-b" x="400" y="82" text-anchor="middle">輸入緩衝：兩顆電晶體（FET）把腳位電壓跟門檻比</text>
+          <line class="wire" x1="150" y1="305" x2="400" y2="305"></line>
+          <polygon class="chev-sig" points="281,299 269,305 281,311"></polygon>
+          <rect id="i1PGlow" class="glow p" x="386" y="172" width="28" height="56" rx="10"></rect>
+          <line class="wire" x1="400" y1="100" x2="400" y2="180"></line>
+          <line class="seg-ch" x1="400" y1="180" x2="400" y2="192"></line>
+          <line class="seg-ch" x1="400" y1="194" x2="400" y2="206"></line>
+          <line class="seg-ch" x1="400" y1="208" x2="400" y2="220"></line>
+          <rect id="i1PChan" class="chan p" x="394" y="178" width="12" height="44"></rect>
+          <line class="plate" x1="414" y1="184" x2="414" y2="216"></line>
+          <line class="wire thin" x1="450" y1="200" x2="414" y2="200"></line>
+          <line class="wire thin" x1="400" y1="200" x2="380" y2="200" marker-end="url(#i_ahB)"></line>
+          <polyline class="wire thin" points="380,200 380,160 400,160"></polyline>
+          <circle class="node" cx="400" cy="160" r="3"></circle>
+          <line class="wire" x1="400" y1="220" x2="400" y2="305"></line>
+          <rect id="i1NGlow" class="glow n" x="386" y="392" width="28" height="56" rx="10"></rect>
+          <line class="wire" x1="400" y1="305" x2="400" y2="400"></line>
+          <line class="seg-ch" x1="400" y1="400" x2="400" y2="412"></line>
+          <line class="seg-ch" x1="400" y1="414" x2="400" y2="426"></line>
+          <line class="seg-ch" x1="400" y1="428" x2="400" y2="440"></line>
+          <rect id="i1NChan" class="chan n" x="394" y="398" width="12" height="44"></rect>
+          <line class="plate" x1="414" y1="404" x2="414" y2="436"></line>
+          <line class="wire thin" x1="450" y1="420" x2="414" y2="420"></line>
+          <line class="wire thin" x1="380" y1="420" x2="398" y2="420" marker-end="url(#i_ahB)"></line>
+          <polyline class="wire thin" points="380,420 380,460 400,460"></polyline>
+          <circle class="node" cx="400" cy="460" r="3"></circle>
+          <line class="wire" x1="400" y1="440" x2="400" y2="520"></line>
+          <line class="wire thin" x1="450" y1="200" x2="450" y2="420"></line>
+          <circle class="node" cx="450" cy="305" r="4.5"></circle>
+          <circle class="node" cx="400" cy="305" r="4.5"></circle>
+          <rect id="i1PChip" class="chipst off" x="312" y="197" width="54" height="20"></rect>
+          <text id="i1PChipT" class="chipst-t" x="339" y="211" text-anchor="middle">P 關</text>
+          <rect id="i1NChip" class="chipst on" x="312" y="417" width="54" height="20"></rect>
+          <text id="i1NChipT" class="chipst-t" x="339" y="431" text-anchor="middle">N 開</text>
+          <text class="lbl-s mono" x="455" y="196">G</text>
+          <text class="lbl-s mono" x="392" y="150" text-anchor="end">S</text>
+          <text class="lbl-s mono" x="392" y="252" text-anchor="end">D</text>
+          <text class="lbl-s mono" x="392" y="362" text-anchor="end">D</text>
+          <text class="lbl-s mono" x="392" y="488" text-anchor="end">S</text>
+          <text class="lbl-s mono" x="455" y="416">G</text>
+          <text class="lbl-s mono" x="374" y="184" text-anchor="end">B</text>
+          <text class="lbl-s mono" x="374" y="446" text-anchor="end">B</text>
+          <line id="i1Shoot" class="shoot" x1="400" y1="110" x2="400" y2="510" style="display:none"></line>
+
+          <!-- 輸入致能 IE 與腳位節點 -->
+          <line class="wire" x1="450" y1="305" x2="578" y2="305"></line>
+          <polygon class="chev-sig" points="526,299 514,305 526,311"></polygon>
+          <circle class="sw-dot" cx="578" cy="305" r="3"></circle>
+          <circle class="sw-dot" cx="600" cy="305" r="3"></circle>
+          <line id="i_ieSw" class="swh" x1="600" y1="305" x2="579" y2="305"></line>
+          <text class="lbl-s2" x="589" y="288" text-anchor="middle">輸入致能（IE）</text>
+          <line class="wire" x1="600" y1="305" x2="733" y2="305"></line>
+          <polygon class="chev-sig" points="722,299 710,305 722,311"></polygon>
+
+          <!-- 內建上拉／下拉 -->
+          <g id="i_puG">
+            <line class="wire thin" x1="640" y1="100" x2="640" y2="160"></line>
+            <path class="res" d="M640,160 l-8,5 l16,10 l-16,10 l16,10 l-16,10 l16,10 l-16,10 l8,5"></path>
+            <line class="wire thin" x1="640" y1="230" x2="640" y2="240"></line>
+            <circle class="sw-dot" cx="640" cy="240" r="3"></circle>
+            <circle class="sw-dot" cx="640" cy="262" r="3"></circle>
+            <line id="i_puSw" class="sw open" x1="640" y1="262" x2="640" y2="241"></line>
+            <line class="wire thin" x1="640" y1="262" x2="640" y2="305"></line>
+            <text class="lbl-s" x="628" y="150" text-anchor="end">內建上拉 45 kΩ</text>
+          </g>
+          <g id="i_pdG">
+            <line class="wire thin" x1="640" y1="305" x2="640" y2="340"></line>
+            <circle class="sw-dot" cx="640" cy="340" r="3"></circle>
+            <circle class="sw-dot" cx="640" cy="362" r="3"></circle>
+            <line id="i_pdSw" class="sw open" x1="640" y1="362" x2="640" y2="341"></line>
+            <line class="wire thin" x1="640" y1="362" x2="640" y2="385"></line>
+            <path class="res" d="M640,385 l-8,5 l16,10 l-16,10 l16,10 l-16,10 l16,10 l-16,10 l8,5"></path>
+            <line class="wire thin" x1="640" y1="455" x2="640" y2="520"></line>
+            <text class="lbl-s" x="628" y="480" text-anchor="end">內建下拉 45 kΩ</text>
+          </g>
+          <circle class="node" cx="640" cy="305" r="4.5"></circle>
+
+          <!-- 保護二極體 -->
+          <line class="wire thin" x1="690" y1="100" x2="690" y2="195"></line>
+          <line class="diode-bar" x1="680" y1="195" x2="700" y2="195"></line>
+          <polygon class="diode" points="680,215 700,215 690,195"></polygon>
+          <line class="wire thin" x1="690" y1="215" x2="690" y2="305"></line>
+          <line class="wire thin" x1="690" y1="305" x2="690" y2="400"></line>
+          <line class="diode-bar" x1="680" y1="400" x2="700" y2="400"></line>
+          <polygon class="diode" points="680,420 700,420 690,400"></polygon>
+          <line class="wire thin" x1="690" y1="420" x2="690" y2="520"></line>
+          <circle class="node" cx="690" cy="305" r="4.5"></circle>
+          <text class="lbl-s" x="706" y="215" text-anchor="middle" transform="rotate(-90 706 215)">保護二極體</text>
+
+          <!-- 腳位焊墊 -->
+          <rect class="pad" x="733" y="294" width="22" height="22" rx="3"></rect>
+          <text id="i_padLabel" class="lbl-b" x="744" y="280" text-anchor="middle">GPIO5 腳位</text>
+          <text id="i_vPin" class="vpin" x="744" y="262" text-anchor="middle">3.30 V</text>
+
+          <!-- 外部電路 -->
+          <line class="wire" x1="755" y1="305" x2="935" y2="305"></line>
+          <line id="i_wireMid" class="wire" x1="935" y1="305" x2="965" y2="305" style="display:none"></line>
+          <line class="wire" x1="965" y1="305" x2="980" y2="305"></line>
+          <line id="i_wireEnd" class="wire" x1="980" y1="305" x2="1050" y2="305"></line>
+          <!-- 輸入模式：按鈕、外接電阻、可變電阻 -->
+          <g id="extIn">
+            <g id="btnG">
+              <circle class="node" cx="935" cy="305" r="3.5"></circle>
+              <circle class="node" cx="965" cy="305" r="3.5"></circle>
+              <line id="btnBar" class="btn-bar" x1="930" y1="296" x2="970" y2="296"></line>
+              <line id="btnStem" class="wire thin" x1="950" y1="296" x2="950" y2="280"></line>
+              <rect id="btnCap" class="btn-cap" x="941" y="274" width="18" height="6" rx="2"></rect>
+              <text class="lbl-b" x="950" y="346" text-anchor="middle">按鈕</text>
+              <text id="btnState" class="lbl-s" x="950" y="363" text-anchor="middle">放開</text>
+            </g>
+            <g id="extPU" style="display:none">
+              <line class="wire thin" x1="820" y1="305" x2="820" y2="240"></line>
+              <path class="res" d="M820,240 l-8,-5 l16,-10 l-16,-10 l16,-10 l-16,-10 l16,-10 l-16,-10 l8,-5"></path>
+              <line class="wire thin" x1="820" y1="170" x2="820" y2="158"></line>
+              <circle class="term" cx="820" cy="152" r="6"></circle>
+              <text class="lbl-b" x="820" y="140" text-anchor="middle">3.3 V</text>
+              <text class="lbl-s" x="832" y="208">外接上拉 10 kΩ</text>
+            </g>
+            <g id="extPD" style="display:none">
+              <line class="wire thin" x1="820" y1="305" x2="820" y2="370"></line>
+              <path class="res" d="M820,370 l-8,5 l16,10 l-16,10 l16,10 l-16,10 l16,10 l-16,10 l8,5"></path>
+              <line class="wire thin" x1="820" y1="440" x2="820" y2="450"></line>
+              <line class="gnd" x1="800" y1="450" x2="840" y2="450"></line>
+              <line class="gnd" x1="808" y1="460" x2="832" y2="460"></line>
+              <line class="gnd" x1="816" y1="470" x2="824" y2="470"></line>
+              <text class="lbl-s" x="832" y="408">外接下拉 10 kΩ</text>
+            </g>
+            <circle id="extNode" class="node" cx="820" cy="305" r="4.5" style="display:none"></circle>
+            <g id="potG" style="display:none">
+              <circle class="term" cx="1050" cy="152" r="6"></circle>
+              <text class="lbl-b" x="1050" y="140" text-anchor="middle">3.3 V</text>
+              <line class="wire" x1="1050" y1="158" x2="1050" y2="190"></line>
+              <path class="res" d="M1050,190 l-8,5 l16,10 l-16,10 l16,10 l-16,10 l16,10 l-16,10 l8,5"></path>
+              <line class="wire" x1="1050" y1="260" x2="1050" y2="380"></line>
+              <line class="gnd" x1="1030" y1="380" x2="1070" y2="380"></line>
+              <line class="gnd" x1="1038" y1="390" x2="1062" y2="390"></line>
+              <line class="gnd" x1="1046" y1="400" x2="1054" y2="400"></line>
+              <text class="lbl" x="1050" y="422" text-anchor="middle">地（0 V）</text>
+              <polyline id="potWiper" class="wire" points="980,305 1010,305 1042,225" marker-end="url(#i_ahB)"></polyline>
+              <text class="lbl-s" x="1072" y="228">可變電阻</text>
+              <text id="potV" class="vpin" x="1015" y="292" text-anchor="middle">1.65 V</text>
+            </g>
+          </g>
+
+
+          <g id="i_endGnd">
+            <line class="wire" x1="1050" y1="305" x2="1050" y2="380"></line>
+            <line class="gnd" x1="1030" y1="380" x2="1070" y2="380"></line>
+            <line class="gnd" x1="1038" y1="390" x2="1062" y2="390"></line>
+            <line class="gnd" x1="1046" y1="400" x2="1054" y2="400"></line>
+            <text class="lbl" x="1050" y="422" text-anchor="middle">地（0 V）</text>
+          </g>
+          <g id="i_endVdd" style="display:none">
+            <line class="wire" x1="1050" y1="305" x2="1050" y2="158"></line>
+            <circle class="term" cx="1050" cy="152" r="6"></circle>
+            <text class="lbl-b" x="1050" y="140" text-anchor="middle">3.3 V</text>
+            <text class="lbl-s" x="1050" y="126" text-anchor="middle">開發板的 3V3 腳位</text>
+          </g>
+
+          <!-- 圖例 -->
+          <text class="lbl-s legend" x="44" y="534" font-size="10">腳位電壓接在這兩顆電晶體的閘極上；閘極隔著氧化層、不吃電流（手冊：漏電流 ≤ 50 nA），所以「讀」不會影響外面的電路</text>
+          <text class="lbl-s legend" x="44" y="545" font-size="10">輸入、輸出是兩條各自的路，靠 IE／OE 兩個開關決定誰在用（可以同時開）；晶片裡另有訊號切換器，決定哪個內部訊號接到這支腳位（術語：IO_MUX、GPIO 矩陣）</text>
+          <text class="lbl-s legend" x="44" y="556" font-size="10">空心箭頭＝訊號方向（電壓怎麼一路被讀進來）；實心粒子＝真的有電流在流（只在上拉／下拉電阻那條路）</text>
+          <text class="lbl-s legend" x="44" y="567" font-size="10">符號：G 閘極、S 源極、D 汲極、B 基體（箭頭朝內＝N 型、朝外＝P 型）；閘極畫在右邊，因為訊號從右邊進來，跟輸出圖剛好相反</text>
+          <g id="chevronsIn"></g>
+          <g id="particlesIn"></g>
+        </svg>
+        <figcaption id="narr">電從 <b>3.3 V 電源</b> 出發 → 上開關（P 型）→ 腳位 → 限流電阻 → LED → 地。這叫<b>拉電流</b>（source）：電是從腳位「流出去」的。</figcaption>
+      </figure>
+
+      <div class="meters" aria-live="polite">
+        <div class="meter" id="mI"><span class="lbl" id="mIl">電流</span><span class="val" id="mIv">6.0<small>mA</small></span><span class="sub" id="mIs">流過 LED 的量</span></div>
+        <div class="meter" id="mV"><span class="lbl" id="mVl">腳位電壓</span><span class="val" id="mVv">3.12<small>V</small></span><span class="sub" id="mVs">手冊保證高電位 ≥ 2.64 V</span></div>
+        <div class="meter" id="mP"><span class="lbl" id="mPl">電晶體發熱</span><span class="val" id="mPv">1.1<small>mW</small></span><span class="sub" id="mPs">上開關導通電阻 30 Ω</span></div>
+        <div class="meter" id="mL"><span class="lbl" id="mLl">燈</span><span class="val" id="mLv">亮</span><span class="sub" id="mLs">亮度約 49%</span></div>
+      </div>
+
+      <details class="why" id="whyBox">
+        <summary>數字怎麼算 · 額定 · 提醒 <span class="badge-alert" id="alertBadge"></span></summary>
+      <div class="strip">
+        <div class="formula">
+          <span class="tiny" id="eqTitle">電流怎麼算（簡化版：電晶體當一個固定電阻）</span>
+          <span class="eq" id="eq">(3.3 − 1.8) ÷ (30 + 220) ≈ 6.0 mA</span>
+          <span class="why" id="eqWhy">電源電壓減掉 LED 吃掉的順向電壓，剩下的除以路上所有電阻。</span>
+        </div>
+        <div class="gauge" id="gauge">
+          <div class="row"><span id="gaugeLbl">對照這一檔的額定</span><span id="gaugeTxt">6.0 / 20 mA</span></div>
+          <div class="bar"><div class="fill" id="gaugeFill" style="width:30%"></div><div class="mark" id="gaugeM1" style="left:80%"></div><div class="mark" id="gaugeM2" style="left:75%;display:none"></div></div>
+          <span class="mark-lbl" id="gaugeSub">驅動強度第 2 檔（預設），約 20 mA</span>
+        </div>
+      </div>
+
+      <div class="notes" id="notes" aria-live="polite"></div>
+      </details>
+    </div>
+
+    <aside class="panel" aria-label="設定">
+      <div class="group" id="grpOut">
+        <h3>程式寫的值 <span class="hint">led.value( )</span></h3>
+        <div class="seg big" role="group" aria-label="輸出值">
+          <button id="btnV1" aria-pressed="true" data-v="1">1<small>高電位 HIGH</small></button>
+          <button id="btnV0" aria-pressed="false" data-v="0">0<small>低電位 LOW</small></button>
+        </div>
+        <label class="check"><input type="checkbox" id="chkBlink"> 自動閃爍（每 0.5 秒換一次，像課堂那支程式）</label>
+      </div>
+
+      <div class="group" id="grpWire">
+        <h3>燈怎麼接 <span class="hint">同一顆燈，兩種接法</span></h3>
+        <div class="seg mint" role="group" aria-label="接法">
+          <button id="btnSrc" aria-pressed="true" data-w="source">燈接到地<small>寫 1 才亮</small></button>
+          <button id="btnSnk" aria-pressed="false" data-w="sink">燈接到 3.3 V<small>寫 0 才亮</small></button>
+        </div>
+        <div class="field"><label for="selLed">LED 顏色</label>
+          <select id="selLed">
+            <option value="red">紅（順向電壓約 1.8 V）</option>
+            <option value="yellow">黃（約 2.0 V）</option>
+            <option value="green">綠（約 2.1 V）</option>
+            <option value="blue">藍（約 3.0 V）</option>
+            <option value="white">白（約 3.1 V）</option>
+          </select></div>
+        <div class="field"><label for="selR">限流電阻</label>
+          <select id="selR">
+            <option value="0">沒有電阻（0 Ω）</option>
+            <option value="100">100 Ω</option>
+            <option value="220" selected>220 Ω（課堂用）</option>
+            <option value="330">330 Ω</option>
+            <option value="1000">1 kΩ</option>
+            <option value="10000">10 kΩ</option>
+          </select></div>
+        <div class="field"><label for="selPin">腳位</label>
+          <select id="selPin">
+            <option value="16">GPIO16（套件上的紅燈）</option>
+            <option value="12">GPIO12（套件上的黃燈）</option>
+            <option value="13">GPIO13（套件上的綠燈）</option>
+            <option value="2">GPIO2（很多開發板的內建燈）</option>
+          </select></div>
+      </div>
+
+      <div class="group" id="grpIn" hidden>
+        <h3>外面接什麼 <span class="hint">btn.value( )</span></h3>
+        <div class="field"><label for="selInWiring">接法</label>
+          <select id="selInWiring">
+            <option value="btn_gnd">按鈕：一端接腳位、一端接地</option>
+            <option value="btn_vdd">按鈕：一端接腳位、一端接 3.3 V</option>
+            <option value="pot">可變電阻分壓：自己給一個電壓</option>
+          </select></div>
+        <div id="rowBtn" style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn big" id="btnPress" aria-pressed="false">現在：放開（點一下按住）</button>
+          <label class="check"><input type="checkbox" id="chkAuto"> 自動按放（每 0.8 秒換一次）</label>
+        </div>
+        <div class="field" id="fldPot" hidden><label for="rngPot">給的電壓</label>
+          <div class="speedrow" style="grid-template-columns:1fr auto"><input type="range" id="rngPot" min="0" max="3.3" step="0.05" value="1.65" aria-label="外部電壓"><span class="spd" id="potTxt">1.65 V</span></div></div>
+        <div class="field"><label>外接電阻</label>
+          <div class="seg mint" role="group" aria-label="外接電阻" id="segExt">
+            <button data-x="none" aria-pressed="true">不接</button>
+            <button data-x="up" aria-pressed="false">10 kΩ 上拉</button>
+            <button data-x="down" aria-pressed="false">10 kΩ 下拉</button>
+          </div></div>
+        <div class="field"><label for="selPinIn">腳位</label>
+          <select id="selPinIn">
+            <option value="5">GPIO5（套件上的按鍵 A）</option>
+            <option value="0">GPIO0（開發板上的 BOOT 鍵）</option>
+            <option value="34">GPIO34（只能輸入，沒有內建上下拉）</option>
+          </select></div>
+        <p class="tiny">內建的上拉／下拉電阻在下面「晶片裡的設定」裡開。</p>
+      </div>
+
+      <details class="adv group" id="advBox">
+        <summary>晶片裡的設定 <span class="hint">進階，平常用預設就好</span></summary>
+        <div class="inner">
+          <div class="field" id="fldMode"><label>輸出方式</label>
+            <div class="seg violet" role="group" aria-label="輸出方式">
+              <button id="btnPP" aria-pressed="true" data-m="pp">推挽<small>上下兩顆都用</small></button>
+              <button id="btnOD" aria-pressed="false" data-m="od">開汲極<small>只用下面那顆</small></button>
+            </div></div>
+          <div class="field" id="fldDrive"><label>驅動強度</label>
+            <div class="seg violet" role="group" aria-label="驅動強度" id="segDrive">
+              <button data-d="0" aria-pressed="false">0<small>約 5 mA</small></button>
+              <button data-d="1" aria-pressed="false">1<small>約 10 mA</small></button>
+              <button data-d="2" aria-pressed="true">2<small>約 20 mA</small></button>
+              <button data-d="3" aria-pressed="false">3<small>約 40 mA</small></button>
+            </div></div>
+          <div class="field"><label>內建電阻</label>
+            <div class="seg violet" role="group" aria-label="內建上拉下拉" id="segPull">
+              <button data-p="none" aria-pressed="true">不用</button>
+              <button data-p="up" aria-pressed="false">上拉</button>
+              <button data-p="down" aria-pressed="false">下拉</button>
+            </div></div>
+        </div>
+      </details>
+
+      <div class="group" id="grpView">
+        <h3>觀看方式</h3>
+        <div class="speedrow">
+          <input type="range" id="rngSpeed" min="0.05" max="2" step="0.05" value="0.3" aria-label="慢動作倍率">
+          <span class="spd" id="spdTxt">0.30×</span>
+          <button class="btn" id="btnPause" aria-pressed="false">暫停</button>
+        </div>
+        <label class="check"><input type="checkbox" id="chkE"> 畫電子真正的走向（跟習慣的電流方向相反）</label>
+        <details class="about"><summary>粒子速度只是示意</summary><p>真實世界裡，電子在銅線裡挪動得很慢（大約每秒不到一公釐），但「推」的力量幾乎是光速傳過去的，所以燈是瞬間亮。粒子的快慢在這裡只代表「電流多大」。</p></details>
+      </div>
+
+      <details class="adv group" id="codeBox">
+        <summary>對應的 MicroPython <span class="hint">照你的設定即時改</span></summary>
+        <div class="inner"><pre class="code" id="code"></pre></div>
+      </details>
+    </aside>
+  </section>
+
+  <!-- ===== 放大看電晶體 ===== -->
+  <details class="sect">
+  <summary>放大看那兩顆開關：電晶體裡面長什麼樣</summary>
+  <section class="xs-wrap" aria-label="電晶體剖面圖">
+    <div class="xsw" style="margin-bottom:14px">
+      <div>
+        <p class="muted" style="margin-top:0;max-width:52em">它們叫<span class="term">「金屬氧化物半導體場效電晶體」</span>（MOSFET），三隻腳的名字很像水利工程：<b>源極</b>（source，水源）、<b>汲極</b>（drain，出水口）、<b>閘極</b>（gate，水閘）；第四隻腳<b>基體</b>（body）在晶片裡接回源極。名字裡的「金屬」是早年的做法，ESP32 這種 40 nm 製程的閘極其實是<b>多晶矽</b>；不變的是閘極跟通道之間隔著一層<b>絕緣的氧化層</b>，所以閘極只靠「電壓」隔空施力，本身幾乎不吃電流，手冊上寫輸入漏電流不到 50 nA。這就是為什麼一小片晶片能用電壓去指揮電流，而不是用電流去推電流。</p>
+      </div>
+      <label class="check"><input type="checkbox" id="chkLink" checked> <span id="linkLbl">跟著上面的電路動（取消就能自己拉閘極電壓）</span></label>
+    </div>
+    <div class="xs-grid">
+      <div class="xs">
+        <h3>下開關：N 型 <span class="tag n">通道裡跑的是電子</span></h3>
+        <svg id="xsN" viewBox="0 0 460 320" role="img" aria-label="N 型電晶體剖面：P 型基板上有兩塊 N 型區域當源極與汲極，中間隔著氧化層的閘極加正電壓時，底下聚集電子形成通道。" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="ctl"><label for="rngN">閘極電壓</label><input type="range" id="rngN" min="0" max="3.3" step="0.1" value="0" disabled><span class="v" id="vN">0.0 V</span></div>
+        <div class="st" id="stN"></div>
+      </div>
+      <div class="xs">
+        <h3>上開關：P 型 <span class="tag p">通道裡跑的是電洞</span></h3>
+        <svg id="xsP" viewBox="0 0 460 320" role="img" aria-label="P 型電晶體剖面：N 型井裡有兩塊 P 型區域當源極與汲極，源極接 3.3 V；閘極電壓被拉低時，底下聚集電洞形成通道。" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="ctl"><label for="rngP">閘極電壓</label><input type="range" id="rngP" min="0" max="3.3" step="0.1" value="0" disabled><span class="v" id="vP">0.0 V</span></div>
+        <div class="st" id="stP"></div>
+      </div>
+    </div>
+    <p class="tiny" style="margin-top:10px">「門檻電壓」畫成約 1 V 只是示意，ESP32 的製程數字沒有公開；手冊寫的是 TSMC 低功耗 40 nm 製程，電晶體的尺度大約是頭髮直徑的千分之一等級。晶片裡真正的開關是很多條這樣的細通道並聯起來，驅動強度調高＝多開幾條通道一起導通，所以等效電阻變小。</p>
+  </section>
+  </details>
+
+  <!-- ===== 六個常見疑問 ===== -->
+  <details class="sect">
+  <summary>六個上課常被問的問題，用上面的模擬自己答</summary>
+  <section aria-label="常見疑問">
+    <div class="cards">
+      <div class="card">
+        <h3>LED 為什麼一定要串電阻？</h3>
+        <p>LED 自己幾乎不擋電流。把電阻拿掉，路上就只剩電晶體自己那一點點導通電阻（15 到 130 Ω）在擋，電流會衝到<b>幾十毫安培</b>，超過腳位額定。<b>Wokwi 不會報錯</b>，但實體板會發燙、腳位或 LED 可能就此壞掉。</p>
+        <button class="try" data-preset="noR">試試看：拿掉電阻</button>
+      </div>
+      <div class="card">
+        <h3>藍光、白光 LED 為什麼在 3.3 V 特別暗？</h3>
+        <p>紅燈只吃掉約 1.8 V，藍燈要 3.0 V 才肯亮。3.3 V 扣掉 3.0 V 只剩 0.3 V 給電阻，<b>220 Ω 只能流 1 毫安培多</b>。要亮一點就換小一點的電阻，多小要看電流表，別憑感覺。</p>
+        <button class="try" data-preset="blue">試試看：換成藍燈</button>
+      </div>
+      <div class="card">
+        <h3>為什麼有些板子要寫 0 燈才亮？</h3>
+        <p>燈的另一頭接到 3.3 V 的話，腳位寫 1 時兩端都是 3.3 V、沒有電位差、不流；寫 0 時電才從 3.3 V 經過燈<b>灌進腳位</b>、走下開關到地。這叫<b>灌電流</b>（sink）。很多開發板的內建燈就是這樣接的。</p>
+        <button class="try" data-preset="sink">試試看：燈接到 3.3 V 再寫 0</button>
+      </div>
+      <div class="card">
+        <h3>「開汲極」是什麼？什麼時候用？</h3>
+        <p>把上開關拆掉，腳位只會做兩件事：<b>拉到地</b>，或<b>放手</b>。放手時電位交給外面的上拉電阻決定。好處是很多顆晶片可以共用同一條線（I²C 就是這樣）。只靠內建的 45 kΩ 上拉點燈？試了就知道有多暗。</p>
+        <button class="try" data-preset="od">試試看：開汲極＋內建上拉</button>
+      </div>
+      <div class="card">
+        <h3>按鈕放開時，讀到的值為什麼會亂跳？</h3>
+        <p>按下去腳位被接到地，讀 0 很穩；放開後腳位<b>誰都沒接</b>，電位隨旁邊的雜訊飄，手指靠近都會變。這叫<b>浮接</b>（floating）。解法是給它一條「預設的路」：按鈕接地就開上拉、按鈕接 3.3 V 就開下拉，內建的或外面接一顆都行。</p>
+        <button class="try" data-preset="float">試試看：不接電阻，放開按鈕</button>
+      </div>
+      <div class="card">
+        <h3>開了上拉，為什麼按下去反而讀到 0？</h3>
+        <p>上拉電阻平常把腳位輕輕拉到 3.3 V，所以放開讀 1；按下去按鈕直接把腳位接到地，讀 0。「按下＝0」是<b>反著的</b>，但很正常，程式就寫 <b>if btn.value() == 0</b>。按住時只有幾十微安培流過上拉電阻，所以電阻用幾十 kΩ 就夠。</p>
+        <button class="try" data-preset="pullup">試試看：內建上拉＋按鈕接地</button>
+      </div>
+    </div>
+  </section>
+  </details>
+
+  <!-- ===== 數字從哪裡來 ===== -->
+  <details class="sect">
+  <summary>數字從哪裡來</summary>
+  <section aria-label="數字出處">
+    <p class="muted" style="margin-bottom:14px;max-width:52em">模擬用的每個數字都有出處；標 ⚠️ 的是為了畫圖做的簡化，實體板量到的值會有出入，所以之後要拿三用電表實際量一次。</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>數字</th><th>值</th><th>出處與備註</th></tr></thead>
+        <tbody>
+          <tr><td>驅動強度四檔</td><td class="num">約 5 / 10 / 20 / 40 mA</td><td>ESP32 Series Datasheet v5.3，腳位表附註 8；預設第 2 檔。</td></tr>
+          <tr><td>電晶體等效導通電阻（模型用）</td><td class="num">130 / 60 / 30 / 15 Ω</td><td>MicroPython ESP32 quickref 對 DRIVE_0 到 DRIVE_3 的說明。<span class="src">⚠️ 上下兩顆在這裡用同一組數字，真實晶片略有差異。</span></td></tr>
+          <tr><td>高電位輸出電壓下限</td><td class="num">0.8 × 3.3 = 2.64 V</td><td>Datasheet 表 5-3（3.3 V、25 °C）。</td></tr>
+          <tr><td>低電位輸出電壓上限</td><td class="num">0.1 × 3.3 = 0.33 V</td><td>同上。</td></tr>
+          <tr><td>拉電流上限（最強檔）</td><td class="num">40 mA；GPIO16／17 為 20 mA</td><td>表 5-3 IOH：VDD3P3_CPU 與 VDD3P3_RTC 電源域 40 mA，VDD_SDIO 電源域 20 mA。GPIO16、GPIO17 屬 VDD_SDIO。</td></tr>
+          <tr><td>灌電流上限（最強檔）</td><td class="num">28 mA</td><td>表 5-3 IOL，量測條件 VOL = 0.495 V。</td></tr>
+          <tr><td>內建上拉／下拉電阻</td><td class="num">45 kΩ（典型）</td><td>表 5-3 RPU、RPD；換算約 75 µA。</td></tr>
+          <tr><td>輸入漏電流</td><td class="num">≤ 50 nA</td><td>表 5-3 IIH、IIL，這就是閘極幾乎不吃電流的證據。</td></tr>
+          <tr><td>高電位輸入門檻</td><td class="num">≥ 0.75 × 3.3 = 2.475 V</td><td>表 5-3 VIH；低於這個值，手冊不保證讀到 1。</td></tr>
+          <tr><td>低電位輸入門檻</td><td class="num">≤ 0.25 × 3.3 = 0.825 V</td><td>表 5-3 VIL；高於這個值，手冊不保證讀到 0。中間那段是「不保證區」。</td></tr>
+          <tr><td>腳位單元裡有什麼</td><td class="num">焊墊、IE、OE、WPU、WPD</td><td>ESP32 TRM v5.8 圖 6.1-2「Internal Structure of a Pad」，手冊只給到這個方塊圖。<span class="src">⚠️ 電晶體層（反相閘、輸出的兩顆電晶體、輸入緩衝的兩顆電晶體）是教科書 CMOS 腳位的標準畫法，Espressif 沒公開實際電路。</span></td></tr>
+          <tr><td>只能輸入的腳位</td><td class="num">GPIO34–39</td><td>TRM v5.8 §6.10 附註：這些腳位「沒有輸出驅動器，也沒有內建上拉／下拉電路」；MicroPython quickref 同。</td></tr>
+          <tr><td>Pin.OUT 時輸入也開著</td><td class="num">GPIO_MODE_INPUT_OUTPUT</td><td>MicroPython 原始碼 ports/esp32/machine_pin.c：Pin.OUT 對應 INPUT_OUTPUT、Pin.OPEN_DRAIN 對應 INPUT_OUTPUT_OD，所以 led.value() 讀得回腳位實際電位。</td></tr>
+          <tr><td>外接電阻與可變電阻（模型用）</td><td class="num">10 kΩ</td><td><span class="src">⚠️ 常見選擇，不是唯一答案。</span></td></tr>
+          <tr><td>腳位允許電壓</td><td class="num">−0.3 ～ 3.6 V</td><td>表 5-1 絕對最大額定。超過會經保護二極體倒灌，所以不能直接接 5 V。</td></tr>
+          <tr><td>LED 順向電壓</td><td class="num">紅 1.8 / 黃 2.0 / 綠 2.1 / 藍 3.0 / 白 3.1 V</td><td><span class="src">⚠️ 一般 5 mm LED 的常見典型值，依型號與電流不同；模擬把它當固定值。</span></td></tr>
+          <tr><td>LED 常見額定電流</td><td class="num">20 mA</td><td><span class="src">⚠️ 一般指示用 LED 的常見值，實際看零件規格書。</span></td></tr>
+          <tr><td>門檻電壓</td><td class="num">約 1 V</td><td><span class="src">⚠️ 只是畫剖面圖用的示意值，ESP32 製程參數未公開。</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tiny" style="margin-top:10px">其他簡化：電晶體當成固定電阻（真實是一條曲線）、忽略溫度影響、忽略保護二極體的漏電；圖中的輸入緩衝與訊號切換器只畫概念，省略 IO_MUX、訊號切換與讀取路徑的實際細節，輸入緩衝只畫一級電晶體、不標內部極性；手冊也沒提遲滯。</p>
+  </section>
+  </details>
+
+  <footer class="foot">
+    <span>資料來源：Espressif《ESP32 Series Datasheet》v5.3（2026-07）表 5-1、表 5-3 與腳位表附註 8；Espressif《ESP32 Technical Reference Manual》v5.8 第 6 章圖 6.1-2 與 §6.10；MicroPython 官方文件 ESP32 quickref「Pins and GPIO」與原始碼 ports/esp32/machine_pin.c。</span>
+    <span>國立東華大學通識課《創客入門—智慧生活裝置實作》教材，配合第 4 週「數位輸出與燈光控制」使用。</span>
+  </footer>
+
+</div></div>
+
+<script>
+(function () {
+  'use strict';
+  var VDD = 3.3, RPU = 45000, REXT = 10000, RPOT = 10000;
+  var VIH = 0.75 * VDD, VIL = 0.25 * VDD;          // 手冊表 5-3：2.475 V／0.825 V
+  var RON = [130, 60, 30, 15], RATE = [5, 10, 20, 40];
+  var PINS_OUT = {
+    16: { label: 'GPIO16', led: 'red',    domain: 'VDD_SDIO',   cap: 20 },
+    12: { label: 'GPIO12', led: 'yellow', domain: 'VDD3P3_RTC', cap: 40 },
+    13: { label: 'GPIO13', led: 'green',  domain: 'VDD3P3_RTC', cap: 40 },
+    2:  { label: 'GPIO2',  led: 'blue',   domain: 'VDD3P3_RTC', cap: 40 }
+  };
+  var PINS_IN = {
+    5:  { label: 'GPIO5' },
+    0:  { label: 'GPIO0' },
+    34: { label: 'GPIO34', noPull: true }
+  };
+  var LEDS = {
+    red:    { n: '紅', vf: 1.8, c: '#E5322D' },
+    yellow: { n: '黃', vf: 2.0, c: '#F2B01E' },
+    green:  { n: '綠', vf: 2.1, c: '#34B233' },
+    blue:   { n: '藍', vf: 3.0, c: '#2D7DF6' },
+    white:  { n: '白', vf: 3.1, c: '#E9E4D6' }
+  };
+  var reduced = false;
+  try { reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+  var S = { io: 'out', value: 1, mode: 'pp', drive: 2, pull: 'none', wiring: 'source', pin: 16, led: 'red', r: 220,
+            inWiring: 'btn_gnd', pressed: false, extPull: 'none', vpot: 1.65, autoPress: false, pinIn: 5,
+            speed: reduced ? 0 : 0.3, paused: false, electrons: false, blink: false, link: true, vgN: 0, vgP: 0 };
+
+  function $(id) { return document.getElementById(id); }
+  function fmtI(mA) {
+    if (mA <= 0) return { v: '0', u: 'mA' };
+    if (mA < 1) return { v: Math.round(mA * 1000).toString(), u: 'µA' };
+    if (mA >= 100) return { v: Math.round(mA).toString(), u: 'mA' };
+    return { v: mA.toFixed(1), u: 'mA' };
+  }
+  function fmtOhm(r) { return r >= 1000 ? (r / 1000) + ' kΩ' : r + ' Ω'; }
+
+  /* ---------- 輸出模式的電路模型 ---------- */
+  function solve(s) {
+    var ron = RON[s.drive], led = LEDS[s.led], pin = PINS_OUT[s.pin];
+    var pOn = (s.mode === 'pp' && s.value === 1);
+    var nOn = (s.value === 0);
+    var Gp = 0, Gn = 0;
+    if (pOn) Gp += 1 / ron;
+    if (nOn) Gn += 1 / ron;
+    if (s.pull === 'up') Gp += 1 / RPU;
+    if (s.pull === 'down') Gn += 1 / RPU;
+    var G = Gp + Gn, floating = (G === 0);
+    var Vth = floating ? 0 : VDD * Gp / G, Rth = floating ? Infinity : 1 / G;
+    var I = 0, Vpin = 0, reason = '';
+    if (s.wiring === 'source') {
+      if (floating) { I = 0; Vpin = 0; reason = 'float'; }
+      else {
+        I = (Vth - led.vf) / (Rth + s.r);
+        if (I <= 0) { I = 0; reason = (Vth < 0.5) ? 'nodiff' : 'vf'; }
+        Vpin = Vth - I * Rth;
+      }
+    } else {
+      if (floating) { I = 0; Vpin = VDD; reason = 'float'; }
+      else {
+        I = (VDD - led.vf - Vth) / (Rth + s.r);
+        if (I <= 0) { I = 0; reason = (Vth > VDD - 0.5) ? 'nodiff' : 'vf'; }
+        Vpin = Vth + I * Rth;
+      }
+    }
+    var I_mA = I * 1000;
+    var path = 'none';
+    if (I > 0) {
+      if (s.wiring === 'source') path = pOn ? 'srcP' : 'srcPU';
+      else path = nOn ? 'snkN' : 'snkPD';
+    }
+    var Ifet = 0, Pfet = 0, Rused = ron;
+    if (pOn) { Ifet = (VDD - Vpin) / ron; Pfet = (VDD - Vpin) * Ifet; }
+    else if (nOn) { Ifet = Vpin / ron; Pfet = Vpin * Ifet; }
+    if (path === 'srcPU' || path === 'snkPD') Rused = RPU;
+    var capDrive = RATE[s.drive];
+    var capHard = pOn ? pin.cap : 28;
+    var cap = Math.min(capDrive, capHard);
+    var Ifet_mA = Ifet * 1000;
+    var ratio = cap > 0 ? Ifet_mA / cap : 0;
+    var bright = I_mA <= 0 ? 0 : Math.min(1, Math.pow(I_mA / 20, 0.6));
+    var ledState = I_mA < 0.01 ? '不亮' : I_mA < 0.3 ? '幾乎看不出' : I_mA < 3 ? '微亮' : I_mA > 20 ? '過亮' : '亮';
+    return { pOn: pOn, nOn: nOn, I: I_mA, Vpin: Vpin, Vth: Vth, path: path, floating: floating, reason: reason,
+             Ifet: Ifet_mA, Pfet: Pfet * 1000, ron: ron, Rused: Rused, cap: cap, capDrive: capDrive, capHard: capHard,
+             ratio: ratio, bright: bright, ledState: ledState, led: led, pin: pin };
+  }
+
+  /* ---------- 輸入模式的電路模型 ---------- */
+  function solveIn(s) {
+    var pin = PINS_IN[s.pinIn], noPull = !!pin.noPull;
+    var intPull = noPull ? 'none' : s.pull;
+    var Gp = 0, Gn = 0;
+    if (intPull === 'up') Gp += 1 / RPU;
+    if (intPull === 'down') Gn += 1 / RPU;
+    if (s.extPull === 'up') Gp += 1 / REXT;
+    if (s.extPull === 'down') Gn += 1 / REXT;
+    var Vpin = 0, floating = false, I = 0, path = 'none', how = '', loaded = false;
+    if (s.inWiring === 'pot') {
+      // 可變電阻＝上半段接 3.3 V、下半段接地的分壓器；內建／外接的上下拉也掛在同一個節點上（立霧複驗抓到之前沒算）
+      var k = s.vpot / VDD, eps = 1e-9;
+      var R1 = Math.max((1 - k) * RPOT, eps), R2 = Math.max(k * RPOT, eps);
+      var Gpt = Gp + 1 / R1, Gnt = Gn + 1 / R2;
+      Vpin = VDD * Gpt / (Gpt + Gnt);
+      I = (VDD - Vpin) * Gpt * 1000;          // 從 3.3 V 流出來的總量（可變電阻上半段＋上拉）
+      loaded = (Gp > 0 || Gn > 0);
+      path = 'pot'; how = 'pot';
+    } else if (s.pressed) {
+      if (s.inWiring === 'btn_gnd') { Vpin = 0; I = VDD * Gp * 1000; path = s.extPull === 'up' ? 'extPU' : (intPull === 'up' ? 'srcPU' : 'none'); }
+      else { Vpin = VDD; I = VDD * Gn * 1000; path = s.extPull === 'down' ? 'extPD' : (intPull === 'down' ? 'snkPD' : 'none'); }
+      how = 'pressed';
+    } else {
+      var G = Gp + Gn;
+      if (G === 0) { floating = true; Vpin = NaN; how = 'float'; }
+      else {
+        Vpin = VDD * Gp / G; how = 'released';
+        if (Gp > 0 && Gn > 0) {   // 上拉與下拉同時開：兩顆電阻串在 3.3 V 與地之間，一直有小電流在流（秀姑巒複驗抓到）
+          I = VDD / (1 / Gp + 1 / Gn) * 1000;
+          path = (s.extPull === 'down') ? 'mixUD' : 'mixDU';
+          how = 'tug';
+        }
+      }
+    }
+    var zone = floating ? 'float' : (Vpin >= VIH ? 'high' : (Vpin <= VIL ? 'low' : 'mid'));
+    var reading = zone === 'high' ? '1' : zone === 'low' ? '0' : '?';
+    return { pin: pin, noPull: noPull, intPull: intPull, Vpin: Vpin, floating: floating, I: I, path: path, zone: zone, reading: reading, how: how, loaded: loaded };
+  }
+
+  /* ---------- 路徑與粒子 ---------- */
+  // 兩張圖各自的電流路徑（輸出圖：內建電阻欄在 x=548；輸入圖：在 x=640）
+  var PATHS_OUT = {
+    srcP:  [[92,100],[400,100],[400,305],[733,305],[1050,305],[1050,380]],
+    srcPU: [[92,100],[548,100],[548,305],[733,305],[1050,305],[1050,380]],
+    snkN:  [[1050,152],[1050,305],[733,305],[400,305],[400,520],[92,520]],
+    snkPD: [[1050,152],[1050,305],[733,305],[548,305],[548,520],[92,520]]
+  };
+  var PATHS_IN = {
+    srcPU: [[92,100],[640,100],[640,305],[733,305],[1050,305],[1050,380]],
+    snkPD: [[1050,152],[1050,305],[733,305],[640,305],[640,520],[92,520]],
+    extPU: [[820,158],[820,305],[1050,305],[1050,380]],
+    extPD: [[1050,152],[1050,305],[820,305],[820,450]],
+    mixUD: [[92,100],[640,100],[640,305],[733,305],[820,305],[820,450]],
+    mixDU: [[820,158],[820,305],[733,305],[640,305],[640,520],[92,520]],
+    pot:   [[1050,152],[1050,380]]
+  };
+  function buildPath(pts) {
+    var segs = [], L = 0;
+    for (var i = 0; i < pts.length - 1; i++) {
+      var a = pts[i], b = pts[i + 1], dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy);
+      segs.push({ a: a, dx: dx, dy: dy, len: len, s0: L }); L += len;
+    }
+    return { segs: segs, L: L };
+  }
+  function pointAt(p, s) {
+    s = ((s % p.L) + p.L) % p.L;
+    for (var i = 0; i < p.segs.length; i++) {
+      var g = p.segs[i];
+      if (s <= g.s0 + g.len || i === p.segs.length - 1) {
+        var t = g.len ? (s - g.s0) / g.len : 0;
+        return { x: g.a[0] + g.dx * t, y: g.a[1] + g.dy * t, ang: Math.atan2(g.dy, g.dx) };
+      }
+    }
+    return { x: 0, y: 0, ang: 0 };
+  }
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var PG = { out: { parts: $('particlesOut'), chev: $('chevronsOut'), paths: PATHS_OUT },
+             in:  { parts: $('particlesIn'),  chev: $('chevronsIn'),  paths: PATHS_IN } };
+  var partsG = PG.out.parts, chevG = PG.out.chev;
+  var curPathKey = null, curPath = null, parts = [], partEls = [], spacing = 28;
+  function rebuildParticles(key, I) {
+    ['out', 'in'].forEach(function (k) {
+      var g = PG[k];
+      while (g.parts.firstChild) g.parts.removeChild(g.parts.firstChild);
+      while (g.chev.firstChild) g.chev.removeChild(g.chev.firstChild);
+    });
+    var cfg = PG[S.io]; partsG = cfg.parts; chevG = cfg.chev;
+    parts = []; partEls = []; curPathKey = key; curPath = null;
+    if (key === 'none' || !cfg.paths[key]) return;
+    curPath = buildPath(cfg.paths[key]);
+    spacing = I < 0.3 ? 70 : I < 3 ? 40 : 26;
+    var n = Math.max(3, Math.floor(curPath.L / spacing));
+    for (var i = 0; i < n; i++) {
+      var g = document.createElementNS(SVGNS, 'g');
+      var halo = document.createElementNS(SVGNS, 'circle'); halo.setAttribute('r', '7'); halo.setAttribute('class', 'pt' + (S.electrons ? ' e' : '')); halo.setAttribute('opacity', '.45');
+      var core = document.createElementNS(SVGNS, 'circle'); core.setAttribute('r', '3.6'); core.setAttribute('class', 'pt-core' + (S.electrons ? ' e' : ''));
+      g.appendChild(halo); g.appendChild(core); partsG.appendChild(g);
+      parts.push(i * spacing); partEls.push(g);
+    }
+    var step = 105;
+    for (var s = 50; s < curPath.L - 20; s += step) {
+      var pt = pointAt(curPath, s);
+      var tri = document.createElementNS(SVGNS, 'polygon');
+      tri.setAttribute('points', '-6,-5 6,0 -6,5');
+      tri.setAttribute('class', 'chev');
+      var ang = pt.ang * 180 / Math.PI + (S.electrons ? 180 : 0);
+      tri.setAttribute('transform', 'translate(' + pt.x.toFixed(1) + ',' + pt.y.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')');
+      chevG.appendChild(tri);
+    }
+    placeParticles();
+  }
+  function placeParticles() {
+    if (!curPath) return;
+    for (var i = 0; i < parts.length; i++) {
+      var pt = pointAt(curPath, parts[i]);
+      partEls[i].setAttribute('transform', 'translate(' + pt.x.toFixed(1) + ',' + pt.y.toFixed(1) + ')');
+    }
+  }
+
+  /* ---------- 剖面圖 ---------- */
+  function sup(base, s) { return base + '<tspan baseline-shift="super" font-size="9">' + s + '</tspan>'; }
+  function buildXS(svg, type) {
+    var isN = type === 'n';
+    var dopSD = isN ? 'dop-n' : 'dop-p', dopB = isN ? 'dop-p' : 'dop-n';
+    var sdTxt = isN ? 'n' : 'p', bTxt = isN ? 'p' : 'n';
+    var h = '';
+    h += '<defs><marker id="xsF-' + type + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="rayhead"></path></marker></defs>';
+    h += '<text class="xlbl-b" x="131" y="30" text-anchor="middle">源極 S</text>';
+    h += '<text class="xlbl-b" x="230" y="30" text-anchor="middle">閘極 G</text>';
+    h += '<text class="xlbl-b" x="329" y="30" text-anchor="middle">汲極 D</text>';
+    h += '<text class="xlbl-s" x="131" y="46" text-anchor="middle">' + (isN ? '接 0 V' : '接 3.3 V') + '</text>';
+    h += '<text class="xlbl-s" x="329" y="46" text-anchor="middle">接往腳位</text>';
+    h += '<text class="xlbl-s" x="59" y="54" text-anchor="middle">基體 B</text>';
+    h += '<line class="xs-lead" x1="131" y1="50" x2="131" y2="100"></line>';
+    h += '<line class="xs-lead" x1="230" y1="36" x2="230" y2="78"></line>';
+    h += '<line class="xs-lead" x1="329" y1="50" x2="329" y2="100"></line>';
+    h += '<polyline class="xs-lead" fill="none" points="59,100 59,66 131,66"></polyline>';
+    h += '<circle class="node" cx="131" cy="66" r="3"></circle>';
+    h += '<rect class="sub-p" x="30" y="116" width="400" height="150" rx="6"></rect>';
+    if (!isN) h += '<rect class="well-n" x="36" y="116" width="388" height="118" rx="10"></rect>';
+    h += '<rect class="' + dopB + '" x="44" y="116" width="30" height="34" rx="6"></rect>';
+    h += '<rect class="' + dopSD + '" x="96" y="116" width="70" height="44" rx="8"></rect>';
+    h += '<rect class="' + dopSD + '" x="294" y="116" width="70" height="44" rx="8"></rect>';
+    h += '<path class="dep" d="M90,116 v40 a12,12 0 0 0 12,12 h58 a12,12 0 0 0 12,-12 v-40"></path>';
+    h += '<path class="dep" d="M288,116 v40 a12,12 0 0 0 12,12 h58 a12,12 0 0 0 12,-12 v-40"></path>';
+    h += '<path class="dep xs-dep" d="M166,116 v4 h128 v-4"></path>';
+    h += '<rect class="xchan ' + type + ' xs-chan" x="166" y="116" width="128" height="4" opacity="0"></rect>';
+    h += '<rect class="oxide" x="160" y="108" width="140" height="8"></rect>';
+    h += '<rect class="gate" x="160" y="78" width="140" height="30" rx="3"></rect>';
+    h += '<text class="gate-t" x="230" y="97" text-anchor="middle">多晶矽閘極</text>';
+    h += '<g class="xs-field" opacity="0">';
+    [178, 204, 230, 256, 282].forEach(function (x) {
+      h += isN ? '<line class="field-arrow" x1="' + x + '" y1="100" x2="' + x + '" y2="130" marker-end="url(#xsF-' + type + ')"></line>'
+               : '<line class="field-arrow" x1="' + x + '" y1="130" x2="' + x + '" y2="100" marker-end="url(#xsF-' + type + ')"></line>';
+    });
+    h += '</g>';
+    h += '<rect class="metal" x="106" y="100" width="50" height="16" rx="2"></rect>';
+    h += '<rect class="metal" x="304" y="100" width="50" height="16" rx="2"></rect>';
+    h += '<rect class="metal" x="46" y="100" width="26" height="16" rx="2"></rect>';
+    h += '<text class="xlbl-b" x="131" y="148" text-anchor="middle">' + sup(sdTxt, '+') + '</text>';
+    h += '<text class="xlbl-b" x="329" y="148" text-anchor="middle">' + sup(sdTxt, '+') + '</text>';
+    h += '<text class="xlbl-s" x="59" y="140" text-anchor="middle">' + sup(bTxt, '+') + '</text>';
+    if (isN) h += '<text class="xlbl" x="230" y="252" text-anchor="middle">p 型基板（接 0 V）</text>';
+    else {
+      h += '<text class="xlbl" x="230" y="224" text-anchor="middle">n 型井（接 3.3 V）</text>';
+      h += '<text class="xlbl-s" x="230" y="254" text-anchor="middle">外面還是 p 型基板（接 0 V）</text>';
+    }
+    h += '<text class="xlbl-s" x="424" y="262" text-anchor="end">不按比例</text>';
+    h += '<text class="xlbl-s xs-chant" x="230" y="196" text-anchor="middle"></text>';
+    h += '<g class="xs-carriers"></g>';
+    h += '<rect class="oxide" x="30" y="279" width="22" height="8"></rect>';
+    h += '<text class="xlbl-s" x="58" y="287">黃條＝閘極氧化層（二氧化矽，絕緣）</text>';
+    h += '<path class="dep" d="M262,279 h22 v8 h-22 z"></path>';
+    h += '<text class="xlbl-s" x="290" y="287">虛線＝空乏區，沒有可動的電荷</text>';
+    h += '<text class="xlbl-s xs-flow" x="230" y="309" text-anchor="middle"></text>';
+    svg.innerHTML = h;
+    return {
+      chan: svg.querySelector('.xs-chan'), dep: svg.querySelector('.xs-dep'), field: svg.querySelector('.xs-field'),
+      chanT: svg.querySelector('.xs-chant'), car: svg.querySelector('.xs-carriers'), flow: svg.querySelector('.xs-flow'),
+      els: [], pos: [], path: buildPath([[118,120],[166,118],[294,118],[342,120]])
+    };
+  }
+  var XS = { n: buildXS($('xsN'), 'n'), p: buildXS($('xsP'), 'p') };
+  ['n', 'p'].forEach(function (t) {
+    var x = XS[t];
+    for (var i = 0; i < 9; i++) {
+      var g = document.createElementNS(SVGNS, 'g');
+      var c = document.createElementNS(SVGNS, 'circle'); c.setAttribute('r', '4'); c.setAttribute('class', 'carrier ' + (t === 'n' ? 'e' : 'h'));
+      var tx = document.createElementNS(SVGNS, 'text'); tx.setAttribute('class', 'carrier-t'); tx.setAttribute('text-anchor', 'middle'); tx.setAttribute('y', '2.5'); tx.textContent = (t === 'n' ? '−' : '+');
+      g.appendChild(c); g.appendChild(tx); x.car.appendChild(g); x.els.push(g); x.pos.push(i * 25);
+      g.setAttribute('opacity', '0');
+    }
+  });
+  var VTH = 1.0;
+  function xsState(t) {
+    var vg = t === 'n' ? S.vgN : S.vgP;
+    var drive = t === 'n' ? vg : (VDD - vg);
+    var sub = Math.max(0, Math.min(1, drive / VTH));
+    var inv = drive > VTH ? Math.min(1, (drive - VTH) / (VDD - VTH)) : 0;
+    return { vg: vg, drive: drive, sub: sub, inv: inv, on: inv > 0, dep: 4 + 22 * sub, field: Math.max(0, Math.min(1, drive / VDD)) };
+  }
+  function renderXS() {
+    ['n', 'p'].forEach(function (t) {
+      var x = XS[t], st = xsState(t), isN = t === 'n';
+      var d2 = (st.dep - 4).toFixed(1);
+      x.dep.setAttribute('d', 'M166,116 v' + d2 + ' a4,4 0 0 0 4,4 h120 a4,4 0 0 0 4,-4 v-' + d2);
+      x.chan.setAttribute('opacity', st.on ? (0.3 + 0.7 * st.inv).toFixed(2) : '0');
+      x.field.setAttribute('opacity', st.field > 0.03 ? (0.25 + 0.75 * st.field).toFixed(2) : '0');
+      var carriers = isN ? '電子' : '電洞';
+      x.chanT.textContent = st.on
+        ? '反轉層形成：氧化層下面聚了一層' + carriers + '，源極與汲極接通'
+        : (st.sub > 0.05 ? '閘極開始施力：底下先被推出一層空乏區，' + carriers + '還沒聚集'
+                         : '沒有通道：源極、汲極與基板之間是兩個背對背的 pn 接面，電過不去');
+      x.flow.textContent = st.on
+        ? (isN ? '電子從源極（0 V）往汲極走 →　習慣上的電流方向則是 ← 從汲極流向源極'
+               : '電洞從源極（3.3 V）往汲極走 →　這次跟習慣上的電流方向一致')
+        : '閘極電壓不夠，' + carriers + '不會聚集，開關是關的';
+      var lbl = isN ? $('vN') : $('vP'); lbl.textContent = st.vg.toFixed(1) + ' V';
+      var box = isN ? $('stN') : $('stP');
+      box.innerHTML = isN
+        ? (st.on ? '閘極 <b>' + st.vg.toFixed(1) + ' V</b>，比源極高過門檻 → 電場（由閘極指向基板）把電子拉到氧化層下面成為<b>反轉層</b>，n 型通道接通：<b>下開關開</b>。'
+                 : '閘極 <b>' + st.vg.toFixed(1) + ' V</b>，還沒超過門檻（示意約 1 V）→ 沒有通道：<b>下開關關</b>。')
+        : (st.on ? '閘極 <b>' + st.vg.toFixed(1) + ' V</b>，比源極（3.3 V）低過門檻 → 電場（由井指向閘極）把電洞拉到氧化層下面成為<b>反轉層</b>，p 型通道接通：<b>上開關開</b>。'
+                 : '閘極 <b>' + st.vg.toFixed(1) + ' V</b>，跟源極（3.3 V）差不到門檻（示意約 1 V）→ 沒有通道：<b>上開關關</b>。P 型是「閘極拉低才開」，剛好跟 N 型相反。');
+      var nShow = st.on ? Math.round(3 + 6 * st.inv) : 0;
+      for (var i = 0; i < x.els.length; i++) x.els[i].setAttribute('opacity', i < nShow ? '1' : '0');
+      placeCarriers(t, st);
+    });
+  }
+  function placeCarriers(t) {
+    var x = XS[t];
+    for (var i = 0; i < x.els.length; i++) {
+      var pt = pointAt(x.path, x.pos[i]);
+      x.els[i].setAttribute('transform', 'translate(' + pt.x.toFixed(1) + ',' + pt.y.toFixed(1) + ')');
+    }
+  }
+
+  /* ---------- 共用的畫面小工具 ---------- */
+  function setSwitches(m) {
+    // 上下開關、前級、內建電阻
+    $('pChan').classList.toggle('on', m.pOn); $('pGlow').classList.toggle('on', m.pOn);
+    $('nChan').classList.toggle('on', m.nOn); $('nGlow').classList.toggle('on', m.nOn);
+    $('pChip').setAttribute('class', 'chipst ' + (m.pOn ? 'on' : 'off')); $('pChipT').textContent = m.pOn ? '開' : '關';
+    $('nChip').setAttribute('class', 'chipst ' + (m.nOn ? 'on' : 'off')); $('nChipT').textContent = m.nOn ? '開' : '關';
+  }
+  function setPulls(intPull, noPull) {
+    [['puSw', 'pdSw', 'puG', 'pdG'], ['i_puSw', 'i_pdSw', 'i_puG', 'i_pdG']].forEach(function (ids) {
+      $(ids[0]).classList.toggle('open', intPull !== 'up');
+      $(ids[1]).classList.toggle('open', intPull !== 'down');
+      $(ids[2]).setAttribute('opacity', noPull ? '.18' : (intPull === 'up' ? '1' : '.45'));
+      $(ids[3]).setAttribute('opacity', noPull ? '.18' : (intPull === 'down' ? '1' : '.45'));
+    });
+  }
+  var nAlerts = 0;
+  function setNotes(list) {
+    var nb = $('notes'); nb.innerHTML = '';
+    list.forEach(function (n) { var d = document.createElement('div'); d.className = 'note ' + n[0]; d.textContent = n[1]; nb.appendChild(d); });
+    nAlerts = list.filter(function (n) { return n[0] === 'alert'; }).length;
+    var nWarn = list.filter(function (n) { return n[0] === 'warn'; }).length;
+    $('alertBadge').textContent = nAlerts ? ('⚠️ ' + nAlerts + ' 則紅色提醒') : (nWarn ? nWarn + ' 則提醒' : '');
+  }
+  function alertChip() { return nAlerts ? '<span class="look alert">⚠️ 有 ' + nAlerts + ' 則紅色提醒，展開下方「數字怎麼算」</span>' : ''; }
+  function setMeterLabels(a, b, c, d) {
+    $('mP').classList.toggle('small', false); $('mIl').textContent = a; $('mVl').textContent = b; $('mPl').textContent = c; $('mLl').textContent = d; }
+  // 輸入端：用兩顆 FET 示意輸入緩衝怎麼受腳位電壓控制；畫面只標最後讀到的值，不展開內部級數（Ted 2026-09-09 拍板）
+  function stageSet(pre, pOn, nOn, mid) {
+    var pc = $(pre + 'PChan'), nc = $(pre + 'NChan');
+    pc.classList.toggle('on', pOn); pc.classList.toggle('half', mid); $(pre + 'PGlow').classList.toggle('on', pOn);
+    nc.classList.toggle('on', nOn); nc.classList.toggle('half', mid); $(pre + 'NGlow').classList.toggle('on', nOn);
+    $(pre + 'PChip').setAttribute('class', 'chipst ' + (pOn ? 'on' : 'off')); $(pre + 'PChipT').textContent = mid ? 'P 半開' : pOn ? 'P 開' : 'P 關';
+    $(pre + 'NChip').setAttribute('class', 'chipst ' + (nOn ? 'on' : 'off')); $(pre + 'NChipT').textContent = mid ? 'N 半開' : nOn ? 'N 開' : 'N 關';
+    $(pre + 'Shoot').style.display = mid ? '' : 'none';
+  }
+  function setInputStage(v, floating) {
+    var p1 = !floating && v < VIH, n1 = !floating && v > VIL, mid = p1 && n1;
+    stageSet('i1', p1, n1, mid);
+    // 畫面直接標最後讀到的值：高過門檻讀 1、低於門檻讀 0（不談內部級數）
+    var digit = (floating || mid) ? '?' : (p1 ? '0' : '1');
+    $('i_digit').textContent = digit; $('o_inDigit').textContent = digit;
+  }
+  function updateParticles(path, I) {
+    if (path !== lastKey || S.electrons !== lastE || (I < 3) !== (lastI < 3) || (I < 0.3) !== (lastI < 0.3)) rebuildParticles(path, I);
+    lastKey = path; lastI = I; lastE = S.electrons; curI = I;
+  }
+  var lastKey = null, lastI = -1, lastE = null, curI = 0, curFloating = false;
+
+  /* ---------- 輸出模式畫面 ---------- */
+  function renderOut() {
+    var m = solve(S), led = m.led, pin = m.pin;
+    $('valDigit').textContent = S.value;
+    $('gP').textContent = m.pOn ? '0 V' : '3.3 V';   // 開汲極時的「固定 3.3 V、永遠關」由 odTxt 說明，別加長這行以免蓋到 G
+    $('gN').textContent = m.nOn ? '3.3 V' : '0 V';
+    $('odSw').classList.toggle('open', S.mode === 'od');
+    $('odTxt').style.display = S.mode === 'od' ? '' : 'none';
+    $('oeTxt').textContent = '輸出致能（OE）：開';
+    setSwitches(m);
+    $('pNote').textContent = S.mode === 'od' ? '永遠關' : (m.pOn ? '通道相連' : '通道斷開');
+    $('nNote').textContent = m.nOn ? '通道相連' : '通道斷開';
+    setPulls(S.pull, false);
+    setInputStage(m.Vpin, false);
+    $('padLabel').textContent = pin.label + ' 腳位';
+    $('vPin').textContent = (m.floating ? '≈' : '') + m.Vpin.toFixed(2) + ' V';
+
+    // 外部零件
+    $('rLabel').textContent = S.r === 0 ? '沒有電阻！' : fmtOhm(S.r);
+    $('rRes').style.display = S.r === 0 ? 'none' : '';
+    $('rWire').style.display = S.r === 0 ? '' : 'none';
+    var tri = $('ledTri'), bar = $('ledBar');
+    if (S.wiring === 'source') { tri.setAttribute('points', '935,290 935,320 965,305'); bar.setAttribute('x1', '965'); bar.setAttribute('x2', '965'); }
+    else { tri.setAttribute('points', '965,290 965,320 935,305'); bar.setAttribute('x1', '935'); bar.setAttribute('x2', '935'); }
+    tri.setAttribute('fill', led.c); tri.setAttribute('fill-opacity', (0.18 + 0.82 * m.bright).toFixed(2));
+    var halo = $('ledHalo'); halo.setAttribute('fill', led.c); halo.setAttribute('opacity', (0.55 * m.bright).toFixed(2)); halo.setAttribute('r', (22 + 16 * m.bright).toFixed(1));
+    $('ledRays').setAttribute('opacity', m.bright > 0.05 ? Math.min(1, m.bright * 1.4).toFixed(2) : '0');
+    $('ledLabel').textContent = 'LED（' + led.n + '）';
+    $('ledVf').textContent = '順向電壓 ' + led.vf.toFixed(1) + ' V';
+    $('ledWarn').style.display = m.I > 20 ? '' : 'none';
+    $('endGnd').style.display = S.wiring === 'source' ? '' : 'none';
+    $('endVdd').style.display = S.wiring === 'sink' ? '' : 'none';
+
+    // 敘述
+    var narr;
+    if (m.path === 'srcP') narr = '電從 <b>3.3 V 電源</b> 出發 → 上開關（P 型）→ 腳位 → 限流電阻 → LED → 地。這叫<b>拉電流</b>（source）：電是從腳位「流出去」的。';
+    else if (m.path === 'srcPU') narr = '上開關沒開，電只能從 <b>45 kΩ 的內建上拉電阻</b>擠過來 → 腳位 → 電阻 → LED → 地。電阻太大，電流只有幾十微安培，燈幾乎不亮。';
+    else if (m.path === 'snkN') narr = '電從<b>開發板的 3.3 V</b> 出發 → LED → 限流電阻 → <b>灌進腳位</b> → 下開關（N 型）→ 地。這叫<b>灌電流</b>（sink）：電是「流進」腳位的。';
+    else if (m.path === 'snkPD') narr = '下開關沒開，電只能經 LED 與電阻流進腳位，再從 <b>45 kΩ 的內建下拉電阻</b>擠到地。幾十微安培，燈幾乎不亮。';
+    else if (m.floating) narr = '上下兩顆開關都關、也沒開內建電阻：晶片<b>放手</b>了（高阻抗），腳位電位只剩外面那條路弱弱地拉向 ' + (S.wiring === 'source' ? '0 V' : '3.3 V') + '，燈不亮。要是外面什麼都沒接，這支腳位就是<b>浮接</b>（floating），讀起來會飄。';
+    else if (m.reason === 'nodiff') narr = S.wiring === 'source'
+      ? '腳位是 <b>0 V</b>，燈的另一頭也是地：兩端沒有電位差，<b>電不流</b>。要亮就寫 1，或把燈改接到 3.3 V。'
+      : '腳位是 <b>3.3 V</b>，燈的另一頭也是 3.3 V：兩端沒有電位差，<b>電不流</b>。這種接法要寫 0 燈才亮。';
+    else narr = '電源只有 3.3 V，扣掉 LED 需要的順向電壓 ' + led.vf.toFixed(1) + ' V 後幾乎不剩，<b>推不動這顆燈</b>。';
+    if (S.electrons && m.path !== 'none') narr += ' <span class="tiny">（現在畫的是電子真正的走向：跟上面講的「電流方向」剛好相反。兩種說法都對，只是約定不同。）</span>';
+    narr += ' <span class="tiny">腳位旁那一格「輸入暫存器也在讀」一直在看腳位電壓：MicroPython 的 Pin.OUT 其實是「輸出＋輸入」都開，所以 led.value() 讀得回實際電位；輸入端那兩顆電晶體長什麼樣，切到「輸入」看。</span>';
+    $('narr').innerHTML = narr;
+
+    // 電表
+    setMeterLabels('電流', '腳位電壓', '電晶體發熱', '燈');
+    var fi = fmtI(m.I);
+    $('mIv').innerHTML = fi.v + '<small>' + fi.u + '</small>';
+    $('mIs').textContent = m.path === 'none' ? '沒有電流' : ('流過 LED 的量' + (Math.abs(m.Ifet - m.I) > 0.05 ? '；開關本身 ' + fmtI(m.Ifet).v + ' ' + fmtI(m.Ifet).u : ''));
+    $('mI').className = 'meter' + (m.ratio >= 1 ? ' hot' : m.ratio >= 0.8 ? ' warm' : '');
+    $('mVv').innerHTML = (m.floating ? '≈' : '') + m.Vpin.toFixed(2) + '<small>V</small>';
+    $('mVs').textContent = m.floating ? '晶片放手，由外面弱弱決定' : m.pOn ? (m.Vpin >= 2.64 ? '手冊保證高電位 ≥ 2.64 V' : '⚠️ 已低於手冊的 2.64 V') : m.nOn ? (m.Vpin <= 0.33 ? '手冊保證低電位 ≤ 0.33 V' : '⚠️ 已高於手冊的 0.33 V') : '由內建電阻與外部零件決定';
+    $('mV').className = 'meter' + ((m.pOn && m.Vpin < 2.64) || (m.nOn && m.Vpin > 0.33) ? ' warm' : '');
+    var pf = m.Pfet;
+    $('mPv').innerHTML = (pf < 0.05 ? '0' : pf >= 100 ? Math.round(pf) : pf.toFixed(1)) + '<small>mW</small>';
+    $('mPs').textContent = (m.pOn ? '上開關' : m.nOn ? '下開關' : '沒有開關導通') + (m.pOn || m.nOn ? '導通電阻 ' + m.ron + ' Ω' : '');
+    $('mP').className = 'meter' + (pf > 100 ? ' hot' : pf > 40 ? ' warm' : '');
+    $('mLv').textContent = m.ledState;
+    $('mLs').textContent = m.I > 0 ? '亮度約 ' + Math.round(m.bright * 100) + '%' : '—';
+    $('mL').className = 'meter' + (m.I > 20 ? ' hot' : '');
+
+    // 公式
+    var eq, why;
+    if (m.path === 'none') {
+      eq = m.floating ? '（晶片這頭沒接通，沒有完整迴路）' : (m.reason === 'nodiff' ? '(0 V 的電位差) ÷ 任何電阻 = 0' : '(3.3 − ' + led.vf.toFixed(1) + ') 剩不到 0 → 0 mA');
+      why = m.floating ? '電要流，得有一條從高電位到低電位的完整路；現在晶片裡兩顆開關都關著。' : m.reason === 'nodiff' ? '兩端一樣高，電就沒理由動。' : '電源電壓得先大於 LED 的順向電壓，燈才會開始導通。';
+    } else {
+      var rr = m.Rused === RPU ? '45000' : String(m.ron);
+      eq = '(3.3 − ' + led.vf.toFixed(1) + ') ÷ (' + rr + ' + ' + S.r + ') ≈ ' + fi.v + ' ' + fi.u;
+      why = (m.Rused === RPU ? '這次擋路的是 45 kΩ 的內建電阻，' : '括號裡是「開關的導通電阻 ＋ 你串的電阻」，') + '電源電壓扣掉 LED 吃掉的，剩下的除以路上所有電阻。';
+    }
+    $('eqTitle').textContent = '電流怎麼算（簡化版：電晶體當一個固定電阻）';
+    $('eq').textContent = eq; $('eqWhy').textContent = why;
+
+    // 額定
+    $('gauge').className = 'gauge' + (m.ratio >= 1 ? ' hot' : m.ratio >= 0.8 ? ' warm' : '');
+    $('gaugeLbl').textContent = '對照這一檔的額定';
+    $('gaugeFill').style.width = Math.min(100, m.ratio * 100).toFixed(1) + '%';
+    $('gaugeM1').style.left = '80%'; $('gaugeM2').style.display = 'none';
+    $('gaugeTxt').textContent = fmtI(m.Ifet).v + ' ' + fmtI(m.Ifet).u + ' / ' + m.cap + ' mA';
+    var capNote = '驅動強度第 ' + S.drive + ' 檔' + (S.drive === 2 ? '（預設）' : '') + '，約 ' + m.capDrive + ' mA';
+    if (m.pOn && m.capHard < m.capDrive) capNote += '；但 ' + pin.label + ' 屬 ' + pin.domain + ' 電源域，手冊拉電流只保證 ' + pin.cap + ' mA';
+    else if (m.nOn && m.capHard < m.capDrive) capNote += '；但手冊灌電流只保證 28 mA（不分電源域）';
+    $('gaugeSub').textContent = capNote;
+
+    // 提醒
+    var notes = [];
+    if (S.r === 0 && m.I > 0) notes.push(['alert', '沒有限流電阻：路上只剩開關自己的 ' + m.ron + ' Ω 在擋，電流衝到 ' + fmtI(m.I).v + ' ' + fmtI(m.I).u + '。Wokwi 不會報錯，實體板會發燙、燈或腳位可能燒掉。']);
+    if (m.ratio >= 1) notes.push(['alert', '超過腳位額定 ' + m.cap + ' mA。晶片不會立刻壞，但腳位電壓會垮、長期會傷晶片；資料手冊那一行講的就是這件事。']);
+    else if (m.ratio >= 0.8) notes.push(['warn', '接近腳位額定（' + Math.round(m.ratio * 100) + '%）。可以動，但沒有餘裕；換大一點的電阻或調高驅動強度。']);
+    if (m.I > 20 && !(S.r === 0)) notes.push(['alert', '超過一般 LED 的常見額定 20 mA，燈會很亮、然後很短命。']);
+    if (m.floating) notes.push(['info', '「放手」（高阻抗）是開汲極的正常狀態之一：晶片不出力，電位交給外面決定。真的要拿來讀輸入時，記得開內建上拉或外面接電阻，不然會浮接。']);
+    if (m.path === 'srcPU' || m.path === 'snkPD') notes.push(['info', '內建的上拉／下拉電阻是給「訊號」用的（讀按鈕之類），不是拿來供電的：45 kΩ 只放得出約 75 µA。']);
+    if (m.I > 0 && led.vf >= 3.0) notes.push(['info', led.n + '光 LED 的順向電壓高達 ' + led.vf.toFixed(1) + ' V，3.3 V 扣掉後只剩 ' + (3.3 - led.vf).toFixed(1) + ' V 給電阻分，所以特別暗。']);
+    if (S.pin === 16 && S.drive === 3 && m.pOn && m.I > 0) notes.push(['info', 'GPIO16、GPIO17 屬 VDD_SDIO 電源域，手冊上最強檔的拉電流只保證 20 mA，不是 40 mA。同一顆晶片、不同腳位，額定會不一樣。']);
+    setNotes(notes);
+
+    // 程式碼
+    var modeTxt = S.mode === 'pp' ? 'Pin.OUT' : 'Pin.OPEN_DRAIN';
+    var pullTxt = S.pull === 'up' ? ', Pin.PULL_UP' : S.pull === 'down' ? ', Pin.PULL_DOWN' : '';
+    var drvTxt = ', drive=Pin.DRIVE_' + S.drive;
+    var code = '<span class="cm"># ' + pin.label + '：' + (S.wiring === 'source' ? '燈接到地，寫 1 亮' : '燈接到 3.3 V，寫 0 亮') + '</span>\n';
+    code += 'from machine import Pin\n';
+    if (S.blink) code += 'from time import sleep\n';
+    code += '\n';
+    code += 'led = Pin(' + S.pin + ', <span class="hl">' + modeTxt + '</span>' + (pullTxt ? '<span class="hl">' + pullTxt + '</span>' : '') + (S.drive !== 2 ? '<span class="hl">' + drvTxt + '</span>' : drvTxt) + ')';
+    code += '  <span class="cm"># ' + (S.mode === 'pp' ? '推挽：上下兩顆開關都用' : '開汲極：只用下面那顆') + (S.drive === 2 ? '；DRIVE_2 是預設，可省略' : '') + '</span>\n';
+    if (S.blink) {
+      var c1 = S.mode === 'pp' ? '上開關開、下開關關' : '放手：兩顆都關，電位交給上拉';
+      code += 'while True:\n';
+      code += (S.value === 1 ? '    <span class="hl">led.value(1)</span>' : '    led.value(1)') + '  <span class="cm"># ' + c1 + '</span>\n';
+      code += '    sleep(0.5)\n';
+      code += (S.value === 0 ? '    <span class="hl">led.value(0)</span>' : '    led.value(0)') + '  <span class="cm"># 上開關關、下開關開</span>\n';
+      code += '    sleep(0.5)';
+    } else {
+      code += '<span class="hl">led.value(' + S.value + ')</span>  <span class="cm"># ' + (S.value === 1 ? (S.mode === 'pp' ? '上開關開、下開關關' : '放手：兩顆都關') : '上開關關、下開關開') + '</span>';
+    }
+    $('code').innerHTML = code;
+
+    curFloating = false;
+    var look = m.path !== 'none' ? '看橘色粒子：電從哪裡出發、經哪顆開關、流到哪' : (m.floating ? '看兩顆開關都是關的，腳位沒人管' : '看兩端電位一樣高，所以沒有電流');
+    $('stateHint').innerHTML = '現在看的是<b>輸出圖</b> · ' + pin.label + ' · 寫 <b>' + S.value + '</b>' + (S.mode === 'od' ? '（開汲極）' : '') + ' → 上開關' + (m.pOn ? '開' : '關') + '、下開關' + (m.nOn ? '開' : '關') + ' → 燈<b>' + m.ledState + '</b><span class="look">' + look + '</span>' + alertChip();
+    updateParticles(m.path, m.I);
+    if (S.link) { S.vgN = m.nOn ? 3.3 : 0; S.vgP = m.pOn ? 0 : 3.3; $('rngN').value = S.vgN; $('rngP').value = S.vgP; }
+  }
+
+  /* ---------- 輸入模式畫面 ---------- */
+  function renderIn() {
+    var m = solveIn(S), pin = m.pin, isPot = S.inWiring === 'pot';
+    setPulls(m.intPull, m.noPull);
+    setInputStage(m.Vpin, m.floating);
+    $('i_padLabel').textContent = pin.label + ' 腳位';
+    $('i_vPin').textContent = m.floating ? '？V' : m.Vpin.toFixed(2) + ' V';
+
+    // 外部零件（輸入圖）
+    $('btnG').style.display = isPot ? 'none' : '';
+    $('potG').style.display = isPot ? '' : 'none';
+    $('i_wireMid').style.display = isPot ? '' : 'none';
+    $('i_wireEnd').style.display = isPot ? 'none' : '';
+    $('i_endGnd').style.display = (!isPot && S.inWiring === 'btn_gnd') ? '' : 'none';
+    $('i_endVdd').style.display = (!isPot && S.inWiring === 'btn_vdd') ? '' : 'none';
+    $('extPU').style.display = S.extPull === 'up' ? '' : 'none';
+    $('extPD').style.display = S.extPull === 'down' ? '' : 'none';
+    $('extNode').style.display = S.extPull !== 'none' ? '' : 'none';
+    var by = S.pressed ? 305 : 296;
+    $('btnBar').setAttribute('y1', by); $('btnBar').setAttribute('y2', by);
+    $('btnStem').setAttribute('y1', by); $('btnStem').setAttribute('y2', by - 16);
+    $('btnCap').setAttribute('y', by - 22);
+    $('btnState').textContent = S.pressed ? '按住' : '放開';
+    var yw = 260 - 70 * (S.vpot / VDD);
+    $('potWiper').setAttribute('points', '980,305 1010,305 1042,' + yw.toFixed(1));
+    $('potV').textContent = S.vpot.toFixed(2) + ' V';
+
+    // 敘述
+    var pullName = m.intPull === 'up' ? '內建上拉' : m.intPull === 'down' ? '內建下拉' : '';
+    var extName = S.extPull === 'up' ? '外接上拉' : S.extPull === 'down' ? '外接下拉' : '';
+    var pullTxt = [pullName, extName].filter(Boolean).join('與');
+    // 按住時只有「有效方向」那邊的電阻在流（接地看上拉、接 3.3 V 看下拉）
+    var act = S.inWiring === 'btn_gnd' ? 'up' : 'down';
+    var actTxt = [m.intPull === act ? '內建' + (act === 'up' ? '上拉' : '下拉') : '', S.extPull === act ? '外接' + (act === 'up' ? '上拉' : '下拉') : ''].filter(Boolean).join('與');
+    var narr;
+    if (isPot) {
+      narr = '可變電阻把 3.3 V 分出 <b>' + m.Vpin.toFixed(2) + ' V</b> 給腳位。在這張簡化圖裡，輸入緩衝器只做一件事：跟門檻比。' +
+        (m.zone === 'high' ? '≥ 2.475 V → 讀到 <b>1</b>。' : m.zone === 'low' ? '≤ 0.825 V → 讀到 <b>0</b>。' : '落在 0.825 到 2.475 V 之間 → <b>手冊不保證</b>讀到什麼。') +
+        (m.loaded ? ' 注意：' + [pullName, extName].filter(Boolean).join('與') + '電阻也掛在腳位上，把分壓<b>拉偏</b>了（單靠可變電阻本來是 ' + S.vpot.toFixed(2) + ' V）。' : ' 腳位本身幾乎不吃電流，電只在可變電阻裡自己流。');
+    } else if (m.how === 'pressed') {
+      narr = S.inWiring === 'btn_gnd'
+        ? '按住：按鈕把腳位<b>直接接到地</b> → 0 V → 讀到 <b>0</b>。' + (m.I > 0 ? ' 此時 3.3 V 經' + actTxt + '電阻流到地，' + fmtI(m.I).v + ' ' + fmtI(m.I).u + '，電阻大所以很小。' : ' 沒有上拉電阻，所以也沒有電流。')
+        : '按住：按鈕把腳位<b>直接接到 3.3 V</b> → 讀到 <b>1</b>。' + (m.I > 0 ? ' 此時 3.3 V 經腳位、' + actTxt + '電阻流到地，' + fmtI(m.I).v + ' ' + fmtI(m.I).u + '。' : ' 沒有下拉電阻，所以也沒有電流。');
+    } else if (m.floating) {
+      narr = '放開：按鈕斷開，腳位<b>誰都沒接</b>，這就是<b>浮接</b>（floating）。電位隨旁邊的雜訊飄，讀到的值會跳來跳去。給它一條預設的路：' +
+        (S.inWiring === 'btn_gnd' ? '開內建上拉，或外面接上拉電阻。' : '開內建下拉，或外面接下拉電阻（按鈕接 3.3 V 要配下拉，配上拉會永遠讀 1）。');
+    } else if (m.how === 'tug') {
+      narr = '放開：內建與外接的電阻一顆往上拉、一顆往下拉，<b>兩顆在拔河</b>，腳位停在 <b>' + m.Vpin.toFixed(2) + ' V</b> → 讀到 <b>' + m.reading + '</b>。而且 3.3 V 一直經這兩顆電阻流到地（' + fmtI(m.I).v + ' ' + fmtI(m.I).u + '），白白耗電。實務上不會這樣接。';
+    } else {
+      narr = '放開：按鈕斷開，腳位靠' + pullTxt + '電阻輕輕拉到 <b>' + m.Vpin.toFixed(2) + ' V</b> → 讀到 <b>' + m.reading + '</b>。沒有電流在流（只有不到 50 nA 的漏電流），電阻只是在「定電位」。';
+    }
+    if (!m.floating) {
+      narr += ' 這個電壓接在<b>輸入緩衝那兩顆電晶體的閘極</b>上，跟門檻比：' +
+        (m.zone === 'high' ? '高過門檻（下面 N 型開、上面 P 型關）→ 晶片整理成 <b>1</b> 送進暫存器。'
+         : m.zone === 'low' ? '低於門檻（上面 P 型開、下面 N 型關）→ 晶片整理成 <b>0</b> 送進暫存器。'
+         : '兩顆都半開、判不出來，讀到什麼<b>不保證</b>；而且 3.3 V 會直接穿過兩顆電晶體漏到地，晶片白白發熱。') +
+        '閘極隔著氧化層、不吃電流，所以「量」這個電壓不會影響外面的電路。';
+    }
+    $('narr').innerHTML = narr;
+
+    // 電表
+    setMeterLabels('電流', '腳位電壓', '讀到的值', '判定');
+    var fi = fmtI(m.I);
+    $('mIv').innerHTML = fi.v + '<small>' + fi.u + '</small>';
+    $('mIs').textContent = isPot ? (m.loaded ? '從 3.3 V 流出的總量（可變電阻＋上下拉）' : '流過可變電阻，不進腳位') : m.I > 0 ? (m.how === 'tug' ? '流過上拉與下拉兩顆電阻' : '流過' + (m.how === 'pressed' ? actTxt : pullTxt) + '電阻') : '腳位漏電流 ≤ 50 nA';
+    $('mI').className = 'meter';
+    $('mVv').innerHTML = m.floating ? '？<small>V</small>' : m.Vpin.toFixed(2) + '<small>V</small>';
+    $('mVs').textContent = m.floating ? '浮接，隨雜訊飄' : (m.how === 'pressed' ? '按鈕直接接上去' : (isPot ? '可變電阻分出來的' : '由' + pullTxt + '電阻定的'));
+    $('mV').className = 'meter' + (m.zone === 'mid' ? ' warm' : m.floating ? ' hot' : '');
+    $('mPv').innerHTML = m.floating ? '0／1 亂跳' : m.reading;
+    $('mPs').textContent = m.floating ? '浮接，故意模擬給你看' : m.zone === 'mid' ? '手冊不保證' : 'btn.value() 回傳';
+    $('mP').className = 'meter' + (m.floating ? ' hot' : m.zone === 'mid' ? ' warm' : '');
+    $('mLv').textContent = m.zone === 'high' ? '高電位區' : m.zone === 'low' ? '低電位區' : m.zone === 'mid' ? '不保證區' : '浮接';
+    $('mLs').textContent = m.zone === 'high' ? '≥ 2.475 V' : m.zone === 'low' ? '≤ 0.825 V' : m.zone === 'mid' ? '0.825–2.475 V' : '沒有東西定電位';
+    $('mL').className = 'meter' + (m.floating ? ' hot' : m.zone === 'mid' ? ' warm' : '');
+
+    // 判定與公式
+    $('eqTitle').textContent = (m.how === 'pressed' && m.I > 0) ? '按住時的電流（電壓 ÷ 電阻）與判定' : (m.how === 'tug' ? '兩顆電阻拔河時的電流與分壓' : '輸入緩衝器怎麼判定（手冊表 5-3）');
+    var eq, why;
+    if (m.floating) { eq = '（沒有電位可以比）'; why = '腳位沒接任何東西，電壓不確定，比出來的結果也不確定。'; }
+    else if (m.how === 'pressed' && m.I > 0) {
+      var hasInt = (m.intPull === act), hasExt = (S.extPull === act);   // act 在上面算過：接地看上拉、接 3.3 V 看下拉
+      var rDiv = (hasInt && hasExt) ? '(10000 ∥ 45000)' : (hasExt ? '10000' : '45000');
+      eq = '3.3 ÷ ' + rDiv + ' ≈ ' + fi.v + ' ' + fi.u + '　　腳位 ' + m.Vpin.toFixed(2) + ' V → 讀 ' + m.reading;
+      why = '按住時電阻兩端各接 3.3 V 與 0 V，電流＝電壓 ÷ 電阻；電阻越大電流越小，所以上拉電阻通常用幾十 kΩ。';
+    }
+    else if (m.how === 'tug') { eq = '3.3 ÷ (' + (S.extPull === 'down' ? '45000 + 10000' : '10000 + 45000') + ') ≈ ' + fi.v + ' ' + fi.u + '　　腳位 ' + m.Vpin.toFixed(2) + ' V → 讀 ' + m.reading; why = '上拉與下拉串成一條路：電流＝3.3 V 除以兩顆電阻相加，腳位電壓照兩顆電阻的比例分。'; }
+    else { eq = '腳位 ' + m.Vpin.toFixed(2) + ' V ' + (m.zone === 'high' ? '≥ 2.475 V → 讀 1' : m.zone === 'low' ? '≤ 0.825 V → 讀 0' : '落在 0.825–2.475 V → 不保證'); why = '高於 0.75 × 3.3 V 保證讀 1，低於 0.25 × 3.3 V 保證讀 0，中間那段手冊不承諾。'; }
+    $('eq').textContent = eq; $('eqWhy').textContent = why;
+
+    // 電壓落在哪一區
+    $('gauge').className = 'gauge' + (m.floating ? ' hot' : m.zone === 'mid' ? ' warm' : '');
+    $('gaugeLbl').textContent = '腳位電壓落在哪一區（0–3.3 V）';
+    $('gaugeFill').style.width = (m.floating ? 0 : Math.min(100, m.Vpin / VDD * 100)).toFixed(1) + '%';
+    $('gaugeM1').style.left = '25%'; $('gaugeM2').style.display = ''; $('gaugeM2').style.left = '75%';
+    $('gaugeTxt').textContent = m.floating ? '？' : m.Vpin.toFixed(2) + ' V';
+    $('gaugeSub').textContent = '≤ 0.825 V 讀 0 ｜ 0.825–2.475 V 不保證 ｜ ≥ 2.475 V 讀 1';
+
+    // 提醒
+    var notes = [];
+    if (m.floating) notes.push(['alert', '浮接：沒有任何東西決定腳位電位，讀到的值會飄。' + (S.inWiring === 'btn_gnd' ? '開內建上拉（Pin.PULL_UP）或外面接上拉電阻' : '開內建下拉（Pin.PULL_DOWN）或外面接下拉電阻') + '，給它一條預設的路。']);
+    if (isPot && m.loaded) notes.push(['info', '可變電阻分出來的電壓被上下拉電阻拉偏了：分壓器接上別的電阻就不再是原本的比例。量電壓時要記得「量的東西也是負載」。']);
+    if (m.noPull && S.pull !== 'none') notes.push(['warn', 'GPIO34–39 只能輸入，也沒有內建上下拉電阻；程式裡寫 PULL_UP 拉不起來（MicroPython 不會報錯，⚠️底層頂多印一行錯誤訊息），要外面接。']);
+    if (m.how === 'tug') notes.push(['warn', '上拉與下拉同時開：兩顆電阻在拔河，腳位電位停在中間偏某一邊，還一直耗電。選一邊就好。']);
+    if (!isPot && S.inWiring === 'btn_gnd' && m.intPull === 'up' && !S.pressed) notes.push(['info', '放開讀 1、按下讀 0，反著的，很正常。程式就寫 if btn.value() == 0: 當作按下。']);
+    if (!isPot && S.inWiring === 'btn_gnd' && m.intPull === 'down' && S.extPull === 'none') notes.push(['warn', '按鈕接地卻開下拉：放開讀 0、按下也讀 0，永遠分不出來。按鈕接地要配上拉。']);
+    if (!isPot && S.inWiring === 'btn_vdd' && m.intPull === 'up' && S.extPull === 'none') notes.push(['warn', '按鈕接 3.3 V 卻開上拉：放開讀 1、按下也讀 1，永遠分不出來。按鈕接 3.3 V 要配下拉。']);
+    if (m.how === 'pressed' && m.I > 0) notes.push(['info', '按住時只有幾十到幾百微安培流過電阻，所以上拉／下拉電阻用 10 kΩ 到 45 kΩ 都行；太小反而浪費電。']);
+    if (m.zone === 'mid') notes.push(['warn', '電壓落在不保證區。實際上晶片會在某個點翻轉，但每顆不一樣，也會抖；訊號要嘛拉高要嘛拉低，別停在中間。']);
+    if (isPot) notes.push(['info', '輸入腳位只是在「量電壓」，本身幾乎不吃電流（≤ 50 nA）。要讀出連續的電壓值得用類比輸入，那是之後的課。']);
+    setNotes(notes);
+
+    // 程式碼
+    var pullArg = S.pull === 'up' ? ', Pin.PULL_UP' : S.pull === 'down' ? ', Pin.PULL_DOWN' : '';
+    var cm = m.noPull && S.pull !== 'none' ? '⚠️ ' + pin.label + ' 沒有內建上下拉，這裡拉不起來' :
+             S.pull === 'up' ? '內建上拉：放開讀 1、按下讀 0' : S.pull === 'down' ? '內建下拉：放開讀 0、按下讀 1' : (S.extPull !== 'none' ? '電阻接在外面，晶片裡不用開' : '沒開上拉／下拉：放開時讀到的值會飄');
+    var code = '<span class="cm"># ' + pin.label + '：' + (isPot ? '外面給一個電壓' : S.inWiring === 'btn_gnd' ? '按鈕接地' : '按鈕接 3.3 V') + '</span>\n';
+    code += 'from machine import Pin\n\n';
+    code += 'btn = Pin(' + S.pinIn + ', <span class="hl">Pin.IN</span>' + (pullArg ? '<span class="hl">' + pullArg + '</span>' : '') + ')  <span class="cm"># ' + cm + '</span>\n';
+    code += 'print(btn.value())  <span class="cm"># 現在會印出 ' + (m.floating ? '0 或 1，不一定' : m.zone === 'mid' ? '0 或 1，手冊不保證' : m.reading) + '</span>';
+    $('code').innerHTML = code;
+
+    curFloating = m.floating;
+    $('i_floatBadge').style.display = m.floating ? '' : 'none';
+    var outside = isPot ? '可變電阻給 ' + S.vpot.toFixed(2) + ' V' : (S.inWiring === 'btn_gnd' ? '按鈕接地' : '按鈕接 3.3 V') + '、' + (S.pressed ? '按住' : '放開');
+    var pulls = [pullName, extName].filter(Boolean).join('＋') || '沒接電阻';
+    var look2 = m.floating ? '暫存器的值故意亂跳：這就是浮接，不是程式壞了' : (m.I > 0 ? '空心箭頭＝訊號方向，實心粒子＝電流（只在電阻那條路）' : '順著空心箭頭（訊號方向）看電壓怎麼讀進暫存器；沒有電流');
+    $('stateHint').innerHTML = '現在看的是<b>輸入圖</b> · ' + pin.label + ' · ' + outside + ' · ' + pulls + ' → 腳位 <b>' + (m.floating ? '？' : m.Vpin.toFixed(2) + ' V') + '</b> → 讀到 <b>' + (m.floating ? '亂跳' : m.reading) + '</b><span class="look">' + look2 + '</span>' + alertChip();
+    updateParticles(m.path, m.I);
+    if (S.link) { S.vgN = 0; S.vgP = 3.3; $('rngN').value = S.vgN; $('rngP').value = S.vgP; }
+  }
+
+  function render() {
+    var out = S.io === 'out';
+    $('grpOut').hidden = !out; $('grpWire').hidden = !out; $('grpIn').hidden = out;
+    $('fldMode').classList.toggle('off', !out); $('fldDrive').classList.toggle('off', !out);
+    $('fldPot').hidden = S.inWiring !== 'pot'; $('rowBtn').hidden = S.inWiring === 'pot';
+    press($('segIO'), 'data-io', S.io);
+    $('selPreset').value = S.preset || '';
+    $('schOut').style.display = out ? '' : 'none';
+    $('schIn').style.display = out ? 'none' : '';
+    $('linkLbl').textContent = out ? '跟著上面的電路動（取消就能自己拉閘極電壓）' : '剖面圖畫的是輸出那兩顆；現在輸出級關閉，所以都是關的（取消就能自己拉閘極電壓）';
+    if (S.io !== lastIO) { lastKey = null; lastIO = S.io; }   // 換圖就重畫粒子
+    if (out) renderOut(); else renderIn();
+    renderXS();
+  }
+  var lastIO = null;
+
+  /* ---------- 動畫 ---------- */
+  var last = null, blinkAcc = 0, pressAcc = 0, flickAcc = 0;
+  function frame(ts) {
+    if (last === null) last = ts;
+    var dt = Math.min(0.1, (ts - last) / 1000); last = ts;
+    var scale = S.paused ? 0 : S.speed;
+    if (scale > 0) {
+      if (S.io === 'out' && S.blink) {
+        blinkAcc += dt * scale;
+        if (blinkAcc >= 0.5) { blinkAcc -= 0.5; setValue(S.value === 1 ? 0 : 1); }
+      }
+      if (S.io === 'in' && S.autoPress && S.inWiring !== 'pot') {
+        pressAcc += dt * scale;
+        if (pressAcc >= 0.8) { pressAcc -= 0.8; setPressed(!S.pressed); }
+      }
+      if (S.io === 'in' && curFloating) {
+        flickAcc += dt * scale;
+        if (flickAcc >= 0.3) { flickAcc = 0; var rv = Math.random() < 0.5 ? 0 : VDD; setInputStage(rv, false); }
+      }
+      if (curPath) {
+        var v2 = 110 * Math.min(1.6, Math.max(0.08, curI / 20)) * scale * (S.electrons ? -1 : 1);
+        for (var i = 0; i < parts.length; i++) parts[i] += v2 * dt;
+        placeParticles();
+      }
+      ['n', 'p'].forEach(function (t) {
+        var st = xsState(t);
+        if (!st.on) return;
+        var x = XS[t], vv = 60 * scale;
+        for (var i = 0; i < x.pos.length; i++) x.pos[i] = ((x.pos[i] + vv * dt) % x.path.L + x.path.L) % x.path.L;
+        placeCarriers(t);
+      });
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- 控制 ---------- */
+  function press(group, attr, val) {
+    group.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute(attr) === String(val))); });
+  }
+  function setValue(v) { S.value = v; press($('btnV1').parentNode, 'data-v', v); render(); }
+  function setPressed(v) { S.pressed = v; var b = $('btnPress'); b.setAttribute('aria-pressed', String(v)); b.textContent = v ? '現在：按住中（點一下放開）' : '現在：放開（點一下按住）'; render(); }
+  $('segIO').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; S.io = b.getAttribute('data-io'); render(); });
+  $('btnV1').addEventListener('click', function () { setValue(1); });
+  $('btnV0').addEventListener('click', function () { setValue(0); });
+  $('chkBlink').addEventListener('change', function (e) { S.blink = e.target.checked; blinkAcc = 0; render(); });
+  $('btnSrc').addEventListener('click', function () { S.wiring = 'source'; press(this.parentNode, 'data-w', 'source'); render(); });
+  $('btnSnk').addEventListener('click', function () { S.wiring = 'sink'; press(this.parentNode, 'data-w', 'sink'); render(); });
+  $('selLed').addEventListener('change', function (e) { S.led = e.target.value; render(); });
+  $('selR').addEventListener('change', function (e) { S.r = parseInt(e.target.value, 10); render(); });
+  $('selPin').addEventListener('change', function (e) { S.pin = parseInt(e.target.value, 10); S.led = PINS_OUT[S.pin].led; $('selLed').value = S.led; render(); });
+  $('btnPP').addEventListener('click', function () { S.mode = 'pp'; press(this.parentNode, 'data-m', 'pp'); render(); });
+  $('btnOD').addEventListener('click', function () { S.mode = 'od'; press(this.parentNode, 'data-m', 'od'); render(); });
+  $('segDrive').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; S.drive = parseInt(b.getAttribute('data-d'), 10); press(this, 'data-d', S.drive); render(); });
+  $('segPull').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; S.pull = b.getAttribute('data-p'); press(this, 'data-p', S.pull); render(); });
+  $('selInWiring').addEventListener('change', function (e) { S.inWiring = e.target.value; render(); });
+  $('btnPress').addEventListener('click', function () { setPressed(!S.pressed); });
+  $('chkAuto').addEventListener('change', function (e) { S.autoPress = e.target.checked; pressAcc = 0; });
+  $('segExt').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; S.extPull = b.getAttribute('data-x'); press(this, 'data-x', S.extPull); render(); });
+  $('rngPot').addEventListener('input', function (e) { S.vpot = parseFloat(e.target.value); $('potTxt').textContent = S.vpot.toFixed(2) + ' V'; render(); });
+  $('selPinIn').addEventListener('change', function (e) { S.pinIn = parseInt(e.target.value, 10); render(); });
+  $('rngSpeed').addEventListener('input', function (e) { S.speed = parseFloat(e.target.value); $('spdTxt').textContent = S.speed.toFixed(2) + '×'; });
+  $('btnPause').addEventListener('click', function () { S.paused = !S.paused; this.setAttribute('aria-pressed', String(S.paused)); this.textContent = S.paused ? '繼續' : '暫停'; });
+  $('chkE').addEventListener('change', function (e) { S.electrons = e.target.checked; render(); });
+  $('chkLink').addEventListener('change', function (e) { S.link = e.target.checked; $('rngN').disabled = S.link; $('rngP').disabled = S.link; render(); });
+  $('rngN').addEventListener('input', function (e) { S.vgN = parseFloat(e.target.value); renderXS(); });
+  $('rngP').addEventListener('input', function (e) { S.vgP = parseFloat(e.target.value); renderXS(); });
+
+  // 疑問卡的「試試看」
+  var PRESETS = {
+    basic:  { io: 'out', value: 1, mode: 'pp', drive: 2, pull: 'none', wiring: 'source', pin: 16, led: 'red', r: 220 },
+    noR:    { io: 'out', value: 1, mode: 'pp', drive: 2, pull: 'none', wiring: 'source', pin: 16, led: 'red', r: 0 },
+    blue:   { io: 'out', value: 1, mode: 'pp', drive: 2, pull: 'none', wiring: 'source', pin: 16, led: 'blue', r: 220 },
+    sink:   { io: 'out', value: 0, mode: 'pp', drive: 2, pull: 'none', wiring: 'sink', pin: 16, led: 'red', r: 220 },
+    od:     { io: 'out', value: 1, mode: 'od', drive: 2, pull: 'up', wiring: 'source', pin: 16, led: 'red', r: 220 },
+    float:  { io: 'in', inWiring: 'btn_gnd', pull: 'none', extPull: 'none', pressed: false, pinIn: 5 },
+    pullup: { io: 'in', inWiring: 'btn_gnd', pull: 'up', extPull: 'none', pressed: false, pinIn: 5 }
+  };
+  function applyPreset(p, key) {
+    Object.keys(p).forEach(function (k) { S[k] = p[k]; });
+    S.preset = key || '';
+    S.blink = false; $('chkBlink').checked = false;
+    S.autoPress = false; $('chkAuto').checked = false;
+    press($('btnV1').parentNode, 'data-v', S.value);
+    press($('btnSrc').parentNode, 'data-w', S.wiring);
+    press($('btnPP').parentNode, 'data-m', S.mode);
+    press($('segDrive'), 'data-d', S.drive);
+    press($('segPull'), 'data-p', S.pull);
+    press($('segExt'), 'data-x', S.extPull);
+    $('selLed').value = S.led; $('selR').value = String(S.r); $('selPin').value = String(S.pin);
+    $('selInWiring').value = S.inWiring; $('selPinIn').value = String(S.pinIn);
+    var b = $('btnPress'); b.setAttribute('aria-pressed', String(S.pressed)); b.textContent = S.pressed ? '現在：按住中（點一下放開）' : '現在：放開（點一下按住）';
+    if (S.mode !== 'pp' || S.pull !== 'none' || S.drive !== 2) $('advBox').open = true;
+    render();
+  }
+  document.querySelectorAll('.card .try').forEach(function (b) {
+    b.addEventListener('click', function () {
+      applyPreset(PRESETS[b.getAttribute('data-preset')], b.getAttribute('data-preset'));
+      var top = document.querySelector('.bench');
+      if (top && top.scrollIntoView) top.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    });
+  });
+
+  // 網址參數：?io=in 直接開輸入模式；?preset=pullup 套用某個「試試看」
+  try {
+    var q = new URLSearchParams(location.search);
+    var pr = q.get('preset');
+    if (pr && PRESETS[pr]) applyPreset(PRESETS[pr], pr);
+    else if (q.get('io') === 'in') S.io = 'in';
+  } catch (e) {}
+
+  $('selPreset').addEventListener('change', function (e) { var k = e.target.value; if (k && PRESETS[k]) applyPreset(PRESETS[k], k); });
+  // 手動改任何控制，情境選單就回到「自己調」
+  ['click', 'change', 'input'].forEach(function (ev) {
+    document.querySelector('.panel').addEventListener(ev, function (e) {
+      var el = e.target.closest('button, select, input');
+      if (el && !el.closest('#grpView, #codeBox') && el.id !== 'btnPress' && el.id !== 'chkAuto') S.preset = '';
+    }, true);
+  });
+  $('segIO').addEventListener('click', function () { S.preset = ''; }, true);
+  $('chkLegend').addEventListener('change', function (e) {
+    document.querySelectorAll('.legend').forEach(function (el) { el.style.display = e.target.checked ? '' : 'none'; });
+  });
+  $('rngSpeed').value = S.speed; $('spdTxt').textContent = S.speed.toFixed(2) + '×';
+  render();
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>
