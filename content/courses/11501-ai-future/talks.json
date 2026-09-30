@@ -90,8 +90,17 @@
         {
           "label": "投影片原檔（PowerPoint）",
           "url": "https://drive.google.com/file/d/1Ut5LR6iHbSZjDl7pmU4J3bBoUo7h9RXd/view"
+        },
+        {
+          "label": "講前導讀一頁卡（PNG 原圖，3 分鐘看完）",
+          "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/images/talks/t02-preread.webp"
         }
-      ]
+      ],
+      "preread": "/images/talks/t02-preread.webp",
+      "teaser": {
+        "src": "/videos/t02-teaser-720p.mp4",
+        "poster": "/images/talks/t02-teaser-poster.jpg"
+      }
     },
     {
       "id": "t03",
