@@ -1,0 +1,46 @@
+<!doctype html><html lang="zh-Hant-TW"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>人工智慧概論 W4｜用例子教 AI，再調它怎麼學</title><style>
+:root{--paper:#fffdf8;--ink:#16343b;--muted:#526b70;--wash:#edf7f3;--sea:#087e8b;--coral:#e76f51;--sun:#f4b942;--line:#cbded9}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.75 "Segoe UI","Microsoft JhengHei","Noto Sans TC",Arial,sans-serif}
+main{max-width:760px;margin:0 auto;padding:28px 16px 56px}
+a{color:var(--sea);text-underline-offset:3px;overflow-wrap:anywhere}
+a:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+code{font-family:Consolas,"Cascadia Mono",monospace;background:#e7efec;border-radius:4px;padding:0 4px;overflow-wrap:anywhere}
+.kicker{font-size:14px;letter-spacing:.06em;font-weight:700;color:var(--muted);border-top:2px solid var(--ink);padding-top:10px;margin:0}
+h1{font-size:28px;line-height:1.3;margin:14px 0 6px}
+h1 .zh{font-size:18px;font-weight:600}
+.meta{color:var(--muted);margin:0 0 12px;font-size:15px}
+.lead{font-size:18px;background:var(--wash);border-left:6px solid var(--sea);padding:12px 14px;margin:16px 0}
+h2{font-size:22px;line-height:1.35;margin:34px 0 10px;padding-top:12px;border-top:2px solid var(--line)}
+h2 .n{color:var(--coral);margin-right:8px}
+h2 .zh{font-size:16px;font-weight:600}
+.zh{display:block;color:var(--muted);font-size:15px;line-height:1.6;margin-top:2px}
+p{margin:10px 0}
+ol,ul{padding-left:1.4em;margin:8px 0}
+li{margin:6px 0}
+.note{background:#fff7e6;border-left:6px solid var(--sun);padding:10px 14px;margin:14px 0}
+.rule{background:#fdf0ec;border-left:6px solid var(--coral);padding:10px 14px;margin:14px 0}
+.prompt{background:#fff;border:2px dashed var(--sea);border-radius:10px;padding:10px 14px;margin:10px 0}
+.prompt .plabel{display:block;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--sea)}
+.prompt p{margin:4px 0;font-weight:600}
+h3{font-size:18px;line-height:1.4;margin:20px 0 4px}
+h3 .zh{font-size:15px;font-weight:600}
+blockquote{margin:12px 0;padding:8px 14px;border-left:4px solid var(--muted);background:#f3f6f5}
+blockquote p{margin:4px 0}
+.quotes{list-style:none;padding:0;margin:4px 0}
+.quotes li{margin:8px 0}
+.quotes .en{display:block;font-style:italic}
+.quotes .tr{display:block;font-weight:600}
+html[lang="en"] .quotes .tr{font-weight:500;color:var(--muted);font-size:15px}
+.cite{display:block;font-size:13px;color:var(--muted);margin-top:4px}
+.time{list-style:none;padding:0}
+.time li{display:grid;grid-template-columns:56px 1fr;gap:8px;border-bottom:1px solid var(--line);padding:6px 0;margin:0}
+.time b{font-variant-numeric:tabular-nums;color:var(--sea)}
+.faq{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;background:#fff}
+.faq .q{font-weight:700;margin:0}
+.faq .q::before{content:"▸ ";color:var(--coral)}
+.faq .a{margin:4px 0 0}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+@media print{a{color:inherit}.lead,.note,.rule{break-inside:avoid}}
+</style></head><body><main><p class="kicker">人工智慧概論 · 第 4 週 · AB 班</p><h1>用例子教 AI，再調它怎麼學</h1><p class="meta">2026-09-29（二）13:10–16:00 · <a href="deck-ab.html">投影片</a></p><div class="lead">今天：兩人一組，用圖片包在 Teachable Machine 訓練一個認圖模型，再一次只改一個訓練參數（Epochs、Batch Size、Learning Rate），看它怎麼變。</div><section><h2><span class="n">1</span>今天做什麼</h2><ul class="time"><li><b>13:10</b><span>開場</span></li><li><b>13:15</b><span>觀念：有些 AI 從例子學</span></li><li><b>13:25</b><span>拿圖片包</span></li><li><b>13:30</b><span>動手 1：建兩類、上傳、訓練、用檔案測</span></li><li><b>13:55</b><span>按下 Train 時發生什麼事</span></li><li><b>14:00</b><span>休息</span></li><li><b>14:10</b><span>Advanced 的三個參數；參數實驗台</span></li><li><b>14:40</b><span>實驗一：只改 Epochs</span></li><li><b>14:55</b><span>實驗二：只改學習率</span></li><li><b>15:00</b><span>休息</span></li><li><b>15:10</b><span>實驗二（續）</span></li><li><b>15:25</b><span>實驗三：補資料，還是調參數？</span></li><li><b>15:35</b><span>找一張它判錯的</span></li><li><b>15:40</b><span>分享</span></li><li><b>15:50</b><span>收尾</span></li></ul></section><section><h2><span class="n">2</span>Teachable Machine 與圖片包</h2><p>它怎麼學，一行講完：<b>資料（data）→ 訓練（train）→ 模型（model）→ 預測（predict）</b>。（簡化說法：訓練＝從例子裡找規律。）</p><p>官方 README 怎麼說（英文原句，每句下面是白話翻譯）：</p><blockquote><ul class="quotes"><li><span class="en" lang="en">“a web-based tool that makes creating machine learning models fast, easy, and accessible for everyone”</span><span class="tr" lang="zh-Hant-TW">一個網頁工具，讓每個人都能快速、輕鬆地做出機器學習模型。</span></li><li><span class="en" lang="en">“train and run the models you make in your web browser”</span><span class="tr" lang="zh-Hant-TW">你做的模型，在你自己的瀏覽器裡訓練、執行。</span></li><li><span class="en" lang="en">“without writing any machine learning code”</span><span class="tr" lang="zh-Hant-TW">不用寫任何機器學習程式碼。</span></li></ul><span class="cite">出處：GitHub googlecreativelab/teachablemachine-community 的 README（2026-09-25 查）。</span></blockquote><div class="rule"><b>兩人一組、一台電腦、一個模型。</b>E403 沒有攝影機，全班用圖片包。</div><p>下載 <a href="starter/image-pack.zip" download>image-pack.zip</a>，<b>先解壓縮</b>（Upload 不吃 zip）。三個資料夾（red-circle、blue-square、green-triangle）各 24 張，程式畫的圖形：沒有照片、沒有人臉。<b>test</b> 夾每類 2 張較難的：只拿來測，不拿去訓練。</p></section><section><h2><span class="n">3</span>動手 1：訓練，再測</h2><p>在 <a href="https://teachablemachine.withgoogle.com/">teachablemachine.withgoogle.com</a>：</p><ol><li><b>Get Started</b> → <b>Image Project</b> → <b>Standard image model</b>。</li><li>把 Class 1、Class 2 改名成 red-circle、blue-square。（第三類按 <b>Add a class</b>，有餘力再加。）</li><li>每類按 <b>Upload</b> → 只選 <b>01–12</b>（12 張）。</li><li>用預設值按 <b>Train Model</b>，跑完前別關分頁。</li><li>在 <b>Preview</b> 把 <b>Input</b> 從 webcam 改成 <b>file</b>，把 test 夾的圖一張張丟進去，記下百分比。</li></ol><p>介面可能改版，找不到就問老師。</p><h3>按下 Train 時發生什麼事</h3><ul><li><b>訓練樣本</b>（training samples）拿來學；<b>測試樣本</b>（test samples）留著考它。</li><li><b>一輪</b>（epoch）：每張訓練圖都看過一次。</li></ul></section><section><h2><span class="n">4</span>Advanced 的三個參數</h2><p>在 <b>Training</b> 底下點 <b>Advanced</b>。預設值（2026-09-29 官網實查）：</p><ul><li><b>Epochs（一輪數）＝50</b>：學幾輪。</li><li><b>Batch Size（批次大小）＝16</b>：看幾張修正一次。工具自己的例子：80 張 ÷ 16 ＝ 5 批 ＝ 1 輪。</li><li><b>Learning Rate（學習率）＝0.001</b>：每次修正多大步。太小學得慢、太大會衝過頭（簡化說法）。</li></ul><div class="note"><b>先到參數實驗台玩一次：</b><a href="params-lab.html">params-lab.html</a>（六個範例；是簡化的玩具模型，數字不會跟 Teachable Machine 一樣）。</div><p>Advanced 旁邊點 <b>Under the hood</b>：<b>Accuracy per epoch</b>（越高越好）、<b>Loss per epoch</b>（越低越好），訓練和測試各一條線。</p></section><section><h2><span class="n">5</span>三個實驗：一次只改一件</h2><ol><li><b>只改 Epochs</b>：5、50、200，其他維持預設。test 圖對幾張？曲線長怎樣？</li><li><b>只改學習率</b>：0.0001、0.001、0.1（Epochs 改回 50）。哪一個的 Loss 亂跳？</li><li><b>補資料</b>：按 Reset Defaults，每類補上 13–24，再訓一次。Under the hood 按 <b>Accuracy per class</b>、<b>Confusion Matrix</b>。資料和參數，哪個幫比較多？</li></ol><p>每個實驗做完截一張圖。為什麼一次一件：一次改兩件，就不知道是哪一件造成的。</p><h3>找一張它判錯的</h3><p>判錯是線索。常見原因（簡化說法）：例子太少；test 圖跟訓練圖不像（變小、偏色、轉角度、雜訊）；參數（輪數太少、步子太大）。</p></section><section><h2><span class="n">6</span>卡住怎麼辦</h2><div class="faq"><p class="q">Upload 沒反應</p><p class="a">是不是選到 zip？先解壓，再選資料夾裡的圖片。</p></div><div class="faq"><p class="q">找不到按鈕</p><p class="a">介面可能改版，問老師。</p></div><div class="faq"><p class="q">按了 Train 很久</p><p class="a">等它跑完，別關分頁；200 輪會比較久。</p></div><div class="faq"><p class="q">參數改亂了</p><p class="a">按 Reset Defaults（50／16／0.001）。</p></div><div class="faq"><p class="q">教室電腦下課會清空</p><p class="a">先截圖，存到自己的雲端或寄給自己。</p></div></section><section><h2><span class="n">7</span>作業與下次上課</h2><p>作業老師課後會在 e學苑 開。今天先把課堂上的事做完。</p><p>下次上課：2026-10-06（二）。</p></section><footer>國立東華大學 · 人工智慧概論 · 115-1 · 第 4 週。這一頁存下來，離線也能開。</footer></main></body></html>
