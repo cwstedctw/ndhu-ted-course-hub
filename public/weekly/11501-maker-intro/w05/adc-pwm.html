@@ -140,6 +140,7 @@
     --c-trace: #7FD8BE;
     --c-trace2: #FF9E6B;
     --c-avg: #FFD66B;
+    --c-on-primary: #FFF7F2;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -149,6 +150,7 @@
       --c-trace: #9FE8D0;
       --c-trace2: #FFB38A;
       --c-avg: #FFD66B;
+      --c-on-primary: #1A1614;
     }
   }
   :root[data-theme="dark"] {
@@ -158,6 +160,7 @@
     --c-trace: #9FE8D0;
     --c-trace2: #FFB38A;
     --c-avg: #FFD66B;
+    --c-on-primary: #1A1614;
   }
 
   * { box-sizing: border-box; }
@@ -201,7 +204,7 @@
   .tabs { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
   .tab { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 10px; padding: 4px 12px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); line-height: 1.3; text-align: left; }
   .tab small { display: block; font-size: 12px; font-weight: 600; opacity: .85; }
-  .tab[aria-selected="true"] { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary-deep); }
+  .tab[aria-selected="true"] { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary-deep); }
   .caption { flex: 1 1 240px; min-width: 0; margin: 0; font-size: 16px; font-weight: 800; line-height: 1.4; color: var(--c-primary-deep); }
   @media (max-width: 560px) {
     .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
@@ -245,7 +248,7 @@
   .btn { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 8px; padding: 4px 10px; font-weight: 700; font-size: 13px; }
   .btn:hover:not(:disabled) { border-color: var(--c-primary); }
   .btn.main { border-color: var(--c-primary); color: var(--c-primary-deep); }
-  .btn[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary-deep); }
+  .btn[aria-pressed="true"] { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary-deep); }
   .spd { flex: 1 1 260px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); min-width: 0; }
   .spd input { flex: 1 1 90px; min-width: 70px; accent-color: var(--c-primary); }
   .spd output { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 800; color: var(--c-ink); min-width: 3.6em; text-align: right; }
@@ -267,7 +270,29 @@
   .seg button { border: 0; background: transparent; padding: 3px 10px; font-weight: 700; font-size: 12.5px; color: var(--c-ink-soft); border-right: 2px solid var(--c-line); line-height: 1.35; }
   .seg button:last-child { border-right: 0; }
   .seg button small { font-size: 12px; font-weight: 600; opacity: .8; margin-left: 3px; }
-  .seg button[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; }
+  .seg button[aria-pressed="true"] { background: var(--c-primary); color: var(--c-on-primary); }
+  /* 零件卡：①選感測器（2 張）、②選 PWM 控制的零件（3 張＋1 張小卡） */
+  .picks { display: grid; gap: 6px; min-width: 0; }
+  .picks.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .picks.three { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, .78fr); }
+  .pick { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 8px; align-items: center; text-align: left; border: 2px solid var(--c-line); background: var(--c-surface); border-radius: 12px; padding: 5px 10px 5px 7px; color: var(--c-ink-soft); min-width: 0; line-height: 1.3; }
+  .pick:hover { border-color: var(--c-primary); }
+  .pick svg { grid-row: 1 / span 2; width: 32px; height: 32px; flex: 0 0 auto; color: var(--c-primary); }
+  .pick .pt { font-size: 14px; font-weight: 800; color: var(--c-ink); min-width: 0; }
+  .pick .pt small { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--c-ink-faint); margin-left: 4px; white-space: nowrap; }
+  .pick .pd { font-size: 12px; font-weight: 700; color: var(--c-ink-soft); min-width: 0; }
+  .pick[aria-pressed="true"] { background: var(--c-primary); border-color: var(--c-primary-deep); }
+  .pick[aria-pressed="true"] svg, .pick[aria-pressed="true"] .pt, .pick[aria-pressed="true"] .pd, .pick[aria-pressed="true"] .pt small { color: var(--c-on-primary); }
+  .pick.mini { grid-template-columns: minmax(0, 1fr); border-style: dashed; background: var(--c-surface-2); padding-left: 10px; }
+  .pick.mini .pt { font-size: 13px; }
+  @media (max-width: 560px) {
+    .picks.three { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+    .picks.three .pick { padding: 3px 10px 3px 7px; }
+    .picks.three .pick svg { width: 28px; height: 28px; }
+    .picks.two .pick { grid-template-columns: minmax(0, 1fr); padding: 5px 7px; }
+    .picks.two .pick svg { grid-row: auto; width: 26px; height: 26px; }
+    .picks.two .pick .pt small { display: block; margin-left: 0; }
+  }
   .inrow { display: flex; align-items: center; gap: 4px 8px; flex-wrap: wrap; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); min-width: 0; }
   .inrow label { white-space: nowrap; }
   .inrow input[type="range"] { flex: 1 1 150px; min-width: 110px; accent-color: var(--c-primary); }
@@ -282,7 +307,7 @@
   .tog input { width: 16px; height: 16px; accent-color: var(--c-primary); margin: 0; }
   .tog.off { opacity: .55; cursor: not-allowed; }
   .flash { font-size: 12px; font-weight: 800; border-radius: 999px; padding: 1px 10px; border: 1.5px solid var(--c-line); color: var(--c-ink-faint); background: var(--c-surface); white-space: nowrap; transition: background-color .15s, color .15s; }
-  .flash.on { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary-deep); }
+  .flash.on { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary-deep); }
   .widget { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 6px 10px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .widget h3 { font-size: 13px; }
   .ro { font-size: 12.5px; color: var(--c-ink-soft); }
@@ -405,7 +430,7 @@
   .bitsbadge { font-size: 12px; font-weight: 800; color: var(--c-violet-deep); background: var(--c-violet-tint); border: 1.5px solid var(--c-violet); border-radius: 999px; padding: 0 9px; white-space: nowrap; }
   .keys { display: flex; flex-wrap: wrap; gap: 3px; }
   .keys button { border: 1.5px solid var(--c-line); background: var(--c-surface); border-radius: 6px; padding: 1px 7px; font-size: 12px; font-weight: 700; }
-  .keys button[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary-deep); }
+  .keys button[aria-pressed="true"] { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary-deep); }
 
   /* ===== 觀念卡、折疊區、卡片、表格 ===== */
   .concepts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 12px; align-items: start; }
@@ -417,7 +442,7 @@
   .ccard:not(.hot) > summary h3 { color: var(--c-ink-soft); }
   .ccard.hot { background: var(--c-surface); border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-tint); }
   .ccard .ccbody { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; min-width: 0; }
-  .ccard .tag { font-size: 12px; font-weight: 800; color: #FFF7F2; background: var(--c-primary); border-radius: 8px; padding: 1px 8px; }
+  .ccard .tag { font-size: 12px; font-weight: 800; color: var(--c-on-primary); background: var(--c-primary); border-radius: 8px; padding: 1px 8px; }
   .ccard h3 { font-size: 15px; line-height: 1.4; }
   .ccard p, .ccard li { font-size: 13px; color: var(--c-ink-soft); }
   .ccard b { color: var(--c-ink); }
@@ -491,7 +516,7 @@
     <div class="appbar-title">
       <span class="kicker"><span class="dot"></span><span>創客入門 · 補充教材</span></span>
       <h1>讀旋鈕、調亮度實驗台</h1>
-      <span class="sub1">旋鈕怎麼變成數字（ADC），數字怎麼變成亮度和音高（PWM）</span>
+      <span class="sub1">旋鈕、光感測器怎麼變成數字（ADC）；數字怎麼控制燈、蜂鳴器、馬達（PWM）</span>
     </div>
     <p class="oneline"><b>ESP32 的腳位平常只認 1 和 0。要讀「中間值」，得把電壓切成 4096 格、看它落在第幾格；要送「中間值」，得用很快的開、關比例騙過燈和耳朵。</b>只有 1 和 0 兩種值，叫數位（digital）；可以停在中間任何一點，叫類比（analog）。把電壓換成格子上的數字，叫類比數位轉換（ADC）；用開、關的時間比例假裝中間值，叫脈衝寬度調變（PWM）。旋鈕從頭轉到底＝電壓 0 到 3.3 V＝數字 0 到 4095；燈的平均光量＝開的時間佔幾成（眼睛覺得多亮不是一直線，第二頁有）。</p>
     <details class="about">
@@ -517,11 +542,11 @@
   <section class="bench" id="bench" aria-label="互動模擬實驗台">
     <div class="tabbar">
       <div class="tabs" role="tablist" aria-label="三個分頁：讀進來、送出去、接起來" id="tablist">
-        <button type="button" class="tab" role="tab" id="tb-adc" data-tab="adc" aria-selected="true" aria-controls="tp-adc">① 讀進來<small>ADC・讀旋鈕</small></button>
-        <button type="button" class="tab" role="tab" id="tb-pwm" data-tab="pwm" aria-selected="false" aria-controls="tp-pwm" tabindex="-1">② 送出去<small>PWM・調亮度</small></button>
+        <button type="button" class="tab" role="tab" id="tb-adc" data-tab="adc" aria-selected="true" aria-controls="tp-adc">① 讀進來<small>ADC・旋鈕、光感</small></button>
+        <button type="button" class="tab" role="tab" id="tb-pwm" data-tab="pwm" aria-selected="false" aria-controls="tp-pwm" tabindex="-1">② 送出去<small>PWM・燈、蜂鳴器、馬達</small></button>
         <button type="button" class="tab" role="tab" id="tb-link" data-tab="link" aria-selected="false" aria-controls="tp-link" tabindex="-1">③ 接起來<small>旋鈕調亮度</small></button>
       </div>
-      <p class="caption" id="caption">電壓可以停在任何一點，程式讀到的是「第幾格」。</p>
+      <p class="caption" id="caption">旋鈕、光感測器都送進電壓，程式讀到的是「第幾格」。</p>
     </div>
 
     <div class="benchgrid">
@@ -529,9 +554,12 @@
 
         <!-- ① 讀進來 -->
         <div class="tabpanel" id="tp-adc" role="tabpanel" aria-labelledby="tb-adc">
-          <p class="lead">旋鈕把 0 到 3.3 V 之間的電壓送進腳位。ESP32 把這段電壓切成 4096 格，指針落在第幾格，讀到的就是幾；切成幾格，叫解析度（resolution）。</p>
+          <p class="lead">套件上有兩個會送出「中間電壓」的感測器：<b>旋鈕（可變電阻）看你轉多少，光感測器看周圍多亮</b>，都變成 0 到 3.3 V 之間的電壓。ESP32 把這段電壓切成 4096 格，指針落在第幾格，讀到的就是幾；切成幾格，叫解析度（resolution）。</p>
+          <div class="picks two" role="group" aria-label="讀哪一個感測器" id="segSrc">
+            <button type="button" class="pick" data-src="pot" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="7"/><path d="M12 13l3.6-4.4M4.5 20.5l1.8-1.8M19.5 20.5l-1.8-1.8"/></svg><span class="pt">旋鈕（可變電阻）<small>GPIO34</small></span><span class="pd">轉多少 → 電壓多高</span></button>
+            <button type="button" class="pick" data-src="ldr" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg><span class="pt">光感測器<small>GPIO39</small></span><span class="pd">周圍多亮 → 電壓跟著變</span></button>
+          </div>
           <div class="ctlrow">
-            <div class="lockrow"><span>輸入</span><div class="seg" role="group" aria-label="輸入從哪裡來" id="segSrc"><button type="button" data-src="pot" aria-pressed="true">旋鈕<small>GPIO34</small></button><button type="button" data-src="ldr" aria-pressed="false">光感測器<small>GPIO39</small></button></div></div>
             <div class="lockrow"><span>解析度</span><div class="seg" role="group" aria-label="解析度：切成幾格" id="segBits"><button type="button" data-bits="12" aria-pressed="true">12 位元</button><button type="button" data-bits="10" aria-pressed="false">10</button><button type="button" data-bits="8" aria-pressed="false">8</button><button type="button" data-bits="4" aria-pressed="false">4</button></div></div>
           </div>
           <div class="fig adcfig" id="adcFig">
@@ -596,8 +624,13 @@
 
         <!-- ② 送出去 -->
         <div class="tabpanel" id="tp-pwm" role="tabpanel" aria-labelledby="tb-pwm" hidden>
-          <p class="lead">腳位還是只能開或關，只是開關得很快。一秒開關幾次，叫頻率（frequency）；每一次開的時間佔一個週期的幾成，叫工作週期（duty cycle）。燈、耳朵、伺服馬達各自把這串開關「平均」成亮度、音高、角度。</p>
-          <div class="lockrow"><span>接什麼</span><div class="seg" role="group" aria-label="腳位接什麼" id="segLoad"><button type="button" data-load="led" aria-pressed="true">燈<small>GPIO16</small></button><button type="button" data-load="buzzer" aria-pressed="false">蜂鳴器<small>GPIO14</small></button><button type="button" data-load="servo" aria-pressed="false">伺服馬達<small>GPIO27</small></button><button type="button" data-load="rc" aria-pressed="false">電阻＋電容</button></div></div>
+          <p class="lead">腳位還是只能開或關，只是開關得很快。一秒開關幾次，叫頻率（frequency）；每一次開的時間佔一個週期的幾成，叫工作週期（duty cycle）。<b>同一招控制三種零件：燈看工作週期（亮度）、蜂鳴器看頻率（音高）、伺服馬達看脈衝寬度（角度）。</b>選一個零件，拉下面的拉桿。</p>
+          <div class="picks three" role="group" aria-label="PWM 控制哪一個零件" id="segLoad">
+            <button type="button" class="pick" data-load="led" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21.5h4M12 2.5a6 6 0 0 0-3.5 10.9V16h7v-2.6A6 6 0 0 0 12 2.5z"/></svg><span class="pt">LED 燈<small>GPIO16</small></span><span class="pd">工作週期 → 亮度</span></button>
+            <button type="button" class="pick" data-load="buzzer" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 9v6h4l5 4V5l-5 4h-4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.8 5.8a9 9 0 0 1 0 12.4"/></svg><span class="pt">蜂鳴器<small>GPIO14</small></span><span class="pd">頻率 → 音高</span></button>
+            <button type="button" class="pick" data-load="servo" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="11" width="15" height="9.5" rx="2"/><circle cx="9" cy="11" r="2.3"/><path d="M9 11l11.5-6.5"/></svg><span class="pt">伺服馬達<small>GPIO27</small></span><span class="pd">脈衝寬度 → 角度</span></button>
+            <button type="button" class="pick mini" data-load="rc" aria-pressed="false"><span class="pt">電阻＋電容</span><span class="pd">加碼：磨成真的中間電壓</span></button>
+          </div>
           <div class="inrow"><label for="rngFreq">頻率</label><input type="range" id="rngFreq" min="0" max="1000" step="1" value="651"><output id="freqTxt" for="rngFreq">1000 Hz</output><span class="bitsbadge" id="pwmBitsTxt">現在最多 16 位元</span></div>
           <div class="chips" id="freqChips"><button type="button" class="chip" data-f="2">2 Hz<small>看得到閃</small></button><button type="button" class="chip" data-f="50">50 Hz<small>伺服</small></button><button type="button" class="chip" data-f="440">440 Hz<small>La</small></button><button type="button" class="chip" data-f="1000">1 kHz<small>燈</small></button><button type="button" class="chip" data-f="5000">5 kHz<small>沒寫就是它</small></button></div>
           <div class="inrow"><label for="rngDuty">工作週期</label><input type="range" id="rngDuty" min="0" max="100" step="0.1" value="50"><output id="dutyTxt" for="rngDuty">50.0%</output><div class="seg" role="group" aria-label="工作週期用哪一種單位寫" id="segUnit"><button type="button" data-unit="pct" aria-pressed="true">%</button><button type="button" data-unit="duty" aria-pressed="false">duty</button><button type="button" data-unit="u16" aria-pressed="false">duty_u16</button><button type="button" data-unit="ns" aria-pressed="false">duty_ns</button></div></div>
@@ -1221,8 +1254,8 @@ var LUX_MIN = 0.1, LUX_MAX = 100000;                 /* 光的拉桿：全黑到
 var SWEEP = 2000;                                    /* 示波器慢動作：畫面上 2 秒走完 4 個週期 */
 var TABS = ['adc', 'pwm', 'link'];
 var CAPTION = {
-  adc: '電壓可以停在任何一點，程式讀到的是「第幾格」。',
-  pwm: '腳位還是只有開和關，只是開關得很快。',
+  adc: '旋鈕、光感測器都送進電壓，程式讀到的是「第幾格」。',
+  pwm: '同一招開開關關：燈有亮暗、蜂鳴器有音高、馬達有角度。',
   knob: '讀進來的數字乘 16，就是送出去的亮度。',
   night: '暗過門檻，才開燈。',
   servo: '讀進來的數字換成角度，再換成脈衝寬度。'
