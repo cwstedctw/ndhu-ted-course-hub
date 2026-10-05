@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINE AI 待辦小秘書｜實作指南</title>
+<style>
+  :root {
+    --bg: #f5f7f6; --card: #ffffff; --ink: #1f2a2a; --muted: #5b6b6a; --line: #d9e2e0;
+    --teal: #0e7c7b; --teal-soft: #e3f3f2; --amber: #b45309; --amber-soft: #fdf3e2;
+    --red: #b42318; --red-soft: #fdecea; --code-bg: #14201f; --code-ink: #e6f0ef;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", system-ui, sans-serif; line-height: 1.7; font-size: 16px; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 24px 16px 64px; overflow-wrap: anywhere; }
+  header.top { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px 22px 18px; }
+  .top-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; justify-content: space-between; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; line-height: 1.35; }
+  .sub { color: var(--muted); margin: 0; }
+  .progress { min-width: 220px; flex: 0 0 auto; background: var(--teal-soft); border-radius: 12px; padding: 10px 14px; }
+  .progress b { color: var(--teal); }
+  .bar { height: 10px; background: #cfe3e1; border-radius: 99px; overflow: hidden; margin-top: 6px; }
+  .bar > span { display: block; height: 100%; width: 0; background: var(--teal); transition: width .3s; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .links a { text-decoration: none; color: var(--ink); background: #eef2f1; border: 1px solid var(--line); border-radius: 10px; padding: 4px 12px; font-size: .92rem; }
+  .links a:hover { background: var(--teal-soft); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; margin-top: 18px; }
+  .card h2 { font-size: 1.25rem; margin: 0 0 10px; }
+  .card h3 { font-size: 1.08rem; margin: 18px 0 6px; }
+  .note { border-radius: 12px; padding: 12px 16px; margin: 12px 0; }
+  .note.warn { background: var(--amber-soft); border-left: 5px solid var(--amber); }
+  .note.info { background: var(--teal-soft); border-left: 5px solid var(--teal); }
+  .note.stop { background: var(--red-soft); border-left: 5px solid var(--red); }
+  .three { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .three > div { background: #fafcfb; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 8px 0 4px; }
+  .flow .box { flex: 0 0 auto; background: #fafcfb; border: 1px solid var(--line); border-radius: 10px; padding: 6px 12px; font-size: .95rem; }
+  .flow .arrow { flex: 0 0 auto; color: var(--muted); }
+  nav.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+  nav.tabs button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 6px 14px; }
+  nav.tabs button[aria-selected="true"] { background: var(--teal); color: #fff; border-color: var(--teal); }
+  .panel[hidden] { display: none; }
+  .step { border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; margin-top: 12px; background: #fcfdfd; }
+  .step h3 { margin-top: 0; }
+  .step ol, .step ul { margin: 6px 0; padding-left: 1.4em; }
+  .level-tag { display: inline-block; font-size: .85rem; font-weight: 700; padding: 1px 10px; border-radius: 99px; background: var(--teal-soft); color: var(--teal); margin-right: 6px; }
+  .level-tag.l2 { background: var(--amber-soft); color: var(--amber); }
+  label.done { display: inline-flex; gap: 8px; align-items: center; margin-top: 8px; font-size: .92rem; background: #eef2f1; border-radius: 10px; padding: 4px 12px; cursor: pointer; }
+  code { font-family: Consolas, "Cascadia Mono", Menlo, monospace; background: #eef2f1; padding: 1px 6px; border-radius: 6px; font-size: .9em; }
+  pre { background: var(--code-bg); color: var(--code-ink); border-radius: 12px; padding: 14px 16px; overflow-x: auto; font-size: .85rem; line-height: 1.55; max-height: 520px; }
+  pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+  .btn { font: inherit; cursor: pointer; border: none; border-radius: 10px; padding: 6px 14px; background: var(--teal); color: #fff; }
+  .btn.ghost { background: #eef2f1; color: var(--ink); border: 1px solid var(--line); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-top: 10px; }
+  blockquote { margin: 8px 0; padding: 10px 14px; background: #fafcfb; border-left: 4px solid var(--line); border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #eef2f1; }
+  .table-wrap { overflow-x: auto; }
+  details { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin-top: 10px; background: #fcfdfd; }
+  summary { cursor: pointer; font-weight: 700; }
+  .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 10px; }
+  .demo-out { background: #fafcfb; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .demo-out h4 { margin: 0 0 6px; font-size: .98rem; }
+  .phone { white-space: pre-wrap; background: #e9f7ea; border-radius: 12px; padding: 10px 12px; font-size: .95rem; }
+  .check-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input { margin-top: 6px; flex: 0 0 auto; }
+  footer { color: var(--muted); font-size: .88rem; margin-top: 28px; }
+  @media print { nav.tabs, .links, .btn, .progress { display: none; } .panel[hidden] { display: block; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="top-row">
+      <div>
+        <h1>🤖 LINE AI 待辦小秘書｜實作指南</h1>
+        <p class="sub">建一張試算表 → 貼程式 → 放好兩把金鑰 → 部署 → 用手機傳訊息給它</p>
+      </div>
+      <div class="progress" aria-live="polite">
+        <div>完成進度 <b id="progressText">0 / 0</b></div>
+        <div class="bar"><span id="progressBar"></span></div>
+      </div>
+    </div>
+    <div class="links">
+      <a href="https://drive.google.com/" target="_blank" rel="noopener">Google 雲端硬碟 ↗</a>
+      <a href="https://aistudio.google.com/" target="_blank" rel="noopener">Google AI Studio ↗</a>
+      <a href="https://manager.line.biz/" target="_blank" rel="noopener">LINE 官方帳號管理後台 ↗</a>
+      <a href="https://developers.line.biz/console/" target="_blank" rel="noopener">LINE Developers ↗</a>
+      <a href="https://developers.line.biz/en/docs/messaging-api/getting-started/" target="_blank" rel="noopener">LINE 官方步驟說明 ↗</a>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>開始前，先確認三件事</h2>
+    <div class="three">
+      <div><b>① 全程用個人 Gmail</b><br>學校帳號可能被關掉 AI Studio，或不能把程式開放給「所有人」，LINE 就敲不進來。</div>
+      <div><b>② 滿 18 歲才能申請 Gemini 金鑰</b><br>這是 Google 的服務條款。未滿 18 歲請和滿 18 歲的同學同組，由對方申請金鑰。</div>
+      <div><b>③ 別把個資傳給你的 bot</b><br>免費版 Gemini 收到的內容，Google 可能拿去改進產品，也可能有人工審閱。</div>
+    </div>
+    <p class="sub">另外請先在手機 LINE 設好「電子郵件帳號」和「密碼」（LINE → 設定 → 帳號）：第 3 步要用它在電腦登入 LINE 官方帳號的後台，沒設會登不進去。</p>
+  </section>
+
+  <section class="card">
+    <h2>這台機器怎麼動</h2>
+    <div class="flow" aria-label="資料流程">
+      <span class="box">📱 手機 LINE</span><span class="arrow">→</span>
+      <span class="box">LINE 伺服器</span><span class="arrow">→ 敲門 →</span>
+      <span class="box">你的 Apps Script</span><span class="arrow">→</span>
+      <span class="box">Gemini 整理欄位</span><span class="arrow">→</span>
+      <span class="box">試算表・日曆</span><span class="arrow">→</span>
+      <span class="box">回覆手機</span>
+    </div>
+    <p><b>有事就來敲門</b>：LINE 收到訊息時，會主動去敲你留給它的網址，這種安排叫 Webhook。<br>
+      <b>欄位固定的資料</b>：Gemini 回給程式的不是一段話，而是「事項、分類、日期、時間」這種欄位固定的資料（JSON），程式才分得出哪個是日期。</p>
+  </section>
+
+  <nav class="tabs" role="tablist" aria-label="內容分頁">
+    <button role="tab" aria-selected="true" aria-controls="tab-steps" id="btn-steps">📖 實作步驟</button>
+    <button role="tab" aria-selected="false" aria-controls="tab-code" id="btn-code">💻 程式碼</button>
+    <button role="tab" aria-selected="false" aria-controls="tab-demo" id="btn-demo">🧪 流程示範</button>
+    <button role="tab" aria-selected="false" aria-controls="tab-check" id="btn-check">✅ 檢核清單</button>
+    <button role="tab" aria-selected="false" aria-controls="tab-help" id="btn-help">🆘 卡住了</button>
+  </nav>
+
+  <!-- 分頁：實作步驟（步驟正本是 STUDENT_LAB.md，這裡照它改） -->
+  <section class="panel card" id="tab-steps" role="tabpanel" aria-labelledby="btn-steps">
+    <h2><span class="level-tag">Level 1</span>在瀏覽器把它做出來</h2>
+
+    <div class="step">
+      <h3>1. 建試算表、貼程式</h3>
+      <ol>
+        <li>在 Google 雲端硬碟新增一份試算表。</li>
+        <li>選「擴充功能 → Apps Script」，刪掉編輯器裡原本的內容。</li>
+        <li>貼上「程式碼」分頁裡的 <b>Level 1</b>，按儲存。</li>
+      </ol>
+      <label class="done"><input type="checkbox" data-check="l1-code"> 程式貼好、存好了</label>
+    </div>
+
+    <div class="step">
+      <h3>2. 申請 Gemini 金鑰</h3>
+      <ol>
+        <li>用個人 Gmail 登入後，開 <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>。第一次進來會先要你同意 Google AI Studio 的服務條款。</li>
+        <li>進到「API Keys」頁（頁首也有「Get API key」）。表格裡已經有一把金鑰的（新帳號同意條款後，系統常會自動建一個專案和一把金鑰）直接用它；沒有就按「Create API key」，照對話框選專案（新帳號選預設那個）。</li>
+        <li>複製金鑰字串，等一下第 4 步直接貼進「指令碼屬性」。不要先存在記事本或桌面：教室電腦是共用的。</li>
+      </ol>
+      <p class="sub">金鑰是一串「證明是你在用」的密碼（API key），不要截圖，也不要貼到群組。開頭字母不一定是 <code>AIza</code>，新建的多半是 <code>AQ.</code> 開頭，別靠開頭判斷對不對。</p>
+      <div class="note warn">按鈕按不下去、出現「You do not have permission to create a key in this project」，或整頁說「you do not have access to Google AI Studio」：多半是學校帳號被限制或被標成未滿 18 歲，換個人 Gmail 重來。</div>
+      <label class="done"><input type="checkbox" data-check="l1-gemini"> 拿到 Gemini 金鑰</label>
+    </div>
+
+    <div class="step">
+      <h3>3. 開一個 LINE 官方帳號，拿到通行碼</h3>
+      <p>LINE 機器人需要三樣東西：<b>LINE 官方帳號</b>（機器人的身分）、打開它的 <b>Messaging API</b>（讓程式收發訊息的通道），以及一組<b>長效通行碼</b>（channel access token）。</p>
+      <p>2024 年 9 月起的順序：<b>先建官方帳號 → 在官方帳號管理後台啟用 Messaging API → 到 LINE Developers 後台發長效通行碼</b>。後台畫面常改版，按鈕字樣以當天畫面為準；看不懂下一步，就把畫面上的字貼給 AI 問。官方說明：<a href="https://developers.line.biz/en/docs/messaging-api/getting-started/" target="_blank" rel="noopener">Getting started</a>。</p>
+      <p><b>3-1 建官方帳號</b></p>
+      <ol>
+        <li>手機 LINE 先確認已設好「電子郵件帳號」和「密碼」（LINE → 設定 → 帳號）。沒設的先設好，不然電腦登不進去。</li>
+        <li>電腦開 <a href="https://manager.line.biz/" target="_blank" rel="noopener">manager.line.biz</a>，按「建立 LINE 官方帳號」（或從 LINE for Business 的「免費開設帳號」進來）。到「LINE 商用 ID」頁選「使用 LINE 帳號登入」，輸入 LINE 的電子郵件和密碼；手機 LINE 會跳出認證畫面，照電腦畫面輸入數字。</li>
+        <li>填官方帳號資料：帳號名稱（給機器人取個名字）、業種（大分類、小分類隨意選）、公司或所有者名稱（寫自己的名字）、電子郵件、國家／地區選台灣 → 確定 → 確認內容 → 完成。</li>
+        <li>回到 manager.line.biz 看到剛建的帳號，這一段就完成了。</li>
+      </ol>
+      <p><b>3-2 啟用 Messaging API</b></p>
+      <ol>
+        <li>在官方帳號管理後台，右上「設定」→ 左側「Messaging API」→ 按「使用 Messaging API」（也可能寫「啟用 Messaging API」）。</li>
+        <li>第一次用會先出現開發者資訊畫面：填姓名、電子郵件 → 同意。</li>
+        <li>選 provider（服務提供者，也就是開發者名稱）：建立新的，名字填自己的名字或組名。<b>選了就不能換、不能解除。</b></li>
+        <li>隱私權政策網址、服務條款網址可以留空 → 確認 → OK。畫面顯示 Messaging API 已啟用、出現 Channel ID。</li>
+      </ol>
+      <p><b>3-3 關掉罐頭回覆</b></p>
+      <ol>
+        <li>同一個後台「設定」→「回應設定」：「自動回應訊息」關掉、「歡迎訊息」關掉（這兩個預設是開的），「Webhook」打開。不關掉，等一下手機會收到官方的罐頭回覆，讓你以為 bot 壞了。</li>
+      </ol>
+      <p><b>3-4 發長效通行碼</b></p>
+      <ol>
+        <li>開 <a href="https://developers.line.biz/console/" target="_blank" rel="noopener">developers.line.biz/console</a>，用同一組帳號登入 → 點你的 provider → 點那個 channel → 上方分頁「Messaging API」。</li>
+        <li>捲到最下面「Channel access token」：「Channel access token (long-lived)」右邊按「Issue」（已經有一組的話是「Reissue」，重發後舊的就失效）。</li>
+        <li>按複製，直接貼進 Apps Script 的指令碼屬性（第 4 步）。別先存在記事本或桌面。</li>
+      </ol>
+      <div class="note warn">provider 選了就不能換。登不進官方帳號後台，多半是手機 LINE 還沒設電子郵件和密碼；設不了就和同學一組，用同組的帳號建。</div>
+      <label class="done"><input type="checkbox" data-check="l1-line"> 拿到 LINE 長效通行碼</label>
+    </div>
+
+    <div class="step">
+      <h3>4. 把金鑰放進「指令碼屬性」，跑自我檢查</h3>
+      <ol>
+        <li>Apps Script 左邊點齒輪「專案設定」，拉到最下面「指令碼屬性」，新增兩筆：<code>GEMINI_API_KEY</code>、<code>LINE_CHANNEL_ACCESS_TOKEN</code>。金鑰放這裡、不寫進程式碼，分享程式或截圖時才不會一起外流。</li>
+        <li>回到編輯器，上方函式選單選 <code>testSetup</code>，按「執行」。</li>
+        <li>第一次會跳出授權畫面：看到「Google 尚未驗證這個應用程式」，點「進階 → 前往…（不安全）」，因為這是你自己寫的程式。權限清單要<b>全部勾選</b>；少勾了，程式就可能寫不進試算表或排不了日曆。</li>
+        <li><b>打開試算表，親眼看到多了一列</b>才算過關。</li>
+      </ol>
+      <label class="done"><input type="checkbox" data-check="l1-test"> 試算表真的多了一列</label>
+    </div>
+
+    <div class="step">
+      <h3>5. 部署，讓 LINE 找得到你</h3>
+      <ol>
+        <li>右上角「部署 → 新增部署作業」，類型選「網頁應用程式」。執行身分選「我」、誰可以存取選「所有人」（不是「任何擁有 Google 帳戶的使用者」：LINE 的伺服器沒有 Google 帳號），按部署，複製結尾是 <code>/exec</code> 的網址。</li>
+        <li>LINE Developers 後台 → 你的 channel →「Messaging API」分頁，往下找「Webhook settings」：「Webhook URL」按「Edit」→ 貼上網址 →「Update」；再打開「Use webhook」。</li>
+        <li>按 Verify 可能會顯示失敗（例如 302）：Apps Script 會把回應轉到別的網址，LINE 看到轉址就判定失敗。先把錯誤記下來，再<b>換一條路確認</b>：用手機傳一則訊息，看試算表有沒有多一列、Apps Script 的執行紀錄有沒有這一筆。</li>
+        <li>回官方帳號管理後台的「回應設定」再看一眼：「自動回應訊息」「歡迎訊息」是關的、「Webhook」是開的（第 3-3 步做過，這裡只是確認）。LINE Developers 的「Webhook 重新傳送（redelivery）」保持關閉，否則同一則訊息可能被記兩次。</li>
+        <li>用手機掃 Messaging API 分頁上的 QR code 加好友，傳「明天下午三點要開會」。</li>
+      </ol>
+      <label class="done"><input type="checkbox" data-check="l1-phone"> 手機收到回覆、試算表多一列、日曆多一個行程</label>
+    </div>
+
+    <h2 style="margin-top:28px"><span class="level-tag l2">Level 2</span>請 AI agent 教它看照片</h2>
+    <p>目標：傳一張活動海報或便條紙的照片，bot 也能記下來。這次在自己的電腦上請 AI agent 改程式，再用 clasp（Google 做的指令工具）一次推上雲端。</p>
+
+    <div class="step">
+      <h3>1. 準備工具（每台電腦做一次）</h3>
+      <ul>
+        <li>裝好 Node.js 後，執行 <code>npm install -g @google/clasp</code>。也可以直接請 AI agent 幫你裝。</li>
+        <li>打開 Apps Script API 開關：<a href="https://script.google.com/home/usersettings" target="_blank" rel="noopener">script.google.com/home/usersettings</a>，剛打開要等幾分鐘才生效。</li>
+        <li>執行 <code>clasp login</code>，用同一個個人帳號登入。</li>
+      </ul>
+      <label class="done"><input type="checkbox" data-check="l2-tools"> clasp 登入成功</label>
+    </div>
+
+    <div class="step">
+      <h3>2. 把雲端的程式抓下來</h3>
+      <p>在 Apps Script「專案設定」複製「指令碼 ID」，開一個新資料夾，執行 <code>clasp clone &lt;指令碼 ID&gt;</code>。</p>
+      <label class="done"><input type="checkbox" data-check="l2-clone"> 本機資料夾出現 Code.gs</label>
+    </div>
+
+    <div class="step">
+      <h3>3. 請 AI agent 加功能</h3>
+      <blockquote>這是一支 LINE 待辦機器人的 Apps Script（Code.gs）。請幫我加上：使用者傳照片時，把照片下載下來交給 Gemini 判讀，整理成跟文字訊息一樣的欄位，再記進試算表。也請加上「對方正在輸入…」的動畫，並且確定試算表真的寫進去了，才回覆「記好了」。金鑰繼續從指令碼屬性讀，不要寫進程式。</blockquote>
+      <p>它改了哪些地方要自己看過，看不懂的請它解釋。對照答案在「程式碼」分頁的 Level 2。</p>
+      <label class="done"><input type="checkbox" data-check="l2-agent"> agent 改好，我看懂了改了哪裡</label>
+    </div>
+
+    <div class="step">
+      <h3>4. 推上雲端，再更新部署</h3>
+      <ol>
+        <li><code>clasp push</code>：把本機的程式整份覆蓋到雲端。</li>
+        <li><b>只 push 還不夠。</b>LINE 敲的 <code>/exec</code> 跑的是「部署那一刻」的版本，要再更新部署：<code>clasp list-deployments</code> 找到部署 ID，執行 <code>clasp update-deployment &lt;部署 ID&gt;</code>；或在網頁上「部署 → 管理部署作業 → 鉛筆 → 版本選『新版本』」。</li>
+        <li>更新完回「管理部署作業」看一眼：誰可以存取還是「所有人」。</li>
+      </ol>
+      <label class="done"><input type="checkbox" data-check="l2-deploy"> 部署已更新成新版本</label>
+    </div>
+
+    <div class="step">
+      <h3>5. 手機驗收</h3>
+      <p>傳一張活動海報或便條紙的照片，看回覆，再看試算表「來源」欄是不是「照片」。</p>
+      <div class="note info"><b>路線 B</b>：不裝 clasp 也可以。在瀏覽器請 AI 改程式、貼回編輯器儲存，一樣要「管理部署作業 → 新版本」。動手前先把舊程式整份存進一份 Google 文件，改完才有東西可以對照。兩條路線怎麼計分，老師開作業時一起說明。</div>
+      <label class="done"><input type="checkbox" data-check="l2-phone"> 照片那筆記進試算表了</label>
+    </div>
+
+    <h3>安全三件事</h3>
+    <ul>
+      <li>金鑰只放指令碼屬性。外流了就到原平台作廢、重新申請。</li>
+      <li><code>/exec</code> 網址不要公開：Apps Script 看不到 LINE 附在訊息上的簽章，知道網址的人都能假冒 LINE 送訊息進來。</li>
+      <li>別讓 bot 處理別人的個資：免費版 Gemini 的條款寫明，不要送出敏感、機密或個人資料。</li>
+    </ul>
+  </section>
+
+  <!-- 分頁：程式碼（三個區塊由 _tools/sync_code_into_html.py 從正本同步，不要手改） -->
+  <section class="panel card" id="tab-code" role="tabpanel" aria-labelledby="btn-code" hidden>
+    <h2>程式碼</h2>
+    <p>兩支程式都從「指令碼屬性」讀金鑰，程式裡找不到任何金鑰，也不該出現金鑰。</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th></th><th>Level 1 基礎版</th><th>Level 2 文字＋照片</th></tr>
+        <tr><td>做事順序</td><td>問 AI → 寫表 → 排日曆 → 全部做完才回覆</td><td>問 AI → 驗算 → 寫表 → 先回覆 → 再排日曆，結果寫回表</td></tr>
+        <tr><td>看得懂</td><td>文字</td><td>文字、照片</td></tr>
+        <tr><td>打招呼</td><td>也拿去問 AI</td><td>程式直接回，不花 AI 額度</td></tr>
+        <tr><td>AI 給錯格式</td><td>直接出錯，回報錯誤訊息</td><td>先驗算：日期不存在、時間格式不對，就改成「未指定」</td></tr>
+        <tr><td>手機要等</td><td>比較久（每一步都要排隊）</td><td>比較短，而且有「對方正在輸入…」動畫</td></tr>
+      </table>
+    </div>
+
+    <div class="row">
+      <div>
+        <button class="btn" id="show-l1" type="button">Level 1</button>
+        <button class="btn ghost" id="show-l2" type="button">Level 2</button>
+      </div>
+      <button class="btn ghost" type="button" data-copy="">📋 複製這段程式</button>
+    </div>
+    <div id="code-l1-box">
+      <p class="sub">levels/Level1-Basic.gs：貼到試算表的「擴充功能 → Apps Script」</p>
+      <pre><code id="code-level1">/**
+ * LINE AI 待辦小秘書（Level 1：基礎版）
+ *
+ * 一步做完再做下一步：收到訊息 → 問 Gemini → 寫試算表 → 排日曆 → 回覆 LINE。
+ * 最好讀懂，但手機要等上好幾秒。Level 2 會把它變快，還會多一項本事：看得懂照片。
+ *
+ * 用法：在試算表按「擴充功能 → Apps Script」，把這整份貼進去。
+ * 金鑰放「專案設定 → 指令碼屬性」：GEMINI_API_KEY、LINE_CHANNEL_ACCESS_TOKEN
+ */
+
+const GEMINI_API_KEY = PropertiesService.getScriptProperties().getProperty("GEMINI_API_KEY") || "";
+const LINE_ACCESS_TOKEN = PropertiesService.getScriptProperties().getProperty("LINE_CHANNEL_ACCESS_TOKEN") || "";
+// 模型名稱會隨 Google 改版而停用：上課前到 https://ai.google.dev/gemini-api/docs/models 確認還在
+const GEMINI_MODEL = "gemini-3.5-flash-lite";
+
+
+// LINE 每收到一則訊息，就會來敲這個門
+function doPost(e) {
+  const events = JSON.parse(e.postData.contents).events;  // 在 LINE 後台按 Verify 時，這裡是空的
+  for (const event of events) {
+    if (event.type !== "message" || !event.replyToken) continue;  // 沒有回覆碼就回不了話，直接跳過
+    if (event.message.type !== "text") {
+      replyLine(event.replyToken, "Level 1 只看得懂文字；照片要等 Level 2 教它。");
+      continue;
+    }
+    try {
+      const todo = askGemini(event.message.text);               // ① 問 Gemini
+      saveToSheet(todo);                                        // ② 寫試算表
+      const hasTime = todo.date !== "未指定" &amp;&amp; todo.time !== "未指定";
+      if (hasTime) createCalendarEvent(todo);                   // ③ 有日期和時間才排日曆
+      replyLine(event.replyToken,                               // ④ 全部做完才回覆
+        `✅ 記好了\n📌 ${todo.summary}\n🏷️ ${todo.category}\n📅 ${todo.date}　⏰ ${todo.time}` +
+        (hasTime ? "\n🗓️ 已排進 Google 日曆" : ""));
+    } catch (err) {
+      // 出錯就把原因回給手機：整段貼給 AI，問它怎麼修
+      replyLine(event.replyToken, "⚠️ 出錯了：" + err.message);
+    }
+  }
+  return ContentService.createTextOutput("OK");
+}
+
+// 用瀏覽器打開 /exec 網址會看到這行字，可以確認部署成功
+function doGet() {
+  return ContentService.createTextOutput("LINE AI 待辦小秘書運作中（Level 1）");
+}
+
+
+// ① 請 Gemini 把一句口語整理成固定欄位
+function askGemini(text) {
+  const now = Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd EEEE HH:mm");
+  const prompt = `你是待辦事項助理。現在是台北時間 ${now}。
+從使用者的話整理出待辦事項，把「明天」「下週五」這類說法換算成實際日期。
+只輸出一個 JSON 物件：
+{"summary": "事項", "category": "繳費、會議、課業、生活、其他 五選一",
+ "date": "YYYY-MM-DD，沒提到就填 未指定", "time": "HH:mm，沒提到就填 未指定"}
+使用者說：${text}`;
+
+  const res = UrlFetchApp.fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
+    method: "post",
+    contentType: "application/json",
+    headers: { "x-goog-api-key": GEMINI_API_KEY },
+    payload: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { responseMimeType: "application/json" }
+    }),
+    muteHttpExceptions: true
+  });
+  if (res.getResponseCode() !== 200) {
+    throw new Error(`Gemini 回應 ${res.getResponseCode()}：${res.getContentText().slice(0, 150)}`);
+  }
+  const data = JSON.parse(res.getContentText());
+  return JSON.parse(data.candidates[0].content.parts[0].text);
+}
+
+
+// ② 寫進這份試算表的第一個工作表
+function saveToSheet(todo) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  if (sheet.getLastRow() === 0) sheet.appendRow(["建立時間", "事項", "分類", "日期", "時間"]);
+  const now = Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd HH:mm:ss");
+  sheet.appendRow([now, todo.summary, todo.category, todo.date, todo.time]);
+}
+
+
+// ③ 在自己的 Google 日曆排 30 分鐘的行程，提前 30 分鐘提醒
+function createCalendarEvent(todo) {
+  const start = new Date(`${todo.date}T${todo.time}:00+08:00`);
+  // AI 偶爾會給不存在的日子（例如 2 月 30 日），JavaScript 會默默換算成 3 月 2 日。
+  // 轉回文字對不上就停下來，別排出一個錯的行程（Level 2 會在更前面就把關）
+  if (isNaN(start.getTime()) || Utilities.formatDate(start, "Asia/Taipei", "yyyy-MM-dd HH:mm") !== `${todo.date} ${todo.time}`) {
+    throw new Error(`AI 給的日期或時間不存在：${todo.date} ${todo.time}`);
+  }
+  const end = new Date(start.getTime() + 30 * 60 * 1000);
+  CalendarApp.getDefaultCalendar()
+    .createEvent(`【${todo.category}】${todo.summary}`, start, end)
+    .addPopupReminder(30);
+}
+
+
+// ④ 用回覆碼回訊息給傳訊息的人（回覆不算進每月的免費則數）
+function replyLine(replyToken, text) {
+  const res = UrlFetchApp.fetch("https://api.line.me/v2/bot/message/reply", {
+    method: "post",
+    contentType: "application/json",
+    headers: { Authorization: "Bearer " + LINE_ACCESS_TOKEN },
+    payload: JSON.stringify({ replyToken: replyToken, messages: [{ type: "text", text: text }] }),
+    muteHttpExceptions: true
+  });
+  // 回覆失敗（token 貼錯、回覆碼過期）時手機上什麼都看不到，只能到 Apps Script 的執行紀錄裡找
+  if (res.getResponseCode() !== 200) console.error("LINE 回覆失敗：", res.getResponseCode(), res.getContentText());
+}
+
+
+// 自我檢查：在編輯器上方選 testSetup，按「執行」
+function testSetup() {
+  const todo = askGemini("明天早上十點要交房租，記得轉帳給房東");
+  console.log("Gemini 整理出來的欄位：", JSON.stringify(todo));
+  saveToSheet(todo);
+  console.log("👉 打開試算表，親眼看到多了一列才算成功。出現權限錯誤，或這裡沒報錯、表裡卻沒有，多半是授權畫面沒有全部勾選。");
+}</code></pre>
+    </div>
+    <div id="code-l2-box" hidden>
+      <p class="sub">apps-script/Code.gs：Level 2 對照答案，也是老師示範 bot 的正本</p>
+      <pre><code id="code-level2">/**
+ * LINE AI 待辦小秘書（Level 2：文字＋照片）
+ *
+ * 這份是正本：老師的示範 bot、學生 Level 2 的對照答案，都以這份為準。
+ * 一則訊息的旅程：
+ *   LINE 送來訊息 → 請 Gemini 把口語整理成固定欄位 → 程式驗算欄位
+ *   → 寫進試算表 → 回覆 LINE（只講已經做完的事）→ 排 Google 日曆，結果寫回試算表
+ *
+ * 金鑰不寫在程式裡，一律放「專案設定 → 指令碼屬性」：
+ *   GEMINI_API_KEY             必填，到 Google AI Studio 申請
+ *   LINE_CHANNEL_ACCESS_TOKEN  必填，LINE Developers 後台發的長效 token
+ *   SHEET_ID                   選填，程式不是從試算表「擴充功能 → Apps Script」開的才要填
+ *   GEMINI_MODEL               選填，模型停用或想換模型時改這裡，不用動程式
+ */
+
+// ===== 1. 設定 =====
+const PROPS = PropertiesService.getScriptProperties();
+const GEMINI_API_KEY = PROPS.getProperty("GEMINI_API_KEY") || "";
+const LINE_ACCESS_TOKEN = PROPS.getProperty("LINE_CHANNEL_ACCESS_TOKEN") || "";
+const SHEET_ID = PROPS.getProperty("SHEET_ID") || "";
+// 模型名稱會隨 Google 改版而停用：上課前到 https://ai.google.dev/gemini-api/docs/models 確認還在
+const GEMINI_MODEL = PROPS.getProperty("GEMINI_MODEL") || "gemini-3.5-flash-lite";
+const TZ = "Asia/Taipei";
+const CATEGORIES = ["繳費", "會議", "課業", "生活", "其他"];
+const HEADERS = ["建立時間", "事項", "分類", "日期", "時間", "來源", "日曆"];
+const GREETING = /^(hi|hello|hey|你好|嗨|哈囉|安安|早安|午安|晚安|謝謝|感謝|ok|好的|掰|bye|test|測試)$/i;
+const HELP_TEXT = "你好！我是你的 AI 待辦小秘書 🤖\n\n直接傳給我：\n•「明天下午三點要開會」\n•「週五前記得繳房租」\n• 或拍一張活動海報、便條紙\n\n我會記進試算表；有日期和時間的，再幫你排進 Google 日曆。";
+
+
+// ===== 2. LINE 送訊息進來的入口 =====
+function doPost(e) {
+  try {
+    const body = JSON.parse((e &amp;&amp; e.postData &amp;&amp; e.postData.contents) || "{}");
+    // 在 LINE 後台按 Verify 時，送來的 events 是空的，這裡就什麼都不做
+    (body.events || []).forEach(handleEvent);
+  } catch (err) {
+    console.error("讀不懂 LINE 送來的內容：", err);
+  }
+  return ContentService.createTextOutput("OK");
+}
+
+// 用瀏覽器打開 /exec 網址會看到這行字，可以確認部署成功
+function doGet() {
+  return ContentService.createTextOutput("LINE AI 待辦小秘書運作中（Level 2）");
+}
+
+// 一次處理一則訊息；其中一則出錯，不影響同一批的其他訊息
+function handleEvent(event) {
+  if (event.type !== "message" || !event.replyToken) return;
+  try {
+    const msg = event.message;
+    if (msg.type === "text") {
+      const text = msg.text.trim();
+      if (GREETING.test(text)) return replyLine(event.replyToken, HELP_TEXT);  // 打招呼不必問 AI，直接回
+      showLoading(event.source);
+      return saveAndReply(event.replyToken, askGeminiAboutText(text), "文字");
+    }
+    if (msg.type === "image") {
+      showLoading(event.source);
+      const image = downloadLineImage(msg.id);
+      return saveAndReply(event.replyToken, askGeminiAboutImage(image), "照片");
+    }
+    replyLine(event.replyToken, "目前我看得懂文字和照片，其他類型還不行喔。");
+  } catch (err) {
+    console.error("處理訊息失敗：", err);
+    // 課堂版刻意把錯誤原因回給手機：學生可以整段貼給 AI，問它怎麼修
+    try {
+      replyLine(event.replyToken, "⚠️ 出錯了：" + err.message);
+    } catch (err2) {
+      console.error("連錯誤訊息都回不出去（多半是 LINE token 沒設定或貼錯）：", err2);
+    }
+  }
+}
+
+
+// ===== 3. 記錄、回覆、排日曆 =====
+function saveAndReply(replyToken, todo, source) {
+  if (!todo.isTodo) return replyLine(replyToken, todo.chatReply || HELP_TEXT);
+
+  // ① 先寫進試算表：確定真的寫進去了，才能跟使用者說「記好了」
+  const row = appendTodoRow(todo, source);
+  const wantsCalendar = todo.date !== "未指定" &amp;&amp; todo.time !== "未指定";
+
+  // ② 回覆手機：只講已經做完的事（回覆碼要在收到訊息後 1 分鐘內用掉）
+  let reply = `✅ 記好了（試算表第 ${row} 列）\n\n📌 ${todo.summary}\n🏷️ ${todo.category}\n📅 ${todo.date}　⏰ ${todo.time}`;
+  reply += wantsCalendar
+    ? "\n🗓️ 日曆提醒建立中，結果會寫在試算表的「日曆」欄"
+    : "\nℹ️ 沒有明確的日期和時間，這筆先不排日曆";
+  replyLine(replyToken, reply);
+
+  // ③ 最後才排日曆；成功或失敗都寫回試算表，不讓人誤以為做好了
+  if (wantsCalendar) getSheet().getRange(row, 7).setValue(createCalendarEvent(todo));
+}
+
+function getSheet() {
+  const ss = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) throw new Error("找不到試算表：請從試算表的「擴充功能 → Apps Script」開程式，或在指令碼屬性填 SHEET_ID");
+  const sheet = ss.getSheets()[0];
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(HEADERS);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight("bold").setBackground("#0E7C7B").setFontColor("#FFFFFF");
+  }
+  return sheet;
+}
+
+function appendTodoRow(todo, source) {
+  const sheet = getSheet();
+  const now = Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd HH:mm:ss");
+  // 全班同時傳訊息時，先排隊再寫，避免兩筆搶到同一列
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    sheet.appendRow([now, todo.summary, todo.category, todo.date, todo.time, source, ""]);
+    return sheet.getLastRow();
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function createCalendarEvent(todo) {
+  try {
+    const start = new Date(`${todo.date}T${todo.time}:00+08:00`);
+    const end = new Date(start.getTime() + 30 * 60 * 1000);
+    const event = CalendarApp.getDefaultCalendar().createEvent(`【${todo.category}】${todo.summary}`, start, end, {
+      description: "由 LINE AI 待辦小秘書建立"
+    });
+    event.addPopupReminder(30);
+    return "已建立";
+  } catch (err) {
+    console.error("建立日曆失敗：", err);
+    return "失敗：" + err.message;
+  }
+}
+
+
+// ===== 4. 請 Gemini 把口語整理成固定欄位 =====
+const JSON_SHAPE = `只輸出一個 JSON 物件，欄位固定如下：
+{"isTodo": true 或 false,
+ "summary": "事項，簡短一句",
+ "category": "繳費、會議、課業、生活、其他 五選一",
+ "date": "YYYY-MM-DD，沒提到就填 未指定",
+ "time": "HH:mm（24 小時制），沒提到就填 未指定",
+ "chatReply": "不是待辦時，給使用者的一句簡短回覆；是待辦就填空字串"}`;
+
+// 附上星期幾，AI 才算得準「下週五」是哪一天
+function nowText() {
+  return Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd EEEE HH:mm");
+}
+
+function askGeminiAboutText(text) {
+  const prompt = `你是待辦事項助理。現在是台北時間 ${nowText()}。
+判斷使用者這句話是不是待辦、提醒或行程。
+是的話，把「明天」「下週五」這類說法換算成實際日期；不是的話，isTodo 填 false。
+${JSON_SHAPE}
+使用者說：${text}`;
+  return checkTodo(callGemini([{ text: prompt }]));
+}
+
+function askGeminiAboutImage(blob) {
+  const prompt = `你是待辦事項助理。現在是台北時間 ${nowText()}。
+這是一張照片，可能是活動海報、便條紙或繳費單。找出上面最重要的一件待辦或活動。
+照片上沒寫的欄位就填 未指定，不要自己猜。
+${JSON_SHAPE}`;
+  return checkTodo(callGemini([
+    { text: prompt },
+    { inlineData: { mimeType: blob.getContentType() || "image/jpeg", data: Utilities.base64Encode(blob.getBytes()) } }
+  ]));
+}
+
+function callGemini(parts) {
+  if (!GEMINI_API_KEY) throw new Error("還沒設定 GEMINI_API_KEY（專案設定 → 指令碼屬性）");
+  const res = UrlFetchApp.fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
+    method: "post",
+    contentType: "application/json",
+    headers: { "x-goog-api-key": GEMINI_API_KEY },  // 金鑰放標頭、不放網址，才不會留在各種紀錄裡
+    payload: JSON.stringify({
+      contents: [{ role: "user", parts: parts }],
+      generationConfig: { responseMimeType: "application/json" }
+    }),
+    muteHttpExceptions: true
+  });
+  const code = res.getResponseCode();
+  if (code !== 200) throw new Error(`Gemini 回應 ${code}：${res.getContentText().slice(0, 150)}`);
+  const data = JSON.parse(res.getContentText());
+  const cand = (data.candidates || [])[0];
+  const text = cand &amp;&amp; cand.content &amp;&amp; (cand.content.parts || []).map(p =&gt; p.text || "").join("");
+  if (!text) throw new Error(`Gemini 沒有給內容（原因：${cand ? cand.finishReason : "沒有任何答案"}）`);
+  return JSON.parse(text.replace(/^```(json)?\s*|\s*```$/g, ""));
+}
+
+
+// ===== 5. 驗算：AI 給的欄位不直接照單全收 =====
+function checkTodo(t) {
+  return {
+    isTodo: t.isTodo === true,
+    summary: String(t.summary || "").trim() || "（沒抓到事項）",
+    category: CATEGORIES.includes(t.category) ? t.category : "其他",
+    date: isRealDate(t.date) ? t.date : "未指定",
+    time: /^([01]\d|2[0-3]):[0-5]\d$/.test(t.time) ? t.time : "未指定",
+    chatReply: String(t.chatReply || "")
+  };
+}
+
+// 「2026-02-30」格式對、日子卻不存在：轉成日期再轉回來，對得上才算數
+function isRealDate(s) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(`${s}T12:00:00+08:00`);
+  return !isNaN(d.getTime()) &amp;&amp; Utilities.formatDate(d, TZ, "yyyy-MM-dd") === s;
+}
+
+
+// ===== 6. LINE 相關 =====
+function lineApi(path, payload, host) {
+  if (!LINE_ACCESS_TOKEN) throw new Error("還沒設定 LINE_CHANNEL_ACCESS_TOKEN（專案設定 → 指令碼屬性）");
+  const options = {
+    method: payload ? "post" : "get",
+    headers: { Authorization: "Bearer " + LINE_ACCESS_TOKEN },
+    muteHttpExceptions: true
+  };
+  if (payload) {
+    options.contentType = "application/json";
+    options.payload = JSON.stringify(payload);
+  }
+  return UrlFetchApp.fetch((host || "https://api.line.me") + path, options);
+}
+
+function replyLine(replyToken, text) {
+  const res = lineApi("/v2/bot/message/reply", {
+    replyToken: replyToken,
+    messages: [{ type: "text", text: text.slice(0, 5000) }]
+  });
+  if (res.getResponseCode() !== 200) console.error("LINE 回覆失敗：", res.getResponseCode(), res.getContentText());
+}
+
+// 「對方正在輸入…」動畫：只有一對一聊天看得到，沒開成也不影響功能
+function showLoading(source) {
+  if (!source || source.type !== "user") return;
+  try {
+    lineApi("/v2/bot/chat/loading/start", { chatId: source.userId, loadingSeconds: 20 });
+  } catch (err) {
+    console.warn("輸入中動畫沒開成：", err);
+  }
+}
+
+// 照片要到另一個網域（api-data）下載，而且 LINE 不會一直保存，收到就要抓
+function downloadLineImage(messageId) {
+  const res = lineApi(`/v2/bot/message/${messageId}/content`, null, "https://api-data.line.me");
+  if (res.getResponseCode() !== 200) throw new Error(`照片下載失敗（LINE 回應 ${res.getResponseCode()}）`);
+  const blob = res.getBlob();
+  // 送給 Gemini 的請求有大小上限，照片轉成文字（Base64）還會再大三分之一，太大的先請使用者縮小
+  if (blob.getBytes().length &gt; 10 * 1024 * 1024) throw new Error("照片太大（超過 10 MB），請截圖或壓縮後再傳");
+  return blob;
+}
+
+
+// ===== 7. 自我檢查：在編輯器上方選 testSetup，按「執行」 =====
+function testSetup() {
+  const results = [];
+  const check = (name, fn) =&gt; {
+    try {
+      results.push(`✅ ${name}：${fn()}`);
+    } catch (err) {
+      results.push(`❌ ${name}：${err.message}`);
+    }
+  };
+  check("LINE token", () =&gt; {
+    const res = lineApi("/v2/bot/info");
+    if (res.getResponseCode() !== 200) throw new Error(`LINE 回應 ${res.getResponseCode()}，token 可能貼錯或已經重發`);
+    return "bot 名稱「" + JSON.parse(res.getContentText()).displayName + "」";
+  });
+  check("Google 日曆", () =&gt; "可以使用「" + CalendarApp.getDefaultCalendar().getName() + "」");
+  let todo = null;
+  check("Gemini", () =&gt; {
+    todo = askGeminiAboutText("明天早上十點要交房租，記得轉帳給房東");
+    return JSON.stringify(todo);
+  });
+  check("試算表", () =&gt; {
+    if (!todo) throw new Error("Gemini 那關沒過，先不寫");
+    return `寫進第 ${appendTodoRow(todo, "testSetup")} 列`;
+  });
+  console.log(results.join("\n"));
+  console.log("👉 打開試算表，親眼看到多了一列才算成功。出現權限錯誤，或這裡說成功、表裡卻沒有，多半是授權畫面沒有全部勾選。");
+}</code></pre>
+    </div>
+
+    <h3>appsscript.json（專案設定檔）</h3>
+    <p class="sub">用 clasp 時會一起推上去：設定台北時區、網頁應用程式的存取方式，以及要跟你要的三種權限。</p>
+    <pre><code id="code-manifest">{
+  "timeZone": "Asia/Taipei",
+  "dependencies": {},
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "webapp": {
+    "executeAs": "USER_DEPLOYING",
+    "access": "ANYONE_ANONYMOUS"
+  },
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/calendar",
+    "https://www.googleapis.com/auth/script.external_request"
+  ]
+}</code></pre>
+  </section>
+
+  <!-- 分頁：流程示範（寫死的示範，不會真的呼叫 AI） -->
+  <section class="panel card" id="tab-demo" role="tabpanel" aria-labelledby="btn-demo" hidden>
+    <h2>流程示範</h2>
+    <div class="note warn">這是<b>事先寫好的示範</b>，不會真的呼叫 AI，只讓你先看懂一則訊息會變成什麼。bot 做好之後，用手機傳同樣的句子，看它是不是真的算對日期。</div>
+    <div class="row" style="justify-content:flex-start">
+      <button class="btn ghost" type="button" data-demo="0">明天早上十點要交房租</button>
+      <button class="btn ghost" type="button" data-demo="1">下週三下午兩點半跟教授開會</button>
+      <button class="btn ghost" type="button" data-demo="2">記得買牛奶跟麵包</button>
+      <button class="btn ghost" type="button" data-demo="3">今天好熱喔</button>
+    </div>
+    <p id="demo-said" class="sub" style="margin-top:12px">點一個例句開始。</p>
+    <div class="demo-grid">
+      <div class="demo-out"><h4>① Gemini 整理出的欄位（JSON）</h4><pre id="demo-json" style="max-height:260px">—</pre></div>
+      <div class="demo-out"><h4>② 程式驗算＋寫進試算表</h4><div id="demo-sheet">—</div></div>
+      <div class="demo-out"><h4>③ 手機收到的回覆</h4><div class="phone" id="demo-reply">—</div></div>
+      <div class="demo-out"><h4>④ Google 日曆</h4><div id="demo-cal">—</div></div>
+    </div>
+  </section>
+
+  <!-- 分頁：檢核清單 -->
+  <section class="panel card" id="tab-check" role="tabpanel" aria-labelledby="btn-check" hidden>
+    <h2>檢核清單</h2>
+    <p class="sub">勾選會存在這台電腦的瀏覽器裡；換電腦或無痕視窗不會保留。</p>
+    <div id="checklist"></div>
+    <div class="row"><span></span><button class="btn ghost" type="button" id="reset-check">全部清除</button></div>
+  </section>
+
+  <!-- 分頁：卡住了 -->
+  <section class="panel card" id="tab-help" role="tabpanel" aria-labelledby="btn-help" hidden>
+    <h2>卡住了怎麼辦</h2>
+    <p>把錯誤訊息<b>整段</b>貼給 AI，照這個格式問：</p>
+    <blockquote>我在做 LINE 待辦機器人（Apps Script＋Gemini＋LINE Messaging API）。我在做〔哪一步〕，出現這段錯誤：〔整段貼上〕。請告訴我可能的原因，以及我要去哪裡確認。</blockquote>
+
+    <details><summary>手機傳了訊息，完全沒反應</summary>
+      <p>依序確認：部署時「誰可以存取」是不是「所有人」（不是「任何擁有 Google 帳戶的使用者」）？Webhook URL 是不是結尾 <code>/exec</code> 的那個網址？LINE Developers 的「Use webhook」、官方帳號回應設定裡的「Webhook」都打開了嗎？改過程式卻沒更新部署，也會這樣。</p>
+    </details>
+    <details><summary>按 Verify 顯示 302 或其他錯誤</summary>
+      <p>用 Apps Script 當 Webhook 常會這樣：回應被轉到另一個網址，LINE 看到轉址就判定失敗；存取權設錯時也會看到 302，所以這個訊息判斷不了成敗。先記下錯誤，再換一條路確認：用手機傳一則訊息，看試算表和 Apps Script 的執行紀錄。</p>
+    </details>
+    <details><summary>bot 回「⚠️ 出錯了：…」</summary>
+      <p>這是程式刻意把錯誤原因回給你。把那段文字整段貼給 AI。常見的有：金鑰沒設定、Gemini 回應 404（模型名稱停用了）、429（今天的免費額度用完）。</p>
+    </details>
+    <details><summary>自我檢查出現權限錯誤，或說成功、試算表卻沒資料</summary>
+      <p>多半是授權沒有全部勾選。到 <a href="https://myaccount.google.com/connections" target="_blank" rel="noopener">Google 帳戶的第三方連結</a>移除這個專案，回編輯器重跑 <code>testSetup</code>，這次全部勾選。</p>
+    </details>
+    <details><summary>Gemini 回應 404，說找不到模型</summary>
+      <p>模型會改版停用。到 <a href="https://ai.google.dev/gemini-api/docs/models" target="_blank" rel="noopener">Gemini 模型頁</a>找現在能用的名字：Level 1 改程式裡的 <code>GEMINI_MODEL</code>，Level 2 在指令碼屬性加一筆 <code>GEMINI_MODEL</code>。</p>
+    </details>
+    <details><summary>一直收到 LINE 的罐頭回覆</summary>
+      <p>到官方帳號的「回應設定」，把「自動回應訊息」關掉。</p>
+    </details>
+    <details><summary>同一則訊息被記了兩次</summary>
+      <p>LINE Developers 的「Webhook 重新傳送（redelivery）」被打開了。Apps Script 的回應在 LINE 看來都算失敗，一打開就會重送，請關掉。</p>
+    </details>
+    <details><summary>clasp 說 User has not enabled the Apps Script API</summary>
+      <p>到 <a href="https://script.google.com/home/usersettings" target="_blank" rel="noopener">Apps Script 使用者設定</a>打開開關，等幾分鐘再試。</p>
+    </details>
+    <details><summary>clasp push 成功了，手機上卻沒變</summary>
+      <p>還要更新部署：<code>clasp update-deployment &lt;部署 ID&gt;</code>，或網頁上「管理部署作業 → 新版本」。</p>
+    </details>
+  </section>
+
+  <footer>
+    版本 2026-09-27｜外部規格（LINE 申請流程、Gemini 模型名稱、clasp 指令）會改版，開課前請重查。程式正本：<code>levels/Level1-Basic.gs</code>、<code>apps-script/Code.gs</code>。
+  </footer>
+</div>
+
+<script>
+(function () {
+  // ---------- 分頁 ----------
+  const tabs = ["steps", "code", "demo", "check", "help"];
+  function showTab(name) {
+    tabs.forEach(t => {
+      document.getElementById("tab-" + t).hidden = t !== name;
+      document.getElementById("btn-" + t).setAttribute("aria-selected", t === name ? "true" : "false");
+    });
+  }
+  tabs.forEach(t => document.getElementById("btn-" + t).addEventListener("click", () => showTab(t)));
+  // 網址後面加 #code、#demo、#check、#help，可以直接開到那個分頁（方便從投影片連過來）
+  function tabFromHash() {
+    const name = location.hash.replace("#", "");
+    if (tabs.includes(name)) showTab(name);
+  }
+  tabFromHash();
+  window.addEventListener("hashchange", tabFromHash);
+
+  // ---------- 程式碼切換與複製 ----------
+  let current = "l1";
+  const copyBtn = document.querySelector("[data-copy]");
+  function showCode(which) {
+    current = which;
+    document.getElementById("code-l1-box").hidden = which !== "l1";
+    document.getElementById("code-l2-box").hidden = which !== "l2";
+    document.getElementById("show-l1").className = which === "l1" ? "btn" : "btn ghost";
+    document.getElementById("show-l2").className = which === "l2" ? "btn" : "btn ghost";
+  }
+  document.getElementById("show-l1").addEventListener("click", () => showCode("l1"));
+  document.getElementById("show-l2").addEventListener("click", () => showCode("l2"));
+  copyBtn.addEventListener("click", () => {
+    const text = document.getElementById(current === "l1" ? "code-level1" : "code-level2").textContent;
+    const done = () => { copyBtn.textContent = "✅ 已複製"; setTimeout(() => copyBtn.textContent = "📋 複製這段程式", 1800); };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  });
+  function fallbackCopy(text, done) {
+    const ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) { alert("複製失敗，請手動選取程式碼複製"); }
+    ta.remove();
+  }
+
+  // ---------- 流程示範（全部依台北時間計算） ----------
+  function taipeiToday() {
+    const t = new Date(Date.now() + 8 * 3600e3);
+    return new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate()));
+  }
+  const ymd = d => d.toISOString().slice(0, 10);
+  const addDays = (d, n) => new Date(d.getTime() + n * 864e5);
+  function nextWeekWednesday(today) {
+    const sinceMonday = (today.getUTCDay() + 6) % 7;
+    return addDays(today, -sinceMonday + 7 + 2);
+  }
+  const demos = [
+    { said: "明天早上十點要交房租，記得轉帳給房東",
+      ai: t => ({ isTodo: true, summary: "交房租，轉帳給房東", category: "繳費", date: ymd(addDays(t, 1)), time: "10:00", chatReply: "" }) },
+    { said: "下週三下午兩點半跟指導教授在研究室開會",
+      ai: t => ({ isTodo: true, summary: "跟指導教授開會（研究室）", category: "會議", date: ymd(nextWeekWednesday(t)), time: "14:30", chatReply: "" }) },
+    { said: "記得買牛奶跟麵包",
+      ai: () => ({ isTodo: true, summary: "買牛奶跟麵包", category: "生活", date: "未指定", time: "未指定", chatReply: "" }) },
+    { said: "今天好熱喔",
+      ai: () => ({ isTodo: false, summary: "", category: "其他", date: "未指定", time: "未指定", chatReply: "真的好熱，記得多喝水！要我記什麼事再跟我說。" }) }
+  ];
+  function setText(id, text) { document.getElementById(id).textContent = text; }
+  document.querySelectorAll("[data-demo]").forEach(btn => btn.addEventListener("click", () => {
+    const d = demos[Number(btn.dataset.demo)];
+    const todo = d.ai(taipeiToday());
+    setText("demo-said", "你在 LINE 傳：「" + d.said + "」");
+    setText("demo-json", JSON.stringify(todo, null, 2));
+    if (!todo.isTodo) {
+      setText("demo-sheet", "不是待辦，不寫進試算表。");
+      setText("demo-reply", todo.chatReply);
+      setText("demo-cal", "不排日曆。");
+      return;
+    }
+    const hasTime = todo.date !== "未指定" && todo.time !== "未指定";
+    const verdict = hasTime
+      ? "驗算通過：日期真的存在、時間是 HH:mm、分類在五類之內。"
+      : "驗算：分類在五類之內；沒有日期和時間，就保留「未指定」。";
+    setText("demo-sheet", verdict + "\n新增一列：" +
+      [todo.summary, todo.category, todo.date, todo.time, "文字"].join("｜"));
+    document.getElementById("demo-sheet").style.whiteSpace = "pre-wrap";
+    setText("demo-reply", "✅ 記好了（試算表第 2 列）\n\n📌 " + todo.summary + "\n🏷️ " + todo.category +
+      "\n📅 " + todo.date + "　⏰ " + todo.time +
+      (hasTime ? "\n🗓️ 日曆提醒建立中，結果會寫在試算表的「日曆」欄" : "\nℹ️ 沒有明確的日期和時間，這筆先不排日曆"));
+    setText("demo-cal", hasTime
+      ? "【" + todo.category + "】" + todo.summary + "\n" + todo.date + " " + todo.time + " 起 30 分鐘，提前 30 分鐘提醒"
+      : "沒有日期和時間，不排日曆。");
+    document.getElementById("demo-cal").style.whiteSpace = "pre-wrap";
+  }));
+
+  // ---------- 檢核清單（存在這台電腦的瀏覽器；存不了也能用） ----------
+  const items = [
+    ["l1-code", "Level 1｜試算表建好、Level 1 程式貼好並儲存"],
+    ["l1-gemini", "Level 1｜拿到 Gemini 金鑰（用個人 Gmail）"],
+    ["l1-line", "Level 1｜建好 LINE 官方帳號、啟用 Messaging API、拿到長效通行碼"],
+    ["l1-test", "Level 1｜兩把金鑰放進指令碼屬性，testSetup 後試算表真的多一列"],
+    ["l1-phone", "Level 1｜部署、設定 Webhook，手機收到回覆、日曆多一個行程"],
+    ["l2-tools", "Level 2｜clasp 裝好、Apps Script API 已開、clasp login 成功（或走路線 B）"],
+    ["l2-clone", "Level 2｜clasp clone 抓下雲端程式"],
+    ["l2-agent", "Level 2｜請 AI agent 加上看照片的功能，並看懂它改了哪裡"],
+    ["l2-deploy", "Level 2｜clasp push 之後更新部署成新版本"],
+    ["l2-phone", "Level 2｜手機傳照片，試算表出現「來源＝照片」的一列"]
+  ];
+  const KEY = "line_ai_todo_checks_v2";
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
+  function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) { /* 無痕視窗等情況存不了，不影響使用 */ } }
+  let state = load();
+  function render() {
+    const box = document.getElementById("checklist");
+    box.innerHTML = "";
+    items.forEach(([id, label]) => {
+      const row = document.createElement("label");
+      row.className = "check-item";
+      const cb = document.createElement("input");
+      cb.type = "checkbox"; cb.checked = !!state[id];
+      cb.addEventListener("change", () => { state[id] = cb.checked; save(state); sync(); });
+      const span = document.createElement("span");
+      span.textContent = label;
+      row.appendChild(cb); row.appendChild(span); box.appendChild(row);
+    });
+    sync();
+  }
+  function sync() {
+    document.querySelectorAll("[data-check]").forEach(cb => { cb.checked = !!state[cb.dataset.check]; });
+    const n = items.filter(([id]) => state[id]).length;
+    document.getElementById("progressText").textContent = n + " / " + items.length;
+    document.getElementById("progressBar").style.width = Math.round(n / items.length * 100) + "%";
+  }
+  document.querySelectorAll("[data-check]").forEach(cb => cb.addEventListener("change", () => {
+    state[cb.dataset.check] = cb.checked; save(state); render();
+  }));
+  document.getElementById("reset-check").addEventListener("click", () => {
+    if (confirm("確定要清除所有勾選嗎？")) { state = {}; save(state); render(); }
+  });
+  render();
+})();
+</script>
+</body>
+</html>
