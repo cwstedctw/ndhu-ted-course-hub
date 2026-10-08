@@ -138,13 +138,13 @@ footer{margin:30px 0 0;color:var(--mist);font-size:14px}
   <h1>板子上網，<br>點陣跑出空氣品質</h1>
   <p>10/08（四）14:10–17:00，理工二館 E307。</p>
   <p>板子上的兩顆腦第一次一起做事：<b>Linux</b> 上網跟環境部要花蓮的空氣品質，<b>MCU</b> 把它在點陣上捲出來，中間靠 <b>Bridge</b> 傳話。原則跟前幾週一樣：<b>畫面說成功不算，你親眼看到才算。</b></p>
-  <nav><a href="#video">操作影片</a><a href="cheatsheet.html">一頁指令小抄</a><a href="concept.html">互動概念頁</a><a href="design.html">設計文件（架構與程式）</a><a href="deck.html">投影片</a><a href="deck.pdf">投影片 PDF</a></nav>
+  <nav><a href="#video">操作影片</a><a href="cheatsheet.html">一頁指令小抄</a><a href="concept.html">互動概念頁</a><a href="design.html">設計文件（架構與程式）</a><a href="#basics">基礎知識補給站</a><a href="deck.html">投影片</a><a href="deck.pdf">投影片 PDF</a></nav>
 </div></header>
 
 <div class="progress" aria-label="進度"><div class="in">
   <span class="lbl" id="plbl">完成 0／0</span>
   <span class="bar" aria-hidden="true"><i id="pbar"></i></span>
-  <span class="toc"><a href="#pre">課前</a><a href="#s1">1 就位</a><a href="#s2">2 點燈</a><a href="#s3">3 上網</a><a href="#s4">4 天氣</a><a href="#s5">5 AQI</a><a href="#pkg">5＋ 套件</a><a href="#s8">卡住了</a></span>
+  <span class="toc"><a href="#pre">課前</a><a href="#s1">1 就位</a><a href="#s2">2 點燈</a><a href="#s3">3 上網</a><a href="#s4">4 天氣</a><a href="#s5">5 AQI</a><a href="#pkg">5＋ 套件</a><a href="#s8">卡住了</a><a href="#basics">基礎</a></span>
   <button type="button" class="btn" id="preset">清除勾選</button>
 </div></div>
 
@@ -163,7 +163,7 @@ footer{margin:30px 0 0;color:var(--mist);font-size:14px}
     <tr><th>先知道</th><th>內容</th></tr>
     <tr><td>要錢嗎</td><td>不用，註冊免費</td></tr>
     <tr><td>能用多久</td><td>一年；到期後 log 會出現「該 API KEY 不存在或是已經到期。」，再申請一把</td></tr>
-    <tr><td>一天能用幾次</td><td>每把金鑰、每個 API 每天 5,000 次。我們的程式 10 分鐘才問一次，一天最多用 144 次，很夠</td></tr>
+    <tr><td>一天能用幾次</td><td>每把金鑰、每個 API 每天 5,000 次。我們的程式 10 分鐘才問一次，順利的話一天約 144 次，很夠</td></tr>
     <tr><td>金鑰長什麼樣</td><td>一串英文字母和數字，中間有 4 個減號，像 <code>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code>，共 36 個字元。貼的時候要整串，少一截就不能用</td></tr>
     <tr><td>寄到哪</td><td>註冊時填的電子郵件信箱。官方說明只寫「請妥善保存信件中的 API 金鑰」，<b>沒寫信不見了怎麼在網站上重查</b>，所以信一定要留好</td></tr>
   </table></div>
@@ -201,6 +201,7 @@ footer{margin:30px 0 0;color:var(--mist);font-size:14px}
     <div><b>深色框＝指令</b>。框的左上角寫著在<b>電腦</b>還是在<b>板子</b>打；右上角有「複製」鈕。一次打（或貼）一行，按 Enter，看完它回什麼再打下一行。</div>
     <div><b>淺色虛線框＝畫面上會看到的樣子</b>，不用打。數字、時間每次會不一樣。</div>
     <div><b>🆘 卡住了</b>：每一節最後都有，點開看常見狀況。全部整理在第 8 節，還可以搜尋。</div>
+    <div><b>📘 看不懂某個詞</b>（AQI 等級、網址各段、JSON、容器、某個指令的選項）：查最下面的<a href="#basics">基礎知識補給站</a>。</div>
     <div><b>綠色勾選框＝檢查點</b>。親眼看到了才勾；最上面的進度列會跟著動（只存在你這台電腦的瀏覽器）。</div>
   </div>
   <ul>
@@ -221,6 +222,7 @@ footer{margin:30px 0 0;color:var(--mist);font-size:14px}
     <a class="stop" href="#s5"><b>第四站</b><span>AQI 跑馬燈</span><small>點陣捲出花蓮的 AQI</small></a>
   </div>
   <p class="goal">成功線：<b>點陣捲出 <code>HUALIEN AQI …</code></b>（環境部花蓮測站的資料）。</p>
+  <p class="small">AQI 是多少算好、PM2.5 是什麼 → <a href="#b-aqi">基礎知識 A</a>。</p>
   <p><b>要留三樣證據</b>（作業老師上課時會在 e學苑 開，先存好）：</p>
   <div class="tw"><table>
     <tr><th>#</th><th>證據</th><th>在哪一節</th></tr>
@@ -343,7 +345,7 @@ grep -n -E "set_led|analogWrite|digitalWrite" ~/ArduinoApps/my-color/python/main
       <div class="box"><pre class="cmd" data-where="板子" data-src="src">curl -fsS "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=23.97694&amp;longitude=121.60444&amp;current=us_aqi,pm2_5&amp;timezone=Asia%2FTaipei"</pre></div>
       回來的是一長串 JSON（一種「名字:值」成對寫的資料格式），找最後面這一段：
       <div class="box"><pre class="out" data-src="out">"current":{"time":"2026-10-02T14:00","interval":3600,"us_aqi":58,"pm2_5":7.2}</pre></div>
-      <b>把你看到的 <code>us_aqi</code> 數字記下來</b>，第 7 節要跟環境部的比。印出 <code>curl:</code> 開頭的錯誤＝沒拿到，先回上一步看 Wi-Fi。</li>
+      <b>把你看到的 <code>us_aqi</code> 數字記下來</b>，第 7 節要跟環境部的比。網址每一段、<code>%2F</code>、<code>{ }</code> 是什麼意思 → <a href="#b-api">基礎知識 B</a>。印出 <code>curl:</code> 開頭的錯誤＝沒拿到，先回上一步看 Wi-Fi。</li>
     <li><b>時區：板子的時鐘差了 8 小時</b>。先看：
       <div class="box"><pre class="cmd" data-where="板子" data-src="src">date
 timedatectl</pre></div>
@@ -545,7 +547,7 @@ EOF</pre></div>
   <h3>③ 存金鑰：放檔案，不寫進程式</h3>
   <p>打開環境部的「註冊通知信」，複製裡面的 API Key。在板子上打這一行，出現 <code>API Key:</code> 之後<b>貼上金鑰、按 Enter</b>：</p>
   <div class="box"><pre class="cmd" data-where="板子" data-src="src">read -rsp "API Key: " K; echo "$K" &gt; python/moenv_key.txt; unset K; echo</pre></div>
-  <p>貼上的時候<b>畫面不會顯示</b>（跟打密碼一樣），金鑰也不會留在指令歷史裡。確認檔案有內容（只印 OK，不會印出金鑰）：</p>
+  <p>貼上的時候<b>畫面不會顯示</b>（跟打密碼一樣），金鑰也不會留在指令歷史裡（這行每一段的意思 → <a href="#b-cmd">基礎知識 D</a>）。確認檔案有內容（只印 OK，不會印出金鑰）：</p>
   <div class="box"><pre class="cmd" data-where="板子" data-src="rewrite:new" data-note="bash 內建 test -s：檔案存在且不是空的才印；不印金鑰內容">test -s python/moenv_key.txt &amp;&amp; echo "key file OK"</pre></div>
   <p class="why"><b>為什麼放檔案？</b>寫進程式的話，程式一分享、一上傳，金鑰就跟著外流。<code>main.py</code> 只讀這個檔，不會把金鑰印出來。這個檔不截圖、不上傳、不貼給 AI，也不要用 <code>cat</code> 把它印到畫面上。</p>
   <p class="why"><b>為什麼放在 <code>python/</code> 裡、跟 <code>main.py</code> 同一層？</b><code>main.py</code> 是在容器裡跑的，容器只看得到這支 App 的資料夾（下一節 5＋ 會講）。放在家目錄或別的地方，容器裡的程式就找不到，點陣會顯示 <code>NO KEY</code>。</p>
@@ -609,7 +611,8 @@ arduino-app-cli app logs ~/ArduinoApps/my-aqi --tail 60</pre></div>
   <p class="why">今天的 AQI 程式只用 Python 內建的模組（<code>json</code>、<code>urllib</code>…），所以什麼都不用裝。之後要整理表格、算平均、看趨勢，就會用到 numpy、pandas。這時候一定要先知道：<b>套件要裝進 App 的容器，不是裝在板子上。</b></p>
   <p class="note">這一節是<b>有餘力</b>的延伸：點陣捲出 AQI 才是今天的成功線，沒做這節也算完成。⚠️ 這一節的指令是照 Arduino 官方原始碼寫的，<b>還沒在出廠板上照抄跑過</b>；畫面跟這裡寫的不一樣，以畫面為準，把完整錯誤訊息貼給 AI agent。</p>
 
-  <h3>① 先搞清楚：同一塊板子，有兩個「Python 的家」</h3>
+  <h3>① 先弄清楚：同一塊板子，有兩個「Python 的家」</h3>
+  <p class="small">映像、Docker、模組和套件差在哪 → <a href="#b-pkg">基礎知識 C</a>。</p>
   <p>你 SSH 進去的是<b>板子本身</b>的 Linux。<code>app start</code> 的時候，App Lab 會另外開一個<b>容器（container）</b>來跑 <code>main.py</code>。容器像是板子裡隔出來的一個小房間：跟板子共用同一顆 Linux 核心（所以不是虛擬機），但有自己的檔案、自己的 Python、自己的套件。</p>
   <div class="tw"><table>
     <tr><th></th><th>板子本身（你的 SSH 視窗）</th><th>App 的容器（<code>main.py</code> 住這裡）</th></tr>
@@ -767,6 +770,86 @@ sed -i 's/LABEL = "HUALIEN"/LABEL = "YILAN"/' python/main.py</pre></div>
     <li>作業老師上課時會在 e學苑 開，照當時的說明交。<b>金鑰不要交、不要貼在作業裡。</b></li>
   </ol>
   <label class="check"><input type="checkbox" data-ck="s9">證據存好、App 停了。</label>
+</section>
+
+<section class="sec" id="basics">
+  <h2>基礎知識補給站：看不懂某個詞，來這裡查</h2>
+  <p class="why">做步驟的時候不用先讀完這一節。做到一半看不懂「這個數字代表什麼」「這串網址在做什麼」「容器是什麼」，再跳來查。五組：<a href="#b-aqi">A AQI 與 PM2.5</a>、<a href="#b-api">B 網路 API</a>、<a href="#b-pkg">C 容器與套件</a>、<a href="#b-cmd">D 今天新出現的指令</a>、<a href="#b-tls">E HTTPS 憑證</a>。</p>
+
+  <h3 id="b-aqi">A　AQI 和 PM2.5 的數字怎麼看</h3>
+  <p><b>AQI（空氣品質指標）</b>是把六種污染物——臭氧（O₃）、PM2.5、PM10、一氧化碳（CO）、二氧化硫（SO₂）、二氧化氮（NO₂）——各換算成一個分數，<b>取最高的那個</b>。數字越大，空氣越差。</p>
+  <div class="tw"><table style="min-width:0">
+    <tr><th>AQI</th><th>狀態</th><th>顏色</th><th style="white-space:normal">PM2.5 濃度<br>（μg/m³，24 小時平均）</th></tr>
+    <tr><td>0–50</td><td>良好</td><td>綠</td><td>0.0–12.4</td></tr>
+    <tr><td>51–100</td><td>普通</td><td>黃</td><td>12.5–30.4</td></tr>
+    <tr><td>101–150</td><td>對敏感族群不健康</td><td>橘</td><td>30.5–50.4</td></tr>
+    <tr><td>151–200</td><td>對所有族群不健康</td><td>紅</td><td>50.5–125.4</td></tr>
+    <tr><td>201–300</td><td>非常不健康</td><td>紫</td><td>125.5–225.4</td></tr>
+    <tr><td>301–500</td><td>危害</td><td>褐紅</td><td>225.5–500.4</td></tr>
+  </table></div>
+  <ul>
+    <li>log 裡的 <code>良好</code>，就是這張表的「狀態」欄（環境部回的 <code>status</code>）。</li>
+    <li>101 以上開始對<b>敏感族群</b>不健康（心臟、呼吸道、心血管疾病患者、孩童、長者），151 以上對所有人都不健康。第 6 節「超標提示」用 100 當門檻，就是這條線。</li>
+    <li><b>PM2.5</b>＝直徑 2.5 微米（μm）以下的細懸浮微粒，小到會隨呼吸進到肺的深處。單位 <b>μg/m³</b>＝每立方公尺空氣裡有幾微克。</li>
+    <li>點陣上的 <code>PM2.5 7</code> 是測站那一小時的濃度。即時 AQI 裡的 PM2.5 那一項，是用「前 12 小時平均 × 0.5＋前 4 小時平均 × 0.5」算的，所以拿點陣上的 PM2.5 直接對上表，等級不一定一樣。</li>
+    <li>測站<b>每小時</b>發布一次，所以程式 10 分鐘問一次就夠了（第 5 節的快取）；問得再勤，數字也不會比較新。</li>
+  </ul>
+  <p class="small">分級表是環境部 2025 年 1 月 1 日起的新門檻（PM2.5「良好」的上限從 15.4 改成 12.4）。網路上舊表還很多，對照的時候看清楚日期。出處：環境部空氣品質監測網〈空氣品質指標〉頁。</p>
+
+  <h3 id="b-api">B　網路 API：一個網址拆開看、HTTP、JSON</h3>
+  <p>拿 <code>main.py</code> 跟環境部要資料的網址來拆：</p>
+  <div class="tw"><table>
+    <tr><th>這一段</th><th>例</th><th>意思</th></tr>
+    <tr><td>協定</td><td><code>https://</code></td><td>用 HTTPS 連線，內容會加密（見 E）</td></tr>
+    <tr><td>主機</td><td><code>data.moenv.gov.tw</code></td><td>環境部資料開放平臺的伺服器</td></tr>
+    <tr><td>路徑</td><td><code>/api/v2/aqx_p_432</code></td><td>要哪一份資料：<code>aqx_p_432</code>＝空氣品質指標</td></tr>
+    <tr><td>查詢參數</td><td><code>?api_key=…&amp;format=JSON&amp;filters=sitename,EQ,花蓮</code></td><td><code>?</code> 後面是參數，一組一組「名字=值」，組跟組用 <code>&amp;</code> 隔開。<code>filters=sitename,EQ,花蓮</code>＝只要「測站名稱 等於（EQual）花蓮」那幾筆</td></tr>
+  </table></div>
+  <ul>
+    <li><b>網址編碼</b>：中文和一些符號不能直接放進網址，要寫成 <code>%</code> 加兩位數的樣子。第 3 節網址裡的 <code>%2F</code> 就是 <code>/</code>；<code>main.py</code> 用 <code>urllib.parse.urlencode</code> 把「花蓮」和金鑰編好。</li>
+    <li><b>HTTP</b>：瀏覽器、<code>curl</code>、<code>main.py</code> 做的事都一樣——送出一個<b>請求（request）</b>，伺服器回一個<b>回應（response）</b>：一個狀態碼加上內容。<code>200</code> 代表伺服器有回。但環境部<b>金鑰錯了也回 200</b>，內容是一行中文、不是 JSON，所以 <code>main.py</code> 用「能不能解析成 JSON」來判斷成功，不能只看 200。</li>
+    <li><b>JSON</b>：<code>{ }</code> 是<b>物件</b>（一組「名字:值」），<code>[ ]</code> 是<b>陣列</b>（一串東西）。環境部回的是「陣列裡裝物件」，一個物件＝一個測站的一筆，所以程式拿 <code>records[0]</code>（第一筆）。</li>
+    <li><b>數字還是文字？</b>看有沒有引號。第 3 節 open-meteo 回的 <code>"us_aqi":58</code> 是數字；環境部回的 <code>"aqi":"32"</code> 有引號，是<b>文字</b>。要跟 100 比大小，先用 <code>int()</code> 轉成數字；測站沒資料時可能是空的 <code>""</code>，轉之前要先檢查。</li>
+    <li><b>額度</b>：每送出一次請求就算一次。快取讓 10 分鐘內只算一次，順利的話一整天約 144 次（沒拿到資料時 1 分鐘重試一次，會多一些）。</li>
+  </ul>
+
+  <h3 id="b-pkg">C　容器與 Python 套件的名詞</h3>
+  <div class="tw"><table style="min-width:0">
+    <tr><th>名詞</th><th>一句話</th></tr>
+    <tr><td>映像（image）</td><td>唯讀的範本，像一份食譜：寫好裡面要有哪個 Python、哪些套件。App 用的是 Arduino 官方的 <code>python-apps-base</code></td></tr>
+    <tr><td>容器（container）</td><td>照映像跑起來的那一份，像照食譜做出來的一盤菜；可以收掉、再建。你的檔案和裝過的套件放在 App 資料夾裡（掛進容器的 <code>/app</code>），所以容器重建也不會不見</td></tr>
+    <tr><td>Docker</td><td>建立、啟動、管理容器的工具。App Lab 在背後用它：<code>app start</code> 時那行 <code>Container …-main-1 Started</code> 就是它在動。<code>docker ps</code>、<code>docker exec</code> 是直接跟它講話</td></tr>
+    <tr><td>模組（module）</td><td>一個可以 <code>import</code> 的 Python 程式檔，例如 <code>json</code>、<code>urllib</code></td></tr>
+    <tr><td>套件（package）</td><td>好幾個模組包在一起、可以下載安裝的，例如 numpy、pandas</td></tr>
+    <tr><td>標準函式庫</td><td>Python 本來就附的模組，免安裝。今天的 <code>main.py</code> 只用這些（<code>json</code>、<code>pathlib</code>、<code>ssl</code>、<code>time</code>、<code>urllib</code>），外加 Arduino 映像裡的 <code>arduino.app_utils</code></td></tr>
+    <tr><td>PyPI</td><td>Python 的公開套件倉庫，<code>pip</code>、uv 都從這裡下載</td></tr>
+    <tr><td>pip、uv</td><td>都是安裝 Python 套件的工具，用法差不多；uv 比較快。App 的容器用 uv，你只要寫好 <code>requirements.txt</code>，不用自己打安裝指令</td></tr>
+    <tr><td>numpy</td><td>快速的數字陣列運算（算平均、標準差、矩陣）</td></tr>
+    <tr><td>pandas</td><td>處理表格資料（叫 DataFrame，像 Excel 的一張工作表）：讀 JSON、CSV，篩選、排序、分組算平均</td></tr>
+  </table></div>
+
+  <h3 id="b-cmd">D　今天新出現的指令（W3、W4 教過的 cd、cp、cat、grep、echo、sudo 不再列）</h3>
+  <div class="tw"><table class="files">
+    <tr><th>指令</th><th>做什麼</th><th>在哪一節</th></tr>
+    <tr><td><code>curl -fsS 網址</code></td><td>抓網址的內容印出來。<code>-f</code> 伺服器回錯誤時算失敗、<code>-s</code> 不印進度條、<code>-S</code> 但錯誤照印；<code>-L</code> 跟著轉址、<code>-o 檔</code> 存成檔案</td><td>3、5 ②</td></tr>
+    <tr><td><code>nmcli … dev status</code></td><td>看網路卡的連線狀態</td><td>3</td></tr>
+    <tr><td><code>date</code>、<code>timedatectl</code></td><td>看時間、看或改時區</td><td>3</td></tr>
+    <tr><td><code>sed -i 's/舊/新/' 檔</code></td><td>把檔案裡每一行的第一個「舊」換成「新」；<code>-i</code> 直接改原檔</td><td>4、6</td></tr>
+    <tr><td><code>grep -n -E "a|b" 檔</code></td><td>找含 a 或 b 的行；<code>-n</code> 印行號、<code>-E</code> 讓 <code>|</code> 代表「或」</td><td>5 ②</td></tr>
+    <tr><td><code>read -rsp "提示" K</code></td><td>讀你貼上的一行，存進變數 <code>K</code>；<code>-r</code> 反斜線照原樣、<code>-s</code> 畫面不顯示、<code>-p</code> 先印提示字</td><td>5 ③</td></tr>
+    <tr><td><code>echo "$K" &gt; 檔</code>、<code>unset K</code></td><td>把變數內容寫進檔案（<code>&gt;</code> 會蓋掉原內容）；用完把變數清掉</td><td>5 ③</td></tr>
+    <tr><td><code>test -s 檔 &amp;&amp; echo …</code></td><td>檔案存在而且不是空的，才做 <code>&amp;&amp;</code> 後面那件事</td><td>5 ③</td></tr>
+    <tr><td><code>printf "a\nb\n" &gt; 檔</code></td><td>照格式輸出，<code>\n</code> 是換行；這裡一次寫兩行進檔案</td><td>5＋</td></tr>
+    <tr><td><code>docker ps</code></td><td>列出正在跑的容器</td><td>5＋</td></tr>
+    <tr><td><code>docker exec 容器 指令</code></td><td>在那個容器裡執行一個指令；加 <code>-it</code> 可以進去互動</td><td>5＋</td></tr>
+  </table></div>
+
+  <h3 id="b-tls">E　HTTPS 憑證：<code>main.py</code> 裡 <code>SSL_CTX</code> 那兩行在做什麼</h3>
+  <ul>
+    <li><b>憑證</b>像網站的身分證，由瀏覽器和 Python 都信任的機構簽發。HTTPS 連線時先驗證「對方真的是 <code>data.moenv.gov.tw</code>」，才不會連到冒牌網站、被偷看或竄改內容。</li>
+    <li>Python 3.13 起預設多檢查憑證裡的一個欄位，環境部的憑證少了這個欄位，不改的話會連不上（錯誤裡有 <code>CERTIFICATE_VERIFY_FAILED</code>）。</li>
+    <li>所以 <code>main.py</code> <b>只放寬這一項</b>（<code>VERIFY_X509_STRICT</code>）；憑證過期、網址對不上、簽發者不可信，照樣會擋。AI 叫你整個關掉驗證（<code>CERT_NONE</code>、<code>verify=False</code>），不要照做。完整理由見 <a href="design.html#d10">設計文件 §10 的 D5</a>。</li>
+  </ul>
 </section>
 
 <section class="sec" id="words">
