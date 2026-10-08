@@ -296,9 +296,11 @@ footer{margin-top:28px;color:var(--mist);font-size:14px}
   <p class="oneline">一句話：一支 App 就是一個資料夾；<code>app start</code> 會把 sketch 編好燒進 MCU、再把 Python 放進容器跑起來。</p>
 <pre><code>~/ArduinoApps/my-aqi/
 ├── app.yaml            App 的名字、用了哪些積木（bricks）；空白 App 是 bricks: []
+├── .cache/             app start 自動產生：這支 App 的 venv（.venv）與套件安裝紀錄，不用動
 ├── python/
 │   ├── main.py         Linux 這半（換成課程網的版本）
-│   └── moenv_key.txt   金鑰（自己用 read -rsp 存；不截圖、不上傳）
+│   ├── moenv_key.txt   金鑰（自己用 read -rsp 存；不截圖、不上傳）
+│   └── requirements.txt（選用）要額外的 Python 套件才放，一行一個；今天的 AQI 版不用
 └── sketch/
     ├── sketch.ino      MCU 這半（換成課程網的版本）
     └── sketch.yaml     平台＋函式庫清單（多了 ArduinoGraphics (1.1.4)）</code></pre>
@@ -311,6 +313,15 @@ footer{margin-top:28px;color:var(--mist);font-size:14px}
     <li><code>arduino-app-cli app stop ~/ArduinoApps/my-aqi</code>：停掉這支 App。一次只能跑一支，換下一支之前先停；不要用 <code>app restart</code>。</li>
   </ol>
   <p class="note"><b>改了檔案之後</b>：改 <code>main.py</code> → <code>app stop</code>、等 3 秒、<code>app start</code>（約 23 秒）；改 <code>sketch.ino</code>／<code>sketch.yaml</code> → 一樣停再起，但要重新編譯、比較久。只有金鑰檔例外：補好或換掉金鑰檔，<b>不必重開 App</b>，程式 1 分鐘內會自己再試 <span class="tag t-board">〔實板 10-02〕</span>。</p>
+  <h3>Python 在容器裡，套件裝在這支 App 自己的 venv</h3>
+  <ul>
+    <li><b>容器看得到什麼</b>：App 資料夾整個掛進容器，在容器裡叫 <code>/app</code>；所以 <code>main.py</code> 讀得到同一層的 <code>moenv_key.txt</code>，讀不到家目錄裡別的檔。</li>
+    <li><b>映像</b>：<code>python:3.13-slim</code> → <code>python-base</code> → <code>python-apps-base</code>（Arduino 官方，ghcr.io）。裡面已經有 <code>arduino.app_utils</code>、numpy 等積木要用的套件；pandas 沒有。</li>
+    <li><b>第一次 <code>app start</code></b>：容器的啟動腳本在 <code>/app/.cache/.venv</code> 建虛擬環境（帶 <code>--system-site-packages</code>，映像裡的套件照樣看得到）。</li>
+    <li><b>有 <code>python/requirements.txt</code></b>：內容跟 <code>.cache/installed_requirements.txt</code> 不一樣才用 uv 安裝，一樣就印 <code>Requirements already installed.</code> 跳過；裝失敗，準備階段印 <code>App preparation failed</code>，App 起不來。</li>
+    <li><b>每支 App 各一份 venv</b>；在 SSH 視窗 <code>pip install</code> 是裝到板子本身，容器看不到。學生步驟見學生頁「5＋」節。</li>
+  </ul>
+  <p class="meta">出處：Arduino 官方原始碼 <code>arduino/app-bricks-py</code>（<code>containers/bricks/python-apps-base/scripts/run.sh</code>、<code>Dockerfile</code>、<code>pyproject.toml</code>）、<code>arduino/arduino-app-cli</code>（<code>internal/orchestrator/provision.go</code>、<code>docs/app-specification.md</code>），2026-10-08 讀 main 分支。⚠️ 學生出廠板的映像版本可能較舊，還沒在板上逐條核對。</p>
 </section>
 
 <!-- 5 -->

@@ -59,7 +59,7 @@ a{color:var(--teal)}
 <div class="cols">
 
 <div class="card"><h2>課前　申請金鑰</h2>
-<p><code>https://data.moenv.gov.tw/api-term</code> → 勾「我已閱讀…」→ 下一步 → 填資料 → 「註冊通知信」裡有 API Key。</p>
+<p><code>https://data.moenv.gov.tw/api-term</code> → 勾「我已閱讀…」→ 下一步 → 填資料（電子郵件填收得到的）→ 「註冊通知信」裡有 API Key。免費、效期一年、每天 5,000 次；<b>信要留好</b>，官方沒寫怎麼重查。</p>
 <p class="warn">金鑰只給自己：不截圖、不貼群組、不貼給 AI、不寫進程式。</p></div>
 
 <div class="card"><h2>1　就位（接線、等心跳）</h2>
@@ -127,6 +127,15 @@ arduino-app-cli app logs ~/ArduinoApps/my-aqi --tail 60</pre>
 <li><code>NO DATA</code>：連不到環境部 → 看 Wi-Fi</li>
 </ul>
 <p class="k">補好金鑰不用重開，1 分鐘內自己再試。</p></div>
+
+<div class="card"><h2>5＋　加 Python 套件（numpy、pandas）</h2>
+<p><span class="where b">板子</span><code>main.py</code> 跑在 App 的容器裡：套件寫進 <code>python/requirements.txt</code>，start 時自動裝進這支 App 的 venv。SSH 視窗 <code>pip install</code> 沒用。</p>
+<pre>cd ~/ArduinoApps/my-aqi
+printf "numpy\npandas\n" &gt; python/requirements.txt
+arduino-app-cli app stop ~/ArduinoApps/my-aqi
+arduino-app-cli app start ~/ArduinoApps/my-aqi
+docker exec my-aqi-main-1 /app/.cache/.venv/bin/python -c "import numpy, pandas; print(numpy.__version__, pandas.__version__)"</pre>
+<p class="k">印出兩個版本號＝裝好了。容器名字不對先 <code>docker ps</code>。</p></div>
 
 <div class="card"><h2>6　有餘力（改完 stop → 等 3 秒 → start）</h2>
 <p><span class="where b">板子</span>速度（數字越大越慢）／換測站（中英一起改）</p>
