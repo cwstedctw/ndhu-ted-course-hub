@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W5 指令小抄｜板子上網，點陣跑出空氣品質</title>
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --ink:#132525; --mist:#5E7676; --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF;
+  --gold-tint:#FBF0D9; --red:#B4553F; --code-bg:#F3F6F5;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#0B1A1A;--surface:#112424;--ink:#E6F2F2;--mist:#8FA9A8;--line:#26403F;--teal:#5CC8C6;--teal-tint:#123A39;--gold-tint:#3A2F18;--red:#E58B74;--code-bg:#0D1F1F;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0B1A1A;--surface:#112424;--ink:#E6F2F2;--mist:#8FA9A8;--line:#26403F;--teal:#5CC8C6;--teal-tint:#123A39;--gold-tint:#3A2F18;--red:#E58B74;--code-bg:#0D1F1F;color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:15px;line-height:1.55}
+main{max-width:1100px;margin:0 auto;padding:16px 16px 40px}
+h1{font-size:22px;margin:0 0 2px}
+.sub{color:var(--mist);font-size:13.5px;margin:0 0 10px}
+.cols{columns:2 460px;column-gap:18px}
+.card{break-inside:avoid;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:0 0 12px}
+.card h2{font-size:15.5px;margin:0 0 4px;color:var(--teal)}
+.where{display:inline-block;font-size:12px;font-weight:700;padding:0 6px;border-radius:6px;background:var(--teal-tint);color:var(--teal);margin-right:4px}
+.where.b{background:var(--gold-tint);color:#7A5510}
+pre{margin:4px 0 6px;padding:6px 8px;background:var(--code-bg);border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere;font:12.8px/1.5 var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+code{font-family:var(--mono);font-size:.92em;background:var(--code-bg);border-radius:4px;padding:0 3px;font-variant-ligatures:none}
+p{margin:3px 0}
+.k{font-size:13px;color:var(--mist)}
+.warn{color:var(--red);font-weight:700}
+ul{margin:2px 0;padding-left:1.2em}
+nav{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;margin-bottom:8px}
+a{color:var(--teal)}
+@media print{
+  @page{size:A4;margin:9mm}
+  body{background:#fff;font-size:10.2px;line-height:1.35}
+  main{padding:0;max-width:none}
+  nav{display:none}
+  h1{font-size:15px}
+  .sub{font-size:9.5px;margin-bottom:5px}
+  .cols{columns:2;column-gap:8px}
+  .card{padding:4px 7px;margin:0 0 6px;border-radius:6px}
+  .card h2{font-size:11px;margin-bottom:1px}
+  pre{font-size:8.6px;padding:3px 5px;margin:2px 0 3px}
+  .k{font-size:9px}
+  .where{font-size:8.5px}
+}
+</style>
+</head>
+<body>
+<main>
+<nav><a href="student.html">學生頁（完整步驟）</a><a href="design.html">設計文件</a><a href="concept.html">互動概念頁</a></nav>
+<h1>W5 指令小抄：板子上網，點陣跑出空氣品質</h1>
+<p class="sub">AIoT 智慧裝置實作 115-1・10/08（四）E307。照順序一行一行打；<code>&lt;範例ID&gt;</code> 連 &lt; &gt; 一起換掉。看不懂為什麼 → 學生頁同一節；卡住 → 學生頁第 8 節或把完整錯誤訊息貼給 AI agent（金鑰、密碼不要貼）。可以印成一張 A4。</p>
+<div class="cols">
+
+<div class="card"><h2>課前　申請金鑰</h2>
+<p><code>https://data.moenv.gov.tw/api-term</code> → 勾「我已閱讀…」→ 下一步 → 填資料 → 「註冊通知信」裡有 API Key。</p>
+<p class="warn">金鑰只給自己：不截圖、不貼群組、不貼給 AI、不寫進程式。</p></div>
+
+<div class="card"><h2>1　就位（接線、等心跳）</h2>
+<p><span class="where">電腦</span>USB 看得到（要有 <code>2341:0078</code>）</p>
+<pre>lsusb | grep -E '2341:0078|05c6:9008'</pre>
+<p><span class="where">電腦</span>找 adb（兩行一起貼）、列出板子（要有 <code>device</code>）</p>
+<pre>ADB=$(find "$HOME/.arduino15/packages/arduino/tools/adb" \
+    -type f -name adb -perm -u+x -print 2>/dev/null | sort -V | tail -n 1)
+"$ADB" devices -l</pre>
+<p><span class="where">電腦</span>兩條通道（不印字）＋SSH（打 yes、板子密碼）</p>
+<pre>"$ADB" forward tcp:2222 tcp:22
+"$ADB" forward tcp:7000 tcp:7000
+ssh -p 2222 arduino@127.0.0.1</pre>
+<p class="k">✅ 提示字元 <code>arduino@</code> 開頭。以下都在 SSH 視窗打。</p></div>
+
+<div class="card"><h2>2　網頁點燈</h2>
+<p><span class="where b">板子</span></p>
+<pre>arduino-app-cli app list | grep -i color
+arduino-app-cli app start &lt;範例ID&gt;</pre>
+<p class="k">看到 <code>started successfully</code> → 等 10 秒 → 電腦瀏覽器開 <code>http://127.0.0.1:7000</code>。✋ 哪顆燈能調亮度？</p>
+<pre>arduino-app-cli app stop &lt;範例ID&gt;</pre></div>
+
+<div class="card"><h2>3　板子上網＋時區</h2>
+<p><span class="where b">板子</span>Wi-Fi 要 <code>connected</code>；記下 <code>us_aqi</code></p>
+<pre>nmcli -t -f DEVICE,STATE,CONNECTION dev status
+curl -fsS "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=23.97694&amp;longitude=121.60444&amp;current=us_aqi,pm2_5&amp;timezone=Asia%2FTaipei"</pre>
+<p><span class="where b">板子</span>改台灣時間（sudo 打<b>板子</b>密碼；忘了就跳過）</p>
+<pre>date
+sudo timedatectl set-timezone Asia/Taipei
+date</pre></div>
+
+<div class="card"><h2>4　天氣範例（看到動畫就停）</h2>
+<p><span class="where b">板子</span></p>
+<pre>arduino-app-cli app list | grep -i weather
+arduino-app-cli app new my-weather --from-app &lt;範例ID&gt;
+cd ~/ArduinoApps/my-weather
+sed -i 's/"Turin"/"Hualien"/' sketch/sketch.ino
+grep -n Hualien sketch/sketch.ino
+arduino-app-cli app start ~/ArduinoApps/my-weather
+arduino-app-cli app logs ~/ArduinoApps/my-weather --tail 5
+arduino-app-cli app stop ~/ArduinoApps/my-weather</pre>
+<p class="k">📸 證據 1：log 有 <code>Hualien</code>。</p></div>
+
+<div class="card"><h2>5　AQI 跑馬燈</h2>
+<p><span class="where b">板子</span>空白 App＋換三個檔</p>
+<pre>arduino-app-cli app new my-aqi
+cd ~/ArduinoApps/my-aqi
+curl -fsSL https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-aiot/w05/starter/aqi/python/main.py -o python/main.py
+curl -fsSL https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-aiot/w05/starter/aqi/sketch/sketch.ino -o sketch/sketch.ino
+curl -fsSL https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-aiot/w05/starter/aqi/sketch/sketch.yaml -o sketch/sketch.yaml</pre>
+<p><span class="where b">板子</span>存金鑰（出現 <code>API Key:</code> 貼上按 Enter，畫面不顯示）</p>
+<pre>read -rsp "API Key: " K; echo "$K" &gt; python/moenv_key.txt; unset K; echo</pre>
+<p><span class="where b">板子</span>啟動（約 110 秒）、清畫面、看 log</p>
+<pre>arduino-app-cli app start ~/ArduinoApps/my-aqi
+clear
+arduino-app-cli app logs ~/ArduinoApps/my-aqi --tail 60</pre>
+<p class="k">📸 證據 2：同一張有 <code>moenv:</code> 和 <code>cache:</code>。📸 證據 3：點陣捲出 <code>HUALIEN AQI …</code>。</p></div>
+
+<div class="card"><h2>點陣上的字是什麼意思</h2>
+<ul>
+<li><code>WAIT</code>：還沒拿到回覆，等一輪</li>
+<li><code>NO KEY</code>：沒有金鑰檔／放錯資料夾 → 再存一次</li>
+<li><code>KEY?</code>：金鑰錯、到期或今天用完 → 換金鑰</li>
+<li><code>NO SITE</code>：測站名錯（「臺」不是「台」）</li>
+<li><code>NO DATA</code>：連不到環境部 → 看 Wi-Fi</li>
+</ul>
+<p class="k">補好金鑰不用重開，1 分鐘內自己再試。</p></div>
+
+<div class="card"><h2>6　有餘力（改完 stop → 等 3 秒 → start）</h2>
+<p><span class="where b">板子</span>速度（數字越大越慢）／換測站（中英一起改）</p>
+<pre>sed -i 's/textScrollSpeed(60)/textScrollSpeed(90)/' sketch/sketch.ino
+sed -i 's/SITE = "花蓮"/SITE = "宜蘭"/' python/main.py
+sed -i 's/LABEL = "HUALIEN"/LABEL = "YILAN"/' python/main.py
+arduino-app-cli app stop ~/ArduinoApps/my-aqi
+arduino-app-cli app start ~/ArduinoApps/my-aqi</pre>
+<p class="k">或打 <code>agy</code> 請它加超標提示（提示詞在學生頁第 6 節）；離開 agy：連按兩次 Ctrl＋C。</p></div>
+
+<div class="card"><h2>9　離開前</h2>
+<pre>arduino-app-cli app stop ~/ArduinoApps/my-aqi</pre>
+<p class="k">三樣證據存好；作業老師上課時會在 e學苑 開。金鑰不要交。</p></div>
+
+</div>
+<p class="sub">資料來源：環境部「空氣品質指標(AQI)」，經政府資料開放平臺取得；open-meteo：Weather data by Open-Meteo.com（CC BY 4.0）。本頁不印板子密碼、Wi-Fi、金鑰。</p>
+</main>
+</body>
+</html>
