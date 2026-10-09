@@ -118,10 +118,23 @@
       "worksheetUrl": null,
       "materials": [
         {
-          "label": "講者投影片（PDF，57 頁）",
+          "label": "講者投影片（PDF，58 頁）",
           "url": "https://drive.google.com/file/d/1bGsnukDphHr0bpoxp5OqACQcIsbQ8DF9/view"
+        },
+        {
+          "label": "講前導讀一頁卡（原圖，3 分鐘看完）",
+          "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/images/talks/t03-preread.webp"
+        },
+        {
+          "label": "30 秒預告短片（講者同意公開；橫式）",
+          "url": "https://drive.google.com/file/d/1Vam_KnNCdrwwL07pB8htdo5mT7HBMUPW/view"
         }
-      ]
+      ],
+      "preread": "/images/talks/t03-preread.webp",
+      "teaser": {
+        "src": "/videos/t03-teaser-720p.mp4",
+        "poster": "/images/talks/t03-teaser-poster.jpg"
+      }
     },
     {
       "id": "t04",
