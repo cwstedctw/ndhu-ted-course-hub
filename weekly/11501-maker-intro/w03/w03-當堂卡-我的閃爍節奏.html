@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>當堂卡・第三週　我的閃爍節奏｜創客入門</title>
+<style>
+@page { size: A4; margin: 12mm; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #fff; }
+body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', sans-serif; color: #132525; font-size: 11pt; line-height: 1.45; }
+.page { width: 186mm; height: 273mm; margin: 0 auto; padding: 0; display: flex; flex-direction: column; gap: 3mm; page-break-after: always; overflow: hidden; }
+.page:last-child { page-break-after: auto; }
+header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #0E7C7B; padding-bottom: 2mm; }
+h1 { font-size: 16pt; font-weight: 900; color: #0E7C7B; letter-spacing: .02em; }
+h1 small { font-size: 10pt; font-weight: 500; color: #5E7676; margin-left: 3mm; }
+.meta { font-size: 9pt; color: #5E7676; text-align: right; line-height: 1.35; }
+.who { display: flex; gap: 8mm; font-size: 10.5pt; }
+.who span { border-bottom: 1px solid #132525; min-width: 38mm; display: inline-block; padding: 0 2mm; }
+.rule { font-size: 9.5pt; color: #5E7676; }
+.box { border: 1.2px solid #132525; border-radius: 3mm; padding: 2.2mm 4mm 2.6mm; }
+.box h2 { font-size: 11.5pt; font-weight: 700; color: #0E7C7B; margin-bottom: 1.2mm; }
+.box h2 .hint { font-size: 9pt; font-weight: 400; color: #5E7676; margin-left: 2mm; }
+.line { border-bottom: 1px dotted #9FBDBC; height: 7.5mm; }
+.three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2mm; }
+.cell { border: 1px solid #9FBDBC; border-radius: 2mm; padding: 1.5mm 2.5mm; min-height: 24mm; }
+.cell b { display: block; font-size: 9.5pt; color: #0E7C7B; margin-bottom: .5mm; }
+.cell i { display: block; font-size: 8.5pt; color: #5E7676; font-style: normal; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+th, td { border: 1px solid #132525; padding: 1.5mm 2mm; vertical-align: top; font-size: 10pt; }
+th { background: #E6F2F2; text-align: left; font-weight: 700; }
+th.rn, td.rn { width: 9mm; text-align: center; color: #5E7676; }
+td.q { font-size: 9.5pt; }
+td.g { height: 12mm; }
+td.h { height: 13.5mm; }
+code { font-family: ui-monospace, Consolas, monospace; font-size: 9.5pt; background: #E6F2F2; padding: 0 1mm; border-radius: 1mm; }
+.chk { display: inline-block; width: 4mm; height: 4mm; border: 1.2px solid #132525; border-radius: 1mm; vertical-align: -0.5mm; margin-right: 1.5mm; }
+.tick { display: flex; flex-wrap: wrap; gap: 2mm 6mm; margin-top: 1mm; font-size: 10pt; }
+.note { font-size: 9pt; color: #5E7676; margin-top: 1mm; }
+.big { font-size: 12pt; font-weight: 700; }
+.fill { display: inline-block; min-width: 18mm; border-bottom: 1px solid #132525; vertical-align: baseline; }
+.fill--w { min-width: 40mm; }
+footer { margin-top: auto; font-size: 8.5pt; color: #5E7676; display: flex; justify-content: space-between; border-top: 1px solid #E6F2F2; padding-top: 1.5mm; }
+@media screen { body { background: #e9ecec; padding: 8mm 0; } .page { background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.12); padding: 12mm; height: auto; min-height: 297mm; width: 210mm; margin-bottom: 8mm; } }
+</style>
+</head>
+<body>
+
+<!-- 正面 -->
+<section class="page">
+  <header>
+    <h1>我的閃爍節奏<small>創客入門・第三週　今天這張卡</small></h1>
+    <div class="meta">今天只發一次，下課前交<br>「我猜」在按播放之前寫，寫完才准按</div>
+  </header>
+  <div class="who">姓名 <span></span> 學號 <span></span> 日期 <span>2026 / 9 / 22</span></div>
+  <div class="rule">猜錯很正常。猜錯的劃掉重寫，<b>不要擦掉</b>——那條劃掉的線就是今天學到的東西。</div>
+
+  <div class="box">
+    <h2>我今天用的專案</h2>
+    <div class="tick">
+      <span><i class="chk"></i>上週自己存的</span>
+      <span><i class="chk"></i>老師接好線的那份</span>
+      <span><i class="chk"></i>空板子自己重接</span>
+      <span>紅燈接的腳位：<span class="fill"></span></span>
+    </div>
+  </div>
+
+  <div class="box">
+    <h2>A・順序<span class="hint">加兩行 print，看右下角那格印的順序</span></h2>
+    <table>
+      <tr><th style="width:52%">我做了什麼</th><th>我猜會印出什麼（按之前寫）</th><th>實際印出什麼</th></tr>
+      <tr><td class="q g">加 <code>print('亮')</code>、<code>print('滅')</code>，按播放</td><td></td><td></td></tr>
+      <tr><td class="q g">把兩行 print 對調</td><td></td><td></td></tr>
+      <tr><td class="q g">把 <code>print('亮')</code> 搬到 <code>time.sleep</code> 下面</td><td></td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h2>B・變數<span class="hint">一個名字，裝一個數字</span></h2>
+    <table>
+      <tr><th style="width:52%">我做了什麼</th><th>我猜燈會怎樣</th><th>實際怎樣</th></tr>
+      <tr><td class="q g"><code>wait</code> 從 0.5 改成 <span class="fill"></span></td><td></td><td></td></tr>
+      <tr><td class="q g">加 <code>off_wait = 0.1</code>，第二個 sleep 改用它</td><td></td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h2>C・迴圈<span class="hint">while True 一直回頭；for 數幾次就停</span></h2>
+    <table>
+      <tr><th style="width:52%">我做了什麼</th><th>我猜</th><th>實際</th></tr>
+      <tr><td class="q g">把最後一行 <code>time.sleep(wait)</code> 的縮排拿掉</td><td></td><td></td></tr>
+      <tr><td class="q g">貼 blink-v1，右下角第一行印的 <code>n =</code> 幾</td><td></td><td></td></tr>
+      <tr><td class="q g"><code>times</code> 改成 <span class="fill"></span>，最後一行 <code>n =</code> 幾；燈停在 □亮 □滅</td><td></td><td></td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h2>D・條件<span class="hint">if n &lt; 3 快，else 慢</span></h2>
+    <table>
+      <tr><th style="width:52%">我做了什麼</th><th>我猜前幾次快</th><th>實際</th></tr>
+      <tr><td class="q g"><code>n &lt; 3</code> 改成 <code>n &lt; </code><span class="fill"></span></td><td></td><td></td></tr>
+    </table>
+  </div>
+
+  <footer><span>國立東華大學 通識教育中心・創客入門–智慧生活裝置實作（115-1）</span><span>背面還有 →　正面 1／2</span></footer>
+</section>
+
+<!-- 背面 -->
+<section class="page">
+  <header>
+    <h1>弄壞一次，然後用自己的話講<small>今天這張卡・背面</small></h1>
+    <div class="meta">沒有紅字的錯最難抓，所以要先寫預期<br>三句寫法＝各科共用的〈電腦出錯先做的四步〉</div>
+  </header>
+
+  <div class="box">
+    <h2>一・沒有紅字的那次<span class="hint">把 16 改成 25，按播放：字照印、燈不亮、沒有紅字</span></h2>
+    <div class="three">
+      <div class="cell"><b>我做了什麼</b></div>
+      <div class="cell"><b>我預期看到什麼</b></div>
+      <div class="cell"><b>實際看到什麼</b></div>
+    </div>
+    <div class="note">寫完改回 16，跑一次確認燈又閃了。</div>
+  </div>
+
+  <div class="box">
+    <h2>二・有訊息的那次<span class="hint">刪掉 import time 那一行，按播放</span></h2>
+    <table>
+      <tr><td class="q" style="width:42%">右下角最後一行開頭的 ○○Error 是</td><td class="h"></td></tr>
+      <tr><td class="q">我貼給另一個分頁的 AI，它說這句的意思是（一句）</td><td class="h"></td></tr>
+      <tr><td class="q">我自己回 Wokwi 改了哪裡</td><td class="h"></td></tr>
+    </table>
+    <div class="note">訊息是白字、在右下角黑底那格，不是紅的。貼給 AI 之前先遮掉姓名、學號。</div>
+  </div>
+
+  <div class="box">
+    <h2>三・加碼：第二顆燈<span class="hint">做完的人才寫。綠燈 13，一樣串 220Ω</span></h2>
+    <table>
+      <tr><td class="q" style="width:42%">要加哪幾行、改哪幾行（先寫完再動手）</td><td class="h"></td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h2>四・用自己的話寫三句<span class="hint">不要抄 AI 的。寫不出來就代表還沒懂，那就是下週開頭要問的</span></h2>
+    <table>
+      <tr><td class="q" style="width:42%">① 這支程式在做什麼？</td><td class="h"></td></tr>
+      <tr><td class="q">② 我怎麼知道它真的成功了？</td><td class="h"></td></tr>
+      <tr><td class="q">③ 我改了什麼、為什麼改？</td><td class="h"></td></tr>
+    </table>
+  </div>
+
+  <div class="box">
+    <h2>五・今天最想問、但還沒解決的一件事</h2>
+    <div class="line"></div>
+  </div>
+
+  <div class="box">
+    <h2>下課前打勾</h2>
+    <div class="tick">
+      <span><i class="chk"></i>右下角看到我自己加的「亮」「滅」</span>
+      <span><i class="chk"></i>blink-v1 數到最後，燈停在滅</span>
+      <span><i class="chk"></i>16 改 25 那三句寫了</span>
+      <span><i class="chk"></i>交之前跑過一次、會閃</span>
+      <span><i class="chk"></i>Wokwi 連結貼 e學苑（或截圖＋貼程式）</span>
+      <span><i class="chk"></i>這張卡交回</span>
+    </div>
+  </div>
+
+  <footer><span class="big">填不完也交。看的是有沒有先猜、有沒有寫實際，不是全對。</span><span>背面 2／2</span></footer>
+</section>
+
+</body>
+</html>

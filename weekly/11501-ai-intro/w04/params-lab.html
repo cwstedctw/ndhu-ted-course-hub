@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>訓練參數實驗台</title>
+<!-- 最後更新：2026-09-29。人工智慧概論 W4（AB）。單檔、零外部資源、離線可開。
+     這是簡化的玩具模型（兩個特徵、一個小神經網路、Adam 更新），用來看 Epochs／Batch Size／Learning Rate 的「趨勢」；
+     數字不會跟 Teachable Machine 一樣。Teachable Machine 的三個預設值（50／16／0.001）2026-09-29 在官網 Advanced 面板實查。 -->
+<style>
+:root{--paper:#fffdf8;--ink:#16343b;--muted:#526b70;--wash:#edf7f3;--sea:#087e8b;--coral:#e76f51;--sun:#f4b942;--line:#cbded9;--card:#fff;--a:#d33;--b:#2a5bd7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#10262a;--ink:#e8f1ef;--muted:#9fb9b5;--wash:#1a3a40;--line:#2f555c;--card:#16323a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Segoe UI","Microsoft JhengHei","Noto Sans TC",Arial,sans-serif;line-height:1.5}
+main{max-width:1240px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:30px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 14px}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:18px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px}
+.ctl{margin:0 0 14px}
+.ctl label{display:flex;justify-content:space-between;font-weight:800;font-size:19px}
+.ctl label span{color:var(--coral)}
+.ctl input[type=range]{width:100%}
+.ctl .hint{font-size:14px;color:var(--muted);margin:2px 0 0}
+select{font:inherit;font-size:17px;padding:4px 8px;border-radius:8px;border:2px solid var(--line);background:var(--card);color:var(--ink);width:100%}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:9px 16px;cursor:pointer;background:var(--sea);color:#fff}
+button.alt{background:var(--wash);color:var(--ink);border:2px solid var(--line)}
+button:disabled{opacity:.5;cursor:default}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.presets button{font-size:14px;padding:6px 10px}
+.math{font-size:17px;background:var(--wash);border-radius:10px;padding:8px 12px;margin:10px 0 0}
+.math b{color:var(--coral)}
+.dots{display:flex;flex-wrap:wrap;gap:3px;margin-top:8px}
+.dots i{width:12px;height:12px;border-radius:3px;display:block}
+.vis{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:700px){.vis{grid-template-columns:1fr}}
+canvas{width:100%;height:auto;display:block;border-radius:10px;background:var(--card)}
+.cap{font-size:15px;color:var(--muted);margin:4px 0 0}
+.lg{display:flex;gap:14px;font-size:14px;color:var(--muted);flex-wrap:wrap}
+.lg i{display:inline-block;width:22px;height:0;border-top:4px solid var(--sea);vertical-align:middle;margin-right:4px}
+.lg i.d{border-top:4px dashed var(--coral)}
+.stat{display:flex;gap:18px;flex-wrap:wrap;font-size:18px;margin:6px 0}
+.stat b{color:var(--coral);font-size:24px}
+.explain{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+@media (max-width:900px){.explain{grid-template-columns:1fr}}
+.explain h3{margin:0 0 4px;font-size:21px}
+.explain h3 small{font-weight:600;color:var(--muted);font-size:15px}
+.explain p{margin:6px 0;font-size:16px}
+.explain .eg{background:var(--wash);border-radius:8px;padding:6px 10px}
+.note{font-size:14px;color:var(--muted);margin-top:18px}
+</style>
+</head>
+<body>
+<main>
+<h1>訓練參數實驗台</h1>
+<p class="sub">Teachable Machine 的 Advanced 有三個參數：Epochs、Batch Size、Learning Rate。這裡一次改一個，按「開始訓練」，看曲線怎麼變。</p>
+
+<div class="grid">
+  <section class="card" aria-label="參數">
+    <div class="ctl">
+      <label for="ep">Epochs（一輪數）<span id="epv">50</span></label>
+      <input id="ep" type="range" min="1" max="300" value="50">
+      <p class="hint">全部訓練資料看過一次＝一輪。Teachable Machine 預設 50。</p>
+    </div>
+    <div class="ctl">
+      <label for="bs">Batch Size（批次大小）<span id="bsv">16</span></label>
+      <select id="bs"><option>8</option><option selected>16</option><option>32</option><option>64</option><option>128</option><option>256</option><option>512</option></select>
+      <p class="hint">一次看幾張、修正一次。預設 16。</p>
+    </div>
+    <div class="ctl">
+      <label for="lr">Learning Rate（學習率）<span id="lrv">0.001</span></label>
+      <select id="lr"><option>0.00001</option><option>0.0001</option><option selected>0.001</option><option>0.01</option><option>0.1</option><option>0.5</option></select>
+      <p class="hint">每次修正走多大步。預設 0.001。</p>
+    </div>
+    <div class="btns">
+      <button id="go">開始訓練</button>
+      <button id="rs" class="alt">Reset Defaults</button>
+    </div>
+    <div class="presets" aria-label="範例">
+      <button class="alt" data-p="50,16,0.001">① 預設值</button>
+      <button class="alt" data-p="3,16,0.001">② 輪數太少</button>
+      <button class="alt" data-p="300,16,0.001">③ 輪數很多</button>
+      <button class="alt" data-p="50,16,0.5">④ 學習率太大</button>
+      <button class="alt" data-p="50,16,0.00001">⑤ 學習率太小</button>
+      <button class="alt" data-p="50,512,0.001">⑥ 批次很大</button>
+    </div>
+    <div class="math" id="math"></div>
+    <div class="dots" id="dots" aria-hidden="true"></div>
+  </section>
+
+  <section class="card" aria-label="結果">
+    <div class="stat"><span>第 <b id="sE">0</b> 輪</span><span>已修正 <b id="sU">0</b> 次</span><span>測試準確率 <b id="sA">—</b></span></div>
+    <div class="vis">
+      <div>
+        <canvas id="cA" width="520" height="260"></canvas>
+        <p class="cap">Accuracy per epoch（越高越好）</p>
+      </div>
+      <div>
+        <canvas id="cL" width="520" height="260"></canvas>
+        <p class="cap">Loss per epoch（越低越好）</p>
+      </div>
+    </div>
+    <div class="lg"><span><i></i>訓練資料（training）</span><span><i class="d"></i>測試資料（test）</span></div>
+    <div class="vis" style="margin-top:10px">
+      <div>
+        <canvas id="cM" width="520" height="360"></canvas>
+      </div>
+      <div>
+        <p style="margin:0 0 6px;font-weight:700">旁邊這張圖怎麼看</p>
+        <p class="cap" style="font-size:16px">每個點是一張圖片：<span style="color:var(--a)">●紅圓</span>、<span style="color:var(--b)">■藍方</span>。空心的是測試資料（模型沒學過）。底色是模型的判斷：偏紅＝猜紅圓，偏藍＝猜藍方。兩區的交界就是它學到的「規律」。</p>
+        <p class="cap" style="font-size:16px">訓練前，模型一律猜紅圓，所以準確率從 50% 起跳。</p>
+        <p class="cap" style="font-size:16px">兩個座標是模型從圖片抽出的兩個數字（簡化說法）；真實模型會抽出很多個。</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="explain" aria-label="三個參數">
+  <div class="card">
+    <h3>Epochs <small>一輪數</small></h3>
+    <p>全部訓練圖都看過一次，叫一輪。輪數越多，學得越久。</p>
+    <p class="eg">例：按 ② 只跑 3 輪，準確率還沒爬上去就停了（學不夠）。按 ③ 跑 300 輪，Loss 還在往下，準確率卻跟 50 輪差不多：多跑不一定多得分，只是等更久。</p>
+  </div>
+  <div class="card">
+    <h3>Batch Size <small>批次大小</small></h3>
+    <p>一次拿幾張來看、看完修正一次。80 張、每批 16 張＝5 批＝一輪修正 5 次。</p>
+    <p class="eg">例：按 ⑥ 每批 512 張，比全部資料還多，一輪只修正 1 次；同樣 50 輪，總修正次數少很多，曲線爬得慢。</p>
+  </div>
+  <div class="card">
+    <h3>Learning Rate <small>學習率</small></h3>
+    <p>每次修正走多大步。步子太小學得慢，太大會衝過頭。</p>
+    <p class="eg">例：按 ⑤ 0.00001，50 輪幾乎沒動。按 ④ 0.5，Loss 曲線上下亂跳。</p>
+  </div>
+</section>
+
+<p class="note">這是簡化的玩具模型（兩個數字、一個小神經網路），用來看「改一個參數會怎樣」的趨勢；數字不會跟 Teachable Machine 一樣。每次重新訓練都從同一個起點開始，所以只要參數一樣，結果就一樣——一次只改一件，才看得出是哪一件造成的。</p>
+</main>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  // 固定亂數種子：同一組參數，每次結果一樣
+  function rng(seed){ let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function gauss(r){ let u = 0, v = 0; while (!u) u = r(); v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+
+  // 資料：兩類，有一點重疊；訓練 80（配合 80÷16＝5 的例子）、測試 20
+  function makeData(n, seed){
+    const r = rng(seed), out = [];
+    for (let i = 0; i < n; i++){
+      const y = i % 2;
+      const cx = y ? 0.6 : 0.4, cy = y ? 0.6 : 0.4;
+      const bend = y ? 0.08 * Math.sin((r() - .5) * 6) : 0;
+      out.push({x: Math.min(.98, Math.max(.02, cx + gauss(r) * 0.16)), y2: Math.min(.98, Math.max(.02, cy + bend + gauss(r) * 0.16)), c: y});
+    }
+    return out;
+  }
+  const TRAIN = makeData(80, 11), TEST = makeData(20, 97);
+
+  // 小神經網路：2 → 12（tanh）→ 1（sigmoid），Adam 更新
+  const H = 12;
+  function initNet(){
+    const r = rng(2026), w = () => gauss(r) * 0.5;
+    return {W1: Array.from({length: H}, () => [w(), w()]), b1: Array(H).fill(0), W2: Array.from({length: H}, () => gauss(r) * 0.02), b2: -0.6};
+  }
+  function fwd(n, p){
+    const a = [p.x * 2 - 1, p.y2 * 2 - 1], h = new Array(H);
+    let z = n.b2;
+    for (let j = 0; j < H; j++){ h[j] = Math.tanh(n.W1[j][0] * a[0] + n.W1[j][1] * a[1] + n.b1[j]); z += n.W2[j] * h[j]; }
+    return {a, h, o: 1 / (1 + Math.exp(-z))};
+  }
+  function evalSet(n, set){
+    let loss = 0, ok = 0;
+    for (const p of set){ const o = Math.min(1 - 1e-7, Math.max(1e-7, fwd(n, p).o)); loss += -(p.c ? Math.log(o) : Math.log(1 - o)); ok += (o >= .5) === !!p.c; }
+    return {loss: loss / set.length, acc: ok / set.length};
+  }
+  function flat(n){ return [...n.W1.flat(), ...n.b1, ...n.W2, n.b2]; }
+  function unflat(n, v){ let k = 0; for (let j = 0; j < H; j++){ n.W1[j][0] = v[k++]; n.W1[j][1] = v[k++]; } for (let j = 0; j < H; j++) n.b1[j] = v[k++]; for (let j = 0; j < H; j++) n.W2[j] = v[k++]; n.b2 = v[k++]; }
+  function grad(n, batch){
+    const gW1 = Array.from({length: H}, () => [0, 0]), gb1 = Array(H).fill(0), gW2 = Array(H).fill(0); let gb2 = 0;
+    for (const p of batch){
+      const {a, h, o} = fwd(n, p), d = o - p.c;
+      gb2 += d;
+      for (let j = 0; j < H; j++){ gW2[j] += d * h[j]; const dh = d * n.W2[j] * (1 - h[j] * h[j]); gW1[j][0] += dh * a[0]; gW1[j][1] += dh * a[1]; gb1[j] += dh; }
+    }
+    const m = batch.length;
+    return [...gW1.flat(), ...gb1, ...gW2, gb2].map(g => g / m);
+  }
+
+  let net, adam, hist, epoch, updates, timer = null, order;
+  function reset(){
+    net = initNet();
+    const P = flat(net).length;
+    adam = {m: Array(P).fill(0), v: Array(P).fill(0), t: 0};
+    hist = [];
+    epoch = 0; updates = 0;
+    order = rng(7);
+    record();
+  }
+  function record(){ hist.push({tr: evalSet(net, TRAIN), te: evalSet(net, TEST)}); window.__hist = hist; }
+  function oneEpoch(bs, lr){
+    const idx = TRAIN.map((_, i) => i);
+    for (let i = idx.length - 1; i > 0; i--){ const j = Math.floor(order() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+    for (let s = 0; s < idx.length; s += bs){
+      const g = grad(net, idx.slice(s, s + bs).map(i => TRAIN[i]));
+      const v = flat(net); adam.t++;
+      for (let k = 0; k < v.length; k++){
+        adam.m[k] = .9 * adam.m[k] + .1 * g[k];
+        adam.v[k] = .999 * adam.v[k] + .001 * g[k] * g[k];
+        const mh = adam.m[k] / (1 - Math.pow(.9, adam.t)), vh = adam.v[k] / (1 - Math.pow(.999, adam.t));
+        v[k] -= lr * mh / (Math.sqrt(vh) + 1e-7);
+      }
+      unflat(net, v); updates++;
+    }
+    epoch++; record();
+  }
+
+  // 畫圖
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  function chart(cv, key, maxY, total){
+    const c = cv.getContext('2d'), W = cv.width, Hh = cv.height, L = 44, B = 28, T = 10, R = 10;
+    c.clearRect(0, 0, W, Hh);
+    c.strokeStyle = css('--line'); c.fillStyle = css('--muted'); c.font = '13px sans-serif'; c.lineWidth = 1;
+    for (let i = 0; i <= 4; i++){ const y = T + (Hh - T - B) * i / 4; c.beginPath(); c.moveTo(L, y); c.lineTo(W - R, y); c.stroke(); c.fillText((maxY * (1 - i / 4)).toFixed(key === 'acc' ? 2 : 1), 4, y + 4); }
+    c.fillText('0', L - 4, Hh - 8); c.fillText(String(total), W - R - 24, Hh - 8); c.fillText('epoch', (W) / 2 - 16, Hh - 8);
+    const X = i => L + (W - L - R) * i / Math.max(1, total), Y = v => T + (Hh - T - B) * (1 - Math.min(v, maxY) / maxY);
+    for (const [set, col, dash] of [['tr', css('--sea'), []], ['te', css('--coral'), [9, 6]]]){
+      c.strokeStyle = col; c.lineWidth = 3; c.setLineDash(dash); c.beginPath();
+      hist.forEach((h, i) => { const v = h[set][key]; i ? c.lineTo(X(i), Y(v)) : c.moveTo(X(i), Y(v)); });
+      c.stroke(); c.setLineDash([]);
+    }
+  }
+  function map(cv){
+    const c = cv.getContext('2d'), W = cv.width, Hh = cv.height, S = 8;
+    for (let x = 0; x < W; x += S) for (let y = 0; y < Hh; y += S){
+      const o = fwd(net, {x: (x + S / 2) / W, y2: 1 - (y + S / 2) / Hh}).o;
+      c.fillStyle = `rgba(${Math.round(211 * (1 - o) + 42 * o)},${Math.round(51 * (1 - o) + 91 * o)},${Math.round(51 * (1 - o) + 215 * o)},0.22)`;
+      c.fillRect(x, y, S, S);
+    }
+    const dot = (p, hollow) => {
+      const px = p.x * W, py = (1 - p.y2) * Hh, col = p.c ? css('--b') : css('--a');
+      c.lineWidth = 2.5; c.strokeStyle = col; c.fillStyle = col; c.beginPath();
+      if (p.c) c.rect(px - 6, py - 6, 12, 12); else c.arc(px, py, 6.5, 0, 7);
+      hollow ? c.stroke() : c.fill();
+    };
+    TRAIN.forEach(p => dot(p, false)); TEST.forEach(p => dot(p, true));
+  }
+
+  function params(){ return {E: +$('ep').value, bs: +$('bs').value, lr: +$('lr').value}; }
+  function showMath(){
+    const {E, bs, lr} = params(), nb = Math.ceil(TRAIN.length / bs);
+    $('epv').textContent = E; $('bsv').textContent = bs; $('lrv').textContent = lr;
+    $('math').innerHTML = `訓練資料 80 張 ÷ 每批 ${bs} 張 ＝ <b>${nb}</b> 批（一輪修正 ${nb} 次）<br>` +
+      `${E} 輪 × ${nb} ＝ 總共修正 <b>${E * nb}</b> 次` + (bs >= TRAIN.length ? '<br>批次比全部資料還大：一輪只修正 1 次' : '');
+    const pal = ['#087e8b', '#f4b942', '#e76f51', '#3a8d5d', '#7a5cc2', '#c2185b'];
+    $('dots').innerHTML = TRAIN.map((_, i) => `<i style="background:${pal[Math.floor(i / bs) % pal.length]}"></i>`).join('');
+  }
+  function draw(total){
+    chart($('cA'), 'acc', 1, total);
+    const maxL = Math.max(1, ...hist.map(h => Math.max(h.tr.loss, h.te.loss)));
+    chart($('cL'), 'loss', Math.min(3, Math.ceil(maxL * 2) / 2), total);
+    map($('cM'));
+    const last = hist[hist.length - 1];
+    $('sE').textContent = epoch; $('sU').textContent = updates;
+    $('sA').textContent = epoch ? Math.round(last.te.acc * 100) + '%' : '—';
+  }
+  function stop(){ if (timer) cancelAnimationFrame(timer); timer = null; $('go').disabled = false; }
+  function train(){
+    stop(); reset();
+    const {E, bs, lr} = params(), per = Math.max(1, Math.ceil(E / 120));
+    $('go').disabled = true;
+    const step = () => {
+      for (let k = 0; k < per && epoch < E; k++) oneEpoch(bs, lr);
+      draw(E);
+      if (epoch < E) timer = requestAnimationFrame(step); else stop();
+    };
+    step();
+  }
+  function setP(E, bs, lr){ stop(); $('ep').value = E; $('bs').value = String(bs); $('lr').value = String(lr); showMath(); reset(); draw(E); }
+
+  $('ep').addEventListener('input', () => { showMath(); });
+  $('bs').addEventListener('change', showMath);
+  $('lr').addEventListener('change', showMath);
+  $('go').addEventListener('click', train);
+  $('rs').addEventListener('click', () => setP(50, 16, 0.001));
+  document.querySelectorAll('[data-p]').forEach(b => b.addEventListener('click', () => { const [E, bs, lr] = b.dataset.p.split(','); setP(E, bs, lr); train(); }));
+  setP(50, 16, 0.001);
+})();
+</script>
+</body>
+</html>
