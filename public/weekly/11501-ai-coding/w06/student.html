@@ -113,20 +113,20 @@ figcaption{font-size:14px;color:var(--muted);margin-top:4px}
 <div class="prog"><span id="progText">已勾 0／0 步</span><div class="barw"><div id="progBar"></div></div><button type="button" class="ghost" id="resetBtn">清除勾選</button></div>
 <div class="toc"><b>今天的順序</b>
 <ol>
-<li><a href="#s0">第 0 段　先開背景下載</a>（09:10，10 分）——一坐下就貼，下載在背景跑</li>
-<li><a href="#s1">第 1 段　教它看照片、存進 Drive</a>（09:20，40 分）</li>
-<li><a href="#s2">第 2 段　裝 gws、讓 agent 替你下指令</a>（10:10，40 分）</li>
-<li><a href="#s3">第 3 段　本地模型也會上網搜</a>（11:00，30 分）</li>
-<li><a href="#s4">第 4 段　收尾與帶走</a>（11:30）</li>
+<li><a href="#s0">第 0 段　先開背景下載</a>——一坐下就貼；模型在另一個視窗下載，你接著做第 1 段</li>
+<li><a href="#s1">第 1 段　教它看照片、存進 Drive</a>——09:45 還在改程式，就換成老師的對照答案往下走</li>
+<li><a href="#s2">第 2 段　裝 gws、讓 agent 替你下指令</a>——第一次下課後開始；10:40 還在 Cloud Console，就停下來看老師示範</li>
+<li><a href="#s3">第 3 段　本地模型也會上網搜</a>——第二次下課後開始</li>
+<li><a href="#s4">第 4 段　收尾與帶走</a>——離開前一定要登出（含 gws）</li>
 <li><a href="#stuckall">卡關總表</a>——出錯了先用關鍵字查這裡</li>
 </ol>
-<p class="small">鐘響 10:00、11:00 各休息 10 分鐘。開場老師會請你舉手三樣：手機有收到 bot 回覆、試算表有多一列、日曆有多一個行程——這是上週的成果，也是今天的起點。</p></div>
+<p class="small">鐘響 10:00、11:00 各休息一次。開場老師會請你舉手三樣：手機有收到 bot 回覆、試算表有多一列、日曆有多一個行程——這是上週的成果，也是今天的起點。</p></div>
 </header>
 
 <!-- ======================= 第 0 段 ======================= -->
 <section id="s0" data-sec="0"><h2>第 0 段　先開背景下載</h2>
 <p class="gain">這段做完你會有什麼：兩個下載在背景跑（本地模型 6.6 GB、Node.js＋gws），你可以去做第 1 段。</p>
-<p>開 PowerShell（開始功能表搜「PowerShell」，<b>不用</b>系統管理員）。下面 A、B 兩塊整段複製、貼進去、按 Enter，貼完就去第 1 段；C、D 等一下再回來跑。</p>
+<p>開 PowerShell（開始功能表搜「PowerShell」，出現的 Windows PowerShell 就可以，<b>不用</b>系統管理員）。下面 A、B 兩塊整段複製、貼進去、按 Enter，貼完就去第 1 段；C 到第 2 段開頭再跑、D 到第 3 段開頭再跑。</p>
 <ol class="steps">
 
 <li><label class="chk"><input type="checkbox" data-k="s0-a"><span class="n">0-A</span><span class="t">裝 Ollama、在背景拉本地模型</span></label>
@@ -157,7 +157,7 @@ npm install -g --allow-scripts=@googleworkspace/cli @googleworkspace/cli</pre></
 </ul></details>
 </li>
 
-<li><label class="chk"><input type="checkbox" data-k="s0-c"><span class="n">0-C</span><span class="t">新開一個視窗，測版本</span></label>
+<li><label class="chk"><input type="checkbox" data-k="s0-c"><span class="n">0-C</span><span class="t">新開一個視窗，測版本（第 2 段開頭跑）</span></label>
 <p><b>一定要新開一個 PowerShell 視窗</b>（舊視窗的 PATH 還沒更新），貼這四行：</p>
 <div class="cp"><div class="bar"><span>PowerShell（新視窗）</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>ollama --version
 node -v
@@ -173,23 +173,29 @@ ollama list</pre></div>
 </ul></details>
 </li>
 
-<li><label class="chk"><input type="checkbox" data-k="s0-d"><span class="n">0-D</span><span class="t">把「不確定就先搜」的規矩寫進模型設定（等 A 拉完再跑，通常是第 3 段開頭）</span></label>
+<li><label class="chk"><input type="checkbox" data-k="s0-d"><span class="n">0-D</span><span class="t">把「不確定就先搜」的規矩寫進模型設定（第 3 段開頭跑，A 要先拉完）</span></label>
 <p>原生的 <code>gemma4:e4b</code> 不知道今天是哪一天，問它 2026 年的事會說「還沒發生」、連搜都不搜。下面這份 Modelfile（Ollama 的模型設定檔）用一段系統提示把規矩寫死：<b>日期可能在訓練資料之後，不確定一律先搜、附來源</b>。<code>ollama create</code> 這一行就是用這份設定做出一個新名字 <code>gemma4-search</code>（同一個模型＋一段固定的開場指示），不會重新下載。</p>
-<div class="cp"><div class="bar"><span>Modelfile（下載後放在 Downloads）</span><span class="btns"><button type="button" class="copy">複製</button><button type="button" class="dl" data-name="Modelfile">下載 Modelfile</button></span></div><pre id="pre-modelfile" data-src="starter/Modelfile">FROM gemma4:e4b
+<p>下面這段整段一起貼：前半把 Modelfile 的內容寫成一個檔（就是上面說的那段規矩，放在你的使用者資料夾），後半用它做出 <code>gemma4-search</code>。</p>
+<div class="cp"><div class="bar"><span>PowerShell（整段一起貼）</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre data-src="starter/create-gemma4-search.ps1">$mf = @&#x27;
+FROM gemma4:e4b
 SYSTEM &quot;&quot;&quot;你是研究助理。你有網路搜尋與讀網頁的工具。今天的日期可能在你的訓練資料之後，所以遇到「最近發生的事、某一年的得獎名單、版本號、價格、新聞」或任何你不確定的事實，一律先用搜尋工具查，查到再回答，並附上來源網址；不要以「還沒發生」為理由拒絕查詢。回答用繁體中文（台灣用語）。&quot;&quot;&quot;
-PARAMETER num_ctx 16384</pre></div>
-<p>按「下載 Modelfile」會存到 Downloads（檔名就叫 Modelfile、沒有副檔名）。然後：</p>
-<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>cd $env:USERPROFILE\Downloads
-ollama create gemma4-search -f Modelfile
+PARAMETER num_ctx 16384
+&#x27;@
+[IO.File]::WriteAllText(&quot;$env:USERPROFILE\Modelfile&quot;, $mf)
+ollama create gemma4-search -f &quot;$env:USERPROFILE\Modelfile&quot;
 ollama list</pre></div>
 <div class="blk see"><b class="k">你應該看到</b>印幾行 <code>using existing layer</code>、<code>writing manifest</code>，最後一行 <code>success</code>（老師的電腦 1 秒；看到 success 才算）；<code>ollama list</code> 多一列 <code>gemma4-search:latest</code>。</div>
 <div class="blk test"><b class="k">測一下</b><code>ollama list</code> 看得到 <code>gemma4-search</code> 就過。</div>
 <details class="stuck"><summary>卡住了</summary><ul>
-<li><b>檔名被存成 Modelfile.txt</b>→ 改跑 <code>ollama create gemma4-search -f Modelfile.txt</code>（<code>-f</code> 後面是檔名，叫什麼都行）。</li>
+<li><b>貼完停在 <code>&gt;&gt;</code> 不動</b>→ 它在等你把整段貼完：中間那段以 <code>@'</code> 開頭、<code>'@</code> 結尾，<code>'@</code> 必須在一行的最前面。按一次 Enter；還是不動就按 Ctrl+C，整段重新複製再貼。</li>
 <li><b>說找不到 gemma4:e4b</b>→ 0-A 還沒拉完，<code>ollama list</code> 看一下。</li>
-<li><b>自己用記事本存的、中文變亂碼</b>→ 另存新檔時編碼選 UTF-8，檔名用雙引號包起來 <code>"Modelfile"</code> 才不會多 .txt。</li>
-<li><b>顯示卡太小、模型跑不動</b>→ 改拉小一號的 <code>ollama pull gemma4:e2b</code>，Modelfile 第一行改成 <code>FROM gemma4:e2b</code> 再 create。</li>
+<li><b>顯示卡太小、模型跑不動</b>→ 改拉小一號的 <code>ollama pull gemma4:e2b</code>，再把這段第二行的 <code>FROM gemma4:e4b</code> 改成 <code>FROM gemma4:e2b</code> 重貼。</li>
 </ul></details>
+<details class="ans"><summary>只想看 Modelfile 本身（給好奇的人）</summary>
+<div class="cp"><div class="bar"><span>Modelfile</span><span class="btns"><button type="button" class="copy">複製</button><button type="button" class="dl" data-name="Modelfile">下載</button></span></div><pre id="pre-modelfile" data-src="starter/Modelfile">FROM gemma4:e4b
+SYSTEM &quot;&quot;&quot;你是研究助理。你有網路搜尋與讀網頁的工具。今天的日期可能在你的訓練資料之後，所以遇到「最近發生的事、某一年的得獎名單、版本號、價格、新聞」或任何你不確定的事實，一律先用搜尋工具查，查到再回答，並附上來源網址；不要以「還沒發生」為理由拒絕查詢。回答用繁體中文（台灣用語）。&quot;&quot;&quot;
+PARAMETER num_ctx 16384</pre></div>
+</details>
 <details class="ans"><summary>整份 install-commands.ps1（A～D 合在一起，想一次貼的用這個）</summary>
 <div class="cp"><div class="bar"><span>install-commands.ps1</span><span class="btns"><button type="button" class="copy">複製</button><button type="button" class="dl" data-name="install-commands.ps1">下載</button></span></div><pre data-src="starter/install-commands.ps1"># W6 第 0 段：一進教室先貼的指令（PowerShell；2026-10-09 在 msi 實測版本）
 # A. 本地模型（另開一個視窗跑；6.6 GB，教室網路快的話 3–5 分鐘）
@@ -200,13 +206,20 @@ Start-Process powershell -ArgumentList &#x27;-NoExit&#x27;,&#x27;-Command&#x27;,
 winget install --id OpenJS.NodeJS.LTS -e --accept-package-agreements --accept-source-agreements --silent
 $env:PATH += &quot;;$env:ProgramFiles\nodejs;$env:APPDATA\npm&quot;
 npm install -g --allow-scripts=@googleworkspace/cli @googleworkspace/cli
-# C. 測一下（新開一個 PowerShell 視窗再跑，PATH 才會更新）
+# C. 第 2 段開頭測一下（新開一個 PowerShell 視窗再跑，PATH 才會更新）
 ollama --version      # 0.40.1
 node -v               # v24.x
 gws --version         # gws 0.22.5
 ollama list           # 等 pull 完會看到 gemma4:e4b
-# D. 把「會自己搜」的系統提示烤進模型（Modelfile 放在同一個資料夾）
-ollama create gemma4-search -f Modelfile</pre></div>
+# D. 第 3 段開頭（A 拉完才跑得動）：把「不確定就先搜」的規矩寫進模型設定，做出 gemma4-search（不會重新下載）
+$mf = @&#x27;
+FROM gemma4:e4b
+SYSTEM &quot;&quot;&quot;你是研究助理。你有網路搜尋與讀網頁的工具。今天的日期可能在你的訓練資料之後，所以遇到「最近發生的事、某一年的得獎名單、版本號、價格、新聞」或任何你不確定的事實，一律先用搜尋工具查，查到再回答，並附上來源網址；不要以「還沒發生」為理由拒絕查詢。回答用繁體中文（台灣用語）。&quot;&quot;&quot;
+PARAMETER num_ctx 16384
+&#x27;@
+[IO.File]::WriteAllText(&quot;$env:USERPROFILE\Modelfile&quot;, $mf)
+ollama create gemma4-search -f &quot;$env:USERPROFILE\Modelfile&quot;
+ollama list</pre></div>
 </details>
 </li>
 </ol>
@@ -845,15 +858,15 @@ function testSetup() {
 </li>
 
 <li><label class="chk"><input type="checkbox" data-k="s2-6"><span class="n">2-6</span><span class="t">把 JSON 放到 gws 指定的位置</span></label>
-<p>gws 固定到 <code>%USERPROFILE%\.config\gws\client_secret.json</code> 找這把鑰匙。先看瀏覽器右上的下載清單，確認檔案真的在 Downloads，再貼這三行（第二行會把 Downloads 裡那個長檔名搬過去並改名）：</p>
+<p>gws 固定到 <code>%USERPROFILE%\.config\gws\client_secret.json</code> 找這把鑰匙。先看瀏覽器右上的下載清單，確認檔案真的在 Downloads，再貼這三行（第二行會從 Downloads 挑最新下載的那個 client_secret 開頭的檔，搬過去並改名；下載過兩次也沒關係）：</p>
 <div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>New-Item -ItemType Directory -Force "$env:USERPROFILE\.config\gws" | Out-Null
-Move-Item "$env:USERPROFILE\Downloads\client_secret*.json" "$env:USERPROFILE\.config\gws\client_secret.json"
+Get-ChildItem "$env:USERPROFILE\Downloads\client_secret*.json" | Sort-Object LastWriteTime | Select-Object -Last 1 | Move-Item -Destination "$env:USERPROFILE\.config\gws\client_secret.json" -Force
 Get-ChildItem "$env:USERPROFILE\.config\gws"</pre></div>
 <div class="blk see"><b class="k">你應該看到</b>第三行印一張小表，<code>Name</code> 欄只有一列 <code>client_secret.json</code>（<code>Length</code> 大約 400）。</div>
 <div class="blk test"><b class="k">測一下</b>有那個檔、名字一字不差，就過。</div>
 <details class="stuck"><summary>卡住了</summary><ul>
-<li><b>Move-Item 說找不到</b>→ 瀏覽器存到別的資料夾，或檔名不是 client_secret 開頭；用檔案總管找到它，拖進 <code>%USERPROFILE%\.config\gws</code>（在檔案總管上方的網址列貼這個路徑、按 Enter 就會開；名字有小數點的資料夾不是隱藏的，只是長得怪）並改名成 <code>client_secret.json</code>。</li>
-<li><b>Move-Item 說有多個檔</b>→ 你下載了兩次（或以前就有舊的）；Downloads 裡只留今天那一個再跑。</li>
+<li><b>第三行列出來是空的</b>→ Downloads 裡沒有 client_secret 開頭的檔：瀏覽器存到別的資料夾，或檔名不是 client_secret 開頭；用檔案總管找到它，拖進 <code>%USERPROFILE%\.config\gws</code>（在檔案總管上方的網址列貼這個路徑、按 Enter 就會開；名字有小數點的資料夾不是隱藏的，只是長得怪）並改名成 <code>client_secret.json</code>。</li>
+<li><b>以前也做過、Downloads 裡有好幾個 client_secret 檔</b>→ 第二行會挑最新的那個；確定是今天這個專案下載的就好（不確定就回 2-5 再下載一次、重貼這三行）。</li>
 </ul></details>
 </li>
 
@@ -928,29 +941,31 @@ Using keyring backend: keyring
 </li>
 
 <li><label class="chk"><input type="checkbox" data-k="s2-9"><span class="n">2-9</span><span class="t"><code>gws drive files list</code>：第一次自己下指令</span></label>
-<p>兩條都貼。第一條列你雲端硬碟最近的 5 個檔；第二條加了條件，只找「LINE待辦照片」這個資料夾（<code>''</code> 是 PowerShell 裡寫單引號的方式，照抄）。</p>
-<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>gws drive files list --params '{"pageSize":5,"fields":"files(name,mimeType)"}'
-gws drive files list --params '{"q":"name = ''LINE待辦照片''","fields":"files(name,mimeType)"}'</pre></div>
-<div class="blk see"><b class="k">你應該看到</b>第一條印出一段 JSON，<code>files</code> 底下 5 筆、每筆有 <code>mimeType</code> 與 <code>name</code>（是你雲端硬碟最近碰過的檔，每個人不同）。第二條像這樣：<pre>{
+<p>兩條都貼。第一條列你雲端硬碟最近的 5 個檔，排成一張表；第二條加了條件，只找「LINE待辦照片」這個資料夾。</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>gws.cmd drive files list --params '{\"pageSize\":5,\"fields\":\"files(name,mimeType)\"}' --format table
+gws.cmd drive files list --params '{\"q\":\"name=''LINE待辦照片''\",\"fields\":\"files(name,mimeType)\"}'</pre></div>
+<p class="small">為什麼是 <code>gws.cmd</code>、引號前多一條反斜線、<code>name=</code> 兩邊沒空格：Windows 內建的那版 PowerShell 把引號交給別的程式時會吃掉，這樣寫在新舊版都通（老師 10/09 兩版各跑過一次）。等一下讓 agent 下指令，它也可能撞到同一件事。</p>
+<div class="blk see"><b class="k">你應該看到</b>第一條印一張表，表頭是 <code>mimeType</code> 和 <code>name</code>，底下 5 列是你雲端硬碟最近碰過的檔（每個人不同）。第二條像這樣：<pre>{
   "files": [
     { "mimeType": "application/vnd.google-apps.folder", "name": "LINE待辦照片" }
   ]
-}</pre>第 1 段還沒做到 1-10 的，第二條會印 <code>{"files": []}</code>——正常，資料夾是 bot 收到第一張照片時才建的。</div>
-<div class="blk test"><b class="k">測一下</b>第一條有印出檔案就過：終端機真的拿到你雲端硬碟的門票了。第二條找得到資料夾＝第 1 段也成功了；找不到不影響這段。</div>
+}</pre>第 1 段還沒做到 1-10 的，第二條會印 <code>"files": []</code>——正常，資料夾是 bot 收到第一張照片時才建的。</div>
+<div class="blk test"><b class="k">測一下</b>第一條有印出表格就過：終端機真的拿到你雲端硬碟的門票了。第二條找得到資料夾＝第 1 段也成功了；找不到不影響這段。</div>
 <details class="stuck"><summary>卡住了</summary><ul>
+<li><b>Invalid --params JSON: key must be a string</b>→ 打成 <code>gws</code> 而不是 <code>gws.cmd</code>，或少了反斜線；整行從頭複製再貼，別手打。</li>
+<li><b>unexpected argument '=' found</b>→ 條件裡多了空格（<code>name = …</code>）；照抄 <code>name=''LINE待辦照片''</code>。</li>
 <li><b>403：Google Drive API has not been used in project … or it is disabled</b>→ 2-2 沒啟用、或啟用在別的專案；啟用後等一兩分鐘再跑。</li>
 <li><b>403：insufficient authentication scopes</b>→ 2-8 的 scopes 沒有 drive；重做 2-7（記得引號）。</li>
 <li><b>重登過了還是 403</b>→ 舊的通行證被快取住了：把 <code>%USERPROFILE%\.config\gws\token_cache.json</code> 改名成別的（別刪），再跑一次。</li>
-<li><b>第二條印 {"files": []}</b>→ 第 1 段的 1-10 還沒成功；不影響這段，先往下。</li>
-<li><b>說 JSON 格式錯</b>→ 整行從頭複製再貼一次；引號、逗號少一個都不行，別手打。</li>
+<li><b>第二條印 "files": []</b>→ 第 1 段的 1-10 還沒成功；不影響這段，先往下。</li>
 </ul></details>
 </li>
 
 <li><label class="chk"><input type="checkbox" data-k="s2-10"><span class="n">2-10</span><span class="t">讓 agent 替你下指令</span></label>
-<p>在電腦建一個<b>空資料夾</b>（例如 <code>gws-agent-w6</code>），用 Antigravity 或 Codex 開它，貼這段（把試算表名稱填進去）。<b>11:00 休息前還沒做到這步的，看老師示範就好；這步回家也做得了。</b></p>
+<p>在電腦建一個<b>空資料夾</b>（例如 <code>gws-agent-w6</code>），用 Antigravity 或 Codex 開它，貼這段（把試算表名稱填進去）。老師會先投影示範一次，看它列指令、停下來等你同意的那一刻。<b>11:00 休息前還沒做到這步的，看老師示範就好；這步回家也做得了。</b></p>
 <div class="cp"><div class="bar"><span>提示詞卡</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>我已經用 gws（Google Workspace CLI）登入好了，不要幫我重新登入。請用 gws 列出我 Drive「LINE待辦照片」資料夾的檔案、讀我的待辦試算表最後 5 列、整理成一份今日摘要存成 summary.txt（存在這個資料夾）。我的待辦試算表名稱是「＿＿＿」。每一條指令執行前先告訴我它會做什麼，等我同意再跑。</pre></div>
 <p class="small">路線 B（沒有 agent）：把同一段貼給 ChatGPT／Gemini 請它<b>寫出</b>要跑的 gws 指令，你自己一條一條貼進 PowerShell；每條跑之前自己看一眼它要做什麼。指令裡的 <code>&lt;資料夾ID&gt;</code>、<code>&lt;試算表ID&gt;</code> 別自己從一堆 JSON 裡挑：請 AI 一次給一條，你跑完把輸出貼回去、請它幫你挑出 ID 再給下一條。</p>
-<div class="blk see"><b class="k">你應該看到</b>它<b>先列出</b>要跑的指令，再一條一條執行。老師 10/09 用 Codex 實走，它列的是這四條（<code>&lt;資料夾ID&gt;</code>、<code>&lt;試算表ID&gt;</code> 由前一條的結果代入；中文名稱兩邊的 <code>''</code> 是 PowerShell 的寫法）：<pre>gws drive files list --params '{"q":"name = ''LINE待辦照片'' and mimeType = ''application/vnd.google-apps.folder'' and trashed = false","fields":"files(id,name,modifiedTime)","pageSize":1000}'
+<div class="blk see"><b class="k">你應該看到</b>它<b>先列出</b>要跑的指令，再一條一條執行。老師 10/09 用 Codex 實走，它列的是這四條（<code>&lt;資料夾ID&gt;</code>、<code>&lt;試算表ID&gt;</code> 由前一條的結果代入；這是老師電腦新版 PowerShell 的寫法，跟 2-9 不一樣；你的 agent 會照它自己的環境寫）：<pre>gws drive files list --params '{"q":"name = ''LINE待辦照片'' and mimeType = ''application/vnd.google-apps.folder'' and trashed = false","fields":"files(id,name,modifiedTime)","pageSize":1000}'
 gws drive files list --params '{"q":"''&lt;資料夾ID&gt;'' in parents and trashed = false","fields":"files(id,name,mimeType,size,modifiedTime)","pageSize":1000}'
 gws drive files list --params '{"q":"name = ''你的試算表名稱'' and mimeType = ''application/vnd.google-apps.spreadsheet'' and trashed = false","fields":"files(id,name,modifiedTime)","pageSize":1000}'
 gws sheets spreadsheets values get --params '{"spreadsheetId":"&lt;試算表ID&gt;","range":"A1:ZZZ10000","majorDimension":"ROWS"}'</pre>每條跑之前它會說這條要做什麼、等你同意（⚠️ 老師只用無頭的 Codex 驗過這份指令清單，Antigravity／Codex 桌面版的確認框沒彩排，以當天畫面為準）。資料夾找不到它就直接說「沒有這個資料夾」、跳過第二條。跑完資料夾裡出現 <code>summary.txt</code>。老師那次示範表只有一列、照片資料夾還沒建，它寫出來的摘要長這樣：<pre>今日摘要
@@ -975,6 +990,7 @@ Google Drive 中沒有名稱為「LINE待辦照片」的資料夾。
 <li><b>它先讀一堆說明檔、半天不跑指令</b>→ 有些 agent 裝了 Google Drive 外掛會先去讀外掛說明（老師第二次實走就多花了一分鐘）。在任務後面加一句「不要讀任何外掛說明檔，直接用 gws」再貼一次。</li>
 <li><b>它說工作區唯讀、寫不了 summary.txt</b>→ 你開的不是可寫的資料夾，或 agent 的權限設成唯讀；改開 Downloads 底下新建的資料夾，或請它把摘要印出來、你自己存檔。</li>
 <li><b>它找不到試算表</b>→ 名稱打錯一個字就找不到；去雲端硬碟把試算表名稱整個複製貼進提示詞。</li>
+<li><b>它跑 gws 一直出現 Invalid --params JSON 或 unexpected argument</b>→ 這台是 Windows 內建的舊版 PowerShell：回它「用 gws.cmd、JSON 的引號前加反斜線、JSON 裡不要有空格」，或請它照 2-9 那兩條的寫法。</li>
 <li><b>它想跑 <code>gws auth login</code></b>→ 回它「已經登入了，直接用」。</li>
 <li><b>它要跑的指令有 delete、update、create</b>→ 不要同意，回它「只准讀」。</li>
 </ul></details>
