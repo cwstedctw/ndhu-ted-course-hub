@@ -188,6 +188,8 @@ footer{color:var(--muted);font-size:.85rem;padding:16px 0 40px;border-top:1px so
     <li><a class="rb" href="#route-b">路 B・LM Studio＋MCP</a></li>
     <li><a class="rc" href="#route-c">路 C・終端機小程式</a></li>
     <li><a class="rd" href="#route-d">路 D・Page Assist</a></li>
+    <li><a class="rc" href="#line-bot-simple">延伸・LINE bot 簡單版</a></li>
+    <li><a class="rc" href="#line-bot">延伸・進階版（Apps Script）</a></li>
     <li><a href="#questions">三道考題</a></li>
     <li><a href="#pitfalls">共同的坑</a></li>
     <li><a href="#versions">版本對照</a></li>
@@ -597,7 +599,7 @@ PARAMETER num_ctx 16384</code></pre><button type="button" class="copy">複製</b
   <ul class="tight">
     <li>第 1 題物理獎：搜一次，答 Halzen＋IceCube，附兩個來源。</li>
     <li>第 2 題醫學獎：搜一次，答三位得主＋光遺傳學，附來源。</li>
-    <li>第 3 題 Ollama 版本：搜一次、再用 <code>fetch_page</code> 讀 GitHub releases 頁，答 v0.40.2／10 月 8 日並說明那是快照（snapshot）版。對照標準答案（<code>releases/latest</code> 查到的 v0.40.1、10-07）——同一天問「最新版」，看的頁面不同答案就不同，這正是第 3 題答案會變的原因。</li>
+    <li>第 3 題 Ollama 版本：搜一次、再用 <code>fetch_page</code> 讀 GitHub releases 頁，答 v0.40.2／10 月 8 日並說明那是快照（snapshot）版。當天 <code>releases/latest</code> 查到的還是 v0.40.1（10-07），隔天 10/10 重查已是 v0.40.2——看的頁面、查的那一天不同，答案就不同，這正是第 3 題答案會變的原因。</li>
   </ul>
   <p class="small muted">配方要點：<code>think: false</code>＋系統提示＋題目本身不提搜尋。三樣都在程式裡，不用自己設。</p>
 
@@ -703,22 +705,1322 @@ if __name__ == &quot;__main__&quot;:
   <p class="small muted">留著這條是為了對照：同樣是「本地模型＋搜尋」，誰決定搜、誰去搜，差很多。</p>
 </section>
 
+<!-- ===================== 延伸：LINE bot 簡單版（Python） ===================== -->
+<section class="block route route-c" id="line-bot-simple">
+  <h2>延伸・LINE bot 簡單版：一支 Python 程式就是 bot <span class="tag">W6 課堂示範・回家選做</span></h2>
+  <div class="callout">📘 <strong>完整的安裝、設定、使用步驟（可打勾、可複製、有卡關總表）在 <a href="line-bot-simple.html">LINE bot 簡單版指南：line-bot-simple.html</a></strong>。這一節只講它是什麼、跟其他做法差在哪。新版程式也會把行程排進 Google 日曆、照片存進雲端硬碟（gws 登入要多要 calendar 權限，見指南 1-4、1-5）。</div>
+  <p class="progress" data-progress="s">已勾 <b>0</b>／<b>0</b> 步</p>
+  <h3>做什麼</h3>
+  <p>W5 的 bot 住在 Google 的 Apps Script；這一版改成<strong>一支 Python 程式 <code>line_bot_local.py</code> 就是整個 bot</strong>，跑在你自己的電腦上：</p>
+  <ul class="tight">
+    <li>收<strong>文字</strong> → 交給你電腦上的 Ollama（<code>gemma4:e4b</code>）回答；模型覺得需要就自己上網搜，回覆附來源</li>
+    <li>收<strong>照片</strong> → 同一個模型看照片，說出上面有什麼、有沒有日期時間地點</li>
+    <li>每一則都先<strong>寫進你的 Google 試算表</strong>（用第 2 段登入好的 gws），寫好了才回覆</li>
+  </ul>
+  <p>程式就在你的電腦上，所以叫 Ollama 用 <code>localhost</code> 就行，不用轉接站，也不用 Gemini 金鑰。<strong>只剩一座橋省不掉</strong>：LINE 的伺服器要把訊息送進來，得找得到你的電腦，所以還是要 Cloudflare 的免費臨時通道。程式開起來會自己開通道，<strong>自己把 LINE 的 Webhook 換到你的電腦</strong>；按 Ctrl+C 結束時再換回原本的（例如你 W5 的 Apps Script），不用進 LINE 後台改。</p>
+<div class="term"><span class="dim">一則訊息的旅程（簡單版）</span>
+📱 手機傳文字或照片
+ → LINE → <span class="tool">Cloudflare 通道</span>（臨時 https 網址）
+ → <span class="you">你電腦上的 line_bot_local.py</span>：對 LINE 的簽章，確定真的是 LINE 送來的
+ → localhost 的 Ollama：文字自己決定要不要搜／照片直接看
+ → gws 寫一列進試算表 → 回覆手機（附來源、「📝 已記進試算表」）</div>
+
+  <h3>要準備什麼</h3>
+  <ul class="tight">
+    <li><strong>Python 3</strong>：PowerShell 打 <code>python --version</code> 印得出版本就好；沒有就 <code>winget install --id Python.Python.3.13 -e</code>，裝完新開視窗。程式只用 Python 內建功能，不用 <code>pip install</code></li>
+    <li><strong>Ollama＋<code>gemma4:e4b</code></strong>（路 A 第 1、2 步；W6 第 0 段裝過）</li>
+    <li><strong>gws 已登入、有試算表權限</strong>（W6 第 2 段 2-7 那行 <code>gws auth login -s "drive,sheets"</code>）</li>
+    <li><strong>cloudflared</strong>：<code>winget install --id Cloudflare.cloudflared -e</code></li>
+    <li><strong>LINE 的兩個值</strong>（W5 建的那個 channel）：長效通行碼（Channel access token）、Channel secret</li>
+  </ul>
+
+  <h3>逐步做</h3>
+  <ol class="steps">
+    <li>
+      <div class="step-head"><input type="checkbox" data-key="s1" id="s1"><label class="step-title" for="s1">開一張新的 Google 試算表，記下它的 ID</label></div>
+      <div class="step-body">
+        <p>雲端硬碟新增一張空白試算表，取個名字（例如「LINE bot 簡單版紀錄」）。網址長這樣：<code>docs.google.com/spreadsheets/d/<b>一長串英數字</b>/edit</code>，中間那一長串就是 ID。第一列可以自己打上標題：時間、類型、傳了什麼、bot 回了什麼。</p>
+        <p class="small muted">⚠️ 用跟 gws 登入同一個 Google 帳號開，不然 gws 寫不進去。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-head"><input type="checkbox" data-key="s2" id="s2"><label class="step-title" for="s2">找到 LINE 的兩個值</label></div>
+      <div class="step-body">
+        <p>LINE Developers → 你 W5 建的 channel：</p>
+        <ul class="tight">
+          <li><strong>Channel secret</strong>：「Basic settings」分頁往下找</li>
+          <li><strong>Channel access token（長效通行碼）</strong>：「Messaging API」分頁最下面，W5 按 Issue 拿到的那一串</li>
+        </ul>
+        <p class="small muted">兩個都等於鑰匙：不截圖、不貼進對話。等一下程式會問你，貼進去畫面不會顯示，也不會存進任何檔案。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-head"><input type="checkbox" data-key="s3" id="s3"><label class="step-title" for="s3">取得 line_bot_local.py，開起來</label></div>
+      <div class="step-body">
+        <p>從課程網的 W6 <code>starter</code> 資料夾下載，或展開下面的〈程式全文〉複製、用記事本存成 <code>line_bot_local.py</code>（存檔類型選「所有檔案」）。Ollama app 開著，在 PowerShell 進到那個資料夾：</p>
+        <div class="cmd"><pre><code>python line_bot_local.py</code></pre><button type="button" class="copy">複製</button></div>
+        <p>它會依序問三件事：長效通行碼、Channel secret（這兩個貼上去畫面不顯示，貼完直接按 Enter）、試算表 ID。</p>
+        <p><strong>你應該看到</strong>（⚠️<strong>預期畫面</strong>：程式在 msi 測過「通行碼錯會擋下來」與收訊息、寫表、回覆；開通道、換 Webhook 那幾行還沒在裝了 cloudflared 的電腦跑過）：</p>
+<div class="term">[15:20:01] ✅ LINE bot「你的 bot 名字」
+[15:20:01] 載入模型 gemma4:e4b（第一次要等一下）…
+[15:20:17] ✅ 模型已在顯示卡上
+[15:20:21] ✅ LINE 的 Webhook 換到這台電腦了：https://<span class="tool">（一串英文字）</span>.trycloudflare.com/callback
+[15:20:21]    原本的是：<span class="tool">（你 W5 的 /exec 網址）</span>——按 Ctrl+C 會換回去
+[15:20:21]    LINE 說換網址最多要 1 分鐘才生效；等一下再用手機傳訊息
+[15:20:26]    LINE 測試連線：✅ 通了
+[15:20:26] 開好了。手機傳訊息給 bot 試試看；這個視窗不要關，按 Ctrl+C 結束。</div>
+        <p class="small muted">畫面上「原本的是：…」那行就是你 W5 的 <code>/exec</code> 網址，先抄下來（萬一程式沒換回去，要手動貼回 LINE 後台）。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-head"><input type="checkbox" data-key="s4" id="s4"><label class="step-title" for="s4">手機傳一題文字、一張照片</label></div>
+      <div class="step-body">
+        <div class="cmd"><pre><code>2026 年諾貝爾物理獎得主是誰？</code></pre><button type="button" class="copy">複製</button></div>
+        <p>再拍一張有日期的活動海報傳過去。<strong>你應該看到</strong>電腦視窗出現 <code>📩 收到文字</code> → <code>🔍 模型決定搜：…</code> → <code>📝 寫進試算表了</code> → <code>✅ 回覆了</code>；手機收到（下面是 10/10 msi 用同一支程式實測的回覆，LINE 那端換成記錄用的假函式，手機畫面待老師彩排補）：</p>
+<div class="term">結論：2026 年諾貝爾物理獎的得主是弗朗西斯·哈爾岑。……
+
+來源：
+• https://www.nobelprize.org/prizes/physics/2026/press-release/
+• https://www.cas.cn/kj/202610/t20261007_5121442.shtml
+
+📝 已記進試算表（本地模型 32 秒）</div>
+<div class="term">這是一則關於「生成式 AI 實作講座」的宣傳資訊。
+活動日期是 2026 年 10 月 20 日（二），時間為下午 3:10–5:00，地點在理工二館 A101。
+講座免費入場，提醒參加者請攜帶筆電。
+
+📝 已記進試算表（本地模型 3 秒）</div>
+        <p class="small muted">文字那題 32 秒是模型還沒載進顯示卡就問；正常開機會先載好，之後每題約 4–5 秒（同一台的轉接站實測）。照片是測試用的假海報。打開試算表，要多兩列：「文字」和「照片」。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-head"><input type="checkbox" data-key="s5" id="s5"><label class="step-title" for="s5">用完按 Ctrl+C，把 LINE 還給 Apps Script</label></div>
+      <div class="step-body">
+        <p>在程式視窗按 <strong>Ctrl+C</strong>。<strong>你應該看到</strong> <code>↩️ LINE 的 Webhook 換回原本的了</code>，之後手機傳訊息又回到你 W5 的 Apps Script bot（照樣要等最多 1 分鐘）。</p>
+        <p class="small muted">⚠️ 這支程式開著的時候，訊息全部送到你電腦，<strong>Apps Script 那支 bot 收不到</strong>（試算表、日曆、Drive 那些功能暫停）。直接按視窗右上角的 ✕ 關掉，程式來不及換回去——要到 LINE Developers →「Messaging API」→ Webhook URL，貼回第 3 步抄下的 <code>/exec</code> 網址。</p>
+      </div>
+    </li>
+  </ol>
+
+  <details class="big-code">
+    <summary>程式全文 line_bot_local.py（建置時從 starter 原檔塞入）</summary>
+    <div class="inner">
+      <div class="cmd nowrap"><pre><code># LINE bot 簡單版：一支 Python 程式就是整個 bot，跑在你自己的電腦上
+#
+# 傳什麼進來，它做什麼：
+#   問問題（「2026 年諾貝爾物理獎得主是誰？」）→ 交給你電腦上的 Ollama 本地模型，需要就自己上網搜，回覆附來源
+#   講行程（「明天下午三點開會」）            → 整理出日期時間，排進 Google 日曆
+#   傳照片（活動海報、便條紙）               → 照片存進雲端硬碟；模型看照片說上面有什麼；有日期時間就排進日曆
+#   問題、行程、照片都先寫一列進 Google 試算表，才回覆（只講已經做完的事；打招呼和看不懂的格式不記）
+# 雲端硬碟、試算表、日曆都用第 2 段登入好的 gws；模型一律打本機 Ollama 的 API（http://127.0.0.1:11434）。
+#
+# 為什麼還要「通道」：LINE 的伺服器要把訊息送進來，得找得到你的電腦；
+# 教室和家裡的電腦都躲在網路後面，所以用 Cloudflare 的免費臨時通道給它一個 https 網址。
+# 程式開起來會自己把 LINE 的 Webhook 換成這個網址，按 Ctrl+C 結束時再換回原本的（例如你 W5 的 Apps Script）。
+#
+# 需要：Python 3（只用內建功能，不用 pip install）、Ollama 開著且有 gemma4:e4b、
+#       gws 已登入（要有 drive、sheets、calendar 權限）、cloudflared、LINE 的長效通行碼（W5 申請過）
+# 用法（PowerShell，在這個檔所在的資料夾）：
+#   python line_bot_local.py
+# 開起來會問你 LINE 長效通行碼、Channel secret（畫面不顯示）和試算表 ID，貼上按 Enter 就好。
+
+import base64, getpass, hashlib, hmac, json, os, queue, re, shutil, subprocess, sys, tempfile, threading, time, urllib.error, urllib.request
+from datetime import datetime, timedelta
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+MODEL = os.environ.get(&quot;MODEL&quot;, &quot;gemma4:e4b&quot;)
+PORT = int(os.environ.get(&quot;PORT&quot;, &quot;8000&quot;))
+CALENDAR_ID = os.environ.get(&quot;CALENDAR_ID&quot;, &quot;primary&quot;)          # 排進哪個日曆；primary＝你的主日曆
+PHOTO_FOLDER = os.environ.get(&quot;PHOTO_FOLDER&quot;, &quot;LINE待辦照片&quot;)   # 照片存進雲端硬碟的哪個資料夾（沒有就建）
+OLLAMA = &quot;http://127.0.0.1:11434&quot;
+GREETING = re.compile(r&quot;^(hi|hello|你好|嗨|哈囉|測試|test)$&quot;, re.I)
+HELP = (&quot;你好！我是跑在同學電腦上的本地模型 🤖\n&quot;
+        &quot;• 問我問題：需要的話我會上網查，附來源\n• 講行程（「明天下午三點開會」）：我排進 Google 日曆\n&quot;
+        &quot;• 傳照片：我存進雲端硬碟、告訴你上面有什麼，有日期時間也幫你排日曆\n問題、行程、照片都會記進試算表。&quot;)
+TOOLS = [
+    {&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {&quot;name&quot;: &quot;web_search&quot;, &quot;description&quot;: &quot;搜尋網路，回傳前幾筆標題、網址與內文。&quot;,
+     &quot;parameters&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {&quot;query&quot;: {&quot;type&quot;: &quot;string&quot;}}, &quot;required&quot;: [&quot;query&quot;]}}},
+    {&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {&quot;name&quot;: &quot;web_fetch&quot;, &quot;description&quot;: &quot;讀一個網頁的主要文字。&quot;,
+     &quot;parameters&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {&quot;url&quot;: {&quot;type&quot;: &quot;string&quot;}}, &quot;required&quot;: [&quot;url&quot;]}}},
+]
+EVENT_SHAPE = {&quot;type&quot;: &quot;object&quot;, &quot;required&quot;: [&quot;isEvent&quot;, &quot;title&quot;, &quot;date&quot;, &quot;time&quot;], &quot;properties&quot;: {
+    &quot;isEvent&quot;: {&quot;type&quot;: &quot;boolean&quot;}, &quot;title&quot;: {&quot;type&quot;: &quot;string&quot;},
+    &quot;date&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;YYYY-MM-DD，沒提到就填空字串&quot;},
+    &quot;time&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;HH:MM（24 小時制）；有結束時間就寫 HH:MM-HH:MM；沒提到就填空字串&quot;}}}
+
+LINE_TOKEN = LINE_SECRET = SHEET_ID = &quot;&quot;  # main() 開起來時問你，再填進這裡
+GWS = None
+_folder_id = None
+_turn = threading.Lock()  # 一次只處理一則：顯示卡一次只答一題，照片資料夾也不會被同時建兩個
+_procs = []               # 開出去的 cloudflared，結束時一定要關
+TUNNEL_WAIT = 60         # 等 cloudflared 給網址最多幾秒
+
+
+def log(s):
+    print(f&quot;[{datetime.now():%H:%M:%S}] {s}&quot;, flush=True)
+
+
+def today():
+    return datetime.now().strftime(&quot;%Y-%m-%d（%A）&quot;)  # 附上星期幾，模型才算得準「下週五」
+
+
+# ===== 1. 設定：開起來時問一次，不寫進檔案 =====
+def ask_settings():
+    token = os.environ.get(&quot;LINE_CHANNEL_ACCESS_TOKEN&quot;) or getpass.getpass(&quot;貼上 LINE 長效通行碼（Channel access token，畫面不顯示）：&quot;).strip()
+    secret = os.environ.get(&quot;LINE_CHANNEL_SECRET&quot;) or getpass.getpass(&quot;貼上 Channel secret（LINE Developers → Basic settings；必填；畫面不顯示）：&quot;).strip()
+    sheet = os.environ.get(&quot;SHEET_ID&quot;) or input(&quot;試算表 ID（網址 /d/ 和 /edit 中間那段；不寫試算表就直接 Enter）：&quot;).strip()
+    return token, secret, sheet
+
+
+# ===== 2. 叫 LINE、叫 Ollama、叫 gws 的小工具 =====
+def http_json(method, url, body=None, headers=None, timeout=60):
+    data = json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(url, data=data, method=method, headers={&quot;Content-Type&quot;: &quot;application/json&quot;, **(headers or {})})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            raw = r.read()
+            return r.status, (json.loads(raw) if raw.strip() else {})
+    except urllib.error.HTTPError as e:
+        return e.code, {&quot;error&quot;: e.read().decode(&quot;utf-8&quot;, &quot;replace&quot;)[:200]}
+
+
+def line(method, path, body=None):
+    return http_json(method, &quot;https://api.line.me&quot; + path, body, {&quot;Authorization&quot;: &quot;Bearer &quot; + LINE_TOKEN})
+
+
+def reply(token, text):
+    code, res = line(&quot;POST&quot;, &quot;/v2/bot/message/reply&quot;, {&quot;replyToken&quot;: token, &quot;messages&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: text[:5000]}]})
+    if code != 200:
+        log(f&quot;⚠️ LINE 回覆失敗 {code}：{res}&quot;)
+
+
+def download_image(message_id):
+    req = urllib.request.Request(f&quot;https://api-data.line.me/v2/bot/message/{message_id}/content&quot;,
+                                 headers={&quot;Authorization&quot;: &quot;Bearer &quot; + LINE_TOKEN})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.read()
+
+
+def ollama(path, body, timeout=60):
+    code, res = http_json(&quot;POST&quot;, OLLAMA + path, body, timeout=timeout)
+    if code != 200:
+        raise RuntimeError(f&quot;Ollama {path} 回應 {code}：{res}&quot;)
+    return res
+
+
+def chat(messages, timeout=60, **extra):
+    body = {&quot;model&quot;: MODEL, &quot;messages&quot;: messages, &quot;stream&quot;: False, &quot;think&quot;: False, &quot;keep_alive&quot;: &quot;1h&quot;, &quot;options&quot;: {&quot;num_ctx&quot;: 16384}}
+    return ollama(&quot;/api/chat&quot;, {**body, **extra}, timeout).get(&quot;message&quot;, {})
+
+
+def gws(*args, upload=None, cwd=None):
+    &quot;&quot;&quot;跑一條 gws 指令，回傳它印出的 JSON。（gws 只肯上傳「目前資料夾」裡的檔，所以上傳時用 cwd 指到檔案所在的資料夾）&quot;&quot;&quot;
+    cmd = [GWS, *args] + ([&quot;--upload&quot;, upload] if upload else [])
+    r = subprocess.run(cmd, capture_output=True, text=True, encoding=&quot;utf-8&quot;, timeout=60, cwd=cwd)
+    if r.returncode != 0:
+        raise RuntimeError((r.stderr or r.stdout).strip()[-300:])
+    return json.loads(r.stdout or &quot;{}&quot;)
+
+
+def find_gws():
+    # npm 裝的 gws 背後有一個真正的 gws.exe；直接叫它，JSON 的引號才不會被 Windows 的 .cmd 轉接弄壞
+    roots = [os.path.join(os.environ.get(&quot;APPDATA&quot;, &quot;&quot;), &quot;npm&quot;, &quot;node_modules&quot;)]
+    try:  # npm 裝到別的地方時，問 npm 它的全域資料夾在哪
+        roots.append(subprocess.run(&quot;npm root -g&quot;, shell=True, capture_output=True, text=True, timeout=30).stdout.strip())
+    except Exception:
+        pass
+    for root in roots:
+        exe = os.path.join(root, &quot;@googleworkspace&quot;, &quot;cli&quot;, &quot;bin&quot;, &quot;gws.exe&quot;)
+        if root and os.path.exists(exe):
+            return exe
+    return None
+
+
+# ===== 3. 模型：回答問題（自己決定要不要搜）、看照片、找出行程 =====
+def ask_text(question):
+    &quot;&quot;&quot;模型自己決定要不要搜；回傳（答案, 來源網址清單）。&quot;&quot;&quot;
+    msgs = [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: f&quot;你是 LINE 上的助理，今天是 {today()}，可能比你的訓練資料新。&quot;
+             &quot;遇到最近的事、版本號、價格或任何你不確定的事實，先呼叫 web_search；不夠明確再用 web_fetch 讀官方頁面。&quot;
+             &quot;回答用台灣的繁體中文、純文字（不要用星號或井字號），150 字以內，先講結論；不用自己寫網址，程式會附上來源。&quot;},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: question}]
+    sources = []
+    for _ in range(4):  # 最多來回四次工具呼叫
+        m = chat(msgs, tools=TOOLS)
+        msgs.append(m)
+        if not m.get(&quot;tool_calls&quot;):
+            return m.get(&quot;content&quot;, &quot;&quot;).replace(&quot;**&quot;, &quot;&quot;).strip(), sources
+        for c in m[&quot;tool_calls&quot;]:
+            name, args = c[&quot;function&quot;][&quot;name&quot;], c[&quot;function&quot;].get(&quot;arguments&quot;) or {}
+            try:
+                if name == &quot;web_search&quot;:
+                    log(f&quot;  🔍 模型決定搜：{args.get(&#x27;query&#x27;)}&quot;)
+                    rows = ollama(&quot;/api/experimental/web_search&quot;, {&quot;query&quot;: args.get(&quot;query&quot;, &quot;&quot;), &quot;max_results&quot;: 3}).get(&quot;results&quot;, [])
+                    sources += [r[&quot;url&quot;] for r in rows]
+                    out = json.dumps([{&quot;title&quot;: r[&quot;title&quot;], &quot;url&quot;: r[&quot;url&quot;], &quot;content&quot;: r[&quot;content&quot;][:1500]} for r in rows], ensure_ascii=False)
+                else:
+                    log(f&quot;  📄 模型決定讀網頁：{args.get(&#x27;url&#x27;)}&quot;)
+                    page = ollama(&quot;/api/experimental/web_fetch&quot;, {&quot;url&quot;: args.get(&quot;url&quot;, &quot;&quot;)})
+                    sources.insert(0, args.get(&quot;url&quot;, &quot;&quot;))
+                    out = page.get(&quot;content&quot;, &quot;&quot;)[:3000]
+            except Exception as e:
+                out = f&quot;ERROR: {e}&quot;
+            msgs.append({&quot;role&quot;: &quot;tool&quot;, &quot;tool_name&quot;: name, &quot;content&quot;: out})
+    return &quot;查了幾次還整理不出答案，換個問法再試一次。&quot;, sources
+
+
+def ask_image(jpg):
+    m = chat([{&quot;role&quot;: &quot;user&quot;, &quot;images&quot;: [base64.b64encode(jpg).decode()],
+               &quot;content&quot;: &quot;這是使用者用 LINE 傳來的照片。用台灣的繁體中文、三句以內說明照片裡有什麼；&quot;
+                          &quot;看得到日期、時間、地點、活動或繳費資訊就列出來，看不清楚的不要猜。&quot;}])
+    return re.sub(r&quot;^\s*[*-]\s+&quot;, &quot;• &quot;, m.get(&quot;content&quot;, &quot;&quot;).replace(&quot;**&quot;, &quot;&quot;), flags=re.M).strip()  # 星號清單在 LINE 上很亂，換成 •
+
+
+def find_event(text):
+    &quot;&quot;&quot;請模型照固定格式回答「這是不是有日期和時間的行程」；欄位驗算過才算數，不照單全收。&quot;&quot;&quot;
+    m = chat([{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;今天是 {today()}，台北時間。下面這段文字如果是一個有日期和時間的行程、活動或提醒&quot;
+               &quot;（不是在問問題），把「明天」「下週五」換算成實際日期，整理成 JSON；不是就 isEvent 填 false。\n\n&quot; + text}],
+             format=EVENT_SHAPE)
+    try:
+        ev = json.loads(m.get(&quot;content&quot;, &quot;{}&quot;))
+        times = re.findall(r&quot;\d{1,2}:\d{2}&quot;, ev[&quot;time&quot;])  # 「15:10-17:00」這種區間：第一個是開始、第二個是結束
+        ev[&quot;start&quot;] = datetime.strptime(f&quot;{ev[&#x27;date&#x27;]} {times[0]}&quot;, &quot;%Y-%m-%d %H:%M&quot;)  # 2/30、25:99 這種不存在的會在這裡被擋掉
+        ev[&quot;end&quot;] = datetime.strptime(f&quot;{ev[&#x27;date&#x27;]} {times[1]}&quot;, &quot;%Y-%m-%d %H:%M&quot;) if len(times) &gt; 1 else ev[&quot;start&quot;] + timedelta(minutes=30)
+        ev[&quot;time&quot;] = f&quot;{ev[&#x27;start&#x27;]:%H:%M}&quot; + (f&quot;–{ev[&#x27;end&#x27;]:%H:%M}&quot; if len(times) &gt; 1 else &quot;&quot;)
+    except (ValueError, KeyError, TypeError, IndexError):
+        return None
+    # 原文寫了「幾月幾日」或「10/20」，模型整理出來的日期要對得上：模型會偷偷把「2 月 30 日」改成 2 月 28 日
+    said = re.search(r&quot;(\d{4})\s*[-/年]\s*(\d{1,2})\s*[-/月]\s*(\d{1,2})|(\d{1,2})\s*月\s*(\d{1,2})\s*[日號]|(?&lt;!\d)(\d{1,2})/(\d{1,2})(?!\d)&quot;, text)
+    nums = [int(x) for x in said.groups() if x] if said else []
+    if nums and nums != [ev[&quot;start&quot;].year, ev[&quot;start&quot;].month, ev[&quot;start&quot;].day][-len(nums):]:
+        log(f&quot;  ⚠️ 模型整理的日期 {ev[&#x27;date&#x27;]} 跟原文「{said.group(0)}」對不上，不排日曆&quot;)
+        return None
+    return ev if ev.get(&quot;isEvent&quot;) is True and str(ev.get(&quot;title&quot;, &quot;&quot;)).strip() and ev[&quot;end&quot;] &gt; ev[&quot;start&quot;] else None
+
+
+# ===== 4. Google：照片存雲端硬碟、排日曆、寫試算表（都用 gws） =====
+def save_photo(jpg):
+    &quot;&quot;&quot;照片存進 PHOTO_FOLDER 資料夾（沒有就建），回傳檔案連結。&quot;&quot;&quot;
+    global _folder_id
+    if not _folder_id:
+        q = f&quot;name=&#x27;{PHOTO_FOLDER}&#x27; and mimeType=&#x27;application/vnd.google-apps.folder&#x27; and trashed=false&quot;
+        found = gws(&quot;drive&quot;, &quot;files&quot;, &quot;list&quot;, &quot;--params&quot;, json.dumps({&quot;q&quot;: q, &quot;fields&quot;: &quot;files(id)&quot;}, ensure_ascii=False)).get(&quot;files&quot;, [])
+        _folder_id = found[0][&quot;id&quot;] if found else gws(&quot;drive&quot;, &quot;files&quot;, &quot;create&quot;, &quot;--json&quot;, json.dumps(
+            {&quot;name&quot;: PHOTO_FOLDER, &quot;mimeType&quot;: &quot;application/vnd.google-apps.folder&quot;}, ensure_ascii=False))[&quot;id&quot;]
+    with tempfile.TemporaryDirectory() as tmp:  # 照片先存成暫存檔，上傳完整個暫存資料夾自動刪掉
+        with open(os.path.join(tmp, &quot;photo.jpg&quot;), &quot;wb&quot;) as fh:
+            fh.write(jpg)
+        f = gws(&quot;drive&quot;, &quot;files&quot;, &quot;create&quot;, &quot;--params&quot;, json.dumps({&quot;fields&quot;: &quot;id,webViewLink&quot;}),
+                &quot;--json&quot;, json.dumps({&quot;name&quot;: f&quot;line-{datetime.now():%Y%m%d-%H%M%S}.jpg&quot;, &quot;parents&quot;: [_folder_id]}),
+                upload=&quot;photo.jpg&quot;, cwd=tmp)
+    log(&quot;  📷 照片存進雲端硬碟了&quot;)
+    return f.get(&quot;webViewLink&quot;, &quot;&quot;)
+
+
+def add_calendar(ev):
+    gws(&quot;calendar&quot;, &quot;events&quot;, &quot;insert&quot;, &quot;--params&quot;, json.dumps({&quot;calendarId&quot;: CALENDAR_ID}),
+        &quot;--json&quot;, json.dumps({&quot;summary&quot;: ev[&quot;title&quot;], &quot;description&quot;: &quot;由 LINE bot 簡單版建立&quot;,
+                              &quot;start&quot;: {&quot;dateTime&quot;: f&quot;{ev[&#x27;start&#x27;]:%Y-%m-%dT%H:%M:00}&quot;, &quot;timeZone&quot;: &quot;Asia/Taipei&quot;},
+                              &quot;end&quot;: {&quot;dateTime&quot;: f&quot;{ev[&#x27;end&#x27;]:%Y-%m-%dT%H:%M:00}&quot;, &quot;timeZone&quot;: &quot;Asia/Taipei&quot;}}, ensure_ascii=False))
+    log(f&quot;  🗓️ 排進日曆了：{ev[&#x27;date&#x27;]} {ev[&#x27;time&#x27;]}&quot;)
+
+
+def write_sheet(row):
+    &quot;&quot;&quot;寫一列進試算表：時間、類型、傳了什麼、bot 回了什麼、照片連結、日曆。&quot;&quot;&quot;
+    gws(&quot;sheets&quot;, &quot;spreadsheets&quot;, &quot;values&quot;, &quot;append&quot;,
+        &quot;--params&quot;, json.dumps({&quot;spreadsheetId&quot;: SHEET_ID, &quot;range&quot;: &quot;A1&quot;, &quot;valueInputOption&quot;: &quot;USER_ENTERED&quot;}),
+        &quot;--json&quot;, json.dumps({&quot;values&quot;: [row]}, ensure_ascii=False))
+    log(&quot;  📝 寫進試算表了&quot;)
+
+
+def try_do(what, fn, *args):
+    &quot;&quot;&quot;Google 那邊哪一件失敗，都不讓整則訊息掛掉；回傳（結果, 錯誤訊息；成功時是空字串）。&quot;&quot;&quot;
+    try:
+        return fn(*args), &quot;&quot;
+    except Exception as e:
+        log(f&quot;⚠️ {what}失敗：{e}&quot;)
+        return None, str(e)[:120] or &quot;不明原因&quot;
+
+
+# ===== 5. 處理一則訊息：先把事情做完（存照片、排日曆、寫試算表）→ 才回覆，只講已經做完的事 =====
+def handle(event):
+    with _turn:
+        _handle(event)
+
+
+def _handle(event):
+    if event.get(&quot;type&quot;) != &quot;message&quot; or not event.get(&quot;replyToken&quot;):
+        return
+    msg, token = event[&quot;message&quot;], event[&quot;replyToken&quot;]
+    user = event.get(&quot;source&quot;, {})
+    if user.get(&quot;type&quot;) == &quot;user&quot;:  # 「對方正在輸入…」動畫，最多 60 秒
+        line(&quot;POST&quot;, &quot;/v2/bot/chat/loading/start&quot;, {&quot;chatId&quot;: user[&quot;userId&quot;], &quot;loadingSeconds&quot;: 60})
+    t0, notes, link, cal = time.time(), [], &quot;&quot;, &quot;&quot;
+    try:
+        if msg[&quot;type&quot;] == &quot;text&quot;:
+            text = msg[&quot;text&quot;].strip()
+            if GREETING.match(text):
+                return reply(token, HELP)
+            log(f&quot;📩 收到文字（{len(text)} 字）&quot;)  # 不印內容：螢幕可能正在投影
+            kind, said, ev = &quot;文字&quot;, text, find_event(text)
+            if ev:  # 講行程：排日曆就好，不必上網查
+                answer = f&quot;📌 {ev[&#x27;title&#x27;]}\n📅 {ev[&#x27;date&#x27;]}　⏰ {ev[&#x27;time&#x27;]}&quot;
+            else:   # 問問題：交給模型，需要就自己搜
+                answer, sources = ask_text(text)
+                answer += (&quot;\n\n來源：\n&quot; + &quot;\n&quot;.join(&quot;• &quot; + u for u in list(dict.fromkeys(sources))[:3]) if sources
+                           else &quot;\n\nℹ️ 這題沒有上網查，只憑模型記憶，請自己核對。&quot;)
+        elif msg[&quot;type&quot;] == &quot;image&quot;:
+            log(&quot;📩 收到照片&quot;)
+            jpg = download_image(msg[&quot;id&quot;])
+            kind, said = &quot;照片&quot;, &quot;（照片）&quot;
+            link, err = try_do(&quot;存照片&quot;, save_photo, jpg)
+            notes.append(f&quot;📷 照片已存進雲端硬碟「{PHOTO_FOLDER}」&quot; if not err else &quot;⚠️ 照片沒存進雲端硬碟：&quot; + err)
+            answer = ask_image(jpg)
+            ev = find_event(answer)
+        else:
+            return reply(token, &quot;目前我看得懂文字和照片，其他類型還不行喔。&quot;)
+        if ev:
+            _, err = try_do(&quot;排日曆&quot;, add_calendar, ev)
+            cal = &quot;已建立&quot; if not err else &quot;失敗：&quot; + err
+            notes.append(f&quot;🗓️ 已排進 Google 日曆（{ev[&#x27;date&#x27;]} {ev[&#x27;time&#x27;]}）&quot; if not err else &quot;⚠️ 日曆沒排成：&quot; + err)
+        if SHEET_ID:
+            _, err = try_do(&quot;寫試算表&quot;, write_sheet, [f&quot;{datetime.now():%Y-%m-%d %H:%M:%S}&quot;, kind, said, answer[:500], link or &quot;&quot;, cal])
+            notes.append(&quot;📝 已記進試算表&quot; if not err else &quot;⚠️ 這則沒寫進試算表：&quot; + err)
+        reply(token, f&quot;{answer}\n\n&quot; + &quot;\n&quot;.join(notes + [f&quot;（本地模型 {time.time() - t0:.0f} 秒）&quot;]))
+        log(f&quot;✅ 回覆了（{time.time() - t0:.0f} 秒）&quot;)
+    except Exception as e:
+        log(f&quot;❌ {e}&quot;)
+        reply(token, &quot;⚠️ 出錯了：&quot; + str(e)[:300])
+
+
+class Webhook(BaseHTTPRequestHandler):
+    def do_POST(self):
+        body = self.rfile.read(int(self.headers.get(&quot;Content-Length&quot;, 0)))
+        if LINE_SECRET:  # 對簽章：確定真的是 LINE 送來的，不是知道網址的路人
+            sig = base64.b64encode(hmac.new(LINE_SECRET.encode(), body, hashlib.sha256).digest()).decode()
+            if not hmac.compare_digest(sig, self.headers.get(&quot;x-line-signature&quot;, &quot;&quot;)):
+                log(&quot;⛔ 簽章不對，不是 LINE 送來的，丟掉&quot;)
+                self.send_response(401)
+                self.end_headers()
+                return
+        self.send_response(200)  # 先跟 LINE 說收到了（LINE 要 2 秒內回應），再慢慢處理
+        self.end_headers()
+        for ev in json.loads(body or b&quot;{}&quot;).get(&quot;events&quot;, []):
+            threading.Thread(target=handle, args=(ev,), daemon=True).start()
+
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(&quot;LINE bot 簡單版運作中&quot;.encode())
+
+    def log_message(self, *args):  # 不要印每一個連線
+        pass
+
+
+# ===== 6. 開通道、把 LINE 的 Webhook 換過來；結束時換回去 =====
+def open_tunnel():
+    &quot;&quot;&quot;開 Cloudflare 臨時通道，最多等 60 秒拿網址；拿不到就把它關掉，回傳 None。&quot;&quot;&quot;
+    if not shutil.which(&quot;cloudflared&quot;):
+        log(&quot;⚠️ 找不到 cloudflared，外面連不到這裡。另開 PowerShell 貼：winget install --id Cloudflare.cloudflared -e&quot;)
+        log(&quot;   裝完關掉這個視窗、新開一個再跑一次。&quot;)
+        return None
+    cf = subprocess.Popen([&quot;cloudflared&quot;, &quot;tunnel&quot;, &quot;--no-autoupdate&quot;, &quot;--url&quot;, f&quot;http://127.0.0.1:{PORT}&quot;],
+                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding=&quot;utf-8&quot;, errors=&quot;replace&quot;)
+    _procs.append(cf)
+    found = queue.Queue()
+
+    def watch():  # 另一條執行緒一行一行讀它的輸出（之後的也照讀照丟，免得塞住）；主程式只等 60 秒
+        for row in cf.stdout:
+            m = re.search(r&quot;https://[a-z0-9-]+\.trycloudflare\.com&quot;, row)
+            if m:
+                found.put(m.group(0))
+        found.put(None)
+
+    threading.Thread(target=watch, daemon=True).start()
+    try:
+        url = found.get(timeout=TUNNEL_WAIT)
+    except queue.Empty:
+        url = None
+    if not url:
+        log(f&quot;⚠️ {TUNNEL_WAIT} 秒內通道沒拿到網址：看網路（學校網路可能擋），或再跑一次&quot;)
+    return url
+
+
+def restore(old):
+    &quot;&quot;&quot;把 LINE 的 Webhook 換回原本的，再讀一次確認真的換回去了（換的那條路說成功不算數）。&quot;&quot;&quot;
+    if not old:
+        log(&quot;ℹ️ 原本沒有 Webhook 網址，現在指著一個已經關掉的通道；要用 Apps Script 版就回 LINE Developers 貼回 /exec 網址&quot;)
+        return
+    line(&quot;PUT&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;, {&quot;endpoint&quot;: old})
+    code, now = line(&quot;GET&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;)
+    if code == 200 and now.get(&quot;endpoint&quot;) == old:
+        log(&quot;↩️ LINE 的 Webhook 換回原本的了（重新讀過一次，確認是原本那個）&quot;)
+    else:
+        log(f&quot;⚠️ 沒能確認換回去：到 LINE Developers →「Messaging API」→ Webhook URL 手動貼回：{old}&quot;)
+
+
+def main():
+    global LINE_TOKEN, LINE_SECRET, SHEET_ID, GWS
+    LINE_TOKEN, LINE_SECRET, SHEET_ID = ask_settings()
+    GWS = find_gws()
+    code, info = line(&quot;GET&quot;, &quot;/v2/bot/info&quot;)
+    if code != 200:
+        sys.exit(f&quot;LINE 通行碼不對（{code}）：回 LINE Developers 重新複製長效通行碼&quot;)
+    log(f&quot;✅ LINE bot「{info.get(&#x27;displayName&#x27;)}」&quot;)
+    if not LINE_SECRET:
+        sys.exit(&quot;沒有 Channel secret 就不開通道：沒有它，知道通道網址的人都能假冒 LINE 送訊息進來。&quot;
+                 &quot;回 LINE Developers →「Basic settings」複製，再跑一次。&quot;)
+    if not GWS:
+        log(&quot;⚠️ 找不到 gws.exe：照片、日曆、試算表都會失敗（先裝 gws：指南 1-3）&quot;)
+    code, cur = line(&quot;GET&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;)
+    if code == 200:
+        old = cur.get(&quot;endpoint&quot;)
+    elif code == 404:  # LINE 說這個 channel 原本就沒設 Webhook
+        old = None
+    else:  # 讀不到原本的網址就不換，免得換了回不去
+        sys.exit(f&quot;讀不到 LINE 現在的 Webhook 網址（{code}）：先不換。等一下再跑一次。{cur}&quot;)
+    log(f&quot;   原本的 Webhook：{old or &#x27;（沒有設定）&#x27;}——先抄下來，萬一沒換回去要手動貼回&quot;)
+    log(f&quot;載入模型 {MODEL}（第一次要等一下）…&quot;)
+    chat([], timeout=300)
+    log(&quot;✅ 模型已在顯示卡上&quot;)
+
+    server = ThreadingHTTPServer((&quot;127.0.0.1&quot;, PORT), Webhook)  # 只聽本機：外面只能從通道進來
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    switched = False
+    try:  # 從開通道起就在 try 裡：只要 Webhook 換過，不管怎麼結束都會換回去
+        url = open_tunnel()
+        if url:
+            code, res = line(&quot;PUT&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;, {&quot;endpoint&quot;: url + &quot;/callback&quot;})
+            if code != 200:
+                log(f&quot;⚠️ 換 Webhook 失敗 {code}：{res}。可以手動貼到 LINE Developers：{url}/callback&quot;)
+            else:
+                switched = True
+                log(f&quot;✅ LINE 的 Webhook 換到這台電腦了：{url}/callback（按 Ctrl+C 會換回去）&quot;)
+                log(&quot;   LINE 說換網址最多要 1 分鐘才生效；等一下再用手機傳訊息&quot;)
+                time.sleep(5)
+                code, test = line(&quot;POST&quot;, &quot;/v2/bot/channel/webhook/test&quot;, {})
+                log(f&quot;   LINE 測試連線：{&#x27;✅ 通了&#x27; if test.get(&#x27;success&#x27;) else &#x27;還沒通（&#x27; + str(test.get(&#x27;reason&#x27;)) + &#x27;），等一分鐘再傳&#x27;}&quot;)
+        log(&quot;開好了。手機傳訊息給 bot 試試看；這個視窗不要關，按 Ctrl+C 結束。&quot; if switched
+            else &quot;⚠️ 這次沒接上 LINE（看上面的訊息）。按 Ctrl+C 結束。&quot;)
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        if switched:
+            restore(old)
+        for cf in _procs:
+            cf.terminate()
+        server.shutdown()
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre><button type="button" class="copy">複製</button></div>
+      <p class="small muted">讀法：<code>Webhook</code> 收 LINE 送來的訊息、對簽章、先回 200（LINE 要 2 秒內回應），再開一條執行緒慢慢做；<code>handle</code> 就是一則訊息的旅程——<code>ask_text</code>（跟路 C 一樣的工具迴圈，工具換成 Ollama 自己的搜尋）或 <code>ask_image</code> → <code>write_sheet</code> → <code>reply</code>；<code>main</code> 開通道、換 Webhook，結束時換回去。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>卡住了？（簡單版）</summary>
+    <div class="inner">
+      <ul class="tight">
+        <li><strong>「LINE 通行碼不對（401）」</strong>：貼成 Channel secret 或少複製幾個字。回 LINE Developers「Messaging API」分頁最下面重新複製長效通行碼。</li>
+        <li><strong>「python 不是指令」</strong>：Python 沒裝，或裝完沒新開視窗；也可能打開的是微軟商店的空殼——用 <code>winget install --id Python.Python.3.13 -e</code> 裝。</li>
+        <li><strong>「找不到 cloudflared」</strong>：裝完沒新開視窗。</li>
+        <li><strong>手機傳了沒反應</strong>：LINE 換網址最多要 1 分鐘，等一下再傳；再不行看程式視窗有沒有「⛔ 簽章不對」（Channel secret 貼錯，重開程式重貼）。</li>
+        <li><strong>手機回答了，但寫「⚠️ 這則沒寫進試算表」</strong>：看程式視窗的原因。試算表 ID 抄錯、試算表不是用 gws 登入的那個帳號開的，或 gws 登入時沒有 <code>sheets</code>（重做第 2 段 2-7）。</li>
+        <li><strong>「⚠️ 出錯了：Ollama … 回應 404」</strong>：沒有 <code>gemma4:e4b</code>，<code>ollama pull gemma4:e4b</code>。</li>
+        <li><strong>結束後 Apps Script bot 沒回來</strong>：等 1 分鐘；還是沒有，到 LINE Developers 把 Webhook URL 貼回 <code>/exec</code> 網址。</li>
+      </ul>
+    </div>
+  </details>
+
+  <div class="callout">⚠️ <strong>通行碼和 Channel secret 不寫進檔案、不截圖</strong>：程式每次開起來問一次，關掉就忘。有給 Channel secret，程式會對每則訊息的簽章，假冒 LINE 的請求會被擋掉（Apps Script 版做不到這件事）。<strong>這不是私密管道</strong>：問題會經過 LINE、Cloudflare，搜尋那一下送到 Ollama 的線上搜尋服務，試算表在你的 Google 雲端硬碟。</div>
+
+  <div class="pros">
+    <div><h4>優點</h4><ul class="tight"><li>一支程式、一個指令；不用金鑰、不用改 Apps Script、不用進 LINE 後台改網址。</li><li>文字會搜、照片會看、每則都記進試算表，全部在自己電腦跑。</li><li>對得到 LINE 的簽章，比 Apps Script 版安全。</li></ul></div>
+    <div><h4>缺點</h4><ul class="tight"><li>電腦關了 bot 就停；開著的時候 Apps Script 那支收不到訊息。</li><li>每次開都換一個臨時網址（程式自己換，但要等最多 1 分鐘生效）。</li><li>要多裝 Python 和 cloudflared。</li></ul></div>
+  </div>
+</section>
+
+<!-- ===================== 延伸：LINE bot 也會查（Apps Script 版） ===================== -->
+<section class="block route route-c" id="line-bot">
+  <h2>延伸・Apps Script 版：bot 留在 Google，加一個轉接站 <span class="tag">進階版・下週或有時間再做</span></h2>
+  <p class="progress" data-progress="e">已勾 <b>0</b>／<b>0</b> 步</p>
+  <h3>先搞懂：為什麼 bot 不能直接叫 localhost</h3>
+  <p>你的 LINE bot 程式是在瀏覽器裡的 Apps Script 編輯器寫的（路線 A 還會在電腦存一份給 AI 改），但它<strong>跑在 Google 的機房，不在你的電腦上</strong>：LINE 收到訊息，敲的是 Google 給你的 <code>/exec</code> 網址，由 Google 的機器執行 <code>doPost</code>。所以程式裡寫 <code>localhost</code>，指的是 Google 那台機器自己——那裡沒有你的 Ollama。你的電腦又躲在學校或家裡的網路後面，外面找不到它。</p>
+  <p>所以中間要搭一座橋，一共多兩樣東西：</p>
+<div class="term"><span class="dim">一則「查 …」的旅程</span>
+📱 手機傳「查 2026 年諾貝爾物理獎得主是誰？」
+ → LINE → <span class="you">Apps Script（Google 機房）</span>：開頭是「查」，不問 Gemini、不寫試算表
+ → <span class="tool">Cloudflare 通道（tunnel）</span>：給你電腦一個臨時的 https 網址，免帳號
+ → <span class="tool">轉接站（relay）line-search-relay.mjs</span>：在你電腦上，要通關密碼才回答
+ → Ollama 的 <code>gemma4:e4b</code>：自己決定要不要搜 → Ollama 內建的搜尋（跟路 A 地球圖示同一個服務）
+ ← 🔎 答案＋真的來源網址，一路回到手機</div>
+  <p class="small muted">轉接站其實就是路 C 的同一個機制（模型回「我要搜」→ 程式去搜 → 把結果送回去），只是改成「等網路上的人來問」，而且搜尋改用 Ollama 自己的搜尋服務（10/10 msi 實測不登入也能用），所以不用裝 Python，用第 0 段裝好的 Node.js 就能跑。</p>
+
+  <h3>要裝什麼</h3>
+  <ul class="tight">
+    <li>Ollama＋<code>gemma4:e4b</code>（路 A 第 1、2 步；W6 第 0 段裝過）。顯示卡要載得動模型，電腦要一直開著——關機、睡眠，bot 就查不到</li>
+    <li>Node.js（W6 第 0 段裝過；轉接站不用 <code>npm install</code> 任何套件）</li>
+    <li><code>cloudflared</code>（Cloudflare 官方的通道程式，winget 套件 <code>Cloudflare.cloudflared</code>，免帳號）</li>
+    <li>你 W5／W6 的 LINE bot（Apps Script），要能改程式、改指令碼屬性、更新部署</li>
+  </ul>
+
+  <h3>逐步做</h3>
+  <ol class="steps">
+    <li>
+      <div class="step-head"><input type="checkbox" data-key="e1" id="e1"><label class="step-title" for="e1">裝 cloudflared，新開視窗確認</label></div>
+      <div class="step-body">
+        <div class="cmd"><pre><code>winget install --id Cloudflare.cloudflared -e --accept-package-agreements --accept-source-agreements</code></pre><button type="button" class="copy">複製</button></div>
+        <p>裝完<strong>關掉這個 PowerShell、新開一個</strong>（舊視窗看不到剛裝的程式），再打：</p>
+        <div class="cmd"><pre><code>cloudflared --version</code></pre><button type="button" class="copy">複製</button></div>
+        <p class="small muted">你應該看到 <code>cloudflared version 2026.…</code> 開頭的一行。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-head"><input type="checkbox" data-key="e2" id="e2"><label class="step-title" for="e2">取得轉接站 line-search-relay.mjs</label></div>
+      <div class="step-body"><p>從課程網的 W6 <code>starter</code> 資料夾下載，或展開下面的〈轉接站全文〉複製、用記事本存成 <code>line-search-relay.mjs</code>（存檔類型選「所有檔案」，副檔名才不會變成 .txt）。建議放在「下載」裡新開的 <code>line-search</code> 資料夾。</p>
+        <p><strong>你應該看到</strong>：在那個資料夾開 PowerShell 打 <code>dir</code>，檔名是 <code>line-search-relay.mjs</code>，不是 <code>line-search-relay.mjs.txt</code>。</p></div>
+    </li>
+    <li>
+      <div class="step-head"><input type="checkbox" data-key="e3" id="e3"><label class="step-title" for="e3">開轉接站（它會順便開通道）</label></div>
+      <div class="step-body">
+        <p>Ollama app 開著，在 PowerShell 進到放檔案的資料夾再跑：</p>
+        <div class="cmd"><pre><code>cd "$env:USERPROFILE\Downloads\line-search"
+node line-search-relay.mjs</code></pre><button type="button" class="copy">複製</button></div>
+        <p><strong>你應該看到</strong>（⚠️<strong>預期畫面，不是實測截圖</strong>：前三行是 10/10 msi 實測，「開 Cloudflare 通道」以下照程式寫、還沒在裝了 cloudflared 的電腦跑過，老師彩排後會換成真畫面；網址每次不同）：</p>
+<div class="term"><span class="dim">[14:31:39] 轉接站開好了：http://127.0.0.1:8787（模型 gemma4:e4b）
+[14:31:39] 載入模型 gemma4:e4b（第一次要等一兩分鐘，之後每題幾秒）…
+[14:31:56] ✅ 模型已在顯示卡上（17 秒）
+開 Cloudflare 通道中（免帳號的臨時網址，每次重開都會換）…</span>
+==================== 貼進 Apps Script 的「指令碼屬性」 ====================
+  ① SEARCH_RELAY_KEY ＝ 按 Ctrl+V（密碼已經在剪貼簿，畫面上不顯示）
+  ② SEARCH_RELAY_URL ＝ https://<span class="tool">（一串英文字）</span>.trycloudflare.com</div>
+        <p class="small muted">這個視窗<strong>不要關</strong>：關掉＝通道消失、bot 查不到。密碼存在 <code>%USERPROFILE%\.line-search-relay.key</code>，重開轉接站還是同一組；網址每次重開都會換。印出「⛔ 模型還沒準備好，先不開通道」＝Ollama 沒開或沒有 <code>gemma4:e4b</code>，修好再跑一次。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-head"><input type="checkbox" data-key="e4" id="e4"><label class="step-title" for="e4">請 AI 幫 bot 加「查 …」這條路（用自己的話給目標）</label></div>
+      <div class="step-body">
+        <p>跟第二關一樣：先把舊程式整份存進 Google 文件，再用自己的話把下面的目標交代給 AI（Antigravity、Codex 或瀏覽器裡的 ChatGPT／Gemini）。不給現成提示詞，講清楚就好：</p>
+        <ol class="tight">
+          <li>訊息開頭是「查」加空格或冒號時，不問 Gemini、不寫試算表，把後面的問題送到我電腦上的轉接站</li>
+          <li>轉接站的網址和密碼從指令碼屬性 <code>SEARCH_RELAY_URL</code>、<code>SEARCH_RELAY_KEY</code> 讀；密碼放在標頭 <code>x-relay-key</code>，不放進網址</li>
+          <li>用 POST 送到「網址＋<code>/ask</code>」，內容是 <code>{"question": "問題"}</code>；回來的 <code>answer</code> 當回覆、<code>sources</code> 裡的網址列在後面當來源</li>
+          <li>連不到、密碼不對、轉接站說忙碌（429）時，老實回覆原因，不要改問 Gemini（它不會搜，答案可能是猜的）</li>
+          <li>待辦文字、照片這些原本的功能照舊，跟這次無關的地方不要動</li>
+          <li>先列計畫等我同意才動手；做完給我改前／改後對照和測法</li>
+        </ol>
+        <p><strong>你應該看到</strong>：AI 先列計畫、停下來等你；同意後給的對照只動到「收到文字訊息」那一段和新加的查詢函式，<code>askGeminiAboutText</code>、照片、寫試算表那些段落沒有變。</p>
+        <p class="small muted">對答案：〈bot 的對照答案〉是老師在第二關＋存 Drive 的對照答案上只加這條路的版本（另外把「輸入中」動畫拉長到 60 秒、打轉接站最多等 50 秒、<code>testSetup</code> 多一行檢查網址和密碼）。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-head"><input type="checkbox" data-key="e5" id="e5"><label class="step-title" for="e5">指令碼屬性加兩個值，部署新版本</label></div>
+      <div class="step-body">
+        <p>Apps Script → 左邊齒輪「專案設定」→ 最下面「指令碼屬性」→ 新增：</p>
+        <ul class="tight">
+          <li><code>SEARCH_RELAY_KEY</code>：值按 Ctrl+V（轉接站放在剪貼簿的密碼）</li>
+          <li><code>SEARCH_RELAY_URL</code>：值是轉接站印的 <code>https://….trycloudflare.com</code>（後面不用加 <code>/ask</code>）</li>
+        </ul>
+        <p>程式改過了，要「部署 → 管理部署作業 → 鉛筆 → 版本選『新版本』」（<code>/exec</code> 網址不變）。<strong>之後轉接站重開、網址換了，只要改 <code>SEARCH_RELAY_URL</code>，不用再部署</strong>——Apps Script 每處理一則訊息都會從頭跑程式、重新讀指令碼屬性。改完如果手機還回舊網址連不到，等幾秒再傳一次。</p>
+        <p><strong>你應該看到</strong>：指令碼屬性清單裡多了 <code>SEARCH_RELAY_KEY</code>、<code>SEARCH_RELAY_URL</code> 兩列（名稱一個字都不能錯）；管理部署作業裡的版本號比原本多 1、<code>/exec</code> 網址跟原本一樣。</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-head"><input type="checkbox" data-key="e6" id="e6"><label class="step-title" for="e6">測：testSetup，再用手機問一題</label></div>
+      <div class="step-body">
+        <p>編輯器上方選 <code>testSetup</code> 按執行，執行紀錄要多一行 <code>✅ 本地模型（選做）：轉接站接好了（網址通、密碼對），模型 gemma4:e4b</code>（是 <code>❌ …密碼不對</code> 就回第 5 步重貼密碼）。然後手機傳：</p>
+        <div class="cmd"><pre><code>查 2026 年諾貝爾物理獎得主是誰？</code></pre><button type="button" class="copy">複製</button></div>
+        <p><strong>你應該看到</strong>：轉接站視窗出現 <code>📩 收到一題</code> → <code>🔍 模型決定搜：…</code> → <code>✅ 回答好了</code>；手機收到（10/10 msi 把同一份程式接上真的轉接站模擬跑出來的回覆，⚠️真的 LINE 手機畫面待老師彩排補截圖）：</p>
+<div class="term">🔎 結論：2026年的諾貝爾物理獎得主是來自美國威斯康星大學麥迪遜分校的科學家弗朗西斯·哈爾岑。他獲得此獎項是為了對冰立方中微子天文台做出決定性貢獻……
+
+來源：
+• https://www.nobelprize.org/prizes/physics/2026/press-release/
+• https://www.cas.cn/kj/202610/t20261007_5121442.shtml
+（本地模型 5 秒）</div>
+        <p class="small muted">這段是 10/10 第一版轉接站的原文：模型照搜到的大陸網站寫成「中微子」（台灣說「微中子」）、人名也照對岸譯法。之後轉接站的系統提示加了「用台灣用語」，但小模型不一定每次都照做——引用 AI 的答案前，用語和來源都要自己看過。</p>
+        <p class="small muted">一般的待辦訊息、照片照舊走 Gemini、照舊寫表；只有「查」開頭的會轉給本地模型。</p>
+      </div>
+    </li>
+  </ol>
+
+  <details class="big-code">
+    <summary>轉接站全文 line-search-relay.mjs（建置時從 starter 原檔塞入）</summary>
+    <div class="inner">
+      <div class="cmd nowrap"><pre><code>// LINE bot 的「本地模型轉接站」：讓雲端的 Apps Script 叫得到你電腦上的 Ollama，而且會上網搜
+//
+// 為什麼要這支：LINE bot 的程式跑在 Google 的機房，不在你的電腦上——
+// 它說 localhost，是指 Google 那台機器自己，找不到你電腦裡的 Ollama。
+// 所以要兩樣東西接起來：
+//   ① 這支小程式：在你電腦上等問題，替模型跑搜尋，要「通關密碼」才回答
+//   ② Cloudflare 通道（cloudflared）：給這支小程式一個外面連得到的 https 網址
+//
+// 一則問題的旅程：
+//   手機傳「查 …」→ LINE → Apps Script → 通道網址 → 這支程式（對密碼）
+//   → Ollama 模型自己決定要不要搜 → Ollama 內建的搜尋（web_search／web_fetch）→ 回答＋真的來源網址
+//
+// 需要：Ollama 開著、已 pull gemma4:e4b；Node.js（W6 第 0 段裝過）；cloudflared（沒有也能跑，只是外面連不到）
+// 用法（PowerShell，在這個檔所在的資料夾）：
+//   node line-search-relay.mjs              開轉接站＋自動開通道，印出網址（密碼只放剪貼簿、不顯示）
+//   node line-search-relay.mjs --no-tunnel  只開轉接站（自己在本機測）
+// 不用 npm install 任何套件，只用 Node.js 內建的功能。
+
+import http from &quot;node:http&quot;;
+import { spawn, execFileSync } from &quot;node:child_process&quot;;
+import { randomBytes, timingSafeEqual } from &quot;node:crypto&quot;;
+import { existsSync, readFileSync, writeFileSync } from &quot;node:fs&quot;;
+import { homedir } from &quot;node:os&quot;;
+import { join } from &quot;node:path&quot;;
+
+// ===== 1. 設定（想換就在 PowerShell 先設環境變數，例如 $env:MODEL=&quot;gemma4:e2b&quot;） =====
+const MODEL = process.env.MODEL || &quot;gemma4:e4b&quot;;
+const PORT = Number(process.env.PORT || 8787);
+const OLLAMA = process.env.OLLAMA_URL || &quot;http://127.0.0.1:11434&quot;;
+const BUDGET_MS = 45000;  // LINE 的回覆碼大約 1 分鐘內要用掉，扣掉 Apps Script 自己的時間，最多想 45 秒
+const MAX_ROUNDS = 4;     // 模型最多來回呼叫工具幾次
+const KEY_FILE = join(homedir(), &quot;.line-search-relay.key&quot;);  // 密碼存在家目錄，重開程式還是同一組（不放進專案資料夾，免得被 git 帶走）
+const WANT_TUNNEL = !process.argv.includes(&quot;--no-tunnel&quot;);
+
+function loadKey() {
+  if (process.env.RELAY_KEY) return process.env.RELAY_KEY;
+  if (existsSync(KEY_FILE)) return readFileSync(KEY_FILE, &quot;utf8&quot;).trim();
+  const key = randomBytes(18).toString(&quot;base64url&quot;);
+  writeFileSync(KEY_FILE, key);
+  return key;
+}
+const KEY = loadKey();
+
+function today() {
+  return new Intl.DateTimeFormat(&quot;zh-TW&quot;, { timeZone: &quot;Asia/Taipei&quot;, dateStyle: &quot;full&quot; }).format(new Date());
+}
+
+// 系統提示：日期可能在模型訓練之後，所以不確定就先搜（同 starter/Modelfile 的那段規矩）
+function systemPrompt() {
+  return `你是 LINE 上的查詢助理。今天是 ${today()}（台北時間），可能比你的訓練資料新。
+你有 web_search 與 web_fetch 兩個工具。遇到最近的事、日期在你知識之後的事、版本號、價格，或任何你不確定的事實，先呼叫 web_search；搜尋結果不夠明確時，用 web_fetch 讀官方頁面確認。不要以「還沒發生」為由拒絕查詢。
+回答用台灣的繁體中文用語（例如「微中子」不寫「中微子」）、純文字（不要用 Markdown 的星號或井字號），150 字以內，先講結論。
+不用自己寫網址，程式會附上你實際查到的來源。查不到就老實說查不到。`;
+}
+
+const TOOLS = [
+  { type: &quot;function&quot;, function: { name: &quot;web_search&quot;, description: &quot;搜尋網路，回傳前幾筆的標題、網址與內文摘要。&quot;,
+    parameters: { type: &quot;object&quot;, properties: { query: { type: &quot;string&quot;, description: &quot;搜尋關鍵字&quot; } }, required: [&quot;query&quot;] } } },
+  { type: &quot;function&quot;, function: { name: &quot;web_fetch&quot;, description: &quot;讀取一個網頁的主要文字。&quot;,
+    parameters: { type: &quot;object&quot;, properties: { url: { type: &quot;string&quot;, description: &quot;要讀的網址&quot; } }, required: [&quot;url&quot;] } } }
+];
+
+
+// ===== 2. 叫 Ollama：模型本身、還有 Ollama 內建的搜尋 =====
+async function ollama(path, body, signal) {
+  const res = await fetch(OLLAMA + path, {
+    method: &quot;POST&quot;, headers: { &quot;Content-Type&quot;: &quot;application/json&quot; }, body: JSON.stringify(body), signal
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`Ollama ${path} 回應 ${res.status}：${text.slice(0, 150)}`);
+  return JSON.parse(text);
+}
+
+// 搜尋結果的內文可能很長，截短再給模型，免得塞爆它的記憶（num_ctx）
+async function webSearch(query, signal, sources) {
+  const data = await ollama(&quot;/api/experimental/web_search&quot;, { query, max_results: 3 }, signal);
+  const rows = (data.results || []).map(r =&gt; ({ title: r.title, url: r.url, content: String(r.content || &quot;&quot;).slice(0, 1500) }));
+  rows.forEach(r =&gt; sources.push({ title: r.title, url: r.url }));
+  return JSON.stringify(rows);
+}
+
+async function webFetch(url, signal, sources) {
+  const data = await ollama(&quot;/api/experimental/web_fetch&quot;, { url }, signal);
+  sources.unshift({ title: data.title || url, url });  // 模型特地去讀的那頁，排在來源最前面
+  return JSON.stringify({ title: data.title, content: String(data.content || &quot;&quot;).slice(0, 3000) });
+}
+
+async function answer(question) {
+  const signal = AbortSignal.timeout(BUDGET_MS);
+  const t0 = Date.now();
+  const messages = [{ role: &quot;system&quot;, content: systemPrompt() }, { role: &quot;user&quot;, content: question }];
+  const queries = [], sources = [];
+  let reply = &quot;&quot;;
+  for (let round = 0; round &lt; MAX_ROUNDS; round++) {
+    const data = await ollama(&quot;/api/chat&quot;, {
+      model: MODEL, messages, tools: TOOLS, stream: false, think: false,
+      keep_alive: &quot;1h&quot;, options: { num_ctx: 16384 }
+    }, signal);
+    const msg = data.message || {};
+    messages.push(msg);
+    const calls = msg.tool_calls || [];
+    if (!calls.length) { reply = msg.content || &quot;&quot;; break; }
+    for (const c of calls) {
+      const fn = c.function.name, args = c.function.arguments || {};
+      let out;
+      try {
+        if (fn === &quot;web_search&quot;) {
+          log(`  🔍 模型決定搜：${args.query}`);
+          queries.push(args.query);
+          out = await webSearch(args.query, signal, sources);
+        } else if (fn === &quot;web_fetch&quot;) {
+          log(`  📄 模型決定讀網頁：${args.url}`);
+          out = await webFetch(args.url, signal, sources);
+        } else {
+          out = `ERROR: 沒有 ${fn} 這個工具`;
+        }
+      } catch (err) {
+        if (signal.aborted) throw err;
+        out = `ERROR: ${err.message}`;
+      }
+      messages.push({ role: &quot;tool&quot;, tool_name: fn, content: out });
+    }
+  }
+  if (!reply) reply = &quot;查了幾次還整理不出答案，換個問法再試一次。&quot;;
+  const seen = new Set();
+  const unique = sources.filter(s =&gt; s.url &amp;&amp; !seen.has(s.url) &amp;&amp; seen.add(s.url)).slice(0, 3);
+  return {
+    answer: reply.replace(/\*\*|__|^#+\s*|`/gm, &quot;&quot;).trim().slice(0, 600),
+    searched: queries.length &gt; 0 || unique.length &gt; 0,
+    queries, sources: unique,
+    seconds: Math.round((Date.now() - t0) / 1000)
+  };
+}
+
+
+// ===== 3. 轉接站本身：只回答帶對密碼的請求 =====
+function log(s) {
+  const t = new Date().toLocaleTimeString(&quot;zh-TW&quot;, { hour12: false, timeZone: &quot;Asia/Taipei&quot; });
+  console.log(`[${t}] ${s}`);
+}
+
+function keyMatches(given) {
+  const a = Buffer.from(String(given || &quot;&quot;)), b = Buffer.from(KEY);
+  return a.length === b.length &amp;&amp; timingSafeEqual(a, b);
+}
+
+function send(res, code, obj) {
+  res.writeHead(code, { &quot;Content-Type&quot;: &quot;application/json; charset=utf-8&quot; });
+  res.end(JSON.stringify(obj));
+}
+
+let busy = false;  // 顯示卡一次只答一題；同時來第二題就請它等一下
+
+const server = http.createServer(async (req, res) =&gt; {
+  const path = (req.url || &quot;/&quot;).split(&quot;?&quot;)[0];
+  if (req.method === &quot;GET&quot; &amp;&amp; (path === &quot;/&quot; || path === &quot;/health&quot;)) {
+    return send(res, 200, { ok: true, service: &quot;line-search-relay&quot;, model: MODEL });  // 給瀏覽器確認活著，不需要密碼
+  }
+  const isCheck = req.method === &quot;GET&quot; &amp;&amp; path === &quot;/check-key&quot;;  // testSetup 用：只對密碼、不叫模型
+  if (!isCheck &amp;&amp; (req.method !== &quot;POST&quot; || path !== &quot;/ask&quot;)) return send(res, 404, { error: &quot;只有 POST /ask&quot; });
+  if (!keyMatches(req.headers[&quot;x-relay-key&quot;])) {
+    log(isCheck ? &quot;⛔ 有人來對密碼，但密碼不對&quot; : &quot;⛔ 有人來問，但密碼不對，拒絕&quot;);
+    return send(res, 401, { error: &quot;密碼不對&quot; });
+  }
+  if (isCheck) return send(res, 200, { ok: true, model: MODEL });
+  let raw = &quot;&quot;;
+  for await (const chunk of req) {
+    raw += chunk;
+    if (raw.length &gt; 20000) return send(res, 413, { error: &quot;問題太長&quot; });
+  }
+  let question = &quot;&quot;;
+  try { question = String(JSON.parse(raw || &quot;{}&quot;).question || &quot;&quot;).trim(); } catch (e) { /* 下面一起處理 */ }
+  if (!question) return send(res, 400, { error: &quot;沒有收到問題（JSON 要有 question 欄位）&quot; });
+  if (busy) return send(res, 429, { error: &quot;正在回答上一題，等一下再問&quot; });
+
+  busy = true;
+  log(`📩 收到一題（${question.length} 字）`);  // 不把問題內容印出來：螢幕可能正在投影
+  try {
+    const result = await answer(question);
+    log(`✅ 回答好了（${result.seconds} 秒，${result.searched ? &quot;有上網查&quot; : &quot;沒有上網查&quot;}）`);
+    send(res, 200, result);
+  } catch (err) {
+    const timeout = err.name === &quot;TimeoutError&quot; || err.name === &quot;AbortError&quot;;
+    log(`❌ ${timeout ? &quot;超過 45 秒，放棄這題&quot; : err.message}`);
+    send(res, timeout ? 504 : 502, { error: timeout ? &quot;想太久了（超過 45 秒），換個簡單一點的問法&quot; : err.message });
+  } finally {
+    busy = false;
+  }
+});
+
+
+// ===== 4. 開機：先把模型載進顯示卡，再開通道 =====
+async function warmUp() {
+  log(`載入模型 ${MODEL}（第一次要等一兩分鐘，之後每題幾秒）…`);
+  const t0 = Date.now();
+  try {
+    // num_ctx 要跟答題時一樣，不然第一題又會重新載入一次模型
+    await ollama(&quot;/api/chat&quot;, { model: MODEL, messages: [], keep_alive: &quot;1h&quot;, options: { num_ctx: 16384 } }, AbortSignal.timeout(300000));
+    log(`✅ 模型已在顯示卡上（${Math.round((Date.now() - t0) / 1000)} 秒）`);
+    return true;
+  } catch (err) {
+    log(`⚠️ 模型沒載起來：${err.message}`);
+    log(&quot;   先確認 Ollama app 開著、ollama list 看得到 &quot; + MODEL);
+    return false;
+  }
+}
+
+function hasCloudflared() {
+  try { execFileSync(&quot;cloudflared&quot;, [&quot;--version&quot;], { stdio: &quot;ignore&quot; }); return true; } catch (e) { return false; }
+}
+
+function startTunnel() {
+  if (!hasCloudflared()) {
+    log(&quot;⚠️ 找不到 cloudflared：外面還連不到這裡。另開一個 PowerShell 貼：&quot;);
+    log(&quot;   winget install --id Cloudflare.cloudflared&quot;);
+    log(&quot;   裝完關掉這個視窗、新開一個再跑一次本程式。&quot;);
+    return;
+  }
+  log(&quot;開 Cloudflare 通道中（免帳號的臨時網址，每次重開都會換）…&quot;);
+  const cf = spawn(&quot;cloudflared&quot;, [&quot;tunnel&quot;, &quot;--no-autoupdate&quot;, &quot;--url&quot;, `http://127.0.0.1:${PORT}`], { stdio: [&quot;ignore&quot;, &quot;pipe&quot;, &quot;pipe&quot;] });
+  let shown = false, tail = &quot;&quot;;
+  // 網址可能被切成兩段送來，所以先累積最後一段輸出再找
+  const watch = buf =&gt; {
+    tail = (tail + String(buf)).slice(-4000);
+    const m = tail.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/);
+    if (m &amp;&amp; !shown) {
+      shown = true;
+      // 密碼不印在畫面上（螢幕可能正在投影），直接放進剪貼簿；網址單獨用沒用，可以印
+      let copied = false;
+      try { execFileSync(&quot;clip&quot;, { input: KEY }); copied = true; } catch (e) { /* 不是 Windows 就不複製 */ }
+      console.log(&quot;\n==================== 貼進 Apps Script 的「指令碼屬性」 ====================&quot;);
+      console.log(`  ① SEARCH_RELAY_KEY ＝ ${copied ? &quot;按 Ctrl+V（密碼已經在剪貼簿，畫面上不顯示）&quot; : &quot;用記事本開 &quot; + KEY_FILE + &quot; 複製整行&quot;}`);
+      console.log(`  ② SEARCH_RELAY_URL ＝ ${m[0]}`);
+      console.log(`  密碼要再複製一次：Get-Content &quot;${KEY_FILE}&quot; | Set-Clipboard`);
+      console.log(&quot;  網址每次重開都會換：換了只要改指令碼屬性，不用重新部署。&quot;);
+      console.log(&quot;  這個視窗不要關；關掉＝bot 查不到。按 Ctrl+C 結束。&quot;);
+      console.log(&quot;==========================================================================\n&quot;);
+    }
+  };
+  cf.stdout.on(&quot;data&quot;, watch);
+  cf.stderr.on(&quot;data&quot;, watch);
+  cf.on(&quot;error&quot;, err =&gt; log(`⚠️ 通道程式開不起來：${err.message}。轉接站還在，可以另開視窗手動跑：cloudflared tunnel --url http://127.0.0.1:${PORT}`));
+  cf.on(&quot;exit&quot;, code =&gt; log(shown
+    ? `⚠️ 通道結束了（代碼 ${code}）：bot 現在連不到這裡，重開本程式會拿到新網址`
+    : `⚠️ 通道還沒拿到網址就結束了（代碼 ${code}）：看網路，或另開視窗手動跑 cloudflared tunnel --url http://127.0.0.1:${PORT}`));
+  process.on(&quot;exit&quot;, () =&gt; cf.kill());
+  process.on(&quot;SIGINT&quot;, () =&gt; process.exit(0));
+}
+
+server.listen(PORT, &quot;127.0.0.1&quot;, async () =&gt; {  // 只聽本機：外面只能從通道進來
+  log(`轉接站開好了：http://127.0.0.1:${PORT}（模型 ${MODEL}）`);
+  const ready = await warmUp();
+  if (WANT_TUNNEL &amp;&amp; !ready) {
+    log(&quot;⛔ 模型還沒準備好，先不開通道（開了 bot 問也只會收到錯誤）。修好 Ollama 後按 Ctrl+C、再跑一次本程式。&quot;);
+  } else if (WANT_TUNNEL) startTunnel();
+  else {
+    console.log(`\n本機測試（另開 PowerShell 貼）：`);
+    const keyExpr = process.env.RELAY_KEY ? &quot;$env:RELAY_KEY&quot; : `(Get-Content &quot;${KEY_FILE}&quot;)`;
+    console.log(`  Invoke-RestMethod -Method Post -Uri http://127.0.0.1:${PORT}/ask -Headers @{&quot;x-relay-key&quot;=${keyExpr}} -ContentType &quot;application/json; charset=utf-8&quot; -Body ([Text.Encoding]::UTF8.GetBytes(&#x27;{&quot;question&quot;:&quot;2026 年諾貝爾物理獎得主是誰？&quot;}&#x27;))\n`);
+  }
+});</code></pre><button type="button" class="copy">複製</button></div>
+      <p class="small muted">讀法：<code>answer</code> 那個迴圈跟路 C 一樣——模型回 <code>tool_calls</code> 就去執行、把結果以 <code>role: tool</code> 送回；差別是工具改打 Ollama 自己的 <code>/api/experimental/web_search</code>、<code>web_fetch</code>。<code>keyMatches</code> 對密碼；<code>busy</code> 讓顯示卡一次只答一題；<code>BUDGET_MS</code> 45 秒是因為 LINE 的回覆碼大約 1 分鐘內要用掉。</p>
+    </div>
+  </details>
+
+  <details class="big-code">
+    <summary>bot 的對照答案 Code.search-reference.gs（建置時從 starter 原檔塞入）</summary>
+    <div class="inner">
+      <div class="cmd nowrap"><pre><code>/**
+ * LINE AI 待辦小秘書（Level 2：文字＋照片＋存 Drive；W6 選做：「查 …」交給本地模型上網搜）
+ *
+ * 這份是 W6 選做的對照答案：在 Code.drive-reference.gs 上只加「查 …」這一條路，其他不動。
+ * 一則訊息的旅程：
+ *   LINE 送來訊息 → 請 Gemini 把口語整理成固定欄位 → 程式驗算欄位
+ *   → 寫進試算表 → 回覆 LINE（只講已經做完的事）→ 排 Google 日曆，結果寫回試算表
+ *   「查 …」開頭的：不問 Gemini、不寫表，轉給你電腦上的本地模型（line-search-relay.mjs）查好再回覆
+ *
+ * 這份程式跑在 Google 的機房，不在你的電腦上：程式裡的 localhost 是 Google 那台機器自己，
+ * 所以要靠 Cloudflare 通道給你電腦上的轉接站一個外面連得到的網址。
+ *
+ * 金鑰不寫在程式裡，一律放「專案設定 → 指令碼屬性」：
+ *   GEMINI_API_KEY             必填，到 Google AI Studio 申請
+ *   LINE_CHANNEL_ACCESS_TOKEN  必填，LINE Developers 後台發的長效 token
+ *   SHEET_ID                   選填，程式不是從試算表「擴充功能 → Apps Script」開的才要填
+ *   GEMINI_MODEL               選填，模型停用或想換模型時改這裡，不用動程式
+ *   SEARCH_RELAY_URL           選填，轉接站印出來的 https://….trycloudflare.com（每次重開都會換，換了改這裡就好、不用重新部署）
+ *   SEARCH_RELAY_KEY           選填，轉接站的通關密碼（它放在剪貼簿給你貼）
+ */
+
+// ===== 1. 設定 =====
+const PROPS = PropertiesService.getScriptProperties();
+const GEMINI_API_KEY = PROPS.getProperty(&quot;GEMINI_API_KEY&quot;) || &quot;&quot;;
+const LINE_ACCESS_TOKEN = PROPS.getProperty(&quot;LINE_CHANNEL_ACCESS_TOKEN&quot;) || &quot;&quot;;
+const SHEET_ID = PROPS.getProperty(&quot;SHEET_ID&quot;) || &quot;&quot;;
+// 模型名稱會隨 Google 改版而停用：上課前到 https://ai.google.dev/gemini-api/docs/models 確認還在
+const GEMINI_MODEL = PROPS.getProperty(&quot;GEMINI_MODEL&quot;) || &quot;gemini-3.5-flash-lite&quot;;
+const SEARCH_RELAY_URL = (PROPS.getProperty(&quot;SEARCH_RELAY_URL&quot;) || &quot;&quot;).trim().replace(/\/+$/, &quot;&quot;);
+const SEARCH_RELAY_KEY = (PROPS.getProperty(&quot;SEARCH_RELAY_KEY&quot;) || &quot;&quot;).trim();
+const SEARCH_PREFIX = /^(?:查|搜尋)[\s:：]+([\s\S]+)$/;  // 「查 」「查：」「搜尋 」開頭才轉給本地模型；「查一下明天…」照舊當待辦
+const TZ = &quot;Asia/Taipei&quot;;
+const CATEGORIES = [&quot;繳費&quot;, &quot;會議&quot;, &quot;課業&quot;, &quot;生活&quot;, &quot;其他&quot;];
+const HEADERS = [&quot;建立時間&quot;, &quot;事項&quot;, &quot;分類&quot;, &quot;日期&quot;, &quot;時間&quot;, &quot;來源&quot;, &quot;日曆&quot;, &quot;照片連結&quot;];
+const GREETING = /^(hi|hello|hey|你好|嗨|哈囉|安安|早安|午安|晚安|謝謝|感謝|ok|好的|掰|bye|test|測試)$/i;
+const HELP_TEXT = &quot;你好！我是你的 AI 待辦小秘書 🤖\n\n直接傳給我：\n•「明天下午三點要開會」\n•「週五前記得繳房租」\n• 或拍一張活動海報、便條紙\n\n我會記進試算表；有日期和時間的，再幫你排進 Google 日曆。\n\n想查最新消息，開頭打「查」加一個空格：\n•「查 今年諾貝爾物理獎得主是誰」\n（要我的本地模型開著才查得到）&quot;;
+
+
+// ===== 2. LINE 送訊息進來的入口 =====
+function doPost(e) {
+  try {
+    const body = JSON.parse((e &amp;&amp; e.postData &amp;&amp; e.postData.contents) || &quot;{}&quot;);
+    // 在 LINE 後台按 Verify 時，送來的 events 是空的，這裡就什麼都不做
+    (body.events || []).forEach(handleEvent);
+  } catch (err) {
+    console.error(&quot;讀不懂 LINE 送來的內容：&quot;, err);
+  }
+  return ContentService.createTextOutput(&quot;OK&quot;);
+}
+
+// 用瀏覽器打開 /exec 網址會看到這行字，可以確認部署成功
+function doGet() {
+  return ContentService.createTextOutput(&quot;LINE AI 待辦小秘書運作中（Level 2＋本地模型查詢）&quot;);
+}
+
+// 一次處理一則訊息；其中一則出錯，不影響同一批的其他訊息
+function handleEvent(event) {
+  if (event.type !== &quot;message&quot; || !event.replyToken) return;
+  try {
+    const msg = event.message;
+    if (msg.type === &quot;text&quot;) {
+      const text = msg.text.trim();
+      if (GREETING.test(text)) return replyLine(event.replyToken, HELP_TEXT);  // 打招呼不必問 AI，直接回
+      const asked = text.match(SEARCH_PREFIX);
+      if (asked) {  // 查詢不是待辦：不問 Gemini、不寫表，交給本地模型
+        showLoading(event.source, 60);
+        return replyLine(event.replyToken, askLocalSearch(asked[1].trim()));
+      }
+      showLoading(event.source);
+      return saveAndReply(event.replyToken, askGeminiAboutText(text), &quot;文字&quot;);
+    }
+    if (msg.type === &quot;image&quot;) {
+      showLoading(event.source);
+      const image = downloadLineImage(msg.id);
+      const photoUrl = savePhotoToDrive(image);  // 先把照片存進 Drive，拿到連結
+      return saveAndReply(event.replyToken, askGeminiAboutImage(image), &quot;照片&quot;, photoUrl);
+    }
+    replyLine(event.replyToken, &quot;目前我看得懂文字和照片，其他類型還不行喔。&quot;);
+  } catch (err) {
+    console.error(&quot;處理訊息失敗：&quot;, err);
+    // 課堂版刻意把錯誤原因回給手機：學生可以整段貼給 AI，問它怎麼修
+    try {
+      replyLine(event.replyToken, &quot;⚠️ 出錯了：&quot; + err.message);
+    } catch (err2) {
+      console.error(&quot;連錯誤訊息都回不出去（多半是 LINE token 沒設定或貼錯）：&quot;, err2);
+    }
+  }
+}
+
+
+// ===== 3. 記錄、回覆、排日曆 =====
+function saveAndReply(replyToken, todo, source, photoUrl) {
+  if (!todo.isTodo) return replyLine(replyToken, todo.chatReply || HELP_TEXT);
+
+  // ① 先寫進試算表：確定真的寫進去了，才能跟使用者說「記好了」
+  const row = appendTodoRow(todo, source, photoUrl || &quot;&quot;);
+  const wantsCalendar = todo.date !== &quot;未指定&quot; &amp;&amp; todo.time !== &quot;未指定&quot;;
+
+  // ② 回覆手機：只講已經做完的事（回覆碼要在收到訊息後 1 分鐘內用掉）
+  let reply = `✅ 記好了（試算表第 ${row} 列）\n\n📌 ${todo.summary}\n🏷️ ${todo.category}\n📅 ${todo.date}　⏰ ${todo.time}`;
+  reply += wantsCalendar
+    ? &quot;\n🗓️ 日曆提醒建立中，結果會寫在試算表的「日曆」欄&quot;
+    : &quot;\nℹ️ 沒有明確的日期和時間，這筆先不排日曆&quot;;
+  if (photoUrl) reply += &quot;\n📷 照片已存進 Drive 的「LINE待辦照片」資料夾&quot;;
+  replyLine(replyToken, reply);
+
+  // ③ 最後才排日曆；成功或失敗都寫回試算表，不讓人誤以為做好了
+  if (wantsCalendar) getSheet().getRange(row, 7).setValue(createCalendarEvent(todo));
+}
+
+function getSheet() {
+  const ss = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) throw new Error(&quot;找不到試算表：請從試算表的「擴充功能 → Apps Script」開程式，或在指令碼屬性填 SHEET_ID&quot;);
+  const sheet = ss.getSheets()[0];
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(HEADERS);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight(&quot;bold&quot;).setBackground(&quot;#0E7C7B&quot;).setFontColor(&quot;#FFFFFF&quot;);
+  }
+  return sheet;
+}
+
+function appendTodoRow(todo, source, photoUrl) {
+  const sheet = getSheet();
+  const now = Utilities.formatDate(new Date(), TZ, &quot;yyyy-MM-dd HH:mm:ss&quot;);
+  // 全班同時傳訊息時，先排隊再寫，避免兩筆搶到同一列
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    sheet.appendRow([now, todo.summary, todo.category, todo.date, todo.time, source, &quot;&quot;, photoUrl || &quot;&quot;]);
+    return sheet.getLastRow();
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// 照片先存進 Google Drive 的「LINE待辦照片」資料夾（沒有就建一個），回傳檔案連結
+function savePhotoToDrive(blob) {
+  const folderName = &quot;LINE待辦照片&quot;;
+  const found = DriveApp.getFoldersByName(folderName);
+  const folder = found.hasNext() ? found.next() : DriveApp.createFolder(folderName);
+  const stamp = Utilities.formatDate(new Date(), TZ, &quot;yyyyMMdd-HHmmss&quot;);
+  const file = folder.createFile(blob.setName(&quot;line-&quot; + stamp + &quot;.jpg&quot;));
+  return file.getUrl();
+}
+
+function createCalendarEvent(todo) {
+  try {
+    const start = new Date(`${todo.date}T${todo.time}:00+08:00`);
+    const end = new Date(start.getTime() + 30 * 60 * 1000);
+    const event = CalendarApp.getDefaultCalendar().createEvent(`【${todo.category}】${todo.summary}`, start, end, {
+      description: &quot;由 LINE AI 待辦小秘書建立&quot;
+    });
+    event.addPopupReminder(30);
+    return &quot;已建立&quot;;
+  } catch (err) {
+    console.error(&quot;建立日曆失敗：&quot;, err);
+    return &quot;失敗：&quot; + err.message;
+  }
+}
+
+
+// ===== 4. 請 Gemini 把口語整理成固定欄位 =====
+const JSON_SHAPE = `只輸出一個 JSON 物件，欄位固定如下：
+{&quot;isTodo&quot;: true 或 false,
+ &quot;summary&quot;: &quot;事項，簡短一句&quot;,
+ &quot;category&quot;: &quot;繳費、會議、課業、生活、其他 五選一&quot;,
+ &quot;date&quot;: &quot;YYYY-MM-DD，沒提到就填 未指定&quot;,
+ &quot;time&quot;: &quot;HH:mm（24 小時制），沒提到就填 未指定&quot;,
+ &quot;chatReply&quot;: &quot;不是待辦時，給使用者的一句簡短回覆；是待辦就填空字串&quot;}`;
+
+// 附上星期幾，AI 才算得準「下週五」是哪一天
+function nowText() {
+  return Utilities.formatDate(new Date(), TZ, &quot;yyyy-MM-dd EEEE HH:mm&quot;);
+}
+
+function askGeminiAboutText(text) {
+  const prompt = `你是待辦事項助理。現在是台北時間 ${nowText()}。
+判斷使用者這句話是不是待辦、提醒或行程。
+是的話，把「明天」「下週五」這類說法換算成實際日期；不是的話，isTodo 填 false。
+${JSON_SHAPE}
+使用者說：${text}`;
+  return checkTodo(callGemini([{ text: prompt }]));
+}
+
+function askGeminiAboutImage(blob) {
+  const prompt = `你是待辦事項助理。現在是台北時間 ${nowText()}。
+這是一張照片，可能是活動海報、便條紙或繳費單。找出上面最重要的一件待辦或活動。
+照片上沒寫的欄位就填 未指定，不要自己猜。
+${JSON_SHAPE}`;
+  return checkTodo(callGemini([
+    { text: prompt },
+    { inlineData: { mimeType: blob.getContentType() || &quot;image/jpeg&quot;, data: Utilities.base64Encode(blob.getBytes()) } }
+  ]));
+}
+
+function callGemini(parts) {
+  if (!GEMINI_API_KEY) throw new Error(&quot;還沒設定 GEMINI_API_KEY（專案設定 → 指令碼屬性）&quot;);
+  const res = UrlFetchApp.fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
+    method: &quot;post&quot;,
+    contentType: &quot;application/json&quot;,
+    headers: { &quot;x-goog-api-key&quot;: GEMINI_API_KEY },  // 金鑰放標頭、不放網址，才不會留在各種紀錄裡
+    payload: JSON.stringify({
+      contents: [{ role: &quot;user&quot;, parts: parts }],
+      generationConfig: { responseMimeType: &quot;application/json&quot; }
+    }),
+    muteHttpExceptions: true
+  });
+  const code = res.getResponseCode();
+  if (code !== 200) throw new Error(`Gemini 回應 ${code}：${res.getContentText().slice(0, 150)}`);
+  const data = JSON.parse(res.getContentText());
+  const cand = (data.candidates || [])[0];
+  const text = cand &amp;&amp; cand.content &amp;&amp; (cand.content.parts || []).map(p =&gt; p.text || &quot;&quot;).join(&quot;&quot;);
+  if (!text) throw new Error(`Gemini 沒有給內容（原因：${cand ? cand.finishReason : &quot;沒有任何答案&quot;}）`);
+  return JSON.parse(text.replace(/^```(json)?\s*|\s*```$/g, &quot;&quot;));
+}
+
+
+// ===== 4-2. 「查 …」：交給你電腦上的本地模型（W6 選做） =====
+// 免費的 Gemini 沒有上網搜尋；本地模型＋Ollama 內建的搜尋有。
+// 連不到就老實說連不到，不改問 Gemini——它不會搜，答案可能是猜的。
+function askLocalSearch(question) {
+  if (!SEARCH_RELAY_URL || !SEARCH_RELAY_KEY) {
+    return &quot;這支 bot 還沒接上本地模型（指令碼屬性要有 SEARCH_RELAY_URL 和 SEARCH_RELAY_KEY）。&quot;;
+  }
+  let res;
+  try {
+    res = UrlFetchApp.fetch(SEARCH_RELAY_URL + &quot;/ask&quot;, {
+      method: &quot;post&quot;,
+      contentType: &quot;application/json&quot;,
+      headers: { &quot;x-relay-key&quot;: SEARCH_RELAY_KEY },  // 密碼放標頭、不放網址
+      payload: JSON.stringify({ question: question }),
+      muteHttpExceptions: true,
+      timeoutSeconds: 50  // 預設會等 6 分鐘；LINE 的回覆碼大約 1 分鐘就失效，等不起
+    });
+  } catch (err) {
+    console.error(&quot;連不到轉接站：&quot;, err);
+    return &quot;🔌 本地模型現在連不到（或等超過 50 秒）：電腦關了、轉接站的視窗被關掉，或通道換了網址（指令碼屬性的 SEARCH_RELAY_URL 要改成新的）。&quot;;
+  }
+  const code = res.getResponseCode();
+  let data = {};
+  try { data = JSON.parse(res.getContentText()); } catch (err) { /* 不是 JSON：多半是通道已經關了，下面一起處理 */ }
+  if (code === 401) return &quot;🔒 轉接站說密碼不對：檢查指令碼屬性的 SEARCH_RELAY_KEY。&quot;;
+  if (code === 429) return &quot;⏳ 本地模型正在回答上一題，等十幾秒再問一次。&quot;;
+  if (code !== 200 || !data.answer) {
+    console.error(&quot;轉接站回應&quot;, code, res.getContentText().slice(0, 200));
+    return `🔌 本地模型這次沒答出來（${code}）：${data.error || &quot;通道可能已經關了，或網址換了&quot;}`;
+  }
+  let reply = &quot;🔎 &quot; + data.answer;
+  if (data.sources &amp;&amp; data.sources.length) {
+    reply += &quot;\n\n來源：\n&quot; + data.sources.map(s =&gt; &quot;• &quot; + s.url).join(&quot;\n&quot;);
+  } else {
+    reply += &quot;\n\nℹ️ 這題模型沒有上網查，只憑記憶回答，請自己再核對。&quot;;
+  }
+  return reply + `\n（本地模型 ${data.seconds} 秒）`;
+}
+
+
+// ===== 5. 驗算：AI 給的欄位不直接照單全收 =====
+function checkTodo(t) {
+  return {
+    isTodo: t.isTodo === true,
+    summary: String(t.summary || &quot;&quot;).trim() || &quot;（沒抓到事項）&quot;,
+    category: CATEGORIES.includes(t.category) ? t.category : &quot;其他&quot;,
+    date: isRealDate(t.date) ? t.date : &quot;未指定&quot;,
+    time: /^([01]\d|2[0-3]):[0-5]\d$/.test(t.time) ? t.time : &quot;未指定&quot;,
+    chatReply: String(t.chatReply || &quot;&quot;)
+  };
+}
+
+// 「2026-02-30」格式對、日子卻不存在：轉成日期再轉回來，對得上才算數
+function isRealDate(s) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(`${s}T12:00:00+08:00`);
+  return !isNaN(d.getTime()) &amp;&amp; Utilities.formatDate(d, TZ, &quot;yyyy-MM-dd&quot;) === s;
+}
+
+
+// ===== 6. LINE 相關 =====
+function lineApi(path, payload, host) {
+  if (!LINE_ACCESS_TOKEN) throw new Error(&quot;還沒設定 LINE_CHANNEL_ACCESS_TOKEN（專案設定 → 指令碼屬性）&quot;);
+  const options = {
+    method: payload ? &quot;post&quot; : &quot;get&quot;,
+    headers: { Authorization: &quot;Bearer &quot; + LINE_ACCESS_TOKEN },
+    muteHttpExceptions: true
+  };
+  if (payload) {
+    options.contentType = &quot;application/json&quot;;
+    options.payload = JSON.stringify(payload);
+  }
+  return UrlFetchApp.fetch((host || &quot;https://api.line.me&quot;) + path, options);
+}
+
+function replyLine(replyToken, text) {
+  const res = lineApi(&quot;/v2/bot/message/reply&quot;, {
+    replyToken: replyToken,
+    messages: [{ type: &quot;text&quot;, text: text.slice(0, 5000) }]
+  });
+  if (res.getResponseCode() !== 200) console.error(&quot;LINE 回覆失敗：&quot;, res.getResponseCode(), res.getContentText());
+}
+
+// 「對方正在輸入…」動畫：只有一對一聊天看得到，沒開成也不影響功能
+function showLoading(source, seconds) {
+  if (!source || source.type !== &quot;user&quot;) return;
+  try {
+    lineApi(&quot;/v2/bot/chat/loading/start&quot;, { chatId: source.userId, loadingSeconds: seconds || 20 });
+  } catch (err) {
+    console.warn(&quot;輸入中動畫沒開成：&quot;, err);
+  }
+}
+
+// 照片要到另一個網域（api-data）下載，而且 LINE 不會一直保存，收到就要抓
+function downloadLineImage(messageId) {
+  const res = lineApi(`/v2/bot/message/${messageId}/content`, null, &quot;https://api-data.line.me&quot;);
+  if (res.getResponseCode() !== 200) throw new Error(`照片下載失敗（LINE 回應 ${res.getResponseCode()}）`);
+  const blob = res.getBlob();
+  // 送給 Gemini 的請求有大小上限，照片轉成文字（Base64）還會再大三分之一，太大的先請使用者縮小
+  if (blob.getBytes().length &gt; 10 * 1024 * 1024) throw new Error(&quot;照片太大（超過 10 MB），請截圖或壓縮後再傳&quot;);
+  return blob;
+}
+
+
+// ===== 7. 自我檢查：在編輯器上方選 testSetup，按「執行」 =====
+function testSetup() {
+  const results = [];
+  const check = (name, fn) =&gt; {
+    try {
+      results.push(`✅ ${name}：${fn()}`);
+    } catch (err) {
+      results.push(`❌ ${name}：${err.message}`);
+    }
+  };
+  check(&quot;LINE token&quot;, () =&gt; {
+    const res = lineApi(&quot;/v2/bot/info&quot;);
+    if (res.getResponseCode() !== 200) throw new Error(`LINE 回應 ${res.getResponseCode()}，token 可能貼錯或已經重發`);
+    return &quot;bot 名稱「&quot; + JSON.parse(res.getContentText()).displayName + &quot;」&quot;;
+  });
+  check(&quot;Google 日曆&quot;, () =&gt; &quot;可以使用「&quot; + CalendarApp.getDefaultCalendar().getName() + &quot;」&quot;);
+  let todo = null;
+  check(&quot;Gemini&quot;, () =&gt; {
+    todo = askGeminiAboutText(&quot;明天早上十點要交房租，記得轉帳給房東&quot;);
+    return JSON.stringify(todo);
+  });
+  check(&quot;試算表&quot;, () =&gt; {
+    if (!todo) throw new Error(&quot;Gemini 那關沒過，先不寫&quot;);
+    return `寫進第 ${appendTodoRow(todo, &quot;testSetup&quot;)} 列`;
+  });
+  check(&quot;本地模型（選做）&quot;, () =&gt; {
+    if (!SEARCH_RELAY_URL) return &quot;沒設定 SEARCH_RELAY_URL，「查 …」功能先不開&quot;;
+    // 只對密碼、不叫模型：網址通、密碼也對，才算接好
+    const res = UrlFetchApp.fetch(SEARCH_RELAY_URL + &quot;/check-key&quot;, {
+      headers: { &quot;x-relay-key&quot;: SEARCH_RELAY_KEY }, muteHttpExceptions: true, timeoutSeconds: 20
+    });
+    if (res.getResponseCode() === 401) throw new Error(&quot;轉接站活著，但密碼不對：檢查 SEARCH_RELAY_KEY&quot;);
+    if (res.getResponseCode() !== 200) throw new Error(`轉接站回應 ${res.getResponseCode()}：電腦上的轉接站視窗開著嗎？網址是不是新的那個？`);
+    return &quot;轉接站接好了（網址通、密碼對），模型 &quot; + JSON.parse(res.getContentText()).model;
+  });
+  console.log(results.join(&quot;\n&quot;));
+  console.log(&quot;👉 打開試算表，親眼看到多了一列才算成功。出現權限錯誤，或這裡說成功、表裡卻沒有，多半是授權畫面沒有全部勾選。&quot;);
+}</code></pre><button type="button" class="copy">複製</button></div>
+      <p class="small muted">新加的部分：檔頭兩個指令碼屬性、<code>SEARCH_PREFIX</code>、<code>handleEvent</code> 裡「查」的那幾行、<code>askLocalSearch</code> 整個函式、<code>showLoading</code> 多一個秒數參數、<code>testSetup</code> 最後一項。<code>appsscript.json</code> 不用改：打外部網址的權限第一關就有了。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>卡住了？（LINE bot 也會查）</summary>
+    <div class="inner">
+      <ul class="tight">
+        <li><strong>手機回「🔌 本地模型現在連不到」</strong>：轉接站視窗被關、電腦睡著，或通道換了網址。看轉接站視窗還在不在；重開過就把新網址貼回 <code>SEARCH_RELAY_URL</code>。</li>
+        <li><strong>回「🔒 轉接站說密碼不對」</strong>：<code>SEARCH_RELAY_KEY</code> 貼錯（多了空白或貼成網址）。PowerShell 跑 <code>Get-Content "$env:USERPROFILE\.line-search-relay.key" | Set-Clipboard</code> 再貼一次。</li>
+        <li><strong>回「這支 bot 還沒接上本地模型」</strong>：兩個指令碼屬性名稱打錯，或沒加。</li>
+        <li><strong>回「⏳ 本地模型正在回答上一題」</strong>：顯示卡一次只答一題，等十幾秒再問。</li>
+        <li><strong>回「🔌 本地模型這次沒答出來（504）：想太久了」</strong>：超過 45 秒。第一題要先把模型載進顯示卡，轉接站開好後先等它印「✅ 模型已在顯示卡上」再問；題目換簡單一點。</li>
+        <li><strong>「查一下明天要交的作業」被當成待辦</strong>：正常。「查」後面要空格或冒號才算查詢，免得一般待辦被誤判。</li>
+        <li><strong>轉接站印「⚠️ 找不到 cloudflared」</strong>：第 1 步裝完沒有新開視窗；新開 PowerShell 再跑一次。</li>
+        <li><strong>轉接站印「⚠️ 模型沒載起來」</strong>：Ollama app 沒開，或 <code>ollama list</code> 沒有 <code>gemma4:e4b</code>。8 GB 顯示卡同時開著 LM Studio 也會失敗（見〈共同的坑〉）。</li>
+        <li><strong>手機回答了、卻寫「這題模型沒有上網查」</strong>：模型判斷不用搜就直接答了，不是每次都穩；問具體一點、或再問一次。</li>
+        <li><strong>改了程式，手機還是舊行為</strong>：忘了「管理部署作業 → 新版本」。</li>
+      </ul>
+    </div>
+  </details>
+
+  <div class="callout">⚠️ <strong>通道網址＋密碼＝外面的人可以用你的顯示卡</strong>：拿到的人能一直送題目、用掉你的顯示卡和搜尋額度。密碼不截圖、不貼進對話、不投影（轉接站故意不把它印在畫面上）；懷疑外流就按 Ctrl+C 關掉、刪掉 <code>%USERPROFILE%\.line-search-relay.key</code> 再開，會產生新密碼（記得重貼）。不用的時候按 Ctrl+C，通道就消失。<br>
+  <strong>這不是私密管道</strong>：模型在你電腦上，但問題會經過 LINE、Google、Cloudflare，搜尋那一下還會送到 Ollama 的線上搜尋服務，別拿它查私事或貼個資。另外，Apps Script 讀不到 LINE 附在訊息上的簽章（W5 教材講過），知道你 <code>/exec</code> 網址的人能假冒 LINE 送「查 …」進來，所以 <code>/exec</code> 網址一樣不要公開。</div>
+
+  <div class="pros">
+    <div><h4>優點</h4><ul class="tight"><li>bot 第一次「上網查最新消息、附真的來源」，免費 Gemini 做不到的事。</li><li>模型在自己電腦、沒有 API 費用；不用另外申請搜尋 API 金鑰。</li><li>原本的待辦、照片功能一行都沒動，查不到時老實說。</li></ul></div>
+    <div><h4>缺點</h4><ul class="tight"><li>你的電腦要一直開著、轉接站視窗不能關；臨時網址每次重開都換。</li><li>一次只能答一題，不適合很多人同時問。</li><li>多了一座橋就多一個會斷的地方：通道、轉接站、Ollama 任何一個沒開，都只會回「連不到」。</li></ul></div>
+  </div>
+</section>
+
 <!-- ===================== 三道考題 ===================== -->
 <section class="block" id="questions">
   <h2>三道考題：不開搜尋問一次、開搜尋問一次</h2>
   <p>這三題都是「要搜尋才答得對」：兩題是 2026 年 10 月初剛公布的諾貝爾獎，一題是軟體版本號。建議同一題問兩次——<strong>先不開搜尋</strong>（路 A 把地球關掉），<strong>再開搜尋</strong>——只看兩件事：答對沒、有沒有附來源。msi 實測不開搜尋時，Gemma 4 e4b 三題都答「不知道／尚未公布」。</p>
-  <p class="small muted">標準答案查核日：<strong>2026-10-09</strong>（查核方式：網路搜尋＋GitHub API）。</p>
+  <p class="small muted">標準答案查核日：<strong>2026-10-10</strong>（查核方式：網路搜尋＋GitHub API）。</p>
   <div class="tablewrap">
   <table class="stack">
     <thead><tr><th>#</th><th>題目</th><th>標準答案</th><th>出處（查核日）</th></tr></thead>
     <tbody>
       <tr><td data-label="#">1</td><td data-label="題目">2026 年諾貝爾物理獎得主是誰？得獎理由是什麼？</td><td data-label="標準答案"><strong>Francis Halzen</strong> 一人獨得；理由＝對 IceCube 微中子觀測站的決定性貢獻、偵測到來自天體的高能微中子。2026-10-06 斯德哥爾摩公布。</td><td data-label="出處（查核日）">nobelprize.org/prizes/physics/2026；Daily Maverick 2026-10-06</td></tr>
       <tr><td data-label="#">2</td><td data-label="題目">2026 年諾貝爾生理醫學獎的三位得主是誰？研究什麼？</td><td data-label="標準答案"><strong>Karl Deisseroth（史丹佛）、Peter Hegemann（柏林洪堡大學）、Georg Nagel（符茲堡大學）</strong>，各三分之一；光遺傳學（光控離子通道，用光開關單一神經元）。2026-10-05 公布。</td><td data-label="出處（查核日）">nobelprize.org/prizes/medicine/2026；NPR 2026-10-05</td></tr>
-      <tr><td data-label="#">3</td><td data-label="題目">Ollama 目前最新的正式版本號是多少？什麼時候發布的？</td><td data-label="標準答案"><strong>v0.40.1</strong>，2026-10-07（UTC 23:22）發布。</td><td data-label="出處（查核日）"><code>gh api repos/ollama/ollama/releases/latest</code>（2026-10-09 查）</td></tr>
+      <tr><td data-label="#">3</td><td data-label="題目">Ollama 目前最新的正式版本號是多少？什麼時候發布的？</td><td data-label="標準答案"><strong>v0.40.2</strong>，2026-10-08（UTC 16:53）發布。</td><td data-label="出處（查核日）"><code>gh api repos/ollama/ollama/releases/latest</code>（2026-10-10 查；10/09 查時還是 v0.40.1）</td></tr>
     </tbody>
   </table>
   </div>
-  <div class="callout">⚠️ <strong>第 3 題的答案會隨時間變</strong>：Ollama 常常更新，上課前一天要用同一支指令再核一次、改答案與查核日：<code>gh api repos/ollama/ollama/releases/latest</code>。路 C 實走當天模型答的是 v0.40.2（快照版），標準答案是 v0.40.1（正式版）——問「最新版」時，正式版還是快照版要先講清楚。</div>
+  <div class="callout">⚠️ <strong>第 3 題的答案會隨時間變</strong>：Ollama 常常更新，上課前一天要用同一支指令再核一次、改答案與查核日：<code>gh api repos/ollama/ollama/releases/latest</code>。10/09 路 C 實走時模型答 v0.40.2，當天 <code>releases/latest</code> 查到的卻還是 v0.40.1；10/10 重查，v0.40.2 已經是正式版——「最新版」一天之內就可能換，答案要跟查核日一起看。</div>
   <details>
     <summary>英文版題目（AA 班用）</summary>
     <div class="inner"><ol class="tight">
