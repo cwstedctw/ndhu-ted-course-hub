@@ -158,7 +158,12 @@
       ],
       "poster": "/images/talks/t04-poster.webp",
       "worksheetUrl": null,
-      "materials": []
+      "materials": [
+        {
+          "label": "講者投影片（PDF，26 頁）",
+          "url": "https://drive.google.com/file/d/16_a62QvtFz513lTqougTnEcrY0T-zP7L/view"
+        }
+      ]
     },
     {
       "id": "t05",
