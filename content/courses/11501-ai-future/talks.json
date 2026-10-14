@@ -162,8 +162,21 @@
         {
           "label": "講者投影片（PDF，26 頁）",
           "url": "https://drive.google.com/file/d/16_a62QvtFz513lTqougTnEcrY0T-zP7L/view"
+        },
+        {
+          "label": "講前導讀一頁卡（原圖，3 分鐘看完）",
+          "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/images/talks/t04-preread.webp"
+        },
+        {
+          "label": "30 秒預告短片（講者同意公開；橫式）",
+          "url": "https://drive.google.com/file/d/1n6IUt_2poIk5IN0Os04S8ohsenMILjpq/view"
         }
-      ]
+      ],
+      "preread": "/images/talks/t04-preread.webp",
+      "teaser": {
+        "src": "/videos/t04-teaser-720p.mp4",
+        "poster": "/images/talks/t04-teaser-poster.jpg"
+      }
     },
     {
       "id": "t05",
