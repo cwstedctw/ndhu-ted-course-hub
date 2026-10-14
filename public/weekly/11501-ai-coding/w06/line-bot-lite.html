@@ -112,9 +112,9 @@ figcaption{font-size:14px;color:var(--muted);margin-top:4px}
 <p class="lead">課堂那一版（<code>line_bot_local.py</code>）要教室的顯示卡、6.6 GB 的模型，還要 gws 接雲端硬碟和日曆。回家作業把它砍到最少：<b>一支 <code>line_bot_lite.py</code>，只做「文字問題進來 → 你電腦裡的小模型回答 → 回覆」</b>。模型換成 4.6 GB 的 <code>gemma4:e2b</code>（沒有顯示卡、只用 CPU 也跑得動，慢一點而已），再小一號有 <code>gemma3:1b</code>。</p>
 <p class="note"><b>兩個關卡，做到哪交到哪：</b><br>
 <b>關卡 A「模擬」</b>（必做）：不接 LINE、不開通道。程式加 <code>--simulate</code>，在終端機假裝手機傳訊息進來，看 bot 回什麼。只要 Ollama 裝得起來就做得完。<br>
-<b>關卡 B「真的接 LINE」</b>（選做、加分）：開 Cloudflare 通道、把 LINE 的 Webhook 換到你的電腦，手機上真的問得到。<br>
-<b>交件</b>（e學苑）：① 你的 GitHub repo 連結（第一行貼）② 一張對話截圖（關卡 A 的終端機畫面，或關卡 B 的手機畫面）③ 一句話：用哪個模型、電腦有沒有顯示卡、一題等了多久。</p>
-<p class="note"><b>這一頁怎麼用：</b>從上往下做，每一步有「指令或畫面 → 你應該看到 → 測一下 → 卡住了」，做完打勾（勾選只存在這台瀏覽器）。指令以 <b>Windows 的 PowerShell</b> 為主，Mac 的差別寫在旁邊。<b>關卡 A 全部約 30–45 分鐘</b>（大半是在等模型下載）。</p>
+<b>關卡 B「真的接 LINE」</b>（選做、加分）：開 Cloudflare 通道、把 LINE 的 Webhook（LINE 把訊息送去哪個網址的設定）換到你的電腦，手機上真的問得到。<br>
+<b>交件</b>（e學苑）：① 你的 GitHub repo（放程式的公開專案頁）連結（第一行貼）② 一張對話截圖（關卡 A 的終端機畫面，或關卡 B 的手機畫面）③ 一句話：用哪個模型、電腦有沒有顯示卡、一題等了多久、哪裡卡住。</p>
+<p class="note"><b>這一頁怎麼用：</b>從上往下做，每一步有「指令或畫面 → 你應該看到 → 測一下 → 卡住了」，做完打勾（勾選只存在這台瀏覽器）。指令以 <b>Windows 的 PowerShell</b> 為主，Mac 的差別寫在旁邊。<b>關卡 A 約 30–45 分鐘</b>（不含模型下載：4.6 GB，網路慢可能要一小時以上，先開著下載去做別的）。</p>
 <div class="prog"><span id="progText">已勾 0／0 步</span><div class="barw"><div id="progBar"></div></div><button type="button" class="ghost" id="resetBtn">清除勾選</button></div>
 <div class="toc"><b>順序</b>
 <ol>
@@ -564,7 +564,7 @@ dir</pre></div>
 <details class="stuck"><summary>卡住了</summary><ul>
 <li><b>打了字很久沒反應</b>→ 它在算：CPU 一題可能要一兩分鐘；看終端機有沒有「📩 收到文字…交給 gemma4:e2b…」那行，有就是在跑。</li>
 <li><b>⚠️ 出錯了：timed out</b>→ 十分鐘都沒答完，電腦真的太慢：改用 gemma3:1b。</li>
-<li><b>中文打不進終端機</b>→ Windows 舊版 PowerShell 偶爾會：先打 <code>chcp 65001</code> 再開 bot；或改用 Windows Terminal。</li>
+<li><b>中文打不進終端機</b>→ Windows 舊版 PowerShell 偶爾會：先打 <code>chcp 65001</code> 再開 bot；或開 bot 時改打 <code>py -X utf8 line_bot_lite.py --simulate</code>；或改用 Windows Terminal。</li>
 <li><b>它回英文或簡體</b>→ 小模型偶爾會，再問一次通常就對；不扣分。</li>
 <li><b>第三題它很有自信地給了一個名字</b>→ 這叫「幻覺」，小模型常見；作業那句話可以寫「它掰了 ○○，我查過是錯的」。想讓它真的去查，看 2-4。</li>
 </ul></details>
@@ -634,7 +634,7 @@ dir</pre></div>
 </li>
 
 <li><label class="chk"><input type="checkbox" data-k="3-3"><span class="n">3-3</span><span class="t">e學苑 交三樣</span></label>
-<p>線上文字第一行貼 repo 網址，第二行一句話（模型、有沒有顯示卡、一題幾秒、卡在哪）；附檔上傳 2-3 那張截圖（關卡 B 做到的，再加一張手機畫面）。</p>
+<p>線上文字第一行貼 repo 網址，第二行一句話（模型、有沒有顯示卡、一題幾秒、卡在哪）；附檔上傳一張截圖：做關卡 A 交 2-3 那張終端機畫面；做到關卡 B 的改交手機畫面（想把終端機那張一起放也可以）。</p>
 <div class="blk see"><b class="k">你應該看到</b>e學苑 顯示「已繳交」。</div>
 <div class="blk test"><b class="k">測一下</b>再點一次自己貼的 repo 網址，打得開。</div>
 <details class="stuck"><summary>卡住了</summary><ul>
@@ -717,7 +717,7 @@ dir</pre></div>
 
 <!-- ======================= 程式怎麼讀 ======================= -->
 <section id="s5" data-sec="5"><h2>程式怎麼讀、安全與隱私</h2>
-<p class="gain">想改它、或 README 要寫「改了什麼」的人看這段。整支約 230 行，六塊。</p>
+<p class="gain">想改它、或 README 要寫「改了什麼」的人看這段。整支約 290 行，六塊。</p>
 <table>
 <thead><tr><th style="width:26%">函式</th><th>做什麼</th></tr></thead>
 <tbody>
@@ -1026,7 +1026,7 @@ if __name__ == &quot;__main__&quot;:
     main()</pre></div>
 <h3>安全與隱私</h3>
 <ul>
-<li><b>通行碼和 Channel secret 不寫進檔案</b>：程式每次開起來問一次，關掉就忘；畫面上不顯示。所以 repo 裡本來就沒有鑰匙——除非你自己加進去。</li>
+<li><b>通行碼和 Channel secret 不寫進檔案</b>：程式每次開起來問一次，關掉就忘；畫面上不顯示（進階：先設好環境變數 <code>LINE_CHANNEL_ACCESS_TOKEN</code>、<code>LINE_CHANNEL_SECRET</code> 它就不問，一樣不寫進檔案）。所以 repo 裡本來就沒有鑰匙——除非你自己加進去。</li>
 <li><b>對簽章</b>：有給 Channel secret，假冒 LINE 送進來的請求會被擋掉。</li>
 <li><b>模擬模式完全不出門</b>：沒有 LINE、沒有通道、沒有上網（除非加 <code>--search</code>），問什麼都留在你的電腦。</li>
 <li><b>關卡 B 不是私密管道</b>：訊息會經過 LINE 和 Cloudflare。不要拿它處理別人的個資。用完 Ctrl+C，通道就消失。</li>
