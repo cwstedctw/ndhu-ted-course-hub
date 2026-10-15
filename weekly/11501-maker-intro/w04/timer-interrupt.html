@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>計時器與中斷實驗台</title>
+<meta name="description" content="互動模擬：紅綠燈用 sleep 輪流亮的時候，按鈕為什麼會被漏掉？看程式卡在哪一行、按鈕怎麼被錯過，再比較三條解法：不睡覺改看時鐘、把燈交給計時器、把按鈕交給中斷。創客入門補充教材。">
+</head>
+<body>
+<style>
+  :root {
+    --c-primary: #D13B00;
+    --c-primary-deep: #A32E00;
+    --c-primary-bright: #FF8A5C;
+    --c-primary-tint: #FFE3D6;
+    --c-primary-pale: #FFF1E8;
+    --c-mint: #7FD8BE;
+    --c-mint-deep: #2F8A6F;
+    --c-mint-tint: #DFF5EE;
+    --c-yellow: #FFD66B;
+    --c-yellow-deep: #9A6B00;
+    --c-yellow-tint: #FFF2CE;
+    --c-violet: #B9A7E0;
+    --c-violet-deep: #6B5BA0;
+    --c-violet-tint: #EFEAFA;
+    --c-alert: #B00020;
+    --c-alert-tint: #FDE7EA;
+    --c-bg: #FFF9F2;
+    --c-surface: #FFFFFF;
+    --c-surface-2: #FBF3EA;
+    --c-line: #EAD8C8;
+    --c-line-soft: #F3E4D8;
+    --c-ink: #2D3142;
+    --c-ink-soft: #4A4F63;
+    --c-ink-faint: #8A8FA3;
+    --c-code-bg: #F4F1FB;
+    --c-code-line: #E4DDF5;
+    --c-code-ink: #3B3457;
+    --c-wire: #2D3142;
+    --c-wire-off: #C9BFB8;
+    --c-chip: #FFFDF9;
+    --c-particle: #FF8A5C;
+    --c-particle-core: #D13B00;
+    --c-electron: #7FD8BE;
+    --c-electron-core: #1F6B54;
+    --c-meter-bg: #1E2230;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #8A8FA3;
+    --c-halo: rgba(45, 49, 66, 0.06);
+    --font-zh: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-primary: #FFA57D;
+      --c-primary-deep: #FFC0A0;
+      --c-primary-bright: #C9532A;
+      --c-primary-tint: #4A2A1C;
+      --c-primary-pale: #33211A;
+      --c-mint: #2A7D63;
+      --c-mint-deep: #7FD8BE;
+      --c-mint-tint: #1E3A33;
+      --c-yellow: #8A6B1E;
+      --c-yellow-deep: #FFD66B;
+      --c-yellow-tint: #3A3220;
+      --c-violet: #6B5BA0;
+      --c-violet-deep: #B9A7E0;
+      --c-violet-tint: #2A2440;
+      --c-alert: #FF6B7A;
+      --c-alert-tint: #4A1F26;
+      --c-bg: #1A1614;
+      --c-surface: #241E1B;
+      --c-surface-2: #2C2522;
+      --c-line: #3A302A;
+      --c-line-soft: #332A25;
+      --c-ink: #F2EAE4;
+      --c-ink-soft: #C9BFB8;
+      --c-ink-faint: #8C817A;
+      --c-code-bg: #1F1B2E;
+      --c-code-line: #332C4A;
+      --c-code-ink: #D6CFEA;
+      --c-wire: #F2EAE4;
+      --c-wire-off: #5E534C;
+      --c-chip: #201B18;
+      --c-particle: #FFB38A;
+      --c-particle-core: #FF7A3D;
+      --c-electron: #9FE8D0;
+      --c-electron-core: #2F8A6F;
+      --c-meter-bg: #12151E;
+      --c-meter-ink: #F4ECD8;
+      --c-meter-dim: #7E8398;
+      --c-halo: rgba(242, 234, 228, 0.07);
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-primary: #FFA57D;
+    --c-primary-deep: #FFC0A0;
+    --c-primary-bright: #C9532A;
+    --c-primary-tint: #4A2A1C;
+    --c-primary-pale: #33211A;
+    --c-mint: #2A7D63;
+    --c-mint-deep: #7FD8BE;
+    --c-mint-tint: #1E3A33;
+    --c-yellow: #8A6B1E;
+    --c-yellow-deep: #FFD66B;
+    --c-yellow-tint: #3A3220;
+    --c-violet: #6B5BA0;
+    --c-violet-deep: #B9A7E0;
+    --c-violet-tint: #2A2440;
+    --c-alert: #FF6B7A;
+    --c-alert-tint: #4A1F26;
+    --c-bg: #1A1614;
+    --c-surface: #241E1B;
+    --c-surface-2: #2C2522;
+    --c-line: #3A302A;
+    --c-line-soft: #332A25;
+    --c-ink: #F2EAE4;
+    --c-ink-soft: #C9BFB8;
+    --c-ink-faint: #8C817A;
+    --c-code-bg: #1F1B2E;
+    --c-code-line: #332C4A;
+    --c-code-ink: #D6CFEA;
+    --c-wire: #F2EAE4;
+    --c-wire-off: #5E534C;
+    --c-chip: #201B18;
+    --c-particle: #FFB38A;
+    --c-particle-core: #FF7A3D;
+    --c-electron: #9FE8D0;
+    --c-electron-core: #2F8A6F;
+    --c-meter-bg: #12151E;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #7E8398;
+    --c-halo: rgba(242, 234, 228, 0.07);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { margin: 0; background: var(--c-bg); color: var(--c-ink); font-family: var(--font-zh); font-size: 14px; line-height: 1.6; }
+  button, select, input, output { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--c-primary); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  code { font-family: var(--font-mono); font-size: .9em; background: var(--c-code-bg); color: var(--c-code-ink); border-radius: 5px; padding: 0 4px; overflow-wrap: anywhere; }
+
+  .wrap { padding: 10px 16px 36px; display: flex; justify-content: center; }
+  .col { width: 100%; max-width: 1400px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--c-primary); white-space: nowrap; }
+  .kicker .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c-primary-bright); }
+  h1 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 800; letter-spacing: .01em; }
+  .appbar { display: flex; align-items: baseline; justify-content: space-between; gap: 2px 16px; flex-wrap: wrap; padding: 2px 4px 0; }
+  .appbar-title { order: 1; display: flex; align-items: baseline; gap: 2px 12px; flex-wrap: wrap; min-width: 0; }
+  .sub1 { font-size: 14px; color: var(--c-ink-soft); font-weight: 600; }
+  .about { order: 2; font-size: 13px; color: var(--c-ink-soft); max-width: 46em; }
+  .about summary { cursor: pointer; font-weight: 700; color: var(--c-primary); list-style: none; }
+  .about summary::-webkit-details-marker { display: none; }
+  .about summary::before { content: "＋ "; }
+  .about[open] summary::before { content: "－ "; }
+  .about p { margin: 6px 0 0; line-height: 1.6; }
+  .oneline { order: 3; flex: 1 1 100%; margin: 2px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--c-ink-soft); }
+  .oneline b { color: var(--c-ink); }
+  h2 { margin: 0; font-size: 18px; font-weight: 800; line-height: 1.3; }
+  h3 { margin: 0; font-size: 14px; font-weight: 800; }
+  p { margin: 0; }
+  .muted { color: var(--c-ink-soft); }
+  .tiny { font-size: 12px; color: var(--c-ink-faint); line-height: 1.5; }
+  a { color: var(--c-primary); }
+
+  /* ===== 實驗台 ===== */
+  .bench { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 16px; padding: 8px 12px 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .tabbar { display: flex; align-items: center; gap: 6px 16px; flex-wrap: wrap; padding-bottom: 8px; border-bottom: 2px solid var(--c-line-soft); }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+  .tab { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 10px; padding: 4px 10px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); line-height: 1.3; text-align: left; }
+  .tab small { display: block; font-size: 11px; font-weight: 600; opacity: .85; }
+  .tab[aria-selected="true"] { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary-deep); }
+  .caption { flex: 1 1 240px; min-width: 0; margin: 0; font-size: 16px; font-weight: 800; line-height: 1.4; color: var(--c-primary-deep); }
+  @media (max-width: 560px) {
+    .tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+    .caption { font-size: 15px; }
+  }
+
+  .benchgrid { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: 12px; align-items: start; }
+  @media (max-width: 1020px) {
+    .benchgrid { grid-template-columns: minmax(0, 1fr); }
+    .codecol { order: 2; }
+  }
+  .codecol { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .codehead { display: flex; justify-content: space-between; align-items: baseline; gap: 2px 10px; flex-wrap: wrap; font-size: 12px; font-weight: 700; color: var(--c-ink-faint); }
+  .codehead .fn { font-family: var(--font-mono); color: var(--c-ink-soft); }
+  .codeview { position: relative; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 6px 0; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: var(--c-code-ink); overflow: auto; height: clamp(300px, calc(100vh - 236px), 680px); }
+  @media (max-width: 1020px) { .codeview { height: 340px; } }
+  .codeinner { width: max-content; min-width: 100%; }
+  .cl { display: flex; border-left: 3px solid transparent; padding-right: 14px; }
+  .cl .ln { flex: 0 0 2.8em; padding-right: .9em; text-align: right; color: var(--c-ink-faint); user-select: none; -webkit-user-select: none; }
+  .cl .tx { white-space: pre; }
+  .cl.t3 { background: color-mix(in srgb, var(--c-yellow-tint) 45%, transparent); }
+  .cl.t2 { background: color-mix(in srgb, var(--c-yellow-tint) 75%, transparent); }
+  .cl.t1 { background: var(--c-yellow-tint); }
+  .cl.on { background: var(--c-primary-tint); border-left-color: var(--c-primary); }
+  .cl.on .ln { color: var(--c-primary); font-weight: 800; }
+  .cl mark { background: var(--c-yellow); color: var(--c-ink); border-radius: 3px; padding: 0 2px; }
+  .cl .edtag { margin-left: 10px; font-family: var(--font-zh); font-size: 11px; font-weight: 700; color: var(--c-alert); }
+
+  .labcol { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .tlbox { margin: 0; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .tlbox svg { display: block; width: 100%; height: auto; }
+  .tlhead { margin: 0; font-size: 12px; font-weight: 700; line-height: 1.45; color: var(--c-ink-soft); }
+  figcaption { font-size: 12px; line-height: 1.5; color: var(--c-ink-soft); }
+  figcaption b { color: var(--c-ink); }
+  .meters { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px; }
+  .meter { background: var(--c-meter-bg); color: var(--c-meter-ink); border-radius: 10px; padding: 4px 10px 5px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+  .meter .lbl { font-size: 11px; letter-spacing: .03em; color: var(--c-meter-dim); line-height: 1.35; }
+  .meter .val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 700; line-height: 1.15; white-space: nowrap; }
+  .meter .val small { font-family: var(--font-zh); font-size: 11px; font-weight: 600; color: var(--c-meter-dim); margin-left: 3px; }
+  .meter.hot .val { color: #FF6B7A; }
+  .meter.good .val { color: #7FD8BE; }
+  @media (max-width: 480px) { .meter { padding: 4px 7px; } .meter .val { font-size: 19px; } .meter .lbl { font-size: 10.5px; } }
+  .ctlbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+  .bigbtn { flex: 1 1 190px; padding: 8px 10px; border-radius: 14px; border: 3px solid var(--c-primary); background: var(--c-primary-pale); color: var(--c-primary-deep); font-size: 17px; font-weight: 800; line-height: 1.25; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  .bigbtn small { display: block; font-size: 11px; font-weight: 600; color: var(--c-ink-faint); margin-top: 2px; }
+  .bigbtn[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary-deep); }
+  .bigbtn[aria-pressed="true"] small { color: #FFF7F2; opacity: .85; }
+  .ctls { flex: 3 1 330px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 0; }
+  .btn { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 8px; padding: 5px 10px; font-weight: 700; font-size: 13px; }
+  .btn:hover { border-color: var(--c-primary); }
+  .btn.main { border-color: var(--c-primary); color: var(--c-primary-deep); }
+  .stepwrap { display: inline-flex; gap: 6px; }
+  .spd { flex: 1 1 200px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); min-width: 0; }
+  .spd input { flex: 1 1 90px; min-width: 70px; accent-color: var(--c-primary); }
+  .spd output { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 800; color: var(--c-ink); min-width: 3.2em; text-align: right; }
+  .lower { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 8px; align-items: start; }
+  @media (max-width: 700px) { .lower { grid-template-columns: minmax(0, 1fr); } }
+  .serial { background: var(--c-meter-bg); color: var(--c-meter-ink); border-radius: 10px; padding: 6px 10px 8px; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; min-width: 0; }
+  .serial .sh { font-family: var(--font-zh); font-size: 11px; color: var(--c-meter-dim); margin-bottom: 2px; }
+  .serial .row { display: flex; gap: 8px; min-height: 1.55em; }
+  .serial .ts { flex: 0 0 auto; color: var(--c-meter-dim); }
+  .serial .msg { min-width: 0; overflow-wrap: anywhere; }
+
+  .tabpanel { display: flex; flex-direction: column; gap: 6px; font-size: 13px; min-width: 0; }
+  .tabpanel .lead { color: var(--c-ink-soft); line-height: 1.6; }
+  .tabpanel .lead b { color: var(--c-ink); }
+  .widget { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 6px 10px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .widget h3 { font-size: 13px; }
+  .ro { font-size: 12.5px; color: var(--c-ink-soft); }
+  .ro b { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--c-ink); }
+  table.plan { border-collapse: collapse; width: 100%; font-size: 12px; }
+  table.plan th, table.plan td { text-align: left; padding: 2px 6px; border-bottom: 1px solid var(--c-line-soft); }
+  table.plan th { color: var(--c-ink-faint); font-weight: 700; }
+  table.plan td.mono { font-family: var(--font-mono); }
+  table.plan tr.cur td { background: var(--c-primary-tint); color: var(--c-ink); font-weight: 800; }
+  .lockrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; font-weight: 800; }
+  .seg { display: inline-grid; grid-auto-flow: column; border: 2px solid var(--c-line); border-radius: 10px; overflow: hidden; background: var(--c-surface); min-width: 0; }
+  .seg button { border: 0; background: transparent; padding: 4px 10px; font-weight: 700; font-size: 12.5px; color: var(--c-ink-soft); border-right: 2px solid var(--c-line); }
+  .seg button:last-child { border-right: 0; }
+  .seg button[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; }
+  .when { font-size: 12.5px; background: var(--c-mint-tint); border: 1.5px solid var(--c-mint); border-radius: 10px; padding: 5px 10px; }
+  .when b { font-weight: 800; }
+  .note { font-size: 12.5px; line-height: 1.55; padding: 6px 10px; border-radius: 10px; border: 1.5px solid var(--c-line-soft); background: var(--c-surface-2); color: var(--c-ink-soft); }
+  .note.warn { background: var(--c-yellow-tint); border-color: var(--c-yellow); color: var(--c-ink); }
+  .note b { color: var(--c-ink); }
+
+  /* ===== 觀念卡、折疊區、卡片、表格 ===== */
+  .concepts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 12px; align-items: start; }
+  .ccard { background: var(--c-surface-2); border: 2px solid var(--c-line-soft); border-radius: 16px; padding: 10px 16px; display: block; min-width: 0; }
+  .ccard > summary { cursor: pointer; list-style: none; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .ccard > summary::-webkit-details-marker { display: none; }
+  .ccard > summary h3::after { content: "　＋"; font-size: 12px; font-weight: 600; color: var(--c-ink-faint); }
+  .ccard[open] > summary h3::after { content: "　－"; }
+  .ccard:not(.hot) > summary h3 { color: var(--c-ink-soft); }
+  .ccard.hot { background: var(--c-surface); border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-tint); }
+  .ccard .ccbody { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; min-width: 0; }
+  .ccard .tag { font-size: 11px; font-weight: 800; color: #FFF7F2; background: var(--c-primary); border-radius: 8px; padding: 1px 8px; }
+  .ccard h3 { font-size: 15px; line-height: 1.4; }
+  .ccard p, .ccard li { font-size: 13px; color: var(--c-ink-soft); }
+  .ccard b { color: var(--c-ink); }
+  .ccard ol { margin: 0; padding-left: 1.5em; display: flex; flex-direction: column; gap: 4px; }
+  .en { color: var(--c-ink); }
+
+  .sect { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 14px; padding: 0 16px; min-width: 0; }
+  .sect > summary { cursor: pointer; font-size: 16px; font-weight: 800; padding: 12px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .sect > summary::-webkit-details-marker { display: none; }
+  .sect > summary::after { content: "展開 ＋"; font-size: 12px; font-weight: 600; color: var(--c-ink-faint); white-space: nowrap; }
+  .sect[open] > summary::after { content: "收起 －"; }
+  .sect[open] > summary { border-bottom: 2px solid var(--c-line-soft); margin-bottom: 14px; }
+  .sect > section { padding-bottom: 16px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+  .adv { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 6px 12px; min-width: 0; }
+  .adv > summary { cursor: pointer; font-weight: 800; font-size: 13px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .adv > summary::-webkit-details-marker { display: none; }
+  .adv > summary::after { content: "＋"; color: var(--c-ink-faint); }
+  .adv[open] > summary::after { content: "－"; }
+  .adv .inner { padding-top: 8px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .code { margin: 0; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 10px 12px; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; color: var(--c-code-ink); overflow-x: auto; white-space: pre; max-width: 100%; }
+  .code.small { font-size: 11.5px; padding: 8px 10px; }
+  .copy { border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 8px; padding: 3px 10px; font-weight: 700; font-size: 12px; white-space: nowrap; }
+  .copy:hover { background: var(--c-primary-tint); }
+  .shared { display: flex; flex-direction: column; gap: 6px; }
+  .shared .codehead { font-size: 12.5px; color: var(--c-ink-soft); font-weight: 600; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 14px; }
+  .card { background: var(--c-surface); border: 2px solid var(--c-line-soft); border-radius: 16px; padding: 14px 16px 13px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .card h3 { font-size: 15px; line-height: 1.4; }
+  .card p { font-size: 13px; color: var(--c-ink-soft); }
+  .card p b { color: var(--c-ink); }
+  .card .try { margin-top: auto; align-self: flex-start; border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 10px; padding: 5px 12px; font-weight: 700; font-size: 13px; }
+  .card .try:hover { background: var(--c-primary-tint); }
+  .card .btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .steps { margin: 0; padding-left: 1.3em; font-size: 13px; color: var(--c-ink-soft); }
+  .mono1 { font-family: var(--font-mono); font-size: 12px; background: var(--c-code-bg); border-radius: 5px; padding: 1px 5px; color: var(--c-code-ink); overflow-wrap: anywhere; }
+  .tablewrap { overflow-x: auto; border: 2px solid var(--c-line); border-radius: 14px; max-width: 100%; }
+  table.facts { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 13px; }
+  table.facts th, table.facts td { text-align: left; padding: 8px 12px; border-bottom: 1.5px solid var(--c-line-soft); vertical-align: top; }
+  table.facts th { font-size: 12px; letter-spacing: .06em; color: var(--c-ink-faint); font-weight: 700; background: var(--c-surface-2); }
+  table.facts tr:last-child td { border-bottom: 0; }
+  table.facts td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; }
+  table.cmp { min-width: 820px; }
+  .simp { margin: 0; padding-left: 1.3em; font-size: 13px; color: var(--c-ink-soft); display: flex; flex-direction: column; gap: 3px; }
+  .foot { font-size: 12px; color: var(--c-ink-faint); border-top: 2px solid var(--c-line-soft); padding-top: 10px; display: flex; flex-direction: column; gap: 3px; }
+
+  /* ===== 時間軸（SVG，文字都是真文字） ===== */
+  #tl text { user-select: text; -webkit-user-select: text; }
+  .lanebg { fill: var(--c-surface-2); }
+  .lanelab { font-family: var(--font-zh); font-size: 11px; font-weight: 800; fill: var(--c-ink); }
+  .lanelab2 { font-family: var(--font-zh); font-size: 10px; font-weight: 600; fill: var(--c-ink-faint); }
+  .gmin { stroke: var(--c-line-soft); stroke-width: 1; }
+  .gmaj { stroke: var(--c-line); stroke-width: 1.3; }
+  .tick { font-family: var(--font-mono); font-size: 10px; fill: var(--c-ink-faint); }
+  .pre0 { font-family: var(--font-zh); font-size: 11px; fill: var(--c-ink-faint); }
+  .nowl { stroke: var(--c-primary-bright); stroke-width: 1.6; }
+  .nowtxt { font-family: var(--font-zh); font-size: 10.5px; font-weight: 800; fill: var(--c-primary); }
+  .nowbg { fill: var(--c-surface); stroke: var(--c-primary); stroke-width: 1; }
+  .nowtag { font-family: var(--font-zh); font-size: 11px; font-weight: 800; fill: var(--c-primary-deep); }
+  .sleepbar { fill: var(--c-violet-tint); stroke: var(--c-violet); stroke-width: 1.4; }
+  .sleepbar.cur { stroke: var(--c-violet-deep); stroke-width: 2.4; }
+  .sleeptxt { font-family: var(--font-zh); font-size: 11px; font-weight: 800; fill: var(--c-violet-deep); paint-order: stroke; stroke: var(--c-violet-tint); stroke-width: 4px; stroke-linejoin: round; }
+  .band { fill: url(#hatch); stroke: var(--c-violet); stroke-width: 1.4; }
+  .hbg { fill: var(--c-violet-tint); }
+  .hln { stroke: var(--c-violet); stroke-width: 1; }
+  .bandtxt { font-family: var(--font-zh); font-size: 11px; font-weight: 800; fill: var(--c-violet-deep); paint-order: stroke; stroke: var(--c-violet-tint); stroke-width: 4px; stroke-linejoin: round; }
+  .look { stroke: var(--c-primary); stroke-width: 2; }
+  .lookhit { stroke: var(--c-mint-deep); stroke-width: 2.6; }
+  .marktxt { font-family: var(--font-zh); font-size: 10.5px; font-weight: 700; fill: var(--c-primary-deep); }
+  .marktxt.good { fill: var(--c-mint-deep); }
+  .donly { fill: var(--c-ink-soft); }
+  .dprint { fill: var(--c-surface); stroke: var(--c-ink-soft); stroke-width: 1.4; }
+  .needle { stroke: var(--c-violet-deep); stroke-width: 1.3; }
+  .needle.hit { stroke: var(--c-primary); stroke-width: 1.6; }
+  .nlab { font-family: var(--font-mono); font-size: 10.5px; font-weight: 800; fill: var(--c-violet-deep); }
+  .nlab.hit { fill: var(--c-primary); }
+  .conf { fill: var(--c-surface); stroke: var(--c-ink-faint); stroke-width: 1.4; }
+  .conf.hit { fill: var(--c-primary); stroke: var(--c-primary-deep); }
+  .l-g { fill: var(--c-mint); }
+  .l-y { fill: var(--c-yellow); }
+  .l-r { fill: var(--c-alert); }
+  .ltxt { font-family: var(--font-zh); font-size: 10.5px; font-weight: 800; fill: var(--c-ink); paint-order: stroke; stroke: var(--c-surface); stroke-width: 3px; stroke-linejoin: round; }
+  .base { stroke: var(--c-ink-faint); stroke-width: 1.4; }
+  .press { fill: var(--c-primary-tint); stroke: var(--c-primary); stroke-width: 1.6; }
+  .zig { stroke: var(--c-primary-deep); stroke-width: 1.2; }
+  .pnum { font-family: var(--font-mono); font-size: 10px; font-weight: 700; fill: var(--c-primary-deep); }
+  .ok { fill: none; stroke: var(--c-mint-deep); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .ok.mem { stroke: var(--c-violet-deep); }
+  .no { fill: none; stroke: var(--c-alert); stroke-width: 2.4; stroke-linecap: round; }
+  .conn { stroke: var(--c-mint-deep); stroke-width: 1.3; fill: none; }
+  .conn.mem { stroke: var(--c-violet-deep); }
+  .conn.dash { stroke-dasharray: 4 3; }
+  .conn.wait { stroke: var(--c-violet-deep); stroke-dasharray: 4 3; }
+  .ahp { fill: var(--c-mint-deep); }
+  .ahv { fill: var(--c-violet-deep); }
+  .rtxt { font-family: var(--font-zh); font-size: 10.5px; font-weight: 700; fill: var(--c-ink-soft); }
+  .rtxt.num { font-family: var(--font-mono); fill: var(--c-mint-deep); }
+  .rtxt.bad { fill: var(--c-alert); }
+  .rtxt.mem { fill: var(--c-violet-deep); }
+  .rtxt.done { fill: var(--c-mint-deep); }
+  .tk { stroke: var(--c-ink-faint); stroke-width: 1; }
+  .tk.ch { stroke: var(--c-primary); stroke-width: 2.2; }
+  .tktxt { font-family: var(--font-mono); font-size: 10px; fill: var(--c-ink-faint); }
+  .tktxt.ch { font-family: var(--font-zh); font-weight: 800; fill: var(--c-primary); }
+
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap"><div class="col">
+
+  <header class="appbar">
+    <div class="appbar-title">
+      <span class="kicker"><span class="dot"></span><span>創客入門 · 補充教材</span></span>
+      <h1>計時器與中斷實驗台</h1>
+      <span class="sub1">程式在睡的時候，按鈕怎麼辦？</span>
+    </div>
+    <p class="oneline"><b><code>time.sleep(3)</code> 不是「等 3 秒」，是「主程式站在這一行 3 秒，不會往下看按鈕」。</b>一行沒做完、下一行就不會開始，這叫阻塞（blocking）；按鈕在這 3 秒裡按下去，主程式看不見。三條解法：不睡覺，改成每圈看一眼時鐘；把燈交給晶片裡自己會走的碼表，也就是計時器（timer）；把按鈕交給硬體，腳位一變就先記下來、再叫程式來處理，這叫中斷（interrupt）。主程式睡著時，先設好的計時器或中斷照樣會被叫，③④靠的就是這個。</p>
+    <details class="about">
+      <summary>這一頁在做什麼</summary>
+      <p>上週的紅綠燈用 <code>time.sleep()</code> 讓三顆燈輪流亮，這一頁在那支程式上多加一顆按鈕。左邊是程式碼，正在跑的那一行會亮；右邊的時間軸一條一條畫出程式在做什麼、燈、你按的按鈕、程式有沒有看到。四個分頁是同一個紅綠燈的四種寫法，每一種都附一個可以貼進 Wokwi 自己跑的專案。</p>
+      <p>姊妹頁：〈<a href="rs-latch.html">RS 閂鎖工作台</a>〉、〈<a href="../w05/button-bounce.html">按鈕彈跳實驗台</a>〉、〈<a href="esp32-pin-xray.html">ESP32 腳位透視鏡</a>〉</p>
+    </details>
+  </header>
+
+  <section class="bench" id="bench" aria-label="互動模擬實驗台">
+    <div class="tabbar">
+      <div class="tabs" role="tablist" aria-label="同一個紅綠燈的四種寫法" id="tablist">
+        <button class="tab" role="tab" id="tb-sleep" data-tab="sleep" aria-selected="true" aria-controls="tp-sleep">① sleep 版<small>06・按鈕會漏</small></button>
+        <button class="tab" role="tab" id="tb-clock" data-tab="clock" aria-selected="false" aria-controls="tp-clock" tabindex="-1">② 看時鐘不睡覺<small>07・ticks_ms</small></button>
+        <button class="tab" role="tab" id="tb-timer" data-tab="timer" aria-selected="false" aria-controls="tp-timer" tabindex="-1">③ 燈交給計時器<small>08・Timer</small></button>
+        <button class="tab" role="tab" id="tb-irq" data-tab="irq" aria-selected="false" aria-controls="tp-irq" tabindex="-1">④ 按鈕交給中斷<small>09・Pin.irq</small></button>
+      </div>
+      <p class="caption" id="caption">主程式站在這一行，下面全部不動。</p>
+    </div>
+
+    <div class="benchgrid">
+      <div class="codecol">
+        <div class="codehead"><span class="fn" id="codeName">06-sleep-misses／main.py</span><span>亮的那一行＝正在跑；淡黃＝剛剛跑過</span></div>
+        <div class="codeview" id="codeView" tabindex="0" role="region" aria-label="程式碼：正在執行的那一行會亮"></div>
+      </div>
+
+      <div class="labcol">
+        <figure class="tlbox" id="tlBox">
+          <p class="tlhead">由上到下是程式、（③多一條計時器）、燈、按鈕、程式反應；同一個直向位置＝同一時刻。</p>
+          <svg id="tl" role="img" aria-label="時間軸：由上到下是程式在做什麼、燈、按鈕、程式的反應，最右邊是現在"></svg>
+          <figcaption id="tlCap">一格 100 ms、整個畫面約 8 秒，最右邊是「現在」。<b>紫色粗條</b>＝程式在睡；<b>細直線</b>＝第 23 行看一眼按鈕；小點＝換燈、印字。<b>勾</b>＝程式看到了，下面的數字是從按下到看到等了多久；<b>叉</b>＝整下都落在睡著的時候，漏了。</figcaption>
+        </figure>
+
+        <div class="meters" id="meters">
+          <div class="meter"><span class="lbl">按了</span><span class="val"><span id="m1v">0</span><small>次</small></span></div>
+          <div class="meter" id="m4" hidden><span class="lbl">中斷被叫</span><span class="val"><span id="m4v">0</span><small>次</small></span></div>
+          <div class="meter" id="m2"><span class="lbl" id="m2l">程式看到</span><span class="val"><span id="m2v">0</span><small>次</small></span></div>
+          <div class="meter"><span class="lbl" id="m3l">最長等了</span><span class="val"><span id="m3v">—</span><small>ms</small></span></div>
+        </div>
+
+        <div class="ctlbar">
+          <button class="bigbtn" id="btnPress" aria-pressed="false">按住我<small id="bpHint">滑鼠、手指按住，或按空白鍵</small></button>
+          <div class="ctls">
+            <button class="btn main" id="btnAuto">自動按 8 下</button>
+            <button class="btn" id="btnPlay" aria-pressed="false">暫停</button>
+            <button class="btn" id="btnReset">重來</button>
+            <span class="stepwrap" id="stepWrap" hidden><button class="btn" id="btnStep1">+0.1 秒</button><button class="btn" id="btnStep2">+1 秒</button></span>
+            <label class="spd" for="rngSpeed">慢動作<input id="rngSpeed" type="range" min="0.25" max="2" step="0.25" value="0.5"><output id="spdTxt" for="rngSpeed">0.5×</output></label>
+          </div>
+        </div>
+        <p class="tiny">自動按 8 下＝每下按住 150 ms、放開 600 ms，跟 Wokwi 實跑用的同一組。慢動作 1× 就是真實速度。</p>
+
+        <div class="lower">
+          <div class="panels">
+            <div class="tabpanel" id="tp-sleep" role="tabpanel" aria-labelledby="tb-sleep">
+              <p class="lead">上週的紅綠燈加一顆按鈕。程式只在每一輪開頭（第 23 行）<b>看一眼</b>按鈕，接著就去睡：綠燈睡 3 秒、黃燈 1 秒、紅燈 3 秒，一輪 7 秒。你按的那一下如果整個落在睡著的時候，主程式根本不知道。按「自動按 8 下」看看：大多是叉叉；檢查那一刻按鈕剛好還按著，才會看到、才有一個勾。</p>
+              <div class="widget"><p class="ro">下一次看按鈕（一輪 7 秒）：還有 <b id="roNext">—</b> 秒　程式裡的 <code>seen</code>＝<b id="roSeen">0</b></p></div>
+              <p class="when"><b>什麼時候可以這樣寫：</b>只有一件事要做、不用理按鈕的時候，例如純粹讓燈閃。只要多了隨時可能發生的事，就別在它旁邊睡。</p>
+            </div>
+
+            <div class="tabpanel" id="tp-clock" role="tabpanel" aria-labelledby="tb-clock" hidden>
+              <p class="lead">把 <code>sleep(3)</code> 拆掉。迴圈每一圈只做很短的事：看一眼按鈕、看一眼時鐘「該換燈了沒」，然後只睡 1 ms 就回來。像這樣一圈一圈輪流去看，叫輪詢（polling）。</p>
+              <p class="lead">燈序寫成一張表 <code>plan</code>，程式用一個數字記住現在輪到第幾列，這個數字就是它的狀態（state）；再用 <code>since</code> 記下這一列是幾點開始亮的，時間到了才換下一列。</p>
+              <p class="lead">按下、放開的那一瞬間，裡面兩片金屬都會彈好幾下，這叫彈跳（bounce）。所以按鈕的值一有變化，程式就記下時間；離上一次變化超過 50 ms 的那個 1 變 0，才算按下。這 50 ms 叫鎖定時間（lockout）。</p>
+              <div class="widget">
+                <h3>程式裡那張表 <code>plan</code></h3>
+                <table class="plan">
+                  <thead><tr><th>第幾列</th><th>哪顆燈</th><th>亮幾毫秒</th><th>印什麼</th></tr></thead>
+                  <tbody>
+                    <tr id="p7-0"><td class="mono">0</td><td>綠燈</td><td class="mono">3000</td><td>綠燈 3 秒</td></tr>
+                    <tr id="p7-1"><td class="mono">1</td><td>黃燈</td><td class="mono">1000</td><td>黃燈 1 秒</td></tr>
+                    <tr id="p7-2"><td class="mono">2</td><td>紅燈</td><td class="mono">3000</td><td>紅燈 3 秒</td></tr>
+                  </tbody>
+                </table>
+                <p class="ro">現在第 <b id="roState">0</b> 列，從 <code>since</code>＝<b id="roSince">0</b> 開始亮；<code>now</code>＝<b id="roNow">0</b>，已經亮了 <b id="roLit">0</b> ms。</p>
+                <p class="ro"><code>last_edge</code>＝<b id="roEdge">0</b>：按鈕上一次變化的時間。</p>
+              </div>
+              <p class="when"><b>什麼時候用：</b>大多數小專案都可以這樣寫，同時要顧燈、按鈕、感測器的時候尤其好用。</p>
+            </div>
+
+            <div class="tabpanel" id="tp-timer" role="tabpanel" aria-labelledby="tb-timer" hidden>
+              <p class="lead">燈交給晶片裡的計時器：<code>Timer(0)</code> 每 100 ms 叫一次 <code>tick()</code>，<code>tick()</code> 自己數還剩幾格，數到 0 就換燈（綠 30 格＝3 秒、黃 10 格＝1 秒、紅 30 格＝3 秒）。主迴圈只剩一件事：看按鈕，寫法跟②一樣。你怎麼按，燈都照自己的節奏走。</p>
+              <p class="note"><b><code>tick()</code> 裡不 print、不建新東西。</b>它是計時器叫的，要短；換了燈只把 <code>changed</code> 設成 1，這種變數叫旗標，像一個待辦記號；主迴圈看到了，再替它印字。</p>
+              <div class="widget">
+                <h3>這支的表：亮幾格（一格 100 ms）</h3>
+                <table class="plan">
+                  <thead><tr><th>第幾列</th><th>哪顆燈</th><th>亮幾格</th><th>印什麼</th></tr></thead>
+                  <tbody>
+                    <tr id="p8-0"><td class="mono">0</td><td>綠燈</td><td class="mono">30</td><td>綠燈 3 秒</td></tr>
+                    <tr id="p8-1"><td class="mono">1</td><td>黃燈</td><td class="mono">10</td><td>黃燈 1 秒</td></tr>
+                    <tr id="p8-2"><td class="mono">2</td><td>紅燈</td><td class="mono">30</td><td>紅燈 3 秒</td></tr>
+                  </tbody>
+                </table>
+                <p class="ro">現在第 <b id="roState8">0</b> 列；<code>left</code>＝還剩 <b id="roLeft">30</b> 格；<code>changed</code>＝<b id="roChanged">0</b></p>
+              </div>
+              <p class="when"><b>什麼時候用：</b>固定節奏的事（閃燈、每隔一段時間量一次）交給計時器，主迴圈就空出來做別的。</p>
+            </div>
+
+            <div class="tabpanel" id="tp-irq" role="tabpanel" aria-labelledby="tb-irq" hidden>
+              <p class="lead">燈故意還用 <code>sleep</code> 輪（主程式跟①一樣會卡住），按鈕改交給硬體：<code>btn.irq()</code> 設好之後，腳位每從 1 變 0 一次，就把 <code>on_edge()</code> 叫起來，主程式正在睡也一樣。這種被中斷叫起來的函式，叫中斷處理函式（interrupt handler）。</p>
+              <p class="lead">按下、放開都會彈，按一下常常叫它十幾、二十次，所以 <code>on_edge()</code> 只做一件事：把 20 ms 的一次性計時器重新啟動。最後一下過了 20 ms，<code>confirm()</code> 再看一次按鈕，還是 0 才算按了一次。要印出來，得等主程式醒來、跑到下一個 <code>print</code>，所以最下面那條有兩種勾：<b>記住</b>（<code>confirm()</code> 加一那一刻）和<b>印出</b>（主程式醒來、把累計數印出來那一刻）。</p>
+              <div class="widget">
+                <div class="lockrow"><span>20 ms 確認</span><div class="seg" role="group" aria-label="20 ms 確認"><button id="cfOn" aria-pressed="true">開著（原本的程式）</button><button id="cfOff" aria-pressed="false">拿掉：每叫一次就算</button></div></div>
+                <p class="ro"><code>presses</code>＝<b id="roPresses">0</b>　<code>edges</code>＝<b id="roEdges">0</b>　確認計時器：<b id="roDeb">沒在跑</b></p>
+                <p class="tiny">拿掉確認再按：按下、放開那幾下，每一下都算一次，數字會暴增。</p>
+              </div>
+              <p class="when"><b>什麼時候用：</b>一般按鈕先用輪詢；訊號出現的時間很短、要精確計數，或主程式沒辦法常常去看時，再考慮中斷。按鈕的彈跳也可以在硬體上擋：兩顆邏輯閘接成閂鎖，見〈<a href="rs-latch.html">RS 閂鎖工作台</a>〉。</p>
+            </div>
+          </div>
+
+          <div class="serial">
+            <div class="sh">序列埠印出來的字（左邊灰字是模擬時間，Wokwi 不會印）</div>
+            <div id="serialRows"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="concepts" aria-label="三個觀念，跟著上面的分頁換">
+    <details class="ccard" id="cc-block" open>
+      <summary><span class="tag" hidden>這個分頁在講這個</span><h3>阻塞：一行沒做完，下一行不會開始</h3></summary>
+      <div class="ccbody">
+        <p><code>time.sleep()</code> 是最常見的一種。睡 3 秒＝主程式在這一行站 3 秒，下面看按鈕、看感測器、換燈的那幾行全部排在後面。解法不是「睡短一點」（睡得再短，睡著的時候主程式照樣不會往下看按鈕），而是別在需要一直注意的地方睡，分頁②就是這樣改的。</p>
+      </div>
+    </details>
+    <details class="ccard" id="cc-timer">
+      <summary><span class="tag" hidden>這個分頁在講這個</span><h3>計時器：晶片裡一顆自己走的碼表</h3></summary>
+      <div class="ccbody">
+        <p>設好時間，它自己數，到點就叫你的函式一下，不用主程式盯著。08 用它每 100 ms 數一格來換燈，09 用它做 20 ms 的確認。</p>
+        <details class="adv"><summary><span>想看原理</span></summary><div class="inner">
+          <p>官方文件寫「<span class="en" lang="en">The ESP32 port has one, two or four hardware timers, depending on the ESP32 device type</span>」（ESP32 依型號有一、二或四顆硬體計時器），編號從 0 開始：<code>Timer(0)</code>、<code>Timer(1)</code>……；又寫「<span class="en" lang="en">Virtual timers are not currently supported on this port</span>」（ESP32 版目前不支援虛擬計時器），所以不能寫 <code>Timer(-1)</code>。</p>
+          <p><code>period</code> 的單位是毫秒；<code>mode</code> 選 <code>Timer.ONE_SHOT</code>（只叫一次）或 <code>Timer.PERIODIC</code>（每隔一段時間叫一次）；被叫的函式會收到那個計時器本身，所以 08 的 <code>tick(t)</code> 要留一個 <code>t</code>。09 的 <code>Timer(1)</code> 設成只叫一次，當 20 ms 的確認鬧鐘。</p>
+          <pre class="code small">tim0 = Timer(0)
+tim0.init(period=5000, mode=Timer.ONE_SHOT, callback=lambda t:print(0))</pre>
+          <p class="tiny">官方範例（節錄）：5000 ms 之後叫一次，印出 0。</p>
+        </div></details>
+      </div>
+    </details>
+    <details class="ccard" id="cc-irq">
+      <summary><span class="tag" hidden>這個分頁在講這個</span><h3>中斷：腳位一變，硬體先記下來</h3></summary>
+      <div class="ccbody">
+        <p>按鈕從 1 變 0 的那一瞬間，硬體先記下來，很快把你的處理函式叫起來，不管主程式在做什麼、有沒有在睡。處理函式要短：記一下就返回，印字這種事留給主程式。</p>
+        <details class="adv"><summary><span>想看原理</span></summary><div class="inner">
+          <p>09 寫 <code>btn.irq(trigger=Pin.IRQ_FALLING, handler=on_edge)</code>：<code>IRQ_FALLING</code>＝按鈕從 1 變 0 的那一瞬間。官方說處理函式「<span class="en" lang="en">must take exactly one argument which is the Pin instance</span>」（一定要剛好收一個參數，就是那支腳位本身），09 的 <code>on_edge(pin)</code> 那個 <code>pin</code> 就是它。</p>
+          <p>腳位事件本來就是硬體發出的。預設 <code>hard=False</code>：硬體先記下、直譯器很快再叫你的函式，叫軟中斷；<code>hard=True</code>：直接在硬體中斷裡跑你的函式，這時不可以配置記憶體。</p>
+          <p><b>保守寫法：處理函式都保持短小；尤其 <code>hard=True</code> 時不可配置記憶體。</b>官方《Writing interrupt handlers》的三句：</p>
+          <ol>
+            <li>「<span class="en" lang="en">Keep the code as short and simple as possible</span>」：越短越簡單越好。</li>
+            <li>「<span class="en" lang="en">Avoid memory allocation: no appending to lists or insertion into dictionaries, no floating point</span>」：不要配置記憶體，不往串列加東西、不往字典插東西、不用浮點數。</li>
+            <li>「<span class="en" lang="en">updating shared data to indicate that the interrupt has occurred, and it will return</span>」：改一下共用的資料（主程式和處理函式都讀得到的變數），表示中斷發生過，然後就返回。</li>
+          </ol>
+          <p>09 的 <code>on_edge()</code> 除了把 <code>edges</code> 加一，還重新啟動計時器，跟第三句不完全一樣。這支用的是預設的軟中斷，所以可以在裡面重啟計時器；別把這段直接搬去 <code>hard=True</code>——硬中斷處理函式只改旗標或事先準備好的變數。<code>deb = Timer(1)</code> 在主程式開頭就建好了，<code>on_edge()</code> 只是把它重新啟動，不是在中斷裡建新東西。</p>
+          <p>09 是交給主迴圈換燈時印；想在中斷之後「立刻印」又不能在處理函式裡 print，才用 <code>micropython.schedule()</code>：官方說那件事會被「<span class="en" lang="en">queued for execution which will take place at a time when the heap is not locked</span>」，意思是先排進待辦，等記憶體沒被鎖住的時候再執行。用法見下面「想看更深」。</p>
+        </div></details>
+      </div>
+    </details>
+  </section>
+
+  <details class="sect">
+  <summary>四種寫法對照表</summary>
+  <section aria-label="四種寫法對照">
+    <div class="tablewrap">
+      <table class="facts cmp">
+        <thead><tr><th>寫法</th><th>按鈕會不會漏</th><th>燈準不準</th><th>程式好不好讀</th><th>要注意什麼</th><th>什麼時候用</th></tr></thead>
+        <tbody>
+          <tr><td><b>① sleep 版</b></td><td>會漏：只在每一輪開頭看一眼</td><td>準：照 sleep 的秒數</td><td>最好讀：照順序一行一行寫</td><td>睡著的時候主程式不會往下看按鈕；睡短一點只是漏得少一點</td><td>只有一件事要做，例如純粹讓燈閃</td></tr>
+          <tr><td><b>② 看時鐘不睡覺</b></td><td>本實驗的 150 ms 按鍵不會漏：約每 1 ms 看一次，遠短於這次按住的時間</td><td>準：時間到的那一圈就換，最多晚 1 ms 左右</td><td>要多想一步：燈序寫成表，記住第幾列、幾點開始</td><td>每一圈都要很短，圈裡不能睡太久；按下、放開的彈跳都要擋</td><td>大多數小專案：同時顧燈、按鈕、感測器</td></tr>
+          <tr><td><b>③ 燈交給計時器</b></td><td>本實驗的 150 ms 按鍵不會漏：主迴圈仍是每 1 ms 輪詢（寫法同②），只有燈脫鉤了</td><td>準：晶片裡的碼表自己數，不受主迴圈影響</td><td>燈的邏輯搬進 <code>tick()</code>，要記得它隨時會被叫</td><td><code>tick()</code> 要短：不 print、不建新東西；不能用 <code>Timer(-1)</code></td><td>固定節奏的事：閃燈、每隔一段時間量一次感測器</td></tr>
+          <tr><td><b>④ 按鈕交給中斷</b></td><td>本實驗的 150 ms 按鍵不會漏：主程式在睡也記得到</td><td>照 sleep 的秒數（這支故意沿用 sleep）</td><td>「記住」和「印出」分在兩個地方寫</td><td>處理函式要短；按一下會叫它很多次，要等最後一下過了 20 ms 再確認</td><td>一般按鈕先用輪詢；訊號出現的時間很短、要精確計數，或主程式沒辦法常常去看時，再考慮中斷</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  </details>
+
+  <details class="sect">
+  <summary>在 Wokwi 上自己跑一次（四個專案）</summary>
+  <section aria-label="Wokwi 動手做">
+    <p class="muted">上面的時間軸是畫給你看的，真正的手感要自己跑。四個專案用同一張電路圖（紅黃綠三顆燈＋一顆按鈕），只換 <span class="mono1">main.py</span>：</p>
+    <ol class="steps">
+      <li>開新專案：<span class="mono1">wokwi.com/projects/new/micropython-esp32</span></li>
+      <li>點 <span class="mono1">diagram.json</span> 分頁，全選、貼上（覆蓋原本的內容）</li>
+      <li>點 <span class="mono1">main.py</span> 分頁，全選、貼上，按綠色播放鍵</li>
+    </ol>
+    <div class="shared">
+      <div class="codehead"><span>四個專案共用的 diagram.json：紅燈 GPIO16（板面 IO4）、黃燈 GPIO12（IO5）、綠燈 GPIO13（IO6）、按鈕 GPIO5（套件按鍵 A，板面 IO11）</span><button class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button></div>
+      <details class="adv"><summary><span>看一眼 diagram.json</span></summary><div class="inner">
+        <pre class="code" id="cdj">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-led", "id": "led_r", "top": 40, "left": 330, "attrs": { "color": "red", "label": "紅 16" } },
+    { "type": "wokwi-led", "id": "led_y", "top": 140, "left": 330, "attrs": { "color": "yellow", "label": "黃 12" } },
+    { "type": "wokwi-led", "id": "led_g", "top": 240, "left": 330, "attrs": { "color": "green", "label": "綠 13" } },
+    { "type": "wokwi-resistor", "id": "r_r", "top": 70, "left": 420, "attrs": { "value": "220" } },
+    { "type": "wokwi-resistor", "id": "r_y", "top": 170, "left": 420, "attrs": { "value": "220" } },
+    { "type": "wokwi-resistor", "id": "r_g", "top": 270, "left": 420, "attrs": { "value": "220" } },
+    { "type": "wokwi-pushbutton", "id": "btn", "top": 380, "left": 340, "attrs": { "color": "green", "label": "按鈕 → 5" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:16", "led_r:A", "red", [] ],
+    [ "esp:12", "led_y:A", "gold", [] ],
+    [ "esp:13", "led_g:A", "green", [] ],
+    [ "led_r:C", "r_r:1", "black", [] ],
+    [ "led_y:C", "r_y:1", "black", [] ],
+    [ "led_g:C", "r_g:1", "black", [] ],
+    [ "r_r:2", "esp:GND.3", "black", [] ],
+    [ "r_y:2", "esp:GND.3", "black", [] ],
+    [ "r_g:2", "esp:GND.3", "black", [] ],
+    [ "btn:1.l", "esp:5", "green", [] ],
+    [ "btn:2.l", "esp:GND.3", "black", [] ]
+  ],
+  "dependencies": {}
+}
+</pre>
+      </div></details>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h3>① 06 sleep 版：按鈕會漏</h3>
+        <p><b>要做什麼：</b>三顆燈用 <span class="mono1">time.sleep()</span> 輪流亮，按鈕只在每一輪開頭看一眼。</p>
+        <p><b>跑起來會看到：</b>燈照綠 3 秒、黃 1 秒、紅 3 秒一直輪。2026-09-25 在 Wokwi 實跑，按鈕按 8 下（每下按住 150 ms），「看到按鈕了」只印出 1 行。</p>
+        <p><b>試著改：</b>兩個 <span class="mono1">sleep(3)</span> 都改成 <span class="mono1">sleep(0.1)</span>，再按 8 下，印出來的有變多嗎？</p>
+        <div class="btns"><button class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button class="copy" data-copy="c06m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c06m">
+# 06 紅綠燈＋按鈕（會漏按的版本）
+# 燈用 time.sleep() 一顆一顆輪；按鈕只在迴圈開頭看一眼。
+# 程式睡著的那幾秒什麼都看不到——按鈕按了，它也不知道。
+from machine import Pin
+import time
+
+red = Pin(16, Pin.OUT)              # 套件紅燈 GPIO16（板面 IO4）
+yellow = Pin(12, Pin.OUT)           # 套件黃燈 GPIO12（板面 IO5）
+green = Pin(13, Pin.OUT)            # 套件綠燈 GPIO13（板面 IO6）
+btn = Pin(5, Pin.IN, Pin.PULL_UP)   # 套件按鍵 A GPIO5（板面 IO11）：沒按＝1、按下＝0
+
+
+def only(light):
+    red.value(0)
+    yellow.value(0)
+    green.value(0)
+    light.value(1)
+
+
+seen = 0
+print('紅綠燈開始。按鈕只在每一輪開頭看一眼，其餘時間程式在睡')
+while True:
+    if btn.value() == 0:            # 只有跑到本行的那一瞬間才看得到按鈕
+        seen = seen + 1
+        print('看到按鈕了，第', seen, '次')
+    only(green)
+    print('綠燈 3 秒')
+    time.sleep(3)                   # 睡著：本行沒跑完，下面全部不動、按鈕也沒人看
+    only(yellow)
+    print('黃燈 1 秒')
+    time.sleep(1)
+    only(red)
+    print('紅燈 3 秒')
+    time.sleep(3)
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>② 07 看時鐘不睡覺</h3>
+        <p><b>要做什麼：</b>拿掉 <span class="mono1">sleep(3)</span>，每圈看一眼按鈕、看一眼時鐘，只睡 1 ms。</p>
+        <p><b>跑起來會看到：</b>燈的節奏跟①一樣；實跑按 8 下，剛好印到「第 8 次」。</p>
+        <p><b>試著改：</b>把最後一行 <span class="mono1">time.sleep_ms(1)</span> 刪掉，按鈕還看得到嗎？</p>
+        <div class="btns"><button class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button class="copy" data-copy="c07m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c07m">
+# 07 紅綠燈＋按鈕（看時鐘、不睡覺）
+# 迴圈每一圈只做很短的事：看一眼按鈕、看一眼時鐘（ticks_ms）「該換燈了沒」。
+# 沒有 sleep(3)，所以按鈕每 1 ms 就被看一次，幾乎不會漏。
+from machine import Pin
+import time
+
+red = Pin(16, Pin.OUT)              # 套件紅燈 GPIO16（板面 IO4）
+yellow = Pin(12, Pin.OUT)           # 套件黃燈 GPIO12（板面 IO5）
+green = Pin(13, Pin.OUT)            # 套件綠燈 GPIO13（板面 IO6）
+btn = Pin(5, Pin.IN, Pin.PULL_UP)   # 套件按鍵 A GPIO5（板面 IO11）：沒按＝1、按下＝0
+
+
+def only(light):
+    red.value(0)
+    yellow.value(0)
+    green.value(0)
+    light.value(1)
+
+
+# 燈序寫成一張表：(哪顆燈, 亮幾毫秒, 名字)。改順序、改時間只改表。
+plan = [(green, 3000, '綠燈 3 秒'), (yellow, 1000, '黃燈 1 秒'), (red, 3000, '紅燈 3 秒')]
+state = 0                           # 現在輪到表的第幾列
+since = time.ticks_ms()             # 現在的燈是幾點幾分開始亮的
+only(plan[state][0])
+
+seen = 0
+prev = 1
+last_edge = 0                       # 上一次按鈕 0↔1 變化的時間
+print('看時鐘不睡覺：按鈕每 1 ms 看一次')
+print(plan[state][2])
+while True:
+    now = time.ticks_ms()
+
+    # 一、看按鈕：彈跳＝一堆變化擠在 1 ms 內（按下、放開都會抖）。
+    #    只有「離上一次變化超過 50 ms」的那個 1→0 才算按下；其餘變化只是把時間記下來。
+    v = btn.value()
+    if v != prev:
+        if v == 0 and time.ticks_diff(now, last_edge) &gt; 50:
+            seen = seen + 1
+            print('看到按鈕了，第', seen, '次')
+        last_edge = now
+        prev = v
+
+    # 二、看時鐘：現在的燈亮夠久了嗎？夠了就換下一列
+    if time.ticks_diff(now, since) &gt;= plan[state][1]:
+        state = (state + 1) % len(plan)
+        since = now
+        only(plan[state][0])
+        print(plan[state][2])
+
+    time.sleep_ms(1)                # 只睡 1 ms，馬上回來再看一次
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>③ 08 燈交給計時器</h3>
+        <p><b>要做什麼：</b><span class="mono1">Timer(0)</span> 每 100 ms 叫一次 <span class="mono1">tick()</span>，燈的節奏全交給它；主迴圈只看按鈕。</p>
+        <p><b>跑起來會看到：</b>燈照 3、1、3 秒輪；實跑按 8 下，剛好印到「第 8 次」。你一直按，燈也不會晚換。</p>
+        <p><b>試著改：</b><span class="mono1">period=100</span> 改成 50，燈變快還是變慢？</p>
+        <div class="btns"><button class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button class="copy" data-copy="c08m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c08m">
+# 08 燈交給計時器（machine.Timer）
+# 計時器每 100 ms 叫一次 tick()，tick 自己數「還剩幾格」、到了就換燈。
+# 主迴圈只剩一件事：看按鈕。燈的節奏跟按鈕互不干擾。
+from machine import Pin, Timer
+import time
+
+red = Pin(16, Pin.OUT)              # 套件紅燈 GPIO16（板面 IO4）
+yellow = Pin(12, Pin.OUT)           # 套件黃燈 GPIO12（板面 IO5）
+green = Pin(13, Pin.OUT)            # 套件綠燈 GPIO13（板面 IO6）
+btn = Pin(5, Pin.IN, Pin.PULL_UP)   # 套件按鍵 A GPIO5（板面 IO11）：沒按＝1、按下＝0
+
+
+def only(light):
+    red.value(0)
+    yellow.value(0)
+    green.value(0)
+    light.value(1)
+
+
+# 燈序寫成一張表：(哪顆燈, 亮幾格, 名字)。一格＝100 ms，30 格＝3 秒。
+plan = [(green, 30, '綠燈 3 秒'), (yellow, 10, '黃燈 1 秒'), (red, 30, '紅燈 3 秒')]
+state = 0                           # 現在輪到表的第幾列
+left = plan[state][1]               # 現在的燈還剩幾格
+changed = 0                         # 旗標：tick 換了燈，主迴圈看到再印字
+
+
+def tick(t):
+    # 計時器叫的：要短，只改幾個數字和腳位；不 print、不建新東西
+    global state, left, changed
+    left = left - 1
+    if left &lt;= 0:
+        state = (state + 1) % len(plan)
+        left = plan[state][1]
+        only(plan[state][0])
+        changed = 1
+
+
+tim = Timer(0)                      # ESP32 的硬體計時器 0
+tim.init(period=100, mode=Timer.PERIODIC, callback=tick)   # 每 100 ms 叫一次 tick
+only(plan[state][0])
+
+seen = 0
+prev = 1
+last_edge = 0                       # 上一次按鈕 0↔1 變化的時間
+print('燈交給計時器；主迴圈只看按鈕')
+print(plan[state][2])
+while True:
+    now = time.ticks_ms()
+
+    # 看按鈕：只有「離上一次變化超過 50 ms」的那個 1→0 才算按下（按下、放開的彈跳都擋得住）
+    v = btn.value()
+    if v != prev:
+        if v == 0 and time.ticks_diff(now, last_edge) &gt; 50:
+            seen = seen + 1
+            print('看到按鈕了，第', seen, '次')
+        last_edge = now
+        prev = v
+
+    # 計時器換了燈，主迴圈替它印一行
+    if changed:
+        changed = 0
+        print(plan[state][2])
+
+    time.sleep_ms(1)
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>④ 09 按鈕交給中斷</h3>
+        <p><b>要做什麼：</b>燈故意還用 sleep 輪；按鈕交給 <span class="mono1">btn.irq()</span>，每個 1 變 0 都叫 <span class="mono1">on_edge()</span>，再由 20 ms 後的 <span class="mono1">confirm()</span> 確認。</p>
+        <p><b>跑起來會看到：</b>每換一次燈印一行「到目前中斷記到 N 次；被叫 M 次」。在綠燈那 3 秒裡按，要等換黃燈時數字才跳上來。實跑按 8 下：記到 8 次，被叫 170 次。</p>
+        <p><b>試著改：</b>把確認拿掉（第 37 行改成 <span class="mono1">global edges, presses</span>、第 39 行改成 <span class="mono1">presses = presses + 1</span>），按一下記到幾次？</p>
+        <div class="btns"><button class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button class="copy" data-copy="c09m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c09m">
+# 09 按鈕交給中斷（Pin.irq）＋ 一次性計時器確認
+# 按鈕 1→0 那一瞬間，硬體會把 on_edge() 叫起來——就算主程式正在 sleep 也一樣。
+# 燈故意還用 time.sleep() 輪（跟 06 一樣會卡住），證明中斷不受它影響。
+# 彈跳：按下、放開都會有一堆 1→0 的邊緣擠在 1 ms 內。所以 on_edge() 只做一件事——
+# 啟動一個 20 ms 的一次性計時器；20 ms 後 confirm() 再看一次按鈕，還是 0 才算真的按下一次。
+# 中斷處理函式要短：不 print、不建新東西（MicroPython 官方的規則）。
+from machine import Pin, Timer
+import time
+
+red = Pin(16, Pin.OUT)              # 套件紅燈 GPIO16（板面 IO4）
+yellow = Pin(12, Pin.OUT)           # 套件黃燈 GPIO12（板面 IO5）
+green = Pin(13, Pin.OUT)            # 套件綠燈 GPIO13（板面 IO6）
+btn = Pin(5, Pin.IN, Pin.PULL_UP)   # 套件按鍵 A GPIO5（板面 IO11）：沒按＝1、按下＝0
+
+
+def only(light):
+    red.value(0)
+    yellow.value(0)
+    green.value(0)
+    light.value(1)
+
+
+presses = 0                         # 確認過的按下次數
+edges = 0                           # 中斷被叫了幾次（含彈跳，統計用）
+deb = Timer(1)                      # 去彈跳用的一次性計時器（硬體計時器 1）
+
+
+def confirm(t):
+    # 最後一個邊緣之後 20 ms 才會跑到：按鈕還是 0 ＝ 真的按著，算一次
+    global presses
+    if btn.value() == 0:
+        presses = presses + 1
+
+
+def on_edge(pin):
+    # 硬體叫的：每個 1→0 邊緣都會進來（包括彈跳）。只做一件事：重新啟動 20 ms 的一次性計時器
+    global edges
+    edges = edges + 1
+    deb.init(period=20, mode=Timer.ONE_SHOT, callback=confirm)
+
+
+btn.irq(trigger=Pin.IRQ_FALLING, handler=on_edge)   # 按鈕 1→0 就叫 on_edge
+
+print('按鈕交給中斷；燈還是用 sleep 輪')
+while True:
+    only(green)
+    print('綠燈 3 秒；到目前中斷記到', presses, '次；被叫', edges, '次')
+    time.sleep(3)                   # 主程式在睡，中斷還醒著
+    only(yellow)
+    print('黃燈 1 秒；到目前中斷記到', presses, '次；被叫', edges, '次')
+    time.sleep(1)
+    only(red)
+    print('紅燈 3 秒；到目前中斷記到', presses, '次；被叫', edges, '次')
+    time.sleep(3)
+</pre>
+        </div></details>
+      </div>
+    </div>
+    <p class="tiny">Wokwi 的按鈕預設就會彈跳（官方說明：約 1 ms 內來回 10 到 100 次），實跑也看到放開的時候一樣會彈。所以 07、08 用 50 ms 的鎖定時間、09 用 20 ms 的確認把它擋掉；序列埠印出來的次數，就是擋完之後的結果。</p>
+  </section>
+  </details>
+
+  <details class="sect">
+  <summary>試試看：五個問題</summary>
+  <section aria-label="試試看">
+    <div class="cards">
+      <div class="card">
+        <h3>① 把 sleep(3) 改成 sleep(0.1)，還會漏嗎？</h3>
+        <p><b>會，只是機率變小。</b>一輪裡還是有大半時間在睡（黃燈那個 <span class="mono1">sleep(1)</span> 也還在），睡著的時候主程式照樣不會往下看按鈕；你按的那一下只要整個落在睡著的時候，就看不到。睡得短，只是「剛好碰上看一眼」的機會多一點。</p>
+        <button class="try" data-preset="miss">試試看：sleep 版按 8 下</button>
+      </div>
+      <div class="card">
+        <h3>② 07 把 sleep_ms(1) 拿掉會怎樣？</h3>
+        <p><b>照樣看得到按鈕，還看得更勤。</b>少了那 1 ms，主迴圈會高速空轉、幾乎吃滿可用的處理時間，也更耗電；有設中斷的話，中斷仍會被叫。留著 1 ms 不影響反應（最多晚 1 ms 左右），卻讓晶片每圈喘一口氣。</p>
+        <button class="try" data-preset="catch">試試看：看時鐘版按 8 下</button>
+      </div>
+      <div class="card">
+        <h3>③ 08 把 period 改 50，燈變快還是變慢？</h3>
+        <p><b>變快。</b>一格從 100 ms 變成 50 ms，表上的 30 格就只剩 1.5 秒，程式註解寫的「30 格＝3 秒」也跟著不對了。想讓燈速不變，表上的格數要一起改成兩倍。</p>
+        <button class="try" data-preset="timer">試試看：看計時器怎麼數格子</button>
+      </div>
+      <div class="card">
+        <h3>④ 09 拿掉 20 ms 確認，按一下記到幾次？</h3>
+        <p><b>一下就記好幾次。</b>按下、放開的時候金屬片都會彈，每彈一下就是一次 1 變 0，中斷就叫一次 <span class="mono1">on_edge()</span>；沒有確認，叫幾次就算幾次。Wokwi 實跑按 8 下，中斷被叫 170 次，確認之後剛好 8 次。這一頁把確認拿掉，看「記到」怎麼暴增。</p>
+        <button class="try" data-preset="bounce">試試看：拿掉確認按 8 下</button>
+      </div>
+      <div class="card">
+        <h3>⑤ 按住按鈕不放，四支程式各記到幾次？</h3>
+        <p>①每一輪開頭看一眼，看到還按著就再算一次：按住多久，大約每 7 秒多算一次。②③只算「1 變 0」那一下，按住不放只算 1 次。④按下那幾下只觸發一次確認，按住不放也只記 1 次。</p>
+        <button class="try" data-act="hold">試試看：在目前的分頁按住 15 秒</button>
+        <p class="tiny">慢動作 0.5× 要看 30 秒；先把慢動作調到 2× 比較快。</p>
+      </div>
+    </div>
+  </section>
+  </details>
+
+  <details class="sect">
+  <summary>想看更深：四個小問題</summary>
+  <section aria-label="想看更深">
+    <div class="cards">
+      <div class="card">
+        <h3>比時間為什麼要用 ticks_diff()，不直接相減？</h3>
+        <p><span class="mono1">ticks_ms()</span> 是一個一直往上數的數字，數到上限就會從 0 重新數，這叫繞回。剛好跨過那一刻時，「現在 − 上一次」會變成一個很大的負數，程式就以為時間倒退了。<span class="mono1">ticks_diff(現在, 上一次)</span> 會自己處理繞回，所以比時間一律用它。</p>
+      </div>
+      <div class="card">
+        <h3>放開按鈕也要擋？</h3>
+        <p>要。07、08 的第一版只從「看到按下」那一刻起算 50 ms，Wokwi 實跑按 8 下算成 9 次；09 的第一版用 50 ms 鎖定、沒有計時器確認，實跑記到 16 次。多出來的都是<b>放開時的彈跳</b>：按住 150 ms 才放開，早就過了 50 ms；金屬片分開的時候又彈回去碰一下，那也是一次 1 變 0，就又算了一次。所以現在的寫法是：任何變化都重新計時（07、08），或等最後一下過了 20 ms 再確認（09）。</p>
+      </div>
+      <div class="card">
+        <h3>軟中斷、硬中斷差在哪？</h3>
+        <p>腳位事件本來就是硬體發出的，差在你的函式在哪裡跑。預設 <span class="mono1">hard=False</span>＝硬體先記下、直譯器很快再叫你的函式，這叫軟中斷（這一頁畫成「一被按就叫」，是簡化）；<span class="mono1">hard=True</span>＝直接在硬體中斷裡跑你的函式，這時不可以配置記憶體，官方原文是「<span class="en" lang="en">Hard interrupt handlers may not allocate memory</span>」。初學先用預設的就好。</p>
+        <pre class="code small">Pin.irq(handler=None, trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, *, priority=1, wake=None, hard=False)</pre>
+        <p class="tiny">官方文件裡 <span class="mono1">Pin.irq()</span> 的完整寫法；09 只用到 trigger 和 handler 兩個。</p>
+      </div>
+      <div class="card">
+        <h3>中斷裡想印字怎麼辦？</h3>
+        <p>處理函式裡只記數，印字這種重的事交給 <span class="mono1">micropython.schedule()</span>，它會等到安全的時候再執行：</p>
+        <pre class="code small">import micropython
+
+def report(n):                     # 重的事放這裡：可以 print
+    print('中斷記到', n, '次')
+
+# 在 confirm() 裡、presses 加一之後，多寫這一行：
+micropython.schedule(report, presses)</pre>
+      </div>
+    </div>
+  </section>
+  </details>
+
+  <details class="sect">
+  <summary>數字從哪裡來</summary>
+  <section aria-label="數字出處">
+    <p class="muted">頁面上每個數字都有出處；官方英文照原文引，旁邊是白話翻譯。下面另列這一頁為了畫圖做的簡化。</p>
+    <div class="tablewrap">
+      <table class="facts">
+        <thead><tr><th>事</th><th>值</th><th>出處與備註</th></tr></thead>
+        <tbody>
+          <tr><td>ESP32 的硬體計時器</td><td class="num">一、二或四顆（依型號）；編號從 Timer(0) 起；不能寫 Timer(-1)</td><td>MicroPython 官方文件 ESP32 quickref、machine.Timer：「<span class="en" lang="en">The ESP32 port has one, two or four hardware timers, depending on the ESP32 device type</span>」「<span class="en" lang="en">Virtual timers are not currently supported on this port</span>」。period 單位是毫秒；mode 是 Timer.ONE_SHOT 或 Timer.PERIODIC；被叫的函式收到那個計時器本身。</td></tr>
+          <tr><td>官方計時器範例</td><td class="num">tim0 = Timer(0)；tim0.init(period=5000, mode=Timer.ONE_SHOT, callback=lambda t:print(0))</td><td>同上（逐字節錄）；同一段另一顆是 tim1.init(period=2000, mode=Timer.PERIODIC, …)。</td></tr>
+          <tr><td>腳位中斷</td><td class="num">Pin.irq(handler=None, trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, *, priority=1, wake=None, hard=False)</td><td>MicroPython 官方文件 machine.Pin。處理函式「<span class="en" lang="en">must take exactly one argument which is the Pin instance</span>」；IRQ_FALLING＝1 變 0 那一瞬間；預設 hard=False＝硬體先記下、直譯器很快再叫處理函式（軟中斷），hard=True＝直接在硬體中斷裡跑處理函式，「<span class="en" lang="en">Hard interrupt handlers may not allocate memory</span>」。</td></tr>
+          <tr><td>中斷處理函式的規則</td><td class="num">保守寫法：處理函式都保持短小；尤其 hard=True 時不可配置記憶體；重的事用 micropython.schedule</td><td>MicroPython 官方《Writing interrupt handlers》（逐字引）：「<span class="en" lang="en">Keep the code as short and simple as possible</span>」「<span class="en" lang="en">Avoid memory allocation: no appending to lists or insertion into dictionaries, no floating point</span>」「<span class="en" lang="en">updating shared data to indicate that the interrupt has occurred, and it will return</span>」「<span class="en" lang="en">queued for execution which will take place at a time when the heap is not locked</span>」。</td></tr>
+          <tr><td>時間函式</td><td class="num">time.ticks_ms()、time.ticks_diff(a, b)、time.sleep()（單位秒）、time.sleep_ms()</td><td>MicroPython 官方文件 time；ticks_diff 會自己處理繞回。</td></tr>
+          <tr><td>一顆開關會彈多久</td><td class="num">閉合平均約 1.6 ms；去掉極端值後最長 6.2 ms</td><td>Jack Ganssle《A Guide to Debouncing》。</td></tr>
+          <tr><td>Wokwi 的按鈕</td><td class="num">預設會彈跳：約 1 ms 內來回 10 到 100 次</td><td>docs.wokwi.com 的 wokwi-pushbutton 說明。</td></tr>
+          <tr><td>套件腳位</td><td class="num">紅燈 GPIO16（板面 IO4）、黃燈 GPIO12（IO5）、綠燈 GPIO13（IO6）、按鍵 A GPIO5（IO11）</td><td>原廠 EZ Start Kit+ 腳位對照圖。</td></tr>
+          <tr><td>06 sleep 版</td><td class="num">一輪 7 秒（3＋1＋3）；按 8 下實測看到 1 次</td><td>程式邏輯；2026-09-25 Wokwi 實跑（每下按住 150 ms、間隔 600 ms）。</td></tr>
+          <tr><td>07、08</td><td class="num">每 1 ms 看一次按鈕；50 ms 鎖定時間；按 8 下實測各看到 8 次</td><td>2026-09-25 Wokwi 實跑第二版。第一版只擋 1 變 0 的邊緣，實跑 8 下算到 9 次（放開時的彈跳）。</td></tr>
+          <tr><td>09</td><td class="num">20 ms 一次性計時器 Timer(1) 確認；按 8 下實測記到 8 次、中斷被叫 170 次</td><td>2026-09-25 Wokwi 實跑第二版。第一版用 50 ms 鎖定、沒有計時器確認，實跑 8 下記到 16 次。</td></tr>
+          <tr><td>自動按 8 下</td><td class="num">每下按住 150 ms、放開 600 ms</td><td>跟 Wokwi 實跑腳本同一組參數。</td></tr>
+          <tr><td>時間軸</td><td class="num">一格 100 ms、一個畫面約 8 秒；慢動作 0.25× 到 2×（預設 0.5×）</td><td>這一頁的設定。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>這一頁的簡化</h3>
+    <ul class="simp">
+      <li>簡化：時間軸把 1 ms 畫成看得見的寬度；一瞬間就做完的那幾行（看按鈕、only()、print），畫成細線和小點。</li>
+      <li>簡化：②③ 迴圈裡那幾行本身花的時間幾乎不算，一圈差不多就是 <span class="mono1">sleep_ms(1)</span> 那 1 ms；真的板子上每一行都還要花一點時間。</li>
+      <li>簡化：MicroPython 的中斷處理函式預設是軟中斷（硬體先記下、直譯器很快再叫它），這裡畫成「一被按就叫」；計時器叫 tick()、confirm() 也畫成立刻。</li>
+      <li>簡化：彈跳照 Wokwi 的說法，按下、放開各在約 1 ms 內跳好幾下；時間軸上每一撮只畫幾根直線，實際被叫幾次看數字。這一頁每下跳幾次是隨機生的，跟 Wokwi 實跑的次數不會一樣。</li>
+      <li>簡化：時間從程式開始跑算 0 秒；真的板子上 ticks_ms() 開機就開始數，數字會不一樣。</li>
+    </ul>
+  </section>
+  </details>
+
+  <footer class="foot">
+    <span>資料來源：MicroPython 官方文件（ESP32 quickref、machine.Timer、machine.Pin、time、《Writing interrupt handlers》）；Jack Ganssle《A Guide to Debouncing》；Wokwi 官方零件說明（docs.wokwi.com）；原廠 EZ Start Kit+ 腳位對照圖；2026-09-25 Wokwi 實跑紀錄。</span>
+    <span>國立東華大學通識課《創客入門—智慧生活裝置實作》補充教材（W4 數位輸出與燈光控制）。姊妹頁：〈<a href="rs-latch.html">RS 閂鎖工作台</a>〉、〈<a href="../w05/button-bounce.html">按鈕彈跳實驗台</a>〉、〈<a href="esp32-pin-xray.html">ESP32 腳位透視鏡</a>〉。</span>
+    <span>版本 2026-09-25。</span>
+  </footer>
+
+</div></div>
+
+<script>
+(function () {
+'use strict';
+var $ = function (id) { return document.getElementById(id); };
+
+/* ===== 數字（畫面上出現的，全部來自「數字從哪裡來」那張表；其餘是模擬用的簡化） ===== */
+var WIN = 8000;            /* 時間軸一個畫面 8 秒 */
+var GRID = 100;            /* 一格 100 ms */
+var TINY = 0.002;          /* 一瞬間就做完的一行只算 2 µs（簡化；畫的時候放大成看得見） */
+var HOLD = 150, GAP = 600, NAUTO = 8;   /* 自動按 8 下：每下按住 150 ms、放開 600 ms（跟 Wokwi 實跑腳本同一組） */
+var LEAD = 200;            /* 按「自動按」之後，第一下晚 0.2 秒才按，才看得到它從右邊進來 */
+var MINPRESS = 40;         /* 滑鼠點太快時，一次按下在模擬時間裡至少算 40 ms */
+var HOLDLONG = 15000;      /* 「按住不放」那張卡：按住 15 秒 */
+var BOUNCE = 0.9;          /* 彈跳：按下、放開各在 0.9 ms 內跳完（照 Wokwi 的「約 1 ms 內」） */
+var DEB = 20;              /* 09：最後一個邊緣之後 20 ms 才確認 */
+var LOCK = 50;             /* 07、08：離上一次變化超過 50 ms 的 1→0 才算 */
+var SEED = 20260925;
+var TABS = ['sleep', 'clock', 'timer', 'irq'];
+var CN = { g: '綠燈', y: '黃燈', r: '紅燈' };
+var PLAN07 = [{ c: 'g', ms: 3000, name: '綠燈 3 秒' }, { c: 'y', ms: 1000, name: '黃燈 1 秒' }, { c: 'r', ms: 3000, name: '紅燈 3 秒' }];
+var PLAN08 = [{ c: 'g', n: 30, name: '綠燈 3 秒' }, { c: 'y', n: 10, name: '黃燈 1 秒' }, { c: 'r', n: 30, name: '紅燈 3 秒' }];
+var FILE = { sleep: '06-sleep-misses／main.py', clock: '07-ticks-clock／main.py', timer: '08-timer／main.py', irq: '09-irq-lockout／main.py' };
+var PRE = { sleep: 'c06m', clock: 'c07m', timer: 'c08m', irq: 'c09m' };
+var TOPLINE = { sleep: 1, clock: 19, timer: 25, irq: 13 };
+var CAPTION = {
+  sleep: '主程式站在這一行，下面全部不動。',
+  clock: '不睡覺，改成每圈看一眼時鐘。',
+  timer: '燈的節奏跟主程式脫鉤了。',
+  irq: '記住只晚大約 20 ms，印出來要等主程式醒來。'
+};
+var LEGEND = {
+  sleep: $('tlCap').innerHTML,
+  clock: '一格 100 ms、整個畫面約 8 秒。最上面那條<b>斜線帶子</b>＝一直在繞的迴圈，每圈大約 1 ms，畫面上擠成一條。按下去的下一圈就看到，所以勾都在按鈕正下方，數字是等了幾毫秒。按鈕那條的小鋸齒＝按下、放開那一瞬間金屬片在彈（放大畫）。',
+  timer: '多一條<b>計時器</b>：每 100 ms 一根小刻度（<code>tick()</code> 被叫一次），數字是還剩幾格，長刻度＝數到 0、換燈。帶子是主迴圈，它只剩看按鈕。',
+  irq: '<b>紫色粗條</b>＝主程式在睡。<b>一撮直線</b>＝按鈕每從 1 變 0 一次，<code>on_edge()</code> 就被叫一次（只畫幾根，「×」後面是次數）；<b>菱形</b>＝最後一下過了 20 ms，<code>confirm()</code> 再看一次，實心的有加一。最下面：<b>紫勾</b>＝記住，<b>綠勾</b>＝印出（主程式醒來、把累計數印出來那一刻），中間的虛線就是在等。'
+};
+var CARD = { sleep: 'cc-block', clock: 'cc-block', timer: 'cc-timer', irq: 'cc-irq' };
+
+var reduced = false;
+try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+var S = { tab: 'sleep', speed: 0.5, paused: reduced, confirm: true };
+var realNow = 0, dirty = true;
+
+/* ===== 小工具 ===== */
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function f(n) { return Math.round(n * 10) / 10; }
+function tw(s, size) { var w = 0; for (var i = 0; i < s.length; i++) { var c = s.charCodeAt(i); w += c > 0x2E7F ? size : (c === 32 ? size * 0.32 : size * 0.6); } return w; }
+function load(k) { try { return localStorage.getItem('timer-lab-' + k); } catch (e) { return null; } }
+function save(k, v) { try { localStorage.setItem('timer-lab-' + k, String(v)); } catch (e) {} }
+
+/* ===== 模擬的機器：時間、程式、按鈕、燈 ===== */
+var M;
+function L(l, lab) { return { l: l, d: TINY, lab: lab || '' }; }
+function Z(l, ms, lab) { return { l: l, d: ms, lab: lab, sleep: true }; }
+function tk() { return Math.floor(M.t); }                      /* ticks_ms()：只數到整數毫秒 */
+function setLight(c) { M.lights.push({ t: M.t, c: c }); M.v.light = c; }
+function out(s) { M.serial.push({ t: M.t, s: s }); if (M.serial.length > 60) M.serial.shift(); M.serialDirty = true; }
+function mark(k, o) { var m = o || {}; m.t = M.t; m.k = k; M.marks.push(m); }
+function push(e) { var q = M.ev, i = q.length; while (i > 0 && q[i - 1].t > e.t) i--; q.splice(i, 0, e); }
+
+function* onlyG(c, d) {                                        /* only()：先三顆都關、再開一顆 */
+  yield L(d + 1, '先把三顆燈都關掉'); yield L(d + 2, '先把三顆燈都關掉'); yield L(d + 3, '先把三顆燈都關掉');
+  setLight(c); yield L(d + 4, '只開' + CN[c]);
+}
+function sawIt() {                                             /* 程式看到了：算在現在按著的那一下 */
+  var p = M.held; if (!p) return;
+  if (!p.seen.length) { var w = M.t - p.a; if (w > M.cnt.maxWait) M.cnt.maxWait = w; }
+  p.seen.push(M.t);
+}
+
+/* ① 06：只在迴圈開頭看一眼 */
+function* g06() {
+  yield L(4, '載入 Pin'); yield L(5, '載入 time');
+  yield L(7, '設定紅燈腳位'); yield L(8, '設定黃燈腳位'); yield L(9, '設定綠燈腳位'); yield L(10, '設定按鈕腳位');
+  yield L(13, '定義 only()');
+  M.v.seen = 0; yield L(20, 'seen 歸零');
+  out('紅綠燈開始。按鈕只在每一輪開頭看一眼，其餘時間程式在睡'); yield L(21, '印字');
+  while (true) {
+    yield L(22, '回到迴圈開頭');
+    var hit = (M.btn === 0);
+    M.v.lookAt = M.t;
+    mark('look', { hit: hit });
+    if (hit) sawIt();
+    yield L(23, '看一眼按鈕');
+    if (hit) { M.v.seen += 1; yield L(24, 'seen 加一'); out('看到按鈕了，第 ' + M.v.seen + ' 次'); yield L(25, '印字'); }
+    mark('only'); yield L(26, '換綠燈'); yield* onlyG('g', 13);
+    mark('print'); out('綠燈 3 秒'); yield L(27, '印字');
+    yield Z(28, 3000, 'sleep(3)');
+    mark('only'); yield L(29, '換黃燈'); yield* onlyG('y', 13);
+    mark('print'); out('黃燈 1 秒'); yield L(30, '印字');
+    yield Z(31, 1000, 'sleep(1)');
+    mark('only'); yield L(32, '換紅燈'); yield* onlyG('r', 13);
+    mark('print'); out('紅燈 3 秒'); yield L(33, '印字');
+    yield Z(34, 3000, 'sleep(3)');
+  }
+}
+
+/* ②③ 共用：讀按鈕。任何 0↔1 變化都記時間；離上一次變化超過 50 ms 的 1→0 才算 */
+function readBtn(now) {
+  var v = M.btn, changed = (v !== M.v.prev), hit = changed && v === 0 && (now - M.v.last_edge > LOCK);
+  if (hit) { sawIt(); mark('seen'); }
+  else if (changed && v === 0 && M.held && !M.held.seen.length) M.held.locked = true;
+  return { v: v, changed: changed, hit: hit };
+}
+
+/* ② 07：看時鐘、不睡覺 */
+function* g07() {
+  yield L(4, '載入 Pin'); yield L(5, '載入 time');
+  yield L(7, '設定紅燈腳位'); yield L(8, '設定黃燈腳位'); yield L(9, '設定綠燈腳位'); yield L(10, '設定按鈕腳位');
+  yield L(13, '定義 only()');
+  yield L(21, '寫好燈序表 plan');
+  M.v.state = 0; yield L(22, 'state＝0：第 0 列');
+  M.v.since = tk(); yield L(23, '記下這顆燈幾點開始亮');
+  mark('change'); yield L(24, '開第一顆燈'); yield* onlyG(PLAN07[0].c, 13);
+  M.v.seen = 0; yield L(26, 'seen 歸零');
+  M.v.prev = 1; yield L(27, 'prev＝1');
+  M.v.last_edge = 0; yield L(28, 'last_edge 歸零');
+  out('看時鐘不睡覺：按鈕每 1 ms 看一次'); yield L(29, '印字');
+  out(PLAN07[0].name); yield L(30, '印字');
+  M.band = { a: M.t };
+  while (true) {
+    yield L(31, '回到迴圈開頭');
+    var now = tk(); M.v.now = now; yield L(32, '看時鐘 ticks_ms()');
+    var r = readBtn(now);
+    yield L(36, '看一眼按鈕');
+    yield L(37, '跟上一次不一樣嗎？');
+    if (r.changed) {
+      yield L(38, '是 1 變 0、又超過 50 ms 嗎？');
+      if (r.hit) { M.v.seen += 1; yield L(39, 'seen 加一'); out('看到按鈕了，第 ' + M.v.seen + ' 次'); yield L(40, '印字'); }
+      M.v.last_edge = now; yield L(41, '記下這次變化的時間');
+      M.v.prev = r.v; yield L(42, '記住這次讀到的值');
+    }
+    var due = (now - M.v.since >= PLAN07[M.v.state].ms);
+    yield L(45, '看時鐘：該換燈了沒？');
+    if (due) {
+      M.v.state = (M.v.state + 1) % 3; yield L(46, '換到表的下一列');
+      M.v.since = now; yield L(47, '記下這顆燈幾點開始亮');
+      mark('change'); yield L(48, '換燈'); yield* onlyG(PLAN07[M.v.state].c, 13);
+      out(PLAN07[M.v.state].name); yield L(49, '印字');
+    }
+    yield Z(51, 1, '只睡 1 ms');
+  }
+}
+
+/* ③ 08：燈交給計時器 */
+function* g08() {
+  yield L(4, '載入 Pin、Timer'); yield L(5, '載入 time');
+  yield L(7, '設定紅燈腳位'); yield L(8, '設定黃燈腳位'); yield L(9, '設定綠燈腳位'); yield L(10, '設定按鈕腳位');
+  yield L(13, '定義 only()');
+  yield L(21, '寫好燈序表 plan');
+  M.v.state = 0; yield L(22, 'state＝0：第 0 列');
+  M.v.left = PLAN08[0].n; yield L(23, 'left＝30 格');
+  M.v.changed = 0; yield L(24, 'changed＝0');
+  yield L(27, '定義 tick()');
+  yield L(38, '拿硬體計時器 0 號');
+  M.tickNext = M.t + 100; yield L(39, '計時器開始：每 100 ms 叫一次 tick');
+  yield L(40, '開第一顆燈'); yield* onlyG(PLAN08[0].c, 13);
+  M.v.seen = 0; yield L(42, 'seen 歸零');
+  M.v.prev = 1; yield L(43, 'prev＝1');
+  M.v.last_edge = 0; yield L(44, 'last_edge 歸零');
+  out('燈交給計時器；主迴圈只看按鈕'); yield L(45, '印字');
+  out(PLAN08[0].name); yield L(46, '印字');
+  M.band = { a: M.t };
+  while (true) {
+    yield L(47, '回到迴圈開頭');
+    var now = tk(); M.v.now = now; yield L(48, '看時鐘 ticks_ms()');
+    var r = readBtn(now);
+    yield L(51, '看一眼按鈕');
+    yield L(52, '跟上一次不一樣嗎？');
+    if (r.changed) {
+      yield L(53, '是 1 變 0、又超過 50 ms 嗎？');
+      if (r.hit) { M.v.seen += 1; yield L(54, 'seen 加一'); out('看到按鈕了，第 ' + M.v.seen + ' 次'); yield L(55, '印字'); }
+      M.v.last_edge = now; yield L(56, '記下這次變化的時間');
+      M.v.prev = r.v; yield L(57, '記住這次讀到的值');
+    }
+    var ch = M.v.changed; yield L(60, '計時器換燈了嗎？');
+    if (ch) { M.v.changed = 0; yield L(61, 'changed 歸零'); out(PLAN08[M.v.state].name); yield L(62, '替計時器印字'); }
+    yield Z(64, 1, '只睡 1 ms');
+  }
+}
+function* tickG() {                                            /* 計時器每 100 ms 叫一次 */
+  M.v.left -= 1; yield L(30, 'tick：left 減 1');
+  var hit = (M.v.left <= 0);
+  yield L(31, 'tick：數到 0 了嗎？');
+  if (hit) {
+    M.v.state = (M.v.state + 1) % 3; yield L(32, 'tick：換到下一列');
+    M.v.left = PLAN08[M.v.state].n; yield L(33, 'tick：重新數格子');
+    yield L(34, 'tick：換燈'); yield* onlyG(PLAN08[M.v.state].c, 13);
+    M.v.changed = 1; yield L(35, 'tick：changed＝1 當記號');
+  }
+}
+function doTick() {
+  M.tickNext = M.t + 100;
+  var before = M.v.state;
+  runIrq(tickG());
+  M.ticks.push({ t: M.t, left: M.v.left, ch: M.v.state !== before });
+}
+
+/* ④ 09：按鈕交給中斷＋20 ms 一次性計時器確認 */
+function* g09() {
+  yield L(7, '載入 Pin、Timer'); yield L(8, '載入 time');
+  yield L(10, '設定紅燈腳位'); yield L(11, '設定黃燈腳位'); yield L(12, '設定綠燈腳位'); yield L(13, '設定按鈕腳位');
+  yield L(16, '定義 only()');
+  M.v.presses = 0; yield L(23, 'presses 歸零');
+  M.v.edges = 0; yield L(24, 'edges 歸零');
+  yield L(25, '拿硬體計時器 1 號');
+  yield L(28, '定義 confirm()');
+  yield L(35, '定義 on_edge()');
+  M.v.armed = true; yield L(42, '設定中斷：1 變 0 就叫 on_edge');
+  out('按鈕交給中斷；燈還是用 sleep 輪'); yield L(44, '印字');
+  while (true) {
+    yield L(45, '回到迴圈開頭');
+    mark('only'); yield L(46, '換綠燈'); yield* onlyG('g', 16);
+    report('綠燈 3 秒'); yield L(47, '印出記到幾次');
+    yield Z(48, 3000, 'sleep(3)');
+    mark('only'); yield L(49, '換黃燈'); yield* onlyG('y', 16);
+    report('黃燈 1 秒'); yield L(50, '印出記到幾次');
+    yield Z(51, 1000, 'sleep(1)');
+    mark('only'); yield L(52, '換紅燈'); yield* onlyG('r', 16);
+    report('紅燈 3 秒'); yield L(53, '印出記到幾次');
+    yield Z(54, 3000, 'sleep(3)');
+  }
+}
+function report(name) {                                        /* 主程式醒來印字＝「印出」 */
+  out(name + '；到目前中斷記到 ' + M.v.presses + ' 次；被叫 ' + M.v.edges + ' 次');
+  mark('print');
+  M.rems.forEach(function (it) {
+    if (it.done === null) { it.done = M.t; var w = M.t - it.from; if (w > M.cnt.maxWait) M.cnt.maxWait = w; }
+  });
+}
+function* edgeG(raw) {
+  M.v.edges += 1; yield L(38, 'on_edge：edges 加一');
+  if (raw) M.v.presses += 1; else M.debAt = M.t + DEB;
+  yield L(39, raw ? 'on_edge：確認拿掉了，直接加一' : 'on_edge：重新啟動 20 ms 計時器');
+}
+function onEdge(p, kind) {                                     /* 每個 1→0 邊緣 */
+  if (!M.v.armed) return;
+  var raw = !S.confirm;
+  runIrq(edgeG(raw));
+  var c = M.cl;
+  if (!c || M.t - c.last > 5) { c = { t0: M.t, last: M.t, n: 0, kind: kind, conf: null, raw: raw, item: null }; M.clusters.push(c); M.cl = c; }
+  c.n += 1; c.last = M.t;
+  if (raw) {
+    if (!c.item) {
+      var from = (kind === 'down' || p.b === null) ? p.a : p.b;
+      c.item = { t: M.t, from: from, n: 0, done: null, p: p, kind: kind };
+      M.rems.push(c.item);
+      if (kind === 'down') p.item = c.item;
+    }
+    c.item.n += 1;
+  }
+}
+function* confirmG(hit) {
+  yield L(31, 'confirm：再看一次按鈕');
+  if (hit) { M.v.presses += 1; yield L(32, 'confirm：還是 0，記到加一'); }
+}
+function doConfirm() {                                         /* Timer(1) 到點 */
+  M.debAt = Infinity;
+  var hit = (M.btn === 0);
+  runIrq(confirmG(hit));
+  if (M.cl) M.cl.conf = { t: M.t, hit: hit };
+  if (hit && M.held && !M.held.item) {
+    var it = { t: M.t, from: M.held.a, n: 1, done: null, p: M.held, kind: 'down' };
+    M.rems.push(it); M.held.item = it;
+  } else if (!hit && M.last && M.last.b !== null && !M.last.item) M.last.miss = true;
+}
+
+/* 中斷、計時器插進來的那幾行：效果在這一刻發生，畫面上每行各佔 TINY */
+function runIrq(it) {
+  var a = M.t, ops = [];
+  for (var r = it.next(); !r.done; r = it.next()) {
+    var o = r.value; o.a = a; o.b = a + o.d; a = o.b; ops.push(o);
+    M.lastExec[o.l] = realNow;
+  }
+  M.irq = { ops: ops, end: a };
+}
+function curOp() {
+  if (M.irq && M.t < M.irq.end) {
+    for (var i = 0; i < M.irq.ops.length; i++) if (M.t < M.irq.ops[i].b) return M.irq.ops[i];
+  }
+  return M.op;
+}
+
+var PROG = { sleep: g06, clock: g07, timer: g08, irq: g09 };
+function newMachine() {
+  M = {
+    t: 0, gen: null, op: null, irq: null, ev: [], btn: 1, v: {}, held: null, last: null,
+    presses: [], segs: [], marks: [], lights: [], ticks: [], serial: [], clusters: [], rems: [], cl: null,
+    band: null, tickNext: Infinity, debAt: Infinity, curSeg: null, autoEnd: 0,
+    cnt: { pressed: 0, maxWait: -1 }, rng: mulberry32(SEED), lastExec: {}, serialDirty: true
+  };
+  M.gen = PROG[S.tab]();
+  nextOp();
+}
+function nextOp() {
+  var o = M.gen.next().value;
+  o.a = M.t; o.b = M.t + o.d;
+  M.op = o; M.lastExec[o.l] = realNow;
+  if (o.sleep && o.d >= 1000) { var sg = { a: o.a, b: o.b, l: o.l, lab: o.lab }; M.segs.push(sg); M.curSeg = sg; }
+  else M.curSeg = null;
+}
+
+/* ===== 按鈕（實體）：按下、放開都會彈 ===== */
+function bounceTimes(t0, n) {
+  var a = [];
+  for (var i = 0; i < n; i++) a.push(t0 + 0.02 + M.rng() * (BOUNCE - 0.04));
+  a.sort(function (x, y) { return x - y; });
+  return a;
+}
+function fall(p, kind) {
+  M.btn = 0;
+  if (S.tab === 'irq') onEdge(p, kind);
+}
+function pressDown(auto) {
+  if (M.held) return;
+  M.cnt.pressed += 1;
+  var p = { id: M.cnt.pressed, a: M.t, b: null, seen: [], locked: false, miss: false, item: null, auto: auto, nb: 6 + Math.floor(M.rng() * 11) };
+  M.presses.push(p); M.held = p; M.last = p;
+  fall(p, 'down');                                             /* 第一次碰上 */
+  var prev = M.t, ts = bounceTimes(M.t, p.nb - 1);
+  for (var i = 0; i < ts.length; i++) {                        /* 碰上之後又彈開、再碰上好幾次 */
+    push({ t: prev + (ts[i] - prev) * (0.3 + 0.4 * M.rng()), type: 'rise', p: p });
+    push({ t: ts[i], type: 'fall', p: p, k: 'down' });
+    prev = ts[i];
+  }
+}
+function pressUp() {
+  var p = M.held; if (!p) return;
+  M.ev = M.ev.filter(function (e) { return e.p !== p; });      /* 還沒彈完就放開：剩下的取消 */
+  p.b = M.t; M.held = null; M.btn = 1;
+  var n = 5 + Math.floor(M.rng() * 11), ts = bounceTimes(M.t, n);
+  for (var i = 0; i < ts.length; i++) {                        /* 分開的時候也會彈回去碰幾下 */
+    var nx = (i + 1 < ts.length) ? ts[i + 1] : Math.min(ts[i] + 0.08, M.t + BOUNCE);
+    if (nx <= ts[i]) nx = ts[i] + 0.01;
+    push({ t: ts[i], type: 'fall', p: p, k: 'up', rel: true });
+    push({ t: ts[i] + (nx - ts[i]) * (0.3 + 0.4 * M.rng()), type: 'rise', p: p, rel: true });
+  }
+  if (S.tab !== 'irq' && !p.seen.length) p.miss = true;
+}
+function handle(e) {
+  if (e.type === 'down') pressDown(!!e.auto);
+  else if (e.type === 'up') pressUp();
+  else if (e.type === 'fall') fall(e.p, e.k);
+  else if (e.type === 'rise') M.btn = 1;
+}
+
+/* ===== 時間往前走 ===== */
+function advanceTo(T) {
+  var guard = 0;
+  while (guard++ < 3000000) {
+    var tOp = M.op.b, tEv = M.ev.length ? M.ev[0].t : Infinity, tTk = M.tickNext, tDb = M.debAt;
+    var tn = Math.min(tOp, tEv, tTk, tDb);
+    if (tn > T) break;
+    M.t = tn;
+    if (tEv === tn) handle(M.ev.shift());
+    else if (tDb === tn) doConfirm();
+    else if (tTk === tn) doTick();
+    else nextOp();
+  }
+  if (T > M.t) M.t = T;
+  prune();
+}
+function prune() {
+  var cut = M.t - WIN - 1500;
+  if (M.segs.length && M.segs[0].b < cut) M.segs = M.segs.filter(function (s) { return s.b >= cut; });
+  if (M.marks.length && M.marks[0].t < cut) M.marks = M.marks.filter(function (m) { return m.t >= cut; });
+  if (M.ticks.length && M.ticks[0].t < cut) M.ticks = M.ticks.filter(function (k) { return k.t >= cut; });
+  if (M.clusters.length && M.clusters[0].last < cut) M.clusters = M.clusters.filter(function (c) { return c.last >= cut; });
+  if (M.rems.length && M.rems[0].done !== null && M.rems[0].done < cut) M.rems = M.rems.filter(function (it) { return it.done === null || it.done >= cut; });
+  while (M.lights.length > 1 && M.lights[1].t < cut) M.lights.shift();
+  if (M.presses.length && M.presses[0].b !== null && M.presses[0].b < cut) {
+    M.presses = M.presses.filter(function (p) { return p.b === null || p.b >= cut || (p.item && p.item.done === null); });
+  }
+}
+
+/* ===== 時間軸 ===== */
+var TL = {};
+function layoutTL() {
+  var w = Math.max(280, Math.floor($('tlBox').clientWidth || 600));
+  var narrow = w < 560;
+  TL.W = w; TL.narrow = narrow; TL.L = narrow ? 50 : 76; TL.R = w - 4; TL.top = 4;
+  var y = 4, lanes = {}, order = [];
+  function add(k, h, a, b) { lanes[k] = { y: y, h: h, l1: a, l2: b }; order.push(k); y += h + 5; }
+  add('prog', 50, '程式', '在做什麼');
+  if (S.tab === 'timer') add('tim', 28, '計時器', '100 ms');
+  add('light', 24, '燈', '');
+  add('btn', 34, '按鈕', '');
+  add('react', 44, '程式的', '反應');
+  TL.lanes = lanes; TL.order = order; TL.axisY = y + 1; TL.H = y + 16;
+  var svg = $('tl');
+  svg.setAttribute('viewBox', '0 0 ' + w + ' ' + TL.H);
+  svg.setAttribute('width', w); svg.setAttribute('height', TL.H);
+}
+function T(x, y, s, cls, anchor, extra) { return '<text x="' + f(x) + '" y="' + f(y) + '" class="' + cls + '"' + (anchor ? ' text-anchor="' + anchor + '"' : '') + (extra || '') + '>' + esc(s) + '</text>'; }
+function Rc(x, y, w, h, cls, extra) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(Math.max(0, w)) + '" height="' + f(h) + '" class="' + cls + '"' + (extra || '') + '/>'; }
+function Ln(x1, y1, x2, y2, cls, extra) { return '<line x1="' + f(x1) + '" y1="' + f(y1) + '" x2="' + f(x2) + '" y2="' + f(y2) + '" class="' + cls + '"' + (extra || '') + '/>'; }
+function Ck(x, y, cls) { return '<path class="' + cls + '" d="M' + f(x - 4.5) + ',' + f(y) + ' L' + f(x - 1.2) + ',' + f(y + 3.6) + ' L' + f(x + 5) + ',' + f(y - 4) + '"/>'; }
+function Xx(x, y) { return '<path class="no" d="M' + f(x - 4) + ',' + f(y - 4) + ' L' + f(x + 4) + ',' + f(y + 4) + ' M' + f(x + 4) + ',' + f(y - 4) + ' L' + f(x - 4) + ',' + f(y + 4) + '"/>'; }
+function Dm(x, y, cls) { return '<path class="' + cls + '" d="M' + f(x) + ',' + f(y - 4) + ' L' + f(x + 4) + ',' + f(y) + ' L' + f(x) + ',' + f(y + 4) + ' L' + f(x - 4) + ',' + f(y) + ' Z"/>'; }
+function Placer(lo, hi) { this.iv = []; this.lo = lo; this.hi = hi; }
+Placer.prototype.put = function (x0, w) {
+  if (x0 < this.lo || x0 + w > this.hi) return false;
+  for (var i = 0; i < this.iv.length; i++) { var a = this.iv[i]; if (x0 < a[1] + 4 && x0 + w > a[0] - 4) return false; }
+  this.iv.push([x0, x0 + w]); return true;
+};
+function latTxt(ms) { return ms < 10 ? ms.toFixed(1) + ' ms' : Math.round(ms) + ' ms'; }
+function describe(o) {
+  if (o.sleep) return o.d >= 1000 ? '睡著，還剩 ' + Math.max(0, (o.b - M.t) / 1000).toFixed(1) + ' 秒' : o.lab;
+  return o.lab || '一瞬間就做完';
+}
+
+function drawTL() {
+  var L0 = TL.L, R = TL.R, now = M.t, t0 = now - WIN, px = (R - L0) / WIN;
+  var X = function (t) { return R - (now - t) * px; };
+  var lp = TL.lanes.prog, lt = TL.lanes.tim, ll = TL.lanes.light, lb = TL.lanes.btn, lr = TL.lanes.react;
+  var sleepTab = (S.tab === 'sleep' || S.tab === 'irq');
+  var o = [], co = curOp();
+  o.push('<defs><pattern id="hatch" x="' + f(-((now * px) % 8)) + '" y="0" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" class="hbg"/><path d="M-2,2 L2,-2 M0,8 L8,0 M6,10 L10,6" class="hln"/></pattern>'
+    + '<marker id="ahG" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="ahp"/></marker>'
+    + '<marker id="ahV" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="ahv"/></marker>'
+    + '<clipPath id="tlclip"><rect x="' + L0 + '" y="0" width="' + f(R - L0 + 2) + '" height="' + TL.H + '"/></clipPath></defs>');
+  TL.order.forEach(function (k) {
+    var ln = TL.lanes[k];
+    o.push(Rc(L0, ln.y, R - L0, ln.h, 'lanebg', ' rx="6"'));
+    o.push(T(4, ln.y + (ln.l2 ? 16 : 19), ln.l1, 'lanelab'));
+    if (ln.l2) o.push(T(4, ln.y + 30, ln.l2, 'lanelab2'));
+  });
+  /* 格線：一格 100 ms，每 1 秒一條粗線 */
+  var gTop = TL.top, gBot = TL.axisY - 3;
+  for (var k = Math.max(0, Math.ceil(t0 / GRID)); k * GRID <= now; k++) {
+    var gx = X(k * GRID), maj = (k % 10 === 0);
+    o.push(Ln(gx, gTop, gx, gBot, maj ? 'gmaj' : 'gmin'));
+    if (maj && gx < R - 80 && gx > L0 + 8 && (!TL.narrow || (k / 10) % 2 === 0)) o.push(T(gx, TL.axisY + 11, (k / 10) + ' 秒', 'tick', 'middle'));
+  }
+  if (t0 < 0) { var xs0 = X(0); if (xs0 - L0 > 110) o.push(T((L0 + xs0) / 2, lp.y + 30, '程式還沒開始', 'pre0', 'middle')); }
+
+  o.push('<g clip-path="url(#tlclip)">');
+
+  /* 軌一：程式在做什麼 */
+  var P1 = new Placer(L0 + 2, R - 2), barLabels = [];
+  if (sleepTab) {
+    var sleeping = !!M.curSeg && co === M.op;
+    M.segs.forEach(function (sg) {
+      var a = Math.max(sg.a, t0), b = Math.min(sg.b, now); if (b <= a) return;
+      var xa = X(a), xb = X(b), cur = (sg === M.curSeg && sleeping);
+      o.push(Rc(xa, lp.y + 17, Math.max(1, xb - xa), 24, 'sleepbar' + (cur ? ' cur' : ''), ' rx="4"' + (cur ? ' id="curSeg" data-line="' + sg.l + '"' : '')));
+      var s = '睡著 ' + sg.lab;
+      if (xb - xa <= tw(s, 11) + 12) s = sg.lab;               /* 條太短：只寫 sleep(1) */
+      if (xb - xa > tw(s, 11) + 12) barLabels.push(T((xa + xb) / 2, lp.y + 33, s, 'sleeptxt', 'middle'));
+    });
+    M.marks.forEach(function (m) {
+      if (m.t < t0 - 50 || m.t > now) return;
+      var x = X(m.t);
+      if (m.k === 'look') {
+        o.push(Ln(x, lp.y + 3, x, lp.y + lp.h - 3, m.hit ? 'lookhit' : 'look'));
+        var s = m.hit ? '看一眼：按著！' : '看一眼按鈕', w = tw(s, 10.5);
+        if (P1.put(x + 3, w)) o.push(T(x + 3, lp.y + 12, s, 'marktxt' + (m.hit ? ' good' : '')));
+      } else if (m.k === 'only') o.push('<circle cx="' + f(x + 3) + '" cy="' + (lp.y + 29) + '" r="2.6" class="donly"/>');
+      else if (m.k === 'print') o.push('<circle cx="' + f(x + 7.5) + '" cy="' + (lp.y + 29) + '" r="2.4" class="dprint"/>');
+    });
+    if (S.tab === 'irq') {
+      M.clusters.forEach(function (c) {
+        if (c.last < t0 - 60 || c.t0 > now) return;
+        var x0 = X(c.t0), kk = Math.min(c.n, 3), i;
+        for (i = 0; i < kk; i++) { var x = x0 + i * 1.4; o.push(Ln(x, lp.y + 3, x, lp.y + lp.h - 3, 'needle' + (c.raw ? ' hit' : ''))); }
+        var s = '×' + c.n, w = tw(s, 10.5), xl = x0 + kk * 1.4 + 2;
+        if (P1.put(xl, w)) o.push(T(xl, lp.y + 12, s, 'nlab' + (c.raw ? ' hit' : '')));
+        if (c.conf && c.conf.t <= now) {
+          var xc = Math.max(X(c.conf.t), x0 + kk * 1.4 + 4);
+          o.push(Dm(xc, lp.y + lp.h - 8, 'conf' + (c.conf.hit ? ' hit' : '')));
+          if (c.conf.hit && P1.put(xc + 6, tw('+1', 10.5))) o.push(T(xc + 6, lp.y + lp.h - 4, '+1', 'nlab hit'));
+        }
+      });
+    }
+    barLabels.forEach(function (s) { o.push(s); });              /* 「睡著」字最後畫，壓在直線上面 */
+  } else if (M.band) {
+    var ba = Math.max(M.band.a, t0), xba = X(ba);
+    o.push(Rc(xba, lp.y + 17, R - xba, 24, 'band', ' rx="4" id="curSeg" data-line="' + co.l + '"'));
+    var bs = S.tab === 'clock' ? '一直繞圈：看按鈕 → 看時鐘 → 睡 1 ms' : '主迴圈一直繞：看按鈕 → 睡 1 ms', bw = tw(bs, 11);
+    if (R - xba > bw + 16) barLabels.push(T((xba + R) / 2, lp.y + 33, bs, 'bandtxt', 'middle'));
+    M.marks.forEach(function (m) {
+      if (m.t < t0 - 50 || m.t > now) return;
+      var x = X(m.t);
+      if (m.k === 'seen') {
+        o.push(Ln(x, lp.y + 3, x, lp.y + lp.h - 3, 'lookhit'));
+        if (P1.put(x + 3, tw('看到', 10.5))) o.push(T(x + 3, lp.y + 12, '看到', 'marktxt good'));
+      } else if (m.k === 'change') {
+        o.push('<circle cx="' + f(x) + '" cy="' + (lp.y + 29) + '" r="3" class="donly"/>');
+        if (P1.put(x + 3, tw('換燈', 10.5))) o.push(T(x + 3, lp.y + 12, '換燈', 'marktxt'));
+      }
+    });
+    barLabels.forEach(function (s) { o.push(s); });
+  }
+
+  /* 計時器（只有③） */
+  if (lt) {
+    var PT = new Placer(L0 + 2, R - 2);
+    M.ticks.forEach(function (tt) {
+      if (tt.t < t0 || tt.t > now) return;
+      var x = X(tt.t);
+      o.push(Ln(x, lt.y + (tt.ch ? 3 : 13), x, lt.y + lt.h - 3, 'tk' + (tt.ch ? ' ch' : '')));
+      var s = tt.ch ? '換燈' : (tt.left % 10 === 0 && !TL.narrow ? String(tt.left) : '');
+      if (s) { var w = tw(s, 10); if (PT.put(x + 2, w)) o.push(T(x + 2, lt.y + 11, s, 'tktxt' + (tt.ch ? ' ch' : ''))); }
+    });
+  }
+
+  /* 軌二：燈 */
+  var PL = new Placer(L0 + 2, R - 2);
+  for (var i = 0; i < M.lights.length; i++) {
+    var la = M.lights[i].t, lbd = (i + 1 < M.lights.length) ? M.lights[i + 1].t : now;
+    if (lbd < t0 || la > now) continue;
+    var xla = X(Math.max(la, t0)), xlb = X(Math.min(lbd, now));
+    o.push(Rc(xla, ll.y + 5, Math.max(1, xlb - xla), ll.h - 10, 'l-' + M.lights[i].c, ' rx="3"'));
+    var ls = CN[M.lights[i].c], lw = tw(ls, 10.5);
+    if (xlb - xla > lw + 10 && PL.put((xla + xlb) / 2 - lw / 2, lw)) o.push(T((xla + xlb) / 2, ll.y + 16, ls, 'ltxt', 'middle'));
+  }
+
+  /* 軌三：按鈕 */
+  var yTop = lb.y + 12, yBase = lb.y + lb.h - 6, PB = new Placer(L0 + 2, R - 2);
+  o.push(Ln(L0, yBase, R, yBase, 'base'));
+  M.presses.forEach(function (p) {
+    var pb = p.b === null ? now : p.b;
+    if (pb < t0 || p.a > now) return;
+    var xa = X(Math.max(p.a, t0)), xb = X(Math.min(pb, now)), j;
+    o.push(Rc(xa, yTop, Math.max(2, xb - xa), yBase - yTop, 'press', ' rx="2"'));
+    if (p.a >= t0) for (j = 1; j <= 3; j++) { var xz = X(p.a) + j * 1.6; if (xz < xb) o.push(Ln(xz, yTop, xz, yTop + 6, 'zig')); }
+    if (p.b !== null && p.b >= t0) for (j = 1; j <= 3; j++) { var xr = X(p.b) + j * 1.6; if (xr < R) o.push(Ln(xr, yBase, xr, yBase - 6, 'zig')); }
+    var ns = String(p.id);
+    if (p.a >= t0 && PB.put(xa, tw(ns, 10))) o.push(T(xa, lb.y + 9, ns, 'pnum'));
+  });
+
+  /* 軌四：程式的反應 */
+  var yG = lr.y + 14, yL = lr.y + 34, PR = new Placer(L0 + 2, R - 2), lab = [];
+  if (S.tab !== 'irq') {
+    M.presses.forEach(function (p) {
+      if (p.a > now) return;
+      p.seen.forEach(function (ts, n) {
+        if (ts < t0 || ts > now) return;
+        var xs = X(ts);
+        if (n === 0) o.push(Ln(X(p.a), yBase + 1, xs, yG - 7, 'conn', ' marker-end="url(#ahG)"'));
+        o.push(Ck(xs, yG, 'ok'));
+        lab.push({ x: xs, s: n ? '又看到' : latTxt(ts - p.a), cls: n ? 'rtxt' : 'rtxt num', pr: 1 });
+      });
+      if (p.miss && p.b !== null && p.b >= t0) {
+        var xm = X((p.a + p.b) / 2);
+        o.push(Xx(xm, yG));
+        lab.push({ x: xm, s: p.locked ? '沒算' : '漏了', cls: 'rtxt bad', pr: 1 });
+      }
+    });
+  } else {
+    var groups = {}, pend = null;
+    M.rems.forEach(function (it) {
+      if (it.t > now) return;
+      var xr = X(it.t);
+      if (it.t >= t0) {
+        if (it.kind === 'down' && it.p) o.push(Ln(X(it.p.a), yBase + 1, xr, yG - 7, 'conn mem', ' marker-end="url(#ahV)"'));
+        o.push(Ck(xr, yG, 'ok mem'));
+        lab.push({ x: xr, s: it.n > 1 ? '+' + it.n : '記住', cls: 'rtxt mem', pr: 2 });
+      }
+      var xe = it.done !== null ? X(it.done) - 6 : R;
+      if (xe > Math.max(xr, L0) + 6) o.push(Ln(Math.max(xr + 6, L0), yG, xe, yG, it.done !== null ? 'conn dash' : 'conn wait'));
+      if (it.done !== null) {
+        var g = groups[it.done] || (groups[it.done] = { t: it.done, w: 0 });
+        g.w = Math.max(g.w, it.done - it.from);
+      } else if (!pend || it.t < pend.t) pend = it;
+    });
+    Object.keys(groups).forEach(function (key) {
+      var g = groups[key]; if (g.t < t0 || g.t > now) return;
+      var xd = X(g.t);
+      o.push(Ck(xd, yG, 'ok'));
+      lab.push({ x: xd, s: TL.narrow ? '印出' : '印出：最久等了 ' + Math.round(g.w) + ' ms', cls: 'rtxt done', pr: 0 });
+    });
+    if (pend) lab.push({ x: R - tw('等主程式醒來', 10.5) / 2 - 4, s: '等主程式醒來', cls: 'rtxt mem', pr: 0 });
+    M.presses.forEach(function (p) {
+      if (p.miss && p.b !== null && p.b >= t0 && p.b <= now) { var xm = X((p.a + p.b) / 2); o.push(Xx(xm, yG)); lab.push({ x: xm, s: '沒算', cls: 'rtxt bad', pr: 1 }); }
+    });
+  }
+  lab.sort(function (a, b) { return a.pr - b.pr || b.x - a.x; });
+  lab.forEach(function (q) {
+    var w = tw(q.s, 10.5), x0 = q.x - w / 2;
+    if (x0 + w > R - 2) x0 = R - 2 - w;
+    if (PR.put(x0, w)) o.push(T(x0 + w / 2, yL, q.s, q.cls, 'middle'));
+  });
+
+  o.push('</g>');
+
+  /* 現在 */
+  o.push(Ln(R, gTop, R, TL.axisY + 2, 'nowl'));
+  o.push(T(R, TL.axisY + 11, '現在 ' + (now / 1000).toFixed(1) + ' 秒', 'nowtxt', 'end'));
+  var tag = '第 ' + co.l + ' 行・' + describe(co), tagw = tw(tag, 11), tx0 = Math.max(L0 + 2, R - tagw - 12);
+  o.push('<g id="nowTag" data-line="' + co.l + '">' + Rc(tx0, lp.y + 1, R - tx0 - 1, 15, 'nowbg', ' rx="4"') + T(R - 5, lp.y + 12, tag, 'nowtag', 'end') + '</g>');
+
+  $('tl').innerHTML = o.join('');
+}
+
+/* ===== 程式碼區 ===== */
+var SRC = {}, CV = { rows: [null], trail: [''], cur: 0 };
+function loadSources() {
+  TABS.forEach(function (k) { SRC[k] = $(PRE[k]).textContent.replace(/\n+$/, '').split('\n'); });
+}
+function buildCode() {
+  var k = S.tab, lines = SRC[k], h = ['<div class="codeinner">'];
+  for (var i = 0; i < lines.length; i++) {
+    var n = i + 1, txt = esc(lines[i]);
+    if (k === 'irq' && !S.confirm) {
+      if (lines[i] === '    global edges') txt = '    global edges<mark>, presses</mark>';
+      else if (lines[i].indexOf('deb.init(') >= 0 && lines[i].indexOf('    deb') === 0) txt = '    <mark>presses = presses + 1</mark><span class="edtag">← 這一頁把 20 ms 確認拿掉了：每叫一次就直接算一次</span>';
+    }
+    h.push('<div class="cl" data-line="' + n + '"><span class="ln">' + n + '</span><span class="tx">' + (txt || ' ') + '</span></div>');
+  }
+  h.push('</div>');
+  var box = $('codeView');
+  box.innerHTML = h.join('');
+  CV.rows = [null]; CV.trail = [''];
+  Array.prototype.forEach.call(box.querySelectorAll('.cl'), function (r) { CV.rows.push(r); CV.trail.push(''); });
+  CV.cur = 0;
+  var top = CV.rows[TOPLINE[k]];
+  box.scrollTop = top ? Math.max(0, top.offsetTop - 6) : 0;
+}
+function keepVisible(row) {
+  var box = $('codeView'), top = row.offsetTop, h = row.offsetHeight, st = box.scrollTop, bh = box.clientHeight;
+  if (top < st + 6) box.scrollTop = Math.max(0, top - 36);
+  else if (top + h > st + bh - 6) box.scrollTop = top + h - bh + 36;
+}
+function syncCode() {
+  var co = curOp(), l = co ? co.l : 0;
+  if (l !== CV.cur) {
+    if (CV.rows[CV.cur]) CV.rows[CV.cur].classList.remove('on');
+    CV.cur = l;
+    if (CV.rows[l]) { CV.rows[l].classList.add('on'); keepVisible(CV.rows[l]); }
+  }
+  for (var i = 1; i < CV.rows.length; i++) {
+    var le = M.lastExec[i], cls = '';
+    if (le !== undefined) { var age = realNow - le; cls = age < 220 ? 't1' : age < 520 ? 't2' : age < 900 ? 't3' : ''; }
+    if (CV.trail[i] !== cls) {
+      if (CV.trail[i]) CV.rows[i].classList.remove(CV.trail[i]);
+      if (cls) CV.rows[i].classList.add(cls);
+      CV.trail[i] = cls;
+    }
+  }
+}
+
+/* ===== 計數、序列埠、小抄 ===== */
+var lastMeters = '';
+function updateMeters() {
+  var irq = S.tab === 'irq', pressed = M.cnt.pressed, got = irq ? (M.v.presses || 0) : (M.v.seen || 0), mw = M.cnt.maxWait;
+  var m3 = mw < 0 ? '—' : (mw < 10 ? mw.toFixed(1) : String(Math.round(mw)));
+  var key = [S.tab, pressed, got, m3, M.v.edges || 0].join('|');
+  if (key === lastMeters) return;
+  lastMeters = key;
+  $('m1v').textContent = pressed; $('m2v').textContent = got; $('m3v').textContent = m3; $('m4v').textContent = M.v.edges || 0;
+  var m2 = $('m2');
+  m2.classList.toggle('good', pressed > 0 && got === pressed);
+  m2.classList.toggle('hot', pressed > 0 && got !== pressed);
+}
+function updateSerial() {
+  if (!M.serialDirty) return;
+  M.serialDirty = false;
+  var rows = M.serial.slice(-5), h = [];
+  for (var i = 0; i < 5; i++) {
+    var r = rows[i];
+    h.push('<div class="row"><span class="ts">' + (r ? (r.t / 1000).toFixed(3) + ' 秒' : '') + '</span><span class="msg">' + (r ? esc(r.s) : '') + '</span></div>');
+  }
+  $('serialRows').innerHTML = h.join('');
+}
+function setText(id, v) { var e = $(id); if (e && e.textContent !== String(v)) e.textContent = v; }
+function planRows(prefix, st) { for (var i = 0; i < 3; i++) { var r = $(prefix + i); if (r) r.classList.toggle('cur', i === st); } }
+function updateReadouts() {
+  var v = M.v;
+  if (S.tab === 'sleep') {
+    setText('roNext', v.lookAt === undefined ? '—' : Math.max(0, (v.lookAt + 7000 - M.t) / 1000).toFixed(1));
+    setText('roSeen', v.seen || 0);
+  } else if (S.tab === 'clock') {
+    var st = v.state || 0;
+    setText('roState', st); setText('roSince', v.since || 0); setText('roNow', tk());
+    setText('roLit', Math.max(0, tk() - (v.since || 0))); setText('roEdge', v.last_edge || 0);
+    planRows('p7-', st);
+  } else if (S.tab === 'timer') {
+    setText('roState8', v.state || 0); setText('roLeft', v.left === undefined ? 30 : v.left); setText('roChanged', v.changed || 0);
+    planRows('p8-', v.state || 0);
+  } else {
+    setText('roPresses', v.presses || 0); setText('roEdges', v.edges || 0);
+    setText('roDeb', M.debAt === Infinity ? '沒在跑' : '還剩 ' + Math.max(0, M.debAt - M.t).toFixed(1) + ' ms');
+  }
+}
+function drawAll() { drawTL(); syncCode(); updateMeters(); updateSerial(); updateReadouts(); dirty = false; }
+
+/* ===== 操作 ===== */
+function resetAll() { newMachine(); ui.downT = -1; $('btnPress').setAttribute('aria-pressed', 'false'); lastMeters = ''; dirty = true; }
+function setTab(k) {
+  if (TABS.indexOf(k) < 0) k = 'sleep';
+  S.tab = k;
+  TABS.forEach(function (t) {
+    var on = t === k, b = $('tb-' + t);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+    b.tabIndex = on ? 0 : -1;
+    $('tp-' + t).hidden = !on;
+  });
+  $('caption').textContent = CAPTION[k];
+  $('codeName').textContent = FILE[k];
+  $('tlCap').innerHTML = LEGEND[k];
+  $('m2l').textContent = k === 'irq' ? '中斷記到' : '程式看到';
+  $('m3l').textContent = k === 'irq' ? '印出來最長等了' : '最長等了';
+  $('m4').hidden = k !== 'irq';
+  ['cc-block', 'cc-timer', 'cc-irq'].forEach(function (id) {
+    var hot = CARD[k] === id, card = $(id);                     /* 觀念卡跟著分頁：只打開對應那一張 */
+    card.classList.toggle('hot', hot); card.querySelector('.tag').hidden = !hot; card.open = hot;
+  });
+  save('tab', k);
+  resetAll();
+  buildCode();
+  layoutTL();
+}
+function setConfirm(on) {
+  S.confirm = !!on;
+  $('cfOn').setAttribute('aria-pressed', S.confirm ? 'true' : 'false');
+  $('cfOff').setAttribute('aria-pressed', S.confirm ? 'false' : 'true');
+  if (S.tab === 'irq') { var st = $('codeView').scrollTop; buildCode(); $('codeView').scrollTop = st; }
+  dirty = true;
+}
+function setPaused(p) {
+  S.paused = !!p;
+  var b = $('btnPlay');
+  b.textContent = S.paused ? '播放' : '暫停';
+  b.setAttribute('aria-pressed', S.paused ? 'true' : 'false');
+  $('stepWrap').hidden = !S.paused;
+  $('bpHint').textContent = S.paused ? '暫停中：按一下＝按住 150 ms' : '滑鼠、手指按住，或按空白鍵';
+  dirty = true;
+}
+function showSpeed() { $('spdTxt').textContent = S.speed + '×'; }
+function autoPress(at) {
+  M.ev = M.ev.filter(function (e) { return !e.auto; });
+  if (M.held && M.held.auto) push({ t: M.t, type: 'up' });
+  var t = (at === undefined || at === null) ? M.t + LEAD : at;
+  for (var i = 0; i < NAUTO; i++) { push({ t: t, type: 'down', auto: true }); push({ t: t + HOLD, type: 'up', auto: true }); t += HOLD + GAP; }
+  M.autoEnd = t - GAP;
+  dirty = true;
+}
+function step(ms) { realNow = performance.now(); advanceTo(M.t + ms); dirty = true; drawAll(); }
+
+var PRESETS = {
+  miss: { tab: 'sleep', confirm: true, at: 2000 },
+  catch: { tab: 'clock', confirm: true, at: 600 },
+  timer: { tab: 'timer', confirm: true, at: 600 },
+  irq: { tab: 'irq', confirm: true, at: 600 },
+  bounce: { tab: 'irq', confirm: false, at: 600 }
+};
+function applyPreset(k) {
+  var p = PRESETS[k]; if (!p) return;
+  S.confirm = p.confirm; setConfirm(p.confirm);
+  setTab(p.tab);
+  autoPress(p.at);
+  if (reduced && S.paused) step(M.autoEnd + 500 - M.t);          /* 不想看動畫：直接跳到按完 */
+  else if (S.paused) setPaused(false);
+}
+function holdLong() {
+  resetAll();
+  push({ t: LEAD, type: 'down', auto: true }); push({ t: LEAD + HOLDLONG, type: 'up', auto: true });
+  M.autoEnd = LEAD + HOLDLONG;
+  if (reduced && S.paused) step(M.autoEnd + 500 - M.t);
+  else if (S.paused) setPaused(false);
+}
+
+/* 大按鈕：按住＝按著，放開＝放開；暫停中按一下＝排一次按住 150 ms */
+var ui = { downT: -1 };
+function userDown() {
+  if (S.paused) { push({ t: M.t, type: 'down' }); push({ t: M.t + HOLD, type: 'up' }); dirty = true; return; }
+  if (ui.downT >= 0) return;
+  push({ t: M.t, type: 'down' }); ui.downT = M.t;
+  $('btnPress').setAttribute('aria-pressed', 'true');
+}
+function userUp() {
+  if (ui.downT < 0) return;
+  push({ t: Math.max(M.t, ui.downT + MINPRESS), type: 'up' });
+  ui.downT = -1;
+  $('btnPress').setAttribute('aria-pressed', 'false');
+}
+var bp = $('btnPress');
+bp.addEventListener('pointerdown', function (e) { try { bp.setPointerCapture(e.pointerId); } catch (err) {} userDown(); });
+bp.addEventListener('pointerup', userUp);
+bp.addEventListener('pointercancel', userUp);
+bp.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+bp.addEventListener('keydown', function (e) {
+  if (e.key !== ' ' && e.key !== 'Enter') return;
+  e.preventDefault(); if (!e.repeat) userDown();
+});
+bp.addEventListener('keyup', function (e) {
+  if (e.key !== ' ' && e.key !== 'Enter') return;
+  e.preventDefault(); userUp();
+});
+window.addEventListener('blur', userUp);
+
+$('btnAuto').addEventListener('click', function () { autoPress(); });
+$('btnPlay').addEventListener('click', function () { setPaused(!S.paused); });
+$('btnReset').addEventListener('click', function () { resetAll(); buildCode(); });
+$('btnStep1').addEventListener('click', function () { step(100); });
+$('btnStep2').addEventListener('click', function () { step(1000); });
+$('rngSpeed').addEventListener('input', function (e) {
+  var v = parseFloat(e.target.value);
+  if (v >= 0.25 && v <= 2) { S.speed = v; showSpeed(); save('speed', v); }
+});
+$('cfOn').addEventListener('click', function () { setConfirm(true); });
+$('cfOff').addEventListener('click', function () { setConfirm(false); });
+TABS.forEach(function (k) { $('tb-' + k).addEventListener('click', function () { setTab(k); }); });
+$('tablist').addEventListener('keydown', function (e) {
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+  var i = TABS.indexOf(S.tab) + (e.key === 'ArrowRight' ? 1 : -1);
+  i = (i + TABS.length) % TABS.length;
+  setTab(TABS[i]); $('tb-' + TABS[i]).focus(); e.preventDefault();
+});
+
+/* 試試看的按鈕 */
+Array.prototype.forEach.call(document.querySelectorAll('.try'), function (b) {
+  b.addEventListener('click', function () {
+    var pr = b.getAttribute('data-preset');
+    if (pr) applyPreset(pr); else if (b.getAttribute('data-act') === 'hold') holdLong();
+    var top = $('bench');
+    if (top && top.scrollIntoView) top.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  });
+});
+
+/* 複製按鈕 */
+function selectText(pre) {
+  try {
+    var r = document.createRange(); r.selectNodeContents(pre);
+    var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    return true;
+  } catch (e) { return false; }
+}
+Array.prototype.forEach.call(document.querySelectorAll('.copy'), function (b) {
+  b.addEventListener('click', function () {
+    var pre = $(b.getAttribute('data-copy')), label = b.getAttribute('data-label');
+    var box = pre.closest('details');
+    var ok = function () { b.textContent = '已複製'; setTimeout(function () { b.textContent = label; }, 1800); };
+    var no = function () {
+      if (box && !box.open) box.open = true;
+      var outer = box && box.parentElement ? box.parentElement.closest('details') : null;
+      if (outer && !outer.open) outer.open = true;
+      var picked = selectText(pre);
+      if (pre.scrollIntoView) pre.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+      b.textContent = picked ? '已選取，按 Ctrl+C 複製' : '請自己選取程式碼';
+      setTimeout(function () { b.textContent = label; }, 3500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(pre.textContent).then(ok, no);
+    else no();
+  });
+});
+
+/* ===== 開跑 ===== */
+var lastFrame = 0;
+function frame(ts) {
+  requestAnimationFrame(frame);
+  realNow = ts;
+  if (document.hidden) { lastFrame = 0; return; }
+  if (!lastFrame) { lastFrame = ts; if (dirty) drawAll(); return; }
+  var dt = ts - lastFrame; lastFrame = ts;
+  if (!S.paused) {
+    if (dt > 50) dt = 50;
+    advanceTo(M.t + dt * S.speed);
+    drawAll();
+  } else if (dirty) drawAll();
+  else syncCode();
+}
+document.addEventListener('visibilitychange', function () { lastFrame = 0; });
+/* 寬螢幕：程式碼區從它自己的上緣算到畫面底，標題換行多一行也不會擠出畫面 */
+function fitCode() {
+  var box = $('codeView');
+  if (window.innerWidth <= 1020) { box.style.height = ''; return; }
+  var top = box.getBoundingClientRect().top + (window.scrollY || 0);
+  box.style.height = Math.round(Math.max(300, Math.min(680, window.innerHeight - top - 14))) + 'px';
+}
+var rt = 0;
+window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { fitCode(); layoutTL(); dirty = true; if (S.paused) drawAll(); }, 150); });
+document.querySelector('.about').addEventListener('toggle', fitCode);
+
+loadSources();
+var sp = parseFloat(load('speed'));
+if (sp >= 0.25 && sp <= 2) S.speed = sp;
+$('rngSpeed').value = String(S.speed); showSpeed();
+setPaused(reduced);
+var tab0 = load('tab');
+setTab(TABS.indexOf(tab0) >= 0 ? tab0 : 'sleep');
+try {
+  var qs = new URLSearchParams(location.search), pr0 = qs.get('preset'), tb0 = qs.get('tab');
+  if (pr0 && PRESETS[pr0]) applyPreset(pr0);
+  else if (tb0 && TABS.indexOf(tb0) >= 0) setTab(tb0);
+} catch (e) {}
+realNow = performance.now();
+fitCode();
+drawAll();
+requestAnimationFrame(frame);
+
+/* 給驗收腳本用：讀狀態、快轉模擬時間（不影響一般使用） */
+window.__timerLab = {
+  state: function () {
+    var co = curOp();
+    return {
+      tab: S.tab, t: M.t, paused: S.paused, speed: S.speed, confirm: S.confirm, line: co ? co.l : null,
+      pressed: M.cnt.pressed, seen: M.v.seen || 0, presses: M.v.presses || 0, edges: M.v.edges || 0, maxWait: M.cnt.maxWait,
+      autoEnd: M.autoEnd, pending: M.ev.length,
+      list: M.presses.map(function (p) { return { id: p.id, a: p.a, b: p.b, seen: p.seen.slice(), miss: p.miss, locked: p.locked, rem: p.item ? p.item.t : null, done: p.item ? p.item.done : null }; })
+    };
+  },
+  run: function (ms) { step(ms); return this.state(); }
+};
+})();
+</script>
+
+</body>
+</html>

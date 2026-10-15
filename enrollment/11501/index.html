@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>11501｜每日選課變化</title><style>
+:root{--navy:#12374d;--teal:#087f91;--green:#08775b;--red:#b54658;--ink:#19394d;--muted:#607786;--line:#dbe6ec}*{box-sizing:border-box}body{margin:0;background:#f2f6f9;color:var(--ink);font:16px/1.6 system-ui,"Microsoft JhengHei",sans-serif}header{background:linear-gradient(120deg,#102d43,#155e70);color:white;padding:25px max(24px,calc((100vw - 1420px)/2))}header .small{color:#badce9;letter-spacing:.12em;font-size:13px}h1{font-size:29px;margin:5px 0}header p{margin:0;font-size:14px;color:#d7e8f1}main{max-width:1470px;margin:auto;padding:23px 24px 50px}.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}select,button{font:inherit;padding:9px 13px;border-radius:8px;border:1px solid #b9ccd7;color:var(--ink);background:white}button{cursor:pointer}button:hover{background:#e6f3fa}button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #ebbd5d;outline-offset:3px}.push{margin-left:auto}a{color:#096a94}.layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:22px}.sidebar{background:white;border:1px solid var(--line);border-radius:13px;padding:17px 12px;align-self:start;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}.sidebar h2{font-size:16px;margin:0 10px 12px}.daylabel{font-size:13px;letter-spacing:.08em;color:#667f91;border-bottom:1px solid #e8eff4;padding:7px 10px;margin-top:8px}.sidebar button{display:block;width:100%;text-align:left;border:1px solid transparent;background:transparent;margin:4px 0;padding:9px 10px;line-height:1.5;font-size:14px}.sidebar button.active{background:#e8f3fa;border-color:#a7cedf;box-shadow:inset 3px 0 #087f91}.sidebar .time{display:block;color:#698194;font-size:13px}.content{min-width:0}.hero{background:white;border:1px solid var(--line);border-top:4px solid var(--teal);border-radius:12px;padding:22px 24px}.hero h2{font-size:25px;margin:0 0 8px}.meta{color:var(--muted);font-size:14px}.badge{display:inline-block;background:#fff0cf;color:#795306;font-size:13px;padding:3px 10px;border-radius:5px;margin:9px 0}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}.card{background:white;border:1px solid var(--line);border-radius:11px;padding:18px}.card label{font-size:14px;color:var(--muted)}.card strong{display:block;font-size:35px;font-weight:650;letter-spacing:-.035em;line-height:1.5}.card small{font-size:13px;color:var(--muted)}.added{color:var(--green)}.left{color:var(--red)}.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:23px;margin-top:18px}.panel h2{font-size:19px;margin:0 0 6px}.sub{font-size:14px;color:var(--muted);margin:0 0 16px}.notice{margin-top:17px;background:#edf6fb;border-left:3px solid var(--teal);padding:13px 16px;font-size:14px;line-height:1.8}.empty{padding:26px;text-align:center;background:#f5f8fb;border-radius:8px;color:var(--muted)}.chart{width:100%;display:block;min-height:200px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:14px}th,td{padding:13px 12px;border-bottom:1px solid #e3ecf1;text-align:left}th{background:#f2f6f9;color:#5c7486;font-size:13px}.num{text-align:right;font-variant-numeric:tabular-nums}tbody tr:hover{background:#f7fbfd}tr.selected{background:#edf7fc}.datelink{border:0;background:none;padding:0;color:#086d9d;font-size:14px}details{margin-top:17px}summary{cursor:pointer;color:#096a94}details p{font-size:14px;color:var(--muted);line-height:1.9}.footer{font-size:13px;color:var(--muted);margin-top:22px}.statusline{margin-top:8px;font-size:14px}.stale{color:#ac6220}.chart text{font-family:inherit;font-size:12px;fill:#617e91}.daybadge{font-size:12px;color:#486a80;background:#eaf2f7;border-radius:4px;padding:3px 7px}@media(max-width:1000px){.layout{grid-template-columns:215px minmax(0,1fr);gap:15px}.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){main{padding:15px 12px}.layout{display:block}.sidebar{position:static;max-height:240px;margin-bottom:18px}#nav{display:grid;grid-template-columns:1fr 1fr;gap:6px}.panel{padding:17px}.hero{padding:18px}.hero h2{font-size:22px}.push{margin-left:0}.chart{min-height:150px}}@media print{header{background:white;color:black}header p,header .small{color:black}.sidebar,.toolbar{display:none}.layout{display:block}body{background:white}.panel,.hero,.cards{break-inside:avoid}.notice{background:white}.cards{grid-template-columns:repeat(4,1fr)}}
+</style></head><body><header><div class="small">NDHU · 11501</div><h1 data-i="title">每日選課變化</h1><p data-i="subtitle">逐班比較名冊快照，追蹤加退選期間的人數變動。</p></header><main>
+<div class="toolbar"><label for="date" data-i="date">觀察日期</label><select id="date"></select><button id="lang">English / 中文</button><button id="export" class="push" data-i="export">匯出本班每日統計</button><button id="print" data-i="print">列印</button><a href="../../courses/" data-i="back">回課程總覽</a></div>
+<div class="layout"><aside class="sidebar"><h2 data-i="courses">依上課時間選班</h2><nav id="nav"></nav></aside><div class="content">
+<section class="hero"><h2 id="course-title"></h2><div id="schedule" class="meta"></div><span id="status" class="badge"></span><div id="captured" class="meta"></div><div id="freshness" class="statusline"></div></section>
+<section id="cards" class="cards" aria-live="polite"></section><div id="comparison" class="notice"></div>
+<section class="panel"><h2 data-i="trend">本班每日人數</h2><p class="sub" data-i="trendNote">每天取最後一次成功擷取的名冊；缺資料的日期不補 0。</p><div id="chart"></div></section>
+<section class="panel"><h2 data-i="daily">每日變化紀錄</h2><p class="sub" data-i="dailyNote">「新增／退出」表示兩次名冊之間的變化，不是官方交易時間。</p><div class="tablewrap"><table><thead><tr><th data-i="date">觀察日期</th><th class="num" data-i="count">名冊人數</th><th class="num" data-i="added">新增列冊</th><th class="num" data-i="left">退出名冊</th><th class="num" data-i="net">淨增減</th><th class="num" data-i="retained">持續列冊</th><th data-i="interval">比較區間</th></tr></thead><tbody id="history"></tbody></table></div></section>
+<section class="panel"><h2 data-i="reading">如何閱讀這份紀錄</h2><p class="sub" data-i="manual">目前採手動更新。頁面重新整理不會自動登入校方系統或擷取新名冊。</p><details open><summary data-i="limitsTitle">比較口徑與限制</summary><p data-i="limits">第一筆只建立基準，不計算新增或退出。隔天有資料才顯示相鄰日期差異；漏日則顯示跨日比較區間。擷取失敗不當作0人，也不覆蓋上一份有效名冊。同一位學生在區間內先加後退、或先退再加，可能不會出現在差異中；退出名冊也不代表已確認退選原因。</p></details><details><summary data-i="methodTitle">資料與隱私</summary><p data-i="method">以同學期、同課號的學號集合比對；公開頁面只保存匿名計數，不含姓名、學號、電子郵件或個人變動清單。每次更新須核對全部課程、表頭與官方人數，完整通過才納入日報。</p></details><p class="meta"><a href="https://sys.ndhu.edu.tw/aa/class/TeacherSubj/SubjTransfer.aspx" target="_blank" rel="noopener" data-i="source">官方來源：教師開課查詢系統（需登入）</a></p></section>
+<footer class="footer" data-i="footer">Asia/Taipei · 第一階段與加退選期間快照，尚非最終名冊。變動人數只代表成功觀測到的差異。</footer>
+</div></div></main><script id="history-data" type="application/json">{
+  "schemaVersion": 1,
+  "semester": "11501",
+  "timezone": "Asia/Taipei",
+  "mode": "manual",
+  "asOf": "2026-09-07",
+  "latestCapture": "2026-09-07T22:17:40.669450+08:00",
+  "courses": [
+    {
+      "code": "GC__68210",
+      "name": "和AI一起寫程式：創意生活應用",
+      "nameEn": "Coding with AI: Creative Everyday Projects AA",
+      "day": "星期一",
+      "clock": "09:10-12:00",
+      "room": "理工二館E403"
+    },
+    {
+      "code": "TCAI10040",
+      "name": "基礎程式設計(C++)",
+      "nameEn": "Introduction to Programming (C++)",
+      "day": "星期一",
+      "clock": "09:10-12:00",
+      "room": "理工二館D301"
+    },
+    {
+      "code": "GC__6753AA",
+      "name": "人工智慧概論AA",
+      "nameEn": "Introduction to Artificial Intelligence AA",
+      "day": "星期一",
+      "clock": "13:10-16:00",
+      "room": "理工二館E403"
+    },
+    {
+      "code": "GC__1480AA",
+      "name": "資訊科技與應用AA",
+      "nameEn": "Information Technology and its Applications AA",
+      "day": "星期一",
+      "clock": "16:10-18:00",
+      "room": "理工二館E403"
+    },
+    {
+      "code": "GC__67570",
+      "name": "創客入門–智慧生活裝置實作",
+      "nameEn": "Makers Beginning - Smart Living Device Implementation",
+      "day": "星期二",
+      "clock": "09:10-12:00",
+      "room": "理工二館D301"
+    },
+    {
+      "code": "GC__6753AB",
+      "name": "人工智慧概論AB",
+      "nameEn": "Introduction to Artificial Intelligence AB",
+      "day": "星期二",
+      "clock": "13:10-16:00",
+      "room": "理工二館E403"
+    },
+    {
+      "code": "GC__1480AB",
+      "name": "資訊科技與應用AB",
+      "nameEn": "Information Technology and its Applications AB",
+      "day": "星期二",
+      "clock": "16:10-18:00",
+      "room": "理工二館E403"
+    },
+    {
+      "code": "CSIE35490",
+      "name": "AIoT智慧裝置實作",
+      "nameEn": "AIoT Smart Device Practice",
+      "day": "星期四",
+      "clock": "14:10-17:00",
+      "room": "理工二館E307"
+    },
+    {
+      "code": "GC__68240",
+      "name": "AI未來應用與趨勢探索：洄瀾的智慧未來",
+      "nameEn": "Exploring Future AI Applications and Trends: Hualien's Smart Future AA",
+      "day": "星期五",
+      "clock": "09:10-12:00",
+      "room": "理工二館-ZT講堂C101"
+    }
+  ],
+  "days": [
+    {
+      "date": "2026-09-06",
+      "status": "baseline",
+      "capturedAt": "2026-09-06T15:43:56.723000+08:00",
+      "versions": 1,
+      "comparedWith": null,
+      "gapDays": null,
+      "courses": {
+        "TCAI10040": {
+          "count": 0,
+          "capturedAt": "2026-09-06T15:43:56.723000+08:00",
+          "comparedAt": null,
+          "added": null,
+          "left": null,
+          "retained": null,
+          "net": null
+        },
+        "GC__6753AA": {
+          "count": 40,
+          "capturedAt": "2026-09-06T15:43:48.841000+08:00",
+          "comparedAt": null,
+          "added": null,
+          "left": null,
+          "retained": null,
+          "net": null
+        },
+        "GC__68210": {
+          "count": 27,
+          "capturedAt": "2026-09-06T15:43:53.813000+08:00",
+          "comparedAt": null,
+          "added": null,
+          "left": null,
+          "retained": null,
+          "net": null
+        },
+        "GC__1480AA": {
+          "count": 40,
+          "capturedAt": "2026-09-06T15:43:45.726000+08:00",
+          "comparedAt": null,
+          "added": null,
+          "left": null,
+          "retained": null,
+          "net": null
+        },
+        "GC__6753AB": {
+          "count": 10,
+          "capturedAt": "2026-09-06T15:43:50.505000+08:00",
+          "comparedAt": null,
+          "added": null,
+          "left": null,
+          "retained": null,
+          "net": null
+        },
+        "GC__67570": {
+          "count": 12,
+          "capturedAt": "2026-09-06T15:43:52.466000+08:00",
+          "comparedAt": null,
+          "added": null,
+          "left": null,
+          "retained": null,
+          "net": null
+        },
+        "GC__68240": {
+          "count": 49,
+          "capturedAt": "2026-09-06T15:43:55.285000+08:00",
+          "comparedAt": null,
+          "added": null,
+          "left": null,
+          "retained": null,
+          "net": null
+        },
+        "GC__1480AB": {
+          "count": 40,
+          "capturedAt": "2026-09-06T15:43:47.370000+08:00",
+          "comparedAt": null,
+          "added": null,
+          "left": null,
+          "retained": null,
+          "net": null
+        },
+        "CSIE35490": {
+          "count": 30,
+          "capturedAt": "2026-09-06T15:43:22.618000+08:00",
+          "comparedAt": null,
+          "added": null,
+          "left": null,
+          "retained": null,
+          "net": null
+        }
+      }
+    },
+    {
+      "date": "2026-09-07",
+      "status": "daily",
+      "capturedAt": "2026-09-07T22:17:40.669450+08:00",
+      "versions": 1,
+      "comparedWith": "2026-09-06",
+      "gapDays": 1,
+      "courses": {
+        "TCAI10040": {
+          "count": 0,
+          "capturedAt": "2026-09-07T22:17:40.669450+08:00",
+          "comparedAt": "2026-09-06T15:43:56.723000+08:00",
+          "added": 0,
+          "left": 0,
+          "retained": 0,
+          "net": 0
+        },
+        "GC__6753AA": {
+          "count": 44,
+          "capturedAt": "2026-09-07T22:16:48.106839+08:00",
+          "comparedAt": "2026-09-06T15:43:48.841000+08:00",
+          "added": 13,
+          "left": 9,
+          "retained": 31,
+          "net": 4
+        },
+        "GC__68210": {
+          "count": 43,
+          "capturedAt": "2026-09-07T22:17:21.990878+08:00",
+          "comparedAt": "2026-09-06T15:43:53.813000+08:00",
+          "added": 20,
+          "left": 4,
+          "retained": 23,
+          "net": 16
+        },
+        "GC__1480AA": {
+          "count": 51,
+          "capturedAt": "2026-09-07T22:16:41.342836+08:00",
+          "comparedAt": "2026-09-06T15:43:45.726000+08:00",
+          "added": 22,
+          "left": 11,
+          "retained": 29,
+          "net": 11
+        },
+        "GC__6753AB": {
+          "count": 21,
+          "capturedAt": "2026-09-07T22:17:15.025132+08:00",
+          "comparedAt": "2026-09-06T15:43:50.505000+08:00",
+          "added": 11,
+          "left": 0,
+          "retained": 10,
+          "net": 11
+        },
+        "GC__67570": {
+          "count": 25,
+          "capturedAt": "2026-09-07T22:17:18.320632+08:00",
+          "comparedAt": "2026-09-06T15:43:52.466000+08:00",
+          "added": 16,
+          "left": 3,
+          "retained": 9,
+          "net": 13
+        },
+        "GC__68240": {
+          "count": 60,
+          "capturedAt": "2026-09-07T22:17:25.454688+08:00",
+          "comparedAt": "2026-09-06T15:43:55.285000+08:00",
+          "added": 14,
+          "left": 3,
+          "retained": 46,
+          "net": 11
+        },
+        "GC__1480AB": {
+          "count": 51,
+          "capturedAt": "2026-09-07T22:16:44.611848+08:00",
+          "comparedAt": "2026-09-06T15:43:47.370000+08:00",
+          "added": 13,
+          "left": 2,
+          "retained": 38,
+          "net": 11
+        },
+        "CSIE35490": {
+          "count": 31,
+          "capturedAt": "2026-09-07T22:15:51.126187+08:00",
+          "comparedAt": "2026-09-06T15:43:22.618000+08:00",
+          "added": 4,
+          "left": 3,
+          "retained": 27,
+          "net": 1
+        }
+      }
+    }
+  ]
+}</script><script>
+'use strict';
+const H=JSON.parse(document.getElementById('history-data').textContent),$=id=>document.getElementById(id),params=new URLSearchParams(location.search);
+let lang=params.get('lang')==='en'?'en':'zh',course=H.courses.find(c=>c.code===params.get('course'))||H.courses[0];
+const I={zh:{title:'每日選課變化',subtitle:'逐班比較名冊快照，追蹤加退選期間的人數變動。',date:'觀察日期',export:'匯出本班每日統計',print:'列印',back:'回課程總覽',courses:'依上課時間選班',trend:'本班每日人數',trendNote:'每天取最後一次成功擷取的名冊；缺資料的日期不補0。',daily:'每日變化紀錄',dailyNote:'「新增／退出」表示兩次名冊之間的變化，不是官方交易時間。',count:'名冊人數',added:'新增列冊',left:'退出名冊',net:'淨增減',retained:'持續列冊',interval:'比較區間',reading:'如何閱讀這份紀錄',manual:'目前採手動更新。頁面重新整理不會自動登入校方系統或擷取新名冊。',limitsTitle:'比較口徑與限制',limits:'第一筆只建立基準，不計算新增或退出。隔天有資料才顯示相鄰日期差異；漏日則顯示跨日比較區間。擷取失敗不當作0人，也不覆蓋上一份有效名冊。同一位學生在區間內先加後退、或先退再加，可能不會出現在差異中；退出名冊也不代表已確認退選原因。',methodTitle:'資料與隱私',method:'以同學期、同課號的學號集合比對；公開頁面只保存匿名計數，不含姓名、學號、電子郵件或個人變動清單。每次更新須核對全部課程、表頭與官方人數，完整通過才納入日報。',source:'官方來源：教師開課查詢系統（需登入）',footer:'Asia/Taipei · 第一階段與加退選期間快照，尚非最終名冊。變動人數只代表成功觀測到的差異。',baseline:'建立基準',dailyStatus:'相鄰日期比較',intervalStatus:'跨日區間比較',missing:'尚未取得完整快照',capture:'本班擷取時間',latest:'最新完整擷取',need:'目前只有一個有效觀測日，尚無法呈現趨勢。',missingNote:'這一天沒有完整有效的名冊，無法計算人數或變動；下方保留歷史資料。',baselineNote:'這是本班第一份基準名冊。尚無前次資料，新增、退出與淨增減顯示「—」。',observed:'觀測差異',dailyHint:'相鄰日期的最後有效名冊差異，仍不是當日所有加退選交易。',gapHint:'中間有未擷取日，以下是整個區間的變動，不是單日變動。',stale:'最新資料早於今日；需手動更新後才會出現新的觀測結果。',notLive:'手動快照 · 非即時資料',noData:'尚無有效資料',coursesUnit:'人'},en:{title:'Daily enrollment changes',subtitle:'Compare course roster snapshots during the add/drop period.',date:'Observation date',export:'Export this course’s daily counts',print:'Print',back:'All courses',courses:'Courses by meeting time',trend:'Roster size over time',trendNote:'Last successful snapshot per day. Missing dates are never filled with zero.',daily:'Daily change log',dailyNote:'Added / left means a difference between snapshots, not official transaction times.',count:'Roster size',added:'Added to roster',left:'Left roster',net:'Net change',retained:'Still listed',interval:'Comparison interval',reading:'How to read this log',manual:'Updates are manual. Refreshing this page does not sign in or fetch a new official roster.',limitsTitle:'Comparison rules and limits',limits:'The first snapshot establishes a baseline with no change counts. Consecutive observed dates use a daily comparison; gaps use an explicitly labeled multi-day interval. Failed captures never become zero rosters or replace valid snapshots. Joining and leaving again within an interval may be invisible. Leaving a roster does not establish the reason.',methodTitle:'Data and privacy',method:'Student ID sets are compared within the same semester and course. Only anonymous counts are published: no names, IDs, emails or individual change lists. All courses, headers and official counts must pass validation before a capture is included.',source:'Official source: teacher course system (sign-in required)',footer:'Asia/Taipei · Preliminary roster snapshots, not final enrollment. Counts describe observed differences only.',baseline:'Baseline',dailyStatus:'Consecutive dates',intervalStatus:'Multi-day interval',missing:'No complete snapshot',capture:'Course captured at',latest:'Latest complete capture',need:'Only one observation date is available; a trend cannot yet be shown.',missingNote:'No complete, valid roster is available for this date. Counts and changes are unavailable; previous observations remain below.',baselineNote:'This is the first baseline for this course. Without a previous snapshot, added, left and net change are shown as “—”.',observed:'Observed difference',dailyHint:'Difference between the final valid snapshots on consecutive dates, not a complete daily transaction log.',gapHint:'Some dates were not captured. Changes cover the entire interval, not one day.',stale:'The latest data predates today. A manual update is needed for a new observation.',notLive:'Manual snapshot · not live',noData:'No valid data',coursesUnit:'students'}};
+const tr=k=>I[lang][k],esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const name=c=>lang==='en'?c.nameEn:c.name,number=n=>n===null||n===undefined?'—':n,delta=n=>n===null||n===undefined?'—':n>0?'+'+n:n;
+const label=d=>tr(d.status==='baseline'?'baseline':d.status==='daily'?'dailyStatus':d.status==='interval'?'intervalStatus':'missing');
+const time=s=>s?s.slice(0,16).replace('T',' '):'—';
+const weekday=d=>lang==='en'?['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][['星期一','星期二','星期三','星期四','星期五','星期六','星期日'].indexOf(d)]:d;
+const room=c=>lang==='en'?c.room.replace('理工二館','Science and Engineering Building II, ').replace('-ZT講堂','ZT Auditorium '):c.room;
+H.days.slice().reverse().forEach(d=>{const o=document.createElement('option');o.value=d.date;o.textContent=d.date;$('date').append(o)});$('date').value=H.days[H.days.length-1].date;
+function renderChart(rows){const W=780,T=245,L=48,R=20,top=20,B=42,available=rows.filter(d=>d.courses);if(!available.length)return `<div class="empty">${tr('noData')}</div>`;const max=Math.max(5,...available.map(d=>d.courses[course.code].count)),ceiling=Math.max(4,Math.ceil(max/4)*4);const x=i=>L+(rows.length>1?i/(rows.length-1):.5)*(W-L-R),y=n=>T-B-(n/ceiling)*(T-top-B);let svg=`<svg class="chart" viewBox="0 0 ${W} ${T}" role="img" aria-label="${esc(tr('trend'))}">`;for(let k=0;k<=4;k++){const n=ceiling*k/4;svg+=`<line x1="${L}" x2="${W-R}" y1="${y(n)}" y2="${y(n)}" stroke="#e1eaf0"/><text x="${L-9}" y="${y(n)+4}" text-anchor="end">${Math.round(n)}</text>`}let last=null;rows.forEach((d,i)=>{if(!d.courses){last=null;return}const n=d.courses[course.code].count,p={x:x(i),y:y(n)};if(last)svg+=`<line x1="${last.x}" y1="${last.y}" x2="${p.x}" y2="${p.y}" stroke="#087f91" stroke-width="3"/>`;svg+=`<circle cx="${p.x}" cy="${p.y}" r="5" fill="#087f91"><title>${d.date}: ${n}</title></circle>`;if(rows.length<13||i===0||i===rows.length-1||i%Math.ceil(rows.length/8)===0)svg+=`<text x="${p.x}" y="${T-12}" text-anchor="middle">${d.date.slice(5)}</text>`;last=p});return svg+'</svg>'+(available.length===1?`<p class="sub">${tr('need')}</p>`:'')}
+function render(){document.documentElement.lang=lang==='en'?'en':'zh-Hant';document.querySelectorAll('[data-i]').forEach(e=>e.textContent=tr(e.dataset.i));
+const day=H.days.find(d=>d.date===$('date').value),c=day.courses?.[course.code];
+$('nav').innerHTML=[...new Set(H.courses.map(c=>c.day))].map(d=>`<section><div class="daylabel">${lang==='en'?['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][['星期一','星期二','星期三','星期四','星期五','星期六','星期日'].indexOf(d)]:d}</div>${H.courses.filter(c=>c.day===d).map(c=>`<button class="${c.code===course.code?'active':''}" data-course="${c.code}" aria-pressed="${c.code===course.code}"><span class="time">${c.clock}</span>${esc(name(c))}</button>`).join('')}</section>`).join('');
+$('course-title').textContent=name(course);$('schedule').textContent=`${course.code} · ${weekday(course.day)} ${course.clock} · ${room(course)}`;$('status').textContent=label(day);$('captured').textContent=`${tr('capture')}: ${time(c?.capturedAt)}　｜　${tr('latest')}: ${time(H.latestCapture)}`;
+const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Taipei'}).format(new Date());$('freshness').textContent=H.latestCapture.slice(0,10)<today?tr('stale'):tr('notLive');$('freshness').className='statusline '+(H.latestCapture.slice(0,10)<today?'stale':'');
+$('cards').innerHTML=[['count',c?.count,''],['added',c?.added,'added'],['left',c?.left,'left'],['net',c?.net,'']].map(([key,n,color])=>`<article class="card"><label>${tr(key)}</label><strong class="${color}">${key==='net'?delta(n):number(n)}</strong><small>${key==='count'?day.date:day.comparedWith?`${day.comparedWith} → ${day.date}`:label(day)}</small></article>`).join('');
+$('comparison').textContent=day.status==='missing'?tr('missingNote'):day.status==='baseline'?tr('baselineNote'):`${tr('observed')}: ${time(c.comparedAt)} → ${time(c.capturedAt)}。 ${tr(day.status==='daily'?'dailyHint':'gapHint')}`;
+$('chart').innerHTML=renderChart(H.days.filter(d=>d.date<=day.date));
+$('history').innerHTML=H.days.slice().reverse().map(d=>{const r=d.courses?.[course.code];return `<tr class="${d.date===day.date?'selected':''}"><td><button class="datelink" data-date="${d.date}">${d.date}</button></td><td class="num">${number(r?.count)}</td><td class="num added">${number(r?.added)}</td><td class="num left">${number(r?.left)}</td><td class="num">${delta(r?.net)}</td><td class="num">${number(r?.retained)}</td><td>${d.comparedWith?`${d.comparedWith} → ${d.date}`:`<span class="daybadge">${label(d)}</span>`}</td></tr>`}).join('');}
+$('date').addEventListener('change',render);$('nav').onclick=e=>{const b=e.target.closest('[data-course]');if(b){course=H.courses.find(c=>c.code===b.dataset.course);render()}};$('history').onclick=e=>{const b=e.target.closest('[data-date]');if(b){$('date').value=b.dataset.date;render()}};$('lang').onclick=()=>{lang=lang==='en'?'zh':'en';render()};$('print').onclick=()=>window.print();
+$('export').onclick=()=>{const rows=[['course','date','count','added','left','net','retained','compared_with','status','captured_at'],...H.days.map(d=>{const c=d.courses?.[course.code];return[course.code,d.date,c?.count,c?.added,c?.left,c?.net,c?.retained,d.comparedWith,d.status,c?.capturedAt]})];const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=`11501-${course.code}-daily-enrollment.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};render();
+</script></body></html>

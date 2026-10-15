@@ -1,0 +1,1263 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>W3 離線 Agent 夥伴｜計畫、差異、批准與驗證</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #566178;
+      --paper: #ffffff;
+      --wash: #eef4ff;
+      --line: #c8d3e5;
+      --brand: #3157a4;
+      --brand-dark: #223f7b;
+      --accent: #c45d14;
+      --good: #176b4d;
+      --good-bg: #e7f6ef;
+      --warn: #8a4b0f;
+      --warn-bg: #fff3dc;
+      --bad: #9e2f36;
+      --bad-bg: #fff0f1;
+      --focus: #ffbf47;
+      --shadow: 0 12px 30px rgba(26, 47, 86, .10);
+      font-family: "Segoe UI", "Noto Sans TC", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #f5f7fb;
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+    button, select, input { font: inherit; }
+    a { color: var(--brand-dark); }
+    :focus-visible {
+      outline: 4px solid var(--focus);
+      outline-offset: 3px;
+    }
+    .skip-link {
+      position: fixed;
+      z-index: 50;
+      left: 1rem;
+      top: -6rem;
+      padding: .75rem 1rem;
+      color: #fff;
+      background: #111827;
+      border-radius: .5rem;
+    }
+    .skip-link:focus { top: 1rem; }
+    .wrap { width: min(72rem, calc(100% - 2rem)); margin-inline: auto; }
+    .language-switch {
+      display: flex;
+      justify-content: flex-end;
+      gap: .45rem;
+      margin-bottom: 1rem;
+    }
+    .language-switch button {
+      min-width: 48px;
+      min-height: 44px;
+      padding: .45rem .75rem;
+      color: #fff;
+      background: rgba(15, 27, 55, .35);
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: 999px;
+    }
+    .language-switch button[aria-pressed="true"] {
+      color: var(--brand-dark);
+      background: #fff;
+      border-color: #fff;
+    }
+    body[data-lang="en"] .sub-en { display: none; }
+    header {
+      color: #fff;
+      background:
+        radial-gradient(circle at 84% 20%, rgba(255,255,255,.18), transparent 24rem),
+        linear-gradient(125deg, #1d3568, #3157a4 62%, #4b6bb0);
+      padding: 2.4rem 0 2rem;
+    }
+    .eyebrow {
+      margin: 0 0 .45rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 18ch;
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.65rem);
+      line-height: 1.12;
+    }
+    header .lead { max-width: 48rem; font-size: 1.12rem; }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      padding: 0;
+      list-style: none;
+    }
+    .chips li {
+      padding: .38rem .72rem;
+      border: 1px solid rgba(255,255,255,.45);
+      border-radius: 999px;
+      background: rgba(255,255,255,.1);
+      font-weight: 700;
+    }
+    .privacy {
+      max-width: 50rem;
+      padding: .85rem 1rem;
+      color: #fff;
+      background: rgba(15, 27, 55, .38);
+      border-left: .35rem solid #ffd18e;
+      border-radius: .5rem;
+    }
+    header details {
+      max-width: 54rem;
+      margin-top: 1rem;
+      color: var(--ink);
+      background: #fff;
+      border-radius: .65rem;
+    }
+    details summary {
+      min-height: 44px;
+      padding: .72rem 1rem;
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .english {
+      padding: 0 1rem 1rem;
+      border-top: 1px solid var(--line);
+    }
+    nav {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      background: rgba(255,255,255,.96);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 4px 12px rgba(35, 54, 91, .08);
+    }
+    .progress-list {
+      display: flex;
+      gap: .5rem;
+      margin: 0;
+      padding: .7rem 0;
+      overflow-x: auto;
+      list-style: none;
+    }
+    .progress-list a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: .55rem .8rem;
+      color: var(--ink);
+      text-decoration: none;
+      white-space: nowrap;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      font-weight: 750;
+    }
+    .progress-list a.done::before {
+      content: "✓";
+      margin-right: .4rem;
+      color: var(--good);
+      font-weight: 900;
+    }
+    main { padding: 1.4rem 0 4rem; }
+    .notice {
+      margin: 0 0 1.25rem;
+      padding: 1rem;
+      background: var(--warn-bg);
+      border: 1px solid #e8c894;
+      border-radius: .75rem;
+    }
+    .stage {
+      margin: 1.25rem 0;
+      padding: clamp(1rem, 3vw, 1.6rem);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      box-shadow: var(--shadow);
+      scroll-margin-top: 6rem;
+    }
+    .stage-number {
+      display: inline-grid;
+      place-items: center;
+      width: 2.2rem;
+      height: 2.2rem;
+      margin-right: .45rem;
+      color: #fff;
+      background: var(--brand);
+      border-radius: 50%;
+      font-weight: 900;
+    }
+    h2 {
+      margin: 0 0 .35rem;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      line-height: 1.25;
+    }
+    h3 { margin-bottom: .35rem; }
+    .sub-en {
+      display: block;
+      margin-top: .2rem;
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 650;
+    }
+    .instruction { max-width: 66ch; color: var(--muted); }
+    fieldset {
+      margin: 1rem 0;
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-radius: .8rem;
+    }
+    legend { padding: 0 .35rem; font-weight: 850; }
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .7rem;
+    }
+    .choice {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: .7rem;
+      min-height: 60px;
+      padding: .85rem;
+      border: 2px solid var(--line);
+      border-radius: .75rem;
+      cursor: pointer;
+    }
+    .choice:has(input:checked) {
+      border-color: var(--brand);
+      background: var(--wash);
+    }
+    .choice input { width: 1.3rem; height: 1.3rem; margin-top: .12rem; }
+    label, .label { font-weight: 750; }
+    select {
+      width: min(100%, 34rem);
+      min-height: 48px;
+      padding: .65rem .75rem;
+      color: var(--ink);
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: .55rem;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .7rem;
+      margin-top: 1rem;
+    }
+    button {
+      min-height: 46px;
+      padding: .65rem 1rem;
+      color: #fff;
+      background: var(--brand);
+      border: 2px solid transparent;
+      border-radius: .6rem;
+      cursor: pointer;
+      font-weight: 800;
+    }
+    button:hover { background: var(--brand-dark); }
+    button.secondary {
+      color: var(--brand-dark);
+      background: #fff;
+      border-color: var(--brand);
+    }
+    button.danger {
+      color: var(--bad);
+      background: #fff;
+      border-color: var(--bad);
+    }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    .output {
+      min-height: 3.5rem;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--wash);
+      border-left: .35rem solid var(--brand);
+      border-radius: .55rem;
+      white-space: pre-wrap;
+    }
+    .output[data-state="good"] {
+      background: var(--good-bg);
+      border-left-color: var(--good);
+    }
+    .output[data-state="warn"] {
+      background: var(--warn-bg);
+      border-left-color: var(--warn);
+    }
+    pre {
+      max-width: 100%;
+      min-height: 11rem;
+      overflow: auto;
+      padding: 1rem;
+      color: #e8efff;
+      background: #15213a;
+      border-radius: .75rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .diff-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      padding: 0;
+      list-style: none;
+    }
+    .diff-legend li { padding: .25rem .55rem; border-radius: .4rem; }
+    .remove { color: #7d252e; background: var(--bad-bg); }
+    .add { color: #125a41; background: var(--good-bg); }
+    .simulator {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .app {
+      min-height: 15rem;
+      padding: 1rem;
+      background: #f9fbff;
+      border: 2px solid #a9bad7;
+      border-radius: 1rem;
+    }
+    .app h3 { margin-top: 0; }
+    .app-options {
+      margin: .8rem 0;
+      padding: .8rem;
+      background: #fff;
+      border: 1px dashed #93a5c3;
+      border-radius: .55rem;
+    }
+    .test-card {
+      margin: .75rem 0;
+      padding: .85rem;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: .65rem;
+    }
+    .test-status { font-weight: 850; }
+    .test-status.pass { color: var(--good); }
+    .evidence {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+    .evidence > div {
+      padding: .8rem;
+      background: #f8faff;
+      border: 1px solid var(--line);
+      border-radius: .6rem;
+    }
+    .evidence dt { color: var(--muted); font-weight: 750; }
+    .evidence dd { margin: .3rem 0 0; font-weight: 700; }
+    .rubric {
+      padding-left: 1.4rem;
+    }
+    .rubric li { margin: .35rem 0; }
+    .live-status {
+      position: fixed;
+      z-index: 40;
+      right: 1rem;
+      bottom: 1rem;
+      max-width: min(30rem, calc(100% - 2rem));
+      padding: .75rem 1rem;
+      color: #fff;
+      background: #14213a;
+      border-radius: .6rem;
+      box-shadow: var(--shadow);
+    }
+    footer {
+      padding: 1.5rem 0 2.5rem;
+      color: var(--muted);
+      background: #e9eef7;
+    }
+    .print-only { display: none; }
+
+    @media (max-width: 44rem) {
+      .wrap { width: min(100% - 1rem, 72rem); }
+      .choice-grid, .simulator, .evidence { grid-template-columns: 1fr; }
+      .stage { border-radius: .7rem; }
+      h1 { max-width: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+
+    @media print {
+      @page { size: A4; margin: 12mm; }
+      body { color: #000; background: #fff; font-size: 10.5pt; }
+      header { color: #000; background: #fff; padding: 0 0 .5rem; }
+      header .lead, header .privacy, header details, nav, .notice,
+      #plan, #difference, #decision, #verify, .actions, .live-status,
+      .language-switch, footer {
+        display: none !important;
+      }
+      .wrap { width: 100%; }
+      h1 { max-width: none; font-size: 22pt; }
+      .chips li { color: #000; border-color: #666; background: #fff; }
+      .stage { margin: .4rem 0; padding: 0; border: 0; box-shadow: none; }
+      #evidence { display: block !important; }
+      .evidence > div { break-inside: avoid; }
+      .print-only { display: block; }
+    }
+  </style>
+</head>
+<body data-lang="zh">
+  <a class="skip-link" id="skip-link" href="#main">跳到主要內容</a>
+
+  <header>
+    <div class="wrap">
+      <div class="language-switch" id="language-switch" role="group" aria-label="語言">
+        <button type="button" data-language="zh" aria-pressed="true">中</button>
+        <button type="button" data-language="en" aria-pressed="false">EN</button>
+      </div>
+      <p class="eyebrow" id="hero-eyebrow">W3 · 120 分鐘主路線的離線 Agent 夥伴 · 最後更新 2026-08-25</p>
+      <h1 id="hero-title">Agent 計畫、差異、批准與驗證</h1>
+      <p class="lead" id="hero-lead">這是 120 分鐘 W3 主路線中的約 25 分鐘離線 Agent 夥伴活動，不是另一門縮短版課程。你不需要網路或 AI 帳號；先看預寫計畫與差異，再由人批准、修改或拒絕，最後用測試驗證。</p>
+      <ul class="chips" aria-label="使用條件">
+        <li id="chip-time">120 分鐘主路線內約 25 分鐘</li>
+        <li id="chip-offline">不連網</li>
+        <li id="chip-code">不執行貼入程式碼</li>
+        <li id="chip-storage">不儲存輸入</li>
+      </ul>
+      <p class="privacy" id="privacy-note"><strong>隱私界線：</strong>本頁沒有姓名、學號或自由輸入欄位，也不使用 localStorage。所有選擇只留在目前分頁；重新整理即清除。請勿把真實個人資料寫在列印紙上。</p>
+
+      <details>
+        <summary>English support: complete quick guide</summary>
+        <div class="english" lang="en">
+          <p><strong>Route note:</strong> this is an approximately 25-minute offline Agent companion activity inside the 120-minute W3 main route, not a separate shortened lesson.</p>
+          <p><strong>Goal:</strong> practise a supervised workflow without an AI account. This page uses only pre-written suggestions. It never runs pasted code, sends network requests, or saves personal data.</p>
+          <ol>
+            <li>Choose one synthetic campus topic and generate the pre-written Agent plan.</li>
+            <li>Inspect the conceptual before/after difference. It is not executable code.</li>
+            <li>Approve, modify, or reject the suggestion and record a reason.</li>
+            <li>Run two tests: a normal case must return a result; an empty case must show a correction message and must not invent a result.</li>
+            <li>Select one risk, build the evidence card, and print it before leaving.</li>
+          </ol>
+          <p><strong>Assessment:</strong> the task, two tests, human decision, and risk boundary are the same as in the live-AI route. English grammar or style is not graded in W3.</p>
+        </div>
+      </details>
+    </div>
+  </header>
+
+  <nav aria-label="練習進度">
+    <div class="wrap">
+      <ol class="progress-list">
+        <li><a id="nav-plan" href="#plan">1 計畫</a></li>
+        <li><a id="nav-diff" href="#difference">2 差異</a></li>
+        <li><a id="nav-decision" href="#decision">3 人的決定</a></li>
+        <li><a id="nav-test" href="#verify">4 驗證</a></li>
+        <li><a id="nav-evidence" href="#evidence">5 證據</a></li>
+      </ol>
+    </div>
+  </nav>
+
+  <main id="main" class="wrap">
+    <p class="notice" id="not-chat"><strong>這不是聊天機器人。</strong>所有「Agent 建議」都已預先寫入檔案，內容只會隨你選的合成主題切換。頁面不接受也不執行任何貼入的 HTML 或 JavaScript。</p>
+
+    <form id="workflow" novalidate>
+      <section class="stage" id="plan" aria-labelledby="plan-title">
+        <h2 id="plan-title"><span class="stage-number">1</span><span id="plan-heading">先看 Agent 計畫</span><span class="sub-en" lang="en">Read the Agent plan first</span></h2>
+        <p class="instruction" id="plan-instruction">先選一個不含個資的合成主題。Agent 只能提出固定範圍的建議：保留「幫我選一個」，加入清除功能與空白輸入提示。</p>
+
+        <fieldset>
+          <legend id="topic-legend">選擇合成主題</legend>
+          <div class="choice-grid">
+            <label class="choice">
+              <input type="radio" name="topic" value="lunch" checked>
+              <strong id="topic-lunch-label">校園午餐靈感</strong>
+            </label>
+            <label class="choice">
+              <input type="radio" name="topic" value="break">
+              <strong id="topic-break-label">讀書休息小任務</strong>
+            </label>
+            <label class="choice">
+              <input type="radio" name="topic" value="event">
+              <strong id="topic-event-label">校園活動選擇</strong>
+            </label>
+            <label class="choice">
+              <input type="radio" name="topic" value="club">
+              <strong id="topic-club-label">虛構社團暖身</strong>
+            </label>
+          </div>
+        </fieldset>
+
+        <label for="tone" id="tone-label">內容語氣</label><br>
+        <select id="tone">
+          <option value="friendly">友善、簡短</option>
+          <option value="direct">直接、清楚</option>
+          <option value="playful">活潑但不誇大</option>
+        </select>
+
+        <div class="actions">
+          <button type="button" id="generate-plan">產生預寫計畫</button>
+        </div>
+        <output class="output" id="plan-output" aria-live="polite">尚未產生計畫。請選主題後按按鈕。</output>
+      </section>
+
+      <section class="stage" id="difference" aria-labelledby="diff-title">
+        <h2 id="diff-title"><span class="stage-number">2</span><span id="diff-heading">只看差異，不直接執行</span><span class="sub-en" lang="en">Inspect the difference; do not run it blindly</span></h2>
+        <p class="instruction" id="diff-instruction">這是功能層級的 before／after，不是可執行程式碼。先回答：「改了什麼？有沒有超出任務？」</p>
+        <ul class="diff-legend" id="diff-legend" aria-label="差異符號">
+          <li class="remove" id="diff-before">− 原本不足</li>
+          <li class="add" id="diff-proposed">＋ 建議改變</li>
+        </ul>
+        <div class="actions">
+          <button type="button" id="show-diff">顯示差異</button>
+        </div>
+        <pre id="diff-output" tabindex="0" aria-label="功能差異內容">請先產生計畫，再顯示差異。</pre>
+      </section>
+
+      <section class="stage" id="decision" aria-labelledby="decision-title">
+        <h2 id="decision-title"><span class="stage-number">3</span><span id="decision-heading">由人批准、修改或拒絕</span><span class="sub-en" lang="en">A human approves, modifies, or rejects</span></h2>
+        <p class="instruction" id="decision-instruction">Agent 的建議不是命令。選一個決定，並留下可核對的理由。</p>
+
+        <fieldset>
+          <legend id="decision-legend">我的決定</legend>
+          <div class="choice-grid">
+            <label class="choice">
+              <input type="radio" name="decision" value="approve">
+              <strong id="decision-approve-label">批准</strong>
+            </label>
+            <label class="choice">
+              <input type="radio" name="decision" value="modify">
+              <strong id="decision-modify-label">修改後採用</strong>
+            </label>
+            <label class="choice">
+              <input type="radio" name="decision" value="reject">
+              <strong id="decision-reject-label">拒絕，使用教師安全版</strong>
+            </label>
+          </div>
+        </fieldset>
+
+        <label for="reason" id="reason-label">決定理由</label><br>
+        <select id="reason">
+          <option value="">請選一個理由</option>
+          <option value="scope">建議符合任務範圍</option>
+          <option value="simplify">我要縮小修改，避免一次改太多</option>
+          <option value="privacy">可能接觸不必要的資料</option>
+          <option value="network">可能加入不必要的外連</option>
+          <option value="unclear">建議不夠清楚，不能直接採用</option>
+        </select>
+
+        <div class="actions">
+          <button type="button" id="record-decision">記錄人的決定</button>
+        </div>
+        <output class="output" id="decision-output" aria-live="polite">尚未記錄。</output>
+      </section>
+
+      <section class="stage" id="verify" aria-labelledby="verify-title">
+        <h2 id="verify-title"><span class="stage-number">4</span><span id="verify-heading">用兩筆測試驗證</span><span class="sub-en" lang="en">Verify with two tests</span></h2>
+        <p class="instruction" id="verify-instruction">先做正常案例，再刻意清空選項。通過不是「看起來漂亮」，而是實際行為符合預期。</p>
+
+        <div class="simulator">
+          <div class="app" aria-labelledby="app-title">
+            <h3 id="app-title">安全 app 模擬器</h3>
+            <p id="sim-description">載入三個合成選項，測試「幫我選一個」。</p>
+            <div class="app-options" id="sim-options">請先產生計畫。</div>
+            <div class="actions">
+              <button type="button" id="run-normal">載入正常案例並執行</button>
+              <button type="button" class="secondary" id="run-empty">載入空白案例並執行</button>
+              <button type="button" class="secondary" id="clear-sim">清除</button>
+            </div>
+            <output class="output" id="sim-result" aria-live="polite">等待測試。</output>
+          </div>
+
+          <div id="test-record" aria-label="測試紀錄">
+            <article class="test-card">
+              <h3 id="test-one-heading">測試 1：正常輸入</h3>
+              <p id="normal-expected">預期：三個合成選項能產生一個結果。</p>
+              <p class="test-status" id="test-one">○ 尚未測試</p>
+            </article>
+            <article class="test-card">
+              <h3 id="test-two-heading">測試 2：空白輸入</h3>
+              <p id="empty-expected">預期：不捏造結果，明確提示先補選項。</p>
+              <p class="test-status" id="test-two">○ 尚未測試</p>
+            </article>
+            <p id="recovery-instruction">復原方式：如果結果不符預期，按「清除」，回到教師安全版，再重跑兩筆測試。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="stage" id="evidence" aria-labelledby="evidence-title">
+        <h2 id="evidence-title"><span class="stage-number">5</span><span id="evidence-heading">留下人的證據</span><span class="sub-en" lang="en">Keep evidence of human judgment</span></h2>
+        <p class="instruction" id="evidence-instruction">先選一條風險，再建立證據卡。頁面不會儲存內容；離開前請列印或另存 PDF。</p>
+
+        <label for="risk" id="risk-label">一條風險與界線</label><br>
+        <select id="risk">
+          <option value="">請選一項</option>
+          <option value="privacy">隱私：只用合成選項，不放個資</option>
+          <option value="accuracy">誤導：結果只是隨機靈感，不是假裝最佳答案</option>
+          <option value="accessibility">可及性：結果必須有文字，不能只靠顏色</option>
+          <option value="scope">權限：小工具不連網、不送出資料</option>
+        </select>
+
+        <div class="actions">
+          <button type="button" id="build-evidence">建立證據卡</button>
+          <button type="button" class="secondary" id="print-evidence">列印或另存 PDF</button>
+          <button type="button" class="danger" id="reset-all">清除本頁</button>
+        </div>
+
+        <div class="print-only">
+          <p id="print-note"><strong>W3 離線 exit evidence</strong>（本頁不含姓名；依教師指定方式另外標示）</p>
+        </div>
+        <dl class="evidence" id="evidence-card">
+          <div><dt id="ev-topic-label">主題</dt><dd id="ev-topic">尚未完成</dd></div>
+          <div><dt id="ev-plan-label">計畫</dt><dd id="ev-plan">尚未完成</dd></div>
+          <div><dt id="ev-decision-label">人的決定</dt><dd id="ev-decision">尚未完成</dd></div>
+          <div><dt id="ev-diff-label">前後差異</dt><dd id="ev-diff">尚未完成</dd></div>
+          <div><dt id="ev-tests-label">兩筆測試</dt><dd id="ev-tests">尚未完成</dd></div>
+          <div><dt id="ev-risk-label">風險界線</dt><dd id="ev-risk">尚未完成</dd></div>
+        </dl>
+
+        <h3 id="rubric-heading">共同 rubric 自我檢查</h3>
+        <ol class="rubric">
+          <li id="rubric-1">說得出 app 的用途與對象。</li>
+          <li id="rubric-2">指出一項清楚的 before／after。</li>
+          <li id="rubric-3">完成兩筆測試，其中一筆是失敗案例。</li>
+          <li id="rubric-4">留下人的採用、修改或拒絕決定。</li>
+          <li id="rubric-5">說明一條風險與界線。</li>
+        </ol>
+        <p id="assessment-reminder">評量提醒：這張課內 exit evidence 是共同必做，今天只交這個（離開教室前上傳 e學苑 Week 3）；作品留著，到 W13 可以併進「互動與版本」那 5% 作業。</p>
+      </section>
+    </form>
+  </main>
+
+  <div class="live-status" id="live-status" role="status" aria-live="polite">進度 0／5。先從主題開始。</div>
+
+  <footer>
+    <div class="wrap">
+      <p id="footer-note">115-1《人工智慧概論》W3 離線備援｜不需帳號、API、安裝或命令列｜重新整理會清除本頁狀態。</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var topics = {
+        lunch: {
+          zh: "校園午餐靈感",
+          en: "Campus lunch ideas",
+          audience: "想快速獲得午餐靈感的虛構校園使用者",
+          audienceEn: "fictional campus users who want a quick lunch idea",
+          options: ["暖湯與麵", "蔬食便當", "飯糰與水果"]
+        },
+        break: {
+          zh: "讀書休息小任務",
+          en: "Study-break activities",
+          audience: "需要短暫休息點子的虛構學習者",
+          audienceEn: "fictional learners who need a short break idea",
+          options: ["伸展兩分鐘", "看看窗外", "整理桌面一角"]
+        },
+        event: {
+          zh: "校園活動選擇",
+          en: "Campus event picker",
+          audience: "想從合成活動中取得靈感的虛構學生",
+          audienceEn: "fictional students choosing from synthetic activity ideas",
+          options: ["戶外速寫", "小型讀書會", "校園散步"]
+        },
+        club: {
+          zh: "虛構社團暖身",
+          en: "Fictional club warm-up",
+          audience: "需要安全暖身活動的虛構社團",
+          audienceEn: "a fictional club that needs a safe warm-up",
+          options: ["一句話接龍", "圖卡猜題", "安靜排序挑戰"]
+        }
+      };
+
+      var toneNames = {
+        friendly: { zh: "友善、簡短", en: "friendly and short" },
+        direct: { zh: "直接、清楚", en: "direct and clear" },
+        playful: { zh: "活潑但不誇大", en: "playful without exaggeration" }
+      };
+
+      var state = {
+        plan: false,
+        diff: false,
+        decision: false,
+        test: false,
+        evidence: false,
+        testOne: false,
+        testTwo: false,
+        simMode: "none",
+        topic: "lunch",
+        language: "zh",
+        decisionCode: "",
+        reasonCode: "",
+        decisionValue: "",
+        reasonText: ""
+      };
+
+      function byId(id) { return document.getElementById(id); }
+      function t(zh, en) { return state.language === "en" ? en : zh; }
+
+      var staticText = {
+        "skip-link": ["跳到主要內容", "Skip to main content"],
+        "hero-eyebrow": ["W3 · 120 分鐘主路線的離線 Agent 夥伴 · 最後更新 2026-08-25", "W3 · Offline Agent companion within the 120-minute main route · Updated 2026-08-25"],
+        "hero-title": ["Agent 計畫、差異、批准與驗證", "Agent plan, difference, approval, and verification"],
+        "hero-lead": ["這是 120 分鐘 W3 主路線中的約 25 分鐘離線 Agent 夥伴活動，不是另一門縮短版課程。你不需要網路或 AI 帳號；先看預寫計畫與差異，再由人批准、修改或拒絕，最後用測試驗證。", "This is an approximately 25-minute offline Agent companion activity within the 120-minute W3 main route—not a separate shortened lesson. You need no internet connection or AI account. Read the pre-written plan and difference, make a human approval decision, and verify the result with tests."],
+        "chip-time": ["120 分鐘主路線內約 25 分鐘", "About 25 minutes within the 120-minute route"],
+        "chip-offline": ["不連網", "No network"],
+        "chip-code": ["不執行貼入程式碼", "Runs no pasted code"],
+        "chip-storage": ["不儲存輸入", "Saves no input"],
+        "privacy-note": ["隱私界線：本頁沒有姓名、學號或自由輸入欄位，也不使用 localStorage。所有選擇只留在目前分頁；重新整理即清除。請勿把真實個人資料寫在列印紙上。", "Privacy boundary: this page has no name, student-ID, or free-text fields and uses no localStorage. Choices remain only in this tab and disappear on refresh. Do not write real personal data on the printout."],
+        "nav-plan": ["1 計畫", "1 Plan"],
+        "nav-diff": ["2 差異", "2 Difference"],
+        "nav-decision": ["3 人的決定", "3 Human decision"],
+        "nav-test": ["4 驗證", "4 Verify"],
+        "nav-evidence": ["5 證據", "5 Evidence"],
+        "not-chat": ["這不是聊天機器人。所有「Agent 建議」都已預先寫入檔案，內容只會隨你選的合成主題切換。頁面不接受也不執行任何貼入的 HTML 或 JavaScript。", "This is not a chatbot. Every Agent suggestion is pre-written and changes only with the selected synthetic topic. The page neither accepts nor runs pasted HTML or JavaScript."],
+        "plan-heading": ["先看 Agent 計畫", "Read the Agent plan first"],
+        "plan-instruction": ["先選一個不含個資的合成主題。Agent 只能提出固定範圍的建議：保留「幫我選一個」，加入清除功能與空白輸入提示。", "Choose a synthetic topic with no personal data. The Agent may only suggest a fixed scope: keep “Pick one,” then add Clear and an empty-input message."],
+        "topic-legend": ["選擇合成主題", "Choose a synthetic topic"],
+        "topic-lunch-label": ["校園午餐靈感", "Campus lunch ideas"],
+        "topic-break-label": ["讀書休息小任務", "Study-break activities"],
+        "topic-event-label": ["校園活動選擇", "Campus event picker"],
+        "topic-club-label": ["虛構社團暖身", "Fictional club warm-up"],
+        "tone-label": ["內容語氣", "Content tone"],
+        "diff-heading": ["只看差異，不直接執行", "Inspect the difference; do not run it blindly"],
+        "diff-instruction": ["這是功能層級的 before／after，不是可執行程式碼。先回答：「改了什麼？有沒有超出任務？」", "This is a feature-level before/after description, not executable code. Ask: What changed? Did it exceed the task scope?"],
+        "diff-before": ["− 原本不足", "− Before"],
+        "diff-proposed": ["＋ 建議改變", "+ Proposed"],
+        "decision-heading": ["由人批准、修改或拒絕", "A human approves, modifies, or rejects"],
+        "decision-instruction": ["Agent 的建議不是命令。選一個決定，並留下可核對的理由。", "An Agent suggestion is not an order. Choose a decision and record a checkable reason."],
+        "decision-legend": ["我的決定", "My decision"],
+        "decision-approve-label": ["批准", "Approve as scoped"],
+        "decision-modify-label": ["修改後採用", "Modify, then adopt"],
+        "decision-reject-label": ["拒絕，使用教師安全版", "Reject; use the safe teacher version"],
+        "reason-label": ["決定理由", "Reason"],
+        "verify-heading": ["用兩筆測試驗證", "Verify with two tests"],
+        "verify-instruction": ["先做正常案例，再刻意清空選項。通過不是「看起來漂亮」，而是實際行為符合預期。", "Run the normal case, then deliberately remove every option. Passing means that the behaviour matches the expectation—not that the page merely looks good."],
+        "app-title": ["安全 app 模擬器", "Safe app simulator"],
+        "test-one-heading": ["測試 1：正常輸入", "Test 1: normal case"],
+        "test-two-heading": ["測試 2：空白輸入", "Test 2: empty case"],
+        "normal-expected": ["預期：三個合成選項能產生一個結果。", "Expected: three synthetic options produce one result."],
+        "empty-expected": ["預期：不捏造結果，明確提示先補選項。", "Expected: invent no result and clearly ask for an option."],
+        "recovery-instruction": ["復原方式：如果結果不符預期，按「清除」，回到教師安全版，再重跑兩筆測試。", "Recovery: if a result does not match the expectation, select Clear, return to the safe teacher version, and rerun both tests."],
+        "sim-description": ["載入三個合成選項，測試「幫我選一個」。", "Load three synthetic options and test “Pick one.”"],
+        "evidence-heading": ["留下人的證據", "Keep evidence of human judgment"],
+        "evidence-instruction": ["先選一條風險，再建立證據卡。頁面不會儲存內容；離開前請列印或另存 PDF。", "Select one risk, then build the evidence card. The page saves nothing; print or save as PDF before leaving."],
+        "risk-label": ["一條風險與界線", "One risk and boundary"],
+        "ev-topic-label": ["主題", "Topic"],
+        "ev-plan-label": ["計畫", "Plan"],
+        "ev-decision-label": ["人的決定", "Human decision"],
+        "ev-diff-label": ["前後差異", "Before–after"],
+        "ev-tests-label": ["兩筆測試", "Two tests"],
+        "ev-risk-label": ["風險界線", "Risk boundary"],
+        "rubric-heading": ["共同 rubric 自我檢查", "Shared rubric self-check"],
+        "rubric-1": ["說得出 app 的用途與對象。", "States the app purpose and audience."],
+        "rubric-2": ["指出一項清楚的 before／after。", "Identifies one clear before–after change."],
+        "rubric-3": ["完成兩筆測試，其中一筆是失敗案例。", "Runs two tests, including one failure case."],
+        "rubric-4": ["留下人的採用、修改或拒絕決定。", "Records a human decision to adopt, modify, or reject."],
+        "rubric-5": ["說明一條風險與界線。", "States one risk and boundary."],
+        "assessment-reminder": ["評量提醒：這張課內 exit evidence 是共同必做，今天只交這個（離開教室前上傳 e學苑 Week 3）；作品留著，到 W13 可以併進「互動與版本」那 5% 作業。", "Assessment reminder: this in-class exit evidence is required and is all you hand in today (upload to e-learning Week 3 before leaving). Keep the work; in W13 it can be folded into the Interaction and versions 5% assignment."],
+        "print-note": ["W3 離線 exit evidence（本頁不含姓名；依教師指定方式另外標示）", "W3 offline exit evidence (no name is stored on this page; follow the teacher’s identification method)"],
+        "footer-note": ["115-1《人工智慧概論》W3 離線備援｜不需帳號、API、安裝或命令列｜重新整理會清除本頁狀態。", "115-1 AI Introduction · W3 offline fallback · No account, API, installation, or command line · Refreshing clears this page."],
+        "generate-plan": ["產生預寫計畫", "Generate pre-written plan"],
+        "show-diff": ["顯示差異", "Show difference"],
+        "record-decision": ["記錄人的決定", "Record human decision"],
+        "run-normal": ["載入正常案例並執行", "Load and run normal case"],
+        "run-empty": ["載入空白案例並執行", "Load and run empty case"],
+        "clear-sim": ["清除", "Clear"],
+        "build-evidence": ["建立證據卡", "Build evidence card"],
+        "print-evidence": ["列印或另存 PDF", "Print or save as PDF"],
+        "reset-all": ["清除本頁", "Reset page"]
+      };
+
+      function setStaticLanguage() {
+        Object.keys(staticText).forEach(function (id) {
+          var node = byId(id);
+          if (node) { node.textContent = t(staticText[id][0], staticText[id][1]); }
+        });
+        document.title = t(
+          "W3 離線 Agent 夥伴｜計畫、差異、批准與驗證",
+          "W3 offline Agent companion | Plan, difference, approval, and verification"
+        );
+        byId("language-switch").setAttribute("aria-label", t("語言", "Language"));
+        document.querySelector(".chips").setAttribute("aria-label", t("使用條件", "Use conditions"));
+        document.querySelector("nav").setAttribute("aria-label", t("練習進度", "Activity progress"));
+        byId("diff-legend").setAttribute("aria-label", t("差異符號", "Difference symbols"));
+        byId("diff-output").setAttribute("aria-label", t("功能差異內容", "Feature difference"));
+        byId("test-record").setAttribute("aria-label", t("測試紀錄", "Test record"));
+
+        document.querySelectorAll("#tone option").forEach(function (option) {
+          var item = toneNames[option.value];
+          if (item) { option.textContent = t(item.zh, item.en); }
+        });
+        byId("reason").querySelector('option[value=""]').textContent = t("請選一個理由", "Select one reason");
+        Object.keys(reasonNames).forEach(function (value) {
+          var option = byId("reason").querySelector('option[value="' + value + '"]');
+          if (option) { option.textContent = t(reasonNames[value].zh, reasonNames[value].en); }
+        });
+        byId("risk").querySelector('option[value=""]').textContent = t("請選一項", "Select one");
+        Object.keys(riskNames).forEach(function (value) {
+          var option = byId("risk").querySelector('option[value="' + value + '"]');
+          if (option) { option.textContent = t(riskNames[value].zh, riskNames[value].en); }
+        });
+      }
+
+      function selectedValue(name) {
+        var checked = document.querySelector('input[name="' + name + '"]:checked');
+        return checked ? checked.value : "";
+      }
+
+      function currentTopic() {
+        state.topic = selectedValue("topic") || "lunch";
+        return topics[state.topic];
+      }
+
+      function setOutput(id, text, kind) {
+        var node = byId(id);
+        node.textContent = text;
+        if (kind) {
+          node.setAttribute("data-state", kind);
+        } else {
+          node.removeAttribute("data-state");
+        }
+      }
+
+      function updateProgress() {
+        var keys = ["plan", "diff", "decision", "test", "evidence"];
+        var navIds = ["nav-plan", "nav-diff", "nav-decision", "nav-test", "nav-evidence"];
+        var count = 0;
+        keys.forEach(function (key, index) {
+          var complete = Boolean(state[key]);
+          byId(navIds[index]).classList.toggle("done", complete);
+          if (complete) { count += 1; }
+        });
+        byId("live-status").textContent = t(
+          "進度 " + count + "／5。",
+          "Progress " + count + "/5."
+        );
+      }
+
+      var decisionNames = {
+        approve: { zh: "批准", en: "Approve" },
+        modify: { zh: "修改後採用", en: "Modify, then adopt" },
+        reject: { zh: "拒絕並使用教師安全版", en: "Reject and use the safe teacher version" }
+      };
+      var reasonNames = {
+        scope: { zh: "建議符合任務範圍", en: "The suggestion stays within the task scope" },
+        simplify: { zh: "我要縮小修改，避免一次改太多", en: "I will reduce the change to avoid doing too much at once" },
+        privacy: { zh: "可能接觸不必要的資料", en: "It may use unnecessary data" },
+        network: { zh: "可能加入不必要的外連", en: "It may add an unnecessary network request" },
+        unclear: { zh: "建議不夠清楚，不能直接採用", en: "The suggestion is too unclear to adopt directly" }
+      };
+      var riskNames = {
+        privacy: { zh: "隱私：只用合成選項，不放個資", en: "Privacy: use synthetic options only; include no personal data" },
+        accuracy: { zh: "誤導：結果只是隨機靈感，不是假裝最佳答案", en: "Accuracy: the result is random inspiration, not the best answer" },
+        accessibility: { zh: "可及性：結果必須有文字，不能只靠顏色", en: "Accessibility: provide a text result; do not rely on colour alone" },
+        scope: { zh: "權限：小工具不連網、不送出資料", en: "Scope: the helper makes no network request and submits no data" }
+      };
+
+      function planCopy() {
+        var topic = currentTopic();
+        var tone = toneNames[byId("tone").value] || toneNames.friendly;
+        var zh = [
+          "預寫 Agent 計畫",
+          "1. 保留教師版的「幫我選一個」功能。",
+          "2. 把內容換成「" + topic.zh + "」，對象是" + topic.audience + "。",
+          "3. 使用" + tone.zh + "的短句。",
+          "4. 加入「清除」與空白輸入提示。",
+          "5. 不連網、不收集資料；完成後跑正常與空白兩筆測試。",
+          "",
+          "停止條件：只做到上述範圍，不增加登入、上傳、定位或外部連結。"
+        ].join("\n");
+        var en = [
+          "PRE-WRITTEN AGENT PLAN",
+          "1. Keep the teacher version’s “Pick one” feature.",
+          "2. Change the content to “" + topic.en + "” for " + topic.audienceEn + ".",
+          "3. Use " + tone.en + " sentences.",
+          "4. Add Clear and a helpful empty-input message.",
+          "5. Make no network request and collect no data; run the normal and empty tests.",
+          "",
+          "STOP CONDITION: stay within this scope. Add no login, upload, location, or external link."
+        ].join("\n");
+        return t(zh, en);
+      }
+
+      function diffCopy() {
+        var topic = currentTopic();
+        var zh = [
+          "功能差異（不是程式碼）",
+          "",
+          "− v0：通用標題與示範內容",
+          "+ v1：標題與內容改為「" + topic.zh + "」",
+          "",
+          "  保留：按「幫我選一個」後顯示一個合成選項",
+          "+ 新增：按「清除」後移除目前結果",
+          "+ 新增：選項空白時顯示修正提示，不捏造答案",
+          "",
+          "  不變：不登入、不連網、不上傳、不儲存個資",
+          "  驗收：正常案例通過＋空白案例通過"
+        ].join("\n");
+        var en = [
+          "FEATURE DIFFERENCE — NOT EXECUTABLE CODE",
+          "",
+          "− v0: generic title and example content",
+          "+ v1: title and content become “" + topic.en + "”",
+          "",
+          "  Keep: “Pick one” returns one synthetic option",
+          "+ Add: Clear removes the current result",
+          "+ Add: an empty list shows a repair message and invents nothing",
+          "",
+          "  Unchanged: no login, network, upload, or personal-data storage",
+          "  Acceptance: the normal case and empty case both pass"
+        ].join("\n");
+        return t(zh, en);
+      }
+
+      function decisionLabel(code) {
+        var item = decisionNames[code];
+        return item ? t(item.zh, item.en) : "";
+      }
+      function reasonLabel(code) {
+        var item = reasonNames[code];
+        return item ? t(item.zh, item.en) : "";
+      }
+      function riskLabel(code) {
+        var item = riskNames[code];
+        return item ? t(item.zh, item.en) : "";
+      }
+
+      function renderPlan() {
+        if (state.plan) {
+          setOutput("plan-output", planCopy(), "good");
+        } else {
+          setOutput("plan-output", t("尚未產生計畫。請選主題後按按鈕。", "No plan yet. Choose a topic, then select Generate plan."));
+        }
+      }
+      function renderDiff() {
+        byId("diff-output").textContent = state.diff
+          ? diffCopy()
+          : (state.plan
+            ? t("計畫已更新。請按「顯示差異」。", "Plan ready. Select Show difference.")
+            : t("請先產生計畫，再顯示差異。", "Generate the plan before showing the difference."));
+      }
+      function renderDecision() {
+        if (state.decision) {
+          setOutput(
+            "decision-output",
+            decisionLabel(state.decisionCode) + "\n" + t("理由：", "Reason: ") + reasonLabel(state.reasonCode),
+            "good"
+          );
+        } else {
+          setOutput("decision-output", t("尚未記錄。", "No human decision recorded yet."));
+        }
+      }
+      function renderTests() {
+        var topic = currentTopic();
+        if (state.simMode === "normal") {
+          byId("sim-options").textContent = state.language === "en" ? topic.en + ": 3 synthetic options" : topic.options.join(" ／ ");
+          setOutput(
+            "sim-result",
+            t("系統選擇：" + topic.options[1] + "\n這只是靈感，不代表最佳答案。", "System pick: option 2\nThis is inspiration, not the best answer."),
+            "good"
+          );
+        } else if (state.simMode === "empty") {
+          byId("sim-options").textContent = t("（沒有選項）", "(No options)");
+          setOutput(
+            "sim-result",
+            t("請先加入至少一個選項；系統沒有替你捏造結果。", "Add at least one option first. The system invented no result."),
+            "warn"
+          );
+        } else if (state.simMode === "cleared") {
+          byId("sim-options").textContent = state.language === "en" ? topic.en + ": 3 synthetic options" : topic.options.join(" ／ ");
+          setOutput("sim-result", t("已清除結果，可重新測試。", "Result cleared; ready to retest."));
+        } else {
+          byId("sim-options").textContent = state.plan
+            ? (state.language === "en" ? topic.en + ": 3 synthetic options" : topic.options.join(" ／ "))
+            : t("請先產生計畫。", "Generate the plan first.");
+          setOutput("sim-result", t("等待測試。", "Waiting for a test."));
+        }
+        byId("test-one").textContent = state.testOne
+          ? t("✓ 通過：有結果，也沒有誇大。", "✓ PASS: one result, with no exaggerated claim.")
+          : t("○ 尚未測試", "○ Not tested");
+        byId("test-one").className = state.testOne ? "test-status pass" : "test-status";
+        byId("test-two").textContent = state.testTwo
+          ? t("✓ 通過：停止並提示修正。", "✓ PASS: stopped and asked for a repair.")
+          : t("○ 尚未測試", "○ Not tested");
+        byId("test-two").className = state.testTwo ? "test-status pass" : "test-status";
+      }
+      function clearEvidenceText() {
+        ["ev-topic", "ev-plan", "ev-decision", "ev-diff", "ev-tests", "ev-risk"].forEach(function (id) {
+          byId(id).textContent = t("尚未完成", "Not completed");
+        });
+      }
+      function renderEvidence() {
+        if (!state.evidence) {
+          clearEvidenceText();
+          return;
+        }
+        var topic = currentTopic();
+        byId("ev-topic").textContent = state.language === "en" ? topic.en : topic.zh;
+        byId("ev-plan").textContent = t(
+          "保留選擇功能；加入清除與空白提示；不超出固定範圍。",
+          "Keep the picker; add Clear and an empty-input message; stay within scope."
+        );
+        byId("ev-decision").textContent = decisionLabel(state.decisionCode) + " — " + reasonLabel(state.reasonCode);
+        byId("ev-diff").textContent = t(
+          "v0 通用內容 → v1 合成主題、清除功能與空白狀態。",
+          "v0 generic content → v1 synthetic topic, Clear, and an empty state."
+        );
+        byId("ev-tests").textContent = t(
+          "正常案例：通過；空白案例：通過。",
+          "Normal case: PASS; empty case: PASS."
+        );
+        byId("ev-risk").textContent = riskLabel(byId("risk").value);
+      }
+      function renderAll() {
+        setStaticLanguage();
+        renderPlan();
+        renderDiff();
+        renderDecision();
+        renderTests();
+        renderEvidence();
+        updateProgress();
+      }
+      function setLanguage(lang) {
+        state.language = lang === "en" ? "en" : "zh";
+        document.body.dataset.lang = state.language;
+        document.documentElement.lang = state.language === "en" ? "en" : "zh-Hant-TW";
+        document.querySelectorAll("[data-language]").forEach(function (button) {
+          button.setAttribute("aria-pressed", String(button.dataset.language === state.language));
+        });
+        renderAll();
+      }
+
+      function clearDecisionControls() {
+        document.querySelectorAll('input[name="decision"]').forEach(function (input) { input.checked = false; });
+        byId("reason").value = "";
+      }
+      function invalidateEvidence() {
+        state.evidence = false;
+        renderEvidence();
+      }
+      function invalidateTests() {
+        state.test = false;
+        state.testOne = false;
+        state.testTwo = false;
+        state.simMode = "none";
+        invalidateEvidence();
+        renderTests();
+      }
+      function invalidateDecision(clearControls) {
+        state.decision = false;
+        state.decisionCode = "";
+        state.reasonCode = "";
+        state.decisionValue = "";
+        state.reasonText = "";
+        if (clearControls) { clearDecisionControls(); }
+        invalidateTests();
+        renderDecision();
+      }
+      function invalidateDiff() {
+        state.diff = false;
+        invalidateDecision(true);
+        renderDiff();
+      }
+      function invalidatePlan() {
+        state.plan = false;
+        invalidateDiff();
+        renderPlan();
+        byId("live-status").textContent = t(
+          "上游選擇已改變：請重新產生計畫，舊差異、決定、測試與證據已清除。",
+          "An upstream choice changed. Regenerate the plan; the old difference, decision, tests, and evidence were cleared."
+        );
+        updateProgress();
+      }
+
+      function makePlan() {
+        state.plan = true;
+        invalidateDiff();
+        renderPlan();
+        renderTests();
+        updateProgress();
+      }
+
+      function showDiff() {
+        if (!state.plan) {
+          setOutput("plan-output", t("請先產生計畫。", "Generate the plan first."), "warn");
+          byId("plan").scrollIntoView();
+          byId("generate-plan").focus();
+          return;
+        }
+        state.diff = true;
+        invalidateDecision(true);
+        renderDiff();
+        updateProgress();
+      }
+
+      function recordDecision() {
+        var decision = selectedValue("decision");
+        var reasonCode = byId("reason").value;
+        if (!state.diff) {
+          byId("diff-output").textContent = t("請先顯示並閱讀差異。", "Show and read the difference first.");
+          byId("difference").scrollIntoView();
+          byId("show-diff").focus();
+          return;
+        }
+        if (!decision || !reasonCode) {
+          setOutput("decision-output", t("請同時選擇決定與理由。", "Select both a decision and a reason."), "warn");
+          return;
+        }
+        invalidateTests();
+        state.decisionCode = decision;
+        state.reasonCode = reasonCode;
+        state.decisionValue = decisionLabel(decision);
+        state.reasonText = reasonLabel(reasonCode);
+        state.decision = true;
+        renderDecision();
+        updateProgress();
+      }
+
+      function requireDecision() {
+        if (state.decision) { return true; }
+        setOutput("decision-output", t("測試前要先記錄人的決定。", "Record the human decision before testing."), "warn");
+        byId("decision").scrollIntoView();
+        byId("record-decision").focus();
+        return false;
+      }
+
+      function runNormal() {
+        if (!requireDecision()) { return; }
+        invalidateEvidence();
+        state.simMode = "normal";
+        state.testOne = true;
+        finishTestsIfReady();
+        renderTests();
+      }
+
+      function runEmpty() {
+        if (!requireDecision()) { return; }
+        invalidateEvidence();
+        state.simMode = "empty";
+        state.testTwo = true;
+        finishTestsIfReady();
+        renderTests();
+      }
+
+      function clearSimulator() {
+        state.simMode = "cleared";
+        renderTests();
+      }
+
+      function finishTestsIfReady() {
+        state.test = state.testOne && state.testTwo;
+        updateProgress();
+      }
+
+      function buildEvidence() {
+        var risk = byId("risk");
+        if (!state.plan || !state.diff || !state.decision || !state.test) {
+          byId("live-status").textContent = t(
+            "證據尚缺：請依序完成計畫、差異、人的決定與兩筆測試。",
+            "Evidence is incomplete. Finish the plan, difference, human decision, and both tests in order."
+          );
+          return;
+        }
+        if (!risk.value) {
+          byId("live-status").textContent = t("請先選一條風險與界線。", "Select one risk and boundary first.");
+          risk.focus();
+          return;
+        }
+        state.evidence = true;
+        renderEvidence();
+        updateProgress();
+        byId("live-status").textContent = t(
+          "證據卡完成。離開前請列印或另存 PDF。",
+          "Evidence card complete. Print or save it as PDF before leaving."
+        );
+      }
+
+      function resetAll() {
+        var confirmed = window.confirm(t("確定清除本頁所有選擇？頁面沒有其他備份。", "Reset every choice on this page? There is no other copy."));
+        if (!confirmed) { return; }
+        byId("workflow").reset();
+        state.plan = false;
+        state.diff = false;
+        state.decision = false;
+        state.test = false;
+        state.evidence = false;
+        state.testOne = false;
+        state.testTwo = false;
+        state.simMode = "none";
+        state.topic = "lunch";
+        state.decisionCode = "";
+        state.reasonCode = "";
+        state.decisionValue = "";
+        state.reasonText = "";
+        renderAll();
+        byId("generate-plan").focus();
+      }
+
+      byId("generate-plan").addEventListener("click", makePlan);
+      byId("show-diff").addEventListener("click", showDiff);
+      byId("record-decision").addEventListener("click", recordDecision);
+      byId("run-normal").addEventListener("click", runNormal);
+      byId("run-empty").addEventListener("click", runEmpty);
+      byId("clear-sim").addEventListener("click", clearSimulator);
+      byId("build-evidence").addEventListener("click", buildEvidence);
+      byId("print-evidence").addEventListener("click", function () { window.print(); });
+      byId("reset-all").addEventListener("click", resetAll);
+      document.querySelectorAll("[data-language]").forEach(function (button) {
+        button.addEventListener("click", function () { setLanguage(button.dataset.language); });
+      });
+      document.querySelectorAll('input[name="topic"]').forEach(function (input) {
+        input.addEventListener("change", invalidatePlan);
+      });
+      byId("tone").addEventListener("change", invalidatePlan);
+      document.querySelectorAll('input[name="decision"]').forEach(function (input) {
+        input.addEventListener("change", function () {
+          if (state.decision || state.testOne || state.testTwo || state.evidence) {
+            invalidateDecision(false);
+            byId("live-status").textContent = t(
+              "人的選擇已改變：請重新記錄決定；舊測試與證據已清除。",
+              "The human choice changed. Record the decision again; old tests and evidence were cleared."
+            );
+            updateProgress();
+          }
+        });
+      });
+      byId("reason").addEventListener("change", function () {
+        if (state.decision || state.testOne || state.testTwo || state.evidence) {
+          invalidateDecision(false);
+          byId("live-status").textContent = t(
+            "理由已改變：請重新記錄決定；舊測試與證據已清除。",
+            "The reason changed. Record the decision again; old tests and evidence were cleared."
+          );
+          updateProgress();
+        }
+      });
+      byId("risk").addEventListener("change", function () {
+        if (state.evidence) {
+          invalidateEvidence();
+          byId("live-status").textContent = t(
+            "風險選擇已改變：請重新建立證據卡。",
+            "The risk choice changed. Rebuild the evidence card."
+          );
+          updateProgress();
+        }
+      });
+      var queryLanguage = new URLSearchParams(window.location.search).get("lang");
+      setLanguage(queryLanguage === "en" ? "en" : "zh");
+    }());
+  </script>
+</body>
+</html>

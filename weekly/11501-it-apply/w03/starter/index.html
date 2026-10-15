@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小魚的自我介紹</title>
+<style>
+  body { font-family: system-ui, "Microsoft JhengHei", sans-serif; margin: 24px; line-height: 1.6; }
+  button { padding: 8px 16px; font-size: 16px; }
+  #msg { margin-top: 12px; }
+</style>
+</head>
+<body>
+<h1>嗨，我是小魚</h1>
+<p>東華大學一年級。喜歡海、喜歡拍照，正在學怎麼把想法做成網頁。</p>
+<ul>
+  <li>這學期修的通識：資訊科技與應用</li>
+  <li>最想做的東西：一個記錄花蓮日出時間的小工具</li>
+  <li>聯絡方式：課堂上找我</li>
+</ul>
+<button id="hi">跟我打招呼</button>
+<p id="msg"></p>
+<script>
+  document.getElementById("hi").addEventListener("click", function () {
+    document.getElementById("msg").textContent = "你好！今天也是好天氣。";
+  });
+</script>
+</body>
+</html>
