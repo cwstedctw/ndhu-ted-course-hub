@@ -1,0 +1,1941 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>W7 學生步驟｜bot 留在雲端當接收端、「查 …」轉回你電腦的本地模型、期中開放題</title>
+<style>
+:root{
+  --bg:#f4f6ed;--fg:#153d36;--muted:#51695f;--line:#bbc9bf;--card:#fff;
+  --accent:#1f6153;--accent2:#09695b;--tagbg:#e0ece2;--tagfg:#0b4a3e;
+  --note-bg:#fff9e8;--note-line:#c9963b;
+  --pre-bg:#133e34;--pre-fg:#f4f6ed;--code-bg:#e6ece5;
+  --see-bg:#eef3fb;--see-line:#4b6cb7;
+  --test-bg:#eef7ee;--test-line:#3b8b4a;
+  --stuck-bg:#fbf1f1;--stuck-line:#b85c5c;
+  --todo-bg:#fff3e0;--todo-line:#e08a00;
+  --btn-bg:#1f6153;--btn-fg:#fff;
+  font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  color:var(--fg);background:var(--bg);line-height:1.8
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#121917;--fg:#e4ebe6;--muted:#a8b8ae;--line:#3a4a42;--card:#1b2420;
+    --accent:#6fc3b0;--accent2:#8fd3c3;--tagbg:#243a33;--tagfg:#cfe9df;
+    --note-bg:#2a2414;--note-line:#d7a548;
+    --pre-bg:#0b1b17;--pre-fg:#e8f0ea;--code-bg:#243a33;
+    --see-bg:#17213a;--see-line:#7f9ce6;
+    --test-bg:#162a1b;--test-line:#6cc27a;
+    --stuck-bg:#2e1b1b;--stuck-line:#e08a8a;
+    --todo-bg:#2e2410;--todo-line:#f0b24a;
+    --btn-bg:#6fc3b0;--btn-fg:#0b1b17
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg)}
+main{max-width:900px;margin:auto;padding:28px 20px 90px}
+a{color:var(--accent2);text-underline-offset:4px}
+header{padding:28px 0 22px;border-bottom:2px solid var(--accent)}
+h1{font-size:clamp(26px,5vw,44px);line-height:1.3;margin:.3em 0;max-width:760px}
+h2{font-size:25px;line-height:1.4;margin:52px 0 6px;padding-top:10px;border-top:2px solid var(--accent)}
+h3{font-size:20px;margin:26px 0 8px}
+h4{font-size:17px;margin:14px 0 4px;color:var(--accent2)}
+.eyebrow{letter-spacing:.09em;font-weight:700;color:var(--muted)}
+.lead{font-size:19px}
+.gain{background:var(--tagbg);border-left:4px solid var(--accent);padding:8px 16px;margin:10px 0 18px;font-weight:700}
+section{scroll-margin-top:16px}
+.note{padding:12px 18px;border-left:4px solid var(--note-line);background:var(--note-bg);margin:12px 0}
+.small{font-size:14px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;background:var(--card);table-layout:fixed;margin:10px 0}
+th,td{border:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top;overflow-wrap:anywhere;word-break:break-word}
+th{background:var(--tagbg)}
+pre{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;background:var(--pre-bg);color:var(--pre-fg);padding:14px 16px;border-radius:0 0 8px 8px;margin:0;font:15px/1.75 ui-monospace,Consolas,"Microsoft JhengHei",monospace;max-width:100%}
+pre.plain{border-radius:8px}
+code{background:var(--code-bg);border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;word-break:break-word;font:15px ui-monospace,Consolas,"Microsoft JhengHei",monospace}
+ol,ul{padding-left:1.3em}
+li{margin:6px 0}
+.cp{margin:10px 0 14px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:var(--tagbg);color:var(--tagfg);border-radius:8px 8px 0 0;padding:4px 8px 4px 12px;font-size:14px;font-weight:700}
+.bar .btns{display:flex;gap:6px;flex-wrap:wrap}
+button{font:inherit;font-size:14px;cursor:pointer;border:0;border-radius:6px;padding:4px 12px;background:var(--btn-bg);color:var(--btn-fg)}
+button.ghost{background:transparent;color:var(--accent2);border:1px solid var(--accent2)}
+button:active{transform:translateY(1px)}
+.steps{list-style:none;padding:0;counter-reset:st}
+.steps>li{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:10px;padding:10px 18px 14px;margin:14px 0}
+.chk{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:18px;font-weight:700;margin:4px 0 6px}
+.chk input{width:20px;height:20px;margin-top:8px;flex:0 0 auto;accent-color:var(--accent)}
+.chk .t{flex:1 1 auto;min-width:0}
+.chk .n{display:inline-block;background:var(--accent);color:var(--bg);border-radius:6px;padding:0 9px;font-size:15px;margin-right:6px;flex:0 0 auto;margin-top:5px}
+.blk{border-left:4px solid var(--line);padding:6px 14px;margin:10px 0;border-radius:0 8px 8px 0}
+.blk>b.k{display:inline-block;border-radius:5px;padding:0 8px;margin:0 6px 4px 0;font-size:14px}
+.see{background:var(--see-bg);border-color:var(--see-line)}.see>b.k{background:var(--see-line);color:#fff}
+.test{background:var(--test-bg);border-color:var(--test-line)}.test>b.k{background:var(--test-line);color:#fff}
+.goal{background:var(--note-bg);border-color:var(--note-line)}.goal>b.k{background:var(--note-line);color:#fff}.goal ol{margin:4px 0 6px;padding-left:1.5em}.goal li{margin:2px 0}
+details.stuck{background:var(--stuck-bg);border-left:4px solid var(--stuck-line);border-radius:0 8px 8px 0;padding:6px 14px;margin:10px 0}
+details.stuck summary{cursor:pointer;font-weight:700;color:var(--stuck-line)}
+details.stuck ul{margin:6px 0 4px}
+details.ans{background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:6px 14px;margin:14px 0}
+details.ans summary{cursor:pointer;font-weight:700}
+.todo-shot{border:2px dashed var(--todo-line);background:var(--todo-bg);border-radius:8px;padding:14px;margin:10px 0;color:var(--fg);font-weight:700;text-align:center}
+figure{margin:12px 0}
+img.shot{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;display:block}
+figcaption{font-size:14px;color:var(--muted);margin-top:4px}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 18px;margin:18px 0}
+.toc ol{margin:6px 0}
+.prog{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0 0;font-size:15px}
+.prog .barw{flex:1 1 200px;height:10px;background:var(--tagbg);border-radius:6px;overflow:hidden;min-width:120px}
+.prog .barw>div{height:100%;background:var(--accent);width:0%}
+.two{display:flex;flex-wrap:wrap;gap:14px}
+.two>div{flex:1 1 280px;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:2px 16px 12px}
+.filter{width:100%;padding:8px 12px;font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);margin:8px 0}
+.tag{display:inline-block;background:var(--tagbg);color:var(--tagfg);border-radius:6px;padding:0 8px;font-size:14px;margin-right:6px}
+.quote{border-left:4px solid var(--line);padding:4px 14px;margin:8px 0;color:var(--muted);font-size:15px;white-space:pre-wrap}
+.hand{font-size:17px;font-weight:700;background:var(--todo-bg);border-left:4px solid var(--todo-line);padding:8px 16px;margin:12px 0;border-radius:0 8px 8px 0}
+.mid{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 16px;margin:10px 0;font-size:18px;line-height:2.4}
+input.fill{font:inherit;font-size:17px;border:0;border-bottom:2px solid var(--accent);background:transparent;color:var(--fg);padding:2px 6px;min-width:7em;max-width:100%;border-radius:0}
+input.fill:focus{outline:none;border-bottom-color:var(--accent2);background:var(--tagbg)}
+.secprog{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.secprog span{background:var(--tagbg);color:var(--tagfg);border-radius:6px;padding:0 9px;font-size:13.5px;font-weight:700}
+.secprog span.done{background:var(--accent);color:var(--bg)}
+.flow{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px 12px;margin:12px 0}
+.flow .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.flow .tabs button{background:transparent;color:var(--accent2);border:1px solid var(--accent2);font-weight:700}
+.flow .tabs button.on{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg)}
+.frow{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;margin:6px 0}
+.frow .rl{flex:0 0 100%;font-size:13.5px;color:var(--muted);font-weight:700;margin-top:4px}
+.fn{flex:0 1 auto;min-width:0;max-width:100%;border:2px solid var(--accent);border-radius:8px;padding:3px 10px 5px;background:var(--card);line-height:1.45}
+.fn.you{border-style:dashed}
+.fn b{display:block;font-size:15.5px}
+.fn small{display:block;color:var(--muted);font-size:12.5px}
+.farrow{align-self:center;font-weight:700;color:var(--accent2);font-size:13px;max-width:8em;text-align:center;line-height:1.25;padding:0 2px}
+.flow .fsum{margin:8px 0 0;font-size:15px;border-top:1px dashed var(--line);padding-top:8px}
+.flow .fchain{font-family:ui-monospace,Consolas,"Microsoft JhengHei",monospace;font-size:14px;background:var(--code-bg);border-radius:6px;padding:4px 10px;margin:6px 0 0;overflow-wrap:anywhere}
+.quiz{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px 10px;margin:10px 0}
+.quiz .qq{font-weight:700;margin:4px 0 6px}
+.quiz label{display:flex;gap:8px;align-items:flex-start;cursor:pointer;margin:3px 0}
+.quiz label input{margin-top:9px;flex:0 0 auto;accent-color:var(--accent)}
+.quiz .qa{margin:8px 0 0;padding:6px 12px;border-radius:0 6px 6px 0;font-weight:700}
+.quiz .qa.ok{background:var(--test-bg);border-left:4px solid var(--test-line)}
+.quiz .qa.no{background:var(--stuck-bg);border-left:4px solid var(--stuck-line)}
+.checker{background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:8px 14px 10px;margin:10px 0}
+.checker label{display:block;font-weight:700;margin:6px 0 2px}
+.checker input{width:100%;font:inherit;font-size:15px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.checker .cr{margin:6px 0 0;padding:4px 10px;border-radius:0 6px 6px 0;font-weight:700;border-left:4px solid var(--line)}
+.checker .cr.ok{background:var(--test-bg);border-color:var(--test-line)}
+.checker .cr.no{background:var(--stuck-bg);border-color:var(--stuck-line)}
+.checker .cbtns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.midbtn{margin:8px 0 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.why{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 16px 10px;margin:10px 0}
+.why ol{margin:4px 0}
+.top{position:fixed;right:10px;bottom:10px;background:var(--btn-bg);color:var(--btn-fg);border-radius:50%;width:36px;height:36px;opacity:.85;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+@media (max-width:560px){
+  main{padding:20px 16px 80px}
+  th,td{padding:7px 5px;font-size:14px}
+  pre{font-size:13.5px;padding:12px}
+  code{font-size:13.5px}
+  .steps>li{padding:8px 12px 12px}
+  .chk{font-size:16.5px}
+  h2{font-size:22px}
+  input.fill{display:block;width:100%;min-width:0;font-size:16px;margin:2px 0}
+  .mid{line-height:1.9;font-size:17px}
+}
+@media print{.top,.bar .btns,.prog button{display:none}main{max-width:none;padding:0}}
+</style>
+</head>
+<body><main id="top">
+
+<header>
+<p class="eyebrow">和 AI 一起寫程式：創意生活應用　WEEK 7　2026-10-19（一）09:10–12:00　E403</p>
+<h1>bot 留在雲端當接收端；「查 …」轉回你電腦的本地模型；期中做你自己想做的東西</h1>
+<p class="lead">今天三件事：<br>1. Webhook 是什麼：bot 留在雲端當接收端<br>2. 「查 …」轉回你電腦的本地模型<br>3. 期中開放題：做你自己想做的東西</p>
+<p>上週的簡單版是「一支 Python 就是 bot」，整支 bot 都跑在你的電腦上、電腦關了 bot 就死。今天把它倒過來：bot 留在 W5 那個 Apps Script（Google 機房、一直開著），<b>只有「查 …」那一條路</b>轉回你電腦上的本地模型（會上網搜、附來源），答完原路回到手機。你的工作跟 W5、W6 一樣：看計畫、按同意、看對照、退回一次。</p>
+<p class="note"><b>這一頁怎麼用：</b>每一步有「指令或畫面 → 你應該看到 → 測一下 → 卡住了」四件，照順序做、做完打勾。<b>勾選只存在這台瀏覽器裡；E403 的電腦有還原卡，重開機就全部沒了</b>（今天裝的東西也一樣）。想帶走進度就截圖。指令全部是 PowerShell 寫法，按「複製」再貼。</p>
+<div class="prog"><span id="progText">已勾 0／0 步</span><div class="barw"><div id="progBar"></div></div><button type="button" class="ghost" id="resetBtn">清除勾選</button></div>
+<div class="secprog" id="secProg" aria-label="各段進度"></div>
+<div class="toc"><b>今天的順序</b>
+<ol>
+<li><a href="#s0">第 0 段　一坐下就貼</a>——A、B、C 三塊貼完就去第 1 段；D 選做</li>
+<li><a href="#s1">第 1 段　Webhook 是什麼＋你的 bot 還活著嗎</a>——先確定 W5 的 bot 活著、Webhook 指回 /exec</li>
+<li><a href="#s2">第 2 段　開轉接站</a>——第一次下課前開起來、本機測一題</li>
+<li><a href="#s3">第 3 段　Apps Script 加「查 …」</a>——10:50 還沒做到 3-4，就停下來看老師示範</li>
+<li><a href="#s4">第 4 段　期中開放題</a>——第二次下課後；寫一句「我期中想做什麼」</li>
+<li><a href="#s5">第 5 段　收尾與帶走</a>——Ctrl+C 關轉接站、登出</li>
+<li><a href="#stuckall">卡關總表</a>——出錯了先用關鍵字查這裡</li>
+</ol>
+<p class="small">鐘響 10:00、11:00 各休息一次。開場老師會請你舉手三樣：回家作業的對話截圖、repo 連結、一句話——這是上週的成果，也是今天的起點。</p></div>
+</header>
+
+<!-- ======================= 第 0 段 ======================= -->
+<section id="s0" data-sec="0"><h2>第 0 段　一坐下就貼</h2>
+<p class="gain">這段做完你會有什麼：三個安裝在背景跑（本地模型 6.6 GB、Node.js、cloudflared），你可以去做第 1 段。</p>
+<p>開 PowerShell（開始功能表搜「PowerShell」，出現的 Windows PowerShell 就可以，<b>不用</b>系統管理員）。下面 A、B、C 三塊整段複製、貼進去、按 Enter，貼完就去第 1 段；D 是選做、主線用不到。這週<b>不裝 gws</b>（W6 第 2 段卡住的，課後用 W6 那頁自己補）。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="s0-a"><span class="n">0-A</span><span class="t">裝 Ollama、在背景拉本地模型</span></label>
+<p>Ollama（跑本地模型的程式）用 winget（Windows 內建的套件安裝指令）裝，不用管理員權限；裝完先把它的路徑加進這個視窗（第二行：PATH 是電腦找程式用的路徑清單，剛裝的程式要加進去才叫得到），第三行會<b>另開一個 PowerShell 視窗</b>下載 <code>gemma4:e4b</code>（Google 的 Gemma 4 模型，6.6 GB）——進度條在那個新視窗跑，你回這個視窗繼續貼 B。跟 W6 一字不差。</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>winget install --id Ollama.Ollama -e --accept-package-agreements --accept-source-agreements --silent
+$env:PATH += ";$env:LOCALAPPDATA\Programs\Ollama"
+Start-Process powershell -ArgumentList '-NoExit','-Command','ollama pull gemma4:e4b'</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>winget 跑完說已成功安裝；接著跳出第二個 PowerShell 視窗，裡面出現 <code>pulling manifest</code>（在讀模型的目錄清單），然後一條進度條慢慢往 6.6 GB 走。老師的電腦實測約三分半（211 秒）；全班一起拉、教室網路會慢很多，先讓它跑。那個視窗不要關。</div>
+<div class="blk test"><b class="k">測一下</b>進度條有在動就過。不用等它跑完，直接貼 B。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>winget 說找不到或被擋</b>→ 到官方網站 ollama.com 下載 Windows 安裝檔雙擊裝，裝完一樣跑第二、三行。</li>
+<li><b><code>ollama</code> 不是指令、或第二個視窗一閃就關</b>→ 第二行（加 PATH）沒貼到；重貼第二、三行。還是不行就關掉 PowerShell 重開一個（新開的視窗才會讀到剛裝好的程式）。</li>
+<li><b>進度條卡住不動</b>→ 教室網路慢，先往下做；到第 2 段還沒好，兩人一組用已經拉完的那台開轉接站（一台轉接站可以給兩個 bot 用）。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s0-b"><span class="n">0-B</span><span class="t">裝 Node.js</span></label>
+<p>轉接站是一支用 Node.js（跑 JavaScript 的環境）寫的小程式，所以要裝 Node.js。第二行把 Node 的路徑加進這個視窗（跟 0-A 同一個道理）。這週<b>沒有</b> W6 那行 npm 裝 gws。</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>winget install --id OpenJS.NodeJS.LTS -e --accept-package-agreements --accept-source-agreements --silent
+$env:PATH += ";$env:ProgramFiles\nodejs;$env:APPDATA\npm"</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>Node.js 裝的時候可能跳出「使用者帳戶控制」問你要不要允許，按「是」；winget 最後說已成功安裝。</div>
+<div class="blk test"><b class="k">測一下</b>沒有紅字就過。真正的驗證在 0-C 最後那三行（要新開視窗）。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>「使用者帳戶控制」要管理員密碼</b>→ 舉手，老師處理；先去做第 1 段。</li>
+<li><b>winget 說已經裝過、版本不同</b>→ 電腦本來就有 Node；v18 以上都夠用，不用管。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s0-c"><span class="n">0-C</span><span class="t">拿 cloudflared（本週新加；免安裝、不用管理員），新開視窗測版本</span></label>
+<p>cloudflared 是 Cloudflare 的通道（tunnel）程式，免帳號：等一下它會給你電腦上的轉接站一個外面連得到的臨時 https 網址，Google 機房的 Apps Script 才找得到你的電腦。<b>不用 winget 裝</b>（它的安裝程式要系統管理員權限，教室電腦按不了）：下面五行先在你的使用者資料夾（家目錄）建一個 <code>line-relay</code> 資料夾、進去，把官方的單一執行檔下載成 <code>cloudflared.exe</code>，再把這個資料夾加進 PATH（Node 開程式<b>不會</b>在目前資料夾找，一定要這行），最後印版本。等一下的轉接站也放進同一個資料夾。</p>
+<div class="cp"><div class="bar"><span>PowerShell（整段一起貼）</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>New-Item -ItemType Directory -Force "$env:USERPROFILE\line-relay" | Out-Null
+Set-Location "$env:USERPROFILE\line-relay"
+Invoke-WebRequest -Uri https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe -OutFile cloudflared.exe
+$env:PATH += ";$env:USERPROFILE\line-relay"
+cloudflared --version</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>提示字元變成 <code>…\line-relay&gt;</code>；<code>Invoke-WebRequest</code> 跑一陣子（檔案約 50 MB，教室網路慢的話一兩分鐘，上面會有進度條），結束後最後一行印 <code>cloudflared version 2026.10.1</code>（老師 10/17 下載到的版本；之後會更新，2026 開頭就對）。</div>
+<div class="blk test"><b class="k">測一下</b>最後一行印出版本號就過。<b>PATH 那行只對這個視窗有效：之後每開一個新的 PowerShell 視窗，要再貼一次 <code>$env:PATH += ";$env:USERPROFILE\line-relay"</code>，cloudflared 才叫得到</b>（2-2 開轉接站那三行已經包了）。另外<b>新開一個視窗</b>驗 A、B 裝好沒（舊視窗的 PATH 沒有剛裝的程式；驗完這個視窗先別關，2-3 本機測試還要用）：
+<div class="cp"><div class="bar"><span>PowerShell（新視窗）</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>ollama --version
+node -v
+ollama list</pre></div>
+前兩行各印出一個版本號（<code>ollama version is 0.40.x</code>、<code>v24.x</code>）；第三行等 A 拉完會有一列 <code>gemma4:e4b</code>，還在拉就是空的，等一下再看。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b><code>Invoke-WebRequest</code> 紅字（遠端名稱無法解析、連線被拒之類）</b>→ 教室網路連不到 GitHub：用瀏覽器開那個網址（整條複製貼到網址列）會直接下載，把檔案搬到 <code>line-relay</code> 資料夾、改名成 <code>cloudflared.exe</code>，再貼最後兩行。</li>
+<li><b>下載很慢、進度條跳很久</b>→ 舊版 PowerShell 的進度條會拖慢下載：按 Ctrl+C，先打 <code>$ProgressPreference='SilentlyContinue'</code>，再貼第三行起的三行。</li>
+<li><b><code>cloudflared</code> 不是指令</b>→ PATH 那行沒貼到、或你換了視窗（PATH 只對貼過的那個視窗有效）。在這個視窗再貼第四、五行。</li>
+<li><b>自己的筆電、有管理員權限</b>→ 用 winget 裝也可以（會跳「使用者帳戶控制」，按「是」）：<code>winget install --id Cloudflare.cloudflared -e --accept-package-agreements --accept-source-agreements</code>。裝完要新開視窗，不用 PATH 那行。</li>
+<li><b>winget 版印「安裝程式失敗，結束代碼：1602」</b>→ 就是沒按到管理員那關；改用上面的免安裝五行。</li>
+<li><b>cloudflared 怎樣都拿不到</b>→ 先往下做：轉接站沒有通道也開得起來（2-3 本機測得了，只是外面連不到）；第 3 段改看老師示範、交卡點截圖。</li>
+<li><b><code>ollama --version</code> 印 Warning: could not connect to a running Ollama instance、然後 client version is 0.40.x</b>→ 裝好了，只是伺服器還沒起來；第 2 段開 Ollama app 就會起來。</li>
+<li><b>ollama、node 都說不是指令</b>→ 你還在舊視窗。新裝的程式只有新開的視窗才找得到。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s0-d"><span class="n">0-D</span><span class="t">（選做）做出 gemma4-search，給你在 Ollama app 裡直接問對照用</span></label>
+<p><b>主線用不到這步</b>：轉接站自己用 <code>gemma4:e4b</code>，「不確定就先搜」的規矩寫在它程式裡。想在 Ollama app 直接問、拿來對照「模型本身會不會搜」的才做（A 要先拉完）。做法跟 W6 0-D 一字不差：下面這段整段一起貼，前半把 Modelfile（Ollama 的模型設定檔）寫成一個檔，後半用它做出 <code>gemma4-search</code>（同一個模型＋一段固定的開場指示，不會重新下載）。</p>
+<div class="cp"><div class="bar"><span>PowerShell（整段一起貼）</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre data-src="starter/create-gemma4-search.ps1">$mf = @&#x27;
+FROM gemma4:e4b
+SYSTEM &quot;&quot;&quot;你是研究助理。你有網路搜尋與讀網頁的工具。今天的日期可能在你的訓練資料之後，所以遇到「最近發生的事、某一年的得獎名單、版本號、價格、新聞」或任何你不確定的事實，一律先用搜尋工具查，查到再回答，並附上來源網址；不要以「還沒發生」為理由拒絕查詢。回答用繁體中文（台灣用語）。&quot;&quot;&quot;
+PARAMETER num_ctx 16384
+&#x27;@
+[IO.File]::WriteAllText(&quot;$env:USERPROFILE\Modelfile&quot;, $mf)
+ollama create gemma4-search -f &quot;$env:USERPROFILE\Modelfile&quot;
+ollama list</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>印幾行 <code>using existing layer</code>、<code>writing manifest</code>，最後一行 <code>success</code>（老師的電腦 1 秒；看到 success 才算）；<code>ollama list</code> 多一列 <code>gemma4-search:latest</code>。</div>
+<div class="blk test"><b class="k">測一下</b><code>ollama list</code> 看得到 <code>gemma4:e4b</code> 和 <code>gemma4-search</code> 兩列就過。沒做這步的，第 2 段只要 <code>gemma4:e4b</code> 那列在就行。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>貼完停在 <code>&gt;&gt;</code> 不動</b>→ 它在等你把整段貼完：中間那段以 <code>@'</code> 開頭、<code>'@</code> 結尾，<code>'@</code> 必須在一行的最前面。按一次 Enter；還是不動就按 Ctrl+C，整段重新複製再貼。</li>
+<li><b>說找不到 gemma4:e4b</b>→ 0-A 還沒拉完，<code>ollama list</code> 看一下。</li>
+<li><b>顯示卡太小、模型跑不動（這條跟主線有關，沒做 0-D 也看）</b>→ 改拉小一號的 <code>ollama pull gemma4:e2b</code>；第 2 段開轉接站前、在同一個視窗先打 <code>$env:MODEL="gemma4:e2b"</code>，轉接站就會用它。有做 0-D 的再把這段第二行的 <code>FROM gemma4:e4b</code> 改成 <code>FROM gemma4:e2b</code> 重貼。</li>
+</ul></details>
+<details class="ans"><summary>只想看 Modelfile 本身（給好奇的人）</summary>
+<div class="cp"><div class="bar"><span>Modelfile</span><span class="btns"><button type="button" class="copy">複製</button><button type="button" class="dl" data-name="Modelfile">下載</button></span></div><pre id="pre-modelfile" data-src="starter/Modelfile">FROM gemma4:e4b
+SYSTEM &quot;&quot;&quot;你是研究助理。你有網路搜尋與讀網頁的工具。今天的日期可能在你的訓練資料之後，所以遇到「最近發生的事、某一年的得獎名單、版本號、價格、新聞」或任何你不確定的事實，一律先用搜尋工具查，查到再回答，並附上來源網址；不要以「還沒發生」為理由拒絕查詢。回答用繁體中文（台灣用語）。&quot;&quot;&quot;
+PARAMETER num_ctx 16384</pre></div>
+</details>
+<details class="ans"><summary>整份 install-commands-w7.ps1（A～D 合在一起，想一次貼的用這個）</summary>
+<div class="cp"><div class="bar"><span>install-commands-w7.ps1</span><span class="btns"><button type="button" class="copy">複製</button><button type="button" class="dl" data-name="install-commands-w7.ps1">下載</button></span></div><pre data-src="starter/install-commands-w7.ps1"># W7 第 0 段：一進教室先貼的指令（PowerShell）
+# 這份是 W6 的 install-commands.ps1 改的（2026-10-17）：
+#   改了什麼：① 新加 C 拿 cloudflared（Cloudflare 的通道程式，免帳號）——不用 winget：它的安裝程式要系統管理員權限
+#              （10/17 實測沒按 UAC 就以代碼 1602 失敗），改成把官方單一執行檔下載進 %USERPROFILE%\line-relay、免安裝；
+#              轉接站 line-search-relay.mjs 之後也放進同一個資料夾。Node 開程式不會在目前資料夾找（10/17 實測 ENOENT），
+#              所以要 $env:PATH += 那一行，而且每開一個新的 PowerShell 視窗都要再貼一次
+#            ② 拿掉 B 裡「npm 裝 gws」那一行（這週用不到 gws）
+#            ③ 版本檢查拿掉 gws --version
+#   沒改的：A、B 的 winget 與 PATH 那幾行、D 的 Modelfile 內容，跟 W6 一字不差
+# A. 本地模型（另開一個視窗跑；6.6 GB，教室網路快的話 3–5 分鐘）
+winget install --id Ollama.Ollama -e --accept-package-agreements --accept-source-agreements --silent
+$env:PATH += &quot;;$env:LOCALAPPDATA\Programs\Ollama&quot;
+Start-Process powershell -ArgumentList &#x27;-NoExit&#x27;,&#x27;-Command&#x27;,&#x27;ollama pull gemma4:e4b&#x27;
+# B. Node.js（轉接站 line-search-relay.mjs 要靠它跑）
+winget install --id OpenJS.NodeJS.LTS -e --accept-package-agreements --accept-source-agreements --silent
+$env:PATH += &quot;;$env:ProgramFiles\nodejs;$env:APPDATA\npm&quot;
+# C. cloudflared（給轉接站一個外面連得到的臨時網址；本週新加；免安裝、不用管理員）
+New-Item -ItemType Directory -Force &quot;$env:USERPROFILE\line-relay&quot; | Out-Null
+Set-Location &quot;$env:USERPROFILE\line-relay&quot;
+Invoke-WebRequest -Uri https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe -OutFile cloudflared.exe
+$env:PATH += &quot;;$env:USERPROFILE\line-relay&quot;
+cloudflared --version
+#    自己筆電有管理員權限的，用 winget 裝也可以（要按 UAC；裝完新開視窗、不用 PATH 那行）：
+#    winget install --id Cloudflare.cloudflared -e --accept-package-agreements --accept-source-agreements
+# 版本檢查（新開一個 PowerShell 視窗再跑，PATH 才會更新；cloudflared 在新視窗要先貼上面那行 $env:PATH += &quot;;$env:USERPROFILE\line-relay&quot;）
+ollama --version      # 0.40.x
+node -v               # v24.x
+ollama list           # 等 pull 完會看到 gemma4:e4b
+# D.（選做；主線用不到——轉接站自己用 gemma4:e4b、「不確定先搜」的規矩寫在它程式裡）想在 Ollama app 直接問對照的才做：做出 gemma4-search（不會重新下載）
+$mf = @&#x27;
+FROM gemma4:e4b
+SYSTEM &quot;&quot;&quot;你是研究助理。你有網路搜尋與讀網頁的工具。今天的日期可能在你的訓練資料之後，所以遇到「最近發生的事、某一年的得獎名單、版本號、價格、新聞」或任何你不確定的事實，一律先用搜尋工具查，查到再回答，並附上來源網址；不要以「還沒發生」為理由拒絕查詢。回答用繁體中文（台灣用語）。&quot;&quot;&quot;
+PARAMETER num_ctx 16384
+&#x27;@
+[IO.File]::WriteAllText(&quot;$env:USERPROFILE\Modelfile&quot;, $mf)
+ollama create gemma4-search -f &quot;$env:USERPROFILE\Modelfile&quot;
+ollama list</pre></div>
+</details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 第 1 段 ======================= -->
+<section id="s1" data-sec="1"><h2>第 1 段　Webhook 是什麼＋你的 bot 還活著嗎</h2>
+<p class="gain">這段做完你會有什麼：你說得出 Webhook 是什麼、三種 bot 各在哪裡跑；而且你 W5 的 bot 確定活著、Webhook 指回 <code>/exec</code>。</p>
+<p><b>Webhook 一句話</b>：不是你去問 LINE，是 LINE 主動打到你給它的網址。所以那個網址要「外面連得到、而且一直開著」——Apps Script 的 <code>/exec</code> 就是；你的筆電沒有公開網址，所以上週要通道、今天也要。三種 bot 差在<b>誰在接 LINE</b>。點下面三顆按鈕，看訊息各走哪條路、每一站在誰的電腦上：</p>
+<div class="flow" id="flow">
+<div class="tabs" role="tablist"><button type="button" data-mode="w5" class="on">W5</button><button type="button" data-mode="w6">W6 簡單版</button><button type="button" data-mode="w7">W7 進階版</button></div>
+<div id="flowRows"></div>
+<p class="fsum" id="flowSum"></p>
+<p class="fchain" id="flowChain"></p>
+<p class="small" style="margin:6px 0 0">Webhook 一句話：不是你去問 LINE，是 LINE 主動打到你給它的網址。實線框＝別人機房裡一直開著的；虛線框＝你的電腦，關了就不在。</p>
+</div>
+<p>同一件事的文字版（投影片上也是這三行）：</p>
+<table>
+<tr><th style="width:18%">版本</th><th>三種 bot 在哪跑</th><th style="width:22%">接 LINE 的那一端</th><th style="width:24%">你的電腦關掉會怎樣</th></tr>
+<tr><td><b>W5</b></td><td>W5：LINE → Apps Script（Google 機房）→ Gemini</td><td>Apps Script 的 <code>/exec</code>，一直開著</td><td>沒影響，bot 照常</td></tr>
+<tr><td><b>W6 簡單版</b></td><td>W6 簡單版：LINE → 通道 → 你的電腦（一支 Python 就是 bot）</td><td>你的電腦（透過通道）</td><td>bot 整個不回；程式 Ctrl+C 時會把 Webhook 換回 <code>/exec</code></td></tr>
+<tr><td><b>W7 進階版</b></td><td>W7 進階版：LINE → Apps Script → 只有「查 …」→ 通道 → 你的電腦（轉接站＋本地模型）</td><td>還是 Apps Script 的 <code>/exec</code></td><td>只有「查」會回連不到，待辦照常</td></tr>
+</table>
+<p class="hand">✋ 先想一下再動手：上週簡單版按 Ctrl+C 之後，LINE 的 Webhook 指哪裡？沒按到、或程式當掉的人，現在指哪裡？——1-2 去親眼看。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="s1-1"><span class="n">1-1</span><span class="t">手機傳一句待辦，驗 bot 還活著</span></label>
+<p>開你 W5 那份試算表 → 擴充功能 → Apps Script（等一下第 3 段要用）。手機傳一句「明天下午三點要開會」給 bot。</p>
+<div class="blk see"><b class="k">你應該看到</b>手機收到「✅ 記好了（試算表第 N 列）」，試算表多一列。</div>
+<div class="blk test"><b class="k">測一下</b>有回覆、有新列，就過。沒反應的不要在這裡等，直接做 1-2。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>手機完全沒反應</b>→ 最常見：上週簡單版的 Webhook 沒換回 <code>/exec</code>（Ctrl+C 沒按到、程式當掉、或視窗直接關掉），LINE 現在打的是一條已經關掉的通道。去 1-2 改回來。</li>
+<li><b>bot 回「⚠️ 出錯了：…」</b>→ bot 活著、只是某個環節壞了：把那段整段貼給 AI 問原因；多半是金鑰或長效通行碼過期。先往下做，第 3 段前修好就行。</li>
+<li><b>回的是 W6 簡單版那種回覆（本地模型的口氣、或「連不到」）</b>→ 同第一條：Webhook 還指著你的電腦。去 1-2。</li>
+<li><b>根本沒有 Apps Script 的 bot（W5 沒做完、或刪掉了）</b>→ 走 1-3 補救路。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s1-2"><span class="n">1-2</span><span class="t">LINE Developers 看 Webhook URL 是 <code>/exec</code>、Use webhook 開著</span></label>
+<p>一路點過去：</p>
+<ol>
+<li>瀏覽器開 <code>developers.line.biz/console</code>，用你 W5 建 bot 的那組 LINE 帳號登入（可能要用手機 LINE 掃一次 QR code）。</li>
+<li>登入後是「Providers」清單：點你那個 provider 的名字 → 進去看到「Channels」區塊，點你的 bot 那張卡片（類型寫 Messaging API）。</li>
+<li>上方一排分頁：「Basic settings」「Messaging API」……點「<b>Messaging API</b>」。</li>
+<li>往下捲，找到「<b>Webhook settings</b>」這個小標題。底下第一列「Webhook URL」右邊有「Edit」鈕；第二列「Use webhook」是一個開關；第三列是「Verify」鈕（在 Webhook URL 下面）。</li>
+</ol>
+<p>看兩件：①「Webhook URL」是 <code>https://script.google.com/macros/s/…/exec</code> 這種、結尾 <code>/exec</code> ②「Use webhook」的開關是開的（綠色）。都對就不用動。想按「Verify」也可以，但它可能顯示 302 之類的失敗——Apps Script 會把回應轉到另一個網址，LINE 看到轉址就判定失敗，<b>Verify 判斷不了成敗，成敗看 1-1 手機有沒有回</b>。</p>
+<div class="blk see"><b class="k">你應該看到</b>Webhook URL 結尾是 <code>/exec</code>、Use webhook 開著。<b>截圖時把網址遮掉</b>：<code>/exec</code> 網址等於你 bot 的大門，不放進任何截圖或對話。</div>
+<div class="blk test"><b class="k">測一下</b>網址結尾 <code>/exec</code>、Use webhook 開，就過；改過的人回 1-1 再傳一次，手機回「✅ 記好了」才算。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>Webhook URL 是 <code>…trycloudflare.com/callback</code></b>→ 就是上週沒換回來（怎麼確認：網址結尾不是 <code>/exec</code>，而且 1-1 手機沒回）。先去拿 <code>/exec</code> 網址：Apps Script 編輯器右上藍色「部署」鈕旁的 ▼ →「管理部署作業」→ 跳出視窗，左邊列著你的部署、右邊「網頁應用程式」底下有一條 <code>https://script.google.com/macros/s/…/exec</code> 網址、旁邊「複製」。回 LINE Developers：「Webhook URL」右邊「Edit」→ 貼上 →「Update」→ 畫面回到唯讀、網址變成 /exec 結尾。</li>
+<li><b>Webhook URL 是空的</b>→ 同上，貼 <code>/exec</code> 網址、Update，再打開 Use webhook。</li>
+<li><b>網址對了、Use webhook 也開了，手機還是沒回</b>→ 另一個後台：LINE 官方帳號管理後台 → 設定 → 回應設定：「Webhook」要開、「自動回應訊息」要關（開著它會搶走訊息）。再不行看 Apps Script「管理部署作業」：誰可以存取要是「所有人」（不是「任何擁有 Google 帳戶的使用者」）。</li>
+<li><b>Verify 顯示 302 或失敗</b>→ 判斷不了成敗（上面說的轉址問題）。手機傳一句、看試算表多不多一列、Apps Script 左邊「執行紀錄」有沒有這一筆，這三個才是證據。</li>
+<li><b>登不進 LINE Developers（要手機驗證）</b>→ 用手機 LINE 掃碼登入；還是不行舉手。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s1-3"><span class="n">1-3</span><span class="t">補救路：沒有 Apps Script 的 bot，用對照答案建一個</span></label>
+<p>只有 W5 沒做完、或 bot 已經不在的人要做；其他人跳過。做法＝W5 實作指南的五步（課程網第 5 週那頁有逐畫面步驟），程式直接拿下面「老師的對照答案」Drive 版，金鑰用你自己的：</p>
+<p class="note"><b>超過 10 分鐘還沒好</b>：直接跳第 2 段（轉接站跟 bot 無關、照樣做得完）；第 3 段跟旁邊的人兩人一組用他的 bot。</p>
+<ol>
+<li>用個人 Gmail 新建一份 Google 試算表（取名「LINE待辦」之類）→ 上方選單「擴充功能」→「Apps Script」→ 新分頁開出編輯器，中間是 <code>Code.gs</code>、裡面只有一個空的 <code>myFunction</code>。Ctrl+A 全選、貼上下面的 <code>Code.drive-reference.gs</code>、Ctrl+S。左邊齒輪「專案設定」→ 勾「在編輯器中顯示 appsscript.json 資訊清單檔案」→ 回「編輯器」（左邊 <code>&lt;&gt;</code> 圖示），檔案清單多了 <code>appsscript.json</code>，點它、全選、換成下面那份、Ctrl+S。</li>
+<li>左邊齒輪「專案設定」→ 捲到最下面「指令碼屬性」（Script Properties：程式讀設定值的地方，金鑰不寫進程式）→ 按「新增指令碼屬性」→ 出現「屬性」「值」兩格：屬性打 <code>GEMINI_API_KEY</code>、值貼 AI Studio 申請的金鑰；再按一次「新增指令碼屬性」：<code>LINE_CHANNEL_ACCESS_TOKEN</code>、值貼 LINE Developers「Messaging API」分頁最下面「Channel access token」按 Issue 發的長效通行碼 → 按「儲存指令碼屬性」。</li>
+<li>回「編輯器」，上方工具列「執行」左邊的下拉選單選 <code>testSetup</code> → 按「執行」→ 跳出「需要授權」→「審查權限」→ 選你的 Gmail →「Google 尚未驗證這個應用程式」→ 左下「進階」→「前往…（不安全）」→ 權限清單<b>每一項都勾</b> →「繼續」。下方「執行紀錄」印出四行 ✅（LINE token、Google 日曆、Gemini、試算表）。</li>
+<li>右上藍色「部署」→「新增部署作業」→ 左上齒輪選類型「網頁應用程式」→ 說明隨便、執行身分「我」、誰可以存取「<b>所有人</b>」→「部署」→ 視窗顯示「網頁應用程式」網址（結尾 <code>/exec</code>）→「複製」→「完成」。</li>
+<li>LINE Developers → 你的 channel →「Messaging API」分頁 → Webhook settings →「Webhook URL」的「Edit」→ 貼 <code>/exec</code> →「Update」→ 把「Use webhook」開關打開。再開 LINE 官方帳號管理後台（manager.line.biz）→ 右上「設定」→ 左邊「回應設定」：「Webhook」開、「自動回應訊息」關、「歡迎訊息」關。然後回 1-1 傳一句。</li>
+</ol>
+<div class="blk see"><b class="k">你應該看到</b>testSetup 的執行紀錄四行 ✅（LINE token、Google 日曆、Gemini、試算表）；手機回「✅ 記好了」。</div>
+<div class="blk test"><b class="k">測一下</b>1-1 過了就過。<b>09:45 還沒好</b>：先去做第 2 段（轉接站跟 bot 無關、照樣做得完）；第 3 段兩人一組，用旁邊同學的 bot 接你的轉接站，回家再把自己的 bot 補起來。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>沒有 Gemini 金鑰／長效通行碼</b>→ 申請各要幾分鐘，照 W5 實作指南第 2、3 步；教室裡時間不夠就先走「兩人一組」那條。</li>
+<li><b>testSetup 說成功、表裡沒那列</b>→ 授權畫面沒全勾。到 Google 帳戶的「第三方應用程式與服務」把這個專案移除，重跑 testSetup，這次全勾。</li>
+<li><b>手機沒回</b>→ 1-2 那幾條：誰可以存取＝所有人、兩個後台的 Webhook 都開、自動回應關。</li>
+</ul></details>
+<details class="ans"><summary>老師的對照答案（Drive 版，W6 做完的那份）</summary>
+<details class="ans"><summary>完整的 Code.gs（Drive 版）</summary>
+<div class="cp"><div class="bar"><span>Code.drive-reference.gs</span><span class="btns"><button type="button" class="copy">複製</button><button type="button" class="dl" data-name="Code.gs">下載</button></span></div><pre data-src="starter/Code.drive-reference.gs">/**
+ * LINE AI 待辦小秘書（Level 2：文字＋照片）
+ *
+ * 這份是正本：老師的示範 bot、學生 Level 2 的對照答案，都以這份為準。
+ * 一則訊息的旅程：
+ *   LINE 送來訊息 → 請 Gemini 把口語整理成固定欄位 → 程式驗算欄位
+ *   → 寫進試算表 → 回覆 LINE（只講已經做完的事）→ 排 Google 日曆，結果寫回試算表
+ *
+ * 金鑰不寫在程式裡，一律放「專案設定 → 指令碼屬性」：
+ *   GEMINI_API_KEY             必填，到 Google AI Studio 申請
+ *   LINE_CHANNEL_ACCESS_TOKEN  必填，LINE Developers 後台發的長效 token
+ *   SHEET_ID                   選填，程式不是從試算表「擴充功能 → Apps Script」開的才要填
+ *   GEMINI_MODEL               選填，模型停用或想換模型時改這裡，不用動程式
+ */
+
+// ===== 1. 設定 =====
+const PROPS = PropertiesService.getScriptProperties();
+const GEMINI_API_KEY = PROPS.getProperty(&quot;GEMINI_API_KEY&quot;) || &quot;&quot;;
+const LINE_ACCESS_TOKEN = PROPS.getProperty(&quot;LINE_CHANNEL_ACCESS_TOKEN&quot;) || &quot;&quot;;
+const SHEET_ID = PROPS.getProperty(&quot;SHEET_ID&quot;) || &quot;&quot;;
+// 模型名稱會隨 Google 改版而停用：上課前到 https://ai.google.dev/gemini-api/docs/models 確認還在
+const GEMINI_MODEL = PROPS.getProperty(&quot;GEMINI_MODEL&quot;) || &quot;gemini-3.5-flash-lite&quot;;
+const TZ = &quot;Asia/Taipei&quot;;
+const CATEGORIES = [&quot;繳費&quot;, &quot;會議&quot;, &quot;課業&quot;, &quot;生活&quot;, &quot;其他&quot;];
+const HEADERS = [&quot;建立時間&quot;, &quot;事項&quot;, &quot;分類&quot;, &quot;日期&quot;, &quot;時間&quot;, &quot;來源&quot;, &quot;日曆&quot;, &quot;照片連結&quot;];
+const GREETING = /^(hi|hello|hey|你好|嗨|哈囉|安安|早安|午安|晚安|謝謝|感謝|ok|好的|掰|bye|test|測試)$/i;
+const HELP_TEXT = &quot;你好！我是你的 AI 待辦小秘書 🤖\n\n直接傳給我：\n•「明天下午三點要開會」\n•「週五前記得繳房租」\n• 或拍一張活動海報、便條紙\n\n我會記進試算表；有日期和時間的，再幫你排進 Google 日曆。&quot;;
+
+
+// ===== 2. LINE 送訊息進來的入口 =====
+function doPost(e) {
+  try {
+    const body = JSON.parse((e &amp;&amp; e.postData &amp;&amp; e.postData.contents) || &quot;{}&quot;);
+    // 在 LINE 後台按 Verify 時，送來的 events 是空的，這裡就什麼都不做
+    (body.events || []).forEach(handleEvent);
+  } catch (err) {
+    console.error(&quot;讀不懂 LINE 送來的內容：&quot;, err);
+  }
+  return ContentService.createTextOutput(&quot;OK&quot;);
+}
+
+// 用瀏覽器打開 /exec 網址會看到這行字，可以確認部署成功
+function doGet() {
+  return ContentService.createTextOutput(&quot;LINE AI 待辦小秘書運作中（Level 2）&quot;);
+}
+
+// 一次處理一則訊息；其中一則出錯，不影響同一批的其他訊息
+function handleEvent(event) {
+  if (event.type !== &quot;message&quot; || !event.replyToken) return;
+  try {
+    const msg = event.message;
+    if (msg.type === &quot;text&quot;) {
+      const text = msg.text.trim();
+      if (GREETING.test(text)) return replyLine(event.replyToken, HELP_TEXT);  // 打招呼不必問 AI，直接回
+      showLoading(event.source);
+      return saveAndReply(event.replyToken, askGeminiAboutText(text), &quot;文字&quot;);
+    }
+    if (msg.type === &quot;image&quot;) {
+      showLoading(event.source);
+      const image = downloadLineImage(msg.id);
+      const photoUrl = savePhotoToDrive(image);  // 先把照片存進 Drive，拿到連結
+      return saveAndReply(event.replyToken, askGeminiAboutImage(image), &quot;照片&quot;, photoUrl);
+    }
+    replyLine(event.replyToken, &quot;目前我看得懂文字和照片，其他類型還不行喔。&quot;);
+  } catch (err) {
+    console.error(&quot;處理訊息失敗：&quot;, err);
+    // 課堂版刻意把錯誤原因回給手機：學生可以整段貼給 AI，問它怎麼修
+    try {
+      replyLine(event.replyToken, &quot;⚠️ 出錯了：&quot; + err.message);
+    } catch (err2) {
+      console.error(&quot;連錯誤訊息都回不出去（多半是 LINE token 沒設定或貼錯）：&quot;, err2);
+    }
+  }
+}
+
+
+// ===== 3. 記錄、回覆、排日曆 =====
+function saveAndReply(replyToken, todo, source, photoUrl) {
+  if (!todo.isTodo) return replyLine(replyToken, todo.chatReply || HELP_TEXT);
+
+  // ① 先寫進試算表：確定真的寫進去了，才能跟使用者說「記好了」
+  const row = appendTodoRow(todo, source, photoUrl || &quot;&quot;);
+  const wantsCalendar = todo.date !== &quot;未指定&quot; &amp;&amp; todo.time !== &quot;未指定&quot;;
+
+  // ② 回覆手機：只講已經做完的事（回覆碼要在收到訊息後 1 分鐘內用掉）
+  let reply = `✅ 記好了（試算表第 ${row} 列）\n\n📌 ${todo.summary}\n🏷️ ${todo.category}\n📅 ${todo.date}　⏰ ${todo.time}`;
+  reply += wantsCalendar
+    ? &quot;\n🗓️ 日曆提醒建立中，結果會寫在試算表的「日曆」欄&quot;
+    : &quot;\nℹ️ 沒有明確的日期和時間，這筆先不排日曆&quot;;
+  if (photoUrl) reply += &quot;\n📷 照片已存進 Drive 的「LINE待辦照片」資料夾&quot;;
+  replyLine(replyToken, reply);
+
+  // ③ 最後才排日曆；成功或失敗都寫回試算表，不讓人誤以為做好了
+  if (wantsCalendar) getSheet().getRange(row, 7).setValue(createCalendarEvent(todo));
+}
+
+function getSheet() {
+  const ss = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) throw new Error(&quot;找不到試算表：請從試算表的「擴充功能 → Apps Script」開程式，或在指令碼屬性填 SHEET_ID&quot;);
+  const sheet = ss.getSheets()[0];
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(HEADERS);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight(&quot;bold&quot;).setBackground(&quot;#0E7C7B&quot;).setFontColor(&quot;#FFFFFF&quot;);
+  }
+  return sheet;
+}
+
+function appendTodoRow(todo, source, photoUrl) {
+  const sheet = getSheet();
+  const now = Utilities.formatDate(new Date(), TZ, &quot;yyyy-MM-dd HH:mm:ss&quot;);
+  // 全班同時傳訊息時，先排隊再寫，避免兩筆搶到同一列
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    sheet.appendRow([now, todo.summary, todo.category, todo.date, todo.time, source, &quot;&quot;, photoUrl || &quot;&quot;]);
+    return sheet.getLastRow();
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// 照片先存進 Google Drive 的「LINE待辦照片」資料夾（沒有就建一個），回傳檔案連結
+function savePhotoToDrive(blob) {
+  const folderName = &quot;LINE待辦照片&quot;;
+  const found = DriveApp.getFoldersByName(folderName);
+  const folder = found.hasNext() ? found.next() : DriveApp.createFolder(folderName);
+  const stamp = Utilities.formatDate(new Date(), TZ, &quot;yyyyMMdd-HHmmss&quot;);
+  const file = folder.createFile(blob.setName(&quot;line-&quot; + stamp + &quot;.jpg&quot;));
+  return file.getUrl();
+}
+
+function createCalendarEvent(todo) {
+  try {
+    const start = new Date(`${todo.date}T${todo.time}:00+08:00`);
+    const end = new Date(start.getTime() + 30 * 60 * 1000);
+    const event = CalendarApp.getDefaultCalendar().createEvent(`【${todo.category}】${todo.summary}`, start, end, {
+      description: &quot;由 LINE AI 待辦小秘書建立&quot;
+    });
+    event.addPopupReminder(30);
+    return &quot;已建立&quot;;
+  } catch (err) {
+    console.error(&quot;建立日曆失敗：&quot;, err);
+    return &quot;失敗：&quot; + err.message;
+  }
+}
+
+
+// ===== 4. 請 Gemini 把口語整理成固定欄位 =====
+const JSON_SHAPE = `只輸出一個 JSON 物件，欄位固定如下：
+{&quot;isTodo&quot;: true 或 false,
+ &quot;summary&quot;: &quot;事項，簡短一句&quot;,
+ &quot;category&quot;: &quot;繳費、會議、課業、生活、其他 五選一&quot;,
+ &quot;date&quot;: &quot;YYYY-MM-DD，沒提到就填 未指定&quot;,
+ &quot;time&quot;: &quot;HH:mm（24 小時制），沒提到就填 未指定&quot;,
+ &quot;chatReply&quot;: &quot;不是待辦時，給使用者的一句簡短回覆；是待辦就填空字串&quot;}`;
+
+// 附上星期幾，AI 才算得準「下週五」是哪一天
+function nowText() {
+  return Utilities.formatDate(new Date(), TZ, &quot;yyyy-MM-dd EEEE HH:mm&quot;);
+}
+
+function askGeminiAboutText(text) {
+  const prompt = `你是待辦事項助理。現在是台北時間 ${nowText()}。
+判斷使用者這句話是不是待辦、提醒或行程。
+是的話，把「明天」「下週五」這類說法換算成實際日期；不是的話，isTodo 填 false。
+${JSON_SHAPE}
+使用者說：${text}`;
+  return checkTodo(callGemini([{ text: prompt }]));
+}
+
+function askGeminiAboutImage(blob) {
+  const prompt = `你是待辦事項助理。現在是台北時間 ${nowText()}。
+這是一張照片，可能是活動海報、便條紙或繳費單。找出上面最重要的一件待辦或活動。
+照片上沒寫的欄位就填 未指定，不要自己猜。
+${JSON_SHAPE}`;
+  return checkTodo(callGemini([
+    { text: prompt },
+    { inlineData: { mimeType: blob.getContentType() || &quot;image/jpeg&quot;, data: Utilities.base64Encode(blob.getBytes()) } }
+  ]));
+}
+
+function callGemini(parts) {
+  if (!GEMINI_API_KEY) throw new Error(&quot;還沒設定 GEMINI_API_KEY（專案設定 → 指令碼屬性）&quot;);
+  const res = UrlFetchApp.fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
+    method: &quot;post&quot;,
+    contentType: &quot;application/json&quot;,
+    headers: { &quot;x-goog-api-key&quot;: GEMINI_API_KEY },  // 金鑰放標頭、不放網址，才不會留在各種紀錄裡
+    payload: JSON.stringify({
+      contents: [{ role: &quot;user&quot;, parts: parts }],
+      generationConfig: { responseMimeType: &quot;application/json&quot; }
+    }),
+    muteHttpExceptions: true
+  });
+  const code = res.getResponseCode();
+  if (code !== 200) throw new Error(`Gemini 回應 ${code}：${res.getContentText().slice(0, 150)}`);
+  const data = JSON.parse(res.getContentText());
+  const cand = (data.candidates || [])[0];
+  const text = cand &amp;&amp; cand.content &amp;&amp; (cand.content.parts || []).map(p =&gt; p.text || &quot;&quot;).join(&quot;&quot;);
+  if (!text) throw new Error(`Gemini 沒有給內容（原因：${cand ? cand.finishReason : &quot;沒有任何答案&quot;}）`);
+  return JSON.parse(text.replace(/^```(json)?\s*|\s*```$/g, &quot;&quot;));
+}
+
+
+// ===== 5. 驗算：AI 給的欄位不直接照單全收 =====
+function checkTodo(t) {
+  return {
+    isTodo: t.isTodo === true,
+    summary: String(t.summary || &quot;&quot;).trim() || &quot;（沒抓到事項）&quot;,
+    category: CATEGORIES.includes(t.category) ? t.category : &quot;其他&quot;,
+    date: isRealDate(t.date) ? t.date : &quot;未指定&quot;,
+    time: /^([01]\d|2[0-3]):[0-5]\d$/.test(t.time) ? t.time : &quot;未指定&quot;,
+    chatReply: String(t.chatReply || &quot;&quot;)
+  };
+}
+
+// 「2026-02-30」格式對、日子卻不存在：轉成日期再轉回來，對得上才算數
+function isRealDate(s) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(`${s}T12:00:00+08:00`);
+  return !isNaN(d.getTime()) &amp;&amp; Utilities.formatDate(d, TZ, &quot;yyyy-MM-dd&quot;) === s;
+}
+
+
+// ===== 6. LINE 相關 =====
+function lineApi(path, payload, host) {
+  if (!LINE_ACCESS_TOKEN) throw new Error(&quot;還沒設定 LINE_CHANNEL_ACCESS_TOKEN（專案設定 → 指令碼屬性）&quot;);
+  const options = {
+    method: payload ? &quot;post&quot; : &quot;get&quot;,
+    headers: { Authorization: &quot;Bearer &quot; + LINE_ACCESS_TOKEN },
+    muteHttpExceptions: true
+  };
+  if (payload) {
+    options.contentType = &quot;application/json&quot;;
+    options.payload = JSON.stringify(payload);
+  }
+  return UrlFetchApp.fetch((host || &quot;https://api.line.me&quot;) + path, options);
+}
+
+function replyLine(replyToken, text) {
+  const res = lineApi(&quot;/v2/bot/message/reply&quot;, {
+    replyToken: replyToken,
+    messages: [{ type: &quot;text&quot;, text: text.slice(0, 5000) }]
+  });
+  if (res.getResponseCode() !== 200) console.error(&quot;LINE 回覆失敗：&quot;, res.getResponseCode(), res.getContentText());
+}
+
+// 「對方正在輸入…」動畫：只有一對一聊天看得到，沒開成也不影響功能
+function showLoading(source) {
+  if (!source || source.type !== &quot;user&quot;) return;
+  try {
+    lineApi(&quot;/v2/bot/chat/loading/start&quot;, { chatId: source.userId, loadingSeconds: 20 });
+  } catch (err) {
+    console.warn(&quot;輸入中動畫沒開成：&quot;, err);
+  }
+}
+
+// 照片要到另一個網域（api-data）下載，而且 LINE 不會一直保存，收到就要抓
+function downloadLineImage(messageId) {
+  const res = lineApi(`/v2/bot/message/${messageId}/content`, null, &quot;https://api-data.line.me&quot;);
+  if (res.getResponseCode() !== 200) throw new Error(`照片下載失敗（LINE 回應 ${res.getResponseCode()}）`);
+  const blob = res.getBlob();
+  // 送給 Gemini 的請求有大小上限，照片轉成文字（Base64）還會再大三分之一，太大的先請使用者縮小
+  if (blob.getBytes().length &gt; 10 * 1024 * 1024) throw new Error(&quot;照片太大（超過 10 MB），請截圖或壓縮後再傳&quot;);
+  return blob;
+}
+
+
+// ===== 7. 自我檢查：在編輯器上方選 testSetup，按「執行」 =====
+function testSetup() {
+  const results = [];
+  const check = (name, fn) =&gt; {
+    try {
+      results.push(`✅ ${name}：${fn()}`);
+    } catch (err) {
+      results.push(`❌ ${name}：${err.message}`);
+    }
+  };
+  check(&quot;LINE token&quot;, () =&gt; {
+    const res = lineApi(&quot;/v2/bot/info&quot;);
+    if (res.getResponseCode() !== 200) throw new Error(`LINE 回應 ${res.getResponseCode()}，token 可能貼錯或已經重發`);
+    return &quot;bot 名稱「&quot; + JSON.parse(res.getContentText()).displayName + &quot;」&quot;;
+  });
+  check(&quot;Google 日曆&quot;, () =&gt; &quot;可以使用「&quot; + CalendarApp.getDefaultCalendar().getName() + &quot;」&quot;);
+  let todo = null;
+  check(&quot;Gemini&quot;, () =&gt; {
+    todo = askGeminiAboutText(&quot;明天早上十點要交房租，記得轉帳給房東&quot;);
+    return JSON.stringify(todo);
+  });
+  check(&quot;試算表&quot;, () =&gt; {
+    if (!todo) throw new Error(&quot;Gemini 那關沒過，先不寫&quot;);
+    return `寫進第 ${appendTodoRow(todo, &quot;testSetup&quot;)} 列`;
+  });
+  console.log(results.join(&quot;\n&quot;));
+  console.log(&quot;👉 打開試算表，親眼看到多了一列才算成功。出現權限錯誤，或這裡說成功、表裡卻沒有，多半是授權畫面沒有全部勾選。&quot;);
+}</pre></div>
+</details>
+<details class="ans"><summary>完整的 appsscript.json（Drive 版）</summary>
+<div class="cp"><div class="bar"><span>appsscript.json</span><span class="btns"><button type="button" class="copy">複製</button><button type="button" class="dl" data-name="appsscript.json">下載</button></span></div><pre data-src="starter/appsscript.drive-reference.json">{
+  &quot;timeZone&quot;: &quot;Asia/Taipei&quot;,
+  &quot;dependencies&quot;: {},
+  &quot;exceptionLogging&quot;: &quot;STACKDRIVER&quot;,
+  &quot;runtimeVersion&quot;: &quot;V8&quot;,
+  &quot;webapp&quot;: {
+    &quot;executeAs&quot;: &quot;USER_DEPLOYING&quot;,
+    &quot;access&quot;: &quot;ANYONE_ANONYMOUS&quot;
+  },
+  &quot;oauthScopes&quot;: [
+    &quot;https://www.googleapis.com/auth/spreadsheets&quot;,
+    &quot;https://www.googleapis.com/auth/calendar&quot;,
+    &quot;https://www.googleapis.com/auth/drive&quot;,
+    &quot;https://www.googleapis.com/auth/script.external_request&quot;
+  ]
+}</pre></div>
+</details>
+</details>
+</li>
+</ol>
+
+<h3>三題小測驗（選做）：按了馬上看對錯</h3>
+<p class="small">不計分、不存；答錯就看解釋，再按一次。09:50 到了就先去第 2 段，課後再回來按；觀念頁第 6 節還有五題。</p>
+<div class="quiz" data-ans="b" data-ok="對。Webhook 是 LINE 主動打到你給它的網址；你的程式只要在那個網址「等著被打」。所以那個網址要外面連得到、一直開著。" data-no="再想想。Webhook 一句話：不是你去問 LINE，是 LINE 主動打到你給它的網址。手機也不會直接連你的電腦，中間永遠隔著 LINE 的伺服器。">
+<p class="qq">① Webhook 是誰打給誰？</p>
+<label><input type="radio" name="q1" value="a">你的程式每隔幾秒去問 LINE「有沒有新訊息」</label>
+<label><input type="radio" name="q1" value="b">LINE 主動打到你給它的網址</label>
+<label><input type="radio" name="q1" value="c">手機直接連到你的電腦</label>
+<p class="qa" hidden></p>
+</div>
+<div class="quiz" data-ans="b" data-ok="對。/exec 是 Google 機房給你的公開網址，外面連得到、而且一直開著，LINE 直接打得到；通道是給「沒有公開網址」的你的筆電用的。" data-no="再想想。重點不是快慢、也不是誰跟誰同一家：Apps Script 的 /exec 本來就是外面連得到、一直開著的網址，所以不用通道；你的筆電沒有這種網址，才要借一條。">
+<p class="qq">② 為什麼 Apps Script 的網址不用通道、你的電腦要？</p>
+<label><input type="radio" name="q2" value="a">因為 Google 的機器比較快</label>
+<label><input type="radio" name="q2" value="b">因為 /exec 本來就是外面連得到、一直開著的公開網址；你的筆電沒有</label>
+<label><input type="radio" name="q2" value="c">因為 LINE 和 Google 是同一家公司</label>
+<p class="qa" hidden></p>
+</div>
+<div class="quiz" data-ans="b" data-ok="對。bot 本體留在雲端當接收端，轉接站只管「查 …」這條路：關掉它，待辦、照片照常，只有「查」會回連不到。這就是 W7 跟 W6 簡單版最大的差別。" data-no="再想想。W7 進階版的 bot 本體在 Apps Script（Google 機房），你的電腦只負責「查 …」那條路；轉接站關了，「查」會回連不到，其他功能照常。全部都死的是 W6 簡單版。">
+<p class="qq">③ 關掉轉接站之後，bot 哪些功能還在？</p>
+<label><input type="radio" name="q3" value="a">全部都不回了</label>
+<label><input type="radio" name="q3" value="b">待辦、照片照常，只有「查 …」會回連不到</label>
+<label><input type="radio" name="q3" value="c">只有「查 …」還在，待辦不回</label>
+<p class="qa" hidden></p>
+</div>
+</section>
+
+<!-- ======================= 第 2 段 ======================= -->
+<p class="note"><b>觀念還想多玩一下？</b>開 <a href="concepts.html">觀念頁</a>：Webhook 誰打給誰、這週的東西各住在哪台電腦、為什麼要通道、轉接站的密碼與回應碼、金鑰該放哪——每一節都能按、按了會動，最後有五題小測驗。這頁是觀念，動手步驟還是回這裡。</p>
+
+<section id="s2" data-sec="2"><h2>第 2 段　開轉接站</h2>
+<p class="gain">這段做完你會有什麼：你電腦上跑著一個只聽本機、要密碼的轉接站，外面有一條臨時網址連得到它；你本機問過它一題，答案附來源。</p>
+<div class="why"><h3 style="margin-top:8px">為什麼要通道</h3>
+<ol>
+<li><b>Apps Script 在 Google 機房，要打回你的電腦。</b>bot 的程式不在你的電腦上——它說 localhost（本機），是指 Google 那台機器自己，找不到你電腦裡的 Ollama。</li>
+<li><b>你的筆電在分享器後面，沒有公開網址。</b>外面的人（包括 Google 機房）打不進來。</li>
+<li><b>通道借你一個外面連得到的 https 網址</b>，打到那個網址的東西會被送到你電腦上的轉接站；網址每次重開會換。</li>
+</ol>
+<p class="small">不想被外面連到也有別的做法：讓電腦主動去 Google 拿題目（polling，定時去問「有沒有新問題」），這週不做。</p>
+</div>
+<p>所以今天要兩樣東西接起來：①<b>轉接站（relay）</b>：一支小程式，在你電腦上等問題、替模型跑搜尋、要「通關密碼」才回答 ②<b>通道</b>：cloudflared 給這支小程式一個外面連得到的 https 網址。轉接站只聽 <code>127.0.0.1:8787</code>（只有這台電腦自己連得到），外面只能從通道進來，而且要帶對密碼。密碼它自己產生、存在你的使用者資料夾 <code>.line-search-relay.key</code>，畫面上不印（螢幕可能正在投影）、直接放進剪貼簿。</p>
+<p class="note"><b>先開 Ollama app</b>（開始功能表搜 Ollama）。第一次啟動問帳號時，這週<b>建議登入免費帳號</b>（Sign in）：轉接站用的「上網搜」是 Ollama 的線上搜尋服務，老師 10/09 在這台不登入三次都通，10/12 在另一台電腦不登入卻被拒（401）；登入最保險，不想登入就先試、被拒再登入（2-3 卡住了有寫）。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="s2-1"><span class="n">2-1</span><span class="t">把轉接站 line-search-relay.mjs 下載到 line-relay 資料夾（兩行）</span></label>
+<p>在 0-C 那個視窗貼下面這兩行：第一行先切到 line-relay 資料夾（已經在裡面也沒關係、換了視窗也不怕），第二行直接從課程網把轉接站下載到這個資料夾、跟 <code>cloudflared.exe</code> 放一起。</p>
+<div class="cp"><div class="bar"><span>PowerShell（在 line-relay 資料夾裡）</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>Set-Location "$env:USERPROFILE\line-relay"
+Invoke-WebRequest -Uri https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-ai-coding/w07/starter/line-search-relay.mjs -OutFile line-search-relay.mjs</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>一下子就跑完（檔案只有 14 KB），沒有紅字。</div>
+<div class="blk test"><b class="k">測一下</b>貼 <code>Get-ChildItem "$env:USERPROFILE\line-relay"</code>，印一張小表、<code>Name</code> 欄兩列：<code>cloudflared.exe</code>（<code>Length</code> 約 55000000，約 50 MB）、<code>line-search-relay.mjs</code>（約 14000）。兩個檔都在、名字一字不差（結尾 <code>.exe</code>、<code>.mjs</code>），就過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b><code>Invoke-WebRequest</code> 紅字（404、遠端名稱無法解析、連線被拒）</b>→ 課程網那條網址打不開（教室網路擋 GitHub Pages、或網址被改）。<b>備案</b>：按下面摺疊裡的「下載」鈕，瀏覽器會存到「下載」資料夾，再貼那兩行把它搬進 <code>line-relay</code>。</li>
+<li><b>說找不到 <code>line-relay</code> 資料夾、或提示字元不是 <code>…\line-relay&gt;</code></b>→ 0-C 沒跑（那五行的第一行就是建它），先回 0-C；只是換了視窗就先貼 <code>Set-Location "$env:USERPROFILE\line-relay"</code>。</li>
+<li><b>清單裡沒有 <code>cloudflared.exe</code></b>→ 0-C 的 <code>Invoke-WebRequest</code> 沒下載成功（看 0-C 卡住了第一條）。轉接站沒有它也開得起來、本機測得了，只是外面連不到。</li>
+<li><b>清單裡是 <code>line-search-relay.mjs.txt</code></b>→ 用瀏覽器備案下載時被加了副檔名：檔案總管「檢視」→ 勾「副檔名」，名字改回 <code>line-search-relay.mjs</code>。</li>
+<li><b>gemma4:e4b 還沒拉完</b>→ 檔先放好，等拉完再做 2-2（<code>ollama list</code> 看得到 gemma4:e4b 才行）。</li>
+</ul></details>
+<details class="ans"><summary>備案：課程網那條網址打不開時，用這頁的下載鈕</summary>
+<p class="small">按「下載」，瀏覽器會存到「下載」資料夾；再貼下面兩行把它搬進 <code>line-relay</code>、列出檔案。「下載」鈕沒反應就按「複製」→ 開記事本貼上 → 另存新檔 → 存檔類型「所有檔案」、檔名 <code>line-search-relay.mjs</code>、編碼 UTF-8，直接存進 <code>line-relay</code>。</p>
+<div class="cp"><div class="bar"><span>line-search-relay.mjs</span><span class="btns"><button type="button" class="dl" data-name="line-search-relay.mjs">下載</button><button type="button" class="copy">複製</button></span></div><pre data-src="starter/line-search-relay.mjs" style="max-height:11em;overflow:auto">// LINE bot 的「本地模型轉接站」：讓雲端的 Apps Script 叫得到你電腦上的 Ollama，而且會上網搜
+//
+// 為什麼要這支：LINE bot 的程式跑在 Google 的機房，不在你的電腦上——
+// 它說 localhost，是指 Google 那台機器自己，找不到你電腦裡的 Ollama。
+// 所以要兩樣東西接起來：
+//   ① 這支小程式：在你電腦上等問題，替模型跑搜尋，要「通關密碼」才回答
+//   ② Cloudflare 通道（cloudflared）：給這支小程式一個外面連得到的 https 網址
+//
+// 一則問題的旅程：
+//   手機傳「查 …」→ LINE → Apps Script → 通道網址 → 這支程式（對密碼）
+//   → Ollama 模型自己決定要不要搜 → Ollama 內建的搜尋（web_search／web_fetch）→ 回答＋真的來源網址
+//
+// 需要：Ollama 開著、已 pull gemma4:e4b；Node.js（W6 第 0 段裝過）；cloudflared（沒有也能跑，只是外面連不到）
+// 用法（PowerShell，在這個檔所在的資料夾）：
+//   node line-search-relay.mjs              開轉接站＋自動開通道，印出網址（密碼只放剪貼簿、不顯示）
+//   node line-search-relay.mjs --no-tunnel  只開轉接站（自己在本機測）
+// 不用 npm install 任何套件，只用 Node.js 內建的功能。
+
+import http from &quot;node:http&quot;;
+import { spawn, execFileSync } from &quot;node:child_process&quot;;
+import { randomBytes, timingSafeEqual } from &quot;node:crypto&quot;;
+import { existsSync, readFileSync, writeFileSync } from &quot;node:fs&quot;;
+import { homedir } from &quot;node:os&quot;;
+import { join } from &quot;node:path&quot;;
+
+// ===== 1. 設定（想換就在 PowerShell 先設環境變數，例如 $env:MODEL=&quot;gemma4:e2b&quot;） =====
+const MODEL = process.env.MODEL || &quot;gemma4:e4b&quot;;
+const PORT = Number(process.env.PORT || 8787);
+const OLLAMA = process.env.OLLAMA_URL || &quot;http://127.0.0.1:11434&quot;;
+const BUDGET_MS = 45000;  // LINE 的回覆碼只能用一次、很快就失效（官方沒給秒數），扣掉 Apps Script 自己的時間，最多想 45 秒
+const MAX_ROUNDS = 4;     // 模型最多來回呼叫工具幾次
+const KEY_FILE = join(homedir(), &quot;.line-search-relay.key&quot;);  // 密碼存在家目錄，重開程式還是同一組（不放進專案資料夾，免得被 git 帶走）
+const WANT_TUNNEL = !process.argv.includes(&quot;--no-tunnel&quot;);
+
+function loadKey() {
+  if (process.env.RELAY_KEY) return process.env.RELAY_KEY;
+  if (existsSync(KEY_FILE)) return readFileSync(KEY_FILE, &quot;utf8&quot;).trim();
+  const key = randomBytes(18).toString(&quot;base64url&quot;);
+  writeFileSync(KEY_FILE, key);
+  return key;
+}
+const KEY = loadKey();
+
+function today() {
+  return new Intl.DateTimeFormat(&quot;zh-TW&quot;, { timeZone: &quot;Asia/Taipei&quot;, dateStyle: &quot;full&quot; }).format(new Date());
+}
+
+// 系統提示：日期可能在模型訓練之後，所以不確定就先搜（同 starter/Modelfile 的那段規矩）
+function systemPrompt() {
+  return `你是 LINE 上的查詢助理。今天是 ${today()}（台北時間），可能比你的訓練資料新。
+你有 web_search 與 web_fetch 兩個工具。遇到最近的事、日期在你知識之後的事、版本號、價格，或任何你不確定的事實，先呼叫 web_search；搜尋結果不夠明確時，用 web_fetch 讀官方頁面確認。不要以「還沒發生」為由拒絕查詢。
+回答用台灣的繁體中文用語（例如「微中子」不寫「中微子」）、純文字（不要用 Markdown 的星號或井字號），150 字以內，先講結論。
+不用自己寫網址，程式會附上你實際查到的來源。查不到就老實說查不到。`;
+}
+
+const TOOLS = [
+  { type: &quot;function&quot;, function: { name: &quot;web_search&quot;, description: &quot;搜尋網路，回傳前幾筆的標題、網址與內文摘要。&quot;,
+    parameters: { type: &quot;object&quot;, properties: { query: { type: &quot;string&quot;, description: &quot;搜尋關鍵字&quot; } }, required: [&quot;query&quot;] } } },
+  { type: &quot;function&quot;, function: { name: &quot;web_fetch&quot;, description: &quot;讀取一個網頁的主要文字。&quot;,
+    parameters: { type: &quot;object&quot;, properties: { url: { type: &quot;string&quot;, description: &quot;要讀的網址&quot; } }, required: [&quot;url&quot;] } } }
+];
+
+
+// ===== 2. 叫 Ollama：模型本身、還有 Ollama 內建的搜尋 =====
+async function ollama(path, body, signal) {
+  const res = await fetch(OLLAMA + path, {
+    method: &quot;POST&quot;, headers: { &quot;Content-Type&quot;: &quot;application/json&quot; }, body: JSON.stringify(body), signal
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`Ollama ${path} 回應 ${res.status}：${text.slice(0, 150)}`);
+  return JSON.parse(text);
+}
+
+// 搜尋結果的內文可能很長，截短再給模型，免得塞爆它的記憶（num_ctx）
+async function webSearch(query, signal, sources) {
+  const data = await ollama(&quot;/api/experimental/web_search&quot;, { query, max_results: 3 }, signal);
+  const rows = (data.results || []).map(r =&gt; ({ title: r.title, url: r.url, content: String(r.content || &quot;&quot;).slice(0, 1500) }));
+  rows.forEach(r =&gt; sources.push({ title: r.title, url: r.url }));
+  return JSON.stringify(rows);
+}
+
+async function webFetch(url, signal, sources) {
+  const data = await ollama(&quot;/api/experimental/web_fetch&quot;, { url }, signal);
+  sources.unshift({ title: data.title || url, url });  // 模型特地去讀的那頁，排在來源最前面
+  return JSON.stringify({ title: data.title, content: String(data.content || &quot;&quot;).slice(0, 3000) });
+}
+
+async function answer(question) {
+  const signal = AbortSignal.timeout(BUDGET_MS);
+  const t0 = Date.now();
+  const messages = [{ role: &quot;system&quot;, content: systemPrompt() }, { role: &quot;user&quot;, content: question }];
+  const queries = [], sources = [];
+  let reply = &quot;&quot;;
+  for (let round = 0; round &lt; MAX_ROUNDS; round++) {
+    const data = await ollama(&quot;/api/chat&quot;, {
+      model: MODEL, messages, tools: TOOLS, stream: false, think: false,
+      keep_alive: &quot;1h&quot;, options: { num_ctx: 16384 }
+    }, signal);
+    const msg = data.message || {};
+    messages.push(msg);
+    const calls = msg.tool_calls || [];
+    if (!calls.length) { reply = msg.content || &quot;&quot;; break; }
+    for (const c of calls) {
+      const fn = c.function.name, args = c.function.arguments || {};
+      let out;
+      try {
+        if (fn === &quot;web_search&quot;) {
+          log(`  🔍 模型決定搜：${args.query}`);
+          queries.push(args.query);
+          out = await webSearch(args.query, signal, sources);
+        } else if (fn === &quot;web_fetch&quot;) {
+          log(`  📄 模型決定讀網頁：${args.url}`);
+          out = await webFetch(args.url, signal, sources);
+        } else {
+          out = `ERROR: 沒有 ${fn} 這個工具`;
+        }
+      } catch (err) {
+        if (signal.aborted) throw err;
+        out = `ERROR: ${err.message}`;
+      }
+      messages.push({ role: &quot;tool&quot;, tool_name: fn, content: out });
+    }
+  }
+  if (!reply) reply = &quot;查了幾次還整理不出答案，換個問法再試一次。&quot;;
+  const seen = new Set();
+  const unique = sources.filter(s =&gt; s.url &amp;&amp; !seen.has(s.url) &amp;&amp; seen.add(s.url)).slice(0, 3);
+  return {
+    answer: reply.replace(/\*\*|__|^#+\s*|`/gm, &quot;&quot;).trim().slice(0, 600),
+    searched: queries.length &gt; 0 || unique.length &gt; 0,
+    queries, sources: unique,
+    seconds: Math.round((Date.now() - t0) / 1000)
+  };
+}
+
+
+// ===== 3. 轉接站本身：只回答帶對密碼的請求 =====
+function log(s) {
+  const t = new Date().toLocaleTimeString(&quot;zh-TW&quot;, { hour12: false, timeZone: &quot;Asia/Taipei&quot; });
+  console.log(`[${t}] ${s}`);
+}
+
+function keyMatches(given) {
+  const a = Buffer.from(String(given || &quot;&quot;)), b = Buffer.from(KEY);
+  return a.length === b.length &amp;&amp; timingSafeEqual(a, b);
+}
+
+function send(res, code, obj) {
+  res.writeHead(code, { &quot;Content-Type&quot;: &quot;application/json; charset=utf-8&quot; });
+  res.end(JSON.stringify(obj));
+}
+
+let busy = false;  // 顯示卡一次只答一題；同時來第二題就請它等一下
+
+const server = http.createServer(async (req, res) =&gt; {
+  const path = (req.url || &quot;/&quot;).split(&quot;?&quot;)[0];
+  if (req.method === &quot;GET&quot; &amp;&amp; (path === &quot;/&quot; || path === &quot;/health&quot;)) {
+    return send(res, 200, { ok: true, service: &quot;line-search-relay&quot;, model: MODEL });  // 給瀏覽器確認活著，不需要密碼
+  }
+  const isCheck = req.method === &quot;GET&quot; &amp;&amp; path === &quot;/check-key&quot;;  // testSetup 用：只對密碼、不叫模型
+  if (!isCheck &amp;&amp; (req.method !== &quot;POST&quot; || path !== &quot;/ask&quot;)) return send(res, 404, { error: &quot;只有 POST /ask&quot; });
+  if (!keyMatches(req.headers[&quot;x-relay-key&quot;])) {
+    log(isCheck ? &quot;⛔ 有人來對密碼，但密碼不對&quot; : &quot;⛔ 有人來問，但密碼不對，拒絕&quot;);
+    return send(res, 401, { error: &quot;密碼不對&quot; });
+  }
+  if (isCheck) return send(res, 200, { ok: true, model: MODEL });
+  let raw = &quot;&quot;;
+  for await (const chunk of req) {
+    raw += chunk;
+    if (raw.length &gt; 20000) return send(res, 413, { error: &quot;問題太長&quot; });
+  }
+  let question = &quot;&quot;;
+  try { question = String(JSON.parse(raw || &quot;{}&quot;).question || &quot;&quot;).trim(); } catch (e) { /* 下面一起處理 */ }
+  if (!question) return send(res, 400, { error: &quot;沒有收到問題（JSON 要有 question 欄位）&quot; });
+  if (busy) return send(res, 429, { error: &quot;正在回答上一題，等一下再問&quot; });
+
+  busy = true;
+  log(`📩 收到一題（${question.length} 字）`);  // 不把問題內容印出來：螢幕可能正在投影
+  try {
+    const result = await answer(question);
+    log(`✅ 回答好了（${result.seconds} 秒，${result.searched ? &quot;有上網查&quot; : &quot;沒有上網查&quot;}）`);
+    send(res, 200, result);
+  } catch (err) {
+    const timeout = err.name === &quot;TimeoutError&quot; || err.name === &quot;AbortError&quot;;
+    log(`❌ ${timeout ? &quot;超過 45 秒，放棄這題&quot; : err.message}`);
+    send(res, timeout ? 504 : 502, { error: timeout ? &quot;想太久了（超過 45 秒），換個簡單一點的問法&quot; : err.message });
+  } finally {
+    busy = false;
+  }
+});
+
+
+// ===== 4. 開機：先把模型載進顯示卡，再開通道 =====
+async function warmUp() {
+  log(`載入模型 ${MODEL}（第一次要等一兩分鐘，之後每題幾秒）…`);
+  const t0 = Date.now();
+  try {
+    // num_ctx 要跟答題時一樣，不然第一題又會重新載入一次模型
+    await ollama(&quot;/api/chat&quot;, { model: MODEL, messages: [], keep_alive: &quot;1h&quot;, options: { num_ctx: 16384 } }, AbortSignal.timeout(300000));
+    log(`✅ 模型已在顯示卡上（${Math.round((Date.now() - t0) / 1000)} 秒）`);
+    return true;
+  } catch (err) {
+    log(`⚠️ 模型沒載起來：${err.message}`);
+    log(&quot;   先確認 Ollama app 開著、ollama list 看得到 &quot; + MODEL);
+    return false;
+  }
+}
+
+function hasCloudflared() {
+  try { execFileSync(&quot;cloudflared&quot;, [&quot;--version&quot;], { stdio: &quot;ignore&quot; }); return true; } catch (e) { return false; }
+}
+
+function startTunnel() {
+  if (!hasCloudflared()) {
+    log(&quot;⚠️ 找不到 cloudflared：外面還連不到這裡。照互動頁第 0 段 C：把 cloudflared.exe 下載到 line-relay 資料夾，&quot;);
+    log(&quot;   然後在這個視窗貼  $env:PATH += \&quot;;$env:USERPROFILE\\line-relay\&quot;  ，關掉本程式再跑一次。&quot;);
+    return;
+  }
+  log(&quot;開 Cloudflare 通道中（免帳號的臨時網址，每次重開都會換）…&quot;);
+  const cf = spawn(&quot;cloudflared&quot;, [&quot;tunnel&quot;, &quot;--no-autoupdate&quot;, &quot;--url&quot;, `http://127.0.0.1:${PORT}`], { stdio: [&quot;ignore&quot;, &quot;pipe&quot;, &quot;pipe&quot;] });
+  let shown = false, tail = &quot;&quot;;
+  // 網址可能被切成兩段送來，所以先累積最後一段輸出再找
+  const watch = buf =&gt; {
+    tail = (tail + String(buf)).slice(-4000);
+    const m = tail.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/);
+    if (m &amp;&amp; !shown) {
+      shown = true;
+      // 密碼不印在畫面上（螢幕可能正在投影），直接放進剪貼簿；網址單獨用沒用，可以印
+      let copied = false;
+      try { execFileSync(&quot;clip&quot;, { input: KEY }); copied = true; } catch (e) { /* 不是 Windows 就不複製 */ }
+      console.log(&quot;\n==================== 貼進 Apps Script 的「指令碼屬性」 ====================&quot;);
+      console.log(`  ① SEARCH_RELAY_KEY ＝ ${copied ? &quot;按 Ctrl+V（密碼已經在剪貼簿，畫面上不顯示）&quot; : &quot;用記事本開 &quot; + KEY_FILE + &quot; 複製整行&quot;}`);
+      console.log(`  ② SEARCH_RELAY_URL ＝ ${m[0]}`);
+      console.log(`  密碼要再複製一次：Get-Content &quot;${KEY_FILE}&quot; | Set-Clipboard`);
+      console.log(&quot;  網址每次重開都會換：換了只要改指令碼屬性，不用重新部署。&quot;);
+      console.log(&quot;  這個視窗不要關；關掉＝bot 查不到。按 Ctrl+C 結束。&quot;);
+      console.log(&quot;==========================================================================\n&quot;);
+    }
+  };
+  cf.stdout.on(&quot;data&quot;, watch);
+  cf.stderr.on(&quot;data&quot;, watch);
+  cf.on(&quot;error&quot;, err =&gt; log(`⚠️ 通道程式開不起來：${err.message}。轉接站還在，可以另開視窗手動跑：cloudflared tunnel --url http://127.0.0.1:${PORT}`));
+  cf.on(&quot;exit&quot;, code =&gt; log(shown
+    ? `⚠️ 通道結束了（代碼 ${code}）：bot 現在連不到這裡，重開本程式會拿到新網址`
+    : `⚠️ 通道還沒拿到網址就結束了（代碼 ${code}）：看網路，或另開視窗手動跑 cloudflared tunnel --url http://127.0.0.1:${PORT}`));
+  process.on(&quot;exit&quot;, () =&gt; cf.kill());
+  process.on(&quot;SIGINT&quot;, () =&gt; process.exit(0));
+}
+
+server.listen(PORT, &quot;127.0.0.1&quot;, async () =&gt; {  // 只聽本機：外面只能從通道進來
+  log(`轉接站開好了：http://127.0.0.1:${PORT}（模型 ${MODEL}）`);
+  const ready = await warmUp();
+  if (WANT_TUNNEL &amp;&amp; !ready) {
+    log(&quot;⛔ 模型還沒準備好，先不開通道（開了 bot 問也只會收到錯誤）。修好 Ollama 後按 Ctrl+C、再跑一次本程式。&quot;);
+  } else if (WANT_TUNNEL) startTunnel();
+  else {
+    console.log(`\n本機測試（另開 PowerShell 貼）：`);
+    const keyExpr = process.env.RELAY_KEY ? &quot;$env:RELAY_KEY&quot; : `(Get-Content &quot;${KEY_FILE}&quot;)`;
+    console.log(`  Invoke-RestMethod -Method Post -Uri http://127.0.0.1:${PORT}/ask -Headers @{&quot;x-relay-key&quot;=${keyExpr}} -ContentType &quot;application/json; charset=utf-8&quot; -Body ([Text.Encoding]::UTF8.GetBytes(&#x27;{&quot;question&quot;:&quot;2026 年諾貝爾物理獎得主是誰？&quot;}&#x27;))\n`);
+  }
+});</pre></div>
+<p class="small">上面只露出開頭幾行（可以捲動）；整份會被下載或複製。它不用 npm 裝任何套件，只用 Node.js 內建的功能。</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>Move-Item "$env:USERPROFILE\Downloads\line-search-relay.mjs" "$env:USERPROFILE\line-relay\" -Force
+Get-ChildItem "$env:USERPROFILE\line-relay"</pre></div>
+</details>
+</li>
+
+<li><label class="chk"><input name="x" type="checkbox" data-k="s2-2"><span class="n">2-2</span><span class="t">開轉接站：<code>node line-search-relay.mjs</code>，看懂它印的五行</span></label>
+<p>三行，在同一個 PowerShell 視窗依序貼：第一行進到 <code>line-relay</code> 資料夾；第二行把這個資料夾加進 PATH——Node 開程式不會在目前資料夾找，少了這行轉接站會說找不到 cloudflared，<b>每開一個新的 PowerShell 視窗都要再貼這行</b>；第三行開轉接站。它會：開轉接站 → 把模型載進顯示卡 → 找得到 cloudflared 就自己開通道 → 印出「貼進 Apps Script 的指令碼屬性」那塊。</p>
+<div class="cp"><div class="bar"><span>PowerShell（三行一起貼）</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>Set-Location "$env:USERPROFILE\line-relay"
+$env:PATH += ";$env:USERPROFILE\line-relay"
+node line-search-relay.mjs</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>（時間、秒數是老師 10/17 在自己電腦照這三行跑出來的；網址每個人、每次都不一樣）：<pre>[13:58:02] 轉接站開好了：http://127.0.0.1:8787（模型 gemma4:e4b）
+[13:58:02] 載入模型 gemma4:e4b（第一次要等一兩分鐘，之後每題幾秒）…
+[13:58:20] ✅ 模型已在顯示卡上（18 秒）
+[13:58:20] 開 Cloudflare 通道中（免帳號的臨時網址，每次重開都會換）…
+
+==================== 貼進 Apps Script 的「指令碼屬性」 ====================
+  ① SEARCH_RELAY_KEY ＝ 按 Ctrl+V（密碼已經在剪貼簿，畫面上不顯示）
+  ② SEARCH_RELAY_URL ＝ https://….trycloudflare.com
+  密碼要再複製一次：Get-Content "C:\Users\你\.line-search-relay.key" | Set-Clipboard
+  網址每次重開都會換：換了只要改指令碼屬性，不用重新部署。
+  這個視窗不要關；關掉＝bot 查不到。按 Ctrl+C 結束。
+==========================================================================</pre>
+框框裡那五行，每一行各管一件事：</div>
+<table>
+<tr><th style="width:2.2em">#</th><th style="width:42%">它印的</th><th>意思</th></tr>
+<tr><td>1</td><td><code>SEARCH_RELAY_KEY ＝ 按 Ctrl+V（密碼已經在剪貼簿，畫面上不顯示）</code></td><td>通關密碼。它已經在剪貼簿裡，第 3 段貼進指令碼屬性時按 Ctrl+V 就好；中間複製過別的東西，就照它印的那行 <code>Get-Content … | Set-Clipboard</code> 再放一次。</td></tr>
+<tr><td>2</td><td><code>SEARCH_RELAY_URL ＝ https://….trycloudflare.com</code></td><td>通道網址。外面（Google 機房）就是從這條進來。第 3 段貼進指令碼屬性。</td></tr>
+<tr><td>3</td><td><code>密碼要再複製一次：Get-Content "C:\Users\你\.line-search-relay.key" | Set-Clipboard</code></td><td>密碼的備份路。密碼不印在畫面上，剪貼簿被別的東西蓋掉時，照這行再放一次（<code>你</code> 的位置會是你的使用者名稱）。</td></tr>
+<tr><td>4</td><td><code>網址每次重開都會換：換了只要改指令碼屬性，不用重新部署。</code></td><td>這支程式關了再開，網址就不同；bot 那邊只要改屬性的值，程式不用重貼、不用新版本。</td></tr>
+<tr><td>5</td><td><code>這個視窗不要關；關掉＝bot 查不到。按 Ctrl+C 結束。</code></td><td>轉接站活在這個視窗裡。下課前才按 Ctrl+C（第 5 段）。</td></tr>
+</table>
+<div class="blk test"><b class="k">測一下</b>框框印出來、第 2 行的網址結尾是 <code>.trycloudflare.com</code>，就過。視窗別關、別把它縮到找不到。</div>
+<p>它還可能印下面這些（每一句在「卡住了」都有對應的處置；時間戳省略）：</p>
+<pre class="plain">⚠️ 模型沒載起來：…
+   先確認 Ollama app 開著、ollama list 看得到 gemma4:e4b
+⛔ 模型還沒準備好，先不開通道（開了 bot 問也只會收到錯誤）。修好 Ollama 後按 Ctrl+C、再跑一次本程式。
+⚠️ 找不到 cloudflared：外面還連不到這裡。照互動頁第 0 段 C：把 cloudflared.exe 下載到 line-relay 資料夾，
+   然後在這個視窗貼  $env:PATH += ";$env:USERPROFILE\line-relay"  ，關掉本程式再跑一次。
+⚠️ 通道程式開不起來：…。轉接站還在，可以另開視窗手動跑：cloudflared tunnel --url http://127.0.0.1:8787
+⚠️ 通道還沒拿到網址就結束了（代碼 N）：看網路，或另開視窗手動跑 cloudflared tunnel --url http://127.0.0.1:8787
+⚠️ 通道結束了（代碼 N）：bot 現在連不到這裡，重開本程式會拿到新網址
+📩 收到一題（N 字）
+  🔍 模型決定搜：…
+  📄 模型決定讀網頁：…
+✅ 回答好了（N 秒，有上網查）
+❌ 超過 45 秒，放棄這題
+⛔ 有人來問，但密碼不對，拒絕
+⛔ 有人來對密碼，但密碼不對</pre>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b><code>node</code> 不是指令</b>→ 怎麼確認：另開一個新視窗打 <code>node -v</code>，有版本號就是「這個視窗太舊」、沒有就是 0-B 沒裝好。處置：新開視窗、三行重貼；還是沒有就回 0-B。</li>
+<li><b>印 <code>⚠️ 模型沒載起來：…</code>、下一行 <code>先確認 Ollama app 開著、ollama list 看得到 gemma4:e4b</code>，接著 <code>⛔ 模型還沒準備好，先不開通道</code></b>→ 怎麼確認：另開視窗打 <code>ollama list</code>——印 Warning: could not connect＝Ollama 沒在跑；印得出清單但沒有 gemma4:e4b＝0-A 還沒拉完。處置：前者開始功能表開 Ollama app，後者等拉完；然後在轉接站視窗按 Ctrl+C、再貼第三行。</li>
+<li><b>印 <code>⚠️ 找不到 cloudflared：外面還連不到這裡。照互動頁第 0 段 C：把 cloudflared.exe 下載到 line-relay 資料夾，</code>、下一行 <code>然後在這個視窗貼  $env:PATH += ";$env:USERPROFILE\line-relay"  ，關掉本程式再跑一次。</code></b>→ 怎麼確認：在<b>同一個視窗</b>打 <code>cloudflared --version</code>，說不是指令＝PATH 那行（2-2 第二行）沒貼到；再打 <code>Get-ChildItem "$env:USERPROFILE\line-relay"</code>，沒有 <code>cloudflared.exe</code>＝0-C 沒下載成功。（winget 版只給自己筆電、有系統管理員權限的人用，教室電腦不用理。）處置：按 Ctrl+C，三行重貼；沒有 exe 就回 0-C。轉接站這時其實已經在跑、本機測得了（2-3），只是外面連不到。</li>
+<li><b>印 <code>⚠️ 通道還沒拿到網址就結束了（代碼 N）：看網路，或另開視窗手動跑 cloudflared tunnel --url http://127.0.0.1:8787</code></b>→ 怎麼確認：另開視窗、先貼 PATH 那行、再貼 <code>cloudflared tunnel --url http://127.0.0.1:8787</code>，看它自己印什麼——有 <code>https://….trycloudflare.com</code> 就是剛才只是慢；一直 ERR、connection failed 就是教室網路把它擋了。處置：前者拿那個網址當 SEARCH_RELAY_URL（密碼照舊，<code>Get-Content "$env:USERPROFILE\.line-search-relay.key" | Set-Clipboard</code> 放剪貼簿）；後者第 3 段看老師示範、交卡點截圖，這段回家做得完。</li>
+<li><b>印 <code>⚠️ 通道程式開不起來：…</code></b>→ 怎麼確認：訊息後半有 ENOENT＝找不到程式（同第三條，PATH 沒貼）；有 EACCES 或「存取被拒」＝exe 被防毒隔離。處置：前者三行重貼；後者舉手。</li>
+<li><b>有「轉接站開好了」「開 Cloudflare 通道中」，框框一直沒出來</b>→ 怎麼確認：看最後一行的時間戳，離現在不到一分鐘就是還在連。處置：等 30 秒；超過一分鐘還沒有，就是上面「通道還沒拿到網址」那條。</li>
+<li><b>框框出來過，後來印 <code>⚠️ 通道結束了（代碼 N）：bot 現在連不到這裡，重開本程式會拿到新網址</code></b>→ 怎麼確認：手機開 2-4 那個 /health 網址，開不了就是通道真的斷了。處置：Ctrl+C、再貼第三行，拿新網址去改指令碼屬性（不用重新部署）。</li>
+<li><b>第 1 行印的是「用記事本開 … 複製整行」而不是「按 Ctrl+V」</b>→ 怎麼確認：在記事本按 Ctrl+V，貼出來的不是一串英數字。處置：開記事本 → 開它印的那個路徑的檔（<code>.line-search-relay.key</code>），整行複製；或在另一個視窗跑 <code>Get-Content "$env:USERPROFILE\.line-search-relay.key" | Set-Clipboard</code>。</li>
+<li><b>「載入模型」等超過三分鐘</b>→ 怎麼確認：Ctrl+Shift+Esc 開工作管理員 → 效能 → GPU，使用率有沒有在動；專用記憶體是不是被別的程式佔滿。處置：顯示卡被別的程式佔住（LM Studio 之類）就關掉；顯示卡太小就用 0-D 卡住了那條換 e2b。</li>
+<li><b>印 <code>Error: listen EADDRINUSE</code></b>→ 怎麼確認：瀏覽器開 <code>http://127.0.0.1:8787/health</code>，開得了＝上一次沒關的轉接站還在。處置：找到那個舊視窗按 Ctrl+C；找不到就在這個視窗先打 <code>$env:PORT="8788"</code> 再貼第三行（之後手動開通道也要跟著換 8788）。</li>
+<li><b>想兩人共用一台</b>→ 可以：一台轉接站給兩個 bot 用，兩個人的指令碼屬性填同一個網址與密碼（密碼用 <code>Get-Content … | Set-Clipboard</code> 放剪貼簿後，由你親手走到對方電腦前，在對方 Apps Script 的指令碼屬性那格按 Ctrl+V 貼上；不經 LINE、不經任何訊息或群組——傳出去就留下紀錄）。怎麼確認接好了：兩個人各跑一次 testSetup，都看到「轉接站接好了」。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s2-3"><span class="n">2-3</span><span class="t">本機測一題：另開視窗貼 Invoke-RestMethod 那段</span></label>
+<p>先不碰 bot，直接從這台電腦問轉接站一題，證明「模型會搜、會附來源、密碼對得上」。<b>另開一個 PowerShell 視窗</b>（轉接站那個不能動），先在瀏覽器開 <code>http://127.0.0.1:8787/health</code> 看它活著，再貼下面這一整行（轉接站用 <code>--no-tunnel</code> 模式開時，會自己印「本機測試（另開 PowerShell 貼）：」加同一段指令；這裡只是把密碼檔路徑寫成 <code>$env:USERPROFILE</code>，誰貼都對）：</p>
+<div class="cp"><div class="bar"><span>PowerShell（新視窗，整行貼）</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8787/ask -Headers @{"x-relay-key"=(Get-Content "$env:USERPROFILE\.line-search-relay.key")} -ContentType "application/json; charset=utf-8" -Body ([Text.Encoding]::UTF8.GetBytes('{"question":"2026 年諾貝爾物理獎得主是誰？"}'))</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>瀏覽器那頁：<code>{"ok":true,"service":"line-search-relay","model":"gemma4:e4b"}</code>。貼完指令，<b>轉接站視窗</b>多三行（老師 10/17 的；秒數會不同）：<pre>[14:01:10] 📩 收到一題（17 字）
+[14:01:11]   🔍 模型決定搜：2026 諾貝爾物理獎 得主
+[14:01:13] ✅ 回答好了（3 秒，有上網查）</pre><b>你這個視窗</b>印五個欄位：<code>answer</code>（答案，講到 Francis Halzen 與 IceCube 微中子觀測站）、<code>searched : True</code>、<code>queries</code>（它搜的關鍵字）、<code>sources</code>（三筆 title／url）、<code>seconds</code>。</div>
+<div class="blk test"><b class="k">測一下</b><code>searched</code> 是 True、<code>sources</code> 裡有網址、answer 講得出得主（W6 對過答案：Francis Halzen），就過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>紅字 <code>無法連線到遠端伺服器</code>、或 /health 開不了</b>→ 怎麼確認：看轉接站視窗最後一行——沒有「轉接站開好了」或視窗已經不在，就是它。處置：回 2-2 三行重貼。</li>
+<li><b>紅字 401、轉接站印 <code>⛔ 有人來問，但密碼不對，拒絕</code></b>→ 怎麼確認：在這個視窗打 <code>Get-Content "$env:USERPROFILE\.line-search-relay.key"</code>，印不出一串英數字就是密碼檔不在（轉接站第一次跑之後才會建）。處置：等 2-2 跑過再試；指令整行複製別手打。</li>
+<li><b>轉接站印 <code>❌ Ollama /api/experimental/web_search 回應 401：…</code>、你這邊 answer 說查不到</b>→ 怎麼確認：就是那行 401（Ollama 的線上搜尋要登入）。處置：開 Ollama app → 登入免費帳號（Sign in）→ 不用重開轉接站，再貼一次指令；登入後還是 401 就舉手。</li>
+<li><b>轉接站印 <code>❌ 超過 45 秒，放棄這題</code>、你這邊 504</b>→ 第一題模型剛載、或教室網路慢；再問一次；還是超時就把題目問短一點。</li>
+<li><b>你這邊 429 <code>正在回答上一題，等一下再問</code></b>→ 一次只答一題，等轉接站印「回答好了」再貼。</li>
+<li><b><code>✅ 回答好了（N 秒，沒有上網查）</code>、sources 是空的</b>→ 這次模型決定不搜（小模型的判斷不是每次都穩）。再貼一次；連續兩次都不搜，把題目改成「查 2026 年諾貝爾物理獎得主是誰？請先搜尋再回答」試。</li>
+<li><b>answer 的中文變成問號或亂碼</b>→ 指令要整段複製，別手打；<code>-Body</code> 那段已經把題目轉成 UTF-8，少了就會壞。</li>
+<li><b>轉接站印 <code>❌ Ollama /api/chat 回應 500：…</code></b>→ 顯示卡同時載了別套模型（例如 LM Studio 開著），關掉再試。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s2-4"><span class="n">2-4</span><span class="t">（選做）從外面敲一下通道：瀏覽器開「網址/health」</span></label>
+<p>第 3 段要讓 Google 機房連進來，可以先證明「外面真的連得到」。<b>3-4 的 testSetup 也會從 Google 那端驗通道，這步跳過不影響。</b>把 2-2 框框裡第 2 行的網址複製貼到瀏覽器網址列，後面加 <code>/health</code>，例如 <code>https://（一串英文字）.trycloudflare.com/health</code>——用電腦瀏覽器開也行（複製貼上），用手機（走行動網路）開更能證明是從外面進來的。這一頁不用密碼。</p>
+<div class="blk see"><b class="k">你應該看到</b>畫面一行：<code>{"ok":true,"service":"line-search-relay","model":"gemma4:e4b"}</code>。轉接站視窗<b>不會</b>多印東西（看活著不用密碼、也不記錄）。</div>
+<div class="blk test"><b class="k">測一下</b>看到那行 JSON 就過：通道通了，第 3 段只差把網址和密碼交給 bot。（老師 10/17 從外面走這條網址打 <code>/check-key</code>：密碼對回 200、錯回 401；問一題也是模型自己搜、3 秒答對，跟本機一樣。）</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>開出 Cloudflare 的錯誤頁（Error 1033 之類）或「找不到網站」</b>→ 通道已經關了（轉接站視窗被關、或印過 <code>⚠️ 通道結束了（代碼 N）：bot 現在連不到這裡，重開本程式會拿到新網址</code>），或網址抄錯一個字。回轉接站視窗看最新一行；重開程式網址會換，要抄新的。</li>
+<li><b>2-2 根本沒印框框、轉接站印「找不到 cloudflared」</b>→ 多半是那個視窗沒貼 PATH 那行（2-2 第二行）：Ctrl+C、三行重貼。先看 <code>line-relay</code> 資料夾裡有沒有 <code>cloudflared.exe</code>、轉接站是不是在那個資料夾開的（第一行 <code>Set-Location</code>）。</li>
+<li><b>cloudflared 真的拿不到、通道開不起來</b>→ 這步做不了；第 3 段看老師示範，回家做。本機那題（2-3）過了就先截圖當今天的證據。</li>
+<li><b>這裡開得了、等一下 testSetup 卻說連不到</b>→ 通道網址在 testSetup 跑之前換過了（程式重開過）；拿最新的那個網址改指令碼屬性。</li>
+</ul></details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 第 3 段 ======================= -->
+<section id="s3" data-sec="3"><h2>第 3 段　Apps Script 加「查 …」</h2>
+<p class="gain">這段做完你會有什麼：手機傳「查 …」，bot 把問題轉回你電腦的本地模型，答案附來源回到手機；轉接站視窗看得到它印了一題。其他訊息照舊是待辦。</p>
+<p>這就是 W5、W6 的第二關，換一個題目：在 Drive 版（W6 做完的那份，沒做完的就是 W5 版）上<b>只加「查 …」這一條路</b>。你的工作一樣：<b>看計畫、按同意、看改前改後對照、退回一次</b>。先選路線：</p>
+<table>
+<tr><th>你手上有</th><th>走</th><th>怎麼改程式</th></tr>
+<tr><td>自己的筆電，Antigravity 或 Codex 登得進</td><td><b>路線 A</b></td><td>把程式存成檔案放進一個資料夾，agent（幫你改程式的 AI，這學期用的 Antigravity／Codex）在資料夾裡改，它自己有 diff（改前改後對照）畫面；改完你把檔案內容貼回 Apps Script 編輯器。</td></tr>
+<tr><td>教室電腦，只有瀏覽器</td><td><b>路線 B</b></td><td>把程式整份貼給 ChatGPT／Gemini 網頁版請它改；沒有 diff 畫面，所以<b>動手前先把舊程式存進一份 Google 文件</b>，改完請 AI 列對照、自己對。</td></tr>
+</table>
+<p class="note"><b>時間盒</b>：10:50 還沒做到 3-4 的，停下來看老師示範（老師在講台機跑同一條）；回家再照這頁做完，每一步回家都做得了。真的想今天就看到手機回答的，直接開這段最下面「老師的對照答案」整份換掉 Code.gs，從 3-4 貼回去繼續。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="s3-1"><span class="n">3-1</span><span class="t">先存舊版</span></label>
+<p><b>路線 B</b>：在編輯器裡 Ctrl+A 全選 Code.gs、複製，開一份新的 Google 文件（取名「Code.gs 改前 W7」）貼進去。<b>路線 A</b>：在電腦建一個空資料夾（例如 <code>line-bot-w7</code>），把 Code.gs 的內容存成 <code>Code.gs</code>（記事本貼上 → 另存新檔 → 存檔類型選「所有檔案」、檔名打 <code>Code.gs</code>、編碼 UTF-8，才不會變成 Code.gs.txt）；再把 appsscript.json 也存一份（專案設定勾「在編輯器中顯示 appsscript.json 資訊清單檔案」才看得到）。然後用 Antigravity／Codex 開這個資料夾。</p>
+<div class="blk see"><b class="k">你應該看到</b>路線 B：Google 文件裡有整份程式。路線 A：資料夾裡有 <code>Code.gs</code>（和 <code>appsscript.json</code>），agent 左邊檔案列表看得到。</div>
+<div class="blk test"><b class="k">測一下</b>舊版在編輯器以外的地方有一份完整的，就過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>想在同一個 Apps Script 專案另開一個 .gs 檔存舊版</b>→ 不行：兩份宣告同名常數，整個專案會載入失敗、bot 直接掛掉。存在 Google 文件或電腦上。</li>
+<li><b>找不到 appsscript.json</b>→ 專案設定那個勾沒勾；勾了還沒有就是你的專案用預設清單，這週不用動它（「查 …」只用到 UrlFetchApp，原本就有權限）。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s3-2"><span class="n">3-2</span><span class="t">用自己的話把目標交代給 AI</span></label>
+<p>這一步不給現成的提示詞。下面是這次要 AI 做到的事，<b>用你自己的話跟它說</b>，一次講完或分幾句都行，像在拜託同學幫你改程式。路線 A 打在 agent 的對話框；路線 B 打給 ChatGPT／Gemini，<b>並把整份 Code.gs 一起貼給它</b>。說漏了哪一條，它多半就會漏做，3-3 會幫你抓出來。</p>
+<div class="blk goal"><b class="k">目標</b><ol>
+<li>使用者傳「查 …」或「搜尋 …」開頭的訊息時，把後面的問題送到我的轉接站；轉接站的網址和密碼放在指令碼屬性 SEARCH_RELAY_URL、SEARCH_RELAY_KEY，不要寫進程式</li>
+<li>轉接站怎麼叫：用 POST 打「那個網址加 /ask」，標頭 x-relay-key 放密碼，內容是 JSON {"question":"問題"}；它回的 JSON 裡 answer 是答案、sources 是來源</li>
+<li>轉接站回什麼就回什麼給使用者，來源一起附上</li>
+<li>連不到轉接站就老實回「現在連不到我的電腦」，不要改問 Gemini</li>
+<li>「查 …」以外的訊息照原本的做：待辦、照片那些都不要動</li>
+<li>這條路不寫進試算表，只是問答</li>
+<li>先列計畫、停下來等我同意再動手；改完給我改前改後的對照</li>
+</ol></div>
+<p class="small"><b>路線 A</b>：把 <code>line-relay</code> 資料夾裡的 <code>line-search-relay.mjs</code>（2-1 下載的那份）也複製一份放進同一個資料夾給 agent 看——它讀得到轉接站的 API 就不會瞎猜；JSON 是電腦之間傳資料用的大括號寫法，觀念頁名詞表有解釋。<b>路線 B</b>（沒有 agent）：把上面七條貼給 ChatGPT／Gemini 網頁版，連整份 Code.gs 一起貼；它沒有「停下來等同意」的機制，所以第 7 條要講成「先只給計畫，我說同意你再給程式」。改完請它列改前／改後對照，拿 3-1 的 Google 文件自己對。兩條路線怎麼計分，老師開作業時一起說明。</p>
+<div class="blk see"><b class="k">你應該看到</b><b>它先列計畫、停下來問你，沒有動手。</b>計畫裡講得出：在哪裡判斷「查 」開頭（對照答案用的是「查」或「搜尋」加空格或冒號才算，「查一下明天…」照舊當待辦）、網址密碼從指令碼屬性讀、連不到回什麼、等多久放棄（LINE 的回覆碼（reply token）只能用一次、很快就失效（官方沒給確切秒數），等不起六分鐘）。</div>
+<div class="blk test"><b class="k">測一下</b>看三件：有先列計畫、有說哪裡不確定、有說還沒動手（在等你同意）。三件都有，再拿上面七條目標對一次它的計畫，七條都照顧到才算過；漏的就跟它補一句。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>不知道怎麼開口</b>→ 照目標一條一條講也行，最後補一句「有不清楚的先問我」。不用寫得漂亮，講清楚就好。</li>
+<li><b>它沒停、直接把程式改完丟給你</b>→ 你的話裡少了第 7 條，或它沒照做。回它：「請先不要動，先列計畫等我同意」；路線 B 就重開一段對話，這次記得講到第 7 條。</li>
+<li><b>它問你要轉接站的網址和密碼</b>→ 不給。回它「放在指令碼屬性，程式用 PROPS.getProperty 讀，你不需要知道值」。</li>
+<li><b>它猜轉接站的接法（網址後面亂接、密碼放網址裡）</b>→ 第 2 條沒講到，或路線 A 沒把 <code>line-search-relay.mjs</code> 放進資料夾。照第 2 條再講一次，或把那個檔放進去請它自己讀。</li>
+<li><b>它說要用 Gemini 的搜尋功能、或連不到時改問 Gemini</b>→ 退回第 4 條：免費的 Gemini 沒有上網搜，連不到就老實說連不到。</li>
+<li><b>它想順便重寫轉接站、或幫你寫一支新的</b>→ 不用，轉接站已經在跑了；回它「只改 Code.gs，轉接站不動」。</li>
+<li><b>它把「查一下明天要交什麼」也當成查詢</b>→ 跟它說清楚：只有「查」「搜尋」後面接空格或冒號才轉，其他照舊當待辦。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s3-3"><span class="n">3-3</span><span class="t">看計畫 → 同意 → 看對照找三件 → 退回一次寫理由</span></label>
+<p><b>先看計畫</b>：有講到指令碼屬性、有講到連不到怎麼回、有講到待辦照片不動，就回「同意」（它問的問題也一併回答，沒意見就說「照你的預設」）。它改完會給摘要與改前／改後對照：路線 A 看 agent 的 diff 畫面（紅色減號＝刪掉、綠色加號＝加上），路線 B 看它列的對照，必要時拿 Google 文件裡的舊版比。<b>對照裡找三件</b>：</p>
+<table>
+<tr><th style="width:2.2em">#</th><th style="width:36%">找什麼</th><th>在哪裡看、怎樣才對</th></tr>
+<tr><td>1</td><td><b>網址和密碼是從指令碼屬性讀的，程式裡沒有</b></td><td>整份搜 <code>trycloudflare</code>、搜一長串英數字：都不該有。應該只有 <code>PROPS.getProperty("SEARCH_RELAY_URL")</code>、<code>PROPS.getProperty("SEARCH_RELAY_KEY")</code> 這種讀法。</td></tr>
+<tr><td>2</td><td><b>連不到轉接站是老實說，不是改問 Gemini</b></td><td>找「查 …」那條路的錯誤處理：連不到／逾時／密碼錯時回一句「連不到」之類的話，<b>沒有</b>再呼叫 <code>callGemini</code> 或 <code>askGeminiAboutText</code>。</td></tr>
+<tr><td>3</td><td><b>待辦和照片那幾段一行沒動</b></td><td>diff 裡 <code>saveAndReply</code>、<code>appendTodoRow</code>、<code>savePhotoToDrive</code>、<code>askGeminiAboutImage</code>、<code>downloadLineImage</code> 都沒有紅綠；改動只在 <code>handleEvent</code> 多一個判斷、多一個新函式（對照答案叫 <code>askLocalSearch</code>）、設定區多三個常數（SEARCH_RELAY_URL、SEARCH_RELAY_KEY、SEARCH_PREFIX）。</td></tr>
+</table>
+<p>三件都對了，<b>還是退回一次</b>——「把 AI 的東西退回去改」是這門課要帶走的能力。路線 B 的退回：只叫它改你指定的那一段、它回來你也只貼那一段，不要整份重產（重產慢、也容易貼錯）。理由可以很小（請它把英文註解改成中文也算）。用自己的話講，但要講到這三件：</p>
+<div class="blk goal"><b class="k">目標</b><ol>
+<li>你不要哪一點、為什麼</li>
+<li>只改這一點，其他不要動</li>
+<li>改完再列一次改前／改後對照</li>
+</ol></div>
+<div class="blk see"><b class="k">你應該看到</b>三件都對；退回之後它只動你說的那一點，重新列對照。</div>
+<div class="blk test"><b class="k">測一下</b>三件各指得出在哪一行，而且退回後的對照裡只有你要的那個改動，就過。指不出來就問它「第 N 件在哪裡？」；多改了別的就再退一次。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>它把網址寫死在程式裡（看得到 trycloudflare）</b>→ 退回：「網址和密碼只能從指令碼屬性讀，程式裡不能出現」。</li>
+<li><b>連不到時它改成問 Gemini</b>→ 退回：「連不到就回連不到，不要問 Gemini」。</li>
+<li><b>它把待辦那段也重寫了</b>→ 越界。退回：「只加『查 …』這條路，其他函式恢復原樣」；路線 B 拿 Google 文件那份舊版請它比對。</li>
+<li><b>它用的是 <code>UrlFetchApp.fetch</code> 但沒設逾時</b>→ 可以退回這點當理由：「請設 timeoutSeconds 50 以內，LINE 的回覆碼很快就失效」。</li>
+<li><b>它只給整份新程式、沒有對照</b>→ 回它「請列改前／改後逐段對照，只列有改的段落」。</li>
+<li><b>想不到退回的理由</b>→「新函式請加一行中文註解說明它做什麼」「回覆開頭加一個 🔎 讓我分得出是查的」都行。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s3-4"><span class="n">3-4</span><span class="t">貼回編輯器、指令碼屬性加兩個值、跑 testSetup、管理部署 → 新版本</span></label>
+<p>四個動作一次做完：</p>
+<ol>
+<li><b>貼回</b>：回 Apps Script 編輯器分頁（左邊 <code>&lt;&gt;</code>「編輯器」），檔案清單點 <code>Code.gs</code> → 在程式區 Ctrl+A 全選、貼上新版、Ctrl+S。上方檔名旁的橘點消失＝存好了。appsscript.json 這週不用動。</li>
+<li><b>指令碼屬性</b>：左邊齒輪「專案設定」→ 這一頁往下捲到最底「指令碼屬性」區塊 → 按「新增指令碼屬性」→ 多出一列、兩格「屬性」「值」：屬性打 <code>SEARCH_RELAY_URL</code>、值＝貼轉接站印的那個網址（<code>https://….trycloudflare.com</code>，結尾不要多斜線、前後不要空白）→ 再按一次「新增指令碼屬性」：屬性 <code>SEARCH_RELAY_KEY</code>、值＝按 Ctrl+V（密碼還在剪貼簿；不在就回轉接站視窗印的 <code>Get-Content … | Set-Clipboard</code> 那行再放一次）→ 按藍色「儲存指令碼屬性」→ 區塊上方短暫出現「已儲存」。貼之前可以用下面的檢查器先對格式。</li>
+<li><b>testSetup</b>：回「編輯器」，上方工具列「執行」左邊的下拉選單選 <code>testSetup</code> → 按「執行」。這週沒有新權限，通常不會再跳授權畫面；跳了就<b>每一項都勾</b>。下方「執行紀錄」面板會自己展開。</li>
+<li><b>新版本</b>：存檔不等於上線——LINE 敲的 <code>/exec</code> 跑的是「部署那一刻」的版本。右上藍色「部署」旁的 ▼ →「管理部署作業」→ 視窗右上鉛筆圖示（編輯）→「版本」下拉選「<b>新版本</b>」→ 右下「部署」→ 視窗顯示「已更新部署作業」、網頁應用程式網址跟原本一樣 →「完成」。</li>
+</ol>
+<div class="checker" id="propCheck">
+<p style="margin:4px 0"><b>指令碼屬性填寫檢查器</b>（只在你的瀏覽器裡檢查格式，不存、不送出、不印到任何地方；頁面重新整理就清空）</p>
+<label for="ckUrl">SEARCH_RELAY_URL（貼轉接站印的網址）</label>
+<input id="ckUrl" type="text" autocomplete="off" spellcheck="false" placeholder="https://….trycloudflare.com">
+<p class="cr" id="ckUrlR" hidden></p>
+<label for="ckKey">SEARCH_RELAY_KEY（Ctrl+V；這格看不到字，正常）</label>
+<input id="ckKey" type="password" autocomplete="off" placeholder="密碼">
+<label class="small" for="ckShow" style="display:inline-flex;gap:6px;align-items:center;font-weight:400;margin:4px 0 0"><input type="checkbox" id="ckShow" style="accent-color:var(--accent)">顯示密碼（投影時別開）</label>
+<p class="cr" id="ckKeyR" hidden></p>
+<div class="cbtns"><button type="button" id="ckBtn">檢查格式</button><button type="button" class="ghost" id="ckClear">清掉</button></div>
+<p class="small" style="margin:6px 0 0">兩個都綠勾，再去 Apps Script 貼一模一樣的值。這裡不會幫你貼，也不會記住你輸入的東西。</p>
+</div>
+<div class="blk see"><b class="k">你應該看到</b>儲存後上方沒有紅字；指令碼屬性清單多兩列（值的欄位密碼會露出來，<b>這個畫面不要截圖</b>）；執行紀錄五行 ✅，最後一行是對照答案的版本會印 <code>✅ 本地模型（選做）：轉接站接好了（網址通、密碼對），模型 gemma4:e4b</code>（AI 幫你改的版本 testSetup 可能沒有這一項，那就看 3-5 手機測）；部署版本號加一、<code>/exec</code> 網址<b>沒變</b>（不用回 LINE 後台改）、「誰可以存取」還是「所有人」。</div>
+<div class="blk test"><b class="k">測一下</b>testSetup 沒有 ❌、版本號加一，就過。瀏覽器開你的 <code>/exec</code> 網址，看到 <code>LINE AI 待辦小秘書運作中（Level 2＋本地模型查詢）</code>（對照答案的字；AI 版可能是別的一句）也算。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>儲存就報「已宣告」之類的語法錯誤</b>→ 你的專案裡還有一份舊的 .gs（同名常數撞到），刪掉那份；或貼的時候沒全選、新舊疊在一起，重貼。</li>
+<li><b><code>❌ 本地模型（選做）：轉接站活著，但密碼不對：檢查 SEARCH_RELAY_KEY</code></b>→ 剪貼簿被別的東西蓋掉、貼到的不是密碼。回轉接站視窗印的 <code>Get-Content … | Set-Clipboard</code> 那行跑一次，屬性值重貼、儲存、再跑 testSetup。</li>
+<li><b><code>❌ 本地模型（選做）：轉接站回應 N：電腦上的轉接站視窗開著嗎？網址是不是新的那個？</code></b>→ 視窗關了、或程式重開過網址換了：看轉接站視窗最新的框框，把新網址填回屬性（不用重新部署）。</li>
+<li><b><code>✅ 本地模型（選做）：沒設定 SEARCH_RELAY_URL，「查 …」功能先不開</code></b>→ 屬性名打錯了（大小寫、底線要一模一樣）、或沒按「儲存指令碼屬性」。</li>
+<li><b>testSetup 的 LINE token 或 Gemini 那行 ❌</b>→ 跟今天無關的舊問題（通行碼過期、金鑰失效）；先把「查」做通，回家修。</li>
+<li><b>不小心按成「新增部署作業」</b>→ 會產生一個新的 <code>/exec</code> 網址，LINE 後台還指著舊的；刪掉新的那個，回去用「管理部署作業」。</li>
+<li><b>找不到「指令碼屬性」</b>→ 左邊齒輪「專案設定」那一頁最下面，要往下捲。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s3-5"><span class="n">3-5</span><span class="t">手機測那一題：轉接站視窗印了一題</span></label>
+<p>手機傳這句給 bot（「查」後面有一個空格）：</p>
+<div class="cp"><div class="bar"><span>手機傳給 bot</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>查 2026 年諾貝爾物理獎得主是誰？</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>手機先出現「輸入中…」，幾秒到十幾秒後回覆長這樣（對照答案的版本；AI 版格式會不同，看「有答案、有來源」）：<pre class="plain">🔎 2026 年諾貝爾物理獎由 Francis Halzen 獲得，表彰他對 IceCube 微中子觀測站的……
+
+來源：
+• https://…
+• https://…
+（本地模型 6 秒）</pre>同一時刻，<b>轉接站視窗</b>多了三行：<code>📩 收到一題（N 字）</code>、<code>🔍 模型決定搜：…</code>、<code>✅ 回答好了（N 秒，有上網查）</code>。這就是整條路通了：手機 → LINE → Apps Script → 通道 → 你的電腦 → 回去。</div>
+<div class="blk test"><b class="k">測一下</b>①手機答案有來源、得主對（Francis Halzen）②轉接站視窗印了「收到一題」。兩個都有才過。再傳一句「明天要交作業」，bot 回「✅ 記好了」——待辦那條路沒被動到。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>回「這支 bot 還沒接上本地模型（指令碼屬性要有 SEARCH_RELAY_URL 和 SEARCH_RELAY_KEY）。」</b>→ 怎麼確認：專案設定最下面的指令碼屬性有沒有那兩列（名字一字不差）；有的話就是 3-4 第 4 步「新版本」沒做——「管理部署作業」裡的版本號跟你剛才部署的對不對。處置：補存屬性、或補做新版本。</li>
+<li><b>回「🔌 本地模型現在連不到（或等超過 50 秒）：電腦關了、轉接站的視窗被關掉，或通道換了網址（指令碼屬性的 SEARCH_RELAY_URL 要改成新的）。」</b>→ 怎麼確認：①轉接站視窗有沒有印「收到一題」——沒有＝訊息根本沒到你的電腦（網址舊了或視窗關了：手機開 2-4 那個 /health 網址看開不開）；有＝到了但太慢（第一題模型剛載）。處置：前者拿最新網址改屬性；後者再傳一次。</li>
+<li><b>回「🔒 轉接站說密碼不對：檢查指令碼屬性的 SEARCH_RELAY_KEY。」</b>→ 3-4 卡住了第二條。</li>
+<li><b>回「⏳ 本地模型正在回答上一題，等十幾秒再問一次。」</b>→ 一次一題（旁邊共用你轉接站的人剛好在問）。等一下再傳。</li>
+<li><b>回「🔌 本地模型這次沒答出來（504）：想太久了…」</b>→ 超過 45 秒；再傳一次，或換短一點的問法。</li>
+<li><b>bot 把它當待辦記進試算表了</b>→ 「查」後面沒有空格也沒有冒號（全形空格、全形冒號都可以）；AI 版的判斷式可能跟對照答案不同（對照答案：「查」或「搜尋」後接空格或冒號），看對照答案設定區的 SEARCH_PREFIX 那行。</li>
+<li><b>答案尾巴是「ℹ️ 這題模型沒有上網查，只憑記憶回答，請自己再核對。」</b>→ 模型這次沒搜；再傳一次。</li>
+<li><b>手機完全沒回、轉接站也沒印</b>→ 訊息根本沒到 Apps Script：1-2 那幾條（Webhook、自動回應、所有人）。有到的話 Apps Script 左邊「執行紀錄」最新那筆會有紅字，整段貼給 AI 問。</li>
+<li><b>轉接站印了「收到一題」，接著 <code>❌ Ollama /api/experimental/web_search 回應 401：…</code></b>→ Ollama app 登入免費帳號再傳一次（2-3 卡住了第三條）。</li>
+<li><b>轉接站印了「回答好了」、手機卻沒收到</b>→ 超過 LINE 回覆碼（reply token）的有效時間（它很快就失效；轉接站最多 45 秒＋Apps Script 自己的時間）；問短一點的題目，或等模型暖好再問。</li>
+</ul></details>
+<p class="small">今天的證據就是這兩張：①手機上這一題的回覆（有來源）②同一時刻轉接站視窗（看得到「收到一題」「回答好了」）。截圖裡<b>不能有</b> <code>/exec</code> 網址、通關密碼、長效通行碼、Channel secret；指令碼屬性那一頁不截。</p>
+</li>
+</ol>
+
+<details class="ans"><summary>老師的對照答案（做完再看）：Code.search-reference.gs</summary>
+<p class="small">在 Drive 版上只加「查 …」這一條路：設定區多 <code>SEARCH_RELAY_URL</code>、<code>SEARCH_RELAY_KEY</code>、<code>SEARCH_PREFIX</code> 三個常數，<code>handleEvent</code> 多一個判斷，新函式 <code>askLocalSearch</code>（連不到老實說、不問 Gemini、不寫表），<code>testSetup</code> 多一項打 <code>/check-key</code> 對密碼。其他函式一行沒動。你的版本長得不一樣沒關係，3-3 三件對就好。想整份換掉的用這份（appsscript.json 用 1-3 那份 Drive 版即可）。</p>
+<div class="cp"><div class="bar"><span>Code.search-reference.gs</span><span class="btns"><button type="button" class="copy">複製</button><button type="button" class="dl" data-name="Code.gs">下載</button></span></div><pre data-src="starter/Code.search-reference.gs">/**
+ * LINE AI 待辦小秘書（Level 2：文字＋照片＋存 Drive；W6 選做：「查 …」交給本地模型上網搜）
+ *
+ * 這份是 W6 選做的對照答案：在 Code.drive-reference.gs 上只加「查 …」這一條路，其他不動。
+ * 一則訊息的旅程：
+ *   LINE 送來訊息 → 請 Gemini 把口語整理成固定欄位 → 程式驗算欄位
+ *   → 寫進試算表 → 回覆 LINE（只講已經做完的事）→ 排 Google 日曆，結果寫回試算表
+ *   「查 …」開頭的：不問 Gemini、不寫表，轉給你電腦上的本地模型（line-search-relay.mjs）查好再回覆
+ *
+ * 這份程式跑在 Google 的機房，不在你的電腦上：程式裡的 localhost 是 Google 那台機器自己，
+ * 所以要靠 Cloudflare 通道給你電腦上的轉接站一個外面連得到的網址。
+ *
+ * 金鑰不寫在程式裡，一律放「專案設定 → 指令碼屬性」：
+ *   GEMINI_API_KEY             必填，到 Google AI Studio 申請
+ *   LINE_CHANNEL_ACCESS_TOKEN  必填，LINE Developers 後台發的長效 token
+ *   SHEET_ID                   選填，程式不是從試算表「擴充功能 → Apps Script」開的才要填
+ *   GEMINI_MODEL               選填，模型停用或想換模型時改這裡，不用動程式
+ *   SEARCH_RELAY_URL           選填，轉接站印出來的 https://….trycloudflare.com（每次重開都會換，換了改這裡就好、不用重新部署）
+ *   SEARCH_RELAY_KEY           選填，轉接站的通關密碼（它放在剪貼簿給你貼）
+ */
+
+// ===== 1. 設定 =====
+const PROPS = PropertiesService.getScriptProperties();
+const GEMINI_API_KEY = PROPS.getProperty(&quot;GEMINI_API_KEY&quot;) || &quot;&quot;;
+const LINE_ACCESS_TOKEN = PROPS.getProperty(&quot;LINE_CHANNEL_ACCESS_TOKEN&quot;) || &quot;&quot;;
+const SHEET_ID = PROPS.getProperty(&quot;SHEET_ID&quot;) || &quot;&quot;;
+// 模型名稱會隨 Google 改版而停用：上課前到 https://ai.google.dev/gemini-api/docs/models 確認還在
+const GEMINI_MODEL = PROPS.getProperty(&quot;GEMINI_MODEL&quot;) || &quot;gemini-3.5-flash-lite&quot;;
+const SEARCH_RELAY_URL = (PROPS.getProperty(&quot;SEARCH_RELAY_URL&quot;) || &quot;&quot;).trim().replace(/\/+$/, &quot;&quot;);
+const SEARCH_RELAY_KEY = (PROPS.getProperty(&quot;SEARCH_RELAY_KEY&quot;) || &quot;&quot;).trim();
+const SEARCH_PREFIX = /^(?:查|搜尋)[\s:：]+([\s\S]+)$/;  // 「查 」「查：」「搜尋 」開頭才轉給本地模型；「查一下明天…」照舊當待辦
+const TZ = &quot;Asia/Taipei&quot;;
+const CATEGORIES = [&quot;繳費&quot;, &quot;會議&quot;, &quot;課業&quot;, &quot;生活&quot;, &quot;其他&quot;];
+const HEADERS = [&quot;建立時間&quot;, &quot;事項&quot;, &quot;分類&quot;, &quot;日期&quot;, &quot;時間&quot;, &quot;來源&quot;, &quot;日曆&quot;, &quot;照片連結&quot;];
+const GREETING = /^(hi|hello|hey|你好|嗨|哈囉|安安|早安|午安|晚安|謝謝|感謝|ok|好的|掰|bye|test|測試)$/i;
+const HELP_TEXT = &quot;你好！我是你的 AI 待辦小秘書 🤖\n\n直接傳給我：\n•「明天下午三點要開會」\n•「週五前記得繳房租」\n• 或拍一張活動海報、便條紙\n\n我會記進試算表；有日期和時間的，再幫你排進 Google 日曆。\n\n想查最新消息，開頭打「查」加一個空格：\n•「查 今年諾貝爾物理獎得主是誰」\n（要我的本地模型開著才查得到）&quot;;
+
+
+// ===== 2. LINE 送訊息進來的入口 =====
+function doPost(e) {
+  try {
+    const body = JSON.parse((e &amp;&amp; e.postData &amp;&amp; e.postData.contents) || &quot;{}&quot;);
+    // 在 LINE 後台按 Verify 時，送來的 events 是空的，這裡就什麼都不做
+    (body.events || []).forEach(handleEvent);
+  } catch (err) {
+    console.error(&quot;讀不懂 LINE 送來的內容：&quot;, err);
+  }
+  return ContentService.createTextOutput(&quot;OK&quot;);
+}
+
+// 用瀏覽器打開 /exec 網址會看到這行字，可以確認部署成功
+function doGet() {
+  return ContentService.createTextOutput(&quot;LINE AI 待辦小秘書運作中（Level 2＋本地模型查詢）&quot;);
+}
+
+// 一次處理一則訊息；其中一則出錯，不影響同一批的其他訊息
+function handleEvent(event) {
+  if (event.type !== &quot;message&quot; || !event.replyToken) return;
+  try {
+    const msg = event.message;
+    if (msg.type === &quot;text&quot;) {
+      const text = msg.text.trim();
+      if (GREETING.test(text)) return replyLine(event.replyToken, HELP_TEXT);  // 打招呼不必問 AI，直接回
+      const asked = text.match(SEARCH_PREFIX);
+      if (asked) {  // 查詢不是待辦：不問 Gemini、不寫表，交給本地模型
+        showLoading(event.source, 60);
+        return replyLine(event.replyToken, askLocalSearch(asked[1].trim()));
+      }
+      showLoading(event.source);
+      return saveAndReply(event.replyToken, askGeminiAboutText(text), &quot;文字&quot;);
+    }
+    if (msg.type === &quot;image&quot;) {
+      showLoading(event.source);
+      const image = downloadLineImage(msg.id);
+      const photoUrl = savePhotoToDrive(image);  // 先把照片存進 Drive，拿到連結
+      return saveAndReply(event.replyToken, askGeminiAboutImage(image), &quot;照片&quot;, photoUrl);
+    }
+    replyLine(event.replyToken, &quot;目前我看得懂文字和照片，其他類型還不行喔。&quot;);
+  } catch (err) {
+    console.error(&quot;處理訊息失敗：&quot;, err);
+    // 課堂版刻意把錯誤原因回給手機：學生可以整段貼給 AI，問它怎麼修
+    try {
+      replyLine(event.replyToken, &quot;⚠️ 出錯了：&quot; + err.message);
+    } catch (err2) {
+      console.error(&quot;連錯誤訊息都回不出去（多半是 LINE token 沒設定或貼錯）：&quot;, err2);
+    }
+  }
+}
+
+
+// ===== 3. 記錄、回覆、排日曆 =====
+function saveAndReply(replyToken, todo, source, photoUrl) {
+  if (!todo.isTodo) return replyLine(replyToken, todo.chatReply || HELP_TEXT);
+
+  // ① 先寫進試算表：確定真的寫進去了，才能跟使用者說「記好了」
+  const row = appendTodoRow(todo, source, photoUrl || &quot;&quot;);
+  const wantsCalendar = todo.date !== &quot;未指定&quot; &amp;&amp; todo.time !== &quot;未指定&quot;;
+
+  // ② 回覆手機：只講已經做完的事（回覆碼只能用一次、很快就失效）
+  let reply = `✅ 記好了（試算表第 ${row} 列）\n\n📌 ${todo.summary}\n🏷️ ${todo.category}\n📅 ${todo.date}　⏰ ${todo.time}`;
+  reply += wantsCalendar
+    ? &quot;\n🗓️ 日曆提醒建立中，結果會寫在試算表的「日曆」欄&quot;
+    : &quot;\nℹ️ 沒有明確的日期和時間，這筆先不排日曆&quot;;
+  if (photoUrl) reply += &quot;\n📷 照片已存進 Drive 的「LINE待辦照片」資料夾&quot;;
+  replyLine(replyToken, reply);
+
+  // ③ 最後才排日曆；成功或失敗都寫回試算表，不讓人誤以為做好了
+  if (wantsCalendar) getSheet().getRange(row, 7).setValue(createCalendarEvent(todo));
+}
+
+function getSheet() {
+  const ss = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) throw new Error(&quot;找不到試算表：請從試算表的「擴充功能 → Apps Script」開程式，或在指令碼屬性填 SHEET_ID&quot;);
+  const sheet = ss.getSheets()[0];
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(HEADERS);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight(&quot;bold&quot;).setBackground(&quot;#0E7C7B&quot;).setFontColor(&quot;#FFFFFF&quot;);
+  }
+  return sheet;
+}
+
+function appendTodoRow(todo, source, photoUrl) {
+  const sheet = getSheet();
+  const now = Utilities.formatDate(new Date(), TZ, &quot;yyyy-MM-dd HH:mm:ss&quot;);
+  // 全班同時傳訊息時，先排隊再寫，避免兩筆搶到同一列
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    sheet.appendRow([now, todo.summary, todo.category, todo.date, todo.time, source, &quot;&quot;, photoUrl || &quot;&quot;]);
+    return sheet.getLastRow();
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// 照片先存進 Google Drive 的「LINE待辦照片」資料夾（沒有就建一個），回傳檔案連結
+function savePhotoToDrive(blob) {
+  const folderName = &quot;LINE待辦照片&quot;;
+  const found = DriveApp.getFoldersByName(folderName);
+  const folder = found.hasNext() ? found.next() : DriveApp.createFolder(folderName);
+  const stamp = Utilities.formatDate(new Date(), TZ, &quot;yyyyMMdd-HHmmss&quot;);
+  const file = folder.createFile(blob.setName(&quot;line-&quot; + stamp + &quot;.jpg&quot;));
+  return file.getUrl();
+}
+
+function createCalendarEvent(todo) {
+  try {
+    const start = new Date(`${todo.date}T${todo.time}:00+08:00`);
+    const end = new Date(start.getTime() + 30 * 60 * 1000);
+    const event = CalendarApp.getDefaultCalendar().createEvent(`【${todo.category}】${todo.summary}`, start, end, {
+      description: &quot;由 LINE AI 待辦小秘書建立&quot;
+    });
+    event.addPopupReminder(30);
+    return &quot;已建立&quot;;
+  } catch (err) {
+    console.error(&quot;建立日曆失敗：&quot;, err);
+    return &quot;失敗：&quot; + err.message;
+  }
+}
+
+
+// ===== 4. 請 Gemini 把口語整理成固定欄位 =====
+const JSON_SHAPE = `只輸出一個 JSON 物件，欄位固定如下：
+{&quot;isTodo&quot;: true 或 false,
+ &quot;summary&quot;: &quot;事項，簡短一句&quot;,
+ &quot;category&quot;: &quot;繳費、會議、課業、生活、其他 五選一&quot;,
+ &quot;date&quot;: &quot;YYYY-MM-DD，沒提到就填 未指定&quot;,
+ &quot;time&quot;: &quot;HH:mm（24 小時制），沒提到就填 未指定&quot;,
+ &quot;chatReply&quot;: &quot;不是待辦時，給使用者的一句簡短回覆；是待辦就填空字串&quot;}`;
+
+// 附上星期幾，AI 才算得準「下週五」是哪一天
+function nowText() {
+  return Utilities.formatDate(new Date(), TZ, &quot;yyyy-MM-dd EEEE HH:mm&quot;);
+}
+
+function askGeminiAboutText(text) {
+  const prompt = `你是待辦事項助理。現在是台北時間 ${nowText()}。
+判斷使用者這句話是不是待辦、提醒或行程。
+是的話，把「明天」「下週五」這類說法換算成實際日期；不是的話，isTodo 填 false。
+${JSON_SHAPE}
+使用者說：${text}`;
+  return checkTodo(callGemini([{ text: prompt }]));
+}
+
+function askGeminiAboutImage(blob) {
+  const prompt = `你是待辦事項助理。現在是台北時間 ${nowText()}。
+這是一張照片，可能是活動海報、便條紙或繳費單。找出上面最重要的一件待辦或活動。
+照片上沒寫的欄位就填 未指定，不要自己猜。
+${JSON_SHAPE}`;
+  return checkTodo(callGemini([
+    { text: prompt },
+    { inlineData: { mimeType: blob.getContentType() || &quot;image/jpeg&quot;, data: Utilities.base64Encode(blob.getBytes()) } }
+  ]));
+}
+
+function callGemini(parts) {
+  if (!GEMINI_API_KEY) throw new Error(&quot;還沒設定 GEMINI_API_KEY（專案設定 → 指令碼屬性）&quot;);
+  const res = UrlFetchApp.fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
+    method: &quot;post&quot;,
+    contentType: &quot;application/json&quot;,
+    headers: { &quot;x-goog-api-key&quot;: GEMINI_API_KEY },  // 金鑰放標頭、不放網址，才不會留在各種紀錄裡
+    payload: JSON.stringify({
+      contents: [{ role: &quot;user&quot;, parts: parts }],
+      generationConfig: { responseMimeType: &quot;application/json&quot; }
+    }),
+    muteHttpExceptions: true
+  });
+  const code = res.getResponseCode();
+  if (code !== 200) throw new Error(`Gemini 回應 ${code}：${res.getContentText().slice(0, 150)}`);
+  const data = JSON.parse(res.getContentText());
+  const cand = (data.candidates || [])[0];
+  const text = cand &amp;&amp; cand.content &amp;&amp; (cand.content.parts || []).map(p =&gt; p.text || &quot;&quot;).join(&quot;&quot;);
+  if (!text) throw new Error(`Gemini 沒有給內容（原因：${cand ? cand.finishReason : &quot;沒有任何答案&quot;}）`);
+  return JSON.parse(text.replace(/^```(json)?\s*|\s*```$/g, &quot;&quot;));
+}
+
+
+// ===== 4-2. 「查 …」：交給你電腦上的本地模型（W6 選做） =====
+// 免費的 Gemini 沒有上網搜尋；本地模型＋Ollama 內建的搜尋有。
+// 連不到就老實說連不到，不改問 Gemini——它不會搜，答案可能是猜的。
+function askLocalSearch(question) {
+  if (!SEARCH_RELAY_URL || !SEARCH_RELAY_KEY) {
+    return &quot;這支 bot 還沒接上本地模型（指令碼屬性要有 SEARCH_RELAY_URL 和 SEARCH_RELAY_KEY）。&quot;;
+  }
+  let res;
+  try {
+    res = UrlFetchApp.fetch(SEARCH_RELAY_URL + &quot;/ask&quot;, {
+      method: &quot;post&quot;,
+      contentType: &quot;application/json&quot;,
+      headers: { &quot;x-relay-key&quot;: SEARCH_RELAY_KEY },  // 密碼放標頭、不放網址
+      payload: JSON.stringify({ question: question }),
+      muteHttpExceptions: true,
+      timeoutSeconds: 50  // 預設會等 6 分鐘；LINE 的回覆碼很快就失效，等不起
+    });
+  } catch (err) {
+    console.error(&quot;連不到轉接站：&quot;, err);
+    return &quot;🔌 本地模型現在連不到（或等超過 50 秒）：電腦關了、轉接站的視窗被關掉，或通道換了網址（指令碼屬性的 SEARCH_RELAY_URL 要改成新的）。&quot;;
+  }
+  const code = res.getResponseCode();
+  let data = {};
+  try { data = JSON.parse(res.getContentText()); } catch (err) { /* 不是 JSON：多半是通道已經關了，下面一起處理 */ }
+  if (code === 401) return &quot;🔒 轉接站說密碼不對：檢查指令碼屬性的 SEARCH_RELAY_KEY。&quot;;
+  if (code === 429) return &quot;⏳ 本地模型正在回答上一題，等十幾秒再問一次。&quot;;
+  if (code !== 200 || !data.answer) {
+    console.error(&quot;轉接站回應&quot;, code, res.getContentText().slice(0, 200));
+    return `🔌 本地模型這次沒答出來（${code}）：${data.error || &quot;通道可能已經關了，或網址換了&quot;}`;
+  }
+  let reply = &quot;🔎 &quot; + data.answer;
+  if (data.sources &amp;&amp; data.sources.length) {
+    reply += &quot;\n\n來源：\n&quot; + data.sources.map(s =&gt; &quot;• &quot; + s.url).join(&quot;\n&quot;);
+  } else {
+    reply += &quot;\n\nℹ️ 這題模型沒有上網查，只憑記憶回答，請自己再核對。&quot;;
+  }
+  return reply + `\n（本地模型 ${data.seconds} 秒）`;
+}
+
+
+// ===== 5. 驗算：AI 給的欄位不直接照單全收 =====
+function checkTodo(t) {
+  return {
+    isTodo: t.isTodo === true,
+    summary: String(t.summary || &quot;&quot;).trim() || &quot;（沒抓到事項）&quot;,
+    category: CATEGORIES.includes(t.category) ? t.category : &quot;其他&quot;,
+    date: isRealDate(t.date) ? t.date : &quot;未指定&quot;,
+    time: /^([01]\d|2[0-3]):[0-5]\d$/.test(t.time) ? t.time : &quot;未指定&quot;,
+    chatReply: String(t.chatReply || &quot;&quot;)
+  };
+}
+
+// 「2026-02-30」格式對、日子卻不存在：轉成日期再轉回來，對得上才算數
+function isRealDate(s) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(`${s}T12:00:00+08:00`);
+  return !isNaN(d.getTime()) &amp;&amp; Utilities.formatDate(d, TZ, &quot;yyyy-MM-dd&quot;) === s;
+}
+
+
+// ===== 6. LINE 相關 =====
+function lineApi(path, payload, host) {
+  if (!LINE_ACCESS_TOKEN) throw new Error(&quot;還沒設定 LINE_CHANNEL_ACCESS_TOKEN（專案設定 → 指令碼屬性）&quot;);
+  const options = {
+    method: payload ? &quot;post&quot; : &quot;get&quot;,
+    headers: { Authorization: &quot;Bearer &quot; + LINE_ACCESS_TOKEN },
+    muteHttpExceptions: true
+  };
+  if (payload) {
+    options.contentType = &quot;application/json&quot;;
+    options.payload = JSON.stringify(payload);
+  }
+  return UrlFetchApp.fetch((host || &quot;https://api.line.me&quot;) + path, options);
+}
+
+function replyLine(replyToken, text) {
+  const res = lineApi(&quot;/v2/bot/message/reply&quot;, {
+    replyToken: replyToken,
+    messages: [{ type: &quot;text&quot;, text: text.slice(0, 5000) }]
+  });
+  if (res.getResponseCode() !== 200) console.error(&quot;LINE 回覆失敗：&quot;, res.getResponseCode(), res.getContentText());
+}
+
+// 「對方正在輸入…」動畫：只有一對一聊天看得到，沒開成也不影響功能
+function showLoading(source, seconds) {
+  if (!source || source.type !== &quot;user&quot;) return;
+  try {
+    lineApi(&quot;/v2/bot/chat/loading/start&quot;, { chatId: source.userId, loadingSeconds: seconds || 20 });
+  } catch (err) {
+    console.warn(&quot;輸入中動畫沒開成：&quot;, err);
+  }
+}
+
+// 照片要到另一個網域（api-data）下載，而且 LINE 不會一直保存，收到就要抓
+function downloadLineImage(messageId) {
+  const res = lineApi(`/v2/bot/message/${messageId}/content`, null, &quot;https://api-data.line.me&quot;);
+  if (res.getResponseCode() !== 200) throw new Error(`照片下載失敗（LINE 回應 ${res.getResponseCode()}）`);
+  const blob = res.getBlob();
+  // 送給 Gemini 的請求有大小上限，照片轉成文字（Base64）還會再大三分之一，太大的先請使用者縮小
+  if (blob.getBytes().length &gt; 10 * 1024 * 1024) throw new Error(&quot;照片太大（超過 10 MB），請截圖或壓縮後再傳&quot;);
+  return blob;
+}
+
+
+// ===== 7. 自我檢查：在編輯器上方選 testSetup，按「執行」 =====
+function testSetup() {
+  const results = [];
+  const check = (name, fn) =&gt; {
+    try {
+      results.push(`✅ ${name}：${fn()}`);
+    } catch (err) {
+      results.push(`❌ ${name}：${err.message}`);
+    }
+  };
+  check(&quot;LINE token&quot;, () =&gt; {
+    const res = lineApi(&quot;/v2/bot/info&quot;);
+    if (res.getResponseCode() !== 200) throw new Error(`LINE 回應 ${res.getResponseCode()}，token 可能貼錯或已經重發`);
+    return &quot;bot 名稱「&quot; + JSON.parse(res.getContentText()).displayName + &quot;」&quot;;
+  });
+  check(&quot;Google 日曆&quot;, () =&gt; &quot;可以使用「&quot; + CalendarApp.getDefaultCalendar().getName() + &quot;」&quot;);
+  let todo = null;
+  check(&quot;Gemini&quot;, () =&gt; {
+    todo = askGeminiAboutText(&quot;明天早上十點要交房租，記得轉帳給房東&quot;);
+    return JSON.stringify(todo);
+  });
+  check(&quot;試算表&quot;, () =&gt; {
+    if (!todo) throw new Error(&quot;Gemini 那關沒過，先不寫&quot;);
+    return `寫進第 ${appendTodoRow(todo, &quot;testSetup&quot;)} 列`;
+  });
+  check(&quot;本地模型（選做）&quot;, () =&gt; {
+    if (!SEARCH_RELAY_URL) return &quot;沒設定 SEARCH_RELAY_URL，「查 …」功能先不開&quot;;
+    // 只對密碼、不叫模型：網址通、密碼也對，才算接好
+    const res = UrlFetchApp.fetch(SEARCH_RELAY_URL + &quot;/check-key&quot;, {
+      headers: { &quot;x-relay-key&quot;: SEARCH_RELAY_KEY }, muteHttpExceptions: true, timeoutSeconds: 20
+    });
+    if (res.getResponseCode() === 401) throw new Error(&quot;轉接站活著，但密碼不對：檢查 SEARCH_RELAY_KEY&quot;);
+    if (res.getResponseCode() !== 200) throw new Error(`轉接站回應 ${res.getResponseCode()}：電腦上的轉接站視窗開著嗎？網址是不是新的那個？`);
+    return &quot;轉接站接好了（網址通、密碼對），模型 &quot; + JSON.parse(res.getContentText()).model;
+  });
+  console.log(results.join(&quot;\n&quot;));
+  console.log(&quot;👉 打開試算表，親眼看到多了一列才算成功。出現權限錯誤，或這裡說成功、表裡卻沒有，多半是授權畫面沒有全部勾選。&quot;);
+}</pre></div>
+</details>
+</section>
+
+<!-- ======================= 第 4 段 ======================= -->
+<section id="s4" data-sec="4"><h2>第 4 段　期中開放題</h2>
+<p class="gain">這段做完你會有什麼：你知道期中怎麼算、題目怎麼挑；而且寫下一句「我期中想做什麼」，講給旁邊的人聽過一次。</p>
+<p class="note"><b>期中怎麼算（契約）</b>：30%｜W9（11/02）一次結算｜範圍 W2–W7｜五構面各 6%：需求符合度／可重現功能／測試證據／本人判斷與安全（含 AI 揭露）／溝通與個人貢獻｜個人計分，可以結伴互幫、成績各算｜失敗的版本只要證據完整，照樣拿分</p>
+<p>題目<b>自選、不給範本</b>：用這學期學到的東西做一個你自己想做的東西，W9 每人 90 秒讓它跑給大家看。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="s4-1"><span class="n">4-1</span><span class="t">讀一遍上面那段契約，講得出五構面</span></label>
+<p>五構面各 6%，加起來就是 30%。「失敗的版本只要證據完整，照樣拿分」不是客套話：做不出來但留得下「我試了什麼、哪裡壞、我怎麼判斷」的紀錄，分數一樣算。</p>
+<div class="blk see"><b class="k">你應該看到</b>你不看頁面也說得出：五構面是哪五個、哪一天結算、範圍到哪一週。</div>
+<div class="blk test"><b class="k">測一下</b>讀完能說出三件——30%、範圍 W2–W7、失敗的版本證據完整照樣拿分——就過（跟旁邊的人講留到 4-4 一次做）。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>以為要交一份報告</b>→ 不用。W9 當天 90 秒讓它跑給大家看，加上證據（截圖、對話紀錄、repo）。繳什麼、怎麼繳，老師 W9 前在 e學苑 說。</li>
+<li><b>以為要組隊</b>→ 個人計分。可以結伴互幫（例如共用一台轉接站、互相當測試者），但成績各算、每個人要說得出自己做了什麼。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s4-2"><span class="n">4-2</span><span class="t">三個條件</span></label>
+<p>題目自選，只有三個條件：</p>
+<div class="blk goal"><b class="k">期中開放題，三個條件</b><ol>
+<li>題目你自己定，用這學期學到的東西至少兩樣（面板、LINE bot、agent、本地模型、試算表）</li>
+<li>W9 當天 90 秒讓它跑給大家看：打開什麼、做什麼、看到什麼</li>
+<li>說得出你退回 AI 的哪一次、為什麼</li>
+</ol></div>
+<div class="blk see"><b class="k">你應該看到</b>腦中至少浮出一個題目，而且對得上條件 1 的「至少兩樣」。</div>
+<div class="blk test"><b class="k">測一下</b>把你的題目對一次三個條件，三個都答得出，就過。答不出條件 3 沒關係——做的過程一定會退回 AI 至少一次，到時候記下來。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>想不到題目</b>→ 從今天手上的東西接出去：bot 多一條路（「天氣 …」「翻譯 …」）、面板上一顆按鈕讓 bot 傳訊息、本地模型幫你整理試算表、agent 每天幫你產一份摘要。先挑一個你自己明天就想用的。</li>
+<li><b>想做的太大</b>→ 把「第一步」切到一小時內做得完的大小（例如：先讓 bot 多認得一個開頭字）；期中看的是跑得起來的那一塊，不是野心。</li>
+<li><b>怕做不出來</b>→ 失敗的版本只要證據完整，照樣拿分。留紀錄比做出來重要。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s4-3"><span class="n">4-3</span><span class="t">填一句話：我期中想做什麼</span></label>
+<p>三個空格填一填，下面那句會自動組好（存在這台瀏覽器裡，重新整理還在；離開教室前按「複製」帶走）：</p>
+<div class="mid">我期中想做 <input class="fill" data-f="what" placeholder="＿＿＿" aria-label="想做什麼">，給 <input class="fill" data-f="who" placeholder="＿＿＿" aria-label="給誰用"> 用，第一步是 <input class="fill" data-f="first" placeholder="＿＿＿" aria-label="第一步">。
+<div class="midbtn"><button type="button" id="midCopy">複製成一句話</button><span class="small" id="midCopyMsg"></span></div></div>
+<div class="cp"><div class="bar"><span>你的一句話（自動組好；交作業時貼這句）</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre id="midSentence">我期中想做＿＿＿，給＿＿＿用，第一步是＿＿＿。</pre></div>
+<details class="ans"><summary>想不出題目？別人做過的方向（只列方向、不給範本）</summary><p class="small">也可以回頭看 W2–W4 自己寫過的作業，把它接上 bot 或本地模型。</p>
+<ul>
+<li>面板＋bot：面板上一顆按鈕，按了 bot 傳一則訊息給你（或反過來，bot 收到關鍵字就改面板的燈）</li>
+<li>bot 幫社團記事：社團群組裡「記 …」開頭的訊息進試算表，每週自動整理成一份摘要</li>
+<li>本地模型讀自己的筆記：把上課筆記丟給本地模型，問它「這週考什麼」，附出處</li>
+<li>試算表自動整理：每天固定時間把待辦表裡「今天到期」的整理成一則 LINE 訊息</li>
+<li>bot 多一條路：「天氣 …」「翻譯 …」「查 …」之外再加一個你每天會用的開頭字</li>
+<li>agent 當助理：每天幫你用 gws 讀雲端硬碟某個資料夾、產一份摘要（W6 第 2 段那條路）</li>
+<li>讓「查 …」永遠可用：把轉接站搬到一台一直開著的電腦（或雲端），不用每次重開改網址</li>
+</ul>
+<p class="small">挑一個你明天就想用的；第一步切到一小時內做得完。</p>
+</details>
+<div class="blk see"><b class="k">你應該看到</b>三格都填了，下面那句沒有底線、是一句完整的話。</div>
+<div class="blk test"><b class="k">測一下</b>唸一遍，十秒內講得完、別人聽得懂你要做什麼，就過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>想不出題目</b>→ 先點開上面「別人做過的方向」看一圈，挑一個改成自己的（換個對象、換個開頭字、換個資料來源都算）。</li>
+<li><b>「第一步」想不出來</b>→ 小到不會失敗的就好：「把上週的 bot 專案存一份舊版」「把面板那頁打開、確定還跑得起來」。</li>
+<li><b>填了、換一台電腦就不見</b>→ 只存在這台瀏覽器；按「複製」貼到 LINE 傳給自己，或截圖。</li>
+<li><b>想做的跟課堂內容無關</b>→ 可以，只要用到這學期學到的東西至少兩樣（條件 1）。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s4-4"><span class="n">4-4</span><span class="t">✋ 跟旁邊的人講 30 秒，對方問一個問題</span></label>
+<p>把 4-3 那句講給旁邊的人聽、多加兩句「為什麼想做」，30 秒。對方<b>一定要</b>問一個問題（「第一步做完你會看到什麼？」「90 秒要秀哪一段？」都行），然後換手。</p>
+<div class="blk see"><b class="k">你應該看到</b>對方問的那個問題，你答得出來；答不出來的那一點，就是你第一步該先弄清楚的。</div>
+<div class="blk test"><b class="k">測一下</b>兩個人都講過、都被問過一題，就過。把對方問的問題記在 4-3 那句後面也行。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>旁邊沒人</b>→ 講給老師聽，或打給 AI 請它問你一個問題（只要它問、不要它幫你定題目）。</li>
+<li><b>對方不知道要問什麼</b>→ 就問「90 秒你會打開什麼、按什麼、我們會看到什麼」。</li>
+</ul></details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 第 5 段 ======================= -->
+<section id="s5" data-sec="5"><h2>第 5 段　收尾與帶走</h2>
+<p class="gain">這段做完你會有什麼：今天的證據在你自己手上、轉接站關好、教室電腦上沒留下你的帳號，而且你知道接下來兩週的時程。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="s5-1"><span class="n">5-1</span><span class="t">證據三樣先備好（作業老師上課時會在 e學苑 開）</span></label>
+<table>
+<tr><th style="width:2.2em">#</th><th>備什麼</th><th style="width:16%">哪一步</th></tr>
+<tr><td>1</td><td>手機上 bot 回「查 …」那一題的截圖（有來源）</td><td>3-5</td></tr>
+<tr><td>2</td><td>同一時刻轉接站視窗的截圖（看得到它印了一題）</td><td>3-5</td></tr>
+<tr><td>3</td><td>一句話：期中我想做什麼（4-3 那句，複製）</td><td>4-3</td></tr>
+</table>
+<p>做不到第 1、2 樣的，交你卡在哪一步的截圖＋一句卡在什麼（本機那題 2-3 過了，就截那個）。繳交方式老師開作業時一起說明。</p>
+<div class="blk see"><b class="k">你應該看到</b>三樣都在你自己的雲端硬碟或手機裡，不是只在教室電腦的桌面。截圖裡沒有 <code>/exec</code> 網址、通關密碼、長效通行碼、Channel secret。</div>
+<div class="blk test"><b class="k">測一下</b>用手機或自己的帳號打開確認看得到，就過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>截圖快捷鍵</b>→ Win+Shift+S 框選，貼到小畫家或直接貼進 Google 文件。</li>
+<li><b>截到了密碼或網址</b>→ 小畫家塗掉再交；指令碼屬性那一頁整頁都不要截。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s5-2"><span class="n">5-2</span><span class="t">按 Ctrl+C 關轉接站：只有「查」會回連不到，待辦照常</span></label>
+<p>到轉接站那個視窗按 <b>Ctrl+C</b>。這週跟上週不一樣：<b>bot 本體還在雲端</b>，關掉轉接站只是「查 …」這條路斷了，LINE 的 Webhook 不用改、不用換回去。</p>
+<div class="blk see"><b class="k">你應該看到</b>視窗回到提示字元。手機再傳「查 …」會回「🔌 本地模型現在連不到（或等超過 50 秒）…」；傳「明天要開會」還是「✅ 記好了」。</div>
+<div class="blk test"><b class="k">測一下</b>待辦那句照常回，就過——這就是「bot 留在雲端當接收端」的意思。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>回家想再開</b>→ 新開 PowerShell，把 2-2 那三行再貼一次（PATH 那行每個新視窗都要）；網址會換，改指令碼屬性的 <code>SEARCH_RELAY_URL</code> 就好，不用重新部署。密碼存在使用者資料夾，同一台電腦是同一組。</li>
+<li><b>教室電腦有還原卡</b>→ 重開機後 <code>line-relay</code> 資料夾和密碼檔都沒了，回家要重做 0-C、2-1，而且會是新密碼：<code>SEARCH_RELAY_URL</code>、<code>SEARCH_RELAY_KEY</code> 兩個都要改。</li>
+<li><b>想讓「查」永遠可用</b>→ 要一台一直開著的電腦（或之後把轉接站放到雲端）；這是期中可以做的題目之一。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s5-3"><span class="n">5-3</span><span class="t">登出：Google、LINE 後台、Ollama app；瀏覽器別記密碼</span></label>
+<p>教室電腦有還原卡，重開機會清掉；但在那之前下一個人就坐在這台前面。離開前：①瀏覽器右上頭像 → 登出 Google（雲端硬碟、Apps Script 都跟著登出）②LINE 官方帳號後台與 LINE Developers 登出 ③Ollama app 有登入的話，Settings 裡登出 ④瀏覽器跳出「要儲存密碼嗎」一律按「不要」；有存到的到設定 → 密碼管理員刪掉 ⑤關掉所有瀏覽器視窗與 PowerShell 視窗。</p>
+<div class="blk see"><b class="k">你應該看到</b>重開瀏覽器打開 drive.google.com 要你重新登入；LINE Developers 也要重新登入。</div>
+<div class="blk test"><b class="k">測一下</b>drive.google.com 顯示登入頁，就過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>Ollama app 找不到登出</b>→ 左下 Settings → 帳號那區；找不到就算了，還原卡重開機會清。</li>
+<li><b>PowerShell 視窗關不掉（轉接站還在跑）</b>→ 先 Ctrl+C（5-2），再關。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="s5-4"><span class="n">5-4</span><span class="t">帶走：10/26 停課；11/02 期中，每人 90 秒</span></label>
+<p>接下來兩週：<b>10/26 停課</b>（不補課、不繳交）；<b>11/02 期中</b>，每人 90 秒讓它跑給大家看，下半場互相看、互相問。<b>期中前有問題在 e學苑 問</b>。</p>
+<p>回家想重做一遍：這一頁每一步在自己電腦都做得了（第 0 段整份指令、轉接站、對照答案都在這頁，複製就好）。今天三件事做完，你手上有：一支留在雲端、「查 …」會轉回你電腦的 bot；一個只聽本機、要密碼的轉接站；一句你自己定的期中題目。</p>
+<div class="blk see"><b class="k">你應該看到</b>這一頁的網址存在你自己的地方（書籤，或用 LINE 傳給自己）；4-3 那句也帶走了。</div>
+<div class="blk test"><b class="k">測一下</b>沒有要測的；把這一頁的網址和那句話記下來就好。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>10/26 想找老師</b>→ 停課那週沒有課，用 e學苑 的討論區問；期中前都看得到。</li>
+<li><b>想在家用 W6 簡單版做期中</b>→ 可以，兩種 bot 都是這學期學到的東西；記得條件 1「至少兩樣」。</li>
+</ul></details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 卡關總表 ======================= -->
+<section id="stuckall" data-sec="X"><h2>卡關總表</h2>
+<p class="gain">上面每一步的「卡住了」全部集中在這裡，打關鍵字就過濾（例如 401、cloudflared、Webhook、密碼、新版本）。</p>
+<input class="filter" id="stuckFilter" type="search" placeholder="打關鍵字過濾：401、cloudflared、Webhook、密碼、新版本…" aria-label="過濾卡關總表">
+<p class="small" id="stuckCount"></p>
+<table id="stuckTable"><thead><tr><th style="width:4.5em">步驟</th><th>症狀 → 處理</th></tr></thead><tbody></tbody></table>
+<p class="src small">本頁內容來源：W7 內容規格（硬事實、流程、逐字區）；轉接站與 bot 回覆的字句直接抄自 <code>starter/line-search-relay.mjs</code> 與 <code>starter/Code.search-reference.gs</code>（兩份都沿用 W6、沒改）；第 0 段 A、B、D 與 W6 一字不差，C 是 10/17 老師在自己電腦照抄實走過的（單檔下載、放資料夾、貼 PATH、轉接站自己開通道、從外面打得通）。沒實走到的（真 LINE 端到端：手機 → LINE → Apps Script → 通道 → 轉接站 → 回手機；E403 學生機的網速與帳戶控制）在對應步驟的「卡住了」給了處置，課堂上以老師示範為準。</p>
+</section>
+
+<a class="top" href="#top" aria-label="回到頂端" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑</a>
+</main>
+
+<script>
+(function(){
+  var KEY='w7-student-steps';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return {};}}
+  function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+  var boxes=Array.prototype.slice.call(document.querySelectorAll('input[type=checkbox][data-k]'));
+  var state=load();
+  var secEl=document.getElementById('secProg');
+  function refreshSections(){
+    if(!secEl)return;
+    secEl.innerHTML='';
+    Array.prototype.forEach.call(document.querySelectorAll('section[data-sec]'),function(sec){
+      var bs=sec.querySelectorAll('input[type=checkbox][data-k]');if(!bs.length)return;
+      var d=0;Array.prototype.forEach.call(bs,function(b){if(b.checked)d++;});
+      var s=document.createElement('span');
+      s.textContent='第 '+sec.getAttribute('data-sec')+' 段 '+d+'／'+bs.length;
+      if(d===bs.length)s.className='done';
+      secEl.appendChild(s);
+    });
+  }
+  function refresh(){
+    var done=boxes.filter(function(b){return b.checked;}).length;
+    var t=document.getElementById('progText'),bar=document.getElementById('progBar');
+    if(t)t.textContent='已勾 '+done+'／'+boxes.length+' 步';
+    if(bar)bar.style.width=(boxes.length?Math.round(done*100/boxes.length):0)+'%';
+    refreshSections();
+  }
+  boxes.forEach(function(b){
+    b.checked=!!state[b.getAttribute('data-k')];
+    b.addEventListener('change',function(){
+      state[b.getAttribute('data-k')]=b.checked;save(state);refresh();
+    });
+  });
+  refresh();
+  var rb=document.getElementById('resetBtn');
+  if(rb)rb.addEventListener('click',function(){
+    state={};save(state);boxes.forEach(function(b){b.checked=false;});refresh();
+  });
+
+  // 期中一句話：三個空格存 localStorage，下面那句自動組好
+  var MKEY='w7-midterm';
+  function mload(){try{return JSON.parse(localStorage.getItem(MKEY)||'{}')||{};}catch(e){return {};}}
+  var mstate=mload();
+  var fills=Array.prototype.slice.call(document.querySelectorAll('input.fill[data-f]'));
+  var ms=document.getElementById('midSentence');
+  function mrender(){
+    var g=function(k){var v=(mstate[k]||'').trim();return v||'＿＿＿';};
+    if(ms)ms.textContent='我期中想做'+g('what')+'，給'+g('who')+'用，第一步是'+g('first')+'。';
+  }
+  fills.forEach(function(i){
+    i.value=mstate[i.getAttribute('data-f')]||'';
+    i.addEventListener('input',function(){
+      mstate[i.getAttribute('data-f')]=i.value;
+      try{localStorage.setItem(MKEY,JSON.stringify(mstate));}catch(e){}
+      mrender();
+    });
+  });
+  mrender();
+  var mc=document.getElementById('midCopy'),mcm=document.getElementById('midCopyMsg');
+  if(mc)mc.addEventListener('click',function(){
+    mrender();
+    var text=ms?ms.textContent:'';
+    var say=function(s){if(mcm){mcm.textContent=s;setTimeout(function(){mcm.textContent='';},2000);}};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){say('已複製：'+text);},function(){say('複製失敗：請在下面那格自己選起來 Ctrl+C');});
+    }else{say('這個瀏覽器不支援一鍵複製：請在下面那格自己選起來 Ctrl+C');}
+  });
+
+  // 第 1 段流程圖：三種 bot 在哪跑，點按鈕切換；每個節點一句「在誰的電腦上」
+  var NODES={
+    phone:{t:'手機 LINE',w:'你手上'},
+    line:{t:'LINE 伺服器',w:'LINE 公司的機房'},
+    gas:{t:'Apps Script /exec',w:'Google 機房，一直開著'},
+    gemini:{t:'Gemini',w:'Google 機房'},
+    tunnel:{t:'通道',w:'Cloudflare 借你的臨時網址'},
+    pcbot:{t:'一支 Python 就是 bot',w:'你的電腦',you:1},
+    relay:{t:'轉接站',w:'你的電腦，只聽本機、要密碼',you:1},
+    ollama:{t:'Ollama 本地模型',w:'你的電腦（顯示卡）',you:1}
+  };
+  var MODES={
+    w5:{rows:[{l:'每一則訊息',p:['phone','line','gas','gemini']}],
+        sum:'接 LINE 的是 Apps Script 的 /exec（Google 機房）。LINE 打到的網址＝/exec。你的電腦關掉沒影響，bot 照常。',
+        chain:'W5：LINE → Apps Script（Google 機房）→ Gemini'},
+    w6:{rows:[{l:'每一則訊息',p:['phone','line','tunnel','pcbot','ollama']}],
+        sum:'接 LINE 的是你的電腦（透過通道）。LINE 打到的網址＝通道網址/callback。電腦關掉 bot 整個不回；程式 Ctrl+C 時會把 Webhook 換回 /exec。',
+        chain:'W6 簡單版：LINE → 通道 → 你的電腦（一支 Python 就是 bot）'},
+    w7:{rows:[{l:'只有「查 …」開頭的訊息',p:['phone','line','gas','tunnel','relay','ollama'],e:{2:'只有「查 …」'}},
+              {l:'其他訊息（待辦、照片）照舊',p:['gas','gemini']}],
+        sum:'接 LINE 的還是 Apps Script 的 /exec。LINE 打到的網址＝/exec（跟 W5 一樣，不用改）。你的電腦關掉，只有「查」會回連不到，待辦照常。',
+        chain:'W7 進階版：LINE → Apps Script → 只有「查 …」→ 通道 → 你的電腦（轉接站＋本地模型）'}
+  };
+  var flowRows=document.getElementById('flowRows'),flowSum=document.getElementById('flowSum'),flowChain=document.getElementById('flowChain');
+  function renderFlow(mode){
+    var m=MODES[mode];if(!m||!flowRows)return;
+    flowRows.innerHTML='';
+    m.rows.forEach(function(row){
+      var div=document.createElement('div');div.className='frow';
+      var rl=document.createElement('span');rl.className='rl';rl.textContent=row.l;div.appendChild(rl);
+      row.p.forEach(function(id,i){
+        if(i>0){var ar=document.createElement('span');ar.className='farrow';var lab=row.e&&row.e[i-1];ar.textContent=lab?lab+' →':'→';div.appendChild(ar);}
+        var n=NODES[id];var box=document.createElement('span');box.className='fn'+(n.you?' you':'');
+        var b=document.createElement('b');b.textContent=n.t;var s=document.createElement('small');s.textContent=n.w;
+        box.appendChild(b);box.appendChild(s);div.appendChild(box);
+      });
+      flowRows.appendChild(div);
+    });
+    if(flowSum)flowSum.textContent=m.sum;
+    if(flowChain)flowChain.textContent=m.chain;
+    Array.prototype.forEach.call(document.querySelectorAll('#flow .tabs button'),function(b){b.className=b.getAttribute('data-mode')===mode?'on':'';});
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('#flow .tabs button'),function(b){
+    b.addEventListener('click',function(){renderFlow(b.getAttribute('data-mode'));});
+  });
+  renderFlow('w5');
+
+  // 三題小測驗：按了馬上顯示對錯與一句解釋（不存、不計分）
+  Array.prototype.forEach.call(document.querySelectorAll('.quiz'),function(q){
+    var ans=q.getAttribute('data-ans'),out=q.querySelector('.qa');
+    Array.prototype.forEach.call(q.querySelectorAll('input[type=radio]'),function(r){
+      r.addEventListener('change',function(){
+        var ok=r.value===ans;out.hidden=false;out.className='qa '+(ok?'ok':'no');
+        out.textContent=(ok?'✅ ':'❌ ')+q.getAttribute(ok?'data-ok':'data-no');
+      });
+    });
+  });
+
+  // 指令碼屬性檢查器：只在瀏覽器裡對格式，不存、不送出
+  var cu=document.getElementById('ckUrl'),ck=document.getElementById('ckKey'),cur=document.getElementById('ckUrlR'),ckr=document.getElementById('ckKeyR');
+  function showCr(el,r){if(!el)return;el.hidden=false;el.className='cr '+(r[0]?'ok':'no');el.textContent=(r[0]?'✅ ':'❌ ')+r[1];}
+  function checkUrl(v){
+    if(!v)return [false,'網址是空的：貼轉接站框框第 2 行 SEARCH_RELAY_URL 的網址'];
+    if(/\s/.test(v))return [false,'裡面有空白或換行：整條重新複製，前後不要有空格'];
+    if(!/^https:\/\//.test(v))return [false,'要以 https:// 開頭（不是 http://、也不是只有網域）'];
+    if(/\/$/.test(v))return [false,'結尾多了一個斜線 /，拿掉'];
+    if(!/^https:\/\/[a-z0-9-]+\.trycloudflare\.com$/.test(v))return [false,'結尾要是 .trycloudflare.com，後面不能再接東西（/ask、/health 都不要）'];
+    return [true,'網址格式對了'];
+  }
+  function checkKey(v){
+    if(!v)return [false,'密碼是空的：回轉接站視窗印的 Get-Content … | Set-Clipboard 那行放進剪貼簿，再 Ctrl+V'];
+    if(/\s/.test(v))return [false,'裡面有空白或換行：密碼是一整串英數字，前後不該有空格'];
+    if(v.length<12)return [false,'太短了，不像轉接站產的密碼（它是二十幾個字）'];
+    return [true,'密碼格式對了（這裡驗不了它對不對，3-4 的 testSetup 才會）'];
+  }
+  function runCheck(){if(cu)showCr(cur,checkUrl(cu.value));if(ck)showCr(ckr,checkKey(ck.value));}
+  var ckb=document.getElementById('ckBtn'),ckc=document.getElementById('ckClear');
+  if(ckb)ckb.addEventListener('click',runCheck);
+  [cu,ck].forEach(function(i){if(i)i.addEventListener('keydown',function(e){if(e.key==='Enter')runCheck();});});
+  var cks=document.getElementById('ckShow');
+  if(cks&&ck)cks.addEventListener('change',function(){ck.type=cks.checked?'text':'password';});
+  if(ckc)ckc.addEventListener('click',function(){if(cu)cu.value='';if(ck){ck.value='';ck.type='password';}if(cks)cks.checked=false;if(cur)cur.hidden=true;if(ckr)ckr.hidden=true;});
+
+  // 複製鈕：成功顯示「已複製」，失敗就把文字選起來讓人自己 Ctrl+C
+  function preOf(btn){var w=btn.closest('.cp');return w?w.querySelector('pre'):null;}
+  function selectAll(el){
+    try{var r=document.createRange();r.selectNodeContents(el);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('button.copy'),function(btn){
+    btn.addEventListener('click',function(){
+      var pre=preOf(btn);if(!pre)return;
+      var text=pre.textContent;
+      var ok=function(){btn.textContent='已複製';setTimeout(function(){btn.textContent='複製';},1500);};
+      var fail=function(){selectAll(pre);btn.textContent='請按 Ctrl+C';setTimeout(function(){btn.textContent='複製';},2500);};
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(ok,fail);
+      }else{
+        selectAll(pre);
+        var done=false;try{done=document.execCommand('copy');}catch(e){}
+        done?ok():fail();
+      }
+    });
+  });
+
+  // 下載鈕：把 <pre> 的文字包成檔案（UTF-8）讓瀏覽器存下來，零外部資源
+  Array.prototype.forEach.call(document.querySelectorAll('button.dl'),function(btn){
+    btn.addEventListener('click',function(){
+      var pre=preOf(btn);if(!pre)return;
+      var name=btn.getAttribute('data-name')||'download.txt';
+      var blob=new Blob([pre.textContent],{type:'text/plain;charset=utf-8'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();
+      setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},800);
+    });
+  });
+
+  // 卡關總表：從每一步的「卡住了」自動收集，避免兩邊內容不同步
+  var tbody=document.querySelector('#stuckTable tbody');
+  var rows=[];
+  if(tbody){
+    Array.prototype.forEach.call(document.querySelectorAll('.steps > li'),function(li){
+      var lab=li.querySelector('.chk .n');var step=lab?lab.textContent:'';
+      var sec=li.closest('section');var secId=sec?sec.id:'';
+      Array.prototype.forEach.call(li.querySelectorAll('details.stuck li'),function(item){
+        var tr=document.createElement('tr');
+        var td1=document.createElement('td');var a=document.createElement('a');a.href='#'+secId;a.textContent=step;td1.appendChild(a);
+        var td2=document.createElement('td');td2.innerHTML=item.innerHTML;
+        tr.appendChild(td1);tr.appendChild(td2);tbody.appendChild(tr);
+        rows.push({tr:tr,text:(step+' '+item.textContent).toLowerCase()});
+      });
+    });
+  }
+  var cnt=document.getElementById('stuckCount');
+  function applyFilter(q){
+    q=(q||'').trim().toLowerCase();var n=0;
+    rows.forEach(function(r){var show=!q||r.text.indexOf(q)>=0;r.tr.style.display=show?'':'none';if(show)n++;});
+    if(cnt)cnt.textContent='共 '+rows.length+' 條'+(q?'，符合 '+n+' 條':'');
+  }
+  var f=document.getElementById('stuckFilter');
+  if(f)f.addEventListener('input',function(){applyFilter(f.value);});
+  applyFilter('');
+})();
+</script>
+</body></html>
