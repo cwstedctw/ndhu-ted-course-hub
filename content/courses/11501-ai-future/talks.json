@@ -209,7 +209,16 @@
       ],
       "poster": "/images/talks/t05-poster.webp",
       "worksheetUrl": null,
-      "materials": []
+      "materials": [
+        {
+          "label": "講者投影片（PDF，61 頁；講者提供的同學書面檔）",
+          "url": "https://drive.google.com/file/d/1m9mNGE0QKHSQiJqICakQXDqhBA4CBfFU/view"
+        },
+        {
+          "label": "投影片原檔（PowerPoint，演講版）",
+          "url": "https://drive.google.com/file/d/1m9CLmjkUouejI3ubCfeIgzV6QYKX25B3/view"
+        }
+      ]
     },
     {
       "id": "t06",
