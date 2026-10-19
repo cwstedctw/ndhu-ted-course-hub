@@ -1,0 +1,293 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>資訊科技與應用 W7 · 三份不一樣的表，併成一張看得懂的圖</title><style>:root{--paper:#f6f5f1;--navy:#152e49;--muted:#526071;--amber:#b66505;--line:#b9c2ca;--white:#fff;--scale:1}*{box-sizing:border-box}html,body{margin:0;font-family:'Segoe UI','Microsoft JhengHei',sans-serif;color:var(--navy)}body{background:#152332;overflow:hidden}button,a{-webkit-tap-highlight-color:transparent}a{color:inherit;text-underline-offset:7px}a:focus-visible,button:focus-visible{outline:4px solid #b66505;outline-offset:5px}button{font:inherit;cursor:pointer}#stage{position:fixed;left:50%;top:calc(50% - 26px);width:1280px;height:720px;transform:translate(-50%,-50%) scale(var(--scale));transform-origin:center}.slide{display:none;width:1280px;height:720px;background:var(--paper);padding:62px 78px 64px;position:relative;overflow:hidden}.slide.active{display:block}.slide--dark{background:var(--navy);color:var(--paper)}.kicker{font-size:19px;letter-spacing:.12em;font-weight:600;color:var(--muted);margin-bottom:18px}.slide--dark .kicker{color:#c3ccd5}.title{font-size:55px;line-height:1.18;font-weight:700;letter-spacing:-.03em;margin:0 0 44px;max-width:1120px}.cover .title{font-size:86px;line-height:1.18;max-width:900px;margin-top:72px;margin-bottom:24px}.lead{font-size:39px;line-height:1.55;margin:18px 0}.course{font-size:25px;margin-top:54px}.date{font-size:21px;color:var(--muted)}.footer-org{position:absolute;bottom:24px;left:78px;font-size:15px;letter-spacing:.05em;color:var(--muted)}.slide--dark .footer-org{color:#c3ccd5}.number{position:absolute;right:78px;bottom:21px;font-size:22px;font-variant-numeric:tabular-nums}.columns{display:grid;grid-template-columns:1fr 1fr;gap:56px}.columns article{border-top:4px solid var(--navy);padding-top:26px;min-height:238px}.columns small,.private small,.public small{font-size:23px;letter-spacing:.07em}.columns p{font-size:37px;line-height:1.5;margin-top:25px}.mark{display:block;font-weight:700;font-size:53px;line-height:1.5;color:var(--amber)}.bottom-note{font-size:28px;line-height:1.55;margin-top:34px}.filelist{max-width:1000px;margin-top:12px}.filelist p{border-bottom:1px solid var(--line);font-size:34px;padding:15px 0;margin:0;display:grid;grid-template-columns:90px 1fr 240px}.filelist b{color:var(--amber);font-weight:400}.filelist span{color:var(--muted)}.textlink{display:inline-block;font-size:27px;margin-top:34px;font-weight:600}.split h2{font-size:44px;margin:32px 0 12px}.split .columns p{font-size:29px;margin-top:15px}.public{border-color:var(--amber)!important}.public small{color:var(--amber)}.bigrow{display:flex;align-items:center;gap:48px;font-size:62px;margin:66px 0 36px}.bigrow strong{font-weight:400;color:var(--amber)}.bridge .lead{font-size:32px}div.timeline{display:flex;margin-top:80px;gap:38px}.timeline article{flex:1;border-top:3px solid var(--line);padding-top:24px}.timeline b{font-size:55px;color:var(--amber);font-weight:600}.timeline p{font-size:30px;margin:20px 0;white-space:nowrap}.timeline+.bottom-note{margin-top:60px}.path p,.workrows p{font-size:34px;line-height:1.6;margin:14px 0}.path b,.workrows b{display:inline-block;width:90px;color:var(--amber)}.filename{font-size:83px;line-height:1.2;margin:55px 0 15px;font-weight:700}.publish .lead{font-size:31px}.pathline{font-size:27px;line-height:1.65;margin-top:34px}.diffview{border:1px solid var(--line);margin-top:70px}.diffview p{font-size:41px;margin:0;padding:23px 34px}.diffview b{display:inline-block;width:66px;font-weight:400}.removed{background:#f8e3dc;color:#883321}.added{background:#dfece3;color:#22513a}.counts{display:flex;gap:70px;margin-top:68px}.counts article{flex:1}.counts b{font-size:100px;line-height:1.1;color:#edb867;font-weight:600}.counts p{font-size:35px;margin:24px 0}.checkpoints .bottom-note{margin-top:46px}.workrows{margin-top:50px}.contract .workrows{margin-top:22px}.contract .workrows p{font-size:31px;line-height:1.45;padding:9px 0;margin:5px 0}.contract .workrows b{width:120px}.workrows p{border-bottom:1px solid var(--line);padding:13px 0}.address{font-family:Consolas,monospace;font-size:49px;border-bottom:3px solid var(--amber);display:inline-block;padding-bottom:17px;margin-top:68px}.url .lead{margin-top:32px}.questions{padding-left:50px;margin-top:74px;font-size:38px;line-height:1.6}.questions li{margin-bottom:28px;padding-left:14px}.questions li::marker{color:var(--amber)}.closing .lead{font-size:49px;line-height:1.55;margin-top:80px}.resource-links{display:flex;gap:65px;font-size:29px;margin-top:52px}.controls{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:4;background:#f6f5f1ee;border:1px solid #a4aeb7;border-radius:9px;padding:5px;box-shadow:0 4px 20px #0003}.controls button{border:0;background:none;color:var(--navy);border-radius:4px;padding:6px 11px;font-size:14px}.controls button:hover{background:#dedfdd}.controls .counter{padding:6px 12px;min-width:68px;text-align:center;font-size:14px}.menu{position:fixed;inset:0;background:#152e49d9;z-index:10;padding:5vh 5vw;display:grid;place-items:center}.menu[hidden]{display:none}.menu-inner{background:var(--paper);padding:24px 32px;max-width:1040px;width:100%;max-height:90vh;overflow:auto}.menu-header{display:flex;justify-content:space-between;align-items:center;font-size:24px}.menu-header button{font-size:20px;padding:6px 14px}.toc{display:grid;grid-template-columns:1fr 1fr;gap:4px 30px;margin-top:18px}.toc button{border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;font-size:19px;padding:15px 4px;line-height:1.45}.toc button:hover{background:#e7e7e0}.toc span{color:var(--amber);margin-right:13px}.notes{display:none}.single-slide{background:var(--paper);overflow:visible}.single-slide .slide{display:block}.print-link{display:none}@media(max-width:600px){.controls{gap:0;width:max-content;max-width:98vw}.controls button{padding:7px 8px}.toc{grid-template-columns:1fr}.menu-inner{padding:18px}.toc button{font-size:16px}}@media print{@page{size:13.333333in 7.5in;margin:0}html,body{width:1280px;height:auto;margin:0;padding:0;background:white;overflow:visible;-webkit-print-color-adjust:exact;print-color-adjust:exact}#stage{position:static;transform:none;width:1280px;height:auto}.slide,.slide.active{display:block!important;width:1280px;height:720px;break-after:page;page-break-after:always}.slide:last-child{break-after:auto;page-break-after:auto}.controls,.menu{display:none!important}}
+/* ===== W4 追加（2026-09-25 複驗裁決後的 8 頁版）：每頁＝標題→一句為什麼→自繪視覺→底部一行「檢查點」或「✋」 =====
+   頁型 class 一律 pg- 開頭，別跟下面的版面 class 同名（同名會讓那一頁一直顯示）。 */
+.title{margin-bottom:12px}
+.why{font-size:27px;line-height:1.5;color:var(--muted);margin:0 0 24px;max-width:1100px}
+.slide--dark .why{color:#c9d2da}
+.cue{position:absolute;left:78px;right:230px;bottom:58px;margin:0;font-size:25px;line-height:1.4;font-weight:600;padding-left:16px;border-left:6px solid var(--amber)}
+.slide--dark .cue{border-left-color:#edb867}
+.cue .hand{margin-right:10px}
+/* p1 封面：簡報縮圖 → v1、v2（v3 課後補） */
+.cover .title{font-size:74px;line-height:1.2;max-width:1060px;margin-top:22px;margin-bottom:16px}
+.cover .lead{font-size:32px;margin:0 0 30px}
+.coverviz{display:flex;align-items:center;gap:30px}
+.coverviz figure{margin:0;display:flex;flex-direction:column;gap:14px}
+.coverviz figcaption{font-size:22px;color:var(--muted)}
+.thumbs{display:flex;gap:12px}
+.thumbs i{display:block;width:112px;height:70px;background:var(--white);border:2px solid var(--navy);position:relative}
+.thumbs i::before{content:'';position:absolute;left:11px;top:10px;width:56px;height:9px;background:var(--amber)}
+.thumbs i::after{content:'';position:absolute;left:11px;top:29px;width:82px;height:6px;background:var(--line);box-shadow:0 12px 0 var(--line),0 24px 0 var(--line)}
+.bigarrow{font-size:58px;line-height:1;color:var(--amber);font-weight:400}
+.commits{display:flex;gap:48px;position:relative;padding:10px 0}
+.commits::before{content:'';position:absolute;left:29px;width:106px;top:50%;margin-top:-2px;border-top:4px dashed var(--muted)}
+.commits::after{content:'';position:absolute;left:135px;width:106px;top:50%;margin-top:-2px;border-top:4px dashed var(--muted)}
+.commits span{position:relative;z-index:1;width:58px;height:58px;border-radius:50%;background:var(--navy);color:var(--paper);border:4px solid var(--navy);display:grid;place-items:center;font-size:20px;font-weight:700}
+.commits .later{background:var(--paper);color:var(--muted);border-style:dashed;border-color:var(--muted)}
+.cover .course{margin-top:40px;margin-bottom:4px}
+/* p2 看作業＋叫 AI 做事的三件事 */
+.showline{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 18px;margin:0 0 20px;font-size:24px;color:var(--muted)}
+.showline b{font-size:26px;color:var(--navy);white-space:nowrap}
+.steps3{display:flex;align-items:stretch;gap:16px}
+.steps3 article{flex:1;background:var(--white);border-top:6px solid var(--navy);padding:22px 26px 24px;min-height:216px}
+.steps3 b{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--amber);color:var(--white);font-size:26px}
+.steps3 h3{font-size:38px;line-height:1.3;margin:16px 0 8px}
+.steps3 p{font-size:24px;margin:0;color:var(--muted)}
+.steps3 .arr{align-self:center;font-style:normal;font-size:40px;color:var(--amber)}
+/* p3 版本庫＋三個動作（深底；兩個盒子白底） */
+.moves{display:grid;grid-template-columns:430px 1fr 360px;align-items:center;gap:14px}
+.machine{background:var(--white);color:var(--navy);border:3px solid var(--navy);padding:14px 22px 16px}
+.machine small{font-size:21px;letter-spacing:.06em;font-weight:600;color:var(--muted)}
+.machine .verline{display:block;margin:8px 0 4px}
+.machine p{font-size:21px;line-height:1.45;margin:4px 0 0}
+.machine p b{display:inline-block;min-width:150px;margin-right:10px;color:var(--amber)}
+.machine--gh{border-color:#edb867}
+.machine--gh small{color:var(--amber)}
+.machine--gh p{margin-top:8px}
+.pushlane{text-align:center;padding:0 4px}
+.pushlane b{display:block;font-size:28px;color:#edb867}
+.pushlane i{display:block;height:6px;background:#edb867;position:relative;margin:12px 18px 12px 0}
+.pushlane i::after{content:'';position:absolute;right:-18px;top:-10px;border-style:solid;border-width:13px 0 13px 20px;border-color:transparent transparent transparent #edb867}
+.pushlane span{display:block;font-size:21px;line-height:1.45;color:#c9d2da}
+/* p4 對號入座 */
+.routes{display:grid;gap:14px}
+.route{display:grid;grid-template-columns:60px 290px 1fr 230px;align-items:center;gap:18px;background:var(--white);border:2px solid var(--line);padding:14px 22px}
+.route b{font-size:48px;line-height:1;color:var(--amber);font-weight:600}
+.route h3{font-size:30px;margin:0}
+.route p{font-size:23px;line-height:1.45;margin:0;color:var(--muted)}
+.route span{font-size:23px;font-weight:700}
+.same{font-size:24px;line-height:1.5;margin:20px 0 0}
+.same a{color:var(--amber)}
+/* p5 動手：兩條路匯到同一個終點（步驟在學生頁） */
+.converge{display:grid;grid-template-columns:440px 64px 1fr;align-items:center;gap:10px}
+.lanes{display:grid;gap:16px}
+.lane{margin:0;display:flex;align-items:center;gap:14px;background:var(--white);border:2px solid var(--navy);padding:14px 18px;font-size:25px;font-weight:700}
+.lane b{display:inline-grid;place-items:center;flex:0 0 auto;width:42px;height:42px;background:var(--navy);color:var(--paper);font-size:23px}
+.lane span{margin-left:auto;font-size:19px;font-weight:400;color:var(--muted)}
+.converge>.arrow{font-size:58px;line-height:1;color:var(--amber);text-align:center;font-weight:400}
+.goal{background:var(--white);border:3px solid var(--amber);padding:16px 24px 18px}
+.goal small{font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--amber)}
+.goal .repourl{font-size:28px;margin:8px 0 6px}
+.goal p{margin:0;font-size:23px}
+.aside{font-size:22px;line-height:1.5;color:var(--muted);margin:26px 0 0}
+/* p6 再往前一步（老師示範、選做） */
+.oneline{display:grid;grid-template-columns:580px 1fr;gap:34px;align-items:start}
+.diffcard{background:var(--white);border:2px solid var(--line)}
+.diffcard .fname{margin:0;padding:9px 18px;font-family:Consolas,monospace;font-size:19px;background:#e3e7e9;border-bottom:1px solid var(--line)}
+.diffcard .ln{margin:0;padding:13px 16px;font-family:Consolas,'Microsoft JhengHei',monospace;font-size:21px;line-height:1.4;white-space:nowrap}
+.diffcard .ln b{display:inline-block;width:32px;font-weight:700}
+.diffcard .ctx{color:var(--muted)}
+.optbox{position:relative;background:var(--white);border:2px dashed var(--amber);padding:28px 22px 16px;margin-top:12px}
+.opttag{position:absolute;top:-17px;left:18px;background:var(--amber);color:var(--white);font-size:18px;font-weight:700;padding:3px 12px}
+.optbox p{display:flex;align-items:baseline;gap:12px;margin:0 0 14px;font-size:22px;line-height:1.45}
+.optbox p b{display:inline-grid;place-items:center;flex:0 0 auto;width:32px;height:32px;background:var(--navy);color:var(--paper);font-size:19px}
+.optbox .where{display:block;margin:4px 0 0;font-size:19px;color:var(--muted)}
+/* p7 完成線（深底）：上面完成線、下面再往前一步 */
+.doneline{margin-top:4px}
+.doneline .above,.doneline .below{display:grid;grid-template-columns:180px 1fr;align-items:center;gap:26px}
+.doneline small{font-size:24px;font-weight:700;letter-spacing:.04em;color:#edb867}
+.repourl{margin:0;font-family:Consolas,'Microsoft JhengHei',monospace;font-size:40px;line-height:1.3}
+.doneline .sub{margin:8px 0 0;font-size:24px;color:#c9d2da}
+.goldline{border:0;height:6px;background:#edb867;margin:24px 0}
+.doneline ul{list-style:none;display:flex;gap:44px;margin:0;padding:0;font-size:30px}
+.doneline li::before{content:'→ ';color:#edb867}
+.calm{font-size:22px;line-height:1.5;color:#c9d2da;margin:24px 0 0;padding:10px 16px;border:1px dashed #6b7f94}
+/* p8 目錄亂掉 → 按一下更新 */
+.tocfix{display:flex;align-items:center;gap:36px}
+.tocbox{width:380px;background:var(--white);border:2px solid var(--navy);padding:14px 24px 10px}
+.tocbox small{display:block;font-size:20px;color:var(--muted);margin-bottom:6px}
+.tocbox p{display:flex;justify-content:space-between;margin:0;padding:7px 0;font-size:25px;border-bottom:1px dotted var(--line)}
+.tocbox p:last-child{border-bottom:0}
+.tocbox .bad{color:#883321;text-decoration:line-through;text-decoration-thickness:3px}
+.tocbox--good{border-color:#22513a}
+.tocbox--good small,.tocbox--good span{color:#22513a;font-weight:700}
+.tocfix .arrow{font-size:54px;font-weight:400;color:var(--amber)}
+.when{font-size:26px;margin:22px 0 0}
+/* ===== W5 追加（2026-10-01，兩班共用的結構化文件）：沿 W4 每頁「標題→一句為什麼→自繪視覺→底部一行」 =====
+   頁型 class 一律 pg- 開頭；.fld＝Word 功能變數的灰底；圖表顏色跟範本的兩張圖一樣（藍直條＝圖 1、橘橫條＝圖 2）。 */
+.fld{background:#d9d9d9;padding:0 6px;border-radius:2px;font-style:normal}
+/* p1 封面：右邊一張「壞掉的文件」 */
+.cover .title{max-width:690px}
+.cover .lead{max-width:640px}
+.badpage{position:absolute;right:92px;top:92px;width:390px}
+.paper{background:var(--white);border:2px solid var(--navy);box-shadow:10px 10px 0 #dde1e5;padding:26px 28px 20px;transform:rotate(1.6deg)}
+.paper .ln{height:11px;background:var(--line);margin:0 0 12px}
+.paper .ln.short{width:62%}
+.paper .sent{font-size:25px;line-height:1.4;margin:18px 0 20px;white-space:nowrap}
+.paper mark.bad{background:#f8e3dc;color:#883321;padding:2px 6px;text-decoration:underline wavy #c0392b;text-underline-offset:7px}
+.paper .figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.paper figure{margin:0;text-align:center}
+.paper figure svg{display:block;width:100%;height:auto;border:1px solid var(--line);background:#fbfbf9;padding:6px}
+.paper figcaption{font-size:20px;margin-top:6px;color:var(--muted)}
+.qmark{position:absolute;right:-26px;top:-34px;width:72px;height:72px;border-radius:50%;background:#c0392b;color:var(--white);font-size:46px;line-height:72px;text-align:center;font-weight:700}
+/* p2 外觀／結構 */
+.split2{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.card{position:relative;background:var(--white);border:2px solid var(--line);border-top:8px solid var(--muted);padding:24px 30px 28px;min-height:220px}
+.card small{display:block;font-size:26px;font-weight:700;letter-spacing:.04em;color:var(--muted)}
+.card p{font-size:42px;font-weight:700;line-height:1.35;margin:18px 0 0}
+.card .who{position:absolute;right:24px;top:20px;font-size:26px;font-weight:700;padding:4px 18px;border-radius:999px;background:#e3e7e9;color:var(--muted)}
+.card--mine{border-color:var(--amber);border-top-color:var(--amber)}
+.card--mine small,.card--mine .who{color:var(--amber)}
+.card--mine .who{background:#fff1dc}
+/* p3 功能窗格對照 */
+.navcmp{display:grid;grid-template-columns:1fr 1fr;gap:44px}
+.navcol small{display:block;font-size:25px;font-weight:700;color:var(--muted);margin-bottom:10px}
+.pane{background:var(--white);border:2px solid var(--navy);min-height:236px;padding:0 22px 14px}
+.pane::before{content:'';display:block;height:14px;background:#dfe3e7;margin:0 -22px 14px}
+.pane .empty{display:block;text-align:center;padding-top:62px;font-size:28px;color:#8995a1}
+.pane p{margin:0;padding:9px 12px;font-size:31px;border-left:6px solid transparent}
+.pane .l1{font-weight:700;border-left-color:var(--navy)}
+.pane .l2{padding-left:52px;color:var(--muted)}
+.navcol--bad .pane{border:2px dashed #9aa5b1}
+/* p4 目錄：沿 W4 的 .tocfix，盒子放大 */
+.pg-toc .tocbox{width:420px}
+.pg-toc .tocbox p{font-size:30px}
+.pg-toc .tocbox small{font-size:22px}
+/* p5 圖說 */
+.capdemo{display:grid;grid-template-columns:500px 1fr;gap:60px;align-items:center}
+.figcard{margin:0;background:var(--white);border:2px solid var(--line);padding:22px 26px 18px;text-align:center}
+.figcard svg{display:block;width:100%;height:auto}
+.figcard figcaption{font-size:30px;margin-top:14px}
+.path{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+.path li{display:flex;align-items:center;gap:18px;font-size:34px;font-weight:700;background:var(--white);border:2px solid var(--navy);padding:12px 22px}
+.path li b{display:inline-grid;place-items:center;flex:0 0 auto;width:46px;height:46px;border-radius:50%;background:var(--amber);color:var(--white);font-size:24px}
+/* p6 交互參照 */
+.xref{display:grid;grid-template-columns:640px 80px 1fr;align-items:center;gap:10px}
+.dlg{background:var(--white);border:2px solid var(--navy)}
+.dlg::before{content:'';display:block;height:16px;background:var(--navy)}
+.dlg p{display:grid;grid-template-columns:250px 1fr;align-items:center;margin:0;padding:18px 24px;border-bottom:1px solid var(--line)}
+.dlg p:last-child{border-bottom:0}
+.dlg small{font-size:25px;color:var(--muted)}
+.dlg b{font-size:31px;border:2px solid var(--line);padding:6px 14px;background:#fbfbf9}
+.xref .arrow{font-size:56px;color:var(--amber);text-align:center;font-weight:400}
+.result{font-size:48px;font-weight:700;margin:0;white-space:nowrap}
+.result .fld{text-decoration:underline;text-decoration-color:#174c78;text-underline-offset:8px}
+/* p7 那一擊 */
+.swap{display:grid;grid-template-columns:290px 60px 280px 60px 290px;align-items:center;gap:10px}
+.stack{display:grid;gap:12px}
+.stack--move{outline:3px dashed var(--amber);outline-offset:9px}
+.blk{background:var(--white);border:2px solid var(--navy);padding:10px 16px 8px;text-align:center}
+.blk svg{display:block;width:100%;height:70px}
+.blk span{display:block;font-size:26px;margin-top:4px}
+.swapmark{font-size:56px;color:var(--amber);text-align:center;font-weight:400}
+.keys{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+kbd{display:inline-block;min-width:66px;padding:12px 14px;border:2px solid var(--navy);border-bottom-width:7px;border-radius:9px;background:var(--white);color:var(--navy);font:700 28px/1 'Segoe UI',sans-serif;text-align:center}
+.keys .then{font-size:34px;color:var(--amber);margin:0 4px}
+.steps{font-size:27px;margin:22px 0 0;color:var(--muted)}
+/* p8 來源：沿 W4 .steps3，只放動作 */
+.pg-source .steps3 article{min-height:170px}
+.pg-source .steps3 h3{font-size:40px}
+.pg-source .steps3 p{font-size:28px;margin-top:4px}
+/* p9 替代文字 */
+.altdemo{display:grid;grid-template-columns:440px 1fr;gap:44px;align-items:center}
+.altbox{background:var(--white);border:2px solid var(--navy);padding:18px 26px 22px}
+.altbox small{font-size:23px;font-weight:700;color:var(--muted)}
+.altbox p{font-size:33px;line-height:1.4;margin:10px 0 16px;padding:12px 16px;border:2px dashed var(--line)}
+.ok{font-size:26px;font-weight:700;color:#22513a}
+/* p10 互查（深底） */
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:18px 34px;margin-top:6px}
+.checks p{margin:0;display:flex;align-items:center;gap:18px;font-size:38px;font-weight:700;padding:18px 24px;border:2px solid #6b7f94}
+.checks p::before{content:'✔';color:#edb867}
+/* ===== W7 追加（2026-10-17）：YouBike 三地；頁型 class 一律 pg- 開頭，視覺元件 w7- 開頭 ===== */
+.w7-files{display:flex;align-items:center;gap:18px;margin:6px 0 0}
+.w7-files span{display:grid;place-items:center;width:104px;height:72px;border:3px solid var(--navy);background:var(--white);font:700 22px Consolas,monospace}
+.w7-files span:nth-child(2){border-color:var(--amber);color:var(--amber)}
+.w7-files b{font-size:52px;font-weight:400;color:var(--amber);margin:0 6px}
+.w7-files svg{width:170px;height:102px}
+.cover .course{margin-top:34px}
+.w7-dock{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:22px;max-width:1000px}
+.w7-dock article{border:3px solid #c9d2da;padding:22px 30px 26px}
+.w7-dock small{font-size:24px;letter-spacing:.05em;color:#c9d2da}
+.w7-dock p{font-size:46px;font-weight:700;margin:14px 0 10px}
+.w7-dock span{font-size:30px;color:#edb867}
+.w7-dock--new{border-color:#edb867!important}
+.w7-raw{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:20px}
+.w7-raw article{background:var(--white);border-top:6px solid var(--navy);padding:20px 24px 26px;min-height:200px}
+.w7-raw small{font-size:24px;font-weight:700;color:var(--muted)}
+.w7-raw code{display:block;margin-top:22px;font:600 34px/1.45 Consolas,monospace;color:var(--navy)}
+.w7-raw article:nth-child(3) code{color:var(--amber)}
+.w7-big{display:flex;align-items:flex-end;gap:36px;margin-top:30px}
+.w7-big p{margin:0}
+.w7-big b{font-size:190px;line-height:.95;color:var(--amber);font-weight:700}
+.w7-big span{font-size:52px;font-weight:700;margin-left:10px}
+.w7-of{font-size:34px;line-height:1.45;max-width:560px;padding-bottom:18px}
+.w7-rate{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:22px;max-width:1040px}
+.w7-rate article{background:var(--white);border:3px solid var(--navy);padding:24px 32px}
+.w7-rate small{font-size:28px;font-weight:700}
+.w7-rate b{display:block;font-size:110px;line-height:1.15;margin-top:10px}
+.w7-ok b{color:#22513a}
+.w7-no{border-color:var(--line)!important;color:var(--muted)}
+.w7-no b{text-decoration:line-through;text-decoration-thickness:5px}
+.w7-q{font-size:46px;line-height:1.5;padding-left:60px;margin-top:40px}
+.w7-q li{margin-bottom:20px;padding-left:12px}
+.w7-q li::marker{color:var(--amber);font-weight:700}
+.w7-pivot{display:grid;grid-template-columns:330px 1fr;gap:34px;margin-top:30px;max-width:900px}
+.w7-pivot article{background:var(--white);border:3px solid var(--navy);padding:18px 28px 22px}
+.w7-pivot small{font-size:24px;font-weight:700;color:var(--amber);letter-spacing:.08em}
+.w7-pivot p{font-size:40px;font-weight:700;margin:12px 0 4px}
+.w7-pivot i{font-style:normal;font-size:26px;font-weight:400;color:var(--muted);margin-left:18px}
+.w7-mini{display:flex;align-items:center;gap:30px;margin-top:20px}
+.w7-mini table{border-collapse:collapse;font:600 30px Consolas,'Microsoft JhengHei',monospace;background:var(--white)}
+.w7-mini th{background:#e3e7e9;font-size:22px;color:var(--muted);padding:4px 18px}
+.w7-mini td{border:2px solid var(--line);padding:8px 22px}
+.w7-mini b.arrow{font-size:58px;font-weight:400;color:var(--amber)}
+.w7-mini svg{width:270px;height:180px}
+.pg-chart .why{margin-top:22px}
+.w7-two{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:22px;max-width:1080px}
+.w7-two article{background:var(--white);border-top:6px solid var(--amber);padding:20px 30px 26px;min-height:250px}
+.w7-two small{font-size:26px;font-weight:700;color:var(--amber);letter-spacing:.06em}
+.w7-two p{font-size:40px;font-weight:700;margin:14px 0 14px}
+.w7-two span{font-size:30px;line-height:1.6;color:var(--muted)}
+.w7-deliver p{font-size:38px;margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid #4a6178}
+.w7-deliver b{display:inline-block;min-width:170px;color:#edb867}
+.pg-midterm .why{margin-top:18px}
+.w7-take{font-size:52px;line-height:1.5;padding-left:66px;margin-top:40px}
+.w7-take li{margin-bottom:22px;padding-left:14px}
+.w7-take li::marker{color:#edb867;font-weight:700}
+</style></head><body><main id="stage"><section class="slide slide--light cover" data-title="三份不一樣的表，併成一張看得懂的圖" aria-label="第 1 頁：三份不一樣的表，併成一張看得懂的圖"><div class="kicker">WEEK 7</div><div class="title">三份不一樣的表，<br>併成一張看得懂的圖</div><div class="body-content"><p class=lead>哪裡的 YouBike 最難借？</p><div class=w7-files aria-hidden=true><span>JSON</span><span>CSV</span><span>JSON</span><b>→</b><svg viewBox='0 0 150 90'><rect x=14 y=40 width=30 height=42 fill='#2b5d8a'/><rect x=60 y=22 width=30 height=60 fill='#2b5d8a'/><rect x=106 y=16 width=30 height=66 fill='#b66505'/><line x1=6 y1=82 x2=146 y2=82 stroke='#152e49' stroke-width=3 /></svg></div><p class=course>資訊科技與應用　W7</p><p class=date>AA 10/19（一）・AB 10/20（二）16:10–18:00</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">01 / 12</div></section><section class="slide slide--dark pg-hualien" data-title="花蓮，要有自己的公共自行車了" aria-label="第 2 頁：花蓮，要有自己的公共自行車了"><div class="kicker">開場</div><div class="title">花蓮，要有自己的公共自行車了</div><div class="body-content"><p class=why>10 月起開騎，月底先設 20 站。</p><div class=w7-dock><article><small>YouBike</small><p>有車柱</p><span>可借・可還</span></article><article class=w7-dock--new><small>花蓮新系統</small><p>沒有車柱</p><span>可借</span></article></div><p class=cue>格式不同，問題就來了</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">02 / 12</div></section><section class="slide slide--light pg-raw" data-title="同一件事，三種寫法" aria-label="第 3 頁：同一件事，三種寫法"><div class="kicker">三份原始檔</div><div class="title">同一件事，三種寫法</div><div class="body-content"><p class=why>「總共幾格車柱」，三地三個欄名。</p><div class=w7-raw><article><small>台北・JSON</small><code>"Quantity": 28</code></article><article><small>新北・CSV</small><code>tot_quantity<br>20</code></article><article><small>台中・JSON</small><code>"tot": "16"</code></article></div><p class=cue>台中的 16 有引號：它是文字</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">03 / 12</div></section><section class="slide slide--light pg-mismatch" data-title="總格 ＝ 可借＋可還？不一定" aria-label="第 4 頁：總格 ＝ 可借＋可還？不一定"><div class="kicker">為什麼</div><div class="title">總格 ＝ 可借＋可還？不一定</div><div class="body-content"><p class=why>圖畫得漂亮之前，先問數字對不對。</p><div class=w7-big><p><b>712</b><span>站</span></p><p class=w7-of>台北 1,821 站裡，總格 ≠ 可借＋可還</p></div><p class=cue>官方沒寫原因：寫進報告的「限制」</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">04 / 12</div></section><section class="slide slide--light pg-rate" data-title="可借率：合計 ÷ 合計" aria-label="第 5 頁：可借率：合計 ÷ 合計"><div class="kicker">為什麼</div><div class="title">可借率：合計 ÷ 合計</div><div class="body-content"><p class=why>大站小站，分量不一樣。</p><div class=w7-rate><article class=w7-ok><small>✓ 可借合計 ÷ 總格合計</small><b>26.9%</b></article><article class=w7-no><small>✗ 每站百分比再平均</small><b>29.7%</b></article></div><p class=cue>今天的整理表：478 站，同一份資料</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">05 / 12</div></section><section class="slide slide--light pg-merge" data-title="三份併成一份：對照表，再請 AI" aria-label="第 6 頁：三份併成一份：對照表，再請 AI"><div class="kicker">老師示範</div><div class="title">三份併成一份：對照表，再請 AI</div><div class="body-content"><div class=steps3><article><b>1</b><h3>欄位對照表</h3><p>三地欄名對到同一套</p></article><i class=arr aria-hidden=true>→</i><article><b>2</b><h3>請 AI 併</h3><p>照對照表</p></article><i class=arr aria-hidden=true>→</i><article><b>3</b><h3>驗</h3><p>列數 5,277・抽兩站</p></article></div><p class=cue><span class=hand>👀</span>先看就好；期中換你做</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">06 / 12</div></section><section class="slide slide--light pg-goal1" data-title="看懂整理表：排序和篩選" aria-label="第 7 頁：看懂整理表：排序和篩選"><div class="kicker">目標一　20 分</div><div class="title">看懂整理表：排序和篩選</div><div class="body-content"><ol class=w7-q><li>台北市有幾站？</li><li>可借＝0 的站有幾站？</li><li>可借最多的是哪一站？</li></ol><p class=cue>打開 整理表_縮小版.xlsx・步驟在學生頁</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">07 / 12</div></section><section class="slide slide--light pg-pivot" data-title="樞紐分析表：一個縣市一列" aria-label="第 8 頁：樞紐分析表：一個縣市一列"><div class="kicker">目標二　25 分</div><div class="title">樞紐分析表：一個縣市一列</div><div class="body-content"><div class=w7-pivot><article><small>列</small><p>縣市</p></article><article><small>值</small><p>站名<i>計數</i></p><p>總格<i>加總</i></p><p>可借<i>加總</i></p></article></div><p class=cue>插入 → 樞紐分析表 → 新工作表</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">08 / 12</div></section><section class="slide slide--light pg-chart" data-title="可借率三格，再畫一張直條圖" aria-label="第 9 頁：可借率三格，再畫一張直條圖"><div class="kicker">目標二　續</div><div class="title">可借率三格，再畫一張直條圖</div><div class="body-content"><div class=w7-mini><table><tr><th>F</th><th>G</th></tr><tr><td>縣市</td><td>可借率</td></tr><tr><td>=A4</td><td>=D4/C4</td></tr><tr><td>=A5</td><td>=D5/C5</td></tr><tr><td>=A6</td><td>=D6/C6</td></tr></table><b class=arrow aria-hidden=true>→</b><svg viewBox='0 0 180 120' aria-hidden=true><rect x=24 y=50 width=34 height=60 fill='#2b5d8a'/><rect x=74 y=36 width=34 height=74 fill='#2b5d8a'/><rect x=124 y=44 width=34 height=66 fill='#2b5d8a'/><line x1=12 y1=110 x2=172 y2=110 stroke='#152e49' stroke-width=3 /></svg></div><p class=why>用鍵盤打位址，不要去點樞紐。</p><p class=cue>圖要有：標題・單位・來源與時間</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">09 / 12</div></section><section class="slide slide--light pg-recheck" data-title="兩筆回查：圖上的數字回得去嗎？" aria-label="第 10 頁：兩筆回查：圖上的數字回得去嗎？"><div class="kicker">目標三　15 分</div><div class="title">兩筆回查：圖上的數字回得去嗎？</div><div class="body-content"><div class=w7-two><article><small>合計值</small><p>圖上台北 27.5%</p><span>→ 樞紐兩個合計<br>→ 篩選後加總</span></article><article><small>單站值</small><p>整理表挑一站</p><span>→ 原始表那一列</span></article></div><p class=cue>當堂交回查卡</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">10 / 12</div></section><section class="slide slide--dark pg-midterm" data-title="三地 YouBike，哪裡的車最難借？" aria-label="第 11 頁：三地 YouBike，哪裡的車最難借？"><div class="kicker">期中</div><div class="title">三地 YouBike，哪裡的車最難借？</div><div class="body-content"><div class=w7-deliver><p><b>Excel</b>儀表板＋回查</p><p><b>Word</b>報告 2–3 頁＋PDF</p><p><b>證據卡</b>用了什麼、驗了什麼</p></div><p class=why>資料：三份原始檔，你自己併。</p><p class=cue>W9 課內發表・W10 前交完整版</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">11 / 12</div></section><section class="slide slide--dark pg-close" data-title="三句話帶走" aria-label="第 12 頁：三句話帶走"><div class="kicker">帶走</div><div class="title">三句話帶走</div><div class="body-content"><ol class=w7-take><li>比率：合計 ÷ 合計</li><li>圖上每個數字，回得去</li><li>格式不同，先做對照表</li></ol><p class=cue>選配：篩選器・條件式格式・地圖</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">12 / 12</div></section></main><div class="controls" aria-label="投影片導覽"><button data-action="prev" aria-label="上一頁">←</button><span class="counter" aria-live="polite"></span><button data-action="next" aria-label="下一頁">→</button><button data-action="menu" aria-expanded="false" aria-controls="slide-menu">目錄 M</button><button data-action="print">列印全份</button></div><div class="menu" id="slide-menu" role="dialog" aria-modal="true" aria-label="投影片目錄" hidden><div class="menu-inner"><div class="menu-header"><strong>W7 · 投影片目錄</strong><button data-action="close" aria-label="關閉目錄">×</button></div><div class="toc"><button data-page="0"><span>01</span>三份不一樣的表，併成一張看得懂的圖</button><button data-page="1"><span>02</span>花蓮，要有自己的公共自行車了</button><button data-page="2"><span>03</span>同一件事，三種寫法</button><button data-page="3"><span>04</span>總格 ＝ 可借＋可還？不一定</button><button data-page="4"><span>05</span>可借率：合計 ÷ 合計</button><button data-page="5"><span>06</span>三份併成一份：對照表，再請 AI</button><button data-page="6"><span>07</span>看懂整理表：排序和篩選</button><button data-page="7"><span>08</span>樞紐分析表：一個縣市一列</button><button data-page="8"><span>09</span>可借率三格，再畫一張直條圖</button><button data-page="9"><span>10</span>兩筆回查：圖上的數字回得去嗎？</button><button data-page="10"><span>11</span>三地 YouBike，哪裡的車最難借？</button><button data-page="11"><span>12</span>三句話帶走</button></div></div></div><script>(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const menu = document.querySelector('.menu');
+  const counter = document.querySelector('.counter');
+  const toggle = document.querySelector('[data-action="menu"]');
+  let index = 0;
+  const fromHash = () => Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+  function show(next, changeHash = true) {
+    index = Math.max(0, Math.min(slides.length - 1, next));
+    slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.setAttribute('aria-hidden', String(i !== index)); });
+    counter.textContent = `${index + 1} / ${slides.length}`;
+    document.title = `${index + 1}. ${slides[index].dataset.title} · 資訊科技與應用 W5`;
+    if (changeHash) history.replaceState(null, '', `#${index + 1}`);
+  }
+  function resize() {
+    document.documentElement.style.setProperty('--scale', String(Math.min(innerWidth / 1280, (innerHeight - 52) / 720)));
+  }
+  function openMenu() { menu.hidden = false; toggle.setAttribute('aria-expanded', 'true'); menu.querySelector(`[data-page="${index}"]`).focus(); }
+  function closeMenu() { menu.hidden = true; toggle.setAttribute('aria-expanded', 'false'); toggle.focus(); }
+  document.querySelectorAll('[data-page]').forEach(button => button.addEventListener('click', () => { show(Number(button.dataset.page)); closeMenu(); }));
+  document.querySelector('[data-action="close"]').addEventListener('click', closeMenu);
+  toggle.addEventListener('click', () => menu.hidden ? openMenu() : closeMenu());
+  document.querySelector('[data-action="prev"]').addEventListener('click', () => show(index - 1));
+  document.querySelector('[data-action="next"]').addEventListener('click', () => show(index + 1));
+  document.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
+  addEventListener('keydown', event => {
+    if (!menu.hidden) {
+      if (event.key === 'Escape') { event.preventDefault(); closeMenu(); }
+      if (event.key === 'Tab') {
+        const buttons = [...menu.querySelectorAll('button')];
+        if (event.shiftKey && document.activeElement === buttons[0]) { event.preventDefault(); buttons.at(-1).focus(); }
+        else if (!event.shiftKey && document.activeElement === buttons.at(-1)) { event.preventDefault(); buttons[0].focus(); }
+      }
+      return;
+    }
+    if (event.target.closest('input,textarea,select')) return;
+    if (event.key === ' ' && event.target.closest('a,button')) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); show(index + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(event.key)) { event.preventDefault(); show(index - 1); }
+    if (event.key === 'Home') { event.preventDefault(); show(0); }
+    if (event.key === 'End') { event.preventDefault(); show(slides.length - 1); }
+    if (event.key.toLowerCase() === 'm') { event.preventDefault(); openMenu(); }
+  });
+  addEventListener('hashchange', () => show(fromHash(), false));
+  addEventListener('resize', resize);
+  show(fromHash(), false); resize();
+})();
+</script></body></html>
