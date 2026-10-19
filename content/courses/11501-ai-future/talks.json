@@ -211,14 +211,27 @@
       "worksheetUrl": null,
       "materials": [
         {
-          "label": "講者給同學的書面檔（PDF，61 頁，頁序與演講版相同）",
+          "label": "講者給同學的書面檔（PDF，61 頁，10/19 修正版，頁序與演講版相同）",
           "url": "https://drive.google.com/file/d/1m9mNGE0QKHSQiJqICakQXDqhBA4CBfFU/view"
         },
         {
-          "label": "演講版投影片原檔（PowerPoint，61 頁）",
+          "label": "投影片原檔（PowerPoint，61 頁，上網版、不含講者備忘錄）",
           "url": "https://drive.google.com/file/d/1m9CLmjkUouejI3ubCfeIgzV6QYKX25B3/view"
+        },
+        {
+          "label": "講前導讀一頁卡（原圖，3 分鐘看完）",
+          "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/images/talks/t05-preread.webp"
+        },
+        {
+          "label": "30 秒預告短片（講者同意公開；橫式）",
+          "url": "https://drive.google.com/file/d/1fa2VBFIXAwHW8kPs1zb7DlEed_SvA1a4/view"
         }
-      ]
+      ],
+      "preread": "/images/talks/t05-preread.webp",
+      "teaser": {
+        "src": "/videos/t05-teaser-720p.mp4",
+        "poster": "/images/talks/t05-teaser-poster.jpg"
+      }
     },
     {
       "id": "t06",
