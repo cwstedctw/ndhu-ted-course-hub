@@ -3,7 +3,7 @@
 <p class="callout">這頁的「你應該看到」都是 2026-10-17 18:28 那一份快照的值。整理表是同一份檔，大家看到的數字會一樣；你之後自己重抓即時資料，數字一定不同，那是正常的。</p>
 <h2 id="section-1">1. 今天做什麼</h2>
 <p>這週是<strong>輕週</strong>：當堂做、當堂交，回家不用再做。</p>
-<div class="table-scroll"><table><tr><th>目標</th><th>做什麼</th><th>交什麼</th></tr><tr><td>一</td><td>用排序和篩選看懂整理表</td><td>不交</td></tr><tr><td>二</td><td>做一個樞紐分析表、算三格可借率、畫一張直條圖</td><td>不交（留在你的檔案裡）</td></tr><tr><td>三</td><td>兩筆回查：圖上的數字回得去原值嗎</td><td><strong>回查卡，當堂交</strong></td></tr></table></div>
+<div class="table-scroll"><table><tr><th>目標</th><th>做什麼</th><th>交什麼</th></tr><tr><td>一</td><td>用排序和篩選看懂整理表</td><td>不交</td></tr><tr><td>二</td><td>做一個樞紐分析表、算三格可借率、畫一張直條圖</td><td>不交（留在你的檔案裡）</td></tr><tr><td>三</td><td>兩筆回查：圖上的數字回得去原值嗎</td><td><strong>做完的 Excel 檔，當堂上傳</strong></td></tr></table></div>
 <p>今天的主線只有一句：<strong>一張漂亮的圖，要能證明沒算錯。</strong></p>
 <p><strong>可借率</strong>＝可借車數的合計 ÷ 總停車格的合計。不是把每一站的百分比拿來平均。</p>
 <h2 id="section-2">2. 下載</h2>
@@ -54,7 +54,7 @@
 <details><summary>圖上有一根「總計」，或少了一個縣市</summary><p>列號差了一列：看你的三個縣市在 A 欄哪三列，F、G 欄的公式和選的範圍要對齊那三列。</p></details>
 <details><summary>三根柱子高度看起來差很多</summary><p>看縱軸是不是從 0% 開始。不是的話：點縱軸 → 右鍵「座標軸格式」→ 最小值打 0。</p></details>
 <h2 id="section-5">5. 目標三：兩筆回查（15 分鐘）</h2>
-<p>圖畫好了，現在證明它沒算錯。兩筆都要寫「圖上的值／回到哪裡／一不一樣」。</p>
+<p>圖畫好了，現在證明它沒算錯。照下面兩筆找回去，看數字一不一樣。不用另外寫卡。</p>
 <h3>第一筆：合計值</h3>
 <p>挑圖上一個縣市（例：台北市 27.5%）。</p>
 <ol><li>回樞紐看那一列：可借合計、總格合計。</li><li>回 <strong>整理表</strong>，先清掉前面留下的篩選，再篩選同一個縣市。點看得到的第一站的「可借」，按 <kbd>Ctrl</kbd>＋<kbd>Shift</kbd>＋<kbd>↓</kbd>，看右下角「加總」；「總格」也一樣。</li></ol>
@@ -62,9 +62,9 @@
 <h3>第二筆：單站值</h3>
 <ol><li>在整理表挑<strong>你自己的一站</strong>，記下它的站號和可借數。</li><li>到同一個檔裡那個縣市的「原始表」工作表（台北看 <code>原始表_台北</code>，依此類推）。</li><li>按 <kbd>Ctrl</kbd>＋<kbd>F</kbd>，貼上站號，找到那一列。</li><li>對照欄位對照表，看那一列的「可借」欄：台北叫 <code>available_rent_bikes</code>、新北叫 <code>sbi_quantity</code>、台中叫 <code>sbi</code>。</li></ol>
 <p class="see"><span>你應該看到</span>例：台中市西區「科博館/金典酒店」，整理表可借 30；<code>原始表_台中</code> 第 128 列的 sbi 欄（K 欄）也是 30，左上角有綠色小三角，因為原檔把它存成文字。</p>
-<h3>回查卡（當堂交，交法老師上課時說）</h3>
-<div class="table-scroll"><table><tr><th></th><th>圖上的值</th><th>回到哪裡</th><th>一不一樣</th></tr><tr><td>合計值</td><td>例：台北市 27.5%</td><td>樞紐第幾列；整理表篩選後的加總</td><td></td></tr><tr><td>單站值</td><td>例：某站可借 30</td><td>原始表_？ 第幾列、哪一欄</td><td></td></tr></table></div>
-<p class="callout">不一樣也要誠實寫：寫出差在哪裡、你猜為什麼。沒做完寫「做到哪、卡在哪」，一樣算數。</p>
+<h3>做完了：上傳 Excel 檔</h3>
+<p>兩筆都找到了，就把 <code>整理表_縮小版.xlsx</code> 存檔，上傳到老師上課時開的 e學苑 作業。檔案裡要看得到樞紐、三格可借率、一張直條圖。</p>
+<p class="callout">對不上也照交，舉手給老師看差在哪裡。沒做完就交做到哪裡的版本，一樣算數。</p>
 <h2 id="section-6">6. 卡住了，再看這裡</h2>
 <details><summary>找不到「樞紐分析表」</summary><p>可能是網頁版或很舊的 Excel。改用第 7 節的 Google 試算表，評分一樣。</p></details>
 <details><summary>不小心把整理表改壞了</summary><p>關掉不存檔，重新從 e學苑 下載一份。</p></details>
