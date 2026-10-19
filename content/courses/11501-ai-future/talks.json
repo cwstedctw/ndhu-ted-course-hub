@@ -211,11 +211,11 @@
       "worksheetUrl": null,
       "materials": [
         {
-          "label": "講者投影片（PDF，61 頁；講者提供的同學書面檔）",
+          "label": "講者給同學的書面檔（PDF，61 頁，頁序與演講版相同）",
           "url": "https://drive.google.com/file/d/1m9mNGE0QKHSQiJqICakQXDqhBA4CBfFU/view"
         },
         {
-          "label": "投影片原檔（PowerPoint，演講版）",
+          "label": "演講版投影片原檔（PowerPoint，61 頁）",
           "url": "https://drive.google.com/file/d/1m9CLmjkUouejI3ubCfeIgzV6QYKX25B3/view"
         }
       ]
