@@ -8,7 +8,7 @@
 <ul><li><strong>只用台灣的開放資料</strong>（open data，政府或公部門公開、可以下載的資料）。來源在第 3 節。</li><li><strong>這頁的兩個範例（YouBike、空氣品質 AQI）不能當你的期中題目</strong>。範例只是示範怎麼走，你要換一份別的資料。</li><li><strong>AI 可以用，任何一套都可以</strong>（ChatGPT、Gemini、Claude……），但 AI 給你的每個數字都要回得去原始資料，報告最後一段要寫你用了什麼、驗了什麼。沒驗過的數字不能放進報告。</li></ul>
 <h3>交什麼、什麼時候</h3>
 <div class="table-scroll"><table><tr><th></th><th>AA</th><th>AB</th></tr><tr><td>停課週，自己做</td><td>10/26（一）光復節補假</td><td>10/27（二）不上課</td></tr><tr><td>交到 e學苑 W9 期中作業</td><td><strong>11/02（一）16:10 前</strong></td><td><strong>11/03（二）16:10 前</strong></td></tr><tr><td>上台報告</td><td>11/02 課堂</td><td>11/03 課堂</td></tr></table></div>
-<p>交兩個檔：<code>期中報告.docx</code>、<code>期中簡報.pptx</code>（Google 簡報或 Canva 做的，下載成 .pptx 或 .pdf）。逾期一週內八折，超過一週不收。持核准假單的人另約時間上台，同分。</p>
+<p>交兩個檔：<strong>報告一定要 <code>.docx</code></strong>（<code>期中報告.docx</code>）；<strong>簡報 <code>.pptx</code> 或 <code>.pdf</code> 都可以</strong>（Google 簡報或 Canva 做的就下載成其中一種）。逾期一週內八折，超過一週不收。持核准假單的人另約時間上台，同分。</p>
 <h2 id="section-2">2. 第一步：定一個問題</h2>
 <p>好問題的樣子：<strong>資料答得出來、一句話講得完、答案不是一眼就知道</strong>。四種最好下手：</p>
 <div class="table-scroll"><table><tr><th>類型</th><th>句型</th><th>會畫的圖</th></tr><tr><td>比大小、排名</td><td>哪個縣市（行政區、類別）的 ○○ 最多／最少？</td><td>長條圖</td></tr><tr><td>看變化</td><td>○○ 這幾年（這幾個月、一天之中）怎麼變？</td><td>折線圖</td></tr><tr><td>找關係</td><td>○○ 比較高的地方，△△ 是不是也比較高？</td><td>散佈圖</td></tr><tr><td>看組成</td><td>○○ 裡面，各類別各占多少？</td><td>長條圖（比圓餅圖好讀）</td></tr></table></div>
@@ -38,35 +38,37 @@
 <h2 id="section-4">4. 第三步：整理資料</h2>
 <p>整理的目的：讓每一列是一筆、每一欄是一種東西、數字真的是數字。三條路<strong>評分一樣</strong>，挑你順手的。</p>
 <h3>路 A：Excel 或 Google 試算表自己做</h3>
-<ol><li>開檔：CSV 用 資料 → 從文字/CSV 匯入，編碼選 <strong>UTF-8</strong>（不然中文會變亂碼）。</li><li>選整張表 → 插入 → 表格，勾「我的表格有標題」。</li><li>一欄一欄看：數字欄是不是靠右（靠左就是文字，要轉成數字）、有沒有空白、有沒有怪值（-1、999、「—」）。</li><li>不要的欄可以隱藏，<strong>不要刪原始工作表</strong>。另開一張工作表叫「整理表」做事。</li></ol>
-<h3>路 B：AI 網頁版的 Canvas 或 Artifacts</h3>
-<p>ChatGPT 和 Gemini 有 <strong>Canvas</strong>（畫布，旁邊開一個可以一起改的文件或程式區），Claude 有 <strong>Artifacts</strong>。上傳檔案，用白話請它做事。<strong>先問、再改</strong>，不要一開始就叫它「幫我分析」：</p>
+<ol><li>開檔：CSV 用 資料 → 從文字/CSV 匯入，編碼選 <strong>UTF-8</strong>（不然中文會變亂碼）。</li><li>選整張表 → 插入 → 表格，勾「我的表格有標題」。</li><li>一欄一欄看：數字欄是不是真的數字（靠左通常是文字；用 <code>=SUM(那一欄)</code> 試加，加起來是 0 或加不起來，就是文字，要轉成數字）、有沒有空白、有沒有怪值（-1、999、「—」）。</li><li>不要的欄可以隱藏，<strong>不要刪原始工作表</strong>。另開一張工作表叫「整理表」做事。</li></ol>
+<p>用 <strong>Google 試算表</strong>（學校帳號）：檔案 → 匯入 → 上傳 CSV；資料 → 建立篩選器；插入 → 資料透視表；做完 檔案 → 下載 → Microsoft Excel（.xlsx）。W7 <a href="../w07/student.html#section-7">學生頁第 7 節</a>有一樣的步驟（選單名稱以畫面為準）。</p>
+<h3>路 B：AI 網頁版，上傳檔案請它整理</h3>
+<p>在 ChatGPT、Gemini、Claude 這類 AI 網頁版的對話裡上傳檔案，用白話請它做事。有的會在旁邊開一個可以一起改的區塊（叫 Canvas 或 Artifacts），有的直接在對話裡跑程式給你結果，名稱不一樣、用法差不多。<strong>先問、再改</strong>，不要一開始就叫它「幫我分析」：</p>
 <pre><code>我上傳的是 &lt;資料名稱&gt;，來源 &lt;網址&gt;，&lt;下載日期時間&gt; 下載。
 先不要改任何資料。請告訴我：有幾列、幾欄、每一欄是什麼意思、
 哪些欄有空白或怪值、數字欄有沒有被當成文字。</code></pre>
 <p>看完它的回答，再一件一件請它做：</p>
 <pre><code>請把 &lt;欄位&gt; 轉成數字；空白的不要刪，標成「缺」，告訴我有幾列。
 做完給我下載 CSV（UTF-8），並列出你改了哪些東西。</code></pre>
+<p>它給不出下載檔，就請它把做法寫成 Python，改走路 C。</p>
 <h3>路 C：請 AI 寫 Python，在 Google Colab 跑</h3>
 <p>想看清楚每一步怎麼做的，請 AI 寫 <strong>Python</strong> 程式，貼到 <strong>Google Colab</strong>（用 Google 帳號開的線上筆記本，不用安裝）執行：</p>
 <pre><code>請寫一段 Python，在 Google Colab 執行：讀我上傳的 &lt;檔名&gt;，
 印出列數、欄名、每欄空白幾個，再把 &lt;欄位&gt; 轉成數字，
-存成 整理後.csv（UTF-8-BOM，Excel 打開才不會亂碼）。每一步加中文註解。</code></pre>
+存成 整理後.csv，用 encoding=&quot;utf-8-sig&quot;、index=False（Excel 打開才不會亂碼、不會多一欄編號）。每一步加中文註解。</code></pre>
 <p>程式跑出錯，把<strong>整段錯誤訊息</strong>貼回給 AI，說「這是錯誤，請修正，並告訴我原因」。</p>
 <h3>不管走哪條路，都要做這三件事</h3>
-<ol><li><strong>列數對一次</strong>：整理前幾列、整理後幾列，差多少、為什麼（刪了重複？標成缺？）。</li><li><strong>兩筆回查</strong>：隨便挑兩筆，回原始檔找同一筆，數字一樣才算數。</li><li><strong>寫下你怎麼處理怪東西</strong>：空白、怪值、英文名稱、重複列，各怎麼處理。這段直接放進報告。</li></ol>
-<p class="see"><span>你應該看到</span>一張整理表、整理前後的列數、兩筆回查（原始檔第幾列＝整理表第幾列）。</p>
+<ol><li><strong>列數對一次</strong>：整理前幾列、整理後幾列，差多少、為什麼（刪了重複？標成缺？）。</li><li><strong>兩筆回查</strong>：隨便挑兩筆，用<strong>不會重複的欄位</strong>（站號、測站編號、名稱＋行政區）回原始檔找同一筆，數字一樣才算數。整理時排序或刪過列，列號就對不上，不要用列號找。</li><li><strong>寫下你怎麼處理怪東西</strong>：空白、怪值、英文名稱、重複列，各怎麼處理。這段直接放進報告。</li></ol>
+<p class="see"><span>你應該看到</span>一張整理表、整理前後的列數、兩筆回查（用哪個欄位找、原始檔和整理表的數字各是多少）。</p>
 <details><summary>中文變亂碼</summary><p>檔案是 UTF-8，Excel 直接雙擊會用錯編碼。用「從文字/CSV 匯入」選 UTF-8，或存成 UTF-8-BOM。</p></details>
 <details><summary>日期變成一串數字（像 46316）</summary><p>那是 Excel 的日期序號。選那一欄 → 儲存格格式 → 日期。</p></details>
 <details><summary>AI 說有 100 列，我數是 84 列</summary><p>以你自己數的為準，跟 AI 說「我數到 84 列，請重算並說明差在哪」。AI 數錯很常見，這就是為什麼要回查。</p></details>
-<details><summary>範例 B 的英文縣市要轉中文</summary><p>做一張對照表（兩欄：英文、中文），用 XLOOKUP 或請 AI 照對照表換。對照表本身也要檢查一次。</p></details>
+<details><summary>範例 B 的英文縣市要轉中文</summary><p>做一張對照表（兩欄：英文、中文），用 XLOOKUP（照一個值去對照表查另一個值的公式，例如 <code>=XLOOKUP(B2, 對照表!A:A, 對照表!B:B)</code>，B2 是英文縣市）或請 AI 照對照表換。對照表本身也要檢查一次。</p></details>
 <h2 id="section-5">5. 第四步：分析、出圖</h2>
 <h3>一個問題配一張圖</h3>
 <div class="table-scroll"><table><tr><th>你的問題是</th><th>用這種圖</th></tr><tr><td>比大小、排名</td><td>長條圖（類別多就用橫條，由大排到小）</td></tr><tr><td>看變化</td><td>折線圖（橫軸是時間）</td></tr><tr><td>找關係</td><td>散佈圖（一個點是一筆）</td></tr></table></div>
 <h3>每張圖都要有四樣東西</h3>
-<ol><li><strong>標題</strong>：寫出結論或問題，例如「哪個縣市的 ○○ 最多（2026-10-21）」。</li><li><strong>單位</strong>：座標軸寫上單位（人、站、μg/m³、%）。</li><li><strong>來源與時間</strong>：圖下面一行小字「資料來源：○○，2026-10-21 10:00 下載」。</li><li><strong>看得懂的類別名稱</strong>：不要留英文代碼或欄位名。</li></ol>
+<ol><li><strong>標題</strong>：寫出結論或問題，例如「哪個縣市的 ○○ 最多（2026-10-21）」。</li><li><strong>單位</strong>：座標軸寫上單位（人、站、μg/m³、%）。</li><li><strong>來源與時間</strong>：一行小字「資料來源：○○，2026-10-21 10:00 下載」，<strong>放在圖裡面</strong>（Excel：圖表項目加「副標題」或插入文字方塊；AI／Colab：請它加在圖下方）。放在圖外的儲存格，複製圖時不會跟著走。</li><li><strong>看得懂的類別名稱</strong>：不要留英文代碼或欄位名。</li></ol>
 <h3>怎麼算、怎麼畫</h3>
-<ul><li><strong>Excel</strong>：插入 → 樞紐分析表，把分類欄拉到「列」、數字欄拉到「值」，再 插入 → 圖表（W7 做過）。比率要用<strong>合計 ÷ 合計</strong>，不要把每一筆的百分比拿來平均（W7 的可借率就是這個陷阱）。</li><li><strong>AI 的 Canvas／Artifacts</strong>：先叫它<strong>給你算好的表格</strong>，你核對一兩格，對了再叫它畫圖：</li></ul>
+<ul><li><strong>Excel</strong>：插入 → 樞紐分析表，把分類欄拉到「列」、數字欄拉到「值」，再 插入 → 圖表（W7 做過）。比率要用<strong>合計 ÷ 合計</strong>，不要把每一筆的百分比拿來平均（W7 的可借率就是這個陷阱）。</li><li><strong>AI 網頁版</strong>：先叫它<strong>給你算好的表格</strong>，你核對一兩格，對了再叫它畫圖：</li></ul>
 <pre><code>先用表格列出每個 &lt;分類&gt; 的 &lt;數字欄&gt; 合計，由大排到小，不要畫圖。
 我核對後，再請你畫長條圖：標題 &lt;…&gt;、Y 軸單位 &lt;…&gt;、圖下方寫資料來源與時間。</code></pre>
 <ul><li><strong>Colab</strong>：請 AI 用 matplotlib 畫，存成 PNG。</li></ul>
@@ -78,9 +80,9 @@
 <p>用 W5 的報告格式（<a href="https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-it-apply/w05/starter/%E5%A0%B1%E5%91%8A%E7%AF%84%E6%9C%AC_W5.docx" download>W5 報告範本</a>）：標題樣式、自動目錄、圖用「插入標號」、內文用「交互參照」寫「如圖 1 所示」。頁數不限，下面六段都要有：</p>
 <div class="table-scroll"><table><tr><th>段</th><th>寫什麼</th></tr><tr><td>一、問題</td><td>你的一句話問題，為什麼想知道</td></tr><tr><td>二、資料來源</td><td>來源三行（名稱與網址、下載時間、授權），資料有幾列、幾欄、用到哪幾欄</td></tr><tr><td>三、怎麼整理</td><td>空白、怪值、英文、重複怎麼處理；整理前後列數；兩筆回查</td></tr><tr><td>四、發現</td><td>每張圖一段：圖說了什麼、最高最低是誰、差多少。<strong>數字要寫出來</strong></td></tr><tr><td>五、限制</td><td>這份資料答不了什麼（只是某一刻的快照、有缺值的測站、只有部分縣市……）</td></tr><tr><td>六、AI 使用紀錄</td><td>用了哪一套 AI、做了哪幾件事、哪裡你自己驗過、哪裡發現 AI 錯了怎麼改。沒用 AI 就寫「本次未使用 AI」</td></tr></table></div>
 <h3>圖怎麼放進 Word</h3>
-<ul><li>Excel 的圖：點圖 → 複製 → 到 Word 貼上（貼成圖片比較不會跑版）。</li><li>AI 或 Colab 的圖：下載 PNG → Word 插入 → 圖片。</li><li>放好後：右鍵 → 插入標號 → 「圖 1 ○○○」；內文提到它時用 參考資料 → 交互參照，不要手打「圖 1」。</li></ul>
+<ul><li>Excel 的圖：點圖 → 複製 → 到 Word 貼上（貼成圖片比較不會跑版）。</li><li>AI 或 Colab 的圖：下載 PNG → Word 插入 → 圖片。</li><li>圖裡沒有來源那行，就寫在圖說下面一行。</li><li>放好後：右鍵 → 插入標號 → 「圖 1 ○○○」；內文提到它時用 參考資料 → 交互參照，不要手打「圖 1」。</li></ul>
 <p class="see"><span>你應該看到</span><code>期中報告.docx</code>：有目錄、圖有標號、內文用交互參照、六段都在。</p>
-<details><summary>圖貼進來很糊</summary><p>Excel 圖改用「選擇性貼上 → 圖片（增強型中繼檔）」；PNG 請 AI 存成 dpi 200 以上。</p></details>
+<details><summary>圖貼進來很糊</summary><p>Excel 圖改用「選擇性貼上 → 圖片（增強型中繼檔）」；PNG 請 AI 存成寬至少 1600 像素，貼進 Word 再縮小。</p></details>
 <details><summary>目錄頁碼不對</summary><p>目錄上按右鍵 → 更新功能變數 → 更新整個目錄。</p></details>
 <h2 id="section-7">7. 第六步：做簡報、上台</h2>
 <p>簡報從報告長出來，<strong>不要另外重寫一套</strong>。建議六頁：</p>
