@@ -421,6 +421,7 @@ a.card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(14, 124,
 .talk.tba { border-style: dashed; justify-content: center; }
 .talk.done .top { background: var(--ink-500); }
 .tag-done { font-size: 11px; background: var(--cream-200); color: var(--ink-60); border-radius: var(--radius-full); padding: 1px 8px; align-self: flex-start; }
+.tag-cancel { font-size: 12px; font-weight: 700; background: #FDECEC; color: #9B1C1C; border-radius: var(--radius-full); padding: 2px 9px; align-self: flex-start; }
 
 /* ── 7. 頁首（sticky）與頁尾 ── */
 .site-head {

@@ -6,6 +6,7 @@ import { asArray, hasText, withBase } from './pending';
 //   confirmed＝完整卡（海報／講題／講者／日期；time、venue null → 「時間待定」「地點待定」小字）
 //   tba＝水波占位卡（第 N 場＋「講者確認後公布」），仍可點入占位詳情頁（t01–t12 全建）
 //   done＝已結束角標＋materials 非空加「講座資料」標
+//   cancelled＝停課取消：卡片照留、海報轉灰，加紅色「<cancelNote>・本場取消」標
 // 整卡連到 /courses/{slug}/talks/{id}/；MOE 指標中文對照：legal 法律／ethical 倫理／application 應用。
 
 const MOE_LABELS = {
@@ -52,6 +53,8 @@ export default function TalksWall({ talks, courseSlug }) {
             }
 
             const done = t.status === 'done';
+            const cancelled = t.status === 'cancelled';
+            const cancelNote = hasText(t.cancelNote) ? t.cancelNote : '停課';
             const dateText = hasText(t.date) ? t.date : '日期待定';
             const title = hasText(t.title) ? t.title : '講題公布中';
             const speakerLine = [t.speaker?.name, t.speaker?.title, t.speaker?.org]
@@ -62,9 +65,9 @@ export default function TalksWall({ talks, courseSlug }) {
             return (
               <Link
                 key={t.id}
-                className={`talk${done ? ' done' : ''}`}
+                className={`talk${done ? ' done' : ''}${cancelled ? ' cancelled' : ''}`}
                 href={href}
-                aria-label={`第 ${t.no} 場：${title}（${dateText}${done ? '・已結束' : ''}）`}
+                aria-label={`第 ${t.no} 場：${title}（${dateText}${done ? '・已結束' : ''}${cancelled ? `・${cancelNote}，本場取消` : ''}）`}
               >
                 {hasText(t.poster) ? (
                   <img
@@ -82,6 +85,7 @@ export default function TalksWall({ talks, courseSlug }) {
                       background: 'var(--paper, #FDFAF2)',
                       display: 'block',
                       ...(done ? { filter: 'grayscale(0.35)' } : null),
+                      ...(cancelled ? { filter: 'grayscale(0.85)', opacity: 0.6 } : null),
                     }}
                   />
                 ) : null}
@@ -100,6 +104,7 @@ export default function TalksWall({ talks, courseSlug }) {
                       已結束{asArray(t.materials).length > 0 ? '・講座資料' : ''}
                     </span>
                   ) : null}
+                  {cancelled ? <span className="tag-cancel">{cancelNote}・本場取消</span> : null}
                   {moe.length > 0 ? (
                     <div className="moe">
                       {moe.map((m) => (

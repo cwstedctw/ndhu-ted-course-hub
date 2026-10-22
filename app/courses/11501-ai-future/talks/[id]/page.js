@@ -120,6 +120,14 @@ export async function generateMetadata({ params }) {
   const description =
     squeeze(talk.abstract) || `「${COURSE_FULL}」12 場系列演講第 ${no} 場。`;
 
+  if (talk.status === 'cancelled') {
+    const note = talk.cancelNote || '停課';
+    return {
+      title: `【${note}・本場取消】${title}`,
+      description: `第 ${no} 場因${note}取消。${description}`,
+    };
+  }
+
   const openGraph = { title, description };
   if (talk.poster) openGraph.images = [`${BASE}${talk.poster}`];
   return { title, description, openGraph };
@@ -135,6 +143,8 @@ export default async function TalkDetailPage({ params }) {
   const no = talkNo(talk);
   const isTba = talk.status === 'tba';
   const isDone = talk.status === 'done';
+  const isCancelled = talk.status === 'cancelled';
+  const cancelNote = talk.cancelNote || '停課';
   const jsonLd = buildEventJsonLd(talk);
   const dateText = formatDate(talk.date);
 
@@ -154,6 +164,7 @@ export default async function TalkDetailPage({ params }) {
         <p className="tdp-badges">
           <span className="tdp-no">第 {no} 場</span>
           {isDone ? <span className="tdp-done">已結束</span> : null}
+          {isCancelled ? <span className="tdp-cancel">{cancelNote}・本場取消</span> : null}
         </p>
         <h1>
           {talk.title
@@ -175,6 +186,13 @@ export default async function TalkDetailPage({ params }) {
           </ul>
         ) : null}
       </header>
+
+      {isCancelled ? (
+        <div className="tdp-cancel-box" role="status">
+          <strong>本場因{cancelNote}取消。</strong>
+          {dateText ? `原訂 ${dateText} 上午的演講不舉行，` : ''}當天不用到講堂。
+        </div>
+      ) : null}
 
       {isTba || !talk.speaker?.name ? (
         <div className="tdp-ripple" role="status">
@@ -337,6 +355,8 @@ const tdpCss = `
 .tdp-head { margin: 6px 0 18px; }
 .tdp-badges { margin: 0 0 4px; display: flex; gap: 8px; flex-wrap: wrap; }
 .tdp-no { font-size: 12.5px; background: var(--gold-tint, #F7EAD1); color: var(--gold-deep, #7A5A1E); border: 1px solid var(--gold, #D9A441); border-radius: 999px; padding: 2px 10px; font-weight: 700; }
+.tdp-cancel { font-size: 12.5px; font-weight: 700; background: #FDECEC; color: #9B1C1C; border-radius: 999px; padding: 2px 10px; }
+.tdp-cancel-box { margin: 16px 0; padding: 12px 16px; border-left: 4px solid #B42318; background: #FDECEC; color: #7A1A12; border-radius: 6px; line-height: 1.7; }
 .tdp-done { font-size: 12.5px; background: #ECE7D8; color: var(--ink-60, #5B584F); border-radius: 999px; padding: 2px 10px; }
 .tdp h1 { font-size: clamp(24px, 4vw, 32px); line-height: 1.4; margin: 8px 0 12px; }
 .tdp h2 { font-size: 19px; margin: 26px 0 10px; padding-left: 10px; border-left: 4px solid var(--teal, #0E7C7B); line-height: 1.4; }

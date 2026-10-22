@@ -49,6 +49,9 @@ export default function CoursePoster({ poster, courseName, talks, courseSlug, ma
 .cposter-hot:hover, .cposter-hot:focus-visible {
   outline: 3px solid var(--gold-500, #D9A441); outline-offset: 2px;
   background: rgba(255, 253, 248, 0.16); }
+.cposter-hot.cancelled { background: rgba(253, 250, 242, 0.62); }
+.cposter-chip-cancel { background: #B42318; opacity: 1; font-weight: 700; font-size: 12px; }
+.cposter-list .cancelled { color: #9B1C1C; }
 .cposter-chip { position: absolute; right: 4px; top: 4px; font-size: 11px; line-height: 1;
   padding: 4px 7px; border-radius: 999px;
   background: var(--ink-700, #4A463D); color: var(--surface-000, #FFFDF8); opacity: 0.92; }
@@ -89,15 +92,17 @@ export default function CoursePoster({ poster, courseName, talks, courseSlug, ma
               ? cells.map((c) => {
                   const t = c.talk;
                   const done = t.status === 'done';
+                  const cancelled = t.status === 'cancelled';
+                  const cancelNote = hasText(t.cancelNote) ? t.cancelNote : '停課';
                   const title = hasText(t.title) ? t.title : '講題公布中';
                   const label =
                     t.status === 'tba'
                       ? `第 ${t.no} 場：講者確認後公布`
-                      : `第 ${t.no} 場：${title}（${mdw(t.date) || '日期待定'}${done ? '・已結束' : ''}）——${t.speaker?.name || ''}`;
+                      : `第 ${t.no} 場：${title}（${mdw(t.date) || '日期待定'}${done ? '・已結束' : ''}${cancelled ? `・${cancelNote}，本場取消` : ''}）——${t.speaker?.name || ''}`;
                   return (
                     <Link
                       key={c.id}
-                      className="cposter-hot"
+                      className={`cposter-hot${cancelled ? ' cancelled' : ''}`}
                       href={`/courses/${courseSlug}/talks/${t.id}/`}
                       aria-label={label}
                       title={label}
@@ -112,6 +117,9 @@ export default function CoursePoster({ poster, courseName, talks, courseSlug, ma
                         <span className="cposter-chip">
                           已結束{asArray(t.materials).length > 0 ? '・有資料' : ''}
                         </span>
+                      ) : null}
+                      {cancelled ? (
+                        <span className="cposter-chip cposter-chip-cancel">{cancelNote}・取消</span>
                       ) : null}
                     </Link>
                   );
@@ -143,8 +151,9 @@ export default function CoursePoster({ poster, courseName, talks, courseSlug, ma
                   .sort((a, b) => (a.no || 0) - (b.no || 0))
                   .map((t) => {
                     const done = t.status === 'done';
+                    const cancelled = t.status === 'cancelled';
                     return (
-                      <li key={t.id} className={done ? 'done' : undefined}>
+                      <li key={t.id} className={done ? 'done' : cancelled ? 'cancelled' : undefined}>
                         <Link href={`/courses/${courseSlug}/talks/${t.id}/`}>
                           {mdw(t.date) || '日期待定'}・
                           {t.status === 'tba'
@@ -152,6 +161,7 @@ export default function CoursePoster({ poster, courseName, talks, courseSlug, ma
                             : `${t.speaker?.name || ''}——${hasText(t.title) ? t.title : '講題公布中'}`}
                         </Link>
                         {done ? '（已結束）' : ''}
+                        {cancelled ? `（${hasText(t.cancelNote) ? t.cancelNote : '停課'}，本場取消）` : ''}
                       </li>
                     );
                   })}

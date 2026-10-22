@@ -65,7 +65,8 @@
           "enum": [
             "confirmed",
             "tba",
-            "done"
+            "done",
+            "cancelled"
           ]
         },
         "date": {
@@ -234,6 +235,12 @@
             }
           },
           "description": "站內短片（mp4 放 public/videos/、封面圖放 public/images/），沒有就省略"
+        },
+        "cancelNote": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20,
+          "description": "停課原因短標（例：颱風停課），status=cancelled 時必填；海報牆角標、單場頁徽章都用這一句"
         }
       },
       "allOf": [
@@ -266,6 +273,26 @@
               "moe": {
                 "type": "array",
                 "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "cancelled"
+              }
+            }
+          },
+          "then": {
+            "$comment": "cancelled＝原訂場次停課取消、不補場：講者與講題照留（學生要知道是哪一場沒了），但要寫停課原因、日期要在。",
+            "required": [
+              "cancelNote"
+            ],
+            "properties": {
+              "date": {
+                "type": "string"
               }
             }
           }

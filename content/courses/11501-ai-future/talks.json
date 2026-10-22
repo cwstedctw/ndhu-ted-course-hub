@@ -148,7 +148,8 @@
     {
       "id": "t04",
       "no": 4,
-      "status": "confirmed",
+      "status": "cancelled",
+      "cancelNote": "颱風停課",
       "date": "2026-10-23",
       "time": "09:30",
       "venue": "理工二館 ZT講堂 C101",
