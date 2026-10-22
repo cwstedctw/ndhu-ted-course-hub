@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>這條線為什麼不亮</title>
+<meta name="description" content="創客入門第 2 週補充：五種常見接法，先猜燈會不會亮，再按播放看電流走到哪裡停。Wokwi 不會報錯，但它是錯的。">
+</head>
+<body>
+<style>
+  :root {
+    --c-primary: #D13B00; --c-primary-deep: #A32E00; --c-primary-bright: #FF8A5C; --c-primary-tint: #FFE3D6; --c-primary-pale: #FFF1E8;
+    --c-mint: #7FD8BE; --c-mint-deep: #2F8A6F; --c-mint-tint: #DFF5EE;
+    --c-yellow: #FFD66B; --c-yellow-deep: #9A6B00; --c-yellow-tint: #FFF2CE;
+    --c-alert: #B00020; --c-alert-tint: #FDE7EA;
+    --c-bg: #FFF9F2; --c-surface: #FFFFFF; --c-surface-2: #FBF3EA; --c-line: #EAD8C8; --c-line-soft: #F3E4D8;
+    --c-ink: #2D3142; --c-ink-soft: #4A4F63; --c-ink-faint: #8A8FA3;
+    --c-code-bg: #F4F1FB; --c-code-line: #E4DDF5; --c-code-ink: #3B3457;
+    --c-wire: #2D3142; --c-wire-off: #C9BFB8; --c-board: #1F3A2E; --c-board-edge: #0F241C; --c-board-ink: #E8F3EC; --c-pin: #C9A227; --c-module: #6B7280;
+    --c-particle: #FF8A5C; --c-particle-core: #D13B00;
+    --c-meter-bg: #1E2230; --c-meter-ink: #F4ECD8; --c-meter-dim: #8A8FA3;
+    --font-zh: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-primary: #FFA57D; --c-primary-deep: #FFC0A0; --c-primary-bright: #C9532A; --c-primary-tint: #4A2A1C; --c-primary-pale: #33211A;
+      --c-mint: #2A7D63; --c-mint-deep: #7FD8BE; --c-mint-tint: #1E3A33;
+      --c-yellow: #8A6B1E; --c-yellow-deep: #FFD66B; --c-yellow-tint: #3A3220;
+      --c-alert: #FF6B7A; --c-alert-tint: #4A1F26;
+      --c-bg: #1A1614; --c-surface: #241E1B; --c-surface-2: #2C2522; --c-line: #3A302A; --c-line-soft: #332A25;
+      --c-ink: #F2EAE4; --c-ink-soft: #C9BFB8; --c-ink-faint: #8C817A;
+      --c-code-bg: #1F1B2E; --c-code-line: #332C4A; --c-code-ink: #D6CFEA;
+      --c-wire: #F2EAE4; --c-wire-off: #5E534C; --c-board: #163026; --c-board-edge: #0A1A13; --c-board-ink: #DCEBE2; --c-pin: #E0B840; --c-module: #9AA3AE;
+      --c-particle: #FFB38A; --c-particle-core: #FF7A3D;
+      --c-meter-bg: #12151E; --c-meter-ink: #F4ECD8; --c-meter-dim: #7E8398;
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-primary: #FFA57D; --c-primary-deep: #FFC0A0; --c-primary-bright: #C9532A; --c-primary-tint: #4A2A1C; --c-primary-pale: #33211A;
+    --c-mint: #2A7D63; --c-mint-deep: #7FD8BE; --c-mint-tint: #1E3A33;
+    --c-yellow: #8A6B1E; --c-yellow-deep: #FFD66B; --c-yellow-tint: #3A3220;
+    --c-alert: #FF6B7A; --c-alert-tint: #4A1F26;
+    --c-bg: #1A1614; --c-surface: #241E1B; --c-surface-2: #2C2522; --c-line: #3A302A; --c-line-soft: #332A25;
+    --c-ink: #F2EAE4; --c-ink-soft: #C9BFB8; --c-ink-faint: #8C817A;
+    --c-code-bg: #1F1B2E; --c-code-line: #332C4A; --c-code-ink: #D6CFEA;
+    --c-wire: #F2EAE4; --c-wire-off: #5E534C; --c-board: #163026; --c-board-edge: #0A1A13; --c-board-ink: #DCEBE2; --c-pin: #E0B840; --c-module: #9AA3AE;
+    --c-particle: #FFB38A; --c-particle-core: #FF7A3D;
+    --c-meter-bg: #12151E; --c-meter-ink: #F4ECD8; --c-meter-dim: #7E8398;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--c-bg); color: var(--c-ink); font-family: var(--font-zh); font-size: 14px; line-height: 1.6; }
+  button, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--c-primary); outline-offset: 2px; }
+  .wrap { padding: 8px 16px 12px; display: flex; justify-content: center; }
+  .col { width: 100%; max-width: 1320px; display: flex; flex-direction: column; gap: 8px; }
+  .appbar { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 2px 4px 0; }
+  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--c-primary); white-space: nowrap; }
+  .kicker .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c-primary-bright); }
+  h1 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 800; }
+  .about { font-size: 13px; color: var(--c-ink-soft); max-width: 46em; }
+  .about summary { cursor: pointer; font-weight: 700; color: var(--c-primary); list-style: none; }
+  .about summary::-webkit-details-marker { display: none; }
+  .about summary::before { content: "＋ "; }
+  .about[open] summary::before { content: "－ "; }
+  .about p { margin: 6px 0 0; }
+  .about b { color: var(--c-ink); }
+
+  .bench { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 12px; align-items: start; }
+  @media (max-width: 960px) { .bench { grid-template-columns: 1fr; } }
+  .stage { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 16px; padding: 8px 12px 10px; display: flex; flex-direction: column; gap: 8px; }
+  .stage svg { width: auto; max-width: 100%; height: auto; max-height: calc(100vh - 228px); min-height: 300px; display: block; margin: 0 auto; }
+  figure { margin: 0; position: relative; }
+
+  /* 題目列 */
+  .qbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 2px 4px 8px; border-bottom: 2px solid var(--c-line-soft); }
+  .qbar .lbl { font-size: 13px; font-weight: 700; color: var(--c-ink-soft); margin-right: 4px; }
+  .qbtn { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 10px; padding: 5px 10px; font-weight: 700; font-size: 13px; color: var(--c-ink-soft); }
+  .qbtn[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary); }
+  .qbtn.done::after { content: " ✓"; }
+  .qbtn.done.wrong::after { content: " ✗"; }
+
+  /* 猜 → 播放 → 結果 */
+  .flow { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; padding: 2px 4px 0; }
+  .step { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .step .n { width: 24px; height: 24px; border-radius: 50%; background: var(--c-ink); color: var(--c-bg); font-weight: 800; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; }
+  .step .t { font-weight: 700; font-size: 14px; }
+  .guess { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 10px; padding: 5px 12px; font-weight: 800; font-size: 15px; }
+  .guess:disabled { cursor: default; opacity: .55; }
+  .guess:disabled[aria-pressed="true"] { opacity: 1; }
+  .guess[aria-pressed="true"] { background: var(--c-mint-deep); color: #F2FBF7; border-color: var(--c-mint-deep); }
+  .play { border: 0; background: var(--c-primary); color: #FFF7F2; border-radius: 10px; padding: 6px 18px; font-weight: 800; font-size: 15px; }
+  .play:disabled { opacity: .4; cursor: not-allowed; }
+  .verdict { font-size: 15px; font-weight: 800; min-height: 1.5em; }
+  .verdict.ok { color: var(--c-mint-deep); }
+  .verdict.no { color: var(--c-alert); }
+  .why { position: absolute; right: 8px; top: 30px; max-width: 36%; font-size: 13px; line-height: 1.5; padding: 8px 12px; border-radius: 10px; background: var(--c-yellow-tint); border: 1.5px solid var(--c-yellow); color: var(--c-ink); box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+  .why b { color: var(--c-primary-deep); }
+  .why:empty { display: none; }
+  @media (max-width: 960px) { .why { position: static; max-width: none; margin-top: 8px; } }
+  .score { font-size: 13px; color: var(--c-ink-faint); }
+
+  /* 右欄 */
+  .panel { display: flex; flex-direction: column; gap: 8px; position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; padding-right: 2px; }
+  @media (max-width: 960px) { .panel { position: static; max-height: none; } }
+  .group { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 12px; padding: 6px 12px 8px; display: flex; flex-direction: column; gap: 6px; }
+  h3 { margin: 0; font-size: 14px; font-weight: 800; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  h3 .hint { font-size: 12px; font-weight: 600; color: var(--c-ink-faint); }
+  .code { margin: 0; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 10px 12px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.45; color: var(--c-code-ink); overflow-x: auto; white-space: pre; }
+  .code .cm { opacity: .6; }
+  .code .pin { background: var(--c-primary-tint); border-radius: 4px; padding: 0 4px; margin: 0 -4px; cursor: pointer; font-weight: 700; }
+  .code .pin:hover, .code .pin.on { outline: 2px solid var(--c-primary); }
+  .wirelist { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+  .wirelist li { display: grid; grid-template-columns: 14px 1fr; gap: 8px; align-items: center; }
+  .wirelist .sw { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid var(--c-line); }
+  .wirelist li.bad { color: var(--c-alert); font-weight: 700; }
+  .check { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--c-ink-soft); cursor: pointer; }
+  .check input { width: 16px; height: 16px; accent-color: var(--c-primary); }
+  .speedrow { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 8px; align-items: center; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); }
+  input[type="range"] { accent-color: var(--c-primary); width: 100%; }
+  .spd { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; min-width: 4em; text-align: right; font-size: 13px; }
+  .tiny { font-size: 12px; color: var(--c-ink-faint); }
+  .foot { font-size: 12px; color: var(--c-ink-faint); border-top: 2px solid var(--c-line-soft); padding-top: 6px; display: flex; flex-wrap: wrap; gap: 2px 18px; }
+  @media (max-height: 720px) { .foot { display: none; } .stage svg { max-height: calc(100vh - 182px); } }   /* 投影沒全螢幕時把版面讓給圖 */
+  .foot a { color: var(--c-primary); }
+
+  /* SVG */
+  .board { fill: var(--c-board); stroke: var(--c-board-edge); stroke-width: 2; }
+  .module { fill: var(--c-module); stroke: var(--c-board-edge); stroke-width: 1.5; }
+  .usb { fill: #9AA3AE; stroke: var(--c-board-edge); stroke-width: 1.5; }
+  .pin { fill: var(--c-pin); stroke: var(--c-board-edge); stroke-width: 1; }
+  .pin.hot { fill: var(--c-primary-bright); stroke: var(--c-primary); stroke-width: 2; }
+  .pinlbl { font-family: var(--font-mono); font-size: 10px; fill: var(--c-board-ink); }
+  .pinlbl.key { font-weight: 800; font-size: 14px; }
+  .pin.key { stroke: var(--c-board-ink); stroke-width: 1.6; }
+  .pinlbl.hot { fill: var(--c-primary-bright); font-weight: 800; }
+  .boardtxt { font-family: var(--font-zh); font-size: 11px; fill: var(--c-board-ink); opacity: .85; }
+  .lbl { font-family: var(--font-zh); font-size: 12px; fill: var(--c-ink-soft); }
+  .lbl-b { font-family: var(--font-zh); font-size: 12px; font-weight: 800; fill: var(--c-ink); }
+  .lbl-s { font-family: var(--font-zh); font-size: 11px; fill: var(--c-ink-faint); }
+  .lbl-t { font-family: var(--font-zh); font-size: 13px; font-weight: 800; fill: var(--c-ink-faint); letter-spacing: .06em; }
+  .mono { font-family: var(--font-mono); }
+  .wire { fill: none; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+  .wire.orange { stroke: #E07A1F; } .wire.black { stroke: #2D3142; } .wire.red { stroke: #C8102E; } .wire.green { stroke: #2F8A6F; }
+  :root[data-theme="dark"] .wire.black { stroke: #B8B0A8; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .wire.black { stroke: #B8B0A8; } }
+  .wire.ghost { stroke: var(--c-wire-off); stroke-dasharray: 6 6; }
+  .led-body { stroke: var(--c-wire); stroke-width: 2; }
+  .led-halo { transition: opacity .3s; }
+  .ray { stroke: var(--c-yellow-deep); stroke-width: 2; fill: none; }
+  .rayhead { fill: var(--c-yellow-deep); }
+  .res { stroke: var(--c-wire); stroke-width: 2.5; fill: none; stroke-linejoin: round; }
+  .gndsym { stroke: var(--c-wire); stroke-width: 2.5; }
+  .pt { fill: var(--c-particle); } .pt-core { fill: var(--c-particle-core); }
+  .chev { fill: var(--c-ink-faint); opacity: .8; }
+  .stopmark { fill: none; stroke: var(--c-alert); stroke-width: 3; }
+  .stoptxt { font-family: var(--font-zh); font-size: 12px; font-weight: 800; fill: var(--c-alert); }
+  .legend { font-family: var(--font-zh); font-size: 10.5px; fill: var(--c-ink-faint); }
+</style>
+
+<div class="wrap"><div class="col">
+  <header class="appbar">
+    <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <span class="kicker"><span class="dot"></span><span>創客入門 · 第 2 週</span></span>
+      <h1>這條線為什麼不亮</h1>
+    </div>
+    <details class="about">
+      <summary>這一頁在做什麼</summary>
+      <p>Wokwi 裡接線接錯，<b>不會有錯誤訊息</b>，燈就是不亮。這一頁把五種最常見的接法排成五題：先猜燈會怎樣，再按播放，看電（橘色小點）走到哪裡停下來。電要從腳位出發、經過燈和電阻、回到 GND（地）繞成一圈，燈才會亮；路斷掉時小點停在斷點，那是幫你找斷在哪，真實情況是整條線都沒電在流。腳位名稱和接法照 Wokwi，畫面是簡化圖；程式就是課堂那支。這頁不能幫你接線，接線要回 Wokwi 自己來。「為什麼一定要有電阻」這頁先不管，之後講腳位那一週用「腳位透視鏡」看。</p>
+    </details>
+  </header>
+
+  <section class="bench" aria-label="工作台">
+    <div class="stage">
+      <div class="qbar" id="qbar" role="group" aria-label="題目">
+        <span class="lbl">第幾題</span>
+        <button class="qbtn" data-q="0" aria-pressed="true">1 課堂那樣接</button>
+        <button class="qbtn" data-q="1" aria-pressed="false">2 忘了接地</button>
+        <button class="qbtn" data-q="2" aria-pressed="false">3 燈插反了</button>
+        <button class="qbtn" data-q="3" aria-pressed="false">4 程式寫 25</button>
+        <button class="qbtn" data-q="4" aria-pressed="false">5 線接到 3V3</button>
+        <span class="score" id="score"></span>
+      </div>
+
+      <div class="flow" id="flowBox">
+        <div class="step"><span class="n">1</span><span class="t">先猜：按播放後，燈會怎樣？</span>
+          <button class="guess" data-g="blink" aria-pressed="false">會閃</button>
+          <button class="guess" data-g="on" aria-pressed="false">一直亮</button>
+          <button class="guess" data-g="off" aria-pressed="false">不亮</button>
+        </div>
+        <div class="step"><span class="n">2</span>
+          <button class="play" id="btnPlay" disabled>▶ 播放</button>
+          <button class="qbtn" id="btnReset" hidden>重來這題</button>
+        </div>
+        <div class="step"><span class="n">3</span><span class="verdict" id="verdict">先猜，再播放。</span></div>
+      </div>
+
+      <figure>
+        <svg id="sch" viewBox="0 0 1000 520" role="img" aria-label="ESP32 開發板與一顆 LED、一顆電阻的接線圖；依題目不同，線接在不同腳位，播放後用小點顯示電流走到哪裡。" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="ahRay" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="rayhead"></path></marker>
+          </defs>
+          <text class="lbl-t" x="24" y="22">ESP32 開發板（跟 Wokwi 那塊一樣，DevKit C v4）</text>
+          <text class="lbl-t" x="560" y="22">外面接的零件</text>
+
+          <!-- 板子 -->
+          <rect class="board" x="120" y="52" width="300" height="430" rx="12"></rect>
+          <rect class="module" x="205" y="64" width="130" height="118" rx="4"></rect>
+          <text class="boardtxt" x="270" y="128" text-anchor="middle">ESP32-WROOM-32</text>
+          <rect class="usb" x="248" y="470" width="44" height="22" rx="3"></rect>
+          <text class="boardtxt" x="270" y="506" text-anchor="middle">USB</text>
+          <g id="pins"></g>
+
+          <!-- 線與零件（程式依題目畫） -->
+          <g id="wires"></g>
+          <g id="parts"></g>
+          <g id="chevrons"></g>
+          <g id="particles"></g>
+          <g id="marks"></g>
+          <text class="legend" x="24" y="516">橘色小點＝電流。小點停住的地方＝路斷在哪。</text>
+        </svg>
+        <div class="why" id="why"></div>
+      </figure>
+    </div>
+
+    <aside class="panel" id="panelBox" aria-label="這一題的程式與接線">
+      <div class="group">
+        <h3>這一題的程式 <span class="hint">課堂那支 main.py</span></h3>
+        <pre class="code" id="code"></pre>
+        <p class="tiny">點程式裡的號碼，板子上那支腳位會亮。</p>
+      </div>
+      <div class="group">
+        <h3>這一題的接線 <span class="hint">Wokwi 裡的三條線</span></h3>
+        <ul class="wirelist" id="wirelist"></ul>
+      </div>
+      <div class="group">
+        <div class="speedrow" title="只放慢小點；燈照程式每半秒亮一次、暗一次"><span>慢動作</span><input type="range" id="rngSpeed" min="0.1" max="2" step="0.1" value="0.5" aria-label="慢動作倍率（只放慢小點；燈照程式每半秒亮暗一次）"><span class="spd" id="spdTxt">0.5×</span></div>
+      </div>
+      <div class="group">
+        <h3>接下來 <span class="hint">回到 Wokwi</span></h3>
+        <p class="tiny" style="margin:0">這五題在 Wokwi 都不會出現錯誤訊息。燈不亮先看三件事：程式裡的號碼、線接的號碼、有沒有回到 GND。</p>
+      </div>
+    </aside>
+  </section>
+
+  <footer class="foot">
+    <span>板子腳位排列依 Wokwi 的 ESP32 DevKit C v4；接法依課堂 Wokwi 專案（紅燈接 16 號腳位、220 Ω、GND）。</span>
+    <span>國立東華大學通識課《創客入門—智慧生活裝置實作》教材，配合第 2 週「電子元件與 Wokwi 入門」使用。</span>
+  </footer>
+</div></div>
+
+<script>
+(function () {
+  'use strict';
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function $(id) { return document.getElementById(id); }
+
+  /* ---------- 板子腳位（Wokwi DevKit C v4 的排列） ---------- */
+  var LEFT = ['3V3','EN','VP','VN','34','35','32','33','25','26','27','14','12','GND','13','D2','D3','CMD','5V'];
+  var RIGHT = ['GND','23','22','TX','RX','21','GND','19','18','5','17','16','4','0','2','15','D1','D0','CLK'];
+  var Y0 = 66, DY = 20, XL = 140, XR = 400;
+  var PIN = {};   // 名稱 → {x, y}（GND 三支的編號照 Wokwi：GND.1 左排、GND.2 右上、GND.3 右中）
+  var KEY = ['16', '25', '3V3', 'GND'];   // 這頁會用到的腳位，字加大
+  function drawPins() {
+    var g = $('pins'), h = '';
+    LEFT.forEach(function (n, i) {
+      var y = Y0 + i * DY, id = n === 'GND' ? 'GND.1' : n, key = KEY.indexOf(n) >= 0;
+      PIN[id] = { x: XL, y: y };
+      h += '<rect class="pin' + (key ? ' key' : '') + '" id="pin-' + id + '" x="' + (XL - 6) + '" y="' + (y - 6) + '" width="12" height="12" rx="2"></rect>';
+      h += '<text class="pinlbl' + (key ? ' key' : '') + '" id="lbl-' + id + '" x="' + (XL + 12) + '" y="' + (y + (key ? 5 : 4)) + '">' + n + '</text>';
+    });
+    var gndR = 0;
+    RIGHT.forEach(function (n, i) {
+      var y = Y0 + i * DY, id = n;
+      if (n === 'GND') { gndR++; id = gndR === 1 ? 'GND.2' : 'GND.3'; }
+      var key = KEY.indexOf(n) >= 0;
+      PIN[id] = { x: XR, y: y };
+      h += '<rect class="pin' + (key ? ' key' : '') + '" id="pin-' + id + '" x="' + (XR - 6) + '" y="' + (y - 6) + '" width="12" height="12" rx="2"></rect>';
+      h += '<text class="pinlbl' + (key ? ' key' : '') + '" id="lbl-' + id + '" x="' + (XR - 12) + '" y="' + (y + (key ? 5 : 4)) + '" text-anchor="end">' + n + '</text>';
+    });
+    g.innerHTML = h;
+  }
+  drawPins();
+
+  /* ---------- 零件位置（照課堂 Wokwi 專案：燈在右邊、電阻在下面） ---------- */
+  var LED = { x: 640, top: 250, bot: 310 };     // 直立：上端接腳 A、下端接腳 B（哪端是＋看題目）
+  var RES = { x: 640, top: 350, bot: 420 };
+
+  /* ---------- 五題 ---------- */
+  // wiring：從腳位到燈上端、燈下端到電阻、電阻到哪裡；ledFlip＝燈是否反插（長腳在下）；codePin＝程式寫幾號
+  var Q = [
+    { name: '課堂那樣接', src: '16', ledFlip: false, ret: 'GND.3', codePin: 16, lit: true,
+      why: '電從 <b>16 號腳位</b>出來 → 進燈的長腳（＋）→ 出短腳（－）→ 經過電阻 → 回到 <b>GND</b>。繞成一圈，電通了；程式每半秒寫 1、寫 0，燈就跟著<b>亮半秒、暗半秒</b>。這就是課堂 Wokwi 專案的接法。' },
+    { name: '忘了接地', src: '16', ledFlip: false, ret: null, codePin: 16, lit: false,
+      why: '電阻後面<b>沒路了</b>，沒有回到 GND（回家）。電要繞成一圈才會流；沒繞成一圈，真實情況是<b>整條線都沒有電在流</b>，燈不亮，Wokwi 也不會說什麼。（小點走到斷點停住，只是在幫你找路斷在哪。）' },
+    { name: '燈插反了', src: '16', ledFlip: true, ret: 'GND.3', codePin: 16, lit: false,
+      why: 'LED 是<b>單行道</b>：電只能從長腳（＋）進、短腳（－）出。反著插，路在燈這裡是斷的，整條線沒有電在流，燈不亮，Wokwi 一樣不會報錯。Wokwi 裡把 LED 轉 180 度、或兩條線接反，就是這題。（動畫讓小點停在燈前面，是在指出路斷在哪。）' },
+    { name: '程式寫 25', src: '16', ledFlip: false, ret: 'GND.3', codePin: 25, lit: false,
+      why: '程式把電送到 <b>25 號</b>腳位，可是線接在 <b>16 號</b>。25 號有電、沒人接；16 號有線、沒電。沒有錯誤訊息，燈也不亮。這就是「<b>沒報錯，不等於做對</b>」。' },
+    { name: '線接到 3V3', src: '3V3', ledFlip: false, ret: 'GND.3', codePin: 16, lit: true, always: true,
+      why: '<b>3V3</b> 這支腳位一直有 3.3 伏特的電，它不聽程式的話。燈會一直亮、不閃，程式寫 0 也不會暗。燈亮了不代表程式在控制它。' }
+  ];
+  var cur = 0, guess = null, played = false, started = false, demoDone = false, projMode = false, results = {};   // results[i] = { right, guess }；demoDone＝這題用投影模式播過；projMode＝網址 ?play=1 開的投影模式（換題不用猜、不計分）
+  function answerOf(q) { return q.always ? 'on' : (q.lit ? 'blink' : 'off'); }
+  var ANS_TXT = { blink: '燈會閃（照程式）', on: '燈一直亮、不閃', off: '燈不亮' };
+  var S = { speed: 0.5 };
+
+  /* ---------- 畫線與零件 ---------- */
+  function wireEl(pts, color, id) {
+    var p = document.createElementNS(SVGNS, 'polyline');
+    p.setAttribute('points', pts.map(function (q) { return q[0] + ',' + q[1]; }).join(' '));
+    p.setAttribute('class', 'wire ' + color); if (id) p.id = id;
+    return p;
+  }
+  var curPathPts = null, stopAt = null, stopText = '';
+  function buildScene(q) {
+    var W = $('wires'), P = $('parts'), M = $('marks');
+    W.innerHTML = ''; P.innerHTML = ''; M.innerHTML = '';
+    document.querySelectorAll('.pin.hot, .pinlbl.hot').forEach(function (e) { e.classList.remove('hot'); });
+    var src = PIN[q.src];
+    // 1) 腳位 → 燈上端（3V3 那題從板子上方繞過來，會跨過回地的線一次：畫一個小拱橋表示沒相連）
+    var g = q.ret ? PIN[q.ret] : null;
+    var w1 = [[src.x, src.y]];
+    if (q.src === '3V3') {
+      w1.push([src.x, 40]); w1.push([600, 40]);
+      if (g) {   // 往下會跨過回地的黑線一次：紅線在交叉點畫一個小拱橋（折線本身凸起，粒子也跟著走），表示沒相連
+        w1.push([600, g.y - 9]);
+        for (var k = 1; k < 8; k++) { var a = -Math.PI / 2 + Math.PI * k / 8; w1.push([600 + 9 * Math.cos(a), g.y + 9 * Math.sin(a)]); }
+        w1.push([600, g.y + 9]);
+      }
+      w1.push([600, LED.top - 25]); w1.push([LED.x, LED.top - 25]); w1.push([LED.x, LED.top]);
+    }
+    else { w1.push([560, src.y]); w1.push([560, LED.top - 30]); w1.push([LED.x, LED.top - 30]); w1.push([LED.x, LED.top]); }
+    // 3) 電阻下端 → GND（或沒接）：從右邊繞上去接 GND，不跟 16 號那條線交叉；黑線先畫，紅線的拱橋才會壓在它上面
+    var w3;
+    if (g) { w3 = [[RES.x, RES.bot], [RES.x, RES.bot + 20], [700, RES.bot + 20], [700, g.y], [g.x, g.y]]; W.appendChild(wireEl(w3, 'black', 'w3')); }
+    else { w3 = [[RES.x, RES.bot], [RES.x, RES.bot + 24]]; W.appendChild(wireEl(w3, 'ghost', 'w3')); }
+    W.appendChild(wireEl(w1, q.src === '3V3' ? 'red' : 'orange', 'w1'));
+    // 2) 燈下端 → 電阻上端
+    W.appendChild(wireEl([[LED.x, LED.bot], [LED.x, RES.top]], 'black', 'w2'));
+    // 燈：三角形朝下＝電從上往下走（正常插法：上端是長腳＋）
+    var h = '';
+    var flip = q.ledFlip;
+    h += '<circle id="halo" class="led-halo" cx="' + LED.x + '" cy="' + ((LED.top + LED.bot) / 2) + '" r="34" fill="#E5322D" opacity="0"></circle>';
+    if (!flip) h += '<polygon id="ledTri" class="led-body" points="' + (LED.x - 16) + ',' + (LED.top + 8) + ' ' + (LED.x + 16) + ',' + (LED.top + 8) + ' ' + LED.x + ',' + (LED.bot - 8) + '" fill="#E5322D" fill-opacity=".18"></polygon><line class="led-body" x1="' + (LED.x - 16) + '" y1="' + (LED.bot - 8) + '" x2="' + (LED.x + 16) + '" y2="' + (LED.bot - 8) + '"></line>';
+    else h += '<polygon id="ledTri" class="led-body" points="' + (LED.x - 16) + ',' + (LED.bot - 8) + ' ' + (LED.x + 16) + ',' + (LED.bot - 8) + ' ' + LED.x + ',' + (LED.top + 8) + '" fill="#E5322D" fill-opacity=".18"></polygon><line class="led-body" x1="' + (LED.x - 16) + '" y1="' + (LED.top + 8) + '" x2="' + (LED.x + 16) + '" y2="' + (LED.top + 8) + '"></line>';
+    h += '<line class="wire black" x1="' + LED.x + '" y1="' + LED.top + '" x2="' + LED.x + '" y2="' + (LED.top + 8) + '"></line>';
+    h += '<line class="wire black" x1="' + LED.x + '" y1="' + (LED.bot - 8) + '" x2="' + LED.x + '" y2="' + LED.bot + '"></line>';
+    h += '<g id="rays" opacity="0"><line class="ray" x1="' + (LED.x + 20) + '" y1="' + (LED.top + 10) + '" x2="' + (LED.x + 36) + '" y2="' + (LED.top - 6) + '" marker-end="url(#ahRay)"></line><line class="ray" x1="' + (LED.x + 26) + '" y1="' + (LED.top + 26) + '" x2="' + (LED.x + 44) + '" y2="' + (LED.top + 12) + '" marker-end="url(#ahRay)"></line></g>';
+    h += '<text class="lbl-b" x="' + (LED.x + 30) + '" y="' + ((LED.top + LED.bot) / 2 + 4) + '">紅燈 LED</text>';
+    h += '<text class="lbl-s" x="' + (LED.x + 30) + '" y="' + ((LED.top + LED.bot) / 2 + 20) + '">' + (flip ? '長腳（＋）在下面：插反了' : '長腳（＋）在上面') + '</text>';
+    h += '<text class="lbl-s mono" x="' + (LED.x - 24) + '" y="' + (LED.top + 4) + '" text-anchor="end">' + (flip ? '－' : '＋') + '</text>';
+    h += '<text class="lbl-s mono" x="' + (LED.x - 24) + '" y="' + (LED.bot + 4) + '" text-anchor="end">' + (flip ? '＋' : '－') + '</text>';
+    // 電阻（直立鋸齒）
+    h += '<path class="res" d="M' + RES.x + ',' + RES.top + ' l-8,5 l16,10 l-16,10 l16,10 l-16,10 l16,10 l-16,10 l8,5"></path>';
+    h += '<text class="lbl-b" x="' + (RES.x + 30) + '" y="' + ((RES.top + RES.bot) / 2 + 4) + '">電阻 220 Ω</text>';
+    h += '<text class="lbl-s" x="' + (RES.x + 30) + '" y="' + ((RES.top + RES.bot) / 2 + 20) + '">不分方向</text>';
+    P.innerHTML = h;
+    hotOn = false;   // 程式寫的那支腳位：點程式裡的號碼才亮、按播放也亮（進場不先亮，免得劇透）
+    // 粒子路徑與斷點；reveal＝播放後才出現的字（播放前出現等於把答案先講掉）
+    stopAt = null; stopText = ''; stopSide = 'right'; revealHtml = ''; revealWhen = '';
+    if (q.always) curPathPts = w1.concat([[LED.x, LED.bot]]).concat(w3.slice(1));
+    else if (q.codePin !== 16) { curPathPts = null; }   // 電送到 25：沒有迴路
+    else if (q.ledFlip) { curPathPts = w1; stopAt = [LED.x, LED.top + 2]; stopText = '燈是單行道，反著插電過不去'; }
+    else if (!q.ret) { curPathPts = w1.concat([[LED.x, LED.bot]]).concat([[RES.x, RES.bot], [RES.x, RES.bot + 24]]); stopAt = [RES.x, RES.bot + 24]; stopText = '沒路了：沒有回到 GND'; stopSide = 'left'; }
+    else curPathPts = w1.concat([[LED.x, LED.bot]]).concat(w3.slice(1));
+    // 3V3 那題：程式其實還是在對 16 號送電，只是 16 號沒接線
+    if (q.always) {
+      var p16 = PIN['16'];
+      M.innerHTML = '<line class="wire ghost" x1="' + p16.x + '" y1="' + p16.y + '" x2="' + (p16.x + 44) + '" y2="' + p16.y + '"></line>';
+      revealWhen = 'start';
+      revealHtml = '<text class="stoptxt" x="' + (p16.x + 52) + '" y="' + (p16.y - 14) + '">16 號有電，沒接線</text><text class="stoptxt" x="' + (p16.x + 52) + '" y="' + (p16.y + 22) + '">燈亮是 3V3 給的</text>';
+    }
+    // 25 號那題：畫一小段「電送出去卻沒人接」（字放在板子外面，不騎在板邊上）
+    if (q.codePin === 25) {
+      var p25 = PIN['25'];
+      M.innerHTML = '<line class="wire ghost" x1="' + p25.x + '" y1="' + p25.y + '" x2="' + (p25.x - 64) + '" y2="' + p25.y + '"></line>';
+      curPathPts = [[p25.x, p25.y], [p25.x - 64, p25.y]];
+      stopAt = [p25.x - 64, p25.y]; stopText = '';
+      revealWhen = 'stop';
+      revealHtml = '<text class="stoptxt" x="' + (p25.x - 8) + '" y="' + (p25.y - 14) + '" text-anchor="end">25 號有電，沒接線</text><text class="stoptxt" x="' + (PIN['16'].x + 40) + '" y="' + (PIN['16'].y + 24) + '">16 號有線，沒電</text>';
+    }
+  }
+  var hotOn = false, revealHtml = '', revealWhen = '', stopSide = 'right';
+  function setHot(on) {
+    hotOn = on;
+    var id = String(Q[cur].codePin), pin = $('pin-' + id), lbl = $('lbl-' + id), cp = $('codePin');
+    if (pin) { pin.classList.toggle('hot', on); lbl.classList.toggle('hot', on); }
+    if (cp) cp.classList.toggle('on', on);
+  }
+  function reveal(when) {
+    if (revealHtml && revealWhen === when) { $('marks').insertAdjacentHTML('beforeend', revealHtml); revealHtml = ''; }
+  }
+
+  /* ---------- 粒子 ---------- */
+  function buildPath(pts) {
+    var segs = [], L = 0;
+    for (var i = 0; i < pts.length - 1; i++) {
+      var a = pts[i], b = pts[i + 1], dx = b[0] - a[0], dy = b[1] - a[1], len = Math.sqrt(dx * dx + dy * dy);
+      segs.push({ a: a, dx: dx, dy: dy, len: len, s0: L }); L += len;
+    }
+    return { segs: segs, L: L };
+  }
+  function pointAt(p, s) {
+    for (var i = 0; i < p.segs.length; i++) {
+      var g = p.segs[i];
+      if (s <= g.s0 + g.len || i === p.segs.length - 1) { var t = g.len ? Math.min(1, Math.max(0, (s - g.s0) / g.len)) : 0; return { x: g.a[0] + g.dx * t, y: g.a[1] + g.dy * t, ang: Math.atan2(g.dy, g.dx) }; }
+    }
+    return { x: 0, y: 0, ang: 0 };
+  }
+  var path = null, parts = [], els = [], loop = true, running = false, powered = false;
+  function clearParticles() { $('particles').innerHTML = ''; $('chevrons').innerHTML = ''; parts = []; els = []; }
+  function startParticles() {
+    clearParticles();
+    if (!curPathPts) return;
+    path = buildPath(curPathPts); loop = (stopAt === null);
+    var n = Math.max(1, Math.floor(path.L / 26));   // 短路徑（第 4 題那一小段）只放得下一兩顆；起點不能超過路徑長，否則一開播就「走到底」
+    for (var i = 0; i < n; i++) {
+      if (i * 26 >= path.L) break;
+      var g = document.createElementNS(SVGNS, 'g');
+      var halo = document.createElementNS(SVGNS, 'circle'); halo.setAttribute('r', '7'); halo.setAttribute('class', 'pt'); halo.setAttribute('opacity', '.45');
+      var core = document.createElementNS(SVGNS, 'circle'); core.setAttribute('r', '3.6'); core.setAttribute('class', 'pt-core');
+      g.appendChild(halo); g.appendChild(core); $('particles').appendChild(g);
+      parts.push(i * 26); els.push(g);   // 斷路的情況：一樣排滿整條線，走到底就停住
+    }
+    var step = 105;
+    for (var s = 50; s < path.L - 20; s += step) {
+      var pt = pointAt(path, s), tri = document.createElementNS(SVGNS, 'polygon');
+      tri.setAttribute('points', '-6,-5 6,0 -6,5'); tri.setAttribute('class', 'chev');
+      tri.setAttribute('transform', 'translate(' + pt.x.toFixed(1) + ',' + pt.y.toFixed(1) + ') rotate(' + (pt.ang * 180 / Math.PI).toFixed(1) + ')');
+      $('chevrons').appendChild(tri);
+    }
+    place();
+  }
+  function place() {
+    if (!path) return;
+    for (var i = 0; i < parts.length; i++) {
+      var s = parts[i];
+      if (loop) s = ((s % path.L) + path.L) % path.L;
+      else s = Math.min(path.L, s);
+      var pt = pointAt(path, s);
+      els[i].setAttribute('transform', 'translate(' + pt.x.toFixed(1) + ',' + pt.y.toFixed(1) + ')');
+      els[i].setAttribute('opacity', (!loop && parts[i] < 0) ? '0' : '1');
+    }
+  }
+  var last = null, blinkAcc = 0, stopShown = false;
+  function frame(ts) {
+    if (last === null) last = ts;
+    var dt = Math.min(0.1, (ts - last) / 1000); last = ts;
+    if (running) {
+      var q = Q[cur];
+      if (q.lit && !q.always) { blinkAcc += dt; if (blinkAcc >= 0.5) { blinkAcc -= 0.5; setPowered(!powered); } }   // 會閃的題照程式的 0.5 秒亮暗，慢動作只放慢粒子；不亮的題不閃，讓小點一口氣走到斷點
+      if (path && (powered || q.always)) {
+        var v = 110 * S.speed;
+        var anyDone = false;
+        for (var i = 0; i < parts.length; i++) {
+          if (loop) parts[i] += v * dt;
+          else if (parts[i] < path.L) parts[i] += v * dt;
+          if (!loop && parts[i] >= path.L) anyDone = true;
+        }
+        place();
+        if (!loop && anyDone && !stopShown) showStop();   // 第一顆走到斷點就標出來
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  function showStop() {
+    stopShown = true;
+    if (!stopAt) return;
+    var M = $('marks');
+    var c = document.createElementNS(SVGNS, 'circle'); c.setAttribute('cx', stopAt[0]); c.setAttribute('cy', stopAt[1]); c.setAttribute('r', '14'); c.setAttribute('class', 'stopmark'); M.appendChild(c);
+    if (stopText) { var t = document.createElementNS(SVGNS, 'text'); t.setAttribute('x', stopAt[0] + (stopSide === 'left' ? -22 : 22)); t.setAttribute('y', stopAt[1] + 4); t.setAttribute('class', 'stoptxt'); if (stopSide === 'left') t.setAttribute('text-anchor', 'end'); t.textContent = stopText; M.appendChild(t); }
+    reveal('stop');
+  }
+  function setPowered(on) {
+    powered = on;
+    var q = Q[cur];
+    var lit = q.lit && started && (on || q.always);   // 沒按播放之前一律暗，第 5 題也不先劇透
+    var halo = $('halo'), tri = $('ledTri'), rays = $('rays');
+    if (halo) halo.setAttribute('opacity', lit ? '.55' : '0');
+    if (tri) tri.setAttribute('fill-opacity', lit ? '1' : '.18');
+    if (rays) rays.setAttribute('opacity', lit ? '1' : '0');
+    if (!lit && loop && path) { /* 暗的時候粒子停住 */ }
+  }
+
+  /* ---------- 題目切換、猜、播放 ---------- */
+  function codeHtml(q) {
+    var pin = q.codePin;
+    return 'from machine import Pin\nimport time\n\n' +
+      'red = Pin(<span class="pin" id="codePin">' + pin + '</span>, Pin.OUT)\n' +
+      'wait = 0.5\n\nwhile True:\n    red.value(1)\n    time.sleep(wait)\n    red.value(0)\n    time.sleep(wait)';
+  }
+  function wireListHtml(q) {
+    var items = [];
+    items.push({ c: q.src === '3V3' ? '#C8102E' : '#E07A1F', t: (q.src === '3V3' ? '3V3' : '16 號') + ' → 燈的' + (q.ledFlip ? '短腳（－）' : '長腳（＋）'), bad: q.src === '3V3' || q.ledFlip });
+    items.push({ c: '#2D3142', t: '燈的' + (q.ledFlip ? '長腳（＋）' : '短腳（－）') + ' → 電阻', bad: false });
+    items.push({ c: '#2D3142', t: q.ret ? '電阻 → GND（地）' : '電阻 → （沒接）', bad: !q.ret });
+    if (q.codePin !== 16) items.push({ c: 'transparent', t: '程式寫的是 ' + q.codePin + ' 號，線卻接在 16 號', bad: true });
+    if (q.src === '3V3') items.push({ c: 'transparent', t: '程式寫 16 號，可是 16 號沒接線', bad: true });
+    return items.map(function (it) { return '<li' + (it.bad ? ' class="bad"' : '') + '><span class="sw" style="background:' + it.c + '"></span><span>' + it.t + '</span></li>'; }).join('');
+  }
+  var guessBtns = Array.prototype.slice.call(document.querySelectorAll('.guess'));
+  function paintGuess(g, lock) {
+    guessBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-g') === g)); b.disabled = !!lock; });
+  }
+  function load(i) {
+    cur = i; guess = null; played = false; started = false; demoDone = false; running = false; powered = false; stopShown = false; blinkAcc = 0;
+    var q = Q[i], done = results[i];
+    document.querySelectorAll('#qbar .qbtn[data-q]').forEach(function (b) { b.setAttribute('aria-pressed', String(parseInt(b.getAttribute('data-q'), 10) === i)); });
+    buildScene(q); clearParticles(); path = null; setPowered(false);
+    $('code').innerHTML = codeHtml(q);
+    $('codePin').addEventListener('click', function () { setHot(!hotOn); });   // #codePin 每次重建，監聽器不會疊
+    $('wirelist').innerHTML = wireListHtml(q);
+    $('btnPlay').textContent = done ? '▶ 再看一次' : '▶ 播放'; $('btnReset').textContent = '重來這題';
+    if (done) {   // 做過的題：保留猜過的答案與結果，要重猜請按「重來這題」
+      guess = done.guess; played = true;
+      paintGuess(done.guess, true);
+      $('btnPlay').disabled = false; $('btnReset').hidden = false;
+      $('verdict').className = 'verdict ' + (done.right ? 'ok' : 'no');
+      $('verdict').textContent = (done.right ? '猜對了：' : '猜錯了：') + ANS_TXT[answerOf(q)];
+      $('why').innerHTML = q.why;
+    } else if (projMode) {   // 投影模式：老師換題就能直接播，全班用嘴巴猜
+      paintGuess(null, true);
+      $('btnPlay').disabled = false; $('btnReset').hidden = false; $('btnReset').textContent = '換我猜一次';
+      $('verdict').className = 'verdict'; $('verdict').textContent = '投影模式：全班先猜，再按播放。';
+      $('why').innerHTML = '';
+    } else {
+      paintGuess(null, false);
+      $('btnPlay').disabled = true; $('btnReset').hidden = true;
+      $('verdict').className = 'verdict'; $('verdict').textContent = '先猜，再播放。';
+      $('why').innerHTML = '';
+    }
+    updateScore();
+  }
+  function setGuess(g) {
+    if (played) return;
+    guess = g;
+    paintGuess(g, false);
+    $('btnPlay').disabled = false;
+    $('verdict').textContent = '猜好了。按播放看結果。';
+  }
+  // mode：'score'＝正常（要先猜、算分）；'demo'＝網址 ?play=1 投影用（不代猜、不計分）；'replay'＝做過的題再看一次
+  function play(mode) {
+    var q = Q[cur];
+    if (mode === 'score' && (guess === null || played)) return;
+    if (mode === 'replay') { buildScene(q); stopShown = false; blinkAcc = 0; }
+    started = true; running = true;
+    paintGuess(guess, true);
+    $('btnPlay').disabled = (mode !== 'replay'); $('btnReset').hidden = false;
+    startParticles();
+    setHot(true);
+    setPowered(true);
+    reveal('start');
+    var ans = answerOf(q), v = $('verdict');
+    if (mode === 'demo') {
+      played = true; demoDone = true;
+      v.className = 'verdict'; v.textContent = '結果：' + ANS_TXT[ans];
+      $('btnPlay').textContent = '▶ 再看一次'; $('btnPlay').disabled = false;
+      $('btnReset').textContent = '換我猜一次';   // 投影看完，學生自己猜一次就從這裡進正常流程
+    } else if (mode === 'score') {
+      played = true;
+      var right = (guess === ans);
+      results[cur] = { right: right, guess: guess };
+      v.className = 'verdict ' + (right ? 'ok' : 'no');
+      v.textContent = (right ? '猜對了：' : '猜錯了：') + ANS_TXT[ans];
+      document.querySelectorAll('#qbar .qbtn[data-q]').forEach(function (b) {
+        var k = parseInt(b.getAttribute('data-q'), 10);
+        if (k === cur) { b.classList.add('done'); b.classList.toggle('wrong', !right); }
+      });
+      $('btnPlay').textContent = '▶ 再看一次'; $('btnPlay').disabled = false;
+    }
+    $('why').innerHTML = q.why;
+    updateScore();
+  }
+  function updateScore() {
+    var keys = Object.keys(results), ok = keys.filter(function (k) { return results[k].right; }).length;
+    $('score').textContent = keys.length ? ('猜過 ' + keys.length + ' 題，猜對 ' + ok + ' 題') : (projMode ? '投影模式：不計分' : '猜錯不用擦，猜錯才記得住');
+  }
+  document.querySelectorAll('#qbar .qbtn[data-q]').forEach(function (b) { b.addEventListener('click', function () { load(parseInt(b.getAttribute('data-q'), 10)); }); });
+  guessBtns.forEach(function (b) { b.addEventListener('click', function () { setGuess(b.getAttribute('data-g')); }); });
+  $('btnPlay').addEventListener('click', function () { play((results[cur] || demoDone) ? 'replay' : (projMode ? 'demo' : 'score')); });
+  $('btnReset').addEventListener('click', function () { projMode = false; delete results[cur]; document.querySelectorAll('#qbar .qbtn[data-q]')[cur].classList.remove('done', 'wrong'); load(cur); });   // 「重來這題」／「換我猜一次」都回到正常流程
+  $('rngSpeed').addEventListener('input', function (e) { S.speed = parseFloat(e.target.value); $('spdTxt').textContent = S.speed.toFixed(1) + '×'; });
+
+  var reduced = false;
+  try { reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  if (reduced) { S.speed = 0.1; $('rngSpeed').value = 0.1; $('spdTxt').textContent = '0.1×'; }
+  var autoPlay = false;
+  try {
+    var qs = new URLSearchParams(location.search);
+    var q0 = parseInt(qs.get('q') || '1', 10); if (q0 >= 1 && q0 <= Q.length) cur = q0 - 1;
+    autoPlay = qs.get('play') === '1';   // 投影或截圖用：不代猜、不計分，直接播放看結果與原因
+  } catch (e) {}
+  projMode = autoPlay;
+  load(cur);
+  if (autoPlay) { play('demo'); }
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Introduction to AI W3 · AA</title><style>
+:root{--paper:#fffdf8;--ink:#16343b;--muted:#526b70;--wash:#edf7f3;--sea:#087e8b;--coral:#e76f51;--sun:#f4b942;--leaf:#3a8d5d;--line:#cbded9;--scale:1}
+*{box-sizing:border-box}
+html,body{margin:0;font-family:"Segoe UI","Microsoft JhengHei","Noto Sans TC",Arial,sans-serif;color:var(--ink)}
+body{background:#0f2327;overflow:hidden}
+a{color:inherit;text-underline-offset:6px}
+button{font:inherit;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
+#stage{position:fixed;left:50%;top:calc(50% - 26px);width:1280px;height:720px;transform:translate(-50%,-50%) scale(var(--scale));transform-origin:center}
+.slide{display:none;width:1280px;height:720px;background:var(--paper);color:var(--ink);padding:56px 78px 64px;position:relative;overflow:hidden}
+.slide.active{display:block}
+.slide--dark{background:var(--ink);color:var(--paper)}
+.kicker{display:flex;justify-content:space-between;font-size:18px;letter-spacing:.12em;font-weight:700;color:var(--muted);border-top:2px solid currentColor;padding-top:14px}
+.slide--dark .kicker{color:#c9dcd8}
+.title{font-size:54px;line-height:1.18;font-weight:800;letter-spacing:-.02em;margin:26px 0 24px;max-width:1124px}
+html[lang="en"] .title{font-size:50px}
+.title .support{display:block;font-size:24px;font-weight:500;letter-spacing:0;margin-top:8px;opacity:.82}
+.support{display:block;font-size:24px;line-height:1.4;font-weight:500;margin-top:8px;opacity:.8}
+.lead{font-size:38px;line-height:1.5;margin:14px 0;max-width:1100px}
+.note{font-size:28px;line-height:1.5;margin-top:22px;opacity:.9;max-width:1100px}
+.note .support{font-size:22px}
+.rows p{display:grid;grid-template-columns:84px 1fr;align-items:baseline;font-size:34px;line-height:1.35;border-bottom:1px solid var(--line);padding:11px 0;margin:0}
+.slide--dark .rows p{border-color:#3f5a5f}
+.rows b{color:var(--coral);font-weight:800}
+.rows .support{display:inline;font-size:22px;margin:0 0 0 16px}
+html[lang="en"] .rows p{font-size:30px;padding:8px 0}
+html[lang="en"] .title{margin-bottom:16px}
+html[lang="en"] .clock{font-size:96px;margin:12px 0 0}
+html[lang="en"] .big{font-size:48px;margin:22px 0 6px}
+html[lang="en"] .note{margin-top:14px}
+.three{display:flex;gap:40px;margin-top:28px}
+.three>div{flex:1;border-top:4px solid var(--sea);padding-top:16px;font-size:30px;line-height:1.35}
+.three b{display:block;font-size:42px;margin-bottom:10px;line-height:1.2}
+.three .support{font-size:22px}
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:22px;font-size:40px;font-weight:800;margin:36px 0 18px}
+.flow .arrow{color:var(--coral)}
+.diff{border:1px solid var(--line);margin:22px 0 10px;font-size:36px;max-width:1000px}
+.diff p{margin:0;padding:16px 30px;line-height:1.35}
+.diff .v0{background:#f8e3dc;color:#7a2e1f}
+.diff .v1{background:#dfece3;color:#22513a}
+.diff b{display:inline-block;width:80px;font-weight:800}
+.diff .support{display:inline;font-size:22px;margin-left:12px}
+.tags{margin-top:24px}
+.tags span{display:inline-block;border:2px solid currentColor;border-radius:999px;padding:8px 22px;font-size:32px;font-weight:700;margin:8px 14px 8px 0}
+.big{font-size:60px;font-weight:800;line-height:1.3;margin:34px 0 10px;max-width:1100px}
+.clock{font-size:118px;font-weight:800;letter-spacing:-4px;line-height:1;color:var(--sun);margin:22px 0 6px}
+.cover .title{font-size:70px;line-height:1.12;margin-top:40px;max-width:820px}
+html[lang="en"] .cover .title{font-size:62px}
+.cover-grid{display:grid;grid-template-columns:1fr 320px;gap:40px;align-items:start}
+.cover .lead{font-size:32px;margin-top:4px}
+.cover .course{font-size:24px;margin-top:26px;color:var(--muted)}
+.phone{width:300px;background:#fff;border:8px solid var(--ink);border-radius:28px;padding:18px 20px;box-shadow:8px 12px 0 rgba(8,126,139,.18);color:var(--ink);font-size:19px;line-height:1.4;transform:rotate(-2deg);margin-top:-30px}
+.phone .dot{width:48px;height:7px;background:var(--ink);border-radius:99px;margin:-4px auto 14px}
+.phone h3{margin:0 0 6px;font-size:23px;line-height:1.25}
+.phone .opts{margin:0;color:var(--muted);font-size:17px}
+.phone .btn{background:var(--coral);color:#fff;border-radius:12px;padding:9px;text-align:center;font-weight:800;margin:12px 0 10px}
+.phone .res{border:1px dashed var(--sea);border-radius:10px;padding:8px 10px;font-size:17px;background:var(--wash)}
+.quote{border-left:8px solid var(--coral);padding-left:30px;font-size:40px;line-height:1.4;margin:26px 0 8px;max-width:1080px}
+.quote.weak{border-color:#a63d40;opacity:.85}
+.quote .label{display:block;font-size:22px;letter-spacing:.1em;font-weight:800;color:var(--coral);margin-bottom:4px}
+.quote.weak .label{color:#a63d40}
+.footer-org{position:absolute;left:78px;bottom:24px;font-size:15px;letter-spacing:.06em;color:var(--muted)}
+.slide--dark .footer-org{color:#c9dcd8}
+.number{position:absolute;right:78px;bottom:22px;font-size:20px;font-variant-numeric:tabular-nums}
+.controls{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:4;background:#fffdf8ee;border:1px solid #9fb6b2;border-radius:9px;padding:5px;box-shadow:0 4px 20px #0003}
+.controls button{border:0;background:none;color:var(--ink);border-radius:4px;padding:6px 11px;font-size:14px}
+.controls button:hover{background:#dfe9e6}
+.controls .counter{padding:6px 12px;min-width:68px;text-align:center;font-size:14px}
+.menu{position:fixed;inset:0;background:#16343bd9;z-index:10;padding:5vh 5vw;display:grid;place-items:center}
+.menu[hidden]{display:none}
+.menu-inner{background:var(--paper);padding:24px 32px;max-width:1040px;width:100%;max-height:90vh;overflow:auto}
+.menu-header{display:flex;justify-content:space-between;align-items:center;font-size:24px}
+.menu-header button{font-size:20px;padding:6px 14px}
+.toc{display:grid;grid-template-columns:1fr 1fr;gap:4px 30px;margin-top:18px}
+.toc button{border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;font-size:19px;padding:13px 4px;line-height:1.45}
+.toc button:hover{background:#e7efec}
+.toc span{color:var(--coral);margin-right:13px}
+.single-slide{background:var(--paper);overflow:visible}
+.single-slide .slide{display:block}
+@media(max-width:600px){.controls{gap:0;width:max-content;max-width:98vw}.controls button{padding:7px 8px}.toc{grid-template-columns:1fr}.menu-inner{padding:18px}.toc button{font-size:16px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{@page{size:13.333333in 7.5in;margin:0}html,body{width:1280px;height:auto;margin:0;padding:0;background:white;overflow:visible;-webkit-print-color-adjust:exact;print-color-adjust:exact}#stage{position:static;transform:none;width:1280px;height:auto}.slide,.slide.active{display:block!important;width:1280px;height:720px;break-after:page;page-break-after:always}.slide:last-child{break-after:auto;page-break-after:auto}.controls,.menu{display:none!important}}
+</style></head><body data-deck="Introduction to AI W3 · AA"><main id="stage"><section class="slide slide--light cover" data-title="Build your first web app today" aria-label="1. Build your first web app today"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Build your first web app today<span class="support">今天做出你的第一個網頁小工具</span></div><div class="body"><div class="cover-grid"><div><p class="lead">A campus-life helper that picks one item from a list.<span class="support">幫你從清單挑一項的小幫手。</span></p><p class="course">Introduction to AI · W3 · AA 2026.09.21</p></div><div class="phone" aria-hidden="true"><div class="dot"></div><h3>What should I do?</h3><p class="opts">Walk · Tidy the desk · Water break</p><div class="btn">Pick one</div><div class="res">This time: Walk</div></div></div></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">01 / 15</div></section><section class="slide slide--dark checkpoints" data-title="Only five things today" aria-label="2. Only five things today"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Only five things today<span class="support">今天只做五件事</span></div><div class="body"><div class="rows"><p><b>1</b><span>Try v0<span class="support">先玩 v0</span></span></p><p><b>2</b><span>Choose a mission<span class="support">選一個題目</span></span></p><p><b>3</b><span>Make v1<span class="support">做成 v1</span></span></p><p><b>4</b><span>Break and recover<span class="support">改壞再救回</span></span></p><p><b>5</b><span>Download, document, upload<span class="support">下載、留證據、上傳</span></span></p></div></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">02 / 15</div></section><section class="slide slide--light try" data-title="Try it, then change one thing" aria-label="3. Try it, then change one thing"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Try it, then change one thing<span class="support">先玩，再改一個地方</span></div><div class="body"><p class="lead">Press "Pick one" three times. Then change the title.<span class="support">按三次「幫我選一個」，再換一個標題。</span></p><p class="note">The screen changes. That is checkpoint 1.<span class="support">畫面變了，就是第一個 checkpoint。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">03 / 15</div></section><section class="slide slide--light routes" data-title="Three routes, same credit" aria-label="4. Three routes, same credit"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Three routes, same credit<span class="support">三條路都同分</span></div><div class="body"><div class="three"><div><b>live AI</b>A chat AI the teacher approved</div><div><b>Offline</b>Agent suggestions built into the page</div><div><b>Paper</b>No laptop, same task</div></div><p class="note">No bonus for any tool. No penalty for any route.<span class="support">不加分，也不扣分。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">04 / 15</div></section><section class="slide slide--dark noput" data-title="Never put these in" aria-label="5. Never put these in"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Never put these in<span class="support">不准放的東西</span></div><div class="body"><div class="tags"><span>Name</span><span>Student ID</span><span>Real timetable</span><span>Location</span><span>Private messages</span></div><p class="note">A synthetic topic is enough.<span class="support">合成題目就夠了。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">05 / 15</div></section><section class="slide slide--light missions" data-title="Choose one synthetic mission" aria-label="6. Choose one synthetic mission"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Choose one synthetic mission<span class="support">選題：三個合成題目</span></div><div class="body"><div class="three"><div><b>🌿</b>Study-break picker</div><div><b>🎪</b>Campus activity ideas</div><div><b>🥗</b>Low-waste lunch picker</div></div><p class="note">Cannot decide? Keep the first one.<span class="support">選不出來，留第一題。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">06 / 15</div></section><section class="slide slide--light make" data-title="Make: five fields, your words" aria-label="7. Make: five fields, your words"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Make: five fields, your words<span class="support">Make：五個欄位改成你的</span></div><div class="body"><div class="tags"><span>Title</span><span>Intro</span><span>Option 1</span><span>Option 2</span><span>Option 3</span></div><p class="note">Change one field, press "Update preview", look once.<span class="support">改一格，按「更新預覽」，看一次。</span></p><p class="note">Do not tick the feature yet.<span class="support">先不要勾功能。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">07 / 15</div></section><section class="slide slide--dark break" data-title="10-minute break" aria-label="8. 10-minute break"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">10-minute break<span class="support">休息 10 分鐘</span></div><div class="body"><div class="clock">14:00 – 14:10</div><p class="big">Keep the tab open. Do not log out.<span class="support">分頁不要關、電腦不要登出。</span></p><p class="note">Classroom PCs wipe on restart. Back at 14:10 to add the feature.<span class="support">教室機重開會清空。14:10 回來加功能。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">08 / 15</div></section><section class="slide slide--light upgrade" data-title="v0 → v1: add one thing" aria-label="9. v0 → v1: add one thing"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">v0 → v1: add one thing<span class="support">v0 → v1 只加一件事</span></div><div class="body"><div class="diff"><p class="v0"><b>v0</b>Picks one item. That is all.</p><p class="v1"><b>v1</b>+ Clear choices + empty-list feedback</p></div><p class="note">Tick the one approved feature, then "Update preview".<span class="support">勾那一格白名單，再按「更新預覽」。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">09 / 15</div></section><section class="slide slide--light tests" data-title="A test is not &quot;it looks fine&quot;" aria-label="10. A test is not &quot;it looks fine&quot;"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">A test is not &quot;it looks fine&quot;<span class="support">測試不是「看起來會動」</span></div><div class="body"><div class="rows"><p><b>1</b><span>Options present → one item from the list</span></p><p><b>2</b><span>List cleared → repair prompt, no invented answer</span></p></div><p class="note">The buttons really operate the preview.<span class="support">按鈕真的去操作預覽。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">10 / 15</div></section><section class="slide slide--light recover" data-title="Break it, then recover" aria-label="11. Break it, then recover"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Break it, then recover<span class="support">改壞再救回</span></div><div class="body"><p class="lead">Change one word and both PASS results are void.<span class="support">改一個字，兩筆 PASS 就作廢。</span></p><p class="note">Retest, or press "Restore working version".<span class="support">重測，或按「還原可用版」。</span></p><p class="note">That is what a version feels like.<span class="support">這就是版本的感覺。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">11 / 15</div></section><section class="slide slide--dark break" data-title="Download before you go" aria-label="12. Download before you go"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Download before you go<span class="support">先按下載再走</span></div><div class="body"><div class="clock">15:00 – 15:10</div><p class="big">Download v1.html. See the file name, then leave.<span class="support">下載 v1.html，看到檔名再離開。</span></p><p class="note">Back at 15:10 for the five questions.<span class="support">15:10 回來寫五問。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">12 / 15</div></section><section class="slide slide--light handin" data-title="Download → find → reopen → upload" aria-label="13. Download → find → reopen → upload"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Download → find → reopen → upload<span class="support">下載 → 找檔 → 雙擊重開 → 上傳</span></div><div class="body"><div class="rows"><p><b>1</b><span>Download v1.html</span></p><p><b>2</b><span>Find it in the Downloads list</span></p><p><b>3</b><span>Double-click, press the button once</span></p><p><b>4</b><span>Upload to e-learning Week 3</span></p></div><p class="note">Classroom PCs are wiped after class. Upload before you leave.<span class="support">教室機下課會清空，離開前一定上傳。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">13 / 15</div></section><section class="slide slide--light evidence" data-title="Five questions: a frame and a weak example" aria-label="14. Five questions: a frame and a weak example"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Five questions: a frame and a weak example<span class="support">五問 evidence：句型與反例</span></div><div class="body"><div class="quote"><span class="label">STRONG</span>Before, v0 only picked. After, v1 clears and warns when empty.</div><div class="quote weak"><span class="label">WEAK</span>"I used AI. It works."</div><p class="note">Keep the work; it can join the W13 assignment.<span class="support">作品留著，W13 可併進作業。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">14 / 15</div></section><section class="slide slide--dark rescue" data-title="Rescue ladder: five rungs" aria-label="15. Rescue ladder: five rungs"><div class="kicker"><span>AI INTRO / W03 / AA</span><span>2026.09.21</span></div><div class="title">Rescue ladder: five rungs<span class="support">救援梯五階</span></div><div class="body"><div class="rows"><p><b>1</b><span>See the expected screen</span></p><p><b>2</b><span>Back to the working version</span></p><p><b>3</b><span>Change one thing at a time</span></p><p><b>4</b><span>Switch to starter.html</span></p><p><b>5</b><span>Switch to an equivalent route</span></p></div><p class="note">Errors first: "four steps" in the course page General section.<span class="support">出錯先做四步：課程頁「一般」區塊。</span></p></div><div class="footer-org">NDHU · Introduction to AI · W03</div><div class="number">15 / 15</div></section></main><div class="controls" aria-label="Slide controls"><button data-action="prev" aria-label="Previous">←</button><span class="counter" aria-live="polite"></span><button data-action="next" aria-label="Next">→</button><button data-action="menu" aria-expanded="false" aria-controls="slide-menu">Contents M</button><button data-action="print">Print all</button></div><div class="menu" id="slide-menu" role="dialog" aria-modal="true" aria-label="Contents" hidden><div class="menu-inner"><div class="menu-header"><strong>Introduction to AI W3 · AA</strong><button data-action="close" aria-label="Close">×</button></div><div class="toc"><button data-page="0"><span>01</span>Build your first web app today</button><button data-page="1"><span>02</span>Only five things today</button><button data-page="2"><span>03</span>Try it, then change one thing</button><button data-page="3"><span>04</span>Three routes, same credit</button><button data-page="4"><span>05</span>Never put these in</button><button data-page="5"><span>06</span>Choose one synthetic mission</button><button data-page="6"><span>07</span>Make: five fields, your words</button><button data-page="7"><span>08</span>10-minute break</button><button data-page="8"><span>09</span>v0 → v1: add one thing</button><button data-page="9"><span>10</span>A test is not &quot;it looks fine&quot;</button><button data-page="10"><span>11</span>Break it, then recover</button><button data-page="11"><span>12</span>Download before you go</button><button data-page="12"><span>13</span>Download → find → reopen → upload</button><button data-page="13"><span>14</span>Five questions: a frame and a weak example</button><button data-page="14"><span>15</span>Rescue ladder: five rungs</button></div></div></div><script type="application/json" id="speaker-notes">[{"page": 1, "title": "Build your first web app today", "notes": "Minute 0. Show the finished example app-v1.html on the projector and press its button once. This is what everyone leaves with today."}, {"page": 2, "title": "Only five things today", "notes": "Five checkpoints, same order as the student page. Nothing else is required today."}, {"page": 3, "title": "Try it, then change one thing", "notes": "Minutes 0–10. Students use the embedded v0 on the student page (step 1), not the mock-up in the hero. Only those who see no change go to the rescue ladder."}, {"page": 4, "title": "Three routes, same credit", "notes": "Minute 10. Live AI is optional. The offline agent and the paper prototype earn the same credit. Do not spend class time on login problems."}, {"page": 5, "title": "Never put these in", "notes": "Minutes 10–25. Say it once before students choose. The evidence card also refuses names."}, {"page": 6, "title": "Choose one synthetic mission", "notes": "Minutes 10–25. Choosing is not graded. A custom non-personal topic is allowed."}, {"page": 7, "title": "Make: five fields, your words", "notes": "Minutes 25–50 (13:40–14:00). Content only. Same question from many students: handle it once for the whole class."}, {"page": 8, "title": "10-minute break", "notes": "Break 1. The builder fields are not saved anywhere yet, so the tab must stay open."}, {"page": 9, "title": "v0 → v1: add one thing", "notes": "Minutes 50–80 (14:10–14:40). Exactly one approved feature. Note which agent suggestion you accepted, changed, or rejected."}, {"page": 10, "title": "A test is not \"it looks fine\"", "notes": "Minutes 80–100 (14:40–15:00). Two tests, both against the live preview. Test 2 requires clearing the list first."}, {"page": 11, "title": "Break it, then recover", "notes": "Still minutes 80–100. This invalidation is deliberate. It is also why students must retest after any late edit before downloading."}, {"page": 12, "title": "Download before you go", "notes": "Break 2. Two PASS results exist now, so the download button works. Downloading first protects the work from a sleeping or wiped PC."}, {"page": 13, "title": "Download → find → reopen → upload", "notes": "Minutes 100–120 (15:10–15:30). Project the Downloads list, then the reopened v1.html, then the e-learning assignment page. The assignment takes pasted text plus files."}, {"page": 14, "title": "Five questions: a frame and a weak example", "notes": "Minutes 110–120. Today only the in-class evidence is handed in. No 5% is attached to W3; the W13 'interaction and versions' assignment can absorb this work."}, {"page": 15, "title": "Rescue ladder: five rungs", "notes": "Fixed card. Jump here with End. Rung 1 before anything else; never re-do all steps from scratch."}]</script><script>(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const menu = document.querySelector('.menu');
+  const counter = document.querySelector('.counter');
+  const toggle = document.querySelector('[data-action="menu"]');
+  const deckName = document.body.dataset.deck;
+  let index = 0;
+  const fromHash = () => Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+  function show(next, changeHash = true) {
+    index = Math.max(0, Math.min(slides.length - 1, next));
+    slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.setAttribute('aria-hidden', String(i !== index)); });
+    counter.textContent = `${index + 1} / ${slides.length}`;
+    document.title = `${index + 1}. ${slides[index].dataset.title} · ${deckName}`;
+    if (changeHash) history.replaceState(null, '', `#${index + 1}`);
+  }
+  function resize() {
+    document.documentElement.style.setProperty('--scale', String(Math.min(innerWidth / 1280, (innerHeight - 52) / 720)));
+  }
+  function openMenu() { menu.hidden = false; toggle.setAttribute('aria-expanded', 'true'); menu.querySelector(`[data-page="${index}"]`).focus(); }
+  function closeMenu() { menu.hidden = true; toggle.setAttribute('aria-expanded', 'false'); toggle.focus(); }
+  document.querySelectorAll('[data-page]').forEach(button => button.addEventListener('click', () => { show(Number(button.dataset.page)); closeMenu(); }));
+  document.querySelector('[data-action="close"]').addEventListener('click', closeMenu);
+  toggle.addEventListener('click', () => menu.hidden ? openMenu() : closeMenu());
+  document.querySelector('[data-action="prev"]').addEventListener('click', () => show(index - 1));
+  document.querySelector('[data-action="next"]').addEventListener('click', () => show(index + 1));
+  document.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
+  addEventListener('keydown', event => {
+    if (!menu.hidden) {
+      if (event.key === 'Escape') { event.preventDefault(); closeMenu(); }
+      if (event.key === 'Tab') {
+        const buttons = [...menu.querySelectorAll('button')];
+        if (event.shiftKey && document.activeElement === buttons[0]) { event.preventDefault(); buttons.at(-1).focus(); }
+        else if (!event.shiftKey && document.activeElement === buttons.at(-1)) { event.preventDefault(); buttons[0].focus(); }
+      }
+      return;
+    }
+    const target = event.target instanceof Element ? event.target : null;
+    if (target && target.closest('input,textarea,select')) return;
+    if (event.key === ' ' && target && target.closest('a,button')) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); show(index + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(event.key)) { event.preventDefault(); show(index - 1); }
+    if (event.key === 'Home') { event.preventDefault(); show(0); }
+    if (event.key === 'End') { event.preventDefault(); show(slides.length - 1); }
+    if (event.key.toLowerCase() === 'm') { event.preventDefault(); openMenu(); }
+  });
+  addEventListener('hashchange', () => show(fromHash(), false));
+  addEventListener('resize', resize);
+  show(fromHash(), false); resize();
+})();</script></body></html>

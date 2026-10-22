@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINE AI 待辦小秘書｜驗收單</title>
+<style>
+  :root { --ink: #1f2a2a; --muted: #5b6b6a; --line: #cfdad8; --teal: #0e7c7b; --soft: #e3f3f2; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f5f7f6; color: var(--ink); font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", system-ui, sans-serif; line-height: 1.7; overflow-wrap: anywhere; }
+  .sheet { max-width: 800px; margin: 24px auto; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 28px 32px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  h2 { font-size: 1.1rem; margin: 22px 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--soft); }
+  .sub { color: var(--muted); margin: 0; }
+  ol, ul { margin: 6px 0; padding-left: 1.4em; }
+  .check { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; }
+  .check input { margin-top: 7px; flex: 0 0 auto; width: 18px; height: 18px; }
+  .q { border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
+  .q .lines { height: 5.2em; border-bottom: 1px dashed var(--line); margin-top: 6px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; margin-top: 18px; }
+  button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: #eef2f1; border-radius: 10px; padding: 6px 14px; }
+  button.primary { background: var(--teal); color: #fff; border-color: var(--teal); }
+  @media (max-width: 600px) { .sheet { margin: 0; border-radius: 0; padding: 20px 16px; } }
+  @media print {
+    body { background: #fff; }
+    .sheet { border: none; margin: 0; padding: 0; max-width: none; }
+    .bar { display: none; }
+  }
+</style>
+</head>
+<body>
+<main class="sheet">
+  <h1>🤖 LINE AI 待辦小秘書｜驗收單</h1>
+  <p class="sub">繳交方式依課堂公告。</p>
+
+  <h2>做什麼</h2>
+  <p>做出一個 LINE 機器人：傳一句待辦給它，它會記進試算表、回你一句話；有日期和時間的，再排進 Google 日曆。<br>
+  Level 2 再讓它看得懂照片。</p>
+
+  <h2>交什麼（截圖）</h2>
+  <label class="check"><input type="checkbox" data-k="s1"><span><b>Level 1</b>　①手機上 bot 的回覆　②試算表多出來的那一列　③日曆裡的行程</span></label>
+  <label class="check"><input type="checkbox" data-k="s2"><span><b>Level 2</b>　④傳照片之後 bot 的回覆　⑤試算表「來源」欄寫著「照片」的那一列</span></label>
+  <p class="sub">截圖前先看一眼：畫面上不能出現你的金鑰或通行碼。</p>
+
+  <h2>要回答什麼（各寫一兩句）</h2>
+  <div class="q">1. 你的 bot 為什麼要先寫進試算表，才回「記好了」？如果順序反過來，可能會發生什麼事？<div class="lines"></div></div>
+  <div class="q">2. 你請 AI 改程式時，有沒有一次它改錯了，或被你退回？你是怎麼發現的？<div class="lines"></div></div>
+  <div class="q">3. 你的金鑰放在哪裡？為什麼不直接寫進程式碼？<div class="lines"></div></div>
+
+  <div class="bar">
+    <span class="sub" id="status">勾選只存在這台電腦的瀏覽器。</span>
+    <span>
+      <button type="button" id="reset">清除勾選</button>
+      <button type="button" class="primary" onclick="window.print()">🖨️ 列印／存成 PDF</button>
+    </span>
+  </div>
+</main>
+<script>
+(function () {
+  const KEY = "line_ai_todo_handout_v2";
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { state = {}; }
+  const boxes = document.querySelectorAll("[data-k]");
+  boxes.forEach(cb => {
+    cb.checked = !!state[cb.dataset.k];
+    cb.addEventListener("change", () => {
+      state[cb.dataset.k] = cb.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* 存不了也不影響列印 */ }
+    });
+  });
+  document.getElementById("reset").addEventListener("click", () => {
+    state = {};
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    boxes.forEach(cb => { cb.checked = false; });
+  });
+})();
+</script>
+</body>
+</html>

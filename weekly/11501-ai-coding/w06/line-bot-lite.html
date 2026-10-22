@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>LINE bot 輕量版｜沒有顯示卡也能讓本地模型回答問題（回家作業）</title>
+<style>
+:root{
+  --bg:#f4f6ed;--fg:#153d36;--muted:#51695f;--line:#bbc9bf;--card:#fff;
+  --accent:#1f6153;--accent2:#09695b;--tagbg:#e0ece2;--tagfg:#0b4a3e;
+  --note-bg:#fff9e8;--note-line:#c9963b;
+  --pre-bg:#133e34;--pre-fg:#f4f6ed;--code-bg:#e6ece5;
+  --see-bg:#eef3fb;--see-line:#4b6cb7;
+  --test-bg:#eef7ee;--test-line:#3b8b4a;
+  --stuck-bg:#fbf1f1;--stuck-line:#b85c5c;
+  --todo-bg:#fff3e0;--todo-line:#e08a00;
+  --btn-bg:#1f6153;--btn-fg:#fff;
+  font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  color:var(--fg);background:var(--bg);line-height:1.8
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#121917;--fg:#e4ebe6;--muted:#a8b8ae;--line:#3a4a42;--card:#1b2420;
+    --accent:#6fc3b0;--accent2:#8fd3c3;--tagbg:#243a33;--tagfg:#cfe9df;
+    --note-bg:#2a2414;--note-line:#d7a548;
+    --pre-bg:#0b1b17;--pre-fg:#e8f0ea;--code-bg:#243a33;
+    --see-bg:#17213a;--see-line:#7f9ce6;
+    --test-bg:#162a1b;--test-line:#6cc27a;
+    --stuck-bg:#2e1b1b;--stuck-line:#e08a8a;
+    --todo-bg:#2e2410;--todo-line:#f0b24a;
+    --btn-bg:#6fc3b0;--btn-fg:#0b1b17
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg)}
+main{max-width:900px;margin:auto;padding:28px 20px 90px}
+a{color:var(--accent2);text-underline-offset:4px}
+header{padding:28px 0 22px;border-bottom:2px solid var(--accent)}
+h1{font-size:clamp(26px,5vw,44px);line-height:1.3;margin:.3em 0;max-width:760px}
+h2{font-size:25px;line-height:1.4;margin:52px 0 6px;padding-top:10px;border-top:2px solid var(--accent)}
+h3{font-size:20px;margin:26px 0 8px}
+h4{font-size:17px;margin:14px 0 4px;color:var(--accent2)}
+.eyebrow{letter-spacing:.09em;font-weight:700;color:var(--muted)}
+.lead{font-size:19px}
+.gain{background:var(--tagbg);border-left:4px solid var(--accent);padding:8px 16px;margin:10px 0 18px;font-weight:700}
+section{scroll-margin-top:16px}
+.note{padding:12px 18px;border-left:4px solid var(--note-line);background:var(--note-bg);margin:12px 0}
+.small{font-size:14px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;background:var(--card);table-layout:fixed;margin:10px 0}
+th,td{border:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top;overflow-wrap:anywhere;word-break:break-word}
+th{background:var(--tagbg)}
+pre{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;background:var(--pre-bg);color:var(--pre-fg);padding:14px 16px;border-radius:0 0 8px 8px;margin:0;font:15px/1.75 ui-monospace,Consolas,"Microsoft JhengHei",monospace;max-width:100%}
+pre.plain{border-radius:8px}
+code{background:var(--code-bg);border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;word-break:break-word;font:15px ui-monospace,Consolas,"Microsoft JhengHei",monospace}
+ol,ul{padding-left:1.3em}
+li{margin:6px 0}
+.cp{margin:10px 0 14px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:var(--tagbg);color:var(--tagfg);border-radius:8px 8px 0 0;padding:4px 8px 4px 12px;font-size:14px;font-weight:700}
+.bar .btns{display:flex;gap:6px;flex-wrap:wrap}
+button{font:inherit;font-size:14px;cursor:pointer;border:0;border-radius:6px;padding:4px 12px;background:var(--btn-bg);color:var(--btn-fg)}
+button.ghost{background:transparent;color:var(--accent2);border:1px solid var(--accent2)}
+button:active{transform:translateY(1px)}
+.steps{list-style:none;padding:0;counter-reset:st}
+.steps>li{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:10px;padding:10px 18px 14px;margin:14px 0}
+.chk{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:18px;font-weight:700;margin:4px 0 6px}
+.chk input{width:20px;height:20px;margin-top:8px;flex:0 0 auto;accent-color:var(--accent)}
+.chk .t{flex:1 1 auto;min-width:0}
+.chk .n{display:inline-block;background:var(--accent);color:var(--bg);border-radius:6px;padding:0 9px;font-size:15px;margin-right:6px;flex:0 0 auto;margin-top:5px}
+.blk{border-left:4px solid var(--line);padding:6px 14px;margin:10px 0;border-radius:0 8px 8px 0}
+.blk>b.k{display:inline-block;border-radius:5px;padding:0 8px;margin:0 6px 4px 0;font-size:14px}
+.see{background:var(--see-bg);border-color:var(--see-line)}.see>b.k{background:var(--see-line);color:#fff}
+.test{background:var(--test-bg);border-color:var(--test-line)}.test>b.k{background:var(--test-line);color:#fff}
+.goal{background:var(--note-bg);border-color:var(--note-line)}.goal>b.k{background:var(--note-line);color:#fff}.goal ol{margin:4px 0 6px;padding-left:1.5em}.goal li{margin:2px 0}
+details.stuck{background:var(--stuck-bg);border-left:4px solid var(--stuck-line);border-radius:0 8px 8px 0;padding:6px 14px;margin:10px 0}
+details.stuck summary{cursor:pointer;font-weight:700;color:var(--stuck-line)}
+details.stuck ul{margin:6px 0 4px}
+details.ans{background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:6px 14px;margin:14px 0}
+details.ans summary{cursor:pointer;font-weight:700}
+.todo-shot{border:2px dashed var(--todo-line);background:var(--todo-bg);border-radius:8px;padding:14px;margin:10px 0;color:var(--fg);font-weight:700;text-align:center}
+figure{margin:12px 0}
+img.shot{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;display:block}
+figcaption{font-size:14px;color:var(--muted);margin-top:4px}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 18px;margin:18px 0}
+.toc ol{margin:6px 0}
+.prog{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0 0;font-size:15px}
+.prog .barw{flex:1 1 200px;height:10px;background:var(--tagbg);border-radius:6px;overflow:hidden;min-width:120px}
+.prog .barw>div{height:100%;background:var(--accent);width:0%}
+.two{display:flex;flex-wrap:wrap;gap:14px}
+.two>div{flex:1 1 280px;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:2px 16px 12px}
+.filter{width:100%;padding:8px 12px;font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);margin:8px 0}
+.tag{display:inline-block;background:var(--tagbg);color:var(--tagfg);border-radius:6px;padding:0 8px;font-size:14px;margin-right:6px}
+.quote{border-left:4px solid var(--line);padding:4px 14px;margin:8px 0;color:var(--muted);font-size:15px;white-space:pre-wrap}
+.top{position:fixed;right:10px;bottom:10px;background:var(--btn-bg);color:var(--btn-fg);border-radius:50%;width:36px;height:36px;opacity:.85;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+@media (max-width:560px){
+  main{padding:20px 16px 80px}
+  th,td{padding:7px 5px;font-size:14px}
+  pre{font-size:13.5px;padding:12px}
+  code{font-size:13.5px}
+  .steps>li{padding:8px 12px 12px}
+  .chk{font-size:16.5px}
+  h2{font-size:22px}
+}
+@media print{.top,.bar .btns,.prog button{display:none}main{max-width:none;padding:0}}
+</style>
+</head>
+<body><main id="top">
+
+<header>
+<p class="eyebrow">和 AI 一起寫程式：創意生活應用　WEEK 6 回家作業　LINE bot 輕量版</p>
+<h1>LINE bot 輕量版：在自己的電腦上，讓一個小模型替你的 bot 回答問題</h1>
+<p class="lead">課堂那一版（<code>line_bot_local.py</code>）要教室的顯示卡、6.6 GB 的模型，還要 gws 接雲端硬碟和日曆。回家作業把它砍到最少：<b>一支 <code>line_bot_lite.py</code>，只做「文字問題進來 → 你電腦裡的小模型回答 → 回覆」</b>。模型換成 4.6 GB 的 <code>gemma4:e2b</code>（沒有顯示卡、只用 CPU 也跑得動，慢一點而已），再小一號有 <code>gemma3:1b</code>。</p>
+<p class="note"><b>兩個關卡，做到哪交到哪：</b><br>
+<b>關卡 A「模擬」</b>（必做）：不接 LINE、不開通道。程式加 <code>--simulate</code>，在終端機假裝手機傳訊息進來，看 bot 回什麼。只要 Ollama 裝得起來就做得完。<br>
+<b>關卡 B「真的接 LINE」</b>（選做、加分）：開 Cloudflare 通道、把 LINE 的 Webhook（LINE 把訊息送去哪個網址的設定）換到你的電腦，手機上真的問得到。<br>
+<b>交件</b>（e學苑）：① 你的 GitHub repo（放程式的公開專案頁）連結（第一行貼）② 一張對話截圖（關卡 A 的終端機畫面，或關卡 B 的手機畫面）③ 一句話：用哪個模型、電腦有沒有顯示卡、一題等了多久、哪裡卡住。</p>
+<p class="note"><b>這一頁怎麼用：</b>從上往下做，每一步有「指令或畫面 → 你應該看到 → 測一下 → 卡住了」，做完打勾（勾選只存在這台瀏覽器）。指令以 <b>Windows 的 PowerShell</b> 為主，Mac 的差別寫在旁邊。<b>關卡 A 約 30–45 分鐘</b>（不含模型下載：4.6 GB，網路慢可能要一小時以上，先開著下載去做別的）。</p>
+<div class="prog"><span id="progText">已勾 0／0 步</span><div class="barw"><div id="progBar"></div></div><button type="button" class="ghost" id="resetBtn">清除勾選</button></div>
+<div class="toc"><b>順序</b>
+<ol>
+<li><a href="#s0">先看懂</a>——跟課堂版差在哪、一則訊息怎麼走、CPU 要等多久</li>
+<li><a href="#s1">第 1 段　安裝（只有第一次）</a>——Python、Ollama、拉小模型、先跟模型講一句、下載程式</li>
+<li><a href="#s2">第 2 段　關卡 A：模擬模式</a>——開起來、問三題、截圖</li>
+<li><a href="#s3">第 3 段　放上 GitHub、交件</a>——建 repo、傳兩個檔、README 寫三件事</li>
+<li><a href="#s4">第 4 段　關卡 B：真的接 LINE（選做）</a>——cloudflared、兩個值、手機試、還回去</li>
+<li><a href="#s5">程式怎麼讀、安全與隱私</a></li>
+<li><a href="#stuckall">卡關總表</a>——出錯了先用關鍵字查這裡</li>
+</ol></div>
+</header>
+
+<!-- ======================= 先看懂 ======================= -->
+<section id="s0" data-sec="0"><h2>先看懂：跟課堂版差在哪、CPU 要等多久</h2>
+<p class="gain">看完你會知道：為什麼這一版沒有顯示卡也能做、模擬模式在模擬什麼、一題大概要等多久。</p>
+<table>
+<thead><tr><th style="width:22%"></th><th>課堂版 line_bot_local.py</th><th>輕量版 line_bot_lite.py（這一頁）</th></tr></thead>
+<tbody>
+<tr><td>模型</td><td>gemma4:e4b（6.6 GB，要顯示卡才快）</td><td><b>gemma4:e2b（4.6 GB）</b>；更小的 gemma3:1b（0.8 GB）</td></tr>
+<tr><td>會做的事</td><td>回答問題（會上網查）、看照片、排日曆、存雲端硬碟、寫試算表</td><td><b>只回答文字問題</b>；上網查是選做（<code>--search</code>）</td></tr>
+<tr><td>要裝的東西</td><td>Python、Ollama、Node.js、gws（還要自己建 Google Cloud 專案）、cloudflared</td><td><b>Python、Ollama</b>；關卡 B 才要 cloudflared</td></tr>
+<tr><td>要的鑰匙</td><td>LINE 通行碼、Channel secret、試算表 ID</td><td>關卡 A <b>什麼都不用</b>；關卡 B 要 LINE 通行碼、Channel secret（開程式時貼，不存檔）</td></tr>
+<tr><td>怎麼測</td><td>手機傳訊息</td><td>關卡 A 在終端機打字；關卡 B 才用手機</td></tr>
+</tbody></table>
+<h3>一則訊息怎麼走</h3>
+<pre class="plain">關卡 A（模擬）
+  終端機打一句話
+   → 程式把它包成一個「長得跟 LINE 送來一模一樣」的事件
+   → 同一個 handle() 處理：打招呼就回使用說明；問題交給本機 Ollama（http://127.0.0.1:11434）
+   → 回覆印在終端機（真 LINE 時這一步改成送回手機）
+
+關卡 B（真的接 LINE）
+  📱 手機傳文字 → LINE 的伺服器 → Cloudflare 通道 → 你電腦上的 line_bot_lite.py（先對簽章）
+   → 本機 Ollama 回答 → 回覆送回手機</pre>
+<p><b>為什麼模擬也算</b>：bot 的腦（模型）、處理一則訊息的那條路、回覆長什麼樣，模擬模式全部是真的；少掉的只有「LINE 把訊息送進來」那一段。程式刻意讓兩種模式走<b>同一個 <code>handle()</code></b>，所以關卡 A 做通了，接真 LINE 時程式一行都不用改。</p>
+<h3>沒有顯示卡要等多久</h3>
+<p>老師用一台 <b>2020 年的 Intel 筆電（4 核心 CPU、16 GB 記憶體、沒有獨立顯示卡）</b>實測，Ollama 自己偵測成「只用 CPU」：</p>
+<table id="cpuTiming">
+<thead><tr><th>模型</th><th>下載大小</th><th>第一次載入</th><th>一題（純本機、不上網）</th><th>答得怎樣</th></tr></thead>
+<tbody>
+<tr><td><code>gemma4:e2b</code>（預設）</td><td>4.6 GB</td><td>14 秒（第二次 1 秒）</td><td>3–6 秒</td><td>三題都合理：玉山 3952 公尺對；2026 諾貝爾獎老實說「我無法上網、無法提供」</td></tr>
+<tr><td><code>gemma3:1b</code>（備援）</td><td>0.8 GB</td><td>4 秒</td><td>1–4 秒</td><td>會掰：玉山答成 1,933 公尺；諾貝爾獎編了一個不存在的人名還說「最有力的傳聞」——快，但答案要自己核</td></tr>
+</tbody></table>
+<p class="small">你的電腦跟老師的不一樣，數字只當參考：記憶體 8 GB 的電腦先用 gemma3:1b；有獨立顯示卡的會快很多。等的時候 CPU 會跑滿、風扇會轉，是正常的。</p>
+</section>
+
+<!-- ======================= 第 1 段 安裝 ======================= -->
+<section id="s1" data-sec="1"><h2>第 1 段　安裝（只有第一次）</h2>
+<p class="gain">這段做完你會有：Python、Ollama＋一個小模型，和一個放好 <code>line_bot_lite.py</code> 的資料夾。W6 課堂做過 0-A 到 0-D 的，1-1、1-2 可以跳過，但 1-3 的小模型還是要拉。</p>
+<p>Windows 開 PowerShell（開始功能表搜「PowerShell」，<b>不用</b>系統管理員）；Mac 開「終端機」（Spotlight 搜 Terminal）。每一步裝完，<b>新開一個視窗</b>再測：舊視窗看不到剛裝好的程式。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="1-1"><span class="n">1-1</span><span class="t">Python（跑這支 bot 的程式語言）</span></label>
+<div class="cp"><div class="bar"><span>PowerShell／終端機</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>python --version</pre></div>
+<p>印出 <code>Python 3.</code> 開頭就跳到 1-2。Windows 說「不是指令」或跳出微軟商店，用 winget 裝：</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>winget install --id Python.Python.3.13 -e --accept-package-agreements --accept-source-agreements</pre></div>
+<p class="small">Mac：打 <code>python3 --version</code>；系統沒有會跳出「安裝命令列開發者工具」，按安裝。之後所有 <code>python</code> 都打成 <code>python3</code>。</p>
+<div class="blk see"><b class="k">你應該看到</b>新視窗的 <code>python --version</code> 印出 <code>Python 3.1x.…</code>（3.10 以上都可以）。</div>
+<div class="blk test"><b class="k">測一下</b>印得出版本就過。這支 bot 只用 Python 內建的功能，<b>不用</b> <code>pip install</code> 任何東西。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>打 python 跳出微軟商店</b>→ 那是 Windows 的空殼捷徑。關掉商店，用上面 winget 那行裝，裝完新開視窗。</li>
+<li><b>裝完還是說 python 不是指令</b>→ 沒有新開視窗。真的開新的還不行，改打 <code>py --version</code>，之後的指令把 <code>python</code> 都換成 <code>py</code>。</li>
+<li><b>「使用者帳戶控制」要管理員密碼</b>→ 自己的電腦按「是」。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="1-2"><span class="n">1-2</span><span class="t">Ollama（在你電腦上跑模型的程式）</span></label>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>winget install --id Ollama.Ollama -e --accept-package-agreements --accept-source-agreements</pre></div>
+<p class="small">Mac：到 Ollama 官網（ollama.com → Download）下載 macOS 版，拖進「應用程式」，打開一次。</p>
+<p>裝完<b>新開一個視窗</b>：</p>
+<div class="cp"><div class="bar"><span>PowerShell／終端機</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>ollama --version</pre></div>
+<div class="blk see"><b class="k">你應該看到</b><code>ollama version is 0.40.…</code>（0.40 開頭就對，小數點後的數字會變）。Windows 工作列右下角多一隻小羊駝。</div>
+<div class="blk test"><b class="k">測一下</b>打 <code>ollama list</code>，印出一個空的表頭（還沒有模型），沒有 could not connect。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>could not connect to a running Ollama instance</b>→ Ollama 沒開：開始功能表打開「Ollama」（Mac 打開應用程式裡的 Ollama），等羊駝圖示出現再試；或另開一個視窗打 <code>ollama serve</code> 讓它開著。</li>
+<li><b>winget 說找不到套件</b>→ 到 ollama.com 下載 Windows 版安裝檔，雙擊裝。</li>
+<li><b>裝完說 ollama 不是指令</b>→ 新開視窗。還不行就登出再登入一次。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="1-3"><span class="n">1-3</span><span class="t">拉小模型（4.6 GB，先按下去再做別的）</span></label>
+<div class="cp"><div class="bar"><span>PowerShell／終端機</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>ollama pull gemma4:e2b</pre></div>
+<p>記憶體只有 8 GB、或硬碟快滿的，改拉小一號的（0.8 GB），之後開 bot 前多打一行換模型（2-1 有寫）：</p>
+<div class="cp"><div class="bar"><span>PowerShell／終端機</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>ollama pull gemma3:1b</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>進度條跑到 100%，最後一行 <code>success</code>。進度條顯示的是最大那一塊 3.5 GB，全部拉完約 4.6 GB；老師的網路約 14 MB/s，等了 5 分多鐘。</div>
+<div class="blk test"><b class="k">測一下</b><code>ollama list</code> 的清單裡有 <code>gemma4:e2b</code>（或 <code>gemma3:1b</code>），SIZE 欄 4.6 GB（或 815 MB）。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>下載很慢或中斷</b>→ 再打一次同一行，它會接著下載，不會從頭來。</li>
+<li><b>no space left</b>→ 硬碟不夠：清一些空間，或改拉 gemma3:1b。</li>
+<li><b>pull 卡在 pulling manifest 很久</b>→ 網路連不到 ollama.com：換網路（學校網路有時擋），或等一下再試。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="1-4"><span class="n">1-4</span><span class="t">先跟模型講一句，感受一下它在你電腦上有多快</span></label>
+<div class="cp"><div class="bar"><span>PowerShell／終端機</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>ollama run gemma4:e2b "用一句話介紹花蓮。"</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>停幾秒到幾十秒（模型從硬碟載進記憶體；老師那台 14 秒），然後一個字一個字印出一句介紹。印完回到提示字元。</div>
+<div class="blk test"><b class="k">測一下</b>再打一次同一行：第二次快很多（模型已經在記憶體裡，Ollama 會留它幾分鐘）。記下第二次大概等了幾秒，交件那句話要用。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>等了很久完全沒字</b>→ CPU 慢是正常的，給它兩分鐘；工作管理員看 ollama 有沒有在吃 CPU。超過五分鐘還沒有，Ctrl+C，改用 gemma3:1b 再試。</li>
+<li><b>Error: model requires more system memory</b>→ 記憶體不夠：關掉瀏覽器等大程式再試，或改用 gemma3:1b。</li>
+<li><b>印出來是簡體或英文</b>→ 小模型偶爾會；程式裡有交代它用台灣的繁體中文，到 bot 裡會比較穩。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="1-5"><span class="n">1-5</span><span class="t">下載 line_bot_lite.py，放進自己的資料夾</span></label>
+<p>按下面「下載」，瀏覽器會存到「下載」資料夾。再貼這段，在「下載」裡開一個 <code>line-bot-lite</code> 資料夾、把程式搬進去、進到那裡：</p>
+<div class="cp"><div class="bar"><span>line_bot_lite.py</span><span class="btns"><button type="button" class="dl" data-name="line_bot_lite.py">下載</button><button type="button" class="copy">複製</button></span></div><pre data-src="starter/line_bot_lite.py" style="max-height:11em;overflow:auto"># LINE bot 輕量版：一支 Python 程式，接上你自己電腦裡的小模型，回答問題。沒有顯示卡也跑得動。
+#
+# 跟課堂版 line_bot_local.py 差在哪：
+#   只做一件事：文字問題進來 → 你電腦上的 Ollama 小模型回答 → 回覆。
+#   拿掉照片、日曆、雲端硬碟、試算表（那些要 gws，是課堂版的事）。
+#   預設模型 gemma4:e2b（小、CPU 跑得動）；想更小就 MODEL=gemma3:1b。
+#   多一個「模擬模式」：不接 LINE、不開通道，在終端機假裝手機傳訊息進來，看 bot 回什麼。
+#   作業先用模擬模式做到會回答；要接真的 LINE 再照指南第 4 段。
+#
+# 用法（在這個檔所在的資料夾；Windows 用 PowerShell、Mac 用「終端機」）：
+#   python line_bot_lite.py --simulate      ← 模擬模式：終端機打字，bot 回答；不需要 LINE 任何東西
+#   python line_bot_lite.py                 ← 真的接 LINE：要 cloudflared、LINE 長效通行碼、Channel secret
+#   換模型：Windows PowerShell 先打  $env:MODEL=&quot;gemma3:1b&quot;   ／ Mac 終端機先打  export MODEL=gemma3:1b
+#
+# 需要：Python 3（只用內建功能，不用 pip install）、Ollama 開著、模型拉好（ollama pull gemma4:e2b）。
+# 選做：要它會上網查，開程式時加 --search（搜尋走 Ollama 的線上服務，要網路；額度規則可能變）。
+
+import base64, getpass, hashlib, hmac, json, os, queue, re, shutil, subprocess, sys, threading, time, urllib.error, urllib.request
+from datetime import datetime
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+MODEL = os.environ.get(&quot;MODEL&quot;, &quot;gemma4:e2b&quot;)
+PORT = int(os.environ.get(&quot;PORT&quot;, &quot;8000&quot;))
+OLLAMA = &quot;http://127.0.0.1:11434&quot;
+SEARCH = &quot;--search&quot; in sys.argv          # 要不要讓模型上網查（預設不要：純本機、不用網路）
+SIMULATE = &quot;--simulate&quot; in sys.argv      # 模擬模式：不接 LINE
+GREETING = re.compile(r&quot;^(hi|hello|你好|嗨|哈囉|測試|test)$&quot;, re.I)
+HELP = (&quot;你好！我是跑在同學電腦上的小模型 🤖\n問我問題，我用自己的記憶回答&quot; + (&quot;，需要的話上網查、附來源&quot; if SEARCH else &quot;（沒有上網，答案請自己核對）&quot;) + &quot;。&quot;)
+SYSTEM = (&quot;你是 LINE 上的助理，今天是 {today}。回答用台灣的繁體中文、純文字（不要用星號或井字號），120 字以內，先講結論。&quot;
+          + (&quot;遇到最近的事、版本號、價格或任何你不確定的事實，先呼叫 web_search。不用自己寫網址，程式會附上來源。&quot; if SEARCH
+             else &quot;你沒有上網；不確定的事就說不確定，不要編造。&quot;))
+TOOLS = [{&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {&quot;name&quot;: &quot;web_search&quot;, &quot;description&quot;: &quot;搜尋網路，回傳前幾筆標題、網址與內文。&quot;,
+          &quot;parameters&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {&quot;query&quot;: {&quot;type&quot;: &quot;string&quot;}}, &quot;required&quot;: [&quot;query&quot;]}}}]
+
+LINE_TOKEN = LINE_SECRET = &quot;&quot;   # main() 開起來時問你，再填進這裡；不寫進檔案
+_turn = threading.Lock()        # 一次只答一題：CPU 一次跑一題才不會更慢
+_procs = []                     # 開出去的 cloudflared，結束時一定要關
+TUNNEL_WAIT = 60
+
+
+def log(s):
+    print(f&quot;[{datetime.now():%H:%M:%S}] {s}&quot;, flush=True)
+
+
+# ===== 1. 叫 Ollama、叫 LINE 的小工具 =====
+def http_json(method, url, body=None, headers=None, timeout=60):
+    data = json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(url, data=data, method=method, headers={&quot;Content-Type&quot;: &quot;application/json&quot;, **(headers or {})})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            raw = r.read()
+            return r.status, (json.loads(raw) if raw.strip() else {})
+    except urllib.error.HTTPError as e:
+        return e.code, {&quot;error&quot;: e.read().decode(&quot;utf-8&quot;, &quot;replace&quot;)[:200]}
+    except urllib.error.URLError as e:
+        return 0, {&quot;error&quot;: str(e.reason)}
+
+
+def ollama(path, body, timeout=600):
+    code, res = http_json(&quot;POST&quot;, OLLAMA + path, body, timeout=timeout)
+    if code == 0:
+        raise RuntimeError(&quot;連不到 Ollama：先把 Ollama 打開（Windows 工作列有小羊駝；或另開視窗打 ollama serve）&quot;)
+    if code != 200:
+        raise RuntimeError(f&quot;Ollama {path} 回應 {code}：{res}&quot;)
+    return res
+
+
+def chat(messages, **extra):
+    # CPU 跑小模型，一題可能要等幾十秒到幾分鐘，所以 timeout 給 10 分鐘；num_ctx 開小一點省記憶體
+    body = {&quot;model&quot;: MODEL, &quot;messages&quot;: messages, &quot;stream&quot;: False, &quot;think&quot;: False, &quot;keep_alive&quot;: &quot;30m&quot;, &quot;options&quot;: {&quot;num_ctx&quot;: 4096}}
+    return ollama(&quot;/api/chat&quot;, {**body, **extra}).get(&quot;message&quot;, {})
+
+
+def line(method, path, body=None):
+    return http_json(method, &quot;https://api.line.me&quot; + path, body, {&quot;Authorization&quot;: &quot;Bearer &quot; + LINE_TOKEN})
+
+
+def reply(token, text):
+    if SIMULATE:
+        print(&quot;\n🤖 bot 回覆：\n&quot; + text + &quot;\n&quot;, flush=True)
+        return
+    code, res = line(&quot;POST&quot;, &quot;/v2/bot/message/reply&quot;, {&quot;replyToken&quot;: token, &quot;messages&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: text[:5000]}]})
+    if code != 200:
+        log(f&quot;⚠️ LINE 回覆失敗 {code}：{res}&quot;)
+
+
+# ===== 2. 模型回答問題 =====
+def ask_text(question):
+    &quot;&quot;&quot;回傳（答案, 來源網址清單）。沒開 --search 就純本機回答。&quot;&quot;&quot;
+    msgs = [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: SYSTEM.format(today=datetime.now().strftime(&quot;%Y-%m-%d（%A）&quot;))},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: question}]
+    sources = []
+    for _ in range(3 if SEARCH else 1):
+        m = chat(msgs, **({&quot;tools&quot;: TOOLS} if SEARCH else {}))
+        msgs.append(m)
+        if not m.get(&quot;tool_calls&quot;):
+            return m.get(&quot;content&quot;, &quot;&quot;).replace(&quot;**&quot;, &quot;&quot;).strip(), sources
+        for c in m[&quot;tool_calls&quot;]:
+            q = (c[&quot;function&quot;].get(&quot;arguments&quot;) or {}).get(&quot;query&quot;, &quot;&quot;)
+            log(f&quot;  🔍 模型決定搜：{q}&quot;)
+            try:
+                rows = ollama(&quot;/api/experimental/web_search&quot;, {&quot;query&quot;: q, &quot;max_results&quot;: 3}, timeout=60).get(&quot;results&quot;, [])
+                sources += [r[&quot;url&quot;] for r in rows]
+                out = json.dumps([{&quot;title&quot;: r[&quot;title&quot;], &quot;url&quot;: r[&quot;url&quot;], &quot;content&quot;: r[&quot;content&quot;][:1200]} for r in rows], ensure_ascii=False)
+            except Exception as e:
+                if &quot;401&quot; in str(e) or &quot;Unauthorized&quot; in str(e):
+                    log(&quot;  ⚠️ 搜尋要先登入 Ollama（免費帳號）：另開視窗打 ollama signin，照它給的網址登入，再跑一次&quot;)
+                    out = &quot;ERROR: 搜尋功能沒登入，無法使用。請直接用你的記憶回答，並說明你沒有上網。&quot;
+                else:
+                    out = f&quot;ERROR: {e}&quot;
+            msgs.append({&quot;role&quot;: &quot;tool&quot;, &quot;tool_name&quot;: &quot;web_search&quot;, &quot;content&quot;: out})
+    return &quot;查了幾次還整理不出答案，換個問法再試一次。&quot;, sources
+
+
+# ===== 3. 處理一則訊息 =====
+def handle(event):
+    with _turn:
+        _handle(event)
+
+
+def _handle(event):
+    if event.get(&quot;type&quot;) != &quot;message&quot; or not event.get(&quot;replyToken&quot;):
+        return
+    msg, token = event[&quot;message&quot;], event[&quot;replyToken&quot;]
+    if msg.get(&quot;type&quot;) != &quot;text&quot;:
+        return reply(token, &quot;目前我只看得懂文字喔。&quot;)
+    text = msg[&quot;text&quot;].strip()
+    if GREETING.match(text):
+        return reply(token, HELP)
+    user = event.get(&quot;source&quot;, {})
+    if not SIMULATE and user.get(&quot;type&quot;) == &quot;user&quot;:  # 「對方正在輸入…」動畫，最多 60 秒（CPU 慢，先讓對方知道有在跑）
+        line(&quot;POST&quot;, &quot;/v2/bot/chat/loading/start&quot;, {&quot;chatId&quot;: user[&quot;userId&quot;], &quot;loadingSeconds&quot;: 60})
+    log(f&quot;📩 收到文字（{len(text)} 字），交給 {MODEL}…&quot;)  # 不印內容：螢幕可能正在投影
+    t0 = time.time()
+    try:
+        answer, sources = ask_text(text)
+        tail = (&quot;\n\n來源：\n&quot; + &quot;\n&quot;.join(&quot;• &quot; + u for u in list(dict.fromkeys(sources))[:3])) if sources else \
+               (&quot;\n\nℹ️ 這題沒有上網查，只憑模型記憶，請自己核對。&quot;)
+        reply(token, f&quot;{answer}{tail}\n（本地模型 {MODEL}，{time.time() - t0:.0f} 秒）&quot;)
+        log(f&quot;✅ 回覆了（{time.time() - t0:.0f} 秒）&quot;)
+    except Exception as e:
+        log(f&quot;❌ {e}&quot;)
+        reply(token, &quot;⚠️ 出錯了：&quot; + str(e)[:300])
+
+
+class Webhook(BaseHTTPRequestHandler):
+    def do_POST(self):
+        body = self.rfile.read(int(self.headers.get(&quot;Content-Length&quot;, 0)))
+        if LINE_SECRET:  # 對簽章：確定真的是 LINE 送來的，不是知道網址的路人
+            sig = base64.b64encode(hmac.new(LINE_SECRET.encode(), body, hashlib.sha256).digest()).decode()
+            if not hmac.compare_digest(sig, self.headers.get(&quot;x-line-signature&quot;, &quot;&quot;)):
+                log(&quot;⛔ 簽章不對，不是 LINE 送來的，丟掉&quot;)
+                self.send_response(401)
+                self.end_headers()
+                return
+        self.send_response(200)  # 先跟 LINE 說收到了（LINE 要 2 秒內回應），再慢慢處理
+        self.end_headers()
+        for ev in json.loads(body or b&quot;{}&quot;).get(&quot;events&quot;, []):
+            threading.Thread(target=handle, args=(ev,), daemon=True).start()
+
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(&quot;LINE bot 輕量版運作中&quot;.encode())
+
+    def log_message(self, *args):
+        pass
+
+
+# ===== 4. 模擬模式：終端機假裝是手機 =====
+def simulate():
+    log(f&quot;模擬模式：不接 LINE。模型 {MODEL}&quot; + (&quot;，開了上網查&quot; if SEARCH else &quot;，純本機（沒上網）&quot;))
+    log(&quot;先載入模型（第一次要等一下）…&quot;)
+    t0 = time.time()
+    chat([{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;hi&quot;}])
+    log(f&quot;✅ 模型可以用了（{time.time() - t0:.0f} 秒）。打一句話按 Enter，bot 會回；打 quit 結束。&quot;)
+    n = 0
+    while True:
+        try:
+            text = input(&quot;📱 你：&quot;).strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if text.lower() in (&quot;quit&quot;, &quot;exit&quot;, &quot;q&quot;):
+            break
+        if not text:
+            continue
+        n += 1
+        # 做一個長得跟 LINE 送來一模一樣的事件，走同一條處理路：之後接真 LINE 時程式不用改
+        handle({&quot;type&quot;: &quot;message&quot;, &quot;replyToken&quot;: f&quot;sim-{n}&quot;, &quot;source&quot;: {&quot;type&quot;: &quot;user&quot;, &quot;userId&quot;: &quot;SIMULATED&quot;},
+                &quot;message&quot;: {&quot;type&quot;: &quot;text&quot;, &quot;id&quot;: str(n), &quot;text&quot;: text}})
+    log(&quot;模擬結束。&quot;)
+
+
+# ===== 5. 真的接 LINE：開通道、換 Webhook，結束時換回去（跟課堂版一樣） =====
+def ask_settings():
+    token = os.environ.get(&quot;LINE_CHANNEL_ACCESS_TOKEN&quot;) or getpass.getpass(&quot;貼上 LINE 長效通行碼（Channel access token，畫面不顯示）：&quot;).strip()
+    secret = os.environ.get(&quot;LINE_CHANNEL_SECRET&quot;) or getpass.getpass(&quot;貼上 Channel secret（LINE Developers → Basic settings；必填；畫面不顯示）：&quot;).strip()
+    return token, secret
+
+
+def open_tunnel():
+    if not shutil.which(&quot;cloudflared&quot;):
+        log(&quot;⚠️ 找不到 cloudflared，外面連不到這裡。Windows：winget install --id Cloudflare.cloudflared -e；Mac：brew install cloudflared&quot;)
+        log(&quot;   裝完關掉這個視窗、新開一個再跑一次。&quot;)
+        return None
+    cf = subprocess.Popen([&quot;cloudflared&quot;, &quot;tunnel&quot;, &quot;--no-autoupdate&quot;, &quot;--url&quot;, f&quot;http://127.0.0.1:{PORT}&quot;],
+                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding=&quot;utf-8&quot;, errors=&quot;replace&quot;)
+    _procs.append(cf)
+    found = queue.Queue()
+
+    def watch():
+        for row in cf.stdout:
+            m = re.search(r&quot;https://[a-z0-9-]+\.trycloudflare\.com&quot;, row)
+            if m:
+                found.put(m.group(0))
+        found.put(None)
+
+    threading.Thread(target=watch, daemon=True).start()
+    try:
+        url = found.get(timeout=TUNNEL_WAIT)
+    except queue.Empty:
+        url = None
+    if not url:
+        log(f&quot;⚠️ {TUNNEL_WAIT} 秒內通道沒拿到網址：看網路（學校網路可能擋），或再跑一次&quot;)
+    return url
+
+
+def restore(old):
+    if not old:
+        log(&quot;ℹ️ 原本沒有 Webhook 網址，現在指著一個已經關掉的通道；要用 Apps Script 版就回 LINE Developers 貼回 /exec 網址&quot;)
+        return
+    line(&quot;PUT&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;, {&quot;endpoint&quot;: old})
+    code, now = line(&quot;GET&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;)
+    if code == 200 and now.get(&quot;endpoint&quot;) == old:
+        log(&quot;↩️ LINE 的 Webhook 換回原本的了（重新讀過一次，確認是原本那個）&quot;)
+    else:
+        log(f&quot;⚠️ 沒能確認換回去：到 LINE Developers →「Messaging API」→ Webhook URL 手動貼回：{old}&quot;)
+
+
+def main():
+    global LINE_TOKEN, LINE_SECRET
+    if SIMULATE:
+        return simulate()
+    LINE_TOKEN, LINE_SECRET = ask_settings()
+    code, info = line(&quot;GET&quot;, &quot;/v2/bot/info&quot;)
+    if code != 200:
+        sys.exit(f&quot;LINE 通行碼不對（{code}）：回 LINE Developers 重新複製長效通行碼&quot;)
+    log(f&quot;✅ LINE bot「{info.get(&#x27;displayName&#x27;)}」&quot;)
+    if not LINE_SECRET:
+        sys.exit(&quot;沒有 Channel secret 就不開通道：沒有它，知道通道網址的人都能假冒 LINE 送訊息進來。回 LINE Developers →「Basic settings」複製，再跑一次。&quot;)
+    code, cur = line(&quot;GET&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;)
+    if code == 200:
+        old = cur.get(&quot;endpoint&quot;)
+    elif code == 404:
+        old = None
+    else:
+        sys.exit(f&quot;讀不到 LINE 現在的 Webhook 網址（{code}）：先不換。等一下再跑一次。{cur}&quot;)
+    log(f&quot;   原本的 Webhook：{old or &#x27;（沒有設定）&#x27;}——先抄下來，萬一沒換回去要手動貼回&quot;)
+    log(f&quot;載入模型 {MODEL}（第一次要等一下）…&quot;)
+    chat([{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;hi&quot;}])
+    log(&quot;✅ 模型可以用了&quot;)
+
+    server = ThreadingHTTPServer((&quot;127.0.0.1&quot;, PORT), Webhook)  # 只聽本機：外面只能從通道進來
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    switched = False
+    try:
+        url = open_tunnel()
+        if url:
+            code, res = line(&quot;PUT&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;, {&quot;endpoint&quot;: url + &quot;/callback&quot;})
+            if code != 200:
+                log(f&quot;⚠️ 換 Webhook 失敗 {code}：{res}。可以手動貼到 LINE Developers：{url}/callback&quot;)
+            else:
+                switched = True
+                log(f&quot;✅ LINE 的 Webhook 換到這台電腦了：{url}/callback（按 Ctrl+C 會換回去）&quot;)
+                log(&quot;   LINE 說換網址最多要 1 分鐘才生效；等一下再用手機傳訊息&quot;)
+                time.sleep(5)
+                code, test = line(&quot;POST&quot;, &quot;/v2/bot/channel/webhook/test&quot;, {})
+                log(f&quot;   LINE 測試連線：{&#x27;✅ 通了&#x27; if test.get(&#x27;success&#x27;) else &#x27;還沒通（&#x27; + str(test.get(&#x27;reason&#x27;)) + &#x27;），等一分鐘再傳&#x27;}&quot;)
+        log(&quot;開好了。手機傳訊息給 bot 試試看；這個視窗不要關，按 Ctrl+C 結束。&quot; if switched
+            else &quot;⚠️ 這次沒接上 LINE（看上面的訊息）。按 Ctrl+C 結束。&quot;)
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        if switched:
+            restore(old)
+        for cf in _procs:
+            cf.terminate()
+        server.shutdown()
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</pre></div>
+<p class="small">上面只露出開頭幾行（可以捲動）；整份會被下載或複製。</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>New-Item -ItemType Directory -Force "$env:USERPROFILE\Downloads\line-bot-lite" | Out-Null
+Move-Item "$env:USERPROFILE\Downloads\line_bot_lite.py" "$env:USERPROFILE\Downloads\line-bot-lite\" -Force
+cd "$env:USERPROFILE\Downloads\line-bot-lite"
+dir</pre></div>
+<div class="cp"><div class="bar"><span>Mac 終端機</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>mkdir -p ~/Downloads/line-bot-lite && mv ~/Downloads/line_bot_lite.py ~/Downloads/line-bot-lite/ && cd ~/Downloads/line-bot-lite && ls -l</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>列出一個檔：<code>line_bot_lite.py</code>（約 12 KB）。</div>
+<div class="blk test"><b class="k">測一下</b>檔名剛好是 <code>line_bot_lite.py</code>，不是 <code>line_bot_lite (1).py</code> 或 <code>.txt</code> 結尾。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>Move-Item 說找不到檔</b>→ 瀏覽器存到別的地方、或檔名多了 (1)：用檔案總管把它拖進 <code>下載\line-bot-lite</code>，改名成 <code>line_bot_lite.py</code>。</li>
+<li><b>下載鈕沒反應</b>→ 按「複製」，開記事本貼上，另存新檔：存檔類型選「所有檔案」、檔名 <code>line_bot_lite.py</code>、編碼 UTF-8。</li>
+</ul></details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 第 2 段 關卡 A ======================= -->
+<section id="s2" data-sec="2"><h2>第 2 段　關卡 A：模擬模式（必做）</h2>
+<p class="gain">這段做完：bot 在你電腦上跑起來，你在終端機打字、它用本地模型回答，而且你有一張可以交的截圖。<b>不需要 LINE 的任何東西。</b></p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="2-1"><span class="n">2-1</span><span class="t">開模擬模式</span></label>
+<div class="cp"><div class="bar"><span>PowerShell／終端機（在 line-bot-lite 資料夾）</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>python line_bot_lite.py --simulate</pre></div>
+<p class="small">拉的是 gemma3:1b 的，開之前多打一行換模型（同一個視窗）：Windows <code>$env:MODEL="gemma3:1b"</code>；Mac <code>export MODEL=gemma3:1b</code>。</p>
+<div class="blk see"><b class="k">你應該看到</b>
+<pre class="plain">[20:01:00] 模擬模式：不接 LINE。模型 gemma4:e2b，純本機（沒上網）
+[20:01:00] 先載入模型（第一次要等一下）…
+[20:01:38] ✅ 模型可以用了（38 秒）。打一句話按 Enter，bot 會回；打 quit 結束。
+📱 你：</pre></div>
+<div class="blk test"><b class="k">測一下</b>游標停在「📱 你：」後面等你打字就過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>連不到 Ollama</b>→ Ollama 沒開：1-2 的「卡住了」第一條。</li>
+<li><b>Ollama /api/chat 回應 404：model not found</b>→ 沒拉模型、或打錯名字：<code>ollama list</code> 看清單裡叫什麼，<code>ollama pull gemma4:e2b</code>。</li>
+<li><b>python 不是指令</b>→ 1-1；Mac 打 <code>python3</code>。</li>
+<li><b>can't open file … line_bot_lite.py</b>→ 不在那個資料夾：先 <code>cd</code> 進 1-5 開的資料夾。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="2-2"><span class="n">2-2</span><span class="t">問三題：打招呼、一題常識、一題最近的事</span></label>
+<p>依序打這三句（每句按 Enter，等它回完再打下一句）：</p>
+<div class="cp"><div class="bar"><span>打進「📱 你：」</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>hi</pre></div>
+<div class="cp"><div class="bar"><span>打進「📱 你：」</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>台灣最高的山是哪一座？多高？</pre></div>
+<div class="cp"><div class="bar"><span>打進「📱 你：」</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>2026 年諾貝爾物理獎得主是誰？</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>第一句<b>馬上</b>回使用說明（打招呼不叫模型）。第二句等幾秒到幾十秒（老師那台 3 秒；舊電腦會更久），回「玉山、3952 公尺」這類答案，尾巴多兩行：<code>ℹ️ 這題沒有上網查，只憑模型記憶，請自己核對。</code> 和 <code>（本地模型 gemma4:e2b，NN 秒）</code>。第三句它<b>應該說它不知道或不確定</b>（2026 年的事它訓練時還沒發生）——小模型偶爾會硬掰一個名字，那正是「請自己核對」那行的意思。⚠️ 老師實測的回覆內容在〈先看懂〉的表格；你的電腦印出來的字會不一樣。</div>
+<div class="blk test"><b class="k">測一下</b>三句都有回覆、沒有「⚠️ 出錯了」就過。第二句的秒數記下來。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>打了字很久沒反應</b>→ 它在算：CPU 一題可能要一兩分鐘；看終端機有沒有「📩 收到文字…交給 gemma4:e2b…」那行，有就是在跑。</li>
+<li><b>⚠️ 出錯了：timed out</b>→ 十分鐘都沒答完，電腦真的太慢：改用 gemma3:1b。</li>
+<li><b>中文打不進終端機</b>→ Windows 舊版 PowerShell 偶爾會：先打 <code>chcp 65001</code> 再開 bot；或開 bot 時改打 <code>py -X utf8 line_bot_lite.py --simulate</code>；或改用 Windows Terminal。</li>
+<li><b>它回英文或簡體</b>→ 小模型偶爾會，再問一次通常就對；不扣分。</li>
+<li><b>第三題它很有自信地給了一個名字</b>→ 這叫「幻覺」，小模型常見；作業那句話可以寫「它掰了 ○○，我查過是錯的」。想讓它真的去查，看 2-4。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="2-3"><span class="n">2-3</span><span class="t">截圖、結束</span></label>
+<p>把終端機整個視窗截下來（Windows：Win＋Shift＋S 框選；Mac：⌘＋Shift＋4），要看得到「📱 你：」的問題和「🤖 bot 回覆」的答案、尾巴那行模型名與秒數。然後打 <code>quit</code> 結束。</p>
+<div class="blk see"><b class="k">你應該看到</b>一張圖，裡面至少一組問答；終端機最後一行 <code>模擬結束。</code></div>
+<div class="blk test"><b class="k">測一下</b>圖裡沒有任何通行碼、金鑰（模擬模式本來就沒有，但習慣要養）。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>視窗太窄回覆被折行很醜</b>→ 把視窗拉寬再截，或不管它，看得懂就好。</li>
+<li><b>quit 沒反應</b>→ 它還在算上一題，等它回完；或直接 Ctrl+C。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="2-4"><span class="n">2-4</span><span class="t">（選做）讓它會上網查：加 --search</span></label>
+<div class="cp"><div class="bar"><span>PowerShell／終端機</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>python line_bot_lite.py --simulate --search</pre></div>
+<p>再問一次第三題。搜尋走 Ollama 的線上搜尋服務，<b>要先登入一次 Ollama 的免費帳號</b>：另開視窗打 <code>ollama signin</code>，照它印的網址用瀏覽器登入，回來再跑。沒登入會看到「⚠️ 搜尋要先登入 Ollama」。</p>
+<div class="blk see"><b class="k">你應該看到</b>終端機多一行 <code>🔍 模型決定搜：…</code>，回覆尾巴變成「來源：」加網址。老師實測 e2b <b>會</b>主動呼叫搜尋（終端機印了兩次「🔍 模型決定搜」），但老師那台沒登入、搜尋被擋（401），所以「有來源」那一段沒實走；以你的畫面為準，不會就當它不會、不扣分。</div>
+<div class="blk test"><b class="k">測一下</b>有來源網址就過；沒有也沒關係，這是選做。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>模型沒去搜、還是憑記憶答</b>→ 小模型常不會用工具；換個問法「請上網查 2026 年諾貝爾物理獎得主」，或放棄這步。</li>
+<li><b>⚠️ 搜尋要先登入 Ollama</b>→ 另開視窗 <code>ollama signin</code>，瀏覽器登入後再跑一次。</li>
+<li><b>web_search 回應其他 4xx</b>→ 搜尋額度或網路：等一下再試。</li>
+</ul></details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 第 3 段 GitHub ======================= -->
+<section id="s3" data-sec="3"><h2>第 3 段　放上 GitHub、交件</h2>
+<p class="gain">這段做完：一個公開 repo，裡面有程式和一份 README；e學苑 交三樣。用 W3 學過的任一條路（Antigravity／Codex 叫 agent 幫你 push，或 GitHub 網頁版直接上傳）都行，下面寫網頁版。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="3-1"><span class="n">3-1</span><span class="t">建一個公開 repo</span></label>
+<p>GitHub 右上角「＋」→ New repository。名稱例如 <code>line-bot-lite</code>（<b>不要放姓名學號</b>），Public，勾「Add a README file」，Create。</p>
+<div class="blk see"><b class="k">你應該看到</b>一個只有 README.md 的新 repo 頁。</div>
+<div class="blk test"><b class="k">測一下</b>用無痕視窗開 repo 網址，不用登入也看得到＝真的是 Public。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>名稱已存在</b>→ 換一個，例如 <code>line-bot-lite-2026</code>。</li>
+<li><b>忘了 GitHub 密碼或 2FA</b>→ W1 存的備援碼；都沒有就走 GitHub 的帳號救援，別重新申請一個帳號。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="3-2"><span class="n">3-2</span><span class="t">傳程式、寫 README 三件事</span></label>
+<p>repo 頁「Add file」→「Upload files」，把 <code>line_bot_lite.py</code> 拖進去，Commit changes。然後點 README.md 的鉛筆，照這個骨架寫（用自己的話，不用長）：</p>
+<div class="cp"><div class="bar"><span>README.md</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre># LINE bot 輕量版（和 AI 一起寫程式 W6 回家作業）
+
+## 怎麼裝
+- Python 3、Ollama，`ollama pull gemma4:e2b`
+
+## 怎麼跑
+- 模擬模式：`python line_bot_lite.py --simulate`
+- 真的接 LINE：`python line_bot_lite.py`（要 cloudflared、LINE 通行碼與 Channel secret，開起來時貼）
+
+## 我改了什麼、跑起來怎樣
+- 模型：gemma4:e2b／電腦：（有沒有顯示卡、記憶體多少）／一題約 NN 秒
+- 改了：（沒改就寫「沒改」）
+- 卡在：（沒卡就寫「沒有」）</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>repo 首頁兩個檔：<code>line_bot_lite.py</code>、<code>README.md</code>，README 直接顯示在下面。</div>
+<div class="blk test"><b class="k">測一下</b>點開 repo 裡的 <code>line_bot_lite.py</code>，用瀏覽器的搜尋找 <code>LINE_TOKEN = </code> 那一行，後面是空字串 <code>""</code>——程式本來就不存鑰匙；自己改過的要確認沒把通行碼寫進去。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>Upload files 拖進去沒反應</b>→ 換成「Add file → Create new file」，檔名打 <code>line_bot_lite.py</code>，把程式內容貼進去（1-5 的「複製」鈕）。</li>
+<li><b>不小心把通行碼 commit 進去了</b>→ 立刻到 LINE Developers 重發一把新的（舊的作廢），再從 repo 刪掉；GitHub 的歷史還在，所以作廢才是重點。</li>
+<li><b>想用 W3 的方法叫 agent 幫我 push</b>→ 可以，目標跟上面一樣：公開 repo、兩個檔、README 三件事。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="3-3"><span class="n">3-3</span><span class="t">e學苑 交三樣</span></label>
+<p>線上文字第一行貼 repo 網址，第二行一句話（模型、有沒有顯示卡、一題幾秒、卡在哪）；附檔上傳一張截圖：做關卡 A 交 2-3 那張終端機畫面；做到關卡 B 的改交手機畫面（想把終端機那張一起放也可以）。</p>
+<div class="blk see"><b class="k">你應該看到</b>e學苑 顯示「已繳交」。</div>
+<div class="blk test"><b class="k">測一下</b>再點一次自己貼的 repo 網址，打得開。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>做到一半卡住、沒截圖可交</b>→ 一樣交 repo 連結（有多少傳多少）＋卡在哪一步的截圖＋一句你卡在什麼。老實交比硬湊高分。</li>
+</ul></details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 第 4 段 關卡 B ======================= -->
+<section id="s4" data-sec="4"><h2>第 4 段　關卡 B：真的接 LINE（選做、加分）</h2>
+<p class="gain">這段做完：手機上的 LINE 問問題，是你電腦裡的小模型在回。做法跟課堂版一模一樣，程式開起來會自己開通道、換 Webhook，Ctrl+C 換回去。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="4-1"><span class="n">4-1</span><span class="t">裝 cloudflared（給你電腦一個外面連得到的臨時網址）</span></label>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>winget install --id Cloudflare.cloudflared -e --accept-package-agreements --accept-source-agreements</pre></div>
+<p class="small">Mac：<code>brew install cloudflared</code>（沒有 brew 就到 Cloudflare 官方文件的 Downloads 頁抓 macOS 版）。</p>
+<div class="blk see"><b class="k">你應該看到</b>新開視窗打 <code>cloudflared --version</code> 印出版本。</div>
+<div class="blk test"><b class="k">測一下</b>印得出版本就過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>裝完說不是指令</b>→ 新開視窗。</li>
+<li><b>winget 被擋</b>→ Cloudflare 官方文件「Downloads」頁抓 Windows 版。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="4-2"><span class="n">4-2</span><span class="t">準備兩個值：LINE 長效通行碼、Channel secret</span></label>
+<p>都在 LINE Developers（W5 開的那個 channel）：「Messaging API」分頁最下面的 Channel access token（沒有就按 Issue）；「Basic settings」分頁的 Channel secret。<b>只複製到剪貼簿，不要貼進任何檔案或對話。</b></p>
+<div class="blk see"><b class="k">你應該看到</b>兩串很長的英數字，各自按 Copy 可以複製。</div>
+<div class="blk test"><b class="k">測一下</b>知道兩個分別在哪一頁就過（開程式時會依序要）。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>找不到 W5 的 channel</b>→ LINE Developers 登入後點 Providers → 你的 provider → 那個 Messaging API channel。</li>
+<li><b>通行碼之前不小心外流過</b>→ 按 Reissue 換一把新的，舊的就作廢。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="4-3"><span class="n">4-3</span><span class="t">開 bot、貼兩個值</span></label>
+<div class="cp"><div class="bar"><span>PowerShell／終端機（在 line-bot-lite 資料夾）</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>python line_bot_lite.py</pre></div>
+<p>它會依序問：① 長效通行碼 ② Channel secret。<b>貼上去畫面不會出現任何字、也沒有星號，是正常的</b>（PowerShell 視窗按一下滑鼠右鍵就是貼上），貼完按 Enter。</p>
+<div class="blk see"><b class="k">你應該看到</b>（⚠️ 照程式寫的預期畫面；老師在家只用假的 LINE 函式驗過程式邏輯，真通道那幾行以你的畫面為準）
+<pre class="plain">[20:10:01] ✅ LINE bot「你的 bot 名字」
+[20:10:01]    原本的 Webhook：（你 W5 的 /exec 網址）——先抄下來，萬一沒換回去要手動貼回
+[20:10:01] 載入模型 gemma4:e2b（第一次要等一下）…
+[20:10:39] ✅ 模型可以用了
+[20:10:44] ✅ LINE 的 Webhook 換到這台電腦了：https://（一串英文字）.trycloudflare.com/callback（按 Ctrl+C 會換回去）
+[20:10:44]    LINE 說換網址最多要 1 分鐘才生效；等一下再用手機傳訊息
+[20:10:49]    LINE 測試連線：✅ 通了
+[20:10:49] 開好了。手機傳訊息給 bot 試試看；這個視窗不要關，按 Ctrl+C 結束。</pre></div>
+<div class="blk test"><b class="k">測一下</b>看到「開好了」就過。把「原本的 Webhook」那行網址<b>抄下來</b>。視窗不要關。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>LINE 通行碼不對（401）</b>→ 貼成 Channel secret、或少複製了字：回 4-2 重新複製，再跑一次。</li>
+<li><b>沒有 Channel secret 就不開通道</b>→ 第二個問題直接按了 Enter：回 4-2，再跑一次。</li>
+<li><b>60 秒內通道沒拿到網址</b>→ 網路擋住 Cloudflare：換手機熱點再試。</li>
+<li><b>⚠️ 找不到 cloudflared</b>→ 4-1 裝完沒新開視窗。</li>
+<li><b>換 Webhook 失敗</b>→ 照畫面印的網址，到 LINE Developers →「Messaging API」→ Webhook URL 按 Edit 貼上、Update，Use webhook 要開。</li>
+<li><b>LINE 測試連線：還沒通</b>→ 正常，等一分鐘直接用手機傳。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="4-4"><span class="n">4-4</span><span class="t">手機問一題、截圖</span></label>
+<p>手機 LINE 傳「台灣最高的山是哪一座？」給你的 bot。</p>
+<div class="blk see"><b class="k">你應該看到</b>先出現「對方正在輸入…」，幾秒到幾十秒後回答，尾巴有「ℹ️ 這題沒有上網查…」和「（本地模型 gemma4:e2b，NN 秒）」；終端機同時印「📩 收到文字」「✅ 回覆了」。</div>
+<div class="blk test"><b class="k">測一下</b>手機截圖＋終端機截圖各一張，兩邊秒數對得上。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>手機傳了沒反應、終端機也沒印「收到」</b>→ Webhook 還沒生效（等一分鐘），或 LINE 後台 Use webhook 沒開、或「自動回應訊息」把它搶走了（LINE Official Account Manager → 回應設定 → Webhook 開、自動回應關）。</li>
+<li><b>終端機有「收到」、手機超過一分鐘沒回</b>→ LINE 的 reply token 時效到了（CPU 太慢）：改用 gemma3:1b，或這題就交終端機畫面。</li>
+<li><b>⛔ 簽章不對</b>→ Channel secret 貼錯：Ctrl+C，回 4-2 重貼。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="4-5"><span class="n">4-5</span><span class="t">Ctrl+C 結束，確認 LINE 還給 W5 的 Apps Script</span></label>
+<div class="blk see"><b class="k">你應該看到</b><code>↩️ LINE 的 Webhook 換回原本的了（重新讀過一次，確認是原本那個）</code>。手機再傳一句待辦，W5 那支 bot 照常回。</div>
+<div class="blk test"><b class="k">測一下</b>LINE Developers → Messaging API → Webhook URL 是你 W5 的 <code>/exec</code> 網址。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>⚠️ 沒能確認換回去</b>→ 照畫面印的舊網址，自己到 LINE Developers 貼回。</li>
+<li><b>原本就沒有 Webhook</b>→ 程式會說明；要用 Apps Script 版就貼回 /exec 網址。</li>
+</ul></details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 程式怎麼讀 ======================= -->
+<section id="s5" data-sec="5"><h2>程式怎麼讀、安全與隱私</h2>
+<p class="gain">想改它、或 README 要寫「改了什麼」的人看這段。整支約 290 行，六塊。</p>
+<table>
+<thead><tr><th style="width:26%">函式</th><th>做什麼</th></tr></thead>
+<tbody>
+<tr><td><code>chat()</code></td><td>打本機 Ollama 的 <code>/api/chat</code>，<code>stream:false</code>、<code>think:false</code>、<code>num_ctx 4096</code>（小一點省記憶體）、<code>keep_alive 30m</code>（模型留在記憶體半小時，第二題才快）。timeout 給 10 分鐘，CPU 慢也等得到。</td></tr>
+<tr><td><code>ask_text()</code></td><td>系統提示交代「台灣繁體中文、純文字、120 字、先講結論、不確定就說不確定」。有 <code>--search</code> 才給它 <code>web_search</code> 這個工具、最多來回三次。</td></tr>
+<tr><td><code>handle()</code>／<code>_handle()</code></td><td>一則訊息的旅程：不是文字→固定句；打招呼→使用說明；其他→<code>ask_text()</code>→<code>reply()</code>。一次只處理一則（<code>_turn</code> 鎖），CPU 才不會更慢。</td></tr>
+<tr><td><code>reply()</code></td><td>模擬模式印在終端機；真 LINE 打 <code>/v2/bot/message/reply</code>。</td></tr>
+<tr><td><code>simulate()</code></td><td>終端機讀一行、包成一個跟 LINE 送來一模一樣的事件、丟進 <code>handle()</code>。</td></tr>
+<tr><td><code>Webhook</code>／<code>open_tunnel()</code>／<code>restore()</code>／<code>main()</code></td><td>真 LINE 那條：對簽章、先回 200 再處理、開 cloudflared、換 Webhook、結束時換回去並重讀確認。跟課堂版一樣。</td></tr>
+</tbody></table>
+<p><b>想改的點子</b>（README 寫上就算「改了什麼」）：換系統提示讓它用某種口吻；把 120 字改短或改長；打招呼的詞多加幾個；回覆尾巴加一句自己的簽名；<code>--search</code> 改成預設開。</p>
+<h3>整支程式</h3>
+<div class="cp"><div class="bar"><span>line_bot_lite.py</span><span class="btns"><button type="button" class="dl" data-name="line_bot_lite.py">下載</button><button type="button" class="copy">複製</button></span></div><pre data-src="starter/line_bot_lite.py"># LINE bot 輕量版：一支 Python 程式，接上你自己電腦裡的小模型，回答問題。沒有顯示卡也跑得動。
+#
+# 跟課堂版 line_bot_local.py 差在哪：
+#   只做一件事：文字問題進來 → 你電腦上的 Ollama 小模型回答 → 回覆。
+#   拿掉照片、日曆、雲端硬碟、試算表（那些要 gws，是課堂版的事）。
+#   預設模型 gemma4:e2b（小、CPU 跑得動）；想更小就 MODEL=gemma3:1b。
+#   多一個「模擬模式」：不接 LINE、不開通道，在終端機假裝手機傳訊息進來，看 bot 回什麼。
+#   作業先用模擬模式做到會回答；要接真的 LINE 再照指南第 4 段。
+#
+# 用法（在這個檔所在的資料夾；Windows 用 PowerShell、Mac 用「終端機」）：
+#   python line_bot_lite.py --simulate      ← 模擬模式：終端機打字，bot 回答；不需要 LINE 任何東西
+#   python line_bot_lite.py                 ← 真的接 LINE：要 cloudflared、LINE 長效通行碼、Channel secret
+#   換模型：Windows PowerShell 先打  $env:MODEL=&quot;gemma3:1b&quot;   ／ Mac 終端機先打  export MODEL=gemma3:1b
+#
+# 需要：Python 3（只用內建功能，不用 pip install）、Ollama 開著、模型拉好（ollama pull gemma4:e2b）。
+# 選做：要它會上網查，開程式時加 --search（搜尋走 Ollama 的線上服務，要網路；額度規則可能變）。
+
+import base64, getpass, hashlib, hmac, json, os, queue, re, shutil, subprocess, sys, threading, time, urllib.error, urllib.request
+from datetime import datetime
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+MODEL = os.environ.get(&quot;MODEL&quot;, &quot;gemma4:e2b&quot;)
+PORT = int(os.environ.get(&quot;PORT&quot;, &quot;8000&quot;))
+OLLAMA = &quot;http://127.0.0.1:11434&quot;
+SEARCH = &quot;--search&quot; in sys.argv          # 要不要讓模型上網查（預設不要：純本機、不用網路）
+SIMULATE = &quot;--simulate&quot; in sys.argv      # 模擬模式：不接 LINE
+GREETING = re.compile(r&quot;^(hi|hello|你好|嗨|哈囉|測試|test)$&quot;, re.I)
+HELP = (&quot;你好！我是跑在同學電腦上的小模型 🤖\n問我問題，我用自己的記憶回答&quot; + (&quot;，需要的話上網查、附來源&quot; if SEARCH else &quot;（沒有上網，答案請自己核對）&quot;) + &quot;。&quot;)
+SYSTEM = (&quot;你是 LINE 上的助理，今天是 {today}。回答用台灣的繁體中文、純文字（不要用星號或井字號），120 字以內，先講結論。&quot;
+          + (&quot;遇到最近的事、版本號、價格或任何你不確定的事實，先呼叫 web_search。不用自己寫網址，程式會附上來源。&quot; if SEARCH
+             else &quot;你沒有上網；不確定的事就說不確定，不要編造。&quot;))
+TOOLS = [{&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {&quot;name&quot;: &quot;web_search&quot;, &quot;description&quot;: &quot;搜尋網路，回傳前幾筆標題、網址與內文。&quot;,
+          &quot;parameters&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {&quot;query&quot;: {&quot;type&quot;: &quot;string&quot;}}, &quot;required&quot;: [&quot;query&quot;]}}}]
+
+LINE_TOKEN = LINE_SECRET = &quot;&quot;   # main() 開起來時問你，再填進這裡；不寫進檔案
+_turn = threading.Lock()        # 一次只答一題：CPU 一次跑一題才不會更慢
+_procs = []                     # 開出去的 cloudflared，結束時一定要關
+TUNNEL_WAIT = 60
+
+
+def log(s):
+    print(f&quot;[{datetime.now():%H:%M:%S}] {s}&quot;, flush=True)
+
+
+# ===== 1. 叫 Ollama、叫 LINE 的小工具 =====
+def http_json(method, url, body=None, headers=None, timeout=60):
+    data = json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(url, data=data, method=method, headers={&quot;Content-Type&quot;: &quot;application/json&quot;, **(headers or {})})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            raw = r.read()
+            return r.status, (json.loads(raw) if raw.strip() else {})
+    except urllib.error.HTTPError as e:
+        return e.code, {&quot;error&quot;: e.read().decode(&quot;utf-8&quot;, &quot;replace&quot;)[:200]}
+    except urllib.error.URLError as e:
+        return 0, {&quot;error&quot;: str(e.reason)}
+
+
+def ollama(path, body, timeout=600):
+    code, res = http_json(&quot;POST&quot;, OLLAMA + path, body, timeout=timeout)
+    if code == 0:
+        raise RuntimeError(&quot;連不到 Ollama：先把 Ollama 打開（Windows 工作列有小羊駝；或另開視窗打 ollama serve）&quot;)
+    if code != 200:
+        raise RuntimeError(f&quot;Ollama {path} 回應 {code}：{res}&quot;)
+    return res
+
+
+def chat(messages, **extra):
+    # CPU 跑小模型，一題可能要等幾十秒到幾分鐘，所以 timeout 給 10 分鐘；num_ctx 開小一點省記憶體
+    body = {&quot;model&quot;: MODEL, &quot;messages&quot;: messages, &quot;stream&quot;: False, &quot;think&quot;: False, &quot;keep_alive&quot;: &quot;30m&quot;, &quot;options&quot;: {&quot;num_ctx&quot;: 4096}}
+    return ollama(&quot;/api/chat&quot;, {**body, **extra}).get(&quot;message&quot;, {})
+
+
+def line(method, path, body=None):
+    return http_json(method, &quot;https://api.line.me&quot; + path, body, {&quot;Authorization&quot;: &quot;Bearer &quot; + LINE_TOKEN})
+
+
+def reply(token, text):
+    if SIMULATE:
+        print(&quot;\n🤖 bot 回覆：\n&quot; + text + &quot;\n&quot;, flush=True)
+        return
+    code, res = line(&quot;POST&quot;, &quot;/v2/bot/message/reply&quot;, {&quot;replyToken&quot;: token, &quot;messages&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: text[:5000]}]})
+    if code != 200:
+        log(f&quot;⚠️ LINE 回覆失敗 {code}：{res}&quot;)
+
+
+# ===== 2. 模型回答問題 =====
+def ask_text(question):
+    &quot;&quot;&quot;回傳（答案, 來源網址清單）。沒開 --search 就純本機回答。&quot;&quot;&quot;
+    msgs = [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: SYSTEM.format(today=datetime.now().strftime(&quot;%Y-%m-%d（%A）&quot;))},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: question}]
+    sources = []
+    for _ in range(3 if SEARCH else 1):
+        m = chat(msgs, **({&quot;tools&quot;: TOOLS} if SEARCH else {}))
+        msgs.append(m)
+        if not m.get(&quot;tool_calls&quot;):
+            return m.get(&quot;content&quot;, &quot;&quot;).replace(&quot;**&quot;, &quot;&quot;).strip(), sources
+        for c in m[&quot;tool_calls&quot;]:
+            q = (c[&quot;function&quot;].get(&quot;arguments&quot;) or {}).get(&quot;query&quot;, &quot;&quot;)
+            log(f&quot;  🔍 模型決定搜：{q}&quot;)
+            try:
+                rows = ollama(&quot;/api/experimental/web_search&quot;, {&quot;query&quot;: q, &quot;max_results&quot;: 3}, timeout=60).get(&quot;results&quot;, [])
+                sources += [r[&quot;url&quot;] for r in rows]
+                out = json.dumps([{&quot;title&quot;: r[&quot;title&quot;], &quot;url&quot;: r[&quot;url&quot;], &quot;content&quot;: r[&quot;content&quot;][:1200]} for r in rows], ensure_ascii=False)
+            except Exception as e:
+                if &quot;401&quot; in str(e) or &quot;Unauthorized&quot; in str(e):
+                    log(&quot;  ⚠️ 搜尋要先登入 Ollama（免費帳號）：另開視窗打 ollama signin，照它給的網址登入，再跑一次&quot;)
+                    out = &quot;ERROR: 搜尋功能沒登入，無法使用。請直接用你的記憶回答，並說明你沒有上網。&quot;
+                else:
+                    out = f&quot;ERROR: {e}&quot;
+            msgs.append({&quot;role&quot;: &quot;tool&quot;, &quot;tool_name&quot;: &quot;web_search&quot;, &quot;content&quot;: out})
+    return &quot;查了幾次還整理不出答案，換個問法再試一次。&quot;, sources
+
+
+# ===== 3. 處理一則訊息 =====
+def handle(event):
+    with _turn:
+        _handle(event)
+
+
+def _handle(event):
+    if event.get(&quot;type&quot;) != &quot;message&quot; or not event.get(&quot;replyToken&quot;):
+        return
+    msg, token = event[&quot;message&quot;], event[&quot;replyToken&quot;]
+    if msg.get(&quot;type&quot;) != &quot;text&quot;:
+        return reply(token, &quot;目前我只看得懂文字喔。&quot;)
+    text = msg[&quot;text&quot;].strip()
+    if GREETING.match(text):
+        return reply(token, HELP)
+    user = event.get(&quot;source&quot;, {})
+    if not SIMULATE and user.get(&quot;type&quot;) == &quot;user&quot;:  # 「對方正在輸入…」動畫，最多 60 秒（CPU 慢，先讓對方知道有在跑）
+        line(&quot;POST&quot;, &quot;/v2/bot/chat/loading/start&quot;, {&quot;chatId&quot;: user[&quot;userId&quot;], &quot;loadingSeconds&quot;: 60})
+    log(f&quot;📩 收到文字（{len(text)} 字），交給 {MODEL}…&quot;)  # 不印內容：螢幕可能正在投影
+    t0 = time.time()
+    try:
+        answer, sources = ask_text(text)
+        tail = (&quot;\n\n來源：\n&quot; + &quot;\n&quot;.join(&quot;• &quot; + u for u in list(dict.fromkeys(sources))[:3])) if sources else \
+               (&quot;\n\nℹ️ 這題沒有上網查，只憑模型記憶，請自己核對。&quot;)
+        reply(token, f&quot;{answer}{tail}\n（本地模型 {MODEL}，{time.time() - t0:.0f} 秒）&quot;)
+        log(f&quot;✅ 回覆了（{time.time() - t0:.0f} 秒）&quot;)
+    except Exception as e:
+        log(f&quot;❌ {e}&quot;)
+        reply(token, &quot;⚠️ 出錯了：&quot; + str(e)[:300])
+
+
+class Webhook(BaseHTTPRequestHandler):
+    def do_POST(self):
+        body = self.rfile.read(int(self.headers.get(&quot;Content-Length&quot;, 0)))
+        if LINE_SECRET:  # 對簽章：確定真的是 LINE 送來的，不是知道網址的路人
+            sig = base64.b64encode(hmac.new(LINE_SECRET.encode(), body, hashlib.sha256).digest()).decode()
+            if not hmac.compare_digest(sig, self.headers.get(&quot;x-line-signature&quot;, &quot;&quot;)):
+                log(&quot;⛔ 簽章不對，不是 LINE 送來的，丟掉&quot;)
+                self.send_response(401)
+                self.end_headers()
+                return
+        self.send_response(200)  # 先跟 LINE 說收到了（LINE 要 2 秒內回應），再慢慢處理
+        self.end_headers()
+        for ev in json.loads(body or b&quot;{}&quot;).get(&quot;events&quot;, []):
+            threading.Thread(target=handle, args=(ev,), daemon=True).start()
+
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(&quot;LINE bot 輕量版運作中&quot;.encode())
+
+    def log_message(self, *args):
+        pass
+
+
+# ===== 4. 模擬模式：終端機假裝是手機 =====
+def simulate():
+    log(f&quot;模擬模式：不接 LINE。模型 {MODEL}&quot; + (&quot;，開了上網查&quot; if SEARCH else &quot;，純本機（沒上網）&quot;))
+    log(&quot;先載入模型（第一次要等一下）…&quot;)
+    t0 = time.time()
+    chat([{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;hi&quot;}])
+    log(f&quot;✅ 模型可以用了（{time.time() - t0:.0f} 秒）。打一句話按 Enter，bot 會回；打 quit 結束。&quot;)
+    n = 0
+    while True:
+        try:
+            text = input(&quot;📱 你：&quot;).strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if text.lower() in (&quot;quit&quot;, &quot;exit&quot;, &quot;q&quot;):
+            break
+        if not text:
+            continue
+        n += 1
+        # 做一個長得跟 LINE 送來一模一樣的事件，走同一條處理路：之後接真 LINE 時程式不用改
+        handle({&quot;type&quot;: &quot;message&quot;, &quot;replyToken&quot;: f&quot;sim-{n}&quot;, &quot;source&quot;: {&quot;type&quot;: &quot;user&quot;, &quot;userId&quot;: &quot;SIMULATED&quot;},
+                &quot;message&quot;: {&quot;type&quot;: &quot;text&quot;, &quot;id&quot;: str(n), &quot;text&quot;: text}})
+    log(&quot;模擬結束。&quot;)
+
+
+# ===== 5. 真的接 LINE：開通道、換 Webhook，結束時換回去（跟課堂版一樣） =====
+def ask_settings():
+    token = os.environ.get(&quot;LINE_CHANNEL_ACCESS_TOKEN&quot;) or getpass.getpass(&quot;貼上 LINE 長效通行碼（Channel access token，畫面不顯示）：&quot;).strip()
+    secret = os.environ.get(&quot;LINE_CHANNEL_SECRET&quot;) or getpass.getpass(&quot;貼上 Channel secret（LINE Developers → Basic settings；必填；畫面不顯示）：&quot;).strip()
+    return token, secret
+
+
+def open_tunnel():
+    if not shutil.which(&quot;cloudflared&quot;):
+        log(&quot;⚠️ 找不到 cloudflared，外面連不到這裡。Windows：winget install --id Cloudflare.cloudflared -e；Mac：brew install cloudflared&quot;)
+        log(&quot;   裝完關掉這個視窗、新開一個再跑一次。&quot;)
+        return None
+    cf = subprocess.Popen([&quot;cloudflared&quot;, &quot;tunnel&quot;, &quot;--no-autoupdate&quot;, &quot;--url&quot;, f&quot;http://127.0.0.1:{PORT}&quot;],
+                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding=&quot;utf-8&quot;, errors=&quot;replace&quot;)
+    _procs.append(cf)
+    found = queue.Queue()
+
+    def watch():
+        for row in cf.stdout:
+            m = re.search(r&quot;https://[a-z0-9-]+\.trycloudflare\.com&quot;, row)
+            if m:
+                found.put(m.group(0))
+        found.put(None)
+
+    threading.Thread(target=watch, daemon=True).start()
+    try:
+        url = found.get(timeout=TUNNEL_WAIT)
+    except queue.Empty:
+        url = None
+    if not url:
+        log(f&quot;⚠️ {TUNNEL_WAIT} 秒內通道沒拿到網址：看網路（學校網路可能擋），或再跑一次&quot;)
+    return url
+
+
+def restore(old):
+    if not old:
+        log(&quot;ℹ️ 原本沒有 Webhook 網址，現在指著一個已經關掉的通道；要用 Apps Script 版就回 LINE Developers 貼回 /exec 網址&quot;)
+        return
+    line(&quot;PUT&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;, {&quot;endpoint&quot;: old})
+    code, now = line(&quot;GET&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;)
+    if code == 200 and now.get(&quot;endpoint&quot;) == old:
+        log(&quot;↩️ LINE 的 Webhook 換回原本的了（重新讀過一次，確認是原本那個）&quot;)
+    else:
+        log(f&quot;⚠️ 沒能確認換回去：到 LINE Developers →「Messaging API」→ Webhook URL 手動貼回：{old}&quot;)
+
+
+def main():
+    global LINE_TOKEN, LINE_SECRET
+    if SIMULATE:
+        return simulate()
+    LINE_TOKEN, LINE_SECRET = ask_settings()
+    code, info = line(&quot;GET&quot;, &quot;/v2/bot/info&quot;)
+    if code != 200:
+        sys.exit(f&quot;LINE 通行碼不對（{code}）：回 LINE Developers 重新複製長效通行碼&quot;)
+    log(f&quot;✅ LINE bot「{info.get(&#x27;displayName&#x27;)}」&quot;)
+    if not LINE_SECRET:
+        sys.exit(&quot;沒有 Channel secret 就不開通道：沒有它，知道通道網址的人都能假冒 LINE 送訊息進來。回 LINE Developers →「Basic settings」複製，再跑一次。&quot;)
+    code, cur = line(&quot;GET&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;)
+    if code == 200:
+        old = cur.get(&quot;endpoint&quot;)
+    elif code == 404:
+        old = None
+    else:
+        sys.exit(f&quot;讀不到 LINE 現在的 Webhook 網址（{code}）：先不換。等一下再跑一次。{cur}&quot;)
+    log(f&quot;   原本的 Webhook：{old or &#x27;（沒有設定）&#x27;}——先抄下來，萬一沒換回去要手動貼回&quot;)
+    log(f&quot;載入模型 {MODEL}（第一次要等一下）…&quot;)
+    chat([{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;hi&quot;}])
+    log(&quot;✅ 模型可以用了&quot;)
+
+    server = ThreadingHTTPServer((&quot;127.0.0.1&quot;, PORT), Webhook)  # 只聽本機：外面只能從通道進來
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    switched = False
+    try:
+        url = open_tunnel()
+        if url:
+            code, res = line(&quot;PUT&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;, {&quot;endpoint&quot;: url + &quot;/callback&quot;})
+            if code != 200:
+                log(f&quot;⚠️ 換 Webhook 失敗 {code}：{res}。可以手動貼到 LINE Developers：{url}/callback&quot;)
+            else:
+                switched = True
+                log(f&quot;✅ LINE 的 Webhook 換到這台電腦了：{url}/callback（按 Ctrl+C 會換回去）&quot;)
+                log(&quot;   LINE 說換網址最多要 1 分鐘才生效；等一下再用手機傳訊息&quot;)
+                time.sleep(5)
+                code, test = line(&quot;POST&quot;, &quot;/v2/bot/channel/webhook/test&quot;, {})
+                log(f&quot;   LINE 測試連線：{&#x27;✅ 通了&#x27; if test.get(&#x27;success&#x27;) else &#x27;還沒通（&#x27; + str(test.get(&#x27;reason&#x27;)) + &#x27;），等一分鐘再傳&#x27;}&quot;)
+        log(&quot;開好了。手機傳訊息給 bot 試試看；這個視窗不要關，按 Ctrl+C 結束。&quot; if switched
+            else &quot;⚠️ 這次沒接上 LINE（看上面的訊息）。按 Ctrl+C 結束。&quot;)
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        if switched:
+            restore(old)
+        for cf in _procs:
+            cf.terminate()
+        server.shutdown()
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</pre></div>
+<h3>安全與隱私</h3>
+<ul>
+<li><b>通行碼和 Channel secret 不寫進檔案</b>：程式每次開起來問一次，關掉就忘；畫面上不顯示（進階：先設好環境變數 <code>LINE_CHANNEL_ACCESS_TOKEN</code>、<code>LINE_CHANNEL_SECRET</code> 它就不問，一樣不寫進檔案）。所以 repo 裡本來就沒有鑰匙——除非你自己加進去。</li>
+<li><b>對簽章</b>：有給 Channel secret，假冒 LINE 送進來的請求會被擋掉。</li>
+<li><b>模擬模式完全不出門</b>：沒有 LINE、沒有通道、沒有上網（除非加 <code>--search</code>），問什麼都留在你的電腦。</li>
+<li><b>關卡 B 不是私密管道</b>：訊息會經過 LINE 和 Cloudflare。不要拿它處理別人的個資。用完 Ctrl+C，通道就消失。</li>
+</ul>
+</section>
+
+<section id="stuckall" data-sec="X"><h2>卡關總表</h2>
+<p class="gain">上面每一步的「卡住了」全部集中在這裡，打關鍵字就過濾（例如 404、記憶體、cloudflared、簽章）。</p>
+<input class="filter" id="stuckFilter" type="search" placeholder="打關鍵字過濾：404、記憶體、cloudflared、簽章、Webhook…" aria-label="過濾卡關總表">
+<p class="small" id="stuckCount"></p>
+<table id="stuckTable"><thead><tr><th style="width:4.5em">步驟</th><th>症狀 → 處理</th></tr></thead><tbody></tbody></table>
+<p class="small">本頁內容來源：<code>starter/line_bot_lite.py</code> 與老師 2026-10-12 在一台沒有顯示卡的 Intel 筆電上的實測（真的 Ollama 與 gemma4:e2b／gemma3:1b；LINE 端用記錄用的假函式；紀錄 <code>qa/lite-bot/</code>）。⚠️ 關卡 B 的通道與真手機，老師沒有在這一版實走。</p>
+</section>
+
+<a class="top" href="#top" aria-label="回到頂端" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑</a>
+</main>
+<script>
+(function(){
+  var KEY='w6-line-bot-lite';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return {};}}
+  function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+  var boxes=Array.prototype.slice.call(document.querySelectorAll('input[type=checkbox][data-k]'));
+  var state=load();
+  function refresh(){
+    var done=boxes.filter(function(b){return b.checked;}).length;
+    var t=document.getElementById('progText'),bar=document.getElementById('progBar');
+    if(t)t.textContent='已勾 '+done+'／'+boxes.length+' 步';
+    if(bar)bar.style.width=(boxes.length?Math.round(done*100/boxes.length):0)+'%';
+  }
+  boxes.forEach(function(b){
+    b.checked=!!state[b.getAttribute('data-k')];
+    b.addEventListener('change',function(){
+      state[b.getAttribute('data-k')]=b.checked;save(state);refresh();
+    });
+  });
+  refresh();
+  var rb=document.getElementById('resetBtn');
+  if(rb)rb.addEventListener('click',function(){
+    state={};save(state);boxes.forEach(function(b){b.checked=false;});refresh();
+  });
+
+  // 複製鈕：成功顯示「已複製」，失敗就把文字選起來讓人自己 Ctrl+C
+  function preOf(btn){var w=btn.closest('.cp');return w?w.querySelector('pre'):null;}
+  function selectAll(el){
+    try{var r=document.createRange();r.selectNodeContents(el);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('button.copy'),function(btn){
+    btn.addEventListener('click',function(){
+      var pre=preOf(btn);if(!pre)return;
+      var text=pre.textContent;
+      var ok=function(){btn.textContent='已複製';setTimeout(function(){btn.textContent='複製';},1500);};
+      var fail=function(){selectAll(pre);btn.textContent='請按 Ctrl+C';setTimeout(function(){btn.textContent='複製';},2500);};
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(ok,fail);
+      }else{
+        selectAll(pre);
+        var done=false;try{done=document.execCommand('copy');}catch(e){}
+        done?ok():fail();
+      }
+    });
+  });
+
+  // 下載鈕：把 <pre> 的文字包成檔案（UTF-8）讓瀏覽器存下來，零外部資源
+  Array.prototype.forEach.call(document.querySelectorAll('button.dl'),function(btn){
+    btn.addEventListener('click',function(){
+      var pre=preOf(btn);if(!pre)return;
+      var name=btn.getAttribute('data-name')||'download.txt';
+      var blob=new Blob([pre.textContent],{type:'text/plain;charset=utf-8'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();
+      setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},800);
+    });
+  });
+
+  // 卡關總表：從每一步的「卡住了」自動收集，避免兩邊內容不同步
+  var tbody=document.querySelector('#stuckTable tbody');
+  var rows=[];
+  if(tbody){
+    Array.prototype.forEach.call(document.querySelectorAll('.steps > li'),function(li){
+      var lab=li.querySelector('.chk .n');var step=lab?lab.textContent:'';
+      var sec=li.closest('section');var secId=sec?sec.id:'';
+      Array.prototype.forEach.call(li.querySelectorAll('details.stuck li'),function(item){
+        var tr=document.createElement('tr');
+        var td1=document.createElement('td');var a=document.createElement('a');a.href='#'+secId;a.textContent=step;td1.appendChild(a);
+        var td2=document.createElement('td');td2.innerHTML=item.innerHTML;
+        tr.appendChild(td1);tr.appendChild(td2);tbody.appendChild(tr);
+        rows.push({tr:tr,text:(step+' '+item.textContent).toLowerCase()});
+      });
+    });
+  }
+  var cnt=document.getElementById('stuckCount');
+  function applyFilter(q){
+    q=(q||'').trim().toLowerCase();var n=0;
+    rows.forEach(function(r){var show=!q||r.text.indexOf(q)>=0;r.tr.style.display=show?'':'none';if(show)n++;});
+    if(cnt)cnt.textContent='共 '+rows.length+' 條'+(q?'，符合 '+n+' 條':'');
+  }
+  var f=document.getElementById('stuckFilter');
+  if(f)f.addEventListener('input',function(){applyFilter(f.value);});
+  applyFilter('');
+})();
+</script>
+</body></html>

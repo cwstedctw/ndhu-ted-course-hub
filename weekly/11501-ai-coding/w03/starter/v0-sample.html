@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>小魚的喝水面板 v0</title>
+<style>
+body{font-family:system-ui,'Microsoft JhengHei',sans-serif;background:#f4f6ed;color:#153d36;text-align:center;padding:60px 20px}
+h1{font-size:30px;margin-bottom:10px} p{font-size:40px;font-weight:700;margin:24px 0} button{font-size:22px;padding:14px 30px;border:0;border-radius:8px;background:#175b4a;color:#fff;cursor:pointer}
+</style>
+</head>
+<body>
+<h1 id="who">姓名：</h1>
+<p id="show">今天喝了 0 杯</p>
+<button id="add">記一杯水</button>
+<script>
+let name = "小魚";
+let count = 0;
+document.getElementById("who").textContent = "姓名：" + name;
+document.getElementById("add").onclick = function () {
+  count = count + 1;
+  document.getElementById("show").textContent = "今天喝了 " + count + " 杯";
+};
+</script>
+</body>
+</html>
