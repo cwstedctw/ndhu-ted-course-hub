@@ -142,17 +142,24 @@ sudo reboot</pre>
 <div class="part">
 <h2><small>第二部分 15:10–16:00</small>跳線帽刷機：整個系統換成 558</h2>
 
-<div class="card"><h3>2-1 準備（工具 0.5.4、映像、空間）</h3>
-<p>從<b>老師講台區網或隨身碟</b>拷三個檔到「下載」：<code>arduino-flasher-cli-0.5.4-linux-amd64.tar.gz</code>、<code>arduino-unoq-debian-image-20260528-558.tar.zst</code>、<code>SHA256SUMS.txt</code></p>
-<p><span class="where">電腦</span>每行都要 <code>OK</code>（映像 <code>d692a12f…c0c8</code>），<span class="warn">不是 OK 別刷</span></p>
+<div class="card"><h3>2-1 準備（工具 0.5.4、映像、空間、教室電腦權限）</h3>
+<p><span class="where">電腦</span>從官方直接抓兩個檔（e學苑 Week 7 那兩個網址）</p>
 <pre>cd ~/Downloads
-sha256sum -c SHA256SUMS.txt --ignore-missing</pre>
+curl -LO https://github.com/arduino/arduino-flasher-cli/releases/download/v0.5.4/arduino-flasher-cli-0.5.4-linux-amd64.tar.gz
+curl -LO https://downloads.arduino.cc/debian-im/Stable/20260528-558/arduino-unoq-debian-image-20260528-558.tar.zst</pre>
+<p><span class="where">電腦</span>指紋：工具 <code>c174c5c8…31b6b5</code>、映像 <code>d692a12f…c0c8</code>，<span class="warn">不對別刷</span></p>
+<pre>sha256sum arduino-flasher-cli-0.5.4-linux-amd64.tar.gz arduino-unoq-debian-image-20260528-558.tar.zst</pre>
 <p><span class="where">電腦</span>印 <code>Arduino Flasher CLI version 0.5.4</code>；空間 ≥ 12 GB</p>
 <pre>tar xzf arduino-flasher-cli-0.5.4-linux-amd64.tar.gz
 ./arduino-flasher-cli version
 df -h ~
 ./arduino-flasher-cli list</pre>
-<p class="k">備案（拿不到工具時）：<code>curl -LO https://downloads.arduino.cc/arduino-flasher-cli/arduino-flasher-cli-0.5.4-linux-amd64.tar.gz</code>，抓完 <code>sha256sum arduino-flasher-cli-0.5.4-linux-amd64.tar.gz</code> 要是 <code>c174c5c8…31b6b5</code>，不對別用。</p></div>
+<p><span class="where">電腦</span><b>E307 每台做一次</b>：權限規則（2341＋05c6）＋拿掉搶走 EDL 板子的 <code>qcserial</code>；少一樣就卡 <code>Waiting for EDL device</code></p>
+<pre>printf '%s\n' 'SUBSYSTEM=="usb", ATTRS{idVendor}=="2341", MODE="0666", GROUP="dialout"' 'SUBSYSTEM=="usb", ATTRS{idVendor}=="05c6", MODE="0666", GROUP="dialout"' | sudo tee /etc/udev/rules.d/99-arduino-uno-q.rules && sudo udevadm control --reload-rules && sudo udevadm trigger
+sudo usermod -a -G dialout $USER
+sudo rmmod qcserial
+echo "blacklist qcserial" | sudo tee /etc/modprobe.d/blacklist-qcserial.conf</pre>
+<p class="k">網路抓不動：用老師區網／隨身碟那三個檔，<code>sha256sum -c SHA256SUMS.txt --ignore-missing</code> 每行 <code>OK</code> 才用。<code>rmmod</code> 說 not currently loaded＝本來就沒載，不要緊。</p></div>
 
 <div class="card"><h3>2-2 進 EDL</h3>
 <p><span class="warn">只碰那兩根 EDL pin</span>：POWER 鍵右邊、標 JCTL 的 2×4 黑色排針，<b>最右邊那一直排的上下兩根</b>（橘框）</p>
@@ -165,7 +172,7 @@ df -h ~
 <p><span class="where">電腦</span>要寫 <code>unoq</code>；不問確認、直接開刷；<b>不要拔線</b></p>
 <pre>cd ~/Downloads
 ./arduino-flasher-cli flash unoq ~/Downloads/arduino-unoq-debian-image-20260528-558.tar.zst --preserve-user</pre>
-<p class="k">最後一句 <code>The board has been successfully flashed.</code>；卡在 <code>Waiting for EDL device</code>＝沒進 EDL 或教室缺權限規則 → 舉手（備案：自己筆電、老師課後代刷）。</p></div>
+<p class="k">最後一句 <code>The board has been successfully flashed.</code>；卡在 <code>Waiting for EDL device</code>＝沒進 EDL，或 2-1 最後四行沒跑（跑完拔線重進 EDL）→ 還不行舉手（備案：自己筆電、老師課後代刷）。</p></div>
 
 <div class="card"><h3>2-4 開機、手動佈建五步</h3>
 <p>拔線 → <b>確認跳線帽已拆</b> → 插回，約 39 秒。刷完：<b>帳號沒密碼、SSH 關著也沒鑰匙</b>。<span class="where">電腦</span>用 adb 進板子</p>

@@ -473,7 +473,7 @@ Removing kernel version 7.0.0-… from systemd-boot...</pre></div>
 
 <section class="sec" id="p2-1">
   <h2>2-1　準備：刷機工具、映像、空間</h2>
-  <p class="goal">目標：<code>~/Downloads</code> 裡有刷機工具 <code>arduino-flasher-cli</code>（0.5.4）和課程映像 <code>arduino-unoq-debian-image-20260528-558.tar.zst</code>，家目錄至少 12 GB 可用。</p>
+  <p class="goal">目標：<code>~/Downloads</code> 裡有刷機工具 <code>arduino-flasher-cli</code>（0.5.4）和課程映像 <code>arduino-unoq-debian-image-20260528-558.tar.zst</code>，家目錄至少 12 GB 可用；教室電腦補好 EDL 的權限設定（第 6 步）。</p>
   <p class="why">刷機（flash）是把整個 Linux 系統——一個映像（image）——重新寫進板子：核心、系統、<code>/etc</code> 的設定一起換成映像的樣子。加 <code>--preserve-user</code> 保留 <code>/home/arduino</code> 那個分割區。課程鎖定 <code>20260528-558</code> 這一版，全班刷出來的系統才會一樣。</p>
   <div class="tw"><table>
     <tr><th></th><th>apt 換核心（第一部分）</th><th>跳線帽刷機（第二部分）</th></tr>
@@ -484,13 +484,16 @@ Removing kernel version 7.0.0-… from systemd-boot...</pre></div>
     <tr><td>退路</td><td><code>sudo dpkg -r</code>（1-6 剛做過）</td><td>刷壞了再刷一次：EDL 在晶片裡，作業系統壞了也進得去</td></tr>
   </table></div>
   <ol class="steps">
-    <li><p class="do"><b class="lab do-l">做什麼</b>從<b>老師講台區網或隨身碟</b>把三個檔拷到 <code>~/Downloads</code>（「下載」資料夾）：刷機工具 <code>arduino-flasher-cli-0.5.4-linux-amd64.tar.gz</code>、映像 <code>arduino-unoq-debian-image-20260528-558.tar.zst</code>（約 2.1 GB）、指紋清單 <code>SHA256SUMS.txt</code>。30 台同時從網路抓 2.1 GB 會塞爆教室網路，所以不從網路下載映像。<span class="dur">多久：看區網或隨身碟速度，沒量過</span></p>
-      <p class="type"><b class="lab type-l">打什麼</b>不用打：照老師台上說的位置，用檔案管理員把三個檔拖進「下載」。</p>
-      <p class="see"><b class="lab see-l">應該看到</b>「下載」裡有這三個檔。映像要等它拷完（2,278,254,042 bytes）。</p></li>
-    <li><p class="do"><b class="lab do-l">做什麼</b>一次比對指紋（視窗 A）。<code>SHA256SUMS.txt</code> 裡記著每個檔該有的指紋，<code>-c</code> 會逐一算、逐一比；<code>--ignore-missing</code> 是「清單上有、但你沒拷的檔就跳過」。<b>對不上別刷。</b><span class="dur">多久：映像 2.1 GB 要算一下，沒量過</span></p>
-      <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 F 映像檔列（SHA256 d692a12f…c0c8）與刷機工具下載列（SHA256 c174c5c8…31b6b5）；SHA256SUMS.txt 跟映像放在老師隨身碟同一夾">cd ~/Downloads
-sha256sum -c SHA256SUMS.txt --ignore-missing</pre></div>
-      <p class="see"><b class="lab see-l">應該看到</b>拷來的每個檔各一行、後面都是 <code>OK</code>（映像的指紋開頭 <code>d692a12f</code>、結尾 <code>c0c8</code>；刷機工具開頭 <code>c174c5c8</code>、結尾 <code>31b6b5</code>）。任何一行不是 <code>OK</code>：刪掉那個檔重拷，<b>別刷</b>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>從官方直接下載兩個檔到 <code>~/Downloads</code>（「下載」資料夾，視窗 A）：刷機工具（約 14 MB）和映像（約 2.1 GB）。網址就是 e學苑 Week 7 老師貼的那兩個。全班同時抓會慢，映像抓的時候先往下讀第 6 步。<span class="dur">多久：工具幾秒；映像看教室網路，沒量過</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 I 刷機工具直連、映像直連（Ted 10/22 e學苑 Week 7 標籤）">cd ~/Downloads
+curl -LO https://github.com/arduino/arduino-flasher-cli/releases/download/v0.5.4/arduino-flasher-cli-0.5.4-linux-amd64.tar.gz
+curl -LO https://downloads.arduino.cc/debian-im/Stable/20260528-558/arduino-unoq-debian-image-20260528-558.tar.zst</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>每個檔各跑一條進度，跑完回到提示字元。映像要等它跑到底（2,278,254,042 bytes）。網路塞住、一直不動：舉手，老師講台區網或隨身碟有同樣的檔（下面摺疊）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>比對兩個檔的指紋（視窗 A）。指紋（SHA256）是從檔案內容算出來的一串字，差一個位元組就完全不同。<b>對不上別刷。</b><span class="dur">多久：映像 2.1 GB 要算一下，沒量過</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 I 兩檔一起核對">sha256sum arduino-flasher-cli-0.5.4-linux-amd64.tar.gz arduino-unoq-debian-image-20260528-558.tar.zst</pre></div>
+      <div class="box"><pre class="out" data-src="out">c174c5c800f4b95f3e267c3a9b37f8c2716ea87b7dfa491d810753bbba31b6b5  arduino-flasher-cli-0.5.4-linux-amd64.tar.gz
+d692a12fab2b60acab3138db32c270ad29827c394553c97079b0d2a5c00dc0c8  arduino-unoq-debian-image-20260528-558.tar.zst</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>上面兩行，一字不差（看開頭 <code>c174c5c8</code>、<code>d692a12f</code> 和結尾 <code>31b6b5</code>、<code>c0c8</code> 最快）。不一樣：刪掉那個檔重抓，<b>別刷</b>。</p></li>
     <li><p class="do"><b class="lab do-l">做什麼</b>解開刷機工具，問它是哪一版。解開會多一個執行檔 <code>arduino-flasher-cli</code>（和授權檔）。<span class="dur">多久：打完馬上印</span></p>
       <div class="box"><pre class="cmd" data-where="電腦" data-src="src">tar xzf arduino-flasher-cli-0.5.4-linux-amd64.tar.gz
 ./arduino-flasher-cli version</pre></div>
@@ -502,9 +505,18 @@ sha256sum -c SHA256SUMS.txt --ignore-missing</pre></div>
     <li><p class="do"><b class="lab do-l">做什麼</b>看工具認得哪些版本（要連網路；連不上就跳過這步，我們用本地檔）。<span class="dur">多久：打完馬上印</span></p>
       <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 F 有哪些版本列：arduino-flasher-cli list；./ 因為工具在目前資料夾">./arduino-flasher-cli list</pre></div>
       <p class="see"><b class="lab see-l">應該看到</b>一串版本，裡面有 <code>20260528-558</code>（老師 10/22 早上看到它是清單裡最新的那一個），還有 <code>20260407-523</code> 等更舊的。我們<b>指名 558 的本地檔</b>，不用「最新」那個標籤：最新會一直變，先刷、後刷的人會拿到不同系統。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b><b>讓教室電腦碰得到 EDL 的板子</b>（E307 Ubuntu，每台電腦做一次；今天上課老師在現場試出來的）。兩件事：① 一份權限規則（udev），讓一般帳號能碰 Arduino（<code>2341</code>）和 EDL（<code>05c6</code>）的 USB 裝置；② 把 Linux 內建的 <code>qcserial</code> 驅動拿掉——它會把 EDL 的板子（<code>05c6:9008</code>）當成一般序列埠先接走，刷機工具就只能一直等。每一行都要 <code>sudo</code>，會問這台電腦帳號的密碼。<span class="dur">多久：一分鐘內</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 I udev 規則（一行寫好）、dialout 群組、qcserial（Ted 10/22 e學苑 Week 7 標籤)">printf '%s\n' 'SUBSYSTEM=="usb", ATTRS{idVendor}=="2341", MODE="0666", GROUP="dialout"' 'SUBSYSTEM=="usb", ATTRS{idVendor}=="05c6", MODE="0666", GROUP="dialout"' | sudo tee /etc/udev/rules.d/99-arduino-uno-q.rules && sudo udevadm control --reload-rules && sudo udevadm trigger
+sudo usermod -a -G dialout $USER
+sudo rmmod qcserial
+echo "blacklist qcserial" | sudo tee /etc/modprobe.d/blacklist-qcserial.conf</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行把兩條規則印回畫面（<code>tee</code> 寫進檔案、也印出來）；最後一行印 <code>blacklist qcserial</code>。<code>rmmod</code> 說 <code>Module qcserial is not currently loaded</code>＝本來就沒載，不要緊。<code>usermod</code> 下次登入才算數，<b>今天不用登出</b>。<code>sudo</code> 不讓你用（<code>is not in the sudoers file</code>）：舉手請老師打。</p></li>
   </ol>
-  <details><summary>備案：區網和隨身碟都拿不到刷機工具時，自己從官方下載</summary>
-    <p>刷機工具只有 14,225,229 bytes，可以自己抓（映像還是要跟老師拿）。在視窗 A：</p>
+  <details><summary>備案：網路抓不動，改用老師講台區網或隨身碟的檔</summary>
+    <p>老師那份有三個檔：刷機工具、映像、指紋清單 <code>SHA256SUMS.txt</code>。用檔案管理員拖進「下載」，然後一次比對（<code>-c</code> 逐一算、逐一比；<code>--ignore-missing</code>＝清單上有、你沒拷的就跳過）：</p>
+    <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 F 映像檔列與刷機工具下載列；SHA256SUMS.txt 跟映像放在老師隨身碟同一夾">cd ~/Downloads
+sha256sum -c SHA256SUMS.txt --ignore-missing</pre></div>
+    <p>每個檔一行、後面都是 <code>OK</code> 才用。刷機工具也可以從 Arduino 自己的下載站抓（跟 GitHub 那份是同一個檔、同一個指紋）：</p>
     <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 F 刷機工具下載列：Linux 直連網址；curl -LO 寫法同附錄 X §〇 B 步 1">cd ~/Downloads
 curl -LO https://downloads.arduino.cc/arduino-flasher-cli/arduino-flasher-cli-0.5.4-linux-amd64.tar.gz</pre></div>
     <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 F 刷機工具下載列：Linux 版 SHA256；寫法同附錄 X §〇 B 步 1 的 sha256sum">sha256sum arduino-flasher-cli-0.5.4-linux-amd64.tar.gz</pre></div>
@@ -521,15 +533,15 @@ curl -LO https://downloads.arduino.cc/arduino-flasher-cli/arduino-flasher-cli-0.
   </details>
   <details class="stuck"><summary>卡住了：下載、解開、空間</summary>
     <ul>
-      <li><code>sha256sum -c</code> 有一行不是 <code>OK</code>：那個檔沒拷完整。刪掉重拷，<b>別刷</b>。</li>
-      <li><code>SHA256SUMS.txt</code> 找不到：三個檔沒拷齊，回第 1 步。</li>
+      <li>指紋對不上（或 <code>sha256sum -c</code> 有一行不是 <code>OK</code>）：那個檔沒抓完整。刪掉重抓，<b>別刷</b>。</li>
+      <li><code>curl</code> 停住不動：全班同時在抓。等一下，或改用老師的區網／隨身碟（上面摺疊）。</li>
       <li><code>./arduino-flasher-cli</code> 說 <code>Permission denied</code>：檔案沒有執行權限（從隨身碟拷的常見）。打 <code>chmod +x arduino-flasher-cli</code> 再試；還不行舉手。</li>
       <li><code>No such file or directory</code>：視窗 A 不在 <code>~/Downloads</code>，先 <code>cd ~/Downloads</code>。</li>
       <li>空間不到 12 GB：舉手，不要硬刷（刷到一半空間不夠會失敗）。</li>
     </ul>
   </details>
   <p class="deep">想深入：apt 與刷機各換了哪個房間、每個工具做什麼 → <a href="concept.html">互動概念頁</a>的「apt 與刷機」和「工具百科」。</p>
-  <label class="check"><input type="checkbox" data-ck="p2-1"><code>sha256sum -c</code> 全部 <code>OK</code>；<code>Arduino Flasher CLI version 0.5.4</code>；空間 12 GB 以上。</label>
+  <label class="check"><input type="checkbox" data-ck="p2-1">兩個指紋一字不差；<code>Arduino Flasher CLI version 0.5.4</code>；空間 12 GB 以上；權限規則和 <code>qcserial</code> 那四行跑過了。</label>
 </section>
 
 <section class="sec" id="p2-2">
@@ -597,7 +609,7 @@ The board has been successfully flashed. You can now power-cycle the board (unpl
     <p>進 EDL 的三動作一樣（拔線 → 短接 → 插線 → 拔跳線帽）；Windows／Mac 沒有 <code>lsusb</code>，沒進 EDL 時工具會一直停在 <code>Waiting for EDL device</code>。刷完之後的 adb 指令，Windows 一律改成 <code>&amp; $ADB</code> 開頭（找 adb 的寫法在 W6 學生頁第 1 節的摺疊）。</p>
   </details>
   <details><summary>E307 刷不了怎麼辦（備案）</summary>
-    <p>可能的原因：教室電腦缺了 EDL 那條權限規則（udev 少了 <code>05c6</code> 那行，工具會卡在 <code>Waiting for EDL device</code>；學生帳號沒有 <code>sudo</code>，自己補不了）、空間不夠、工具卡住。照這個順序：</p>
+    <p>先確認 <a href="#p2-1">2-1</a> 第 6 步那四行跑過（權限規則＋拿掉 <code>qcserial</code>；少了任何一個，工具都會卡在 <code>Waiting for EDL device</code>）。還是不行（空間不夠、工具卡住、不能 <code>sudo</code>），照這個順序：</p>
     <ol>
       <li><b>有自己 Windows／macOS 筆電的人</b>：改用自己的筆電刷，同一條指令（上面的摺疊）。Windows 第一次要系統管理員權限裝驅動。</li>
       <li><b>都不行</b>：老師在講台示範刷一塊，你把每一步看到的記下來；<b>課後老師收板代刷</b>（一樣加 <code>--preserve-user</code>，你的 <code>/home</code> 會保留）。</li>
@@ -609,7 +621,7 @@ The board has been successfully flashed. You can now power-cycle the board (unpl
   </details>
   <details class="stuck"><summary>卡住了：一直等、刷到一半斷了</summary>
     <ul>
-      <li>一直停在 <code>Waiting for EDL device</code>：板子沒進 EDL（回 2-2 重來），或教室電腦缺權限規則（舉手，走上面的備案）。</li>
+      <li>一直停在 <code>Waiting for EDL device</code>：① 板子沒進 EDL（回 2-2 重來）；② 2-1 第 6 步沒做——Ctrl-C，跑那四行，<b>拔線重進 EDL</b> 再刷；③ 都做了還卡：舉手，走上面的備案。</li>
       <li>印一句 <code>flashing an image without naming the board is deprecated</code> 開頭的警告：<code>flash</code> 後面漏了 <code>unoq</code>。Ctrl-C，照上面那行重打。</li>
       <li>刷到一半斷了、出錯：<b>不要慌</b>。換線、換 USB 孔，從 2-2 的拔線、短接那步重來——可以一直重試，EDL 在晶片裡，作業系統刷壞了也進得去。</li>
       <li>空間不夠的錯誤：舉手，老師告訴你暫存放哪。</li>
@@ -904,7 +916,7 @@ TX  -> 43.2,0.31,38,61,72  (no subscriber)</pre></div>
     <tr><td><code>Connection refused</code>（<code>ssh</code>）</td><td>2222 通道沒開（重開機之後都要重開）：回<b>視窗 A</b> 打 <code>"$ADB" forward tcp:2222 tcp:22</code>。刷機之後：SSH 是關的、也沒有鑰匙，走 2-4 的「進板」和 ①（<code>"$ADB" shell</code> → <code>sudo dpkg-reconfigure openssh-server</code>、<code>sudo systemctl enable ssh</code>、<code>sudo systemctl start ssh</code>）。</td></tr>
     <tr><td><code>WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</code></td><td>這台電腦記著舊鑰匙（換板、刷機都會）：<code>ssh-keygen -R "[127.0.0.1]:2222"</code>、<code>ssh-keygen -R 192.168.7.2</code>，再連一次。</td></tr>
     <tr><td><code>sudo</code> 一直說密碼錯</td><td>要打<b>板子</b>的密碼，不是教室電腦的。刷機之後帳號<b>沒有密碼</b>：先做 2-4 的 ② <code>sudo /usr/local/bin/arduino-passwd</code> 設好（打錯可以再跑一次蓋過去）；還不對就停手舉手，不要一直猜。忘了問老師，不要貼給 AI。</td></tr>
-    <tr><td><code>curl:</code> 開頭的錯誤</td><td>教室網路可能擋住了。舉手，老師有隨身碟備份（starter、核心套件、刷機工具、映像都有）。</td></tr>
+    <tr><td><code>curl:</code> 開頭的錯誤</td><td>教室網路可能擋住了。舉手，老師有區網和隨身碟備份（starter、核心套件、刷機工具、映像都有）。</td></tr>
     <tr><td><code>sha256sum</code> 的指紋對不上（sha 不合）</td><td><b>不要用</b>。刪掉檔案重抓；還是不合，用老師隨身碟那份。</td></tr>
     <tr><td><code>push</code> 說 <code>more than one device</code></td><td>拔掉手機或別人的板子，再推一次。</td></tr>
     <tr><td><code>push</code> 說 <code>No such file or directory</code></td><td>視窗 A 不在 <code>~/Downloads</code>：先 <code>cd ~/Downloads</code>。</td></tr>
@@ -920,7 +932,7 @@ TX  -> 43.2,0.31,38,61,72  (no subscriber)</pre></div>
     <tr><td><code>./arduino-flasher-cli</code> 說 <code>Permission denied</code></td><td>沒有執行權限：<code>chmod +x arduino-flasher-cli</code> 再試。</td></tr>
     <tr><td>家目錄空間不到 12 GB</td><td>舉手，不要硬刷；老師告訴你暫存放哪（<code>--temp-dir</code>）。</td></tr>
     <tr><td><code>lsusb</code> 還是 <code>2341:0078</code>（沒進 EDL）</td><td>拔線 → 跳線帽短接那兩根 pin → <b>短接著</b>插線 → 拔跳線帽 → 再看（2-2）。</td></tr>
-    <tr><td><code>Waiting for EDL device</code></td><td>板子沒進 EDL（回 2-2），或教室電腦缺 EDL 權限規則（udev）：舉手，走 2-3 的備案（自己的筆電、老師代刷）。</td></tr>
+    <tr><td><code>Waiting for EDL device</code></td><td>板子沒進 EDL（回 2-2），或教室電腦還沒做 2-1 第 6 步（權限規則＋拿掉 <code>qcserial</code>）：做完拔線重進 EDL 再刷；還不行舉手，走 2-3 的備案。</td></tr>
     <tr><td>刷到一半斷了、出錯</td><td>換線、換孔，從 2-2 拔線、短接重來；可以一直重試。</td></tr>
     <tr><td>刷完開不了機，<code>lsusb</code> 是 <code>05c6:9008</code></td><td>跳線帽沒拆：拔線、拆掉跳線帽、插回。</td></tr>
     <tr><td>刷完 <code>BUILD_ID</code> 沒變</td><td>刷機沒成功：截圖舉手。</td></tr>
@@ -1015,7 +1027,7 @@ TX  -> 43.2,0.31,38,61,72  (no subscriber)</pre></div>
     <tr><td>開機載入器</td><td>boot loader</td><td>U-Boot → systemd-boot → 開機項：決定開哪一顆核心</td></tr>
     <tr><td>映像</td><td>image</td><td>整個系統打包成的一個檔；今天是 <code>20260528-558</code></td></tr>
     <tr><td>緊急下載模式</td><td>EDL</td><td>晶片內建的救援通道；跳線帽短接著插電進入，電腦看到 <code>05c6:9008</code></td></tr>
-    <tr><td>裝置權限規則</td><td>udev</td><td>Linux 決定「誰能碰哪個 USB 裝置」的規則；刷機要 <code>05c6</code> 那條</td></tr>
+    <tr><td>裝置權限規則</td><td>udev</td><td>Linux 決定「誰能碰哪個 USB 裝置」的規則；刷機要 <code>05c6</code> 那條，還要把搶走 EDL 板子的 <code>qcserial</code> 驅動拿掉（2-1 第 6 步）</td></tr>
     <tr><td>保留使用者資料</td><td>--preserve-user</td><td>刷機時不動 <code>/home/arduino</code></td></tr>
     <tr><td>主機鑰匙</td><td>host key</td><td>板子的 SSH 身分證；刷機後換了，電腦要 <code>ssh-keygen -R</code> 忘掉舊的</td></tr>
     <tr><td>USB gadget</td><td>—</td><td>板子扮演的 USB 身分；四合一＝序列埠、adb、網卡、音效卡</td></tr>

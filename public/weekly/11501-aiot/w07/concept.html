@@ -687,7 +687,7 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <p>刷機工具 <code>arduino-flasher-cli list</code> 10/22 早上印出八個版本：<code>20260528-558</code>（打勾、標成目前最新）、<code>20260407-523</code>、<code>20251229-457</code>、<code>20251127-441</code>、<code>20251024-412</code>、<code>20251006-395</code>、<code>20251002-387</code>、<code>20250807-136</code> <span class="tag" title="內容規格 §〇 F 有哪些版本（msi 跑 list）">§〇 F·有哪些版本</span>。</p>
     <p>課程鎖定 <code>20260528-558</code>，指令裡寫死這個版本，不寫「最新版」那個標籤：它會漂移，先刷後刷的人可能拿到不一樣的系統 <span class="tag" title="內容規格 §〇 F 課程鎖定版本（arduino-q CONTRACT.md §四）">§〇 F·課程鎖定版本</span>。</p>
     <p>映像檔 <code>arduino-unoq-debian-image-20260528-558.tar.zst</code>：2,278,254,042 bytes（約 2.1 GB），解開約 8.2 GB，電腦磁碟至少留 12 GB；不夠就用 <code>--temp-dir</code> 指到大的磁碟 <span class="tag" title="內容規格 §〇 F 映像檔">§〇 F·映像檔</span>。</p>
-    <p>30 台同時下載 2 GB 多會塞爆教室網路，所以映像和刷機工具由老師隨身碟發，指令吃本地檔 <span class="tag" title="內容規格 §〇 F 不吃教室網路">§〇 F·不吃教室網路</span>。</p>
+    <p>上課時改成每個人直接從官方網址抓（GitHub 上的刷機工具、Arduino 下載站的映像），抓完比對指紋；老師講台區網與隨身碟留作網路塞住時的備援 <span class="tag" title="內容規格 §〇 I 刷機工具直連、映像直連">§〇 I·直連</span>。刷機指令吃的是抓到本地的檔。</p>
   </div></details>
   <details class="deep"><summary>刷的那一行指令：要寫板子名稱 unoq</summary><div class="in">
     <pre>./arduino-flasher-cli flash unoq ~/Downloads/arduino-unoq-debian-image-20260528-558.tar.zst --preserve-user</pre>
@@ -728,7 +728,11 @@ SUBSYSTEM=="usb", ATTRS{idVendor}=="05c6", MODE="0666", GROUP="dialout"
 sudo udevadm control --reload-rules
 sudo udevadm trigger
 sudo usermod -a -G dialout $USER</pre>
-    <p>第一行打開檔案、中間兩行是檔案內容、後三行讓它生效（<code>usermod</code> 要登出再登入）。<code>2341</code> 是正常開機的板子、<code>05c6</code> 是 EDL 的板子；<b>少了 05c6 那行，工具就卡在 <code>Waiting for EDL device</code></b> <span class="tag" title="內容規格 §〇 F udev">§〇 F·udev</span>。E307 學生帳號沒有 <code>sudo</code>，有沒有這行由老師課前查 <span class="wn">⚠️</span>。</p>
+    <p>第一行打開檔案、中間兩行是檔案內容、後三行讓它生效（<code>usermod</code> 要登出再登入）。<code>2341</code> 是正常開機的板子、<code>05c6</code> 是 EDL 的板子；<b>少了 05c6 那行，工具就卡在 <code>Waiting for EDL device</code></b> <span class="tag" title="內容規格 §〇 F udev">§〇 F·udev</span>。</p>
+    <p><b>還有一個坑（10/22 E307 現場）</b>：Linux 核心內建的 <code>qcserial</code> 驅動把 <code>05c6:9008</code> 列為自己的裝置（核心原始碼 <code>qcserial.c</code> 的裝置清單裡就有這一組），板子一進 EDL 就被它當成序列埠接走，刷機工具一樣卡在 <code>Waiting for EDL device</code>——<b>udev 有 05c6 那行也沒用</b> <span class="tag" title="內容規格 §〇 I qcserial 搶走 EDL 的板子">§〇 I·qcserial</span>。拿掉它：</p>
+    <pre>sudo rmmod qcserial
+echo "blacklist qcserial" | sudo tee /etc/modprobe.d/blacklist-qcserial.conf</pre>
+    <p><code>rmmod</code> 是現在卸掉；<code>blacklist</code> 是以後插上也別自動載入。一個裝置同一時間只能被一個驅動接走——這就是「誰先接到誰拿走」。</p>
     <p><b>Windows</b>：刷機工具第一次會自動用系統管理員權限裝驅動；沒有管理員權限就裝不了 <span class="tag" title="內容規格 §〇 F Windows（flash --help 原文）">§〇 F·Windows</span>。</p>
     <p><b>App Lab 內建</b>：設定（齒輪）→ Operating system → <b>Flash Board</b>，對話框勾 <b>Preserve user data during the board flashing process</b>，它會引導你進 EDL、下載映像 <span class="tag" title="內容規格 §〇 F 兩種刷法">§〇 F·兩種刷法</span>。⚠️ E307 那一版 App Lab 有沒有這顆鈕、畫面字樣沒驗；今天全班走命令列，用老師隨身碟的本地映像。</p>
   </div></details>
@@ -1040,7 +1044,7 @@ systemctl --failed</pre></dd></dl></div></details>
     <dt>指令例子</dt><dd><pre>lsusb</pre></dd></dl></div></details>
   <details class="tool"><summary>arduino-flasher-cli（list／flash）<span class="where">電腦</span></summary><div class="in"><dl>
     <dt>做什麼</dt><dd>官方的命令列刷機工具（Arduino Flasher CLI），子指令有 <code>flash</code>、<code>list</code>、<code>download</code>、<code>version</code>；<code>flash</code> 吃本地映像檔（<code>.tar.zst</code>／<code>.tar.xz</code>／解開的資料夾）或版本標籤 <span class="tag" title="內容規格 §〇 F 工具（--help）">§〇 F·工具</span>。</dd>
-    <dt>在哪台跑</dt><dd>電腦（板子要在 EDL）。今天由老師隨身碟發；自己下載的話是官方軟體頁 <code>arduino.cc/en/software</code> 的 Arduino Flasher CLI 區塊，本課用 0.5.4 版 <span class="tag" title="內容規格 §〇 F 刷機工具下載（官方 0.5.4）">§〇 F·工具下載</span>。</dd>
+    <dt>在哪台跑</dt><dd>電腦（板子要在 EDL）。今天每人從官方抓（GitHub 發布頁 v0.5.4，跟 Arduino 下載站那份同一個指紋；老師隨身碟備援）；官方軟體頁 <code>arduino.cc/en/software</code> 的 Arduino Flasher CLI 區塊，本課用 0.5.4 版 <span class="tag" title="內容規格 §〇 F 刷機工具下載（官方 0.5.4）">§〇 F·工具下載</span>。</dd>
     <dt>今天哪一步</dt><dd>第二部分：<code>list</code> 看版本、<code>flash</code> 刷 <code>20260528-558</code>；用本地映像＋<code>--preserve-user</code> 不問確認、直接開刷，10/22 實測 204 秒 <span class="tag" title="內容規格 §〇 H 今天刷機實測（10/22 msi＋同一塊出廠板，官方刷機工具＋本地映像）">§〇 H·秒數</span>。</dd>
     <dt>下載檔</dt><dd>Linux：<code>arduino-flasher-cli-0.5.4-linux-amd64.tar.gz</code>，14,225,229 bytes，SHA256 開頭 <code>c174c5c8</code>；Windows：<code>…-0.5.4-windows-amd64.zip</code>，14,733,628 bytes，SHA256 開頭 <code>a3f411e0</code>；macOS Apple 晶片：<code>…-0.5.4-darwin-arm64.tar.gz</code>，SHA256 開頭 <code>9683d219</code> <span class="tag" title="內容規格 §〇 F 刷機工具下載（官方下載站，10/22 curl＋sha256sum）">§〇 F·工具下載</span></dd>
     <dt>指令例子</dt><dd><pre>tar xzf arduino-flasher-cli-0.5.4-linux-amd64.tar.gz
@@ -1064,8 +1068,8 @@ sudo systemctl enable ssh
 sudo systemctl start ssh
 sudo /usr/local/bin/arduino-passwd</pre></dd></dl></div></details>
   <details class="tool"><summary>udev 規則<span class="where">電腦（Linux）</span></summary><div class="in"><dl>
-    <dt>做什麼</dt><dd>Linux 決定「哪個帳號能碰哪個 USB 裝置」的規則。EDL 的板子是 <code>05c6</code>，少了這行，刷機工具碰不到它，卡在 <code>Waiting for EDL device</code> <span class="tag" title="內容規格 §〇 F Linux 要權限規則（udev）">§〇 F·udev</span>。</dd>
-    <dt>在哪台跑</dt><dd>電腦（要 <code>sudo</code>；E307 學生帳號沒有，老師課前查 <span class="wn">⚠️</span>）</dd>
+    <dt>做什麼</dt><dd>Linux 決定「哪個帳號能碰哪個 USB 裝置」的規則。EDL 的板子是 <code>05c6</code>，少了這行，刷機工具碰不到它，卡在 <code>Waiting for EDL device</code> <span class="tag" title="內容規格 §〇 F Linux 要權限規則（udev）">§〇 F·udev</span>。E307 還要另外拿掉 <code>qcserial</code> 驅動（§8「電腦這頭的權限」） <span class="tag" title="內容規格 §〇 I qcserial 搶走 EDL 的板子">§〇 I·qcserial</span>。</dd>
+    <dt>在哪台跑</dt><dd>電腦（要 <code>sudo</code>；每台電腦做一次，學生頁 2-1 第 6 步）</dd>
     <dt>今天哪一步</dt><dd>第二部分刷機前（§8 的「電腦這頭的權限」有完整兩行）。</dd>
     <dt>指令例子</dt><dd><pre>sudo udevadm control --reload-rules
 sudo udevadm trigger</pre></dd></dl></div></details>
