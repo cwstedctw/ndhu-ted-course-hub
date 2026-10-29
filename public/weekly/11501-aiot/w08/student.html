@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W8 學生步驟｜藍牙健康手環＋親手編出音效卡＋板子裡的語音小助理</title>
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --surface-2:#F1F5F4; --ink:#132525; --ink-soft:#3E5656; --mist:#5E7676;
+  --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF; --gold:#D9A441; --gold-deep:#7A5510; --gold-tint:#FBF0D9;
+  --dark:#062524; --red:#B4553F; --red-tint:#F7E4DE; --violet:#5B4B9A; --violet-tint:#ECE8F7;
+  --term-bg:#133E34; --term-ink:#F4F6ED; --out-bg:#F3F6F5; --out-ink:#1B3433;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC","Heiti TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono","Liberation Mono","Noto Sans Mono CJK TC",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#8FA9A8;
+    --line:#26403F; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+    --dark:#041716; --red:#E58B74; --red-tint:#3A2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+    --term-bg:#071F1A; --term-ink:#E6F2F2; --out-bg:#0D1F1F; --out-ink:#D5E6E5;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#8FA9A8;
+  --line:#26403F; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+  --dark:#041716; --red:#E58B74; --red-tint:#3A2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+  --term-bg:#071F1A; --term-ink:#E6F2F2; --out-bg:#0D1F1F; --out-ink:#D5E6E5;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:16.5px;line-height:1.8}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+a{color:var(--teal);text-underline-offset:3px}
+main{max-width:900px;margin:0 auto;padding:0 16px 80px}
+header.hero{background:var(--dark);color:#E6F2F2;padding:26px 0 20px}
+header.hero .in{max-width:900px;margin:0 auto;padding:0 16px}
+.kicker{font-weight:800;font-size:13px;letter-spacing:.18em;color:var(--gold)}
+h1{font-size:clamp(27px,5vw,44px);line-height:1.25;margin:6px 0 10px;font-weight:900}
+.hero p{margin:6px 0;color:#BFD6D5}
+.hero nav{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px}
+.hero nav a{color:#F3D08A}
+h2{font-size:clamp(21px,3.4vw,26px);line-height:1.4;margin:0 0 6px}
+h3{font-size:18px;margin:22px 0 4px}
+section.sec{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:20px 0;scroll-margin-top:64px}
+.goal{margin:2px 0 4px;font-weight:700}
+.why{margin:2px 0 10px;color:var(--ink-soft)}
+.small{font-size:14.5px;color:var(--mist)}
+/* 進度列 */
+.progress{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.progress .in{max-width:900px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar{flex:1 1 160px;height:10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.progress .lbl{font-weight:800;font-size:14.5px;white-space:nowrap}
+.progress .toc{display:flex;gap:4px 10px;flex-wrap:wrap;font-size:14px}
+.progress .toc a{text-decoration:none}
+.progress .toc .tg{color:var(--mist);font-weight:800;margin-left:4px}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:4px 10px;font-size:14px;line-height:1.4}
+.btn:hover{border-color:var(--teal)}
+/* 指令框與輸出框 */
+.box{position:relative;margin:8px 0 10px}
+pre{margin:0;white-space:pre;overflow-x:auto;border-radius:10px;padding:12px 14px;font:15px/1.65 var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+code{font-family:var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;font-size:.92em;background:var(--surface-2);color:var(--ink);border-radius:5px;padding:0 4px;overflow-wrap:anywhere}
+pre.cmd{background:var(--term-bg);color:var(--term-ink);padding-top:34px}
+pre.cmd::before{position:absolute;left:14px;right:84px;top:8px;font:700 13px/1.4 var(--zh);letter-spacing:.05em;color:#A8D8C8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+pre.cmd[data-where="電腦"]::before{content:"在電腦（Ubuntu）打——視窗 A"}
+pre.cmd[data-where="板子"]::before{content:"在板子裡打——SSH 視窗 B";color:#F1D58F}
+pre.cmd[data-where="板子C"]::before{content:"在板子裡打——SSH 視窗 C（第二個）";color:#F1D58F}
+pre.cmd[data-where="Windows"]::before{content:"在自己的 Windows（PowerShell）打"}
+pre.cmd[data-where="macOS"]::before{content:"在自己的 Mac（終端機）打"}
+pre.out{background:var(--out-bg);color:var(--out-ink);border:2px dashed var(--line);padding-top:30px}
+pre.out::before{content:"你應該看到（例）——不用打";position:absolute;left:14px;top:6px;font:700 13px/1.4 var(--zh);color:var(--mist)}
+.copy{position:absolute;right:8px;top:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;border-radius:8px;padding:1px 10px;font-size:13px}
+.copy:hover{background:rgba(255,255,255,.25)}
+/* 步驟 */
+ol.steps{padding-left:0;list-style:none;counter-reset:st;margin:8px 0}
+ol.steps > li{counter-increment:st;position:relative;padding:4px 0 6px 40px;margin:6px 0}
+ol.steps > li::before{content:counter(st);position:absolute;left:0;top:4px;width:28px;height:28px;border-radius:50%;background:var(--teal-tint);color:var(--teal);font-weight:900;display:grid;place-items:center;font-size:15px}
+ol.steps > li > p{margin:2px 0}
+.lab{display:inline-block;margin-right:8px;padding:0 8px;border-radius:7px;font-size:13px;font-weight:800;letter-spacing:.04em;line-height:1.6;vertical-align:1px}
+.do-l{background:var(--teal-tint);color:var(--teal)}
+.type-l{background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--line)}
+.see-l{background:var(--gold-tint);color:var(--gold-deep)}
+.dur-l{background:var(--violet-tint);color:var(--violet)}
+.dur{display:inline-block;margin-left:8px;padding:0 8px;border-radius:7px;background:var(--violet-tint);color:var(--violet);font-size:13.5px;font-weight:700}
+.dur::before{content:"⏱ "}
+.check{display:flex;gap:10px;align-items:flex-start;margin:12px 0 2px;padding:10px 14px;border-radius:12px;background:var(--teal-tint);border:1px solid var(--teal);font-weight:700}
+.check input{width:22px;height:22px;margin-top:3px;flex:0 0 auto;accent-color:var(--teal)}
+.check.done{opacity:.75}
+.check > span{flex:1 1 0;min-width:0;overflow-wrap:anywhere}
+.check code{white-space:normal;overflow-wrap:anywhere}
+.note{padding:10px 14px;border-left:4px solid var(--gold);background:var(--gold-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.warn{padding:10px 14px;border-left:4px solid var(--red);background:var(--red-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.deep{font-size:14.5px;margin:10px 0 0;color:var(--ink-soft)}
+details{border:1px solid var(--line);border-radius:12px;padding:6px 14px;margin:10px 0;background:var(--surface)}
+details > summary{cursor:pointer;font-weight:700;padding:4px 0;color:var(--ink)}
+details[open] > summary{margin-bottom:6px}
+details.stuck > summary::before{content:"🆘 ";}
+details.reveal > summary::before{content:"👀 ";}
+details.os > summary::before{content:"🔊 ";}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px;margin:10px 0}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.files td:first-child code{white-space:nowrap}
+.route{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0}
+.stop{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--surface-2);text-decoration:none;color:var(--ink)}
+.stop b{display:block;color:var(--teal);font-size:13px;letter-spacing:.08em}
+.stop span{display:block;font-weight:800;line-height:1.4}
+.stop small{display:block;color:var(--mist);font-size:13.5px;line-height:1.5;margin-top:4px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:8px 0}
+.legend > div{border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:15px}
+figure.real{margin:12px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface-2)}
+figure.real img{display:block;width:100%;height:auto}
+figure.real figcaption{padding:8px 12px;font-size:14px;color:var(--ink-soft)}
+figure.real figcaption b{color:var(--teal)}
+.search{width:100%;padding:8px 12px;border:2px solid var(--teal);border-radius:10px;background:var(--surface);font-size:16px}
+.nomatch{display:none;margin:8px 0;color:var(--red);font-weight:700}
+.ev{display:inline-block;background:var(--gold-tint);color:var(--gold-deep);border:1px solid var(--gold);border-radius:8px;padding:0 8px;font-weight:800;font-size:14px}
+.pending{background:var(--red-tint);color:var(--red);border-radius:6px;padding:0 5px;font-weight:700;overflow-wrap:anywhere}
+.part{margin:34px 0 -4px;padding:12px 18px;border-radius:16px;background:var(--dark);color:#E6F2F2;scroll-margin-top:64px}
+.part b{display:block;color:var(--gold);font-size:13px;letter-spacing:.12em}
+.part span{display:block;font-size:clamp(19px,3vw,23px);font-weight:900;line-height:1.4}
+footer{margin:30px 0 0;color:var(--mist);font-size:14px}
+@media (max-width:640px){
+  section.sec{padding:16px 14px}
+  .route{grid-template-columns:repeat(2,minmax(0,1fr))}
+  pre{font-size:14px;padding:10px 12px}
+  pre.cmd{padding-top:32px}
+  ol.steps > li{padding-left:34px}
+  .progress .toc{display:none}
+}
+@media print{
+  .progress,.copy,.search{display:none}
+  header.hero{background:none;color:#000}
+  .hero p{color:#333}
+  section.sec{border:0;padding:0}
+  details{border:0}
+  details > *{display:block}
+  pre{white-space:pre-wrap;overflow-wrap:anywhere;break-inside:avoid}
+}
+</style>
+<body>
+<header class="hero"><div class="in">
+  <div class="kicker">AIoT 智慧裝置實作　WEEK 8　學生步驟（完整版）</div>
+  <h1>藍牙健康手環<br>＋親手編出音效卡<br>＋板子裡的語音小助理</h1>
+  <p>10/29（四）14:10–17:00，理工二館 E307（Ubuntu 教室機）。三節課、三個部分。</p>
+  <p><b>第一部分</b>把 W7 沒做完的藍牙做完：板子用藍牙把自己的體溫、負載每秒送到你的手機。<b>第二部分</b>W7 老師給你的那兩個音效卡模組檔，這次<b>自己從原始碼編出來</b>，指紋要跟老師的一模一樣，再把聲音兩個方向都驗一次。<b>第三部分</b>讓一個會說話的 AI 住進板子：你對電腦麥克風講話 → 聲音經 USB 音效卡進板子 → Gemini 即時語音 → 回話從 USB 回到電腦喇叭；問它板子幾度，它會<b>自己去讀板子</b>再回答——這才叫 agent，不只是聊天。原則跟前幾週一樣：<b>畫面說成功不算，你親眼看到才算。</b>卡住了，先把<b>完整錯誤訊息貼給 AI agent</b>（板子密碼、Gemini 金鑰不要貼），再舉手。</p>
+  <nav><a href="cheatsheet.html">指令小抄（A4 兩頁）</a><a href="concept.html">互動概念頁（編模組、音效卡、語音小助理、藍牙）</a><a href="#basics">基礎知識補給站</a><a href="deck.html">投影片</a><a href="deck.pdf">投影片 PDF</a></nav>
+</div></header>
+
+<div class="progress" aria-label="進度"><div class="in">
+  <span class="lbl" id="plbl">完成 0／0</span>
+  <span class="bar" aria-hidden="true"><i id="pbar"></i></span>
+  <span class="toc"><a href="#s0">0 就位</a><span class="tg">一 藍牙</span><a href="#p1-1">1</a><a href="#p1-2">2</a><a href="#p1-3">3</a><a href="#p1-4">4</a><a href="#p1-5">5</a><a href="#p1-6">6</a><span class="tg">二 編音效卡</span><a href="#p2-1">1</a><a href="#p2-2">2</a><a href="#p2-3">3</a><a href="#p2-4">4</a><span class="tg">三 語音小助理</span><a href="#p3-1">1</a><a href="#p3-2">2</a><a href="#p3-3">3</a><a href="#p3-4">4</a><a href="#p3-5">5</a><a href="#p3-6">6</a><a href="#faq">卡住了</a><a href="#basics">基礎</a></span>
+  <button type="button" class="btn" id="preset">清除勾選</button>
+</div></div>
+
+<main>
+
+<section class="sec" id="how">
+  <h2>怎麼讀這一頁</h2>
+  <div class="legend">
+    <div><b>每一步分四欄</b>：<span class="lab do-l">做什麼</span>（這一步要做的事，和為什麼）、<span class="lab type-l">打什麼</span>（深色指令框，或寫「不用打」）、<span class="lab see-l">應該看到</span>（老師板上實際看到的；你的數字、時間可能不同）、<span class="lab dur-l">多久</span>（老師量到的時間；沒量過的照實寫）。</div>
+    <div><b>深色框＝指令</b>。左上角寫在哪裡打：<b>電腦（視窗 A）</b>、<b>板子（SSH 視窗 B）</b>、第二個 <b>SSH 視窗 C</b>、在家用自己電腦時的 <b>Windows／Mac</b>。右上角有「複製」鈕。一次打（或貼）一行，按 Enter，看完它回什麼再打下一行。</div>
+    <div><b>淺色虛線框＝畫面上會看到的樣子</b>，不用打。字樣、秒數是老師 10/28 晚上用自己的板實跑的；標「現場為準」「⚠️」的是還沒在 E307 Ubuntu 或學生板上驗過的。</div>
+    <div><b>今天有兩樣東西是密碼</b>：板子的密碼、Gemini 的 API 金鑰（<code>AIza</code> 開頭那串）。都不貼給 AI、不截進作業、不放進 git。</div>
+    <div><b>🆘 卡住了</b>：每一節最後都有，點開看常見狀況；全部整理在<a href="#faq">卡關總表</a>，可以搜尋。</div>
+    <div><b>綠色勾選框＝檢查點</b>。親眼看到了才勾；最上面的進度列會跟著動（只存在你這台電腦的瀏覽器）。</div>
+  </div>
+  <ul>
+    <li>Ubuntu 終端機裡，複製是 <b>Ctrl＋Shift＋C</b>、貼上是 <b>Ctrl＋Shift＋V</b>。少了 Shift 的 Ctrl＋C 是「中斷」（停藍牙程式、停語音小助理都是用它）。</li>
+    <li>今天會打幾次<b>板子的密碼</b>（<code>ssh</code>、<code>sudo</code>）：打的時候畫面不會動，打完按 Enter。刷完 558 沒設密碼的人，<code>sudo reboot</code> 那一步改成拔線重插就好。</li>
+    <li>今天只照這一頁和老師的指令做；網路上或 AI 給的其他編法、別的 <code>docker run</code> 參數（尤其是「特權」那種給容器整台板子權限的參數），<b>先給老師看</b>。</li>
+    <li>「跟 AI 講話」那幾步（第三部分 3-4）這一頁只給<b>目標</b>，不給逐字稿——用你自己的話問。</li>
+  </ul>
+</section>
+
+<section class="sec" id="s0">
+  <h2>0　今天的路線、三張證據、就位</h2>
+  <p class="goal">目標：知道今天三部分各做什麼；兩個 SSH 視窗都進到板子；starter 四個檔在板上；<code>--prefetch</code> 已經在視窗 C 跑著。</p>
+  <div class="route">
+    <a class="stop" href="#p1-1"><b>第一部分 14:10</b><span>藍牙健康手環</span><small>板子把板況每秒送到手機（W7 沒做完的，今天第一次做）</small></a>
+    <a class="stop" href="#p2-1"><b>第二部分 15:10</b><span>親手編出音效卡</span><small>從原始碼編出兩個 <code>.ko</code>，指紋跟老師的一模一樣，再雙向驗聲音</small></a>
+    <a class="stop" href="#p3-1"><b>第三部分 16:10</b><span>板子裡的語音小助理</span><small>按住說話 → Gemini → 它自己讀板子再回答</small></a>
+    <a class="stop" href="#p3-6"><b>收尾 16:55</b><span>三張證據</span><small>交 e學苑、回家挑戰 <code>get_wifi</code>、W9 期中展示</small></a>
+  </div>
+  <p><b>完成線＝三張證據</b>（作業老師上課時會在 e學苑 開，先存好）：</p>
+  <div class="tw"><table>
+    <tr><th>#</th><th>證據</th><th>在哪一節</th></tr>
+    <tr><td><span class="ev">證據 1</span></td><td><b>手機 Plotter 的溫度曲線</b>截圖（四支 <code>yes</code> 讓它爬上去、停掉後降下來）</td><td>1-4</td></tr>
+    <tr><td><span class="ev">證據 2</span></td><td><b>親手編的音效卡</b>：上半＝腳本最後兩行 <code>一模一樣</code>；下半＝重開機後 <code>aplay -l</code> 看到 <code>card 1: UAC2Gadget</code>＋ <code>peak</code> 那一行</td><td>2-1、2-4</td></tr>
+    <tr><td><span class="ev">證據 3</span></td><td><b>語音小助理畫面</b>：問到溫度那一輪，看得到 🔧 <code>get_board_status</code> 和它回傳的 JSON、底下四個數字</td><td>3-4</td></tr>
+  </table></div>
+  <p><b>要帶</b>：自己的板子（核心 <code>7.0.0</code>、W7 刷過 558 的）、USB-C <b>資料線</b>、<b>板子的密碼</b>（沒設的人也行，見上面）、<b>手機</b>（裝好免費的 <b>nRF Connect</b> 和 <b>Bluefruit Connect</b>）、<b>個人 Gmail</b>（第三部分要在 Google AI Studio 建一把金鑰，用你登入 agy 的那個帳號）。<b>不用帶麥克風、不用帶筆記型電腦</b>：全程用教室機，它的攝影機自帶麥克風（老師 10/28 確認）。</p>
+  <p class="why">今天至少開三個終端機視窗：<b>視窗 A</b> 留在教室電腦（<code>"$ADB"</code> 開頭的都在這裡）；<b>視窗 B</b> SSH 進板子，主要的指令在這裡；<b>視窗 C</b> 也 SSH 進板子，先拿來跑 <code>--prefetch</code>，之後第一部分的 <code>yes</code>、第三部分的 <code>docker logs</code> 都在這裡。</p>
+
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>接線、等心跳：USB-C 資料線把板子直接插在電腦上（不要經過 hub）。<span class="dur">多久：等到心跳動畫出現（W4–W7 都等過）</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>點陣從旋轉的圖案變成心跳動畫。還在轉就先等，不要拔。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>打開終端機（Ctrl＋Alt＋T），這是<b>視窗 A</b>；找出 App Lab 附的 adb（前兩行是同一個指令，要一起貼）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">ADB=$(find "$HOME/.arduino15/packages/arduino/tools/adb" \
+    -type f -name adb -perm -u+x -print 2>/dev/null | sort -V | tail -n 1)
+"$ADB" devices -l</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>最後一行列出<b>剛好一塊板</b>、狀態是 <code>device</code>。<code>$ADB</code> 只在跑過這段的視窗有值，換視窗要重跑。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>開 2222 通道（同一個視窗 A）。<span class="dur">多久：打完馬上回來</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">"$ADB" forward tcp:2222 tcp:22</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>成功時不印字。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>再開一個終端機（<b>視窗 B</b>），SSH 進板子。<span class="dur">多久：打完密碼就進去</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">ssh -p 2222 arduino@127.0.0.1</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>問密碼時打<b>板子的密碼</b>；提示字元變成 <code>arduino@</code> 開頭。W6 網卡在的人也可以直接 <code>ssh arduino@192.168.7.2</code>（不用通道）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>開場閘門兩行（視窗 B）：核心是不是 <code>7.0.0</code>、板上的 Arduino 套件是不是最新。老師會請全班舉手統計。第三樣在電腦看：App Lab 左下角或「關於」寫的版本要是 <code>0.11.0</code>。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">uname -r
+arduino-app-cli version</pre></div>
+      <div class="box"><pre class="out" data-src="out">7.0.0-g122c2c22d838
+Arduino App CLI version 0.14.0</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行 <code>7.0.0-g122c2c22d838</code>（W7 刷完 558 就是它；官方套件庫 10/28 查過，核心最新就是 7.0.0，沒有更新的）；第二行 <code>0.14.0</code>，後面還有一行 <code>daemon version: 0.14.0</code>。<b>不是 7.0.0 的</b>：舉手，今天第二、三部分都要這顆核心，先照 W7 第一部分升上去（或刷 558）。套件不是 0.14.0 的，點開下面的摺疊。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>拿今天的 starter——這次直接在<b>板子上</b>抓、解開（視窗 B）：一行做三件事，走到家目錄、抓壓縮包直接解開、列出解開了什麼。<span class="dur">多久：檔很小，幾秒</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="rewrite:new" data-note="§三 學生頁 s0：板上 cd ~ &amp;&amp; curl -fsSL …/w08/starter/w08-starter.tar.gz | tar xz &amp;&amp; ls ~/w08-starter；starter 內容照 §四 與 starter README.md">cd ~ &amp;&amp; curl -fsSL https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-aiot/w08/starter/w08-starter.tar.gz | tar xz &amp;&amp; ls ~/w08-starter</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>四個檔：<code>README.md</code>、<code>build-uac2.sh</code>（第二部分）、<code>health_ble.py</code>（第一部分，跟 W7 那份一模一樣）、<code>voice_agent.py</code>（第三部分）。板子連不到課程網（教室網路擋住）：在電腦抓再 <code>"$ADB" push</code> 上去，或用老師的隨身碟。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>再開一個終端機（<b>視窗 C</b>），用第 4 步同一行 SSH 進板子，先把第二部分要用的東西抓好、裝好（對版的 headers、原始碼、<code>debian:trixie</code> 映像，再在映像裡裝好編譯器存成 <code>uac2-build:trixie</code>），讓它跑著。這一步<b>只準備、不編模組</b>。<span class="dur">多久：老師 10/28 整支 2 分 16 秒（家用 Wi-Fi）；⚠️ 30 塊板同時抓沒測，看教室網路</span></p>
+      <div class="box"><pre class="cmd" data-where="板子C" data-src="src">bash ~/w08-starter/build-uac2.sh --prefetch</pre></div>
+      <div class="box"><pre class="out" data-src="out">先抓好了。等一下再跑一次（不加 --prefetch）就會真的編。</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>它先印三行核心設定（<code>is not set</code>，2-1 會講），接著 <code>Get:1 https://apt-repo.arduino.cc …</code> 抓 headers（9,114 kB）、抓 5 個原始碼檔、<code>docker pull</code> 映像、在映像裡裝編譯器（75.1 MB、66 個套件）存成 <code>uac2-build:trixie</code>（已經有就印 <code>uac2-build:trixie 已經有了</code>），最後印上面那一行就結束。還沒印完不用等，先去做第一部分；1-6 再回來看。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：找不到 adb、連不上、套件沒升、核心不是 7.0.0</summary>
+    <ul>
+      <li><code>bash: : command not found</code>：<code>$ADB</code> 是空的，這個視窗沒跑過第 2 步，重跑一次。</li>
+      <li><code>Connection refused</code>：2222 通道沒開。回<b>視窗 A</b> 再打一次 <code>forward</code>。</li>
+      <li><code>WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</code>：這台電腦記著別塊板的鑰匙。在電腦打 <code>ssh-keygen -R "[127.0.0.1]:2222"</code>，再連一次。</li>
+      <li>板上套件不是 0.14.0：558 映像開了白名單，<b>不用密碼</b>就能升 Arduino 的套件（視窗 B）。老師 10/28 在已經最新的板上跑，印 <code>arduino-router is already the newest version (0.11.0).</code> 和 <code>0 upgraded, 0 newly installed, 0 to remove and 149 not upgraded.</code>；你的板會真的下載、安裝。</li>
+    </ul>
+    <div class="box"><pre class="cmd" data-where="板子" data-src="src">sudo apt-get install --only-upgrade -y arduino-app-cli arduino-router</pre></div>
+    <ul>
+      <li>核心不是 <code>7.0.0-g122c2c22d838</code>：第二部分的腳本會直接拒絕（印 <code>你的核心是 …，不是 7.0.0-g122c2c22d838</code>）。回 W7 第一部分升核心，或刷 558；先併組用同學的板跟上。</li>
+      <li><code>curl:</code> 開頭的錯誤（板子連不到課程網）：在電腦視窗 A 抓同一個網址再 <code>"$ADB" push</code>，或問老師拿隨身碟。</li>
+      <li>忘了板子密碼：問老師，<b>不要貼給 AI</b>。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="s0"><span>視窗 B、C 都是 <code>arduino@</code> 開頭；<code>uname -r</code> 是 <code>7.0.0</code>；<code>ls ~/w08-starter</code> 四個檔；視窗 C 的 <code>--prefetch</code> 在跑。</span></label>
+</section>
+
+<div class="part" id="part1"><b>第一部分　14:10–15:00</b><span>藍牙健康手環：板子把板況每秒送到你的手機</span></div>
+
+<section class="sec" id="p1-1">
+  <h2>1-1　讓板子開始喊（<code>health_ble.py</code>）</h2>
+  <p class="goal">目標：板上印出 <code>advertising as</code> 加上你自己取的名字。</p>
+  <p class="why">板子沒有螢幕，手機就是它的螢幕。今天走藍牙低功耗（BLE）：不用線、不用 IP，手機直接連。板子當<b>周邊</b>（peripheral）：開好服務、一直「喊」——這叫<b>廣播</b>（advertising），像一直發名片；手機當<b>中心</b>（central）：掃描、挑一個連上去。程式是一支 Python，用板上現成的藍牙服務，不用裝套件。W7 上課沒做到這段，今天是<b>第一次做</b>；程式已經在 starter 裡（<code>~/w08-starter/health_ble.py</code>，跟 W7 那份一模一樣），不用另外推。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>取名字：<code>UNOQ-</code>＋組別兩位數＋座位字母，例如 <code>UNOQ-G03A</code>。全班 30 塊板同時喊，名字要分得出誰是誰；最多 12 個英數字。<b>不准用學號、姓名。</b><span class="dur">多久：1 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，寫在紙上。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>你和同組同學的名字都不一樣。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>開始廣播（視窗 B）。<b>把 <code>G03A</code> 換成你的</b>。這個視窗接下來一直讓它跑，不要關。<span class="dur">多久：打完幾秒內印出前三行</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">python3 ~/w08-starter/health_ble.py --name UNOQ-G03A</pre></div>
+      <div class="box"><pre class="out" data-src="out">HH:MM:SS ready. health now: T=… L=… M=… D=… W=… U=… C=…
+GATT application registered (6e400001-b5a3-f393-e0a9-e50e24dcca9e)
+advertising as 'UNOQ-G03A'
+TX  -&gt; 43.2,0.31,38,61,72  (no subscriber)</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>前三行（時間、數字會不同）；之後沒人連的時候每秒一行 <code>TX  -&gt;</code> 加 <code>(no subscriber)</code>（數字是示意）。記下 <code>ready.</code> 那行的 <code>T=</code>（溫度），1-2 要用。老師 10/22 在刷好的 558 上實測：藍牙服務、<code>python3-gi</code>、<code>bluetooth</code> 群組都在，<b>不用 <code>sudo</code>、不用裝套件</b>就跑起來，第一行像 <code>ready. health now: T=48.1 L=2.38 M=13 D=66 W=0 U=65 C=0</code>。Wi-Fi 沒連的板 <code>W=0</code>，正常。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：跑不起來</summary>
+    <ul>
+      <li><code>Permission denied</code>、<code>AccessDenied</code>：帳號不在 <code>bluetooth</code> 群組（558 老師板是在的；沒刷成的舊板可能不在）。改用 <code>sudo</code> 跑：</li>
+    </ul>
+    <div class="box"><pre class="cmd" data-where="板子" data-src="rewrite:new" data-note="v1 規格 §一「學生板跑不起來」：bluetooth 群組 NG → sudo python3 health_ble.py --name …；路徑照 §〇 E 的 ~/w08-starter/health_ble.py">sudo python3 ~/w08-starter/health_ble.py --name UNOQ-G03A</pre></div>
+    <ul>
+      <li><code>ModuleNotFoundError</code>（提到 <code>gi</code>）或 <code>RegisterApplication failed</code>、<code>RegisterAdvertisement failed</code>：截圖舉手；先跟同組同學併用一塊板，證據照交（標「用同組的板」）。</li>
+      <li><code>No such file or directory</code>：starter 沒解開，回 0 的第 6 步。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：三條路（USB、Wi-Fi、藍牙）、周邊與中心 → <a href="concept.html">互動概念頁</a>的藍牙那一節。</p>
+  <label class="check"><input type="checkbox" data-ck="p1-1"><span>板上印 <code>advertising as '</code> 加我的名字。</span></label>
+</section>
+
+<section class="sec" id="p1-2">
+  <h2>1-2　手機找到自己（nRF Connect）</h2>
+  <p class="goal">目標：在 30 個名字裡找到你的板，記下訊號強度，把名片上的 7 個 bytes 手算成溫度。</p>
+  <p class="why">廣播封包（名片）最多只有 31 bytes：名字、服務代碼、再加幾個 bytes 的自訂資料。這支程式在名片裡塞了 <b>廠商資料</b>（Manufacturer Data）：公司代碼 <code>0xFFFF</code>（保留給測試用）＋7 bytes 的板況。App 的按鈕、欄位名稱大概長這樣，<b>以你手機上的為準</b>。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>打開 <b>nRF Connect</b> 的掃描頁，用名字過濾（打 <code>UNOQ-G03</code> 這種你的組別）。<b>不要去手機的「設定 → 藍牙」配對</b>，今天全部在 App 裡掃、連。<span class="dur">多久：幾秒</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>手機上：過濾欄打你的名字開頭。Android 12 以上要允許「附近的裝置」權限；更舊的 Android 要開定位。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>清單裡有你的名字。老師 10/22 用電腦的藍牙代替手機掃 558 的板，8 秒掃到；⚠️ 手機 App 的畫面是 10/15 用 iPhone 測的，Android 版老師沒測過。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>記下 RSSI（手機收到的訊號強度）：貼著板子、1 公尺、3 公尺、手掌包住手機，四個數字。<span class="dur">多久：3 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，抄在紙上。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>負數，<b>越接近 0 越強</b>；離越遠、被手掌包住，數字越小（越負）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>點開你的板，找 <code>0xFFFF</code> 後面那串 7 個 bytes，照下表手算，跟 1-1 板上 <code>ready.</code> 那行的 <code>T=</code> 比。<span class="dur">多久：4 分鐘（落後時改成看老師算一次）</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。順序：<code>[溫度×10 低位, 溫度×10 高位, 負載×10, 記憶體%, 容器數, 開機分鐘 低位, 開機分鐘 高位]</code>，低位在前（小端序）。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>示意（不是實測）：<code>B0 01 03 26 02 7D 00</code> → 溫度 <code>0x01B0</code>＝432 → 43.2 °C、負載 3 → 0.3、記憶體 <code>0x26</code>＝38%、容器 2、開機 <code>0x007D</code>＝125 分。老師 10/22 在 558 上實際掃到的是 <code>db 01 17 0d 00 01 00</code> → 47.5 °C、負載 2.3、記憶體 13%、容器 0、開機 1 分。你算出來的溫度要跟板上的 <code>T=</code> 對得上。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>✋ 先猜：兩分鐘後再掃一次，名片上的溫度會不會變？猜完真的再掃一次。<span class="dur">多久：2 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>⚠️ 老師沒實測（推論不會變：名片是開始廣播那一刻的快照）。不管結果如何，要講得出為什麼。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：掃不到、名字一樣</summary>
+    <ul>
+      <li>掃不到：板上那個視窗還在跑嗎？有沒有印 <code>advertising as</code>？手機藍牙開了嗎？Android 權限給了嗎？</li>
+      <li>兩個一樣的名字：你們組別或座位寫重了。Ctrl-C 停掉，換名字重跑。</li>
+      <li>找不到 <code>0xFFFF</code>：App 畫面跟這頁寫的不一樣，找「Manufacturer」字樣那一欄；還是找不到，看隔壁同學的手機一起算。</li>
+      <li>點開之後看到好幾個服務：<b>正常</b>。558 映像自己還帶了一個 BLE-MIDI 服務（<code>03b80e5a</code> 開頭）和 <code>1800</code>、<code>1801</code>、<code>180A</code> 幾個標準服務；我們的是 <code>6E400001</code> 開頭那個。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p1-2"><span>找到自己；四個 RSSI 記好；手算的溫度跟 <code>T=</code> 對上。</span></label>
+</section>
+
+<section class="sec" id="p1-3">
+  <h2>1-3　連上、問它（Bluefruit Connect 的 UART）</h2>
+  <p class="goal">目標：手機每秒收到一行板況；打 <code>help</code>、<code>health</code>、<code>apps</code>、<code>ip</code> 板子都會回。</p>
+  <p class="why">廣播是一對全部、單向；<b>連線</b>是一對一、雙向。連上之後手機看到一棵小樹（GATT）：服務下面掛特徵（characteristic）。這支程式用 Nordic UART Service：<b>RX</b>（手機寫進來）、<b>TX</b>（板子<b>通知</b>（notify）出去）——RX／TX 是站在板子看的。通知一包最多 20 bytes，長的切開送。連上之後如果看到好幾個服務是正常的（558 自帶 BLE-MIDI 和幾個標準服務），<b>找 <code>6E400001</code> 開頭那個</b>。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>打開 <b>Bluefruit Connect</b>，在清單裡選你的板、連上，切到 <b>UART</b> 頁。<span class="dur">多久：1 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>手機上點選，不用打字。</p>
+      <div class="box"><pre class="out" data-src="out">phone subscribed (StartNotify)</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>手機 UART 頁每秒一行數字；板上視窗 B 印出上面這一行。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>在 UART 頁打字問板子：<code>help</code>、<code>health</code>、<code>apps</code>、<code>ip</code>，最後試 <code>HELP</code>（大寫）。<span class="dur">多久：3 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>手機 UART 輸入框一次打一個，送出。</p>
+      <div class="box"><pre class="out" data-src="out">RX  &lt;- 'help'</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>每個都有回：<code>health</code> 回一行帶標籤的板況（像 <code>T=43.2 L=0.31 M=38 D=61 W=72 U=7512 C=2</code>，數字是示意）；<code>apps</code> 回正在跑的容器名（沒在跑 App 就回 <code>none</code>）；<code>ip</code> 回板子的 IP（老師板回 <code>192.168.7.2/24 172.17.0.1/16</code>）；<code>HELP</code> 也有回（程式先轉小寫）。板上每打一次印一行 <code>RX  &lt;-</code>。清單以外的字回 <code>unknown: '…' (try help)</code>，不會執行。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：連上了沒數字、打字沒回</summary>
+    <ul>
+      <li>清單裡好幾個服務、不知道選哪個：選 <code>6E400001</code> 開頭那個（Nordic UART Service）；BLE-MIDI 那個是映像自帶的，不用管。</li>
+      <li>連上了但沒有每秒一行：還沒切到 UART 頁（或沒訂閱 TX）；板上沒印 <code>phone subscribed</code> 就是還沒訂閱。</li>
+      <li>回 <code>unknown:</code>：拼錯字，或那個字不在清單裡。先打 <code>help</code> 看清單。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p1-3"><span><code>help</code>、<code>health</code>、<code>apps</code>、<code>ip</code> 都有回，板上看到 <code>phone subscribed</code>。</span></label>
+</section>
+
+<section class="sec" id="p1-4">
+  <h2>1-4　Plotter、讓四顆核心一起忙</h2>
+  <p class="goal">目標：手機 Plotter 上看到溫度爬上去、再降下來（截圖＋三個數字＝<span class="ev">證據 1</span>）。</p>
+  <p class="why">板子每秒送一行純數字、逗號分隔：<b>溫度°C、負載、記憶體%、硬碟%、Wi-Fi%</b>（Wi-Fi 是 0–100% 的訊號強度，不是 dBm；Wi-Fi 沒連這條線會一直是 0）。Plotter 只認純數字、沒有標籤，所以靠<b>順序</b>認哪條線是誰。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>Bluefruit Connect 切到 <b>Plotter</b>；想只看溫度，回 UART 頁打 <code>plot temp</code>（回 <code>plot order: temp</code>），再切回 Plotter。記下現在的溫度（<b>起點</b>）。<span class="dur">多久：2 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>手機上：UART 頁打 <code>plot temp</code>（想看全部五條打 <code>plot all</code>）。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>五條線（或只剩一條溫度線）一直往右畫。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看<b>視窗 C</b>（0 的第 7 步跑 <code>--prefetch</code> 的那個）：印了 <code>先抓好了…</code>＝它已經回到板子的提示字元（<code>arduino@</code>），<b>直接跳第 3 步</b>打 <code>yes</code>，不用再 ssh（在板子裡再打 ssh 會變成板子連自己）。還在跑，才在電腦<b>另開一個終端機（視窗 D）</b>用下面這行進板子，第 3、4 步改在視窗 D 打。視窗 B 的藍牙程式繼續跑，不要動它。<span class="dur">多久：馬上（要開視窗 D 的：打完密碼就進去）</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">ssh -p 2222 arduino@127.0.0.1</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>視窗 C（或 D）的提示字元是 <code>arduino@</code> 開頭。開視窗 D 時 <code>Connection refused</code>：視窗 A 的 2222 通道沒開，先打 <code>"$ADB" forward tcp:2222 tcp:22</code>；W6 網卡在的人也可以 <code>ssh arduino@192.168.7.2</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>讓四顆核心一起忙：開四支 <code>yes</code>（每支一直印 y 到黑洞），看 Plotter <b>3 分鐘</b>，記下<b>最高</b>溫度。<span class="dur">多久：3 分鐘</span></p>
+      <div class="box"><pre class="cmd" data-where="板子C" data-src="src">for i in 1 2 3 4; do yes &gt; /dev/null &amp; done</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>Plotter 上的溫度和負載往上爬。⚠️ 爬多高、爬多快老師沒量過，自己量。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>停掉四支 <code>yes</code>，再看 <b>2 分鐘</b>，記下停掉後 2 分鐘的溫度。<b>一定用 <code>-x</code></b>（只停名字剛好是 <code>yes</code> 的），別用 <code>-f</code>，會連你的 SSH 一起停掉。<span class="dur">多久：2 分鐘</span></p>
+      <div class="box"><pre class="cmd" data-where="板子C" data-src="src">pkill -x yes</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>負載先掉下來，溫度慢慢降。📸 <b>Plotter 截圖＋起點、最高、停掉後 2 分鐘三個數字＝證據 1</b>。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：Plotter 沒線、SSH 斷了</summary>
+    <ul>
+      <li>Plotter 沒有線：要先連上、訂閱（1-3 的 UART 有每秒一行才行）。</li>
+      <li><code>pkill</code> 之後 SSH 也斷了：用了 <code>-f</code>。重新 SSH 進去，用 <code>pkill -x yes</code>。</li>
+      <li>溫度看起來沒變：五條線的第一條才是溫度；或打 <code>plot temp</code> 只留一條。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p1-4"><span>證據 1 存好：Plotter 截圖＋起點、最高、停掉後 2 分鐘三個溫度。</span></label>
+</section>
+
+<section class="sec" id="p1-5">
+  <h2>1-5　誰都連得上你的板</h2>
+  <p class="goal">目標：講得出為什麼程式只認清單上的字。</p>
+  <p class="why">這支程式的 RX／TX 沒設加密：<b>不用配對、不用密碼</b>，範圍內任何手機都連得上、寫得進來。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>你先在 Bluefruit Connect 按 <b>Disconnect</b>（斷線）；同組同學再用<b>他的</b>手機連<b>你的</b>板、打 <code>apps</code>。<b>輪流</b>，一次一支手機，前一位斷線了下一位才連。<span class="dur">多久：3 分鐘（落後時改成老師口頭講 2 分鐘）</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>同學的手機：UART 頁打 <code>apps</code>。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>他看得到你板子上在跑什麼。⚠️ 第一支手機斷線後第二支連不連得上、幾支手機能同時連，老師都沒測。<b>連不上</b>：在板上視窗 B 按 Ctrl-C，再重跑 1-1 第 2 步那一行，讓它重新開始喊。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>想一想：如果程式把手機傳來的字直接丟給 shell 執行，會怎樣？這支程式怎麼避免？<span class="dur">多久：2 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>（你的答案）程式的 <code>handle_command()</code> 先把字去空白、轉小寫，<b>只跟清單比</b>：比到才回、比不到回 <code>unknown</code>，<b>絕不執行</b>手機傳來的字。老師 10/22 故意送了一串刪檔指令進去，板子只回 <code>unknown: '…' (try help)</code>，什麼都沒執行。第三部分的語音小助理也是同一個道理：它只能呼叫程式裡<b>寫好的兩個工具</b>，不能叫板子做別的事。</p></li>
+  </ol>
+  <label class="check"><input type="checkbox" data-ck="p1-5"><span>同學連過我的板；我講得出「只認清單」為什麼重要。</span></label>
+</section>
+
+<section class="sec" id="p1-6">
+  <h2>1-6　收掉藍牙、看 <code>--prefetch</code> 跑完了沒</h2>
+  <p class="goal">目標：板子關乾淨、視窗 B 回到提示字元；視窗 C 印了 <code>先抓好了…</code>。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>再確認一次四支 <code>yes</code> 都停了（視窗 C）。<span class="dur">多久：馬上</span></p>
+      <div class="box"><pre class="cmd" data-where="板子C" data-src="src">pkill -x yes</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>不印字（已經停了也一樣）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>視窗 B 按 <b>Ctrl-C</b> 停掉藍牙程式；手機在 App 裡斷線。<span class="dur">多久：馬上</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>視窗 B 按 Ctrl-C（不用 Shift）。</p>
+      <div class="box"><pre class="out" data-src="out">bye</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>程式收掉廣播和服務，最後印 <code>bye</code>（前面有時間）。視窗 B 回到 <code>arduino@</code> 的提示字元，第二部分就用它。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>回視窗 C 看 0 的第 7 步跑完了沒。<span class="dur">多久：馬上</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，往上捲看最後一行。</p>
+      <div class="box"><pre class="out" data-src="out">先抓好了。等一下再跑一次（不加 --prefetch）就會真的編。</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>上面這一行。沒有（印了 <code>curl:</code> 或 <code>docker pull</code> 的錯）：舉手；第二部分先看老師的板跑，用 W7 發的那兩個 <code>.ko</code> 繼續（指紋本來就一樣），回家再跑一次。</p></li>
+  </ol>
+  <label class="check"><input type="checkbox" data-ck="p1-6"><span>看到 <code>bye</code>；視窗 C 看到 <code>先抓好了</code>。</span></label>
+</section>
+
+<div class="part" id="part2"><b>第二部分　15:10–16:00</b><span>親手把音效卡編出來：同樣的原料、同樣的工具，指紋一模一樣</span></div>
+
+<section class="sec" id="p2-1">
+  <h2>2-1　真的編（<code>build-uac2.sh</code>）</h2>
+  <p class="goal">目標：腳本最後兩行印 <code>一模一樣</code>（截圖＝<span class="ev">證據 2</span> 的上半）。</p>
+  <p class="why">W7 老師給你的 <code>u_audio.ko</code>、<code>usb_f_uac2.ko</code> 是哪裡來的？這顆核心本來<b>沒有</b> USB 音效（UAC2）這個功能，所以得自己補一個<b>核心模組</b>（kernel module，<code>.ko</code>）。編一個模組要三樣東西：① <b>對版的 headers</b>（核心的標頭檔與符號表 <code>Module.symvers</code>，從官方套件庫抓，不用 sudo）② <b>對版的原始碼</b>（5 個 <code>.c</code>／<code>.h</code>，從 Arduino 的核心原始碼倉抓，分支就是這顆核心的分支）③ <b>同版的編譯器</b>（<code>gcc 14.2.0</code>；板子上沒有，所以開一個 <code>debian:trixie</code> 容器當工作間）。腳本把三樣抓齊、在容器裡 <code>make</code>，產物放 <code>~/uac2-rebuild/</code>，<b>不碰</b> W7 的 <code>~/uac2-soundcard/</code>。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>先親眼看：這顆核心的設定裡 UAC 都沒開（視窗 B）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">zcat /proc/config.gz | grep -E "F_UAC|G_AUDIO"</pre></div>
+      <div class="box"><pre class="out" data-src="out"># CONFIG_USB_CONFIGFS_F_UAC1 is not set
+# CONFIG_USB_CONFIGFS_F_UAC1_LEGACY is not set
+# CONFIG_USB_CONFIGFS_F_UAC2 is not set
+CONFIG_COMMON_CLK_AXG_AUDIO=m</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>就是這四行：前三行 <code>is not set</code>＝核心裡沒有 UAC，最後一行不相干（<code>grep</code> 找 <code>AUDIO</code> 這個字順便撈到的，正常）。核心裡沒有，所以 W7 才要外掛兩個 <code>.ko</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>真的編（視窗 B；0 的 <code>--prefetch</code> 已經把檔和編譯器都備好，這次不加參數、不碰網路）。跑的時候看畫面：headers、原始碼都在 → 用 <code>uac2-build:trixie</code> 容器 <code>make</code> → 跟老師的指紋比（老師的兩個指紋寫在腳本開頭）。<span class="dur">多久：開場 <code>--prefetch</code> 做過約 25 秒（老師 10/28：24.6 秒）；沒做過約 2 分 40 秒（會現場抓檔、裝編譯器）</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">bash ~/w08-starter/build-uac2.sh</pre></div>
+      <div class="box"><pre class="out" data-src="out">make: Entering directory '/work/hdr/usr/src/linux-headers-7.0.0-g122c2c22d838'
+warning: the compiler differs from the one used to build the kernel
+  CC [M]  u_audio.o
+  CC [M]  f_uac2.o
+  LD [M]  usb_f_uac2.o
+  MODPOST Module.symvers
+  LD [M]  u_audio.ko
+  LD [M]  usb_f_uac2.ko
+vermagic:       7.0.0-g122c2c22d838 SMP preempt mod_unload aarch64
+u_audio.ko  一模一樣  6c90c70d8cd54db8593ba2d74ce9b0e695a182bd2fca2724c50d390f83dcbdd3
+usb_f_uac2.ko  一模一樣  5c955ddd1414c1db13acfbf19c26911326683b7a535df4e1e28efc31d6d26f6a
+OK → 回學生頁 2-3：把兩個檔複製進 ~/uac2-soundcard/ 再重開機，讓 hook 載你自己編的（模組正在被音效卡用著，rmmod 會被拒）</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>（節錄，中間還有幾行）<code>CC [M]</code>＝把一個 <code>.c</code> 編成 <code>.o</code>；<code>LD [M]</code>＝連結成 <code>.ko</code>；<code>MODPOST</code>＝對符號表；<code>vermagic:</code> 那行就是模組身上的章，開頭跟 <code>uname -r</code> 一樣。<code>warning: the compiler differs…</code> <b>正常</b>：只是編譯器名字不同（<code>gcc</code> vs <code>aarch64-linux-gnu-gcc</code>），版本都是 14.2.0。<code>一模一樣</code> 那兩行＝你編出來的檔跟老師的指紋<b>逐位元組相同</b>（老師的指紋寫死在腳本開頭，不靠你板上 W7 的檔）。📸 <b>最後三行截圖＝證據 2 上半</b>。最後一行說的就是 2-3：模組正被音效卡用著，<code>rmmod</code> 會被拒，所以換模組靠重開機。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：核心不對、抓不下來、不一樣</summary>
+    <ul>
+      <li>第一行就印 <code>你的核心是 …，不是 7.0.0-g122c2c22d838：先照 W7 第一部分升上去（或刷 558）再回來。</code>：腳本拒絕在別的核心上編（編出來也載不進）。回 0 的閘門。</li>
+      <li><code>curl:</code>、<code>docker pull</code> 卡很久或報錯：教室網路慢（⚠️ 30 塊板同時從 Docker Hub 抓 <code>debian:trixie</code> 沒測過）。先看老師的板跑，用 W7 發的 <code>.ko</code> 做 2-3、2-4（指紋本來就一樣），回家再跑一次。</li>
+      <li>印 <code>不一樣！</code>：原料或工具跟老師的不同（分支、headers 版本、編譯器）。<b>不要拿它去 2-3 換</b>，截圖舉手；2-3、2-4 用 W7 那份。</li>
+      <li>多印一行 <code>（注意：你板上 ~/uac2-soundcard/u_audio.ko 的指紋跟老師 W7 發的不同，先問老師）</code>：你編的沒問題（跟腳本裡老師的指紋比過），是板上 W7 那份不一樣（被改過或不完整）。<b>2-3 之前先問老師</b>，別急著蓋。</li>
+      <li>容器裡 <code>apt-get install</code> 很慢：沒做 <code>--prefetch</code> 才會現場裝編譯器（75.1 MB、66 個套件）；做過的直接用 <code>uac2-build:trixie</code>，不碰網路。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：從原始碼到 <code>.ko</code> 每一步真的印了什麼、少一樣會怎麼壞 → <a href="concept.html#s1">概念頁 §1</a>；vermagic 對版器 → <a href="concept.html#s2">§2</a>。</p>
+  <label class="check"><input type="checkbox" data-ck="p2-1"><span>證據 2 上半存好：兩行 <code>一模一樣</code>。</span></label>
+</section>
+
+<section class="sec" id="p2-2">
+  <h2>2-2　比指紋：為什麼會一模一樣</h2>
+  <p class="goal">目標：四行 SHA256 親眼看到兩兩相同；講得出「可重現建置」是什麼。</p>
+  <p class="why">SHA256 是檔案的指紋：差一個位元組，指紋就完全不同。你 10/29 在自己的板上編的，跟老師 2026-08-21 編的指紋相同，代表<b>同原始碼＋同 headers＋同版編譯器＝同一串位元組</b>——這叫<b>可重現建置</b>（reproducible build）。重點不是「誰算的指紋」，是原料和工具一樣。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>兩個資料夾、四個檔的指紋放在一起看（視窗 B）。板上沒有 W7 那份 <code>~/uac2-soundcard/</code> 的人（會印 <code>No such file or directory</code>），只打前半 <code>sha256sum ~/uac2-rebuild/*.ko</code>，拿兩行跟腳本最後印的老師指紋比就好。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="rewrite:new" data-note="§〇 B「跟老師的一模一樣」列：sha256sum 四行＝兩夾各兩檔；路徑照 §〇 B 產物列（~/uac2-rebuild/）與 W7 附錄 X §〇 C（~/uac2-soundcard/）">sha256sum ~/uac2-rebuild/*.ko ~/uac2-soundcard/*.ko</pre></div>
+      <div class="box"><pre class="out" data-src="out">6c90c70d8cd54db8593ba2d74ce9b0e695a182bd2fca2724c50d390f83dcbdd3  /home/arduino/uac2-rebuild/u_audio.ko
+5c955ddd1414c1db13acfbf19c26911326683b7a535df4e1e28efc31d6d26f6a  /home/arduino/uac2-rebuild/usb_f_uac2.ko
+6c90c70d8cd54db8593ba2d74ce9b0e695a182bd2fca2724c50d390f83dcbdd3  /home/arduino/uac2-soundcard/u_audio.ko
+5c955ddd1414c1db13acfbf19c26911326683b7a535df4e1e28efc31d6d26f6a  /home/arduino/uac2-soundcard/usb_f_uac2.ko</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>四行：第一、三行同一串 <code>6c90c70d…</code>，第二、四行同一串 <code>5c955ddd…</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看產物有多大。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="rewrite:new" data-note="§〇 B 產物列：u_audio.ko 114,024 bytes、usb_f_uac2.ko 207,120 bytes、Makefile 66 bytes；ls -la 寫法照 starter build-uac2.sh 第 5 步">ls -la ~/uac2-rebuild/</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>三個檔：<code>u_audio.ko</code> 114,024 bytes、<code>usb_f_uac2.ko</code> 207,120 bytes、<code>Makefile</code> 66 bytes（老師 10/28 的大小；一模一樣的檔大小當然也一樣）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>讀你自己編的模組身上的章。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="rewrite:new" data-note="W7 附錄 X §〇 C 對版檢查列：modinfo -F vermagic ~/uac2-soundcard/u_audio.ko；這裡改讀 §〇 B 產物 ~/uac2-rebuild/usb_f_uac2.ko">modinfo -F vermagic ~/uac2-rebuild/usb_f_uac2.ko</pre></div>
+      <div class="box"><pre class="out" data-src="out">7.0.0-g122c2c22d838 SMP preempt mod_unload aarch64</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>上面這一行，開頭＝<code>uname -r</code>。W7 你親眼看過：章對不上，<code>insmod</code> 就不收。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>想一想：如果你在原始碼裡改一個字（例如改掉一行註解）再編，指紋會不會變？大小呢？<span class="dur">多久：2 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打（想試的人回家試，今天時間不夠）。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>（你的答案）指紋一定變；大小不一定變。所以「指紋相同」是很強的證據：連一個位元組都沒差。</p></li>
+  </ol>
+  <p class="deep">想深入：原始碼／headers／編譯器三個旋鈕、動任一個指紋就變 → <a href="concept.html#s3">概念頁 §3</a>。</p>
+  <label class="check"><input type="checkbox" data-ck="p2-2"><span>四行指紋兩兩相同；<code>vermagic</code> 開頭＝<code>uname -r</code>。</span></label>
+</section>
+
+<section class="sec" id="p2-3">
+  <h2>2-3　換上你自己編的、重開機、驗它真的載了</h2>
+  <p class="goal">目標：<code>~/uac2-soundcard/</code> 裡是你自己編的檔；重開機後 <code>lsmod</code> 兩行、<code>c.1</code> 四個、hook 日誌 <code>[add] uac2 已掛</code>。</p>
+  <p class="why">W6 裝的 hook 在板子開機、adbd 起來時會去 <code>/home/arduino/uac2-soundcard/</code> 載這兩個檔（路徑寫死在 hook 裡，不能改）。所以把你編的檔複製進去、重開機，板子就是用<b>你編的</b>模組在跑。先備份老師那份，隨時換得回來。指紋一樣，所以板子跑起來一模一樣——這正是重點：你編出來的就是正品。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>備份 W7 那份（視窗 B）。<span class="dur">多久：馬上</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">[ -d ~/uac2-soundcard.w7 ] || cp -r ~/uac2-soundcard ~/uac2-soundcard.w7</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>不印字（已經有備份就跳過，重跑也不會疊成巢狀資料夾）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>把你編的兩個檔複製進 hook 認的那個資料夾，再看一次指紋。<span class="dur">多久：馬上</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">cp ~/uac2-rebuild/*.ko ~/uac2-soundcard/
+sha256sum ~/uac2-soundcard/*.ko</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>還是 <code>6c90c70d…</code>、<code>5c955ddd…</code> 兩串（本來就一樣）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>重開機讓 hook 重新載模組（SSH 會斷，正常）。沒設密碼的人：拔線、重插，效果一樣。<span class="dur">多久：老師板 31 秒 adb 回來</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">sudo reboot</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>視窗 B 的 SSH 斷掉、回到電腦。等心跳動畫回來。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>視窗 A 重開通道，視窗 B 再 SSH 進去（跟 0 一樣）。<span class="dur">多久：等 30 秒</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">"$ADB" devices -l
+"$ADB" forward tcp:2222 tcp:22</pre></div>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">ssh -p 2222 arduino@127.0.0.1</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b><code>device</code>；視窗 B 又是 <code>arduino@</code> 開頭。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>驗三樣：模組載了、<code>c.1</code> 四個身分、hook 自己寫的日誌（視窗 B）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">lsmod | grep -E "u_audio|uac2"
+ls /sys/kernel/config/usb_gadget/g1/configs/c.1/
+cat /tmp/ncm-hook.log</pre></div>
+      <div class="box"><pre class="out" data-src="out">usb_f_uac2             45056  2
+u_audio                24576  2 usb_f_uac2
+acm.GS0 ffs.adb ncm.usb0 uac2.usb0
+[add] ncm 已掛
+[add] uac2 已掛</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b><code>lsmod</code> 前兩行是這兩個模組（後面還有 <code>snd_pcm</code>、<code>snd</code>、<code>libcomposite</code> 三行提到它們，正常）；<code>c.1</code> 四個名字；日誌每行前面有日期時間（板子的 UTC），有 <code>[add] uac2 已掛</code>。這就是你自己編的模組在跑。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：載不進、c.1 少了、想換回老師那份</summary>
+    <ul>
+      <li>日誌寫 <code>[add] uac2 模組載不進（vermagic？）跳過</code>：核心不是 7.0.0，或 <code>~/uac2-soundcard/</code> 裡的檔壞了。看 <code>uname -r</code>、再 <code>sha256sum ~/uac2-soundcard/*.ko</code>。</li>
+      <li><code>c.1</code> 只有 <code>acm.GS0 ffs.adb</code>：hook 沒裝（W7 2-4 的 ③ 沒做）。回 W7 學生頁照做，或先用同學的板。</li>
+      <li>想換回 W7 老師那份：複製回去、再重開機一次。</li>
+    </ul>
+    <div class="box"><pre class="cmd" data-where="板子" data-src="src">cp ~/uac2-soundcard.w7/*.ko ~/uac2-soundcard/</pre></div>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p2-3"><span>重開機後 <code>lsmod</code> 兩行、<code>c.1</code> 四個、<code>[add] uac2 已掛</code>。</span></label>
+</section>
+
+<section class="sec" id="p2-4">
+  <h2>2-4　雙向驗聲音</h2>
+  <p class="goal">目標：板上 <code>aplay -l</code> 看到 <code>card 1</code>；板子發的嗶聲從電腦喇叭出來；電腦播的聲音板子錄得到、<code>peak</code> 明顯大於 0（截圖＝<span class="ev">證據 2</span> 的下半）。</p>
+  <p class="why">這張卡有兩個方向，用它向電腦報的設定名字記：<b><code>p_</code></b>＝板→電腦（48 kHz，電腦當它是<b>麥克風</b>）、<b><code>c_</code></b>＝電腦→板（64 kHz，電腦當它是<b>喇叭</b>）。🔑 <b>板→電腦這個方向，電腦那頭要有程式正在「錄」麥克風 (UNO Q Audio)，板上的聲音才送得出去</b>；電腦沒在收，板上的 <code>aplay</code> 不報錯、就卡著不動。Windows 的「聆聽此裝置」就是一直在錄。第三部分的語音小助理全靠這兩個方向，所以現在先驗。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>板子自己看得到這張卡嗎（視窗 B）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">aplay -l
+arecord -l
+cat /proc/asound/cards</pre></div>
+      <div class="box"><pre class="out" data-src="out">card 1: UAC2Gadget [UAC2_Gadget], device 0: UAC2 PCM [UAC2 PCM]
+ 1 [UAC2Gadget     ]: UAC2_Gadget - UAC2_Gadget</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b><code>aplay -l</code> 和 <code>arecord -l</code> 都有 <code>card 1: UAC2Gadget</code> 那行（<code>card 0</code> 是板子自己的 <code>ArduinoImolaHPH</code>，四個 MultiMedia 裝置，不用管）；<code>/proc/asound/cards</code> 第二張就是它。📸 截下來。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>電腦那頭設兩個方向。教室機是 Ubuntu：點開 E307 那個摺疊（⚠️ 老師沒驗過、現場為準；接不起來就跳過第 3、4 步，第三部分走網頁模式，照實截圖寫「沒接起來」不扣分）。在家用自己的 Windows 電腦時照 Windows 那個摺疊。<span class="dur">多久：⚠️ Ubuntu 沒量；Windows 約 2 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>Ubuntu 見摺疊（四行 <code>pactl</code>）；Windows 不用打指令，點設定。</p>
+      <details class="os"><summary>在家用自己的 Windows 電腦時（老師 10/28 驗過）：兩邊都是「聆聽此裝置」</summary>
+        <p><b>Win＋R</b> → 打 <code>mmsys.cpl</code> → Enter → 切到<b>錄製</b>分頁。</p>
+        <p>① 選 <b>麥克風 (UNO Q Audio)</b> → 內容 → 接聽 → 勾「<b>聆聽此裝置</b>」→「透過此裝置播放」選<b>你真的在聽的喇叭</b> → 套用。（＝板子的聲音出電腦喇叭；也等於電腦一直在「收」板子。）</p>
+        <p>② 選<b>電腦自己的麥克風</b> → 內容 → 接聽 → 勾「聆聽此裝置」→「透過此裝置播放」選 <b>喇叭 (UNO Q Audio)</b> → 套用。（＝你的聲音進板子。）</p>
+        <p>看不到 <code>UNO Q Audio</code>：板子 <code>c.1</code> 有 <code>uac2.usb0</code> 嗎（2-3）？有就拔線重插。</p>
+      </details>
+      <details class="os"><summary>macOS（⚠️ 10/28 沒驗）</summary>
+        <p>系統設定 → 聲音 → <b>輸入</b>選板子那張、<b>輸出</b>選板子那張。老師 8/17 看到的名字是 <code>Capture Inactive</code>／<code>Playback Inactive</code>，現在可能已變成 <code>UNO Q Audio</code>；⚠️ 這條今天沒再驗，以你畫面上的為準。Mac 上怎麼把板子的聲音轉播到你的喇叭、把你的麥克風轉播進板子，老師也沒驗過——做不到就直接用第三部分的網頁模式。</p>
+      </details>
+      <details class="os"><summary>E307 Ubuntu（⚠️ 全部沒驗，現場為準）</summary>
+        <p>教室機的麥克風是攝影機內建的那支（老師 10/28 確認有）；PipeWire 的音效卡字樣、怎麼把它接到 <code>UNO Q Audio</code>，老師還沒在 E307 驗過。方向是：先列出輸出端（sink）和輸入端（source），找到名字含 <code>UNO_Q</code>／<code>UAC2</code> 的那組，再用 <code>module-loopback</code> 把「教室機麥克風 → UNO Q 的 sink」和「UNO Q 的 source → 教室機喇叭」各接一條。<b>你就是第一批驗證的人</b>；接不起來就直接用第三部分的網頁模式（保底），把看到的字樣截圖給老師。</p>
+        <div class="box"><pre class="cmd" data-where="電腦" data-src="src">pactl list short sources
+pactl list short sinks</pre></div>
+        <p>從兩張清單抄下名字：你的麥克風（source）、UNO Q 那張卡的 source 與 sink、你的喇叭（sink）。下面兩行的<b>大寫字換成剛抄的名字</b>再貼（⚠️ 沒驗）：第一行＝你的麥克風進板子，第二行＝板子的聲音出你的喇叭。</p>
+        <div class="box"><pre class="cmd" data-where="電腦" data-src="src">pactl load-module module-loopback source=MIC_NAME sink=UNOQ_SINK
+pactl load-module module-loopback source=UNOQ_SOURCE sink=SPEAKER_NAME</pre></div>
+      </details>
+      <p class="see"><b class="lab see-l">應該看到</b>⚠️ 教室機 Ubuntu 以現場為準：預期 <code>pactl list short sources</code>／<code>sinks</code> 各有一個名字含 UNO Q 或 UAC2 的（名字沒驗）——你就是第一批驗證的人。在家 Windows：錄製分頁裡有 <code>麥克風 (UNO Q Audio)</code>、播放分頁裡有 <code>喇叭 (UNO Q Audio)</code>，狀態 OK（老師 10/28 實測；WASAPI 列麥克風 48000／喇叭 64000）。⚠️ macOS 沒驗。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>板→電腦：板子發 5 秒 440 Hz 的嗶聲（視窗 B）。<code>timeout 5</code> 5 秒後自己停、離開碼 124，正常。<span class="dur">多久：5 秒</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">timeout 5 speaker-test -D plughw:UAC2Gadget,0 -c 2 -t sine -f 440</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>電腦喇叭傳出 5 秒的嗶（老師電腦端錄到 440 Hz，峰值 11,955–13,066，滿刻度 32,767）。<b>沒聲音、而且指令一直不結束</b>：電腦沒在收（Windows ① 沒勾），回上一步。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>電腦→板：先讓聲音流進板子——Windows 把播放軟體（音樂、影片）的輸出裝置指到 <code>喇叭 (UNO Q Audio)</code>，或直接<b>對電腦麥克風講話</b>（第 2 步的 ② 已經把麥克風聆聽到 UNO Q Audio）；板上錄 3 秒、算峰值（視窗 B，兩行）。<span class="dur">多久：3 秒＋馬上</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">arecord -D plughw:UAC2Gadget,0 -f S16_LE -c 1 -r 16000 -d 3 /tmp/in.raw
+python3 -c "import struct;d=open('/tmp/in.raw','rb').read();n=len(d)//2;print('peak',max(abs(v) for v in struct.unpack('&lt;%dh'%n,d[:n*2])))"</pre></div>
+      <div class="box"><pre class="out" data-src="out">peak 32000</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>老師播 300 Hz 測試音得到 <code>peak 32000</code>；沒聲音流進來時接近 0。你的數字會不同，但要<b>明顯大於 0</b>；<code>peak</code> 接近 0＝聲音沒流進板子。📸 <b><code>card 1</code> 那行＋<code>peak</code> 那行＝證據 2 下半</b>。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：沒 card 1、嗶不出來、peak 是 0</summary>
+    <ul>
+      <li>板上 <code>aplay -l</code> 沒有 <code>card 1</code>：<code>c.1</code> 沒有 <code>uac2.usb0</code>，回 2-3。</li>
+      <li><code>speaker-test</code> 卡住不動、沒聲音：電腦沒在收。可以在視窗 C 看它是不是真的塞住：<code>hw_ptr</code> 停在 0、<code>delay 16384</code> 就是（老師 10/28 第一輪就是這樣卡住的）。設好聆聽再試。</li>
+    </ul>
+    <div class="box"><pre class="cmd" data-where="板子C" data-src="rewrite:new" data-note="§〇 C「電腦沒在收，板子就塞住」列：/proc/asound/card1/pcm0p/sub0/status 的 hw_ptr 停在 0、delay 16384；cat 是讀檔的標準用法">cat /proc/asound/card1/pcm0p/sub0/status</pre></div>
+    <ul>
+      <li><code>peak</code> 接近 0＝聲音沒流進板子：播放軟體的輸出沒指到 <code>喇叭 (UNO Q Audio)</code>、或 Windows ② 沒設。把播放裝置切成 <code>喇叭 (UNO Q Audio)</code>，或錄的那 3 秒對著麥克風講話，再錄一次。</li>
+      <li>電腦端 <code>UNO Q Audio</code> 有但是「已停用」：右鍵啟用。</li>
+      <li>Ubuntu 什麼都看不到：照實截圖寫「沒看到」，不扣分；第三部分走網頁模式。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：<code>p_</code>／<code>c_</code> 方向選擇器、「電腦沒在收就塞住」的動畫 → <a href="concept.html#s4">概念頁 §4</a>。</p>
+  <label class="check"><input type="checkbox" data-ck="p2-4"><span>證據 2 下半存好：<code>card 1</code>＋<code>peak</code>；嗶聲聽到了。</span></label>
+</section>
+
+<div class="part" id="part3"><b>第三部分　16:10–17:00</b><span>板子裡的語音小助理：按住說話，它自己去讀板子再回答</span></div>
+
+<section class="sec" id="p3-1">
+  <h2>3-1　金鑰進板子</h2>
+  <p class="goal">目標：板上有一個 <code>~/.gemini_key</code> 檔，<code>wc -c</code> 印出的數字不是 0。</p>
+  <p class="why">語音小助理要連 Google 的 Gemini 即時語音，連線要一把 API 金鑰（<code>AIza…</code> 開頭的一長串）。<b>金鑰是密碼</b>：不貼進作業、不貼給別人、不放進 git。所以用 <code>read -s</code> 貼：畫面不顯示、也不會留在指令歷史。免費方案就能用（⚠️ 預設模型 <code>gemini-3.8-live</code> 免費方案開不開放老師沒驗到；程式連不上會自動換另一個，3-2 會看到）。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>電腦瀏覽器開 Google AI Studio（<code>aistudio.google.com</code>），用<b>個人 Gmail</b>（登入 agy 的那個）登入，建一把 API 金鑰、複製起來。⚠️ 按鈕字樣（Get API key／Create API key）老師沒逐字驗，現場為準。<span class="dur">多久：2 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打指令，網頁上點。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>一串 <code>AIza</code> 開頭的英數字。<b>不要截圖、不要貼到任何對話裡</b>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>把金鑰存進板子（視窗 B）：這一行先問你要金鑰（貼上、按 Enter，畫面不會顯示），寫進 <code>~/.gemini_key</code>，把檔案權限改成只有你能讀，最後印字數。<span class="dur">多久：馬上</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">read -s -p "貼上金鑰再按 Enter（畫面不會顯示）: " K; printf %s "$K" &gt; ~/.gemini_key; chmod 600 ~/.gemini_key; echo; wc -c ~/.gemini_key</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>最後一行是一個數字（金鑰有幾個字）加 <code>/home/arduino/.gemini_key</code>。<b>0</b>＝沒貼進去，再跑一次。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：貼不進去、金鑰檔變成資料夾</summary>
+    <ul>
+      <li><code>wc -c</code> 印 0：貼上之後沒按 Enter，或剪貼簿是空的。重跑那一行。</li>
+      <li>印 <code>Is a directory</code>、或 <code>~/.gemini_key</code> 已經是一個<b>資料夾</b>：你在建金鑰檔<b>之前</b>就先跑了 3-2 的 <code>docker run</code>——docker 會自己建一個同名的空資料夾（root 擁有）。先把那個空資料夾刪掉（自己家目錄裡的空資料夾可以刪），再跑一次上面那行。</li>
+    </ul>
+    <div class="box"><pre class="cmd" data-where="板子" data-src="src">rmdir ~/.gemini_key</pre></div>
+    <ul>
+      <li>AI Studio 不給建金鑰：換個人 Gmail 試；還不行就先併組用同學的板（金鑰是同學的，不要抄到自己板上）。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p3-1"><span><code>wc -c ~/.gemini_key</code> 不是 0；金鑰沒出現在任何截圖、對話裡。</span></label>
+</section>
+
+<section class="sec" id="p3-2">
+  <h2>3-2　跑起來、開網頁</h2>
+  <p class="goal">目標：視窗 B 印出 <code>語音小助理：模型 …</code>；電腦瀏覽器 <code>http://localhost:7790</code> 看到大按鈕。</p>
+  <p class="why">程式用 App Lab 的官方容器跑（裡面已經有 <code>websockets</code>、<code>fastapi</code>、<code>uvicorn</code>、<code>aplay</code>、<code>arecord</code>）。<code>-u 0</code>＝容器裡用 root 才開得了 <code>/dev/snd</code>（是容器裡的 root，不是板子的）；<code>--device /dev/snd</code> 只把音效裝置交給容器，<b>不加</b>給容器整台板子權限的那個特權參數（老師 10/28 實測不加也雙向聲音照通）。網頁開在板子的 7790 埠；用 <code>adb forward</code> 把它接到電腦的 <code>localhost</code>，因為瀏覽器只在 <code>localhost</code> 或 https 才肯開麥克風（網頁模式要用）。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>找出板上的 App Lab 容器映像名字（視窗 B）。<span class="dur">多久：馬上</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">IMG=$(docker images --format '{{.Repository}}:{{.Tag}}' | grep python-apps-base | head -1); echo $IMG</pre></div>
+      <div class="box"><pre class="out" data-src="out">ghcr.io/arduino/app-bricks/python-apps-base:0.13.1</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>老師的板是 <code>:0.13.1</code>；刷完 558 沒升過 App Lab 的板會是 <code>:0.10.1</code>。<b>兩版都測過能跑</b>（⚠️ 學生板是哪一版沒查）。印空白＝板上沒有這個映像，舉手。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>跑起來（視窗 B，一整行）。這個視窗接下來一直讓它跑；停是 Ctrl-C。<span class="dur">多久：幾秒印出第一行</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">docker run --rm -it --name voice -u 0 --network host --device /dev/snd -v ~/w08-starter:/w08 -v ~/.gemini_key:/key:ro --entrypoint python3 "$IMG" /w08/voice_agent.py</pre></div>
+      <div class="box"><pre class="out" data-src="out">語音小助理：模型 gemini-3.8-live → gemini-2.5-flash-native-audio-preview-12-2025、音效卡 plughw:UAC2Gadget,0；電腦先 adb forward tcp:7790 tcp:7790，再開 http://localhost:7790（USB 網路也可：http://192.168.7.2:7790）</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行就是上面那行；之後每問一輪會印一行 JSON（視窗 C 打 <code>docker logs voice</code> 也看得到）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>電腦把板子的 7790 接到自己的 <code>localhost</code>（視窗 A）。<span class="dur">多久：馬上</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">"$ADB" forward tcp:7790 tcp:7790</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>成功時不印字。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>電腦瀏覽器開 <code>http://localhost:7790</code>。<span class="dur">多久：馬上</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>瀏覽器網址列打 <code>http://localhost:7790</code>。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>標題「UNO Q 語音小助理」、旁邊是現在用的模型名、一顆大按鈕「按住說話（或按住空白鍵）」、一條綠條、一句狀態 <code>按住按鈕說話</code>、兩組單選（輸入／輸出各有 USB 音效卡／這個網頁）。還沒連 Gemini，所以模型名旁沒有括號；第一次按下去才連。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：找不到金鑰、/key 是資料夾、名字衝突、網頁打不開</summary>
+    <ul>
+      <li>印 <code>找不到金鑰檔 /key：先在板子上建 ~/.gemini_key（學生頁第 3 部分）</code>：3-1 沒做，做完再跑。</li>
+      <li>印 <code>/key 是資料夾不是檔案：板上還沒建 ~/.gemini_key 就先跑了 docker，docker 會自己建一個同名的空資料夾。先 Ctrl-C，板上 rmdir ~/.gemini_key，照學生頁第 3 部分建金鑰，再跑一次</code>（老師 10/28 自己踩到；舊版程式印的是 <code>連不上 Gemini：IsADirectoryError</code>）：照它說的——Ctrl-C，刪掉空資料夾，回 3-1 第 2 步建金鑰，再跑。</li>
+    </ul>
+    <div class="box"><pre class="cmd" data-where="板子" data-src="src">rmdir ~/.gemini_key</pre></div>
+    <ul>
+      <li><code>docker:</code> 說名字 <code>voice</code> 已經在用（Conflict）：上一次沒關乾淨，在視窗 C 把它清掉再跑。</li>
+    </ul>
+    <div class="box"><pre class="cmd" data-where="板子C" data-src="src">docker rm -f voice</pre></div>
+    <ul>
+      <li>網頁寫 <code>連不到板子上的程式（它還在跑嗎？）</code>：視窗 B 的程式死了或 <code>adb forward</code> 沒做；兩邊都看。</li>
+      <li>網頁開得了但按下去狀態寫 <code>連不上 Gemini：…</code>：金鑰貼錯（3-1 重做）或沒網路（板子要連得到 Google）。</li>
+      <li>標題旁寫 <code>gemini-2.5-flash-native-audio-preview-12-2025（gemini-3.8-live 連不上（…），改用這個）</code>：<b>正常</b>——預設模型你的方案不給用，程式自動換了；回答會慢一點（老師量到放開到開口 4.2 秒）。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p3-2"><span>視窗 B 印 <code>語音小助理：模型</code>；瀏覽器看到大按鈕。</span></label>
+</section>
+
+<section class="sec" id="p3-3">
+  <h2>3-3　電腦的聲音怎麼進板子、怎麼回來</h2>
+  <p class="goal">目標：教室機走網頁模式講得通；在家用自己電腦的人兩個方向設好（2-4 設過的就是這個）。</p>
+  <p class="why">聲音走的路有六段：① 電腦麥克風 →（電腦把麥克風「播」到 <code>喇叭 (UNO Q Audio)</code>）→ ② 板子 <code>arecord</code>（16 kHz 單聲道）→ ③ 每 0.1 秒一段送 Gemini → ④ Gemini 回 24 kHz 的聲音 → ⑤ 板子 <code>aplay</code> 到音效卡 → ⑥ <code>麥克風 (UNO Q Audio)</code> →（電腦「聆聽此裝置」）→ 電腦喇叭。①⑥ 兩段在電腦上，就是 2-4 設的那兩個方向；教室機走網頁模式時，①⑥ 換成瀏覽器的麥克風和網頁播放。30 個人同時講，麥克風會收到隔壁的聲音：<b>按住才講、放開就閉嘴、分組輪流</b>。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>USB 模式（在家用自己的電腦，或 E307 的 loopback 接起來的人）：確認 2-4 第 2 步的設定還在（重開機、換 USB 孔都可能掉），沒做過的點開摺疊做。教室機接不起來的直接做第 2 步。<span class="dur">多久：1 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打指令。</p>
+      <details class="os"><summary>在家用自己的 Windows 電腦時（老師 10/28 驗過）：兩邊都是「聆聽此裝置」</summary>
+        <p><b>Win＋R</b> → <code>mmsys.cpl</code> → <b>錄製</b>分頁。</p>
+        <p>① <b>麥克風 (UNO Q Audio)</b> → 內容 → 接聽 → 勾「聆聽此裝置」→「透過此裝置播放」選你真的在聽的喇叭 → 套用（板子的回話出電腦喇叭）。</p>
+        <p>② <b>電腦自己的麥克風</b> → 內容 → 接聽 → 勾「聆聽此裝置」→「透過此裝置播放」選 <b>喇叭 (UNO Q Audio)</b> → 套用（你的聲音進板子）。</p>
+      </details>
+      <details class="os"><summary>macOS（⚠️ 沒驗）</summary>
+        <p>系統設定 → 聲音：輸入、輸出都選板子那張（名字可能是 <code>UNO Q Audio</code> 或 <code>Capture Inactive</code>／<code>Playback Inactive</code>，⚠️ 以畫面為準）。⚠️ 兩個方向怎麼接老師沒驗，做不到就用下面的網頁模式。</p>
+      </details>
+      <details class="os"><summary>E307 Ubuntu（⚠️ 現場為準）</summary>
+        <p>照 2-4 那個摺疊：先 <code>pactl list short sinks</code>／<code>sources</code> 找到 UNO Q 那組，再用 <code>module-loopback</code> 各接一條。接不起來不要耗時間，直接用網頁模式。</p>
+      </details>
+      <p class="see"><b class="lab see-l">應該看到</b>Windows 錄製分頁兩個裝置的「接聽」都勾著。2-4 的嗶聲有聽到、<code>peak</code> 有數字，就是通的。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>教室機就走這條——<b>網頁模式</b>（不走 USB 聲音）：網頁上「輸入」切「這個網頁的麥克風」、「輸出」切「這個網頁」。麥克風就是教室機攝影機內建的那支；Chrome 第一次會跳出麥克風權限，按<b>允許</b>（⚠️ Chrome 認不認得它、名字叫什麼老師沒驗）。教室機本來就有 App Lab 的 adb，所以 3-2 第 3 步的 <code>"$ADB" forward tcp:7790 tcp:7790</code> 照打。USB 通的人也要會這招，3-5 要比。<span class="dur">多久：30 秒</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>網頁上點兩組單選。一定要是 <code>http://localhost:7790</code>（3-2 第 3、4 步）：走 USB 網路的 <code>http://192.168.7.2:7790</code> 開得了網頁、<b>開不了麥克風</b>。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>按鈕下方寫「網頁麥克風已開（… Hz → 16000 Hz 送板子）」。寫 <code>這個網址開不了麥克風</code>：你不是用 <code>localhost</code> 開的。</p></li>
+  </ol>
+  <label class="check"><input type="checkbox" data-ck="p3-3"><span>教室機已切到網頁模式、Chrome 麥克風已允許（在家：兩個方向設好）；記得按住才講、放開就閉嘴。</span></label>
+</section>
+
+<section class="sec" id="p3-4">
+  <h2>3-4　按住說話、問三題、看四個數字</h2>
+  <p class="goal">目標：三輪問答，其中問溫度那一輪看到 🔧 <code>get_board_status</code> 和它回傳的 JSON（截圖＝<span class="ev">證據 3</span>）。</p>
+  <p class="why">按住按鈕的時候，程式告訴 Gemini「開始講了」（<code>activityStart</code>）、放開告訴它「講完了」（<code>activityEnd</code>），所以它不用猜你講完沒。問到板子的事，Gemini 不會瞎掰：它回一個「請幫我呼叫 <code>get_board_status</code>」，<b>板上的程式真的去讀</b> <code>/sys/class/thermal</code>、<code>/proc/meminfo</code>、<code>/proc/loadavg</code>，把數字還給它，它才開口——這個迴圈就是 <b>agent</b>（會自己呼叫工具再回答的模型）。這一節只給你<b>目標</b>，怎麼問用你自己的話。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>第一題，目標：<b>讓它說出板子現在的溫度</b>。按住大按鈕（或空白鍵）講、講完放開。<span class="dur">多久：老師板放開到它開口 1.57 秒，回答 3.73 秒</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，用講的。</p>
+      <div class="box"><pre class="out" data-src="out">它在查板子（呼叫工具 get_board_status）
+{"cpu_temp_c": 52.8, "mem_total_mb": 3667, "mem_available_mb": 2791, "load_1min": 1.36, "uptime_min": 25.9, "kernel": "7.0.0-g122c2c22d838", "hostname": "uno-q"}
+放開按鈕到它開口：1.57 秒；回答長 3.73 秒；收到音量 32169；輸入 usb／輸出 usb</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>按住時綠條在動、狀態 <code>在聽（USB）…說完放開按鈕</code>；放開後 <code>它在想…</code> → <code>它在查板子（呼叫工具 get_board_status）</code> → <code>它在回答（聲音走 USB 回電腦）</code>（網頁模式是 <code>它在回答（網頁播放）</code>），喇叭裡聽到它講。卡片上：<b>你說</b>（Gemini 的逐字稿，<b>會以簡體字顯示</b>——那是 Gemini 回來的字、不是板子寫的，容器裡沒有轉換工具）、<b>它說</b>、🔧 工具名 → 回傳的 JSON（溫度、記憶體、負載、開機幾分鐘、核心、主機名稱，數字是你的板）、底下一行四個數字。老師板的回答像「現在板子的 CPU 溫度是 52.8 度喔！」。</p>
+      <figure class="real"><img src="img/voice-agent-page.png" alt="語音小助理網頁：你說／它說／工具結果／秒數"><figcaption><b>老師 10/28 實跑的畫面</b>：問溫度那一輪，🔧 <code>get_board_status</code> 回傳 JSON，它照數字回答；最底下是四個數字（放開到開口幾秒、回答長幾秒、收到音量、輸入／輸出走哪條）。你的畫面＝證據 3。</figcaption></figure></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>第二題，目標：<b>問出現在幾點或今天星期幾</b>。<span class="dur">多久：老師板 1.42 秒開口、回答 3.56 秒</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，用講的。</p>
+      <div class="box"><pre class="out" data-src="out">{"taiwan_time": "2026-10-28 20:23:35", "weekday": "星期三"}</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>這次叫的是 🔧 <code>get_time</code>，回傳台灣時間和星期；它照這個回答（老師板回「現在是星期三晚上八點二十三分！」）。板子沒連網路時時鐘不準，答的時間就會怪——那是工具回傳的數字怪，不是它亂講。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>第三題，目標：<b>要它介紹自己（住在哪、是誰的小幫手）</b>。<span class="dur">多久：老師板 1.07 秒開口、回答 6.24 秒</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，用講的。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>這一輪<b>沒有 🔧</b>——不用查板子的問題它就直接答（老師板回「我住在 Arduino UNO Q 板子裡，是你們東華大學 AIoT 課的小幫手！」）。三輪放在一起看：什麼時候它決定叫工具、什麼時候不叫。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看四個數字：<b>放開到開口</b>（老師 1.07–1.57 秒；換成 2.5 那個模型約 4.2 秒）、<b>回答長</b>、<b>收到音量</b>（0–32767；一直是 0＝聲音沒進板子）、<b>輸入／輸出</b>走哪條。📸 問溫度那一輪的卡片截圖＝證據 3。<span class="dur">多久：1 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>每張卡最底下一行像 <code>放開按鈕到它開口：1.57 秒；回答長 3.73 秒；收到音量 32169；輸入 usb／輸出 usb</code>。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：綠條不動、沒聲音回來、它在想很久</summary>
+    <ul>
+      <li>放開後狀態寫 <code>沒錄到聲音：電腦有把麥克風送到「喇叭 (UNO Q Audio)」嗎？</code>（綠條一直沒動）：①那段斷了——Windows ② 沒設、或麥克風選錯張。設好再問；或輸入切「這個網頁的麥克風」。</li>
+      <li>卡片紅字 <code>聲音送不出 USB：電腦沒有在收「麥克風 (UNO Q Audio)」。Windows 開「聆聽此裝置」、Ubuntu 接 loopback，或把輸出切到「這個網頁」</code>：⑥那段斷了——程式等了 4 秒放棄這一輪、改在網頁播一次。照它說的做。</li>
+      <li>它在想超過 10 秒：模型換成 2.5 本來就慢一點（4.2 秒）；再久就看視窗 B 有沒有錯誤、網路通不通。</li>
+      <li>它回答了溫度但沒有 🔧：它沒叫工具、用猜的。再問一次、把「板子現在」講清楚；還是沒有就截圖給老師（這本身就是有趣的觀察）。</li>
+      <li>狀態 <code>Gemini 連線斷了（…），再按一次會重連</code>：再按住一次就好；同一條連線記得前面聊過什麼，斷了就忘。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：六段路哪段壞怎麼看 → <a href="concept.html#s5">概念頁 §5</a>；即時語音時間軸 → <a href="concept.html#s6">§6</a>；工具呼叫迴圈 → <a href="concept.html#s7">§7</a>。</p>
+  <label class="check"><input type="checkbox" data-ck="p3-4"><span>證據 3 存好：問溫度那一輪有 🔧 <code>get_board_status</code>＋JSON＋四個數字。</span></label>
+</section>
+
+<section class="sec" id="p3-5">
+  <h2>3-5　兩條路比一比：USB 模式 vs 網頁模式</h2>
+  <p class="goal">目標：同一題兩條路各問一次，比秒數；講得出「哪段壞、畫面會怎樣」。</p>
+  <p class="why">程式故意留了兩條路：USB 模式聲音真的走音效卡（六段都要通）；網頁模式聲音走瀏覽器 → WebSocket → 板子，回答在網頁播。<b>兩條路同時存在，才分得出問題在哪一段</b>——這比「它會講話」更像工程。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>切到網頁模式（3-3 第 2 步），再問一次第一題（溫度），記下「放開到開口」的秒數；切回 USB 模式再問一次，記下秒數。<span class="dur">多久：3 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，用講的。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>老師板：USB 1.57 秒、網頁模式 2.08 秒（回答 3.7 秒、工具照叫）。卡片最後寫 <code>輸入 web／輸出 web</code> 或 <code>usb</code>，一眼看得出走哪條。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>對照表填一填：下面每一列「哪段壞」，畫面會看到什麼、先查什麼？對著自己剛才踩到的狀況填。<span class="dur">多久：3 分鐘（落後時改成老師口頭講）</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>（參考答案在表裡）</p>
+      <div class="tw"><table>
+        <tr><th>哪段壞</th><th>畫面會看到</th><th>先查什麼</th></tr>
+        <tr><td>① 電腦麥克風沒送到 <code>喇叭 (UNO Q Audio)</code></td><td>綠條不動；<code>沒錄到聲音：電腦有把麥克風送到「喇叭 (UNO Q Audio)」嗎？</code></td><td>Windows ②；或輸入切「這個網頁的麥克風」</td></tr>
+        <tr><td>② 板子 <code>arecord</code> 開不了卡</td><td>跟 ① 一樣：綠條不動、<code>沒錄到聲音…</code>（程式把 <code>arecord</code> 的錯誤訊息丟掉了，畫面分不出 ①②）</td><td>板上 <code>aplay -l</code> 有沒有 <code>card 1</code>（2-4）；有才回頭查 ①</td></tr>
+        <tr><td>③④ 連不到 Gemini</td><td><code>連不上 Gemini：…</code>；或模型名旁出現「改用這個」</td><td>金鑰（3-1）、板子有沒有網路、模型方案</td></tr>
+        <tr><td>⑤⑥ 電腦沒在收 <code>麥克風 (UNO Q Audio)</code></td><td>紅字 <code>聲音送不出 USB：…</code>，4 秒後改在網頁播</td><td>Windows ①；或輸出切「這個網頁」</td></tr>
+        <tr><td>瀏覽器不給麥克風（網頁模式）</td><td><code>這個網址開不了麥克風</code>、或 <code>瀏覽器不給麥克風：…</code></td><td>要用 <code>http://localhost:7790</code>（<code>adb forward</code>）、允許權限</td></tr>
+      </table></div></li>
+  </ol>
+  <label class="check"><input type="checkbox" data-ck="p3-5"><span>兩條路各問過一次、秒數記下來；對照表填完。</span></label>
+</section>
+
+<section class="sec" id="p3-6">
+  <h2>3-6　讀程式、收尾、交作業、回家挑戰</h2>
+  <p class="goal">目標：找得到 <code>voice_agent.py</code> 裡的四個地方；三張證據交上 e學苑；知道回家要加 <code>get_wifi</code>。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>打開 <code>~/w08-starter/voice_agent.py</code>（視窗 C 用 <code>less</code>，或電腦上開），找四個地方。<span class="dur">多久：5 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>視窗 C：<code>less ~/w08-starter/voice_agent.py</code>（<code>/</code> 搜尋、<code>q</code> 離開）。</p>
+      <p class="see"><b class="lab see-l">應該看到</b><code>PERSONA</code>＝給它的人設和規矩（一律台灣華語、最多兩句、問到板子<b>一定要先呼叫</b> <code>get_board_status</code>、不知道就說不知道）；<code>TOOLS</code>＝告訴 Gemini 有哪兩個工具、各做什麼（它只能叫這兩個）；<code>receiver</code>＝一直收 Gemini 傳回來的東西：收到 <code>toolCall</code> 就真的去跑工具、把結果用 <code>toolResponse</code> 送回去，收到聲音就排隊給播放工；<code>player_loop</code>＝播放工：把回話餵給 <code>aplay</code>，塞超過 4 秒就放棄這一輪、把原因寫在畫面上。對照 1-5：手機傳來的字只跟清單比；這裡 Gemini 也只能點名<b>寫好的工具</b>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>收：視窗 B 按 <b>Ctrl-C</b> 停掉小助理（容器會自己消失）。<span class="dur">多久：馬上</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>視窗 B 按 Ctrl-C。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>回到 <code>arduino@</code> 提示字元。卡住不回來：視窗 C 打 <code>docker rm -f voice</code>。金鑰檔留在板上（只有你能讀）；不想留就刪掉 <code>~/.gemini_key</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>交作業：三張證據上傳 e學苑（作業老師上課時開）。<span class="dur">多久：5 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，上傳截圖。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>證據 1（Plotter 溫度曲線）、證據 2（<code>一模一樣</code>兩行＋<code>card 1</code>＋<code>peak</code>）、證據 3（小助理畫面，有 🔧 <code>get_board_status</code>）都在。<b>截圖裡不能有金鑰</b>，上傳前看一眼。</p></li>
+  </ol>
+  <h3>回家挑戰：替小助理多教一個工具 <code>get_wifi</code></h3>
+  <p>目標：問它「你連的是哪個 Wi-Fi、IP 多少」，它呼叫 🔧 <code>get_wifi</code>，照回傳的 SSID 和 IP 回答。</p>
+  <ul>
+    <li>在哪改：<code>voice_agent.py</code>——照 <code>get_time</code> 的樣子寫一個函式 <code>get_wifi()</code>（回一個 dict），加進 <code>TOOLS</code>（名字＋描述）和 <code>TOOL_FUNCS</code>（名字 → 函式），再在 <code>PERSONA</code> 告訴它什麼時候該叫。</li>
+    <li>數字從哪來：SSID 可以用 <code>nmcli</code> 問（1-1 的 <code>health_ble.py</code> 裡 <code>wifi_rssi()</code> 就是這樣做的，照抄寫法）；IP 照 <code>health_ble.py</code> 的 <code>ip</code> 指令那段。</li>
+    <li>改完：視窗 B Ctrl-C → 重跑 3-2 第 2 步 → 問它。</li>
+    <li>可以請 AI 幫忙，給它目標就好；它寫完你要核對三件事：① 工具<b>只讀不改</b>（沒有用 <code>os.system</code>／<code>subprocess</code> 去執行 Gemini 講的字）；② <code>TOOLS</code>、<code>TOOL_FUNCS</code>、<code>PERSONA</code> 三處都改了；③ 實際問一次，卡片上出現 🔧 <code>get_wifi</code>。</li>
+  </ul>
+  <h3>收尾</h3>
+  <ul>
+    <li><b>板子今天多了什麼</b>：<code>~/uac2-rebuild/</code>（你編的模組）、<code>~/uac2-soundcard/</code> 裡是你編的檔（備份在 <code>~/uac2-soundcard.w7/</code>）、<code>~/w08-starter/</code>、<code>~/.gemini_key</code>。</li>
+    <li>下週 <b>W9 期中展示</b>，老師會說明。期中專題想用語音小助理、藍牙手環當零件都可以。</li>
+  </ul>
+  <label class="check"><input type="checkbox" data-ck="p3-6"><span>四個地方找到了；三張證據交上 e學苑；小助理停了。</span></label>
+</section>
+
+<section class="sec" id="faq">
+  <h2>卡關總表（可以搜尋）</h2>
+  <p class="why">先把<b>整段錯誤訊息</b>複製下來，貼進搜尋框找；表上找不到，就把完整錯誤訊息貼給 AI agent（板子密碼、金鑰不要貼），再不行舉手叫老師。</p>
+  <input type="search" class="search" id="q" placeholder="貼上錯誤訊息或關鍵字，例如 /key、不一樣、card 1、沒錄到聲音" aria-label="搜尋卡關對照">
+  <p class="nomatch" id="nomatch">表上沒有這一條：把完整錯誤訊息貼給 AI agent（板子密碼、金鑰不要貼），或舉手叫老師。</p>
+  <div class="tw"><table id="faq-table">
+    <tr><th>看到什麼</th><th>先做這個</th></tr>
+    <tr><td colspan="2"><b>0 就位</b></td></tr>
+    <tr><td><code>bash: : command not found</code></td><td><code>$ADB</code> 是空的：這個視窗沒跑過第 0 節找 adb 那段，重跑一次。</td></tr>
+    <tr><td><code>Connection refused</code>（<code>ssh</code>）</td><td>2222 通道沒開（重開機之後都要重開）：回<b>視窗 A</b> 打 <code>"$ADB" forward tcp:2222 tcp:22</code>。</td></tr>
+    <tr><td><code>WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</code></td><td>這台電腦記著舊鑰匙：<code>ssh-keygen -R "[127.0.0.1]:2222"</code>、<code>ssh-keygen -R 192.168.7.2</code>，再連一次。</td></tr>
+    <tr><td><code>sudo</code> 一直說密碼錯／根本沒密碼</td><td>要打<b>板子</b>的密碼，不是教室電腦的。刷完 558 沒設密碼的：W7 2-4 的 ② 設一組；或今天凡是 <code>sudo reboot</code> 都改拔線重插。忘了問老師，不要貼給 AI。</td></tr>
+    <tr><td><code>curl:</code> 開頭的錯誤（板子抓不到 starter）</td><td>教室網路可能擋住了。在電腦視窗 A 抓同一個網址再 <code>"$ADB" push</code>，或問老師拿隨身碟。</td></tr>
+    <tr><td><code>uname -r</code> 不是 <code>7.0.0-g122c2c22d838</code></td><td>第二、三部分都要這顆核心：回 W7 第一部分升上去，或刷 558；先併組用同學的板。</td></tr>
+    <tr><td><code>arduino-app-cli version</code> 不是 <code>0.14.0</code></td><td>不用密碼：<code>sudo apt-get install --only-upgrade -y arduino-app-cli arduino-router</code>。</td></tr>
+    <tr><td colspan="2"><b>第一部分 藍牙</b></td></tr>
+    <tr><td><code>Permission denied</code>、<code>AccessDenied</code>（跑 <code>health_ble.py</code>）</td><td>不在 <code>bluetooth</code> 群組：改 <code>sudo python3 ~/w08-starter/health_ble.py --name …</code>。</td></tr>
+    <tr><td><code>ModuleNotFoundError</code>（<code>gi</code>）、<code>RegisterApplication failed</code>、<code>RegisterAdvertisement failed</code></td><td>截圖舉手；先跟同組同學併用一塊板，證據照交（標「用同組的板」）。</td></tr>
+    <tr><td>手機掃不到我的板</td><td>板上有沒有 <code>advertising as</code>？藍牙開了嗎？Android 要允許「附近的裝置」（舊版開定位）。<b>不要去手機設定頁配對。</b></td></tr>
+    <tr><td>掃到兩個一樣的名字</td><td>名字撞了：Ctrl-C，換名字重跑。</td></tr>
+    <tr><td>連上藍牙看到好幾個服務（BLE-MIDI、<code>1800</code>、<code>1801</code>、<code>180A</code>）</td><td>正常，558 映像自帶的。找 <code>6E400001</code> 開頭那個。</td></tr>
+    <tr><td>連上了沒有每秒一行</td><td>還沒切到 UART 頁／沒訂閱 TX；板上要印 <code>phone subscribed</code>。</td></tr>
+    <tr><td>手機回 <code>unknown:</code></td><td>那個字不在清單裡：打 <code>help</code> 看清單。</td></tr>
+    <tr><td>Plotter 沒線</td><td>要先連上、訂閱；Plotter 只畫純數字。</td></tr>
+    <tr><td><code>pkill</code> 之後 SSH 斷了</td><td>用了 <code>-f</code>：重新 SSH，改用 <code>pkill -x yes</code>。</td></tr>
+    <tr><td colspan="2"><b>第二部分 編音效卡</b></td></tr>
+    <tr><td><code>你的核心是 …，不是 7.0.0-g122c2c22d838</code></td><td>腳本拒絕在別的核心上編。回 0 的閘門（W7 第一部分或刷 558）。</td></tr>
+    <tr><td><code>--prefetch</code> 或 <code>docker pull</code> 一直不動、<code>curl:</code> 報錯</td><td>教室網路慢（⚠️ 30 塊板同時抓沒測過）。先看老師的板跑；2-3、2-4 用 W7 發的 <code>.ko</code>（指紋本來就一樣），回家再跑一次。</td></tr>
+    <tr><td><code>warning: the compiler differs from the one used to build the kernel</code></td><td><b>正常</b>：編譯器名字不同、版本同是 14.2.0，往下看就好。</td></tr>
+    <tr><td>容器裡 <code>apt-get install</code> 很慢</td><td>沒做 <code>--prefetch</code> 才會現場裝編譯器（75.1 MB、66 個套件）；做過就直接用 <code>uac2-build:trixie</code>，不碰網路。</td></tr>
+    <tr><td>腳本印 <code>不一樣！</code></td><td>原料或工具跟老師不同。<b>不要拿它去 2-3 換</b>，截圖舉手；用 W7 那份繼續。</td></tr>
+    <tr><td><code>（注意：你板上 ~/uac2-soundcard/u_audio.ko 的指紋跟老師 W7 發的不同，先問老師）</code></td><td>你編的沒問題（跟腳本裡老師的指紋比過），是板上 W7 那份不一樣：2-3 之前先問老師，別急著蓋。</td></tr>
+    <tr><td>日誌寫 <code>[add] uac2 模組載不進（vermagic？）跳過</code></td><td>核心不是 7.0.0，或 <code>~/uac2-soundcard/</code> 裡的檔壞了：看 <code>uname -r</code>、<code>sha256sum ~/uac2-soundcard/*.ko</code>；換回老師那份 <code>cp ~/uac2-soundcard.w7/*.ko ~/uac2-soundcard/</code> 再重開機。</td></tr>
+    <tr><td><code>c.1</code> 只有 <code>acm.GS0 ffs.adb</code></td><td>hook 沒裝（W7 2-4 的 ③ 沒做）。照 W7 學生頁補，或先用同學的板。</td></tr>
+    <tr><td>板上 <code>aplay -l</code> 沒有 <code>card 1: UAC2Gadget</code></td><td><code>c.1</code> 沒有 <code>uac2.usb0</code>：回 2-3。</td></tr>
+    <tr><td><code>speaker-test</code> 卡住不動、電腦沒聲音</td><td>電腦沒在收 <code>麥克風 (UNO Q Audio)</code>：Windows ① 的「聆聽此裝置」沒勾（2-4 摺疊）。視窗 C <code>cat /proc/asound/card1/pcm0p/sub0/status</code> 看到 <code>hw_ptr</code> 停在 0 就是這個。</td></tr>
+    <tr><td><code>peak</code> 接近 0</td><td>聲音沒流進板子：播放軟體輸出指到 <code>喇叭 (UNO Q Audio)</code>，或對電腦麥克風講話（Windows ② 要先設好），再錄。</td></tr>
+    <tr><td>電腦看不到 <code>UNO Q Audio</code></td><td>先確認板上 <code>c.1</code> 有 <code>uac2.usb0</code>；有就拔線重插。Ubuntu／macOS 老師沒驗過，照實截圖寫「沒看到」，第三部分走網頁模式。</td></tr>
+    <tr><td colspan="2"><b>第三部分 語音小助理</b></td></tr>
+    <tr><td><code>wc -c ~/.gemini_key</code> 印 0</td><td>貼上後沒按 Enter 或剪貼簿是空的：重跑 3-1 第 2 步那一行。</td></tr>
+    <tr><td><code>找不到金鑰檔 /key：先在板子上建 ~/.gemini_key（學生頁第 3 部分）</code></td><td>3-1 沒做。做完再 <code>docker run</code>。</td></tr>
+    <tr><td><code>/key 是資料夾不是檔案：板上還沒建 ~/.gemini_key 就先跑了 docker…</code>（舊版：<code>IsADirectoryError</code>、<code>Is a directory</code>）</td><td>先跑 docker 才建金鑰，docker 自己建了一個同名空資料夾：Ctrl-C → <code>rmdir ~/.gemini_key</code> → 回 3-1 第 2 步建金鑰 → 再跑 3-2。</td></tr>
+    <tr><td><code>docker:</code> 說 <code>voice</code> 名字已在用（Conflict）</td><td>上次沒關乾淨：視窗 C <code>docker rm -f voice</code> 再跑。</td></tr>
+    <tr><td><code>IMG</code> 印空白</td><td>板上沒有 App Lab 的容器映像：舉手。</td></tr>
+    <tr><td>網頁寫 <code>連不到板子上的程式（它還在跑嗎？）</code></td><td>視窗 B 的程式死了，或 <code>"$ADB" forward tcp:7790 tcp:7790</code> 沒做；兩邊都看。</td></tr>
+    <tr><td>狀態 <code>連不上 Gemini：…</code></td><td>金鑰貼錯（3-1 重做），或板子連不到 Google。</td></tr>
+    <tr><td>模型名旁寫 <code>gemini-3.8-live 連不上（…），改用這個</code></td><td><b>正常</b>：你的方案不給用預設模型，程式自動換成 2.5 原生語音；回答慢一點（約 4.2 秒）。</td></tr>
+    <tr><td><code>沒錄到聲音：電腦有把麥克風送到「喇叭 (UNO Q Audio)」嗎？</code>（綠條不動）</td><td>第 ① 段斷了：Windows ② 沒設、或麥克風選錯張；或輸入切「這個網頁的麥克風」。</td></tr>
+    <tr><td>紅字 <code>聲音送不出 USB：電腦沒有在收「麥克風 (UNO Q Audio)」…</code></td><td>第 ⑥ 段斷了：Windows ① 沒勾；或輸出切「這個網頁」。程式 4 秒放棄、改在網頁播一次。</td></tr>
+    <tr><td><code>這個網址開不了麥克風</code>、<code>瀏覽器不給麥克風</code></td><td>網頁模式要用 <code>http://localhost:7790</code>（先 <code>adb forward</code>），不能用 <code>192.168.7.2</code>；Chrome 問麥克風權限要按允許（教室機的麥克風＝攝影機內建那支）。按到封鎖：網址列左邊的圖示點開，把麥克風改成允許，重新整理（⚠️ 教室機 Chrome 的字樣沒驗）。</td></tr>
+    <tr><td><code>Gemini 連線斷了（…），再按一次會重連</code></td><td>再按住一次就好；斷了它就忘了前面聊的。</td></tr>
+    <tr><td>「你說」那欄是簡體字</td><td><b>正常</b>：那是 Gemini 回來的逐字稿、不是板子寫的（容器裡沒有轉換工具）。「它說」是繁體。</td></tr>
+    <tr><td>問溫度它答了、但沒有 🔧</td><td>它沒叫工具、用猜的。把「板子現在」講清楚再問；還是沒有就截圖給老師。</td></tr>
+    <tr><td>它在想很久（超過 10 秒）</td><td>換成 2.5 模型本來慢一點；再久看視窗 B 的錯誤、板子網路。</td></tr>
+    <tr><td>改完程式沒變（回家挑戰）</td><td>要 Ctrl-C 再重跑 3-2 第 2 步；<code>IndentationError</code> 是縮排沒對齊。</td></tr>
+    <tr><td>AI 叫你加特權參數（privileged）、換別的 <code>docker run</code> 寫法、用別的方式把金鑰塞進去</td><td><b>先給老師看。</b>今天只照 3-2 那一行；金鑰只走 3-1 的 <code>read -s</code>。</td></tr>
+  </table></div>
+  <h3>問 AI 可以，但照這三條</h3>
+  <ol>
+    <li><b>把事實給足</b>：你打的完整指令、原本預期看到什麼、實際看到的完整錯誤原文、<code>uname -r</code> 的結果。</li>
+    <li><b>板子密碼、Gemini 金鑰不給 AI。</b>貼 log 之前看一眼（<code>AIza</code> 開頭那串有沒有混在裡面）。</li>
+    <li><b>AI 叫你加特權參數（privileged）、改核心、換別的編法、碰 <code>/boot</code>，先給老師看。</b></li>
+  </ol>
+</section>
+
+<section class="sec" id="basics">
+  <h2>基礎知識補給站：看不懂某個詞，來這裡查</h2>
+  <p class="why">做步驟的時候不用先讀完這一節。做到一半想知道「這到底在做什麼」，再跳去<a href="concept.html">互動概念頁</a>——每一節都可以點、可以玩，數字都標了出處。</p>
+
+  <h3>核心模組、vermagic、headers</h3>
+  <p><b>核心模組</b>（kernel module）是可以隨時插進核心的零件，一個 <code>.ko</code> 檔；W7 老師給你兩個，今天你自己編。模組身上蓋的章叫 <b>vermagic</b>，寫它只配哪一版核心；章跟 <code>uname -r</code> 對不上，核心不收。要編模組，得先有那顆核心的 <b>headers</b>：標頭檔加一張符號表 <code>Module.symvers</code>（核心裡每個可以被模組呼叫的函式叫什麼、在哪），還有把 <code>.o</code> 蓋章成 <code>.ko</code> 的小工具（<code>modpost</code>）。官方套件庫有對版的 headers 套件，<code>apt-get download</code> 抓下來、<code>dpkg-deb -x</code> 解開就能用，不用裝、不用 sudo。→ <a href="concept.html#s1">概念頁 §1</a>、<a href="concept.html#s2">§2</a></p>
+
+  <h3>可重現建置與 SHA256</h3>
+  <p><b>SHA256</b> 是檔案的指紋：差一個位元組就完全不同。<b>可重現建置</b>（reproducible build）＝同原始碼＋同 headers＋同版編譯器，不管誰在哪一天編，出來的 <code>.ko</code> 逐位元組相同。今天四行 <code>sha256sum</code> 兩兩相同就是證據；它也讓你能驗證「老師給的檔」真的是「這份原始碼編出來的」。→ <a href="concept.html#s3">概念頁 §3</a></p>
+
+  <h3>容器當工作間</h3>
+  <p>板子上沒有編譯器，裝一套又怕弄亂板子，所以開一個 <code>debian:trixie</code> <b>容器</b>（W3 講過的隔離小房間）：開場 <code>--prefetch</code> 先在裡面裝好 <code>build-essential</code>（gcc 14.2.0，跟編核心那顆同版）存成映像 <code>uac2-build:trixie</code>；編的時候用這個映像開容器、把板子上的 <code>/tmp/uac2-build</code> 掛進去當 <code>/work</code>、跑 <code>make</code>，跑完容器就丟掉（<code>--rm</code>）。第三部分的語音小助理也是在容器裡跑（App Lab 的官方映像），差別是它多拿到 <code>/dev/snd</code>（音效裝置）和網路。</p>
+
+  <h3>USB gadget、UAC2、<code>p_</code> 與 <code>c_</code></h3>
+  <p>板子接到電腦時是「被插的那一方」，可以同時報好幾個身分——<b>USB gadget</b>：<code>c.1</code> 底下 <code>acm.GS0</code>（序列埠）、<code>ffs.adb</code>（adb）、<code>ncm.usb0</code>（網卡）、<code>uac2.usb0</code>（音效卡）。<b>UAC2</b> 是 USB 音訊類的第 2 版，就是今天編的那兩個模組實作的東西。設定檔裡 <code>p_</code>（playback，板子播給電腦，48 kHz，電腦當它是<b>麥克風</b>）、<code>c_</code>（capture，板子從電腦收，64 kHz，電腦當它是<b>喇叭</b>）。🔑 板→電腦那條，電腦要有程式正在錄，板子才送得出去。→ <a href="concept.html#s4">概念頁 §4</a></p>
+
+  <h3>聲音的路六段與 PCM</h3>
+  <p>電腦麥克風 → ① 電腦轉播到 <code>喇叭 (UNO Q Audio)</code> → ② 板子 <code>arecord</code> 16 kHz → ③ 送 Gemini → ④ Gemini 回 24 kHz → ⑤ 板子 <code>aplay</code> → ⑥ <code>麥克風 (UNO Q Audio)</code> 轉播到電腦喇叭。路上跑的聲音都是 <b>PCM</b>（沒壓縮的聲音樣本：每秒幾千到幾萬個 16 位元的數字）；<code>plughw:</code> 會自己把 16 kHz 單聲道換成卡要的 48 kHz 雙聲道。哪段壞、畫面會看到什麼，3-5 的表。→ <a href="concept.html#s5">概念頁 §5</a></p>
+
+  <h3>WebSocket 與即時語音</h3>
+  <p>一般網頁請求是「問一次答一次」；<b>WebSocket</b> 是一條<b>一直開著的雙向連線</b>，兩邊隨時能丟東西。語音小助理跟 Gemini 之間就是一條 WebSocket：按住時每 0.1 秒丟一包聲音過去，它邊聽邊準備，放開後第一包回話 1 秒多就到；連線一直開著，所以它記得前面聊過什麼。按住說話＝程式送 <code>activityStart</code>／<code>activityEnd</code>，不讓伺服器自己猜你講完沒。→ <a href="concept.html#s6">概念頁 §6</a></p>
+
+  <h3>agent＝會自己呼叫工具再回答</h3>
+  <p>只會聊天的模型問它板子幾度，它只能猜。<b>agent</b> 多了一個迴圈——<b>工具呼叫</b>（tool calling）：程式先告訴模型「你有 <code>get_board_status</code>、<code>get_time</code> 兩個工具」；模型覺得需要就回「請幫我叫這個」（<code>toolCall</code>），<b>程式真的去讀板子</b>，把結果送回去（<code>toolResponse</code>），模型才照數字回答。模型自己碰不到板子，只能點名程式寫好的工具——跟 1-5 的「只認清單」是同一個安全原則。→ <a href="concept.html#s7">概念頁 §7</a></p>
+
+  <h3>藍牙低功耗（BLE）（W7 的詞，沿用）</h3>
+  <p>板子當<b>周邊</b>（peripheral）一直<b>廣播</b>（advertising）名片，名片最多 31 bytes；手機當<b>中心</b>（central）掃描、連上。連上之後看到 <b>GATT</b> 這棵小樹：服務下面掛<b>特徵</b>（characteristic），每個都有自己的 <b>UUID</b>。板子有新資料就主動<b>通知</b>（notify），一包最多 20 bytes。<b>RSSI</b> 是手機收到的訊號強度，負數，越接近 0 越強。→ <a href="concept.html#s8">概念頁 §8</a></p>
+
+  <h3>今天新出現的指令（W3–W7 教過的 cd、ls、cat、grep、sudo、ssh、adb、uname、modinfo、lsmod 不再列）</h3>
+  <div class="tw"><table class="files">
+    <tr><th>指令</th><th>做什麼</th><th>在哪一節</th></tr>
+    <tr><td><code>curl -fsSL 網址 | tar xz</code></td><td>抓一個壓縮包、不落地直接解開在目前資料夾</td><td>0</td></tr>
+    <tr><td><code>bash 檔.sh</code></td><td>用 bash 跑一支腳本；<code>--prefetch</code> 是腳本自己認的參數</td><td>0、2-1</td></tr>
+    <tr><td><code>apt-get install --only-upgrade -y 套件</code></td><td>只升級已經裝的套件（558 白名單，不用密碼）</td><td>0</td></tr>
+    <tr><td><code>zcat /proc/config.gz</code></td><td>讀正在跑的核心的設定清單（壓縮的）</td><td>2-1</td></tr>
+    <tr><td><code>apt-get download 套件</code>、<code>dpkg-deb -x</code></td><td>只下載套件檔不裝；把 <code>.deb</code> 解開成資料夾（腳本裡）</td><td>2-1</td></tr>
+    <tr><td><code>docker pull</code>、<code>docker run --rm</code>、<code>docker images</code>、<code>docker logs</code>、<code>docker rm -f</code></td><td>抓映像；跑一個用完即丟的容器；列出板上有的映像；看某個容器印了什麼；強制拆掉某個容器</td><td>2-1、3-2</td></tr>
+    <tr><td><code>make -C headers目錄 M=原始碼目錄 modules</code></td><td>用核心的建置規則把原始碼編成 <code>.ko</code>（腳本裡）</td><td>2-1</td></tr>
+    <tr><td><code>sha256sum 檔 檔 …</code></td><td>一次算好幾個檔的指紋，一行一個</td><td>2-2、2-3</td></tr>
+    <tr><td><code>cp -r 夾 新夾</code>、<code>cp 檔 夾/</code></td><td>複製整個資料夾；複製檔到資料夾</td><td>2-3</td></tr>
+    <tr><td><code>aplay -l</code>、<code>arecord -l</code>、<code>cat /proc/asound/cards</code></td><td>列出播放裝置、錄音裝置；核心看到的音效卡清單</td><td>2-4</td></tr>
+    <tr><td><code>timeout 5 指令</code></td><td>最多讓指令跑 5 秒，時間到就停（離開碼 124）</td><td>2-4</td></tr>
+    <tr><td><code>speaker-test -D 卡 -t sine -f 440</code></td><td>往某張卡播 440 Hz 的測試音</td><td>2-4</td></tr>
+    <tr><td><code>arecord -D 卡 -f S16_LE -c 1 -r 16000 -d 3 檔</code></td><td>從某張卡錄 3 秒：16 位元、單聲道、16 kHz</td><td>2-4</td></tr>
+    <tr><td><code>read -s -p "提示" 變數</code></td><td>問你輸入一行、不顯示在畫面、不進歷史</td><td>3-1</td></tr>
+    <tr><td><code>chmod 600 檔</code></td><td>檔案只有自己能讀寫</td><td>3-1</td></tr>
+    <tr><td><code>wc -c 檔</code></td><td>數檔案有幾個位元組</td><td>3-1</td></tr>
+    <tr><td><code>rmdir 夾</code></td><td>刪掉一個<b>空</b>資料夾（有東西就拒絕，所以安全）</td><td>3-1</td></tr>
+    <tr><td><code>"$ADB" forward tcp:7790 tcp:7790</code></td><td>把板子的 7790 埠接到電腦的 <code>localhost:7790</code></td><td>3-2</td></tr>
+    <tr><td><code>less 檔</code></td><td>翻看一個檔：<code>/</code> 搜尋、<code>q</code> 離開</td><td>3-6</td></tr>
+  </table></div>
+</section>
+
+<section class="sec" id="terms">
+  <h2>名詞小抄</h2>
+  <div class="tw"><table>
+    <tr><th>名詞</th><th>英文</th><th>一句話</th></tr>
+    <tr><td>核心模組</td><td>kernel module</td><td>可以隨時載入核心的零件，一個 <code>.ko</code> 檔；今天自己編了兩個</td></tr>
+    <tr><td>vermagic</td><td>—</td><td>模組上的核心版本印記；跟 <code>uname -r</code> 對不上就載不進</td></tr>
+    <tr><td>核心標頭</td><td>headers</td><td>編模組要的標頭檔＋符號表 <code>Module.symvers</code>＋蓋章工具；要跟核心同版</td></tr>
+    <tr><td>可重現建置</td><td>reproducible build</td><td>同原料同工具＝同一串位元組；四行 <code>sha256sum</code> 兩兩相同</td></tr>
+    <tr><td>USB gadget／UAC2</td><td>—</td><td>板子扮演的 USB 身分（四合一）／USB 音訊類第 2 版，音效卡那兩個模組實作的東西</td></tr>
+    <tr><td><code>p_</code>／<code>c_</code></td><td>—</td><td>板→電腦（電腦當它是麥克風，48 kHz）／電腦→板（電腦當它是喇叭，64 kHz）</td></tr>
+    <tr><td>PCM</td><td>—</td><td>沒壓縮的聲音樣本；今天 16 kHz 進、24 kHz 出</td></tr>
+    <tr><td>WebSocket</td><td>—</td><td>一直開著的雙向連線；小助理跟 Gemini、瀏覽器麥克風跟板子都走它</td></tr>
+    <tr><td>agent／工具呼叫</td><td>tool calling</td><td>模型決定要不要叫工具 → 程式真的去讀板子 → 把數字還給它 → 它才回答</td></tr>
+    <tr><td>按住說話</td><td>—</td><td>按下送 <code>activityStart</code>、放開送 <code>activityEnd</code>，不讓伺服器猜你講完沒</td></tr>
+    <tr><td>API 金鑰</td><td>—</td><td>連 Gemini 的通行證，<code>AIza…</code> 開頭；是密碼，只存在 <code>~/.gemini_key</code></td></tr>
+    <tr><td>容器</td><td>—</td><td>隔離的小房間（W3 的詞）；今天編模組、跑小助理都在容器裡</td></tr>
+    <tr><td>藍牙低功耗</td><td>BLE</td><td>不用線、不用 IP，手機直接連；板子當周邊、手機當中心（W7 的詞）</td></tr>
+    <tr><td>廣播</td><td>advertising</td><td>一直發名片，最多 31 bytes，範圍內誰都收得到</td></tr>
+    <tr><td>周邊／中心</td><td>peripheral／central</td><td>等人來連的一方／去掃描、連上的一方</td></tr>
+    <tr><td>GATT、特徵</td><td>characteristic</td><td>連上後看到的小樹：服務下面掛特徵，例如 RX、TX</td></tr>
+    <tr><td>通知</td><td>notify</td><td>板子有新資料就主動推，一包最多 20 bytes</td></tr>
+    <tr><td>UUID</td><td>—</td><td>服務和特徵的代碼；今天的服務是 Nordic UART Service</td></tr>
+    <tr><td>訊號強度</td><td>RSSI</td><td>手機收到的訊號強度，負數，越接近 0 越強</td></tr>
+  </table></div>
+  <p class="small">adb、SSH、sudo、容器、核心、模組、SHA256 是前幾週的詞；藍牙那幾個沿用 W7。</p>
+</section>
+
+<footer>國立東華大學　AIoT 智慧裝置實作（115-1）　W8 學生步驟（完整版）。這一頁沒有接 AI、不收集任何資料，離線打得開；勾選進度只存在你這台電腦的瀏覽器。板子密碼、板子序號、Wi-Fi、Gemini 金鑰本頁都不印；<code>192.168.7.x</code> 是 USB 線上的私人網段，每塊板都一樣。字樣與秒數是老師 10/28 晚上在自己的板上實跑的；標 ⚠️ 的以現場為準。</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  // 複製鈕：只複製指令本身（框上方的「在電腦／在板子」是 CSS 畫的，不會被複製）
+  var pres = document.querySelectorAll("pre.cmd");
+  for (var i = 0; i < pres.length; i++) {
+    (function(pre){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "copy"; b.textContent = "複製";
+      b.addEventListener("click", function(){
+        var t = pre.textContent;
+        function done(ok){ b.textContent = ok ? "已複製" : "請手動選取"; setTimeout(function(){ b.textContent = "複製"; }, 1500); }
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(t).then(function(){ done(true); }, function(){ done(fallback(t)); });
+        } else { done(fallback(t)); }
+      });
+      pre.parentNode.appendChild(b);
+    })(pres[i]);
+  }
+  function fallback(t){
+    try {
+      var ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.top = "-1000px"; document.body.appendChild(ta);
+      ta.select(); var ok = document.execCommand("copy"); document.body.removeChild(ta); return ok;
+    } catch (e) { return false; }
+  }
+
+  // 進度：勾選框存在這台電腦的瀏覽器（存不了也照常運作）
+  var KEY = "w08-aiot-progress-v1";
+  var boxes = document.querySelectorAll("input[data-ck]");
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function paint(){
+    var n = 0;
+    for (var i = 0; i < boxes.length; i++) {
+      var on = !!state[boxes[i].getAttribute("data-ck")];
+      boxes[i].checked = on; boxes[i].parentNode.classList.toggle("done", on); if (on) n++;
+    }
+    document.getElementById("plbl").textContent = "完成 " + n + "／" + boxes.length;
+    document.getElementById("pbar").style.width = (boxes.length ? (100 * n / boxes.length) : 0) + "%";
+  }
+  for (var j = 0; j < boxes.length; j++) {
+    boxes[j].addEventListener("change", function(){ state[this.getAttribute("data-ck")] = this.checked; save(); paint(); });
+  }
+  document.getElementById("preset").addEventListener("click", function(){ state = {}; save(); paint(); });
+  paint();
+
+  // 卡關搜尋（分組標題列跟著整組顯示）
+  var q = document.getElementById("q"), rows = document.querySelectorAll("#faq-table tr"), nm = document.getElementById("nomatch");
+  q.addEventListener("input", function(){
+    var v = q.value.trim().toLowerCase(), shown = 0;
+    for (var k = 1; k < rows.length; k++) {
+      var isHead = rows[k].cells.length === 1;
+      var txt = rows[k].textContent.toLowerCase();
+      var hit = !v || isHead || txt.indexOf(v) >= 0 || v.split(/\s+/).filter(function(w){ return w.length > 2; }).some(function(w){ return txt.indexOf(w) >= 0; });
+      rows[k].style.display = hit ? "" : "none"; if (hit && !isHead) shown++;
+    }
+    nm.style.display = (v && !shown) ? "block" : "none";
+  });
+})();
+</script>
+</body>
+</html>
