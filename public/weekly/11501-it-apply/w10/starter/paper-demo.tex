@@ -2,7 +2,7 @@
 % 教學示例：請把 practice.bib 放在同一個專案，再用 XeLaTeX 編譯。
 \documentclass[11pt,a4paper]{article}
 \usepackage{xeCJK}
-\IfFontExistsTF{Microsoft JhengHei}{\setCJKmainfont{Microsoft JhengHei}}{\IfFontExistsTF{Songti TC}{\setCJKmainfont{Songti TC}}{\setCJKmainfont{FandolSong-Regular.otf}}}
+\IfFontExistsTF{Microsoft JhengHei}{\setCJKmainfont{Microsoft JhengHei}}{\IfFontExistsTF{Songti TC}{\setCJKmainfont{Songti TC}}{\IfFontExistsTF{Noto Serif CJK TC}{\setCJKmainfont{Noto Serif CJK TC}}{\setCJKmainfont{FandolSong-Regular.otf}}}}
 \usepackage[margin=2.5cm]{geometry}
 \begin{document}
 \title{文獻查核練習}
