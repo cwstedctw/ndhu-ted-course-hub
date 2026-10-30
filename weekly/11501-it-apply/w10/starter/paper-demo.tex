@@ -1,0 +1,19 @@
+% !TEX program = xelatex
+% 教學示例：請把 practice.bib 放在同一個專案，再用 XeLaTeX 編譯。
+\documentclass[11pt,a4paper]{article}
+\usepackage{xeCJK}
+\IfFontExistsTF{Microsoft JhengHei}{\setCJKmainfont{Microsoft JhengHei}}{\IfFontExistsTF{Songti TC}{\setCJKmainfont{Songti TC}}{\IfFontExistsTF{Noto Serif CJK TC}{\setCJKmainfont{Noto Serif CJK TC}}{\setCJKmainfont{FandolSong-Regular.otf}}}}
+\usepackage[margin=2.5cm]{geometry}
+\begin{document}
+\title{文獻查核練習}
+\author{你的稱呼（可用化名）}
+\date{}
+\maketitle
+\section{我想了解的問題}
+這份文件用於練習如何整理文獻；請填入自己的研究問題。
+\section{一篇文獻}
+Su 等人的研究於 2021 年刊登在 BMC Geriatrics \cite{Su2021}。
+請回到原文核對題名、作者、年份和本文主張；不要把這個格式示例當成研究結論。
+\bibliographystyle{plain}
+\bibliography{practice}
+\end{document}

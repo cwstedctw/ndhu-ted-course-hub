@@ -1,0 +1,2571 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>讀旋鈕調亮度實驗台</title>
+<meta name="description" content="互動模擬：旋鈕轉到一半，程式讀到多少？燈要半亮，程式送出去的是什麼？把電壓切成格子讀成數字（ADC），再用很快的開關比例送出亮度、音高與伺服角度（PWM），最後接起來做旋鈕調亮度。附六個可以貼進 Wokwi 自己跑的專案。創客入門補充教材。">
+</head>
+<body>
+<style>
+  :root {
+    --c-primary: #D13B00;
+    --c-primary-deep: #A32E00;
+    --c-primary-bright: #FF8A5C;
+    --c-primary-tint: #FFE3D6;
+    --c-primary-pale: #FFF1E8;
+    --c-mint: #7FD8BE;
+    --c-mint-deep: #2F8A6F;
+    --c-mint-tint: #DFF5EE;
+    --c-yellow: #FFD66B;
+    --c-yellow-deep: #9A6B00;
+    --c-yellow-tint: #FFF2CE;
+    --c-violet: #B9A7E0;
+    --c-violet-deep: #6B5BA0;
+    --c-violet-tint: #EFEAFA;
+    --c-alert: #B00020;
+    --c-alert-tint: #FDE7EA;
+    --c-bg: #FFF9F2;
+    --c-surface: #FFFFFF;
+    --c-surface-2: #FBF3EA;
+    --c-line: #EAD8C8;
+    --c-line-soft: #F3E4D8;
+    --c-ink: #2D3142;
+    --c-ink-soft: #4A4F63;
+    --c-ink-faint: #8A8FA3;
+    --c-code-bg: #F4F1FB;
+    --c-code-line: #E4DDF5;
+    --c-code-ink: #3B3457;
+    --c-wire: #2D3142;
+    --c-wire-off: #C9BFB8;
+    --c-chip: #FFFDF9;
+    --c-particle: #FF8A5C;
+    --c-particle-core: #D13B00;
+    --c-electron: #7FD8BE;
+    --c-electron-core: #1F6B54;
+    --c-meter-bg: #1E2230;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #8A8FA3;
+    --c-halo: rgba(45, 49, 66, 0.06);
+    --font-zh: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-primary: #FFA57D;
+      --c-primary-deep: #FFC0A0;
+      --c-primary-bright: #C9532A;
+      --c-primary-tint: #4A2A1C;
+      --c-primary-pale: #33211A;
+      --c-mint: #2A7D63;
+      --c-mint-deep: #7FD8BE;
+      --c-mint-tint: #1E3A33;
+      --c-yellow: #8A6B1E;
+      --c-yellow-deep: #FFD66B;
+      --c-yellow-tint: #3A3220;
+      --c-violet: #6B5BA0;
+      --c-violet-deep: #B9A7E0;
+      --c-violet-tint: #2A2440;
+      --c-alert: #FF6B7A;
+      --c-alert-tint: #4A1F26;
+      --c-bg: #1A1614;
+      --c-surface: #241E1B;
+      --c-surface-2: #2C2522;
+      --c-line: #3A302A;
+      --c-line-soft: #332A25;
+      --c-ink: #F2EAE4;
+      --c-ink-soft: #C9BFB8;
+      --c-ink-faint: #8C817A;
+      --c-code-bg: #1F1B2E;
+      --c-code-line: #332C4A;
+      --c-code-ink: #D6CFEA;
+      --c-wire: #F2EAE4;
+      --c-wire-off: #5E534C;
+      --c-chip: #201B18;
+      --c-particle: #FFB38A;
+      --c-particle-core: #FF7A3D;
+      --c-electron: #9FE8D0;
+      --c-electron-core: #2F8A6F;
+      --c-meter-bg: #12151E;
+      --c-meter-ink: #F4ECD8;
+      --c-meter-dim: #7E8398;
+      --c-halo: rgba(242, 234, 228, 0.07);
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-primary: #FFA57D;
+    --c-primary-deep: #FFC0A0;
+    --c-primary-bright: #C9532A;
+    --c-primary-tint: #4A2A1C;
+    --c-primary-pale: #33211A;
+    --c-mint: #2A7D63;
+    --c-mint-deep: #7FD8BE;
+    --c-mint-tint: #1E3A33;
+    --c-yellow: #8A6B1E;
+    --c-yellow-deep: #FFD66B;
+    --c-yellow-tint: #3A3220;
+    --c-violet: #6B5BA0;
+    --c-violet-deep: #B9A7E0;
+    --c-violet-tint: #2A2440;
+    --c-alert: #FF6B7A;
+    --c-alert-tint: #4A1F26;
+    --c-bg: #1A1614;
+    --c-surface: #241E1B;
+    --c-surface-2: #2C2522;
+    --c-line: #3A302A;
+    --c-line-soft: #332A25;
+    --c-ink: #F2EAE4;
+    --c-ink-soft: #C9BFB8;
+    --c-ink-faint: #8C817A;
+    --c-code-bg: #1F1B2E;
+    --c-code-line: #332C4A;
+    --c-code-ink: #D6CFEA;
+    --c-wire: #F2EAE4;
+    --c-wire-off: #5E534C;
+    --c-chip: #201B18;
+    --c-particle: #FFB38A;
+    --c-particle-core: #FF7A3D;
+    --c-electron: #9FE8D0;
+    --c-electron-core: #2F8A6F;
+    --c-meter-bg: #12151E;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #7E8398;
+    --c-halo: rgba(242, 234, 228, 0.07);
+  }
+  /* 這一頁多用的幾個顏色（實體零件的顏色），同樣分亮、暗兩組 */
+  :root {
+    --c-led: #E53935;
+    --c-led-off: #F1D9D6;
+    --c-sun: #FFB300;
+    --c-trace: #7FD8BE;
+    --c-trace2: #FF9E6B;
+    --c-avg: #FFD66B;
+    --c-on-primary: #FFF7F2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-led: #FF5A55;
+      --c-led-off: #4A2C29;
+      --c-sun: #FFC940;
+      --c-trace: #9FE8D0;
+      --c-trace2: #FFB38A;
+      --c-avg: #FFD66B;
+      --c-on-primary: #1A1614;
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-led: #FF5A55;
+    --c-led-off: #4A2C29;
+    --c-sun: #FFC940;
+    --c-trace: #9FE8D0;
+    --c-trace2: #FFB38A;
+    --c-avg: #FFD66B;
+    --c-on-primary: #1A1614;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { margin: 0; background: var(--c-bg); color: var(--c-ink); font-family: var(--font-zh); font-size: 14px; line-height: 1.6; }
+  button, select, input, output { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .55; }
+  :focus-visible { outline: 3px solid var(--c-primary); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  code { font-family: var(--font-mono); font-size: .9em; background: var(--c-code-bg); color: var(--c-code-ink); border-radius: 5px; padding: 0 4px; overflow-wrap: anywhere; }
+
+  .wrap { padding: 10px 16px 36px; display: flex; justify-content: center; }
+  .col { width: 100%; max-width: 1400px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--c-primary); white-space: nowrap; }
+  .kicker .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c-primary-bright); }
+  h1 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 800; letter-spacing: .01em; }
+  .appbar { display: flex; align-items: baseline; justify-content: space-between; gap: 2px 16px; flex-wrap: wrap; padding: 2px 4px 0; }
+  .appbar-title { order: 1; display: flex; align-items: baseline; gap: 2px 12px; flex-wrap: wrap; min-width: 0; }
+  .sub1 { font-size: 14px; color: var(--c-ink-soft); font-weight: 600; }
+  .about { order: 2; font-size: 13px; color: var(--c-ink-soft); max-width: 46em; }
+  .about summary { cursor: pointer; font-weight: 700; color: var(--c-primary); list-style: none; }
+  .about summary::-webkit-details-marker { display: none; }
+  .about summary::before { content: "＋ "; }
+  .about[open] summary::before { content: "－ "; }
+  .about p { margin: 6px 0 0; line-height: 1.6; }
+  .oneline { order: 3; flex: 1 1 100%; margin: 2px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--c-ink-soft); }
+  .oneline b { color: var(--c-ink); }
+  h2 { margin: 0; font-size: 18px; font-weight: 800; line-height: 1.3; }
+  h3 { margin: 0; font-size: 14px; font-weight: 800; }
+  p { margin: 0; }
+  .muted { color: var(--c-ink-soft); }
+  .tiny { font-size: 12px; color: var(--c-ink-faint); line-height: 1.5; }
+  a { color: var(--c-primary); }
+  a.ref { font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-decoration: none; border-bottom: 1px dotted currentColor; white-space: nowrap; }
+
+  /* ===== 實驗台 ===== */
+  .bench { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 16px; padding: 8px 12px 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .tabbar { display: flex; align-items: center; gap: 6px 16px; flex-wrap: wrap; padding-bottom: 8px; border-bottom: 2px solid var(--c-line-soft); }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+  .tab { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 10px; padding: 4px 12px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); line-height: 1.3; text-align: left; }
+  .tab small { display: block; font-size: 12px; font-weight: 600; opacity: .85; }
+  .tab[aria-selected="true"] { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary-deep); }
+  .caption { flex: 1 1 240px; min-width: 0; margin: 0; font-size: 16px; font-weight: 800; line-height: 1.4; color: var(--c-primary-deep); }
+  @media (max-width: 560px) {
+    .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+    .tab { padding: 4px 6px; }
+    .caption { font-size: 15px; }
+  }
+
+  .benchgrid { display: grid; grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr); gap: 12px; align-items: start; }
+  @media (max-width: 1020px) {
+    .benchgrid { grid-template-columns: minmax(0, 1fr); }
+  }
+  .codecol { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .codehead { display: flex; justify-content: space-between; align-items: baseline; gap: 2px 10px; flex-wrap: wrap; font-size: 12px; font-weight: 700; color: var(--c-ink-faint); }
+  .codehead .fn { font-family: var(--font-mono); color: var(--c-ink-soft); }
+  .codeview { position: relative; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 6px 0; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: var(--c-code-ink); overflow: auto; height: 330px; }
+  .codeinner { width: max-content; min-width: 100%; }
+  .cl { display: flex; border-left: 3px solid transparent; padding-right: 14px; }
+  .cl .ln { flex: 0 0 2.8em; padding-right: .9em; text-align: right; color: var(--c-ink-faint); user-select: none; -webkit-user-select: none; }
+  .cl .tx { white-space: pre; }
+  .cl.mk .tx { text-decoration: underline wavy var(--c-violet-deep); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .cl.mk .ln { color: var(--c-violet-deep); font-weight: 800; }
+  .cl.t3 { background: color-mix(in srgb, var(--c-yellow-tint) 45%, transparent); }
+  .cl.t2 { background: color-mix(in srgb, var(--c-yellow-tint) 75%, transparent); }
+  .cl.t1 { background: var(--c-yellow-tint); }
+  .cl.on { background: var(--c-primary-tint); border-left-color: var(--c-primary); }
+  .cl.on .ln { color: var(--c-primary); font-weight: 800; }
+  .codenote { font-size: 12.5px; line-height: 1.55; background: var(--c-violet-tint); border: 1.5px solid var(--c-violet); border-radius: 10px; padding: 4px 10px; color: var(--c-ink); min-width: 0; }
+  .codenote p + p { margin-top: 2px; }
+  .codenote b { color: var(--c-violet-deep); }
+  .runbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--c-ink-faint); }
+
+  .labcol { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .meters { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px; }
+  .meter { background: var(--c-meter-bg); color: var(--c-meter-ink); border-radius: 10px; padding: 3px 10px 4px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+  .meter .lbl { font-size: 12px; letter-spacing: .02em; color: var(--c-meter-dim); line-height: 1.35; }
+  .meter .val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 21px; font-weight: 700; line-height: 1.15; white-space: nowrap; }
+  .meter .val small { font-family: var(--font-zh); font-size: 12px; font-weight: 600; color: var(--c-meter-dim); margin-left: 3px; }
+  .meter.good .val { color: #7FD8BE; }
+  .meter.vio .val { color: #C9B8F0; }
+  @media (max-width: 480px) { .meter { padding: 3px 7px; } .meter .val { font-size: 18px; } }
+  .btn { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 8px; padding: 4px 10px; font-weight: 700; font-size: 13px; }
+  .btn:hover:not(:disabled) { border-color: var(--c-primary); }
+  .btn.main { border-color: var(--c-primary); color: var(--c-primary-deep); }
+  .btn[aria-pressed="true"] { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary-deep); }
+  .spd { flex: 1 1 260px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); min-width: 0; }
+  .spd input { flex: 1 1 90px; min-width: 70px; accent-color: var(--c-primary); }
+  .spd output { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 800; color: var(--c-ink); min-width: 3.6em; text-align: right; }
+  .serial { background: var(--c-meter-bg); color: var(--c-meter-ink); border-radius: 10px; padding: 5px 10px 7px; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; min-width: 0; }
+  .serial .sh { font-family: var(--font-zh); font-size: 12px; color: var(--c-meter-dim); margin-bottom: 2px; display: flex; justify-content: space-between; gap: 2px 10px; flex-wrap: wrap; }
+  .serial .sh b { color: var(--c-meter-ink); font-family: var(--font-mono); }
+  .serial .row { display: flex; gap: 8px; min-height: 1.55em; }
+  .serial .ts { flex: 0 0 auto; color: var(--c-meter-dim); }
+  .serial .msg { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .serial .row.fresh .msg { color: var(--c-avg); }
+  .serial .idle { font-family: var(--font-zh); color: var(--c-meter-dim); }
+
+  .tabpanel { display: flex; flex-direction: column; gap: 7px; font-size: 13px; min-width: 0; }
+  .tabpanel .lead { color: var(--c-ink-soft); line-height: 1.6; }
+  .tabpanel .lead b { color: var(--c-ink); }
+  .ctlrow { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
+  .lockrow { display: flex; align-items: center; gap: 4px 8px; flex-wrap: wrap; font-size: 13px; font-weight: 800; min-width: 0; }
+  .seg { display: inline-flex; flex-wrap: wrap; border: 2px solid var(--c-line); border-radius: 10px; overflow: hidden; background: var(--c-surface); min-width: 0; }
+  .seg button { border: 0; background: transparent; padding: 3px 10px; font-weight: 700; font-size: 12.5px; color: var(--c-ink-soft); border-right: 2px solid var(--c-line); line-height: 1.35; }
+  .seg button:last-child { border-right: 0; }
+  .seg button small { font-size: 12px; font-weight: 600; opacity: .8; margin-left: 3px; }
+  .seg button[aria-pressed="true"] { background: var(--c-primary); color: var(--c-on-primary); }
+  /* 零件卡：①選感測器（2 張）、②選 PWM 控制的零件（3 張＋1 張小卡） */
+  .picks { display: grid; gap: 6px; min-width: 0; }
+  .picks.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .picks.three { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, .78fr); }
+  .pick { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 8px; align-items: center; text-align: left; border: 2px solid var(--c-line); background: var(--c-surface); border-radius: 12px; padding: 5px 10px 5px 7px; color: var(--c-ink-soft); min-width: 0; line-height: 1.3; }
+  .pick:hover { border-color: var(--c-primary); }
+  .pick svg { grid-row: 1 / span 2; width: 32px; height: 32px; flex: 0 0 auto; color: var(--c-primary); }
+  .pick .pt { font-size: 14px; font-weight: 800; color: var(--c-ink); min-width: 0; }
+  .pick .pt small { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--c-ink-faint); margin-left: 4px; white-space: nowrap; }
+  .pick .pd { font-size: 12px; font-weight: 700; color: var(--c-ink-soft); min-width: 0; }
+  .pick[aria-pressed="true"] { background: var(--c-primary); border-color: var(--c-primary-deep); }
+  .pick[aria-pressed="true"] svg, .pick[aria-pressed="true"] .pt, .pick[aria-pressed="true"] .pd, .pick[aria-pressed="true"] .pt small { color: var(--c-on-primary); }
+  .pick.mini { grid-template-columns: minmax(0, 1fr); border-style: dashed; background: var(--c-surface-2); padding-left: 10px; }
+  .pick.mini .pt { font-size: 13px; }
+  @media (max-width: 560px) {
+    .picks.three { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+    .picks.three .pick { padding: 3px 10px 3px 7px; }
+    .picks.three .pick svg { width: 28px; height: 28px; }
+    .picks.two .pick { grid-template-columns: minmax(0, 1fr); padding: 5px 7px; }
+    .picks.two .pick svg { grid-row: auto; width: 26px; height: 26px; }
+    .picks.two .pick .pt small { display: block; margin-left: 0; }
+  }
+  .inrow { display: flex; align-items: center; gap: 4px 8px; flex-wrap: wrap; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); min-width: 0; }
+  .inrow label { white-space: nowrap; }
+  .inrow input[type="range"] { flex: 1 1 150px; min-width: 110px; accent-color: var(--c-primary); }
+  .inrow output { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 800; color: var(--c-ink); min-width: 4.8em; text-align: right; white-space: nowrap; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip { border: 1.5px solid var(--c-line); background: var(--c-surface); border-radius: 999px; padding: 1px 9px; font-size: 12px; font-weight: 700; color: var(--c-ink-soft); line-height: 1.5; }
+  .chip:hover { border-color: var(--c-primary); color: var(--c-primary-deep); }
+  .chip small { font-size: 12px; font-weight: 600; color: var(--c-ink-faint); margin-left: 3px; }
+  .chip[aria-pressed="true"] { border-color: var(--c-primary); background: var(--c-primary-tint); color: var(--c-primary-deep); }
+  .togs { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; }
+  .tog { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); cursor: pointer; }
+  .tog input { width: 16px; height: 16px; accent-color: var(--c-primary); margin: 0; }
+  .tog.off { opacity: .55; cursor: not-allowed; }
+  .flash { font-size: 12px; font-weight: 800; border-radius: 999px; padding: 1px 10px; border: 1.5px solid var(--c-line); color: var(--c-ink-faint); background: var(--c-surface); white-space: nowrap; transition: background-color .15s, color .15s; }
+  .flash.on { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary-deep); }
+  .widget { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 6px 10px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .widget h3 { font-size: 13px; }
+  .ro { font-size: 12.5px; color: var(--c-ink-soft); }
+  .ro b { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--c-ink); }
+  table.plan { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+  table.plan th, table.plan td { text-align: left; padding: 2px 6px; border-bottom: 1px solid var(--c-line-soft); }
+  table.plan th { color: var(--c-ink-faint); font-weight: 700; font-size: 12px; }
+  table.plan td.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  table.plan tr.cur td { background: var(--c-primary-tint); color: var(--c-ink); font-weight: 800; }
+  .when { font-size: 12.5px; background: var(--c-mint-tint); border: 1.5px solid var(--c-mint); border-radius: 10px; padding: 5px 10px; }
+  .when b { font-weight: 800; }
+  .note { font-size: 12.5px; line-height: 1.55; padding: 6px 10px; border-radius: 10px; border: 1.5px solid var(--c-line-soft); background: var(--c-surface-2); color: var(--c-ink-soft); }
+  .note.warn { background: var(--c-yellow-tint); border-color: var(--c-yellow); color: var(--c-ink); }
+  .note b { color: var(--c-ink); }
+
+  /* ===== 圖：旋鈕、尺、放大鏡、示波器、負載、管線（SVG，文字都是真文字） ===== */
+  .fig { margin: 0; background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 12px; padding: 4px 6px; min-width: 0; }
+  .fig svg { display: block; width: 100%; height: auto; }
+  .adcfig { display: flex; gap: 6px; align-items: flex-start; }
+  .adcfig .src { flex: 0 0 150px; }
+  .adcfig .src svg { display: block; width: 150px; height: auto; }
+  .adcfig .rul { flex: 1 1 auto; min-width: 0; }
+  #knobSvg { touch-action: none; }
+  #pipeSvg { touch-action: pan-y; }
+  @media (max-width: 560px) {
+    .adcfig { flex-direction: column; align-items: stretch; }
+    .adcfig .src { flex: 0 0 auto; display: flex; justify-content: center; }
+  }
+  .fig text { user-select: none; -webkit-user-select: none; }
+  .t12 { font-family: var(--font-zh); font-size: 12px; fill: var(--c-ink-soft); }
+  .t12b { font-family: var(--font-zh); font-size: 12px; font-weight: 800; fill: var(--c-ink); }
+  .t13b { font-family: var(--font-zh); font-size: 13px; font-weight: 800; fill: var(--c-ink); }
+  .tm { font-family: var(--font-mono); font-size: 12px; fill: var(--c-ink-soft); }
+  .tmb { font-family: var(--font-mono); font-size: 12px; font-weight: 800; fill: var(--c-ink); }
+  .tbig { font-family: var(--font-mono); font-size: 16px; font-weight: 800; fill: var(--c-ink); }
+  .tpri { fill: var(--c-primary-deep); }
+  .tvio { fill: var(--c-violet-deep); }
+  .tmint { fill: var(--c-mint-deep); }
+  .tfaint { fill: var(--c-ink-faint); }
+  .halo { paint-order: stroke; stroke: var(--c-surface-2); stroke-width: 4px; stroke-linejoin: round; }
+  .k-track { fill: none; stroke: var(--c-line); stroke-width: 7; stroke-linecap: round; }
+  .k-val { fill: none; stroke: var(--c-primary); stroke-width: 7; stroke-linecap: round; }
+  .k-body { fill: var(--c-surface); stroke: var(--c-ink-soft); stroke-width: 2; }
+  .k-ptr { stroke: var(--c-ink); stroke-width: 4; stroke-linecap: round; }
+  .k-hit { fill: transparent; cursor: grab; }
+  .k-hit:active { cursor: grabbing; }
+  .r-bar { fill: var(--c-surface); stroke: var(--c-line); stroke-width: 1.4; }
+  .r-tick { stroke: var(--c-ink-faint); stroke-width: 1; }
+  .r-cell { stroke: var(--c-line); stroke-width: 1; }
+  .r-bad { fill: var(--c-ink-faint); opacity: .28; }
+  .r-good { fill: var(--c-mint); opacity: .45; }
+  .r-cur { fill: var(--c-primary-tint); stroke: var(--c-primary); stroke-width: 1.4; }
+  .r-needle { stroke: var(--c-primary); stroke-width: 2; }
+  .r-head { fill: var(--c-primary); }
+  .r-read { fill: var(--c-violet-deep); }
+  .r-zoom { stroke: var(--c-violet); stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
+  .r-mag { fill: var(--c-surface); stroke: var(--c-violet); stroke-width: 1.6; }
+  .r-none { fill: var(--c-line-soft); }
+  .sun { fill: var(--c-sun); }
+  .sunray { stroke: var(--c-sun); stroke-width: 2.4; stroke-linecap: round; }
+  .pcb { fill: #2F6FB0; stroke: #1E4B7A; stroke-width: 1.4; }
+  .ldrcell { fill: #F4E3B8; stroke: #9A6B00; stroke-width: 1.2; }
+  .ldrzig { fill: none; stroke: #B0452A; stroke-width: 1.4; }
+  .led-off { fill: var(--c-led-off); stroke: var(--c-line); stroke-width: 1.4; }
+  .led-on { fill: var(--c-led); }
+  .led-glow { fill: var(--c-led); }
+  .leg { stroke: var(--c-ink-faint); stroke-width: 2; }
+  .c-axis { stroke: var(--c-ink-faint); stroke-width: 1.2; fill: none; }
+  .c-lin { stroke: var(--c-ink-faint); stroke-width: 1.4; stroke-dasharray: 4 3; fill: none; }
+  .c-eye { stroke: var(--c-led); stroke-width: 2; fill: none; }
+  .c-dot { fill: var(--c-primary); stroke: var(--c-surface); stroke-width: 1.5; }
+  .sv-dial { fill: none; stroke: var(--c-line); stroke-width: 6; }
+  .sv-tick { stroke: var(--c-ink-faint); stroke-width: 1.4; }
+  .sv-body { fill: #2E6FD8; stroke: #1B4A96; stroke-width: 1.4; }
+  .sv-arm { stroke: var(--c-ink); stroke-width: 7; stroke-linecap: round; }
+  .sv-hub { fill: var(--c-surface); stroke: var(--c-ink); stroke-width: 2; }
+  .sv-grey .sv-arm { stroke: var(--c-ink-faint); }
+  .sv-grey .sv-body { fill: var(--c-ink-faint); stroke: var(--c-ink-faint); }
+  .bz-body { fill: #2D3142; stroke: #11141C; stroke-width: 1.4; }
+  .bz-hole { fill: #11141C; }
+  .bz-wave { fill: none; stroke: var(--c-primary); stroke-width: 2; stroke-linecap: round; }
+  .rc-wire { stroke: var(--c-ink-soft); stroke-width: 2; fill: none; }
+  .rc-part { fill: var(--c-surface); stroke: var(--c-ink); stroke-width: 1.8; }
+  .rc-plate { stroke: var(--c-ink); stroke-width: 3; }
+  .rc-dot { fill: var(--c-trace2); stroke: var(--c-ink); stroke-width: 1.2; }
+  .p-box { fill: var(--c-surface); stroke: var(--c-line); stroke-width: 1.6; }
+  .p-box.hot { stroke: var(--c-primary); stroke-width: 2.2; }
+  .p-box.off { fill: var(--c-surface-2); }
+  .p-arrow { stroke: var(--c-ink-faint); stroke-width: 1.8; fill: none; }
+  .p-ah { fill: var(--c-ink-faint); }
+
+  .pwmgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 8px; align-items: stretch; }
+  .scope { margin: 0; background: var(--c-meter-bg); border-radius: 12px; padding: 4px 6px 6px; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .scope svg { display: block; width: 100%; height: auto; }
+  .scope figcaption { font-size: 12px; line-height: 1.5; color: var(--c-meter-dim); padding: 0 4px; }
+  .scope figcaption b { color: var(--c-meter-ink); }
+  .sc-grid { stroke: rgba(244, 236, 216, .13); stroke-width: 1; }
+  .sc-wave { stroke: var(--c-trace); stroke-width: 2.4; fill: none; stroke-linejoin: round; }
+  .sc-rc { stroke: var(--c-trace2); stroke-width: 2.4; fill: none; }
+  .sc-avg { stroke: var(--c-avg); stroke-width: 1.6; stroke-dasharray: 6 4; }
+  .sc-br { stroke: var(--c-meter-ink); stroke-width: 1.2; fill: none; }
+  .sc-play { stroke: #FFFFFF; stroke-width: 1.2; opacity: .55; }
+  .sc-dot { fill: #FFFFFF; }
+  .sc-t { font-family: var(--font-zh); font-size: 12px; fill: var(--c-meter-ink); }
+  .sc-tb { font-family: var(--font-zh); font-size: 12px; font-weight: 800; fill: var(--c-meter-ink); }
+  .sc-m { font-family: var(--font-mono); font-size: 12px; fill: var(--c-meter-dim); }
+  .sc-y { fill: var(--c-avg); }
+  .sc-o { fill: var(--c-trace2); }
+  .sc-g { fill: var(--c-trace); }
+  .sc-halo { paint-order: stroke; stroke: var(--c-meter-bg); stroke-width: 4px; stroke-linejoin: round; }
+  .loadbox { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 12px; padding: 6px 10px; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .loadbox svg { display: block; width: 100%; height: auto; max-height: 150px; }
+  .loadbox .ro { font-size: 12.5px; }
+  .units { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+  .unit { border: 1.5px solid var(--c-line-soft); border-radius: 8px; padding: 1px 8px; background: var(--c-surface-2); min-width: 0; }
+  .unit .u1 { display: block; font-size: 12px; color: var(--c-ink-faint); font-family: var(--font-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .unit .u2 { display: block; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 800; white-space: nowrap; }
+  .unit.cur { border-color: var(--c-primary); background: var(--c-primary-tint); }
+  @media (max-width: 480px) { .units { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .bitsbadge { font-size: 12px; font-weight: 800; color: var(--c-violet-deep); background: var(--c-violet-tint); border: 1.5px solid var(--c-violet); border-radius: 999px; padding: 0 9px; white-space: nowrap; }
+  .keys { display: flex; flex-wrap: wrap; gap: 3px; }
+  .keys button { border: 1.5px solid var(--c-line); background: var(--c-surface); border-radius: 6px; padding: 1px 7px; font-size: 12px; font-weight: 700; }
+  .keys button[aria-pressed="true"] { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary-deep); }
+
+  /* ===== 觀念卡、折疊區、卡片、表格 ===== */
+  .concepts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 12px; align-items: start; }
+  .ccard { background: var(--c-surface-2); border: 2px solid var(--c-line-soft); border-radius: 16px; padding: 10px 16px; display: block; min-width: 0; }
+  .ccard > summary { cursor: pointer; list-style: none; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .ccard > summary::-webkit-details-marker { display: none; }
+  .ccard > summary h3::after { content: "　＋"; font-size: 12px; font-weight: 600; color: var(--c-ink-faint); }
+  .ccard[open] > summary h3::after { content: "　－"; }
+  .ccard:not(.hot) > summary h3 { color: var(--c-ink-soft); }
+  .ccard.hot { background: var(--c-surface); border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-tint); }
+  .ccard .ccbody { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; min-width: 0; }
+  .ccard .tag { font-size: 12px; font-weight: 800; color: var(--c-on-primary); background: var(--c-primary); border-radius: 8px; padding: 1px 8px; }
+  .ccard h3 { font-size: 15px; line-height: 1.4; }
+  .ccard p, .ccard li { font-size: 13px; color: var(--c-ink-soft); }
+  .ccard b { color: var(--c-ink); }
+  .ccard ol, .ccard ul { margin: 0; padding-left: 1.5em; display: flex; flex-direction: column; gap: 4px; }
+  .en { color: var(--c-ink); }
+
+  .sect { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 14px; padding: 0 16px; min-width: 0; }
+  .sect > summary { cursor: pointer; font-size: 16px; font-weight: 800; padding: 12px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .sect > summary::-webkit-details-marker { display: none; }
+  .sect > summary::after { content: "展開 ＋"; font-size: 12px; font-weight: 600; color: var(--c-ink-faint); white-space: nowrap; }
+  .sect[open] > summary::after { content: "收起 －"; }
+  .sect[open] > summary { border-bottom: 2px solid var(--c-line-soft); margin-bottom: 14px; }
+  .sect > section { padding-bottom: 16px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+  .adv { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 6px 12px; min-width: 0; }
+  .adv > summary { cursor: pointer; font-weight: 800; font-size: 13px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .adv > summary::-webkit-details-marker { display: none; }
+  .adv > summary::after { content: "＋"; color: var(--c-ink-faint); }
+  .adv[open] > summary::after { content: "－"; }
+  .adv .inner { padding-top: 8px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .code { margin: 0; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 10px 12px; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; color: var(--c-code-ink); overflow-x: auto; white-space: pre; max-width: 100%; }
+  .code.small { font-size: 12px; padding: 8px 10px; }
+  .copy { border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 8px; padding: 3px 10px; font-weight: 700; font-size: 12px; white-space: nowrap; }
+  .copy:hover { background: var(--c-primary-tint); }
+  .shared { display: flex; flex-direction: column; gap: 6px; }
+  .shared .codehead { font-size: 12.5px; color: var(--c-ink-soft); font-weight: 600; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 14px; }
+  .card { background: var(--c-surface); border: 2px solid var(--c-line-soft); border-radius: 16px; padding: 14px 16px 13px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .card h3 { font-size: 15px; line-height: 1.4; }
+  .card p { font-size: 13px; color: var(--c-ink-soft); }
+  .card p b { color: var(--c-ink); }
+  .card .try { margin-top: auto; align-self: flex-start; border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 10px; padding: 5px 12px; font-weight: 700; font-size: 13px; }
+  .card .try:hover { background: var(--c-primary-tint); }
+  .card .btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .steps { margin: 0; padding-left: 1.3em; font-size: 13px; color: var(--c-ink-soft); }
+  .mono1 { font-family: var(--font-mono); font-size: 12px; background: var(--c-code-bg); border-radius: 5px; padding: 1px 5px; color: var(--c-code-ink); overflow-wrap: anywhere; }
+  .tablewrap { overflow-x: auto; border: 2px solid var(--c-line); border-radius: 14px; max-width: 100%; }
+  table.facts { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 13px; }
+  table.facts th, table.facts td { text-align: left; padding: 8px 12px; border-bottom: 1.5px solid var(--c-line-soft); vertical-align: top; }
+  table.facts th { font-size: 12px; letter-spacing: .06em; color: var(--c-ink-faint); font-weight: 700; background: var(--c-surface-2); }
+  table.facts tr:last-child td { border-bottom: 0; }
+  table.facts th:first-child { white-space: nowrap; }
+  table.facts td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; }
+  table.facts td.id { font-family: var(--font-mono); font-weight: 800; color: var(--c-primary-deep); white-space: nowrap; }
+  table.facts tr.flash td { background: var(--c-yellow-tint); }
+  table.cmp { min-width: 820px; }
+  .simp { margin: 0; padding-left: 1.3em; font-size: 13px; color: var(--c-ink-soft); display: flex; flex-direction: column; gap: 3px; }
+  .foot { font-size: 12px; color: var(--c-ink-faint); border-top: 2px solid var(--c-line-soft); padding-top: 10px; display: flex; flex-direction: column; gap: 3px; }
+
+  /* ===== 學生自己操作時要的（2026-10-01 加）：頁首「今天怎麼走」、頁尾「離開前」；壓在兩行內，1366×768 實驗台仍在第一個畫面 ===== */
+  .today { background: var(--c-surface); border: 2px solid var(--c-primary); border-radius: 14px; padding: 6px 14px 8px; display: flex; flex-direction: column; gap: 4px; min-width: 0; font-size: 13px; line-height: 1.6; color: var(--c-ink-soft); }
+  .today h2 { font-size: 15px; line-height: 1.4; color: var(--c-primary-deep); white-space: nowrap; }
+  .today b { color: var(--c-ink); }
+  .route { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 14px; min-width: 0; }
+  .route ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; min-width: 0; }
+  .route li { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 5px; font-weight: 700; color: var(--c-ink); min-width: 0; }
+  .route li:not(:last-child)::after { content: "→"; font-weight: 800; color: var(--c-ink-faint); margin-left: 3px; }
+  .route .no { font-family: var(--font-mono); font-weight: 800; color: var(--c-primary-deep); }
+  .route .who { font-size: 12px; font-weight: 800; line-height: 1.5; border: 1.5px solid var(--c-line); border-radius: 999px; padding: 0 8px; background: var(--c-surface-2); color: var(--c-ink-soft); white-space: nowrap; }
+  .route .who.all { border-color: var(--c-primary); background: var(--c-primary-tint); color: var(--c-primary-deep); }
+  .route .chg { font-weight: 600; color: var(--c-ink-soft); }
+  .leave ol { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 3px; }
+
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap"><div class="col">
+
+  <header class="appbar">
+    <div class="appbar-title">
+      <span class="kicker"><span class="dot"></span><span>創客入門 · 補充教材</span></span>
+      <h1>讀旋鈕、調亮度實驗台</h1>
+      <span class="sub1">旋鈕、光感測器怎麼變成數字（ADC）；數字怎麼控制燈、蜂鳴器、馬達（PWM）</span>
+    </div>
+    <p class="oneline"><b>ESP32 的腳位平常只認 1 和 0。要讀「中間值」，得把電壓切成 4096 格、看它落在第幾格；要送「中間值」，得用很快的開、關比例騙過燈和耳朵。</b>只有 1 和 0 兩種值，叫數位（digital）；可以停在中間任何一點，叫類比（analog）。把電壓換成格子上的數字，叫類比數位轉換（ADC）；用開、關的時間比例假裝中間值，叫脈衝寬度調變（PWM）。旋鈕從頭轉到底＝電壓 0 到 3.3 V＝數字 0 到 4095；燈的平均光量＝開的時間佔幾成（眼睛覺得多亮不是一直線，第二頁有）。</p>
+    <details class="about">
+      <summary>這一頁在做什麼</summary>
+      <p>前幾週的燈只有開和關、按鈕只有 1 和 0；這一頁第一次碰「中間值」：旋鈕轉到一半，程式讀到多少？燈要半亮，程式送出去的又是什麼？三個分頁依序是①讀進來、②送出去、③接起來做旋鈕調亮度，左邊可以動，右邊是正在跑的程式（亮的那一行）和序列埠印出來的字。每個觀念都配一支在 Wokwi 實跑過的程式，在下面的動手卡複製、貼上就能自己跑。</p>
+      <p>姊妹頁：〈<a href="../w04/esp32-pin-xray.html?preset=basic">ESP32 腳位透視鏡</a>〉（腳位怎麼把電壓讀成 1 或 0；切到「輸入」、接法選「可變電阻分壓」，就是這一頁的前一步）、〈<a href="../w04/timer-interrupt.html?tab=clock">計時器與中斷實驗台</a>〉（程式什麼時候看一眼）、〈<a href="button-bounce.html">按鈕彈跳實驗台</a>〉</p>
+    </details>
+  </header>
+
+  <section class="today" id="today" aria-labelledby="todayH">
+    <div class="route">
+      <h2 id="todayH">今天怎麼走</h2>
+      <ol>
+        <li><span class="no">01</span>讀旋鈕</li>
+        <li><span class="no">04</span>旋鈕調亮度</li>
+        <li><span class="no">02</span>小夜燈<span class="who all">大家做</span><span class="chg">改 <code>DARK</code> 的數字</span></li>
+        <li><span class="no">05</span>音階 或 <span class="no">06</span>伺服<span class="who">選做</span><span class="chg">夜燈做完再挑一個</span></li>
+      </ol>
+    </div>
+    <p><b>開始前：</b>先登入 Wokwi 才能存檔（Google 帳號就可以）；沒登入也能跑，只是存不了。六支程式在下面〈<a href="#sectWokwi">在 Wokwi 上自己跑一次</a>〉，卡住了看下面〈<a href="#stuck">卡住怎麼辦</a>〉，下課前看〈<a href="#leave">離開前</a>〉。</p>
+  </section>
+
+  <section class="bench" id="bench" aria-label="互動模擬實驗台">
+    <div class="tabbar">
+      <div class="tabs" role="tablist" aria-label="三個分頁：讀進來、送出去、接起來" id="tablist">
+        <button type="button" class="tab" role="tab" id="tb-adc" data-tab="adc" aria-selected="true" aria-controls="tp-adc">① 讀進來<small>ADC・旋鈕、光感</small></button>
+        <button type="button" class="tab" role="tab" id="tb-pwm" data-tab="pwm" aria-selected="false" aria-controls="tp-pwm" tabindex="-1">② 送出去<small>PWM・燈、蜂鳴器、馬達</small></button>
+        <button type="button" class="tab" role="tab" id="tb-link" data-tab="link" aria-selected="false" aria-controls="tp-link" tabindex="-1">③ 接起來<small>旋鈕調亮度</small></button>
+      </div>
+      <p class="caption" id="caption">旋鈕、光感測器都送進電壓，程式讀到的是「第幾格」。</p>
+    </div>
+
+    <div class="benchgrid">
+      <div class="labcol">
+
+        <!-- ① 讀進來 -->
+        <div class="tabpanel" id="tp-adc" role="tabpanel" aria-labelledby="tb-adc">
+          <p class="lead">套件上有兩個會送出「中間電壓」的感測器：<b>旋鈕（可變電阻）看你轉多少，光感測器看周圍多亮</b>，都變成 0 到 3.3 V 之間的電壓。ESP32 把這段電壓切成 4096 格，指針落在第幾格，讀到的就是幾；切成幾格，叫解析度（resolution）。</p>
+          <div class="picks two" role="group" aria-label="讀哪一個感測器" id="segSrc">
+            <button type="button" class="pick" data-src="pot" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="7"/><path d="M12 13l3.6-4.4M4.5 20.5l1.8-1.8M19.5 20.5l-1.8-1.8"/></svg><span class="pt">旋鈕（可變電阻）<small>GPIO34</small></span><span class="pd">轉多少 → 電壓多高</span></button>
+            <button type="button" class="pick" data-src="ldr" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg><span class="pt">光感測器<small>GPIO39</small></span><span class="pd">周圍多亮 → 電壓跟著變</span></button>
+          </div>
+          <div class="ctlrow">
+            <div class="lockrow"><span>解析度</span><div class="seg" role="group" aria-label="解析度：切成幾格" id="segBits"><button type="button" data-bits="12" aria-pressed="true">12 位元</button><button type="button" data-bits="10" aria-pressed="false">10</button><button type="button" data-bits="8" aria-pressed="false">8</button><button type="button" data-bits="4" aria-pressed="false">4</button></div></div>
+          </div>
+          <div class="fig adcfig" id="adcFig">
+            <div class="src"><svg id="knobSvg" viewBox="0 0 150 196" width="150" height="196" role="img" aria-label="輸入：旋鈕或光感測器"></svg></div>
+            <div class="rul" id="rulBox"><svg id="rulSvg" role="img" aria-label="電壓尺、格子尺與放大鏡：指針在哪、落在第幾格"></svg></div>
+          </div>
+          <div class="inrow" id="rowKnob"><label for="rngKnob">旋鈕</label><input type="range" id="rngKnob" min="0" max="1000" step="1" value="500"><output id="knobTxt" for="rngKnob">50%</output></div>
+          <div id="rowLux" hidden>
+            <div class="inrow"><label for="rngLux">多亮</label><span class="tiny">全黑</span><input type="range" id="rngLux" min="0" max="1000" step="1" value="605"><span class="tiny">大太陽</span><output id="luxTxt" for="rngLux">400 lux</output></div>
+            <div class="chips" data-luxchips="1"><button type="button" class="chip" data-lux="1">1 lux</button><button type="button" class="chip" data-lux="10">10 lux</button><button type="button" class="chip" data-lux="100">100 lux<small>樓梯間</small></button><button type="button" class="chip" data-lux="400">400 lux<small>辦公室</small></button><button type="button" class="chip" data-lux="10000">10000 lux</button></div>
+          </div>
+          <div class="meters">
+            <div class="meter"><span class="lbl">電壓</span><span class="val"><span id="mVolt">1.65</span><small>V</small></span></div>
+            <div class="meter good"><span class="lbl">指針在第幾格</span><span class="val"><span id="mCell">2048</span><small id="mCellMax">／4095</small></span></div>
+            <div class="meter vio"><span class="lbl">程式上次讀到</span><span class="val"><span id="mRead">—</span></span></div>
+          </div>
+          <div class="ctlrow">
+            <label class="spd" for="rngIntv">程式多久讀一次<input id="rngIntv" type="range" min="0.05" max="2" step="0.05" value="0.5"><output id="intvTxt" for="rngIntv">0.5 秒</output></label>
+            <span class="flash" id="flash" aria-hidden="true">量一次</span>
+          </div>
+          <div class="togs">
+            <label class="tog"><input type="checkbox" id="chkJit"> 真板會抖</label>
+            <label class="tog off" id="togAvg"><input type="checkbox" id="chkAvg" disabled> 取 16 次平均</label>
+            <span class="tiny" id="jitTxt">Wokwi 的讀數不抖，所以預設關著（<a class="ref" href="#f-W2">W2</a>）。</span>
+          </div>
+
+          <div class="widget">
+            <h3>同一個電壓，四種解析度各讀到多少</h3>
+            <table class="plan" id="bitsTable">
+              <thead><tr><th>解析度</th><th>格數</th><th>一格多寬</th><th>讀到</th></tr></thead>
+              <tbody>
+                <tr id="br-12"><td>12 位元</td><td class="mono">4096</td><td class="mono">0.81 mV</td><td class="mono" id="bv-12">2048</td></tr>
+                <tr id="br-10"><td>10 位元</td><td class="mono">1024</td><td class="mono">3.23 mV</td><td class="mono" id="bv-10">512</td></tr>
+                <tr id="br-8"><td>8 位元（示意）</td><td class="mono">256</td><td class="mono">12.94 mV</td><td class="mono" id="bv-8">128</td></tr>
+                <tr id="br-4"><td>4 位元（示意）</td><td class="mono">16</td><td class="mono">220 mV</td><td class="mono" id="bv-4">8</td></tr>
+              </tbody>
+            </table>
+            <p class="tiny">位元愈少，格子愈粗。一格多寬＝3.3 V ÷（格數 − 1）。ESP32 能設的是 9–12 位元（<a class="ref" href="#f-A7">A7</a>）；8、4 位元是示意，讓格子粗到看得見。</p>
+          </div>
+
+          <details class="adv" id="attnBox">
+            <summary><span>輸入範圍檔位（真板才會遇到）</span></summary>
+            <div class="inner">
+              <p>程式裡的 <code>pot.atten(ADC.ATTN_11DB)</code> 選的是「輸入範圍檔位」。真板的 ADC 有四個檔位，各自量得準的電壓範圍不一樣（<a class="ref" href="#f-A9">A9</a>）。選一個檔位，上面的電壓尺會畫出真板量得準的那一段，範圍外塗灰。</p>
+              <div class="lockrow"><span>檔位</span><div class="seg" role="group" aria-label="輸入範圍檔位" id="segAttn"><button type="button" data-attn="0" aria-pressed="false">0 dB</button><button type="button" data-attn="2.5" aria-pressed="false">2.5 dB</button><button type="button" data-attn="6" aria-pressed="false">6 dB</button><button type="button" data-attn="11" aria-pressed="true">11 dB</button></div></div>
+              <table class="plan">
+                <thead><tr><th>程式裡寫</th><th>真板量得準的範圍（大約）</th></tr></thead>
+                <tbody>
+                  <tr id="ar-0"><td class="mono">ADC.ATTN_0DB</td><td class="mono">100–950 mV</td></tr>
+                  <tr id="ar-2.5"><td class="mono">ADC.ATTN_2_5DB</td><td class="mono">100–1250 mV</td></tr>
+                  <tr id="ar-6"><td class="mono">ADC.ATTN_6DB</td><td class="mono">150–1750 mV</td></tr>
+                  <tr id="ar-11" class="cur"><td class="mono">ADC.ATTN_11DB</td><td class="mono">150–2450 mV</td></tr>
+                </tbody>
+              </table>
+              <p>頭尾都不準：100 mV 以下都讀成 0；11 dB 這一檔讀數超過 3000（大約 2.45 V）以上，就沒有官方表上那麼準（<a class="ref" href="#f-A10">A10</a>）。每顆晶片也不太一樣（<a class="ref" href="#f-A12">A12</a>）。不管哪一檔，輸入腳都別超過 3.6 V，靠近它就可能燒壞晶片（<a class="ref" href="#f-A13">A13</a>）。</p>
+              <p class="note warn"><b>Wokwi 不管哪一檔，都是 0–3.3 V 一直線對 0–4095（<a class="ref" href="#f-W2">W2</a>），所以模擬器裡看不到這件事；真板才會遇到。</b>沒寫檔位的時候，MicroPython 原始碼用的是 11 dB，但文件沒寫（<a class="ref" href="#f-A8">A8</a>）；程式裡寫清楚最保險。</p>
+            </div>
+          </details>
+          <p class="note"><b>為什麼套件把旋鈕和光感測器放在 34 和 39？</b>那幾支腳屬於 ADC1。另一組 ADC2（GPIO0、2、4、12–15、25–27）Wi-Fi 也要用，Wi-Fi 開著的時候讀它會出錯（<a class="ref" href="#f-A2">A2</a>、<a class="ref" href="#f-A3">A3</a>）。34–39 只能當輸入、沒有內建上下拉（<a class="ref" href="#f-K1">K1</a>）。前一步：〈<a href="../w04/esp32-pin-xray.html?io=in">ESP32 腳位透視鏡</a>〉切到輸入、接法選「可變電阻分壓」，看同一個電壓被讀成 1 或 0。</p>
+          <p class="when"><b>「程式多久讀一次」</b>跟 W4〈<a href="../w04/timer-interrupt.html?tab=clock">計時器與中斷實驗台</a>〉的「看一眼按鈕」是同一件事：程式讀的那一刻才知道現在是多少；讀完去睡，這中間旋鈕怎麼轉，它都不知道。所以右邊的序列埠一行一行跳，不會跟著你的手連續走。</p>
+        </div>
+
+        <!-- ② 送出去 -->
+        <div class="tabpanel" id="tp-pwm" role="tabpanel" aria-labelledby="tb-pwm" hidden>
+          <p class="lead">腳位還是只能開或關，只是開關得很快。一秒開關幾次，叫頻率（frequency）；每一次開的時間佔一個週期的幾成，叫工作週期（duty cycle）。<b>同一招控制三種零件：燈看工作週期（亮度）、蜂鳴器看頻率（音高）、伺服馬達看脈衝寬度（角度）。</b>選一個零件，拉下面的拉桿。</p>
+          <div class="picks three" role="group" aria-label="PWM 控制哪一個零件" id="segLoad">
+            <button type="button" class="pick" data-load="led" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21.5h4M12 2.5a6 6 0 0 0-3.5 10.9V16h7v-2.6A6 6 0 0 0 12 2.5z"/></svg><span class="pt">LED 燈<small>GPIO16</small></span><span class="pd">工作週期 → 亮度</span></button>
+            <button type="button" class="pick" data-load="buzzer" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 9v6h4l5 4V5l-5 4h-4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.8 5.8a9 9 0 0 1 0 12.4"/></svg><span class="pt">蜂鳴器<small>GPIO14</small></span><span class="pd">頻率 → 音高</span></button>
+            <button type="button" class="pick" data-load="servo" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="11" width="15" height="9.5" rx="2"/><circle cx="9" cy="11" r="2.3"/><path d="M9 11l11.5-6.5"/></svg><span class="pt">伺服馬達<small>GPIO27</small></span><span class="pd">脈衝寬度 → 角度</span></button>
+            <button type="button" class="pick mini" data-load="rc" aria-pressed="false"><span class="pt">電阻＋電容</span><span class="pd">加碼：磨成真的中間電壓</span></button>
+          </div>
+          <div class="inrow"><label for="rngFreq">頻率</label><input type="range" id="rngFreq" min="0" max="1000" step="1" value="651"><output id="freqTxt" for="rngFreq">1000 Hz</output><span class="bitsbadge" id="pwmBitsTxt">現在最多 16 位元</span></div>
+          <div class="chips" id="freqChips"><button type="button" class="chip" data-f="2">2 Hz<small>看得到閃</small></button><button type="button" class="chip" data-f="50">50 Hz<small>伺服</small></button><button type="button" class="chip" data-f="440">440 Hz<small>La</small></button><button type="button" class="chip" data-f="1000">1 kHz<small>燈</small></button><button type="button" class="chip" data-f="5000">5 kHz<small>沒寫就是它</small></button></div>
+          <div class="inrow"><label for="rngDuty">工作週期</label><input type="range" id="rngDuty" min="0" max="100" step="0.1" value="50"><output id="dutyTxt" for="rngDuty">50.0%</output><div class="seg" role="group" aria-label="工作週期用哪一種單位寫" id="segUnit"><button type="button" data-unit="pct" aria-pressed="true">%</button><button type="button" data-unit="duty" aria-pressed="false">duty</button><button type="button" data-unit="u16" aria-pressed="false">duty_u16</button><button type="button" data-unit="ns" aria-pressed="false">duty_ns</button></div></div>
+          <div class="units" id="units">
+            <div class="unit" id="un-pct"><span class="u1">% 0–100</span><span class="u2" id="uv-pct">50.0</span></div>
+            <div class="unit" id="un-duty"><span class="u1">duty 0–1023</span><span class="u2" id="uv-duty">512</span></div>
+            <div class="unit" id="un-u16"><span class="u1">duty_u16 0–65535</span><span class="u2" id="uv-u16">32768</span></div>
+            <div class="unit" id="un-ns"><span class="u1">duty_ns 奈秒</span><span class="u2" id="uv-ns">500000</span></div>
+          </div>
+          <p class="tiny" id="unitFormula">工作週期 50.0%＝一個週期裡，開的時間佔一半。</p>
+          <div class="pwmgrid">
+            <figure class="scope" id="scopeBox"><svg id="scopeSvg" role="img" aria-label="慢動作示波器：腳位電壓隨時間一開一關"></svg><figcaption id="scopeCap"></figcaption></figure>
+            <div class="loadbox" id="loadBox">
+              <div id="ld-led">
+                <svg id="ledSvg" viewBox="0 0 260 118" role="img" aria-label="紅燈的亮度"></svg>
+                <label class="tog"><input type="checkbox" id="chkEye"> 眼睛看到的（跟 Wokwi 的燈同一條曲線）</label>
+                <p class="ro" id="ledTxt"></p>
+              </div>
+              <div id="ld-buzzer" hidden>
+                <svg id="bzSvg" viewBox="0 0 260 84" role="img" aria-label="無源蜂鳴器"></svg>
+                <div class="ctlrow"><button type="button" class="btn main" id="btnTone" aria-pressed="false">聽聽看</button><span class="ro" id="toneTxt"></span></div>
+                <div class="keys" id="keys"></div>
+                <p class="tiny">音量很小；按「停」、換負載或換分頁就停。</p>
+              </div>
+              <div id="ld-servo" hidden>
+                <svg id="svSvg" viewBox="0 0 260 118" role="img" aria-label="伺服馬達的擺臂角度"></svg>
+                <div class="inrow"><label for="rngPulse">脈衝寬度</label><input type="range" id="rngPulse" min="300" max="3000" step="10" value="1500"><output id="pulseTxt" for="rngPulse">1.50 ms</output></div>
+                <p class="ro" id="servoTxt"></p>
+              </div>
+              <div id="ld-rc" hidden>
+                <svg id="rcSvg" viewBox="0 0 260 88" role="img" aria-label="電阻串電容，量電容上的電壓"></svg>
+                <p class="ro" id="rcTxt"></p>
+              </div>
+            </div>
+          </div>
+          <div class="ctlrow" id="autoRow"><button type="button" class="btn" id="btnAuto" aria-pressed="false">讓程式自己跑：03 呼吸燈</button><span class="tiny" id="autoTxt">程式自己改工作週期；你一動拉桿，就換回自己調。</span></div>
+          <p class="note" id="rcNote" hidden>電阻＋電容把快速的開關「磨平」：示波器上多一條橘色的線，比較像真的中間電壓，上面還有一點上下起伏。要真的輸出中間電壓，ESP32 另有把數字直接換成電壓的數位類比轉換（DAC）：只有 GPIO25、26 兩腳，8 位元 0–255（<a class="ref" href="#f-D1">D1</a>）。Wokwi 裡不一定有反應，以真板為準（<a class="ref" href="#f-D2">D2</a>）。這一段沒有 Wokwi 範例，只在頁面上看。</p>
+          <details class="adv" id="resBox">
+            <summary><span>解析度跟頻率打架</span></summary>
+            <div class="inner">
+              <p>頻率愈高，一個週期能分的格數愈少（<a class="ref" href="#f-P2">P2</a>）。ESP32 用 80 MHz 的時脈數格子：80 MHz ÷ 頻率＝一個週期能數幾格，取 log₂ 就是位元數，上限 20（<a class="ref" href="#f-P6">P6</a>）。</p>
+              <table class="plan">
+                <thead><tr><th>頻率</th><th>一個週期能數幾格</th><th>最多幾位元</th></tr></thead>
+                <tbody>
+                  <tr id="rb-1k"><td class="mono">1 kHz</td><td class="mono">80,000</td><td class="mono">16</td></tr>
+                  <tr id="rb-5k"><td class="mono">5 kHz</td><td class="mono">16,000</td><td class="mono">13</td></tr>
+                  <tr id="rb-10k"><td class="mono">10 kHz</td><td class="mono">8,000</td><td class="mono">12</td></tr>
+                  <tr><td class="mono">40 MHz</td><td class="mono">2</td><td class="mono">1（只剩開或關、固定 50%）</td></tr>
+                </tbody>
+              </table>
+              <p class="ro">現在：<b id="resNow">1000 Hz → 80,000 格 → 16 位元</b></p>
+              <p class="tiny">頻率也不一定剛好：要 1000 Hz 實際 998、要 30000 Hz 實際 30030；改了參數，下一個週期才生效（<a class="ref" href="#f-P7">P7</a>）。</p>
+            </div>
+          </details>
+          <p class="when"><b>什麼時候用：</b>腳位只會開、關，你又想要燈有亮暗、蜂鳴器有音高、伺服馬達轉到某個角度的時候。燈用幾 Hz 沒有權威規定，官方範例用 1、4、5 kHz，本課用 1 kHz（<a class="ref" href="#f-P9">P9</a>）；程式沒寫頻率就是 5 kHz、工作週期 50%（<a class="ref" href="#f-P4">P4</a>）。</p>
+        </div>
+
+        <!-- ③ 接起來 -->
+        <div class="tabpanel" id="tp-link" role="tabpanel" aria-labelledby="tb-link" hidden>
+          <p class="lead" id="linkLead">把①和②接起來：程式量一次旋鈕、換算一下、再寫給燈。04 只比 01 多一行換算：讀進來的尺是 0–4095，送出去的尺是 0–65535。</p>
+          <div class="lockrow"><span>快選</span><div class="seg" role="group" aria-label="三種接法" id="segLink"><button type="button" data-link="knob" aria-pressed="true">旋鈕調亮度<small>04</small></button><button type="button" data-link="night" aria-pressed="false">光感夜燈<small>02</small></button><button type="button" data-link="servo" aria-pressed="false">旋鈕轉伺服<small>06</small></button></div></div>
+          <figure class="fig" id="pipeBox"><svg id="pipeSvg" role="img" aria-label="管線圖：從輸入一路到輸出，每一節現在的數字"></svg></figure>
+          <div class="inrow" id="rowKnob2"><label for="rngKnob2">旋鈕</label><input type="range" id="rngKnob2" min="0" max="1000" step="1" value="500"><output id="knob2Txt" for="rngKnob2">50%</output></div>
+          <div id="rowLux2" hidden>
+            <div class="inrow"><label for="rngLux2">多亮</label><span class="tiny">全黑</span><input type="range" id="rngLux2" min="0" max="1000" step="1" value="605"><span class="tiny">大太陽</span><output id="lux2Txt" for="rngLux2">400 lux</output></div>
+            <div class="chips" data-luxchips="2"><button type="button" class="chip" data-lux="1">1 lux</button><button type="button" class="chip" data-lux="10">10 lux</button><button type="button" class="chip" data-lux="100">100 lux<small>樓梯間</small></button><button type="button" class="chip" data-lux="400">400 lux<small>辦公室</small></button><button type="button" class="chip" data-lux="10000">10000 lux</button></div>
+          </div>
+          <div class="inrow" id="rowDark" hidden><label for="rngDark">門檻 <code>DARK</code></label><input type="range" id="rngDark" min="200" max="3800" step="50" value="1500"><output id="darkTxt" for="rngDark">1500</output></div>
+          <p class="note" id="linkNote"></p>
+          <p class="when" id="linkWhen"></p>
+        </div>
+      </div>
+
+      <div class="codecol">
+        <div class="codehead"><span class="fn" id="codeName">01-adc-pot-read／main.py</span><span>亮的那一行＝正在跑；淡黃＝剛剛跑過</span></div>
+        <div class="codeview" id="codeView" tabindex="0" role="region" aria-label="程式碼：正在執行的那一行會亮"></div>
+        <div class="codenote" id="codeNote"></div>
+        <div class="runbar"><button type="button" class="btn" id="btnPlay" aria-pressed="false">暫停</button><button type="button" class="btn" id="btnStep" hidden>走一步</button><span id="runTxt">程式照真實速度在跑。</span></div>
+        <div class="serial">
+          <div class="sh"><span>序列埠印出來的字（左邊灰字是模擬時間，Wokwi 不會印）</span><span>共 <b id="serN">0</b> 行</span></div>
+          <div id="serialRows"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="concepts" aria-label="三個觀念，跟著上面的分頁換">
+    <details class="ccard" id="cc-analog" open>
+      <summary><span class="tag" hidden>這個分頁在講這個</span><h3>類比和數位：連續的電壓、一格一格的晶片</h3></summary>
+      <div class="ccbody">
+        <p>外面的世界是連續的：旋鈕可以停在任何角度，電壓可以是 0 到 3.3 V 之間任何一點。晶片只認格子：類比數位轉換做的事，就是把這個電壓<b>放到最近的那一格</b>，回傳格子的號碼。</p>
+        <p><code>pot.read()</code> 回傳 0–4095（<a class="ref" href="#f-A4">A4</a>）；<code>pot.read_u16()</code> 把同一個讀數換到 0–65535 這把各家板子共用的尺（<a class="ref" href="#f-A5">A5</a>）。</p>
+        <details class="adv"><summary><span>想看原理</span></summary><div class="inner">
+          <p>ESP32 裡有兩個 12 位元的類比數位轉換器，可以量 18 支腳（<a class="ref" href="#f-A1">A1</a>）。<code>read_u16()</code> 在 12 位元時的換算，是把讀數往左移 4 位、再把最高的 4 位補到最右邊：<code>raw &lt;&lt; 4 | raw &gt;&gt; 8</code>。Wokwi 實跑 raw 2050 → 32808（<a class="ref" href="#f-A5">A5</a>）。</p>
+          <p>01 印的電壓用 <code>3.3 * raw / 4095</code> 算，這是簡化：Wokwi 這樣算剛好對，真板每顆晶片不一樣，要準就用 <code>read_uv()</code>（見下面「想看更深」）。</p>
+        </div></details>
+      </div>
+    </details>
+    <details class="ccard" id="cc-res">
+      <summary><span class="tag" hidden>這個分頁在講這個</span><h3>解析度：把 3.3 V 切成幾格</h3></summary>
+      <div class="ccbody">
+        <p>12 位元＝4096 格＝一格約 0.8 mV；10 位元是 1024 格、一格約 3.2 mV。格子愈多愈細，但真板有雜訊，最後幾格會抖（<a class="ref" href="#f-A11">A11</a>），多量幾次取平均比較穩。</p>
+        <p>③ 的「乘 16」就是換尺：讀進來是 0–4095 的尺，<code>duty_u16()</code> 要的是 0–65535 的尺。4095 × 16 ＝ 65520，差一點點到不了頂。</p>
+        <details class="adv"><summary><span>想看原理</span></summary><div class="inner">
+          <p>PWM 也有解析度：一個週期能分成幾格。頻率愈高，格子愈少：1 kHz 最多 16 位元、5 kHz 13 位元、10 kHz 12 位元（<a class="ref" href="#f-P6">P6</a>）。所以「解析度」在讀進來、送出去兩邊都會碰到，意思一樣：能分成幾格。</p>
+        </div></details>
+      </div>
+    </details>
+    <details class="ccard" id="cc-pwm">
+      <summary><span class="tag" hidden>這個分頁在講這個</span><h3>PWM 不是真的中間電壓</h3></summary>
+      <div class="ccbody">
+        <p>腳位仍然只有開、關兩種電壓，只是開關得很快；燈和眼睛、蜂鳴器和耳朵、伺服馬達裡的電路，把它「平均」掉。官方的說法是在數位腳位上做出「假的類比輸出」（<a class="ref" href="#f-P1">P1</a>）。示波器上那條虛線是平均電壓＝工作週期 × 3.3 V。要真的中間電壓，得靠數位類比轉換，或接電阻＋電容把它磨平。</p>
+        <details class="adv"><summary><span>想看原理</span></summary><div class="inner">
+          <ul>
+            <li><b>燈</b>看工作週期（亮度）；頻率只要夠快、眼睛看不出閃就好（大約 48–60 Hz 以上，<a class="ref" href="#f-E1">E1</a>）。</li>
+            <li><b>蜂鳴器</b>看頻率（音高，<a class="ref" href="#f-W6">W6</a>）；工作週期影響音色。</li>
+            <li><b>伺服馬達</b>看脈衝有多寬：Wokwi 實跑 544 µs＝0°、1500 µs＝93°、2400 µs＝180°；頻率在 40–400 Hz 內，角度只看脈衝寬度（<a class="ref" href="#f-W5">W5</a>）。</li>
+          </ul>
+        </div></details>
+      </div>
+    </details>
+  </section>
+
+  <details class="sect">
+  <summary>ADC、PWM、DAC 對照表</summary>
+  <section aria-label="三種對照">
+    <div class="tablewrap">
+      <table class="facts cmp">
+        <thead><tr><th>哪一種</th><th>方向</th><th>值的範圍</th><th>ESP32 哪些腳能用</th><th>程式怎麼寫</th><th>套件上誰用到</th><th>Wokwi 做不做得到</th></tr></thead>
+        <tbody>
+          <tr><td><b>類比數位轉換 ADC</b></td><td>進：電壓 → 數字</td><td><code>read()</code> 0–4095（12 位元）；<code>read_u16()</code> 0–65535</td><td>ADC1：GPIO32–39；ADC2：GPIO0、2、4、12–15、25–27（Wi-Fi 開著時 ADC2 不能用）</td><td><code>pot = ADC(Pin(34))</code>、<code>pot.read()</code></td><td>旋鈕 GPIO34、光感測器 GPIO39</td><td>可以（01、02、04、06）；讀數不抖、0–3.3 V 一直線到底（<a class="ref" href="#f-W2">W2</a>）</td></tr>
+          <tr><td><b>脈衝寬度調變 PWM</b></td><td>出：很快地開、關（假的類比）</td><td>頻率 1 Hz–40 MHz；<code>duty()</code> 0–1023、<code>duty_u16()</code> 0–65535、<code>duty_ns()</code> 奈秒</td><td>所有能輸出的腳；最多 16 路、8 種頻率（<a class="ref" href="#f-P5">P5</a>）</td><td><code>led = PWM(Pin(16), freq=1000)</code>、<code>led.duty_u16(32768)</code></td><td>紅燈 16、蜂鳴器 14、伺服馬達 27（外接）</td><td>可以（03–06）；燈照「眼睛看到的」曲線畫（<a class="ref" href="#f-W4">W4</a>）</td></tr>
+          <tr><td><b>數位類比轉換 DAC</b></td><td>出：真的中間電壓</td><td>0–255（8 位元）；輸出＝Vref × 值 ÷ 255</td><td>只有 GPIO25、26</td><td><code>dac = DAC(Pin(25))</code>、<code>dac.write(128)</code></td><td>套件沒用到</td><td>不一定有反應，以真板為準（<a class="ref" href="#f-D2">D2</a>）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  </details>
+
+  <details class="sect" id="sectWokwi">
+  <summary>在 Wokwi 上自己跑一次（六個專案）</summary>
+  <section aria-label="Wokwi 動手做">
+    <p class="note warn"><b>開始前：先登入 Wokwi 才能存檔</b>（Google 帳號就可以；沒登入也能跑，只是存不了）。今天的順序：01 → 04 → 02（大家做）→ 05 或 06（選做），見頁首〈<a href="#today">今天怎麼走</a>〉；卡住了看下面〈<a href="#stuck">卡住怎麼辦</a>〉。</p>
+    <p class="muted">上面的實驗台是畫給你看的，真正的手感要自己跑。六個專案用同一張電路圖（模擬版的套件），只換 <span class="mono1">main.py</span>：</p>
+    <ol class="steps">
+      <li>開新專案：<span class="mono1">wokwi.com/projects/new/micropython-esp32</span></li>
+      <li>點 <span class="mono1">diagram.json</span> 分頁，全選、貼上（覆蓋原本的內容）</li>
+      <li>點 <span class="mono1">main.py</span> 分頁，全選、貼上，按綠色播放鍵；大約 3 到 5 秒後序列埠開始印字（實跑 3.1–5.1 秒，<a class="ref" href="#f-W7">W7</a>）</li>
+    </ol>
+    <div class="shared">
+      <div class="codehead"><span>六個專案共用的 diagram.json：旋鈕 GPIO34（板面 IO2）、光感測器 GPIO39（IO1）、紅燈 16（IO4）、黃燈 12（IO5）、綠燈 13（IO6）、蜂鳴器 14（IO0）、伺服馬達 27（IO14，套件沒附、外接才有，V+ 接 5 V）</span><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button></div>
+      <details class="adv"><summary><span>看一眼 diagram.json</span></summary><div class="inner">
+        <pre class="code" id="cdj">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-photoresistor-sensor", "id": "ldr", "top": -60, "left": -330, "attrs": { "lux": "400" } },
+    { "type": "wokwi-potentiometer", "id": "pot", "top": 40, "left": -170, "attrs": { "value": "512" } },
+    { "type": "wokwi-servo", "id": "servo", "top": 150, "left": -300, "attrs": { "horn": "single" } },
+    { "type": "wokwi-buzzer", "id": "bz", "top": 270, "left": -160, "attrs": { "volume": "0.1" } },
+    { "type": "wokwi-led", "id": "led_y", "top": 360, "left": -130, "attrs": { "color": "yellow", "label": "黃 12" } },
+    { "type": "wokwi-resistor", "id": "r_y", "top": 390, "left": -250, "attrs": { "value": "220" } },
+    { "type": "wokwi-led", "id": "led_g", "top": 450, "left": -130, "attrs": { "color": "green", "label": "綠 13" } },
+    { "type": "wokwi-resistor", "id": "r_g", "top": 480, "left": -250, "attrs": { "value": "220" } },
+    { "type": "wokwi-led", "id": "led_r", "top": 120, "left": 330, "attrs": { "color": "red", "label": "紅 16" } },
+    { "type": "wokwi-resistor", "id": "r_r", "top": 150, "left": 420, "attrs": { "value": "220" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "ldr:AO", "esp:VN", "orange", [] ],
+    [ "ldr:VCC", "esp:3V3", "red", [] ],
+    [ "ldr:GND", "esp:GND.1", "black", [] ],
+    [ "pot:SIG", "esp:34", "blue", [] ],
+    [ "pot:VCC", "esp:3V3", "red", [] ],
+    [ "pot:GND", "esp:GND.1", "black", [] ],
+    [ "servo:PWM", "esp:27", "violet", [] ],
+    [ "servo:V+", "esp:5V", "red", [] ],
+    [ "servo:GND", "esp:GND.1", "black", [] ],
+    [ "bz:2", "esp:14", "magenta", [] ],
+    [ "bz:1", "esp:GND.1", "black", [] ],
+    [ "esp:12", "led_y:A", "gold", [] ],
+    [ "esp:13", "led_g:A", "green", [] ],
+    [ "led_y:C", "r_y:1", "black", [] ],
+    [ "led_g:C", "r_g:1", "black", [] ],
+    [ "r_y:2", "esp:GND.1", "black", [] ],
+    [ "r_g:2", "esp:GND.1", "black", [] ],
+    [ "esp:16", "led_r:A", "red", [] ],
+    [ "led_r:C", "r_r:1", "black", [] ],
+    [ "r_r:2", "esp:GND.3", "black", [] ]
+  ],
+  "dependencies": {}
+}
+</pre>
+      </div></details>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h3>01 讀可變電阻</h3>
+        <p><b>要做什麼：</b><span class="mono1">ADC(Pin(34))</span> 讀旋鈕，每 0.5 秒印一行：raw（0–4095）、<span class="mono1">read_u16()</span>（0–65535）、電壓、百分比。</p>
+        <p><b>跑起來會看到：</b>電路預設旋鈕在中間（位置 512；Wokwi 的位置是 0–1023，不是電壓，<a class="ref" href="#f-W1">W1</a>），實跑印 <span class="mono1">raw 2050  u16 32808  電壓 1.65 V  50%</span>。實跑五個位置 0／256／512／768／1023 讀到 0／1025／2050／3074／4095，一直線到底；用滑鼠拖旋鈕，讀數跟著變。</p>
+        <p><b>試著改：</b>最後一行 <span class="mono1">time.sleep(0.5)</span> 改成 <span class="mono1">time.sleep(2)</span>，快速轉旋鈕，序列埠還跟得上你的手嗎？</p>
+        <div class="btns"><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button type="button" class="copy" data-copy="c01m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c01m">
+# 01 讀可變電阻：ADC 把 0–3.3 V 的電壓變成 0–4095 的整數。
+# 4095 = 2 的 12 次方減 1，所以叫「12 位元」：電壓被切成 4096 格。
+# 旋鈕轉到底就是 4095、轉到頭就是 0，中間照比例。
+from machine import ADC, Pin
+import time
+
+pot = ADC(Pin(34))              # 套件可變電阻 GPIO34（板面 IO2）：只能輸入、沒有內建上下拉
+pot.atten(ADC.ATTN_11DB)        # 輸入範圍檔位 11 dB：把量測範圍拉到最寬（官方文件寫 150 mV–2450 mV；Wokwi 實跑是 0–3.3 V 線性對 0–4095，見 README）
+pot.width(ADC.WIDTH_12BIT)      # 12 位元 0–4095（ESP32 預設就是 12 位元，寫出來是讓「4095 從哪來」有跡可循）
+
+print('旋鈕讀數：raw / read_u16 / 電壓 / 百分比')
+while True:
+    raw = pot.read()            # 0–4095，ADC 直接給的數字
+    u16 = pot.read_u16()        # 同一個位置換成 0–65535 的尺（MicroPython 各家板子共用的尺）
+    volt = 3.3 * raw / 4095     # 簡化換算：滿刻度當 3.3 V，兩位小數
+    pct = 100 * raw // 4095
+    print('raw', raw, ' u16', u16, ' 電壓 %.2f V' % volt, ' %d%%' % pct)
+    time.sleep(0.5)
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>02 光感測器小夜燈</h3>
+        <p><b>要做什麼：</b><span class="mono1">ADC(Pin(39))</span> 讀光感測器，讀數大於 1500 就算暗、開紅燈。</p>
+        <p><b>跑起來會看到：</b>電路預設 400 lux，實跑印 <span class="mono1">亮  raw 1123</span>、紅燈不亮。實跑五種亮度：1 lux 讀 3938、10 lux 3413、100 lux 2045（這三個都算暗、紅燈亮），400 lux 1123、10000 lux 156（算亮）：愈暗，讀數愈大。</p>
+        <p><b>試著改：</b>diagram.json 裡光感測器的 <span class="mono1">"lux": "400"</span> 改成 <span class="mono1">"100"</span> 再跑，印出來變成什麼？紅燈呢？</p>
+        <div class="btns"><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button type="button" class="copy" data-copy="c02m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c02m">
+# 02 光感測器小夜燈：模組的 AO 腳是「LDR 串 10 kΩ」的分壓，電壓隨亮暗變。
+# 暗 → LDR 電阻大 → AO 電壓高 → 讀數大；亮 → 讀數小（Wokwi 文件的表是 5 V 供電：0.1 lux 4.96 V、10000 lux 0.19 V；接 3.3 V 照比例縮小）。
+# 讀數超過門檻就開紅燈；門檻是實跑三種亮度後挑的（見 README）。
+from machine import ADC, Pin
+import time
+
+ldr = ADC(Pin(39))              # 套件光感測器 GPIO39（板面 IO1）：只能輸入
+ldr.atten(ADC.ATTN_11DB)        # 範圍拉到最寬，跟 01 一樣
+red = Pin(16, Pin.OUT)          # 套件紅燈 GPIO16（板面 IO4）
+
+DARK = 1500                     # 門檻：讀數比它大就當「暗」。Wokwi 實跑：100 lux 讀 2045、400 lux 讀 1123，門檻放中間（見 README）
+
+print('小夜燈：讀數超過', DARK, '算暗，紅燈亮')
+while True:
+    raw = ldr.read()
+    if raw &gt; DARK:
+        red.value(1)
+        state = '暗'
+    else:
+        red.value(0)
+        state = '亮'
+    print(state, ' raw', raw)
+    time.sleep(0.5)
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>03 呼吸燈</h3>
+        <p><b>要做什麼：</b><span class="mono1">PWM(Pin(16), freq=1000)</span>，<span class="mono1">duty_u16</span> 從 0 加到 65535 再減回 0，每步停 15 ms。</p>
+        <p><b>跑起來會看到：</b>紅燈慢慢亮、慢慢暗。實跑每 250 ms 拍一張、連拍 10 張：Wokwi 的燈亮度在 0.46 到 0.97 之間來回，3.5 秒內兩個來回；序列埠一趟只印一行「第 N 次呼吸完成」。</p>
+        <p><b>試著改：</b><span class="mono1">WAIT = 15</span> 改成 <span class="mono1">5</span>，呼吸變快還是變慢？</p>
+        <div class="btns"><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button type="button" class="copy" data-copy="c03m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c03m">
+# 03 呼吸燈：PWM 用「開多久、關多久」的比例騙眼睛，看起來像亮度在變。
+# freq=1000：每秒開關 1000 次，眼睛看不到閃、只看到平均亮度。
+# duty_u16 0–65535：0 全關、65535 全開、32768 一半時間開。
+from machine import Pin, PWM
+import time
+
+led = PWM(Pin(16), freq=1000)   # 套件紅燈 GPIO16（板面 IO4）
+led.duty_u16(0)
+
+STEP = 1024                     # 每步加多少：65536 / 1024 = 64 步到最亮
+WAIT = 15                       # 每步停幾 ms：64 步 × 15 ms ≈ 1 秒漸亮、1 秒漸暗
+
+print('呼吸燈：duty_u16 從 0 到 65535 再回 0')
+n = 0
+while True:
+    for d in range(0, 65536, STEP):     # 漸亮
+        led.duty_u16(d)
+        time.sleep_ms(WAIT)
+    led.duty_u16(65535)
+    for d in range(65535, -1, -STEP):   # 漸暗
+        led.duty_u16(d)
+        time.sleep_ms(WAIT)
+    led.duty_u16(0)
+    n = n + 1
+    print('第', n, '次呼吸完成')       # 一趟來回只印一行，別每步印（序列埠會被洗版）
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>04 旋鈕調亮度</h3>
+        <p><b>要做什麼：</b>讀旋鈕（0–4095），乘 16 交給 <span class="mono1">duty_u16()</span>，每 0.2 秒印一行。</p>
+        <p><b>跑起來會看到：</b>預設旋鈕在中間，實跑印 <span class="mono1">raw 2050  → duty_u16 32800</span>，燈的亮度 0.78（不是 0.50：Wokwi 的燈照「眼睛看到的」曲線畫，<a class="ref" href="#f-W4">W4</a>）；轉到頭 <span class="mono1">raw 0  → duty_u16 0</span> 燈滅，轉到底 <span class="mono1">raw 4095  → duty_u16 65520</span>、亮度 1.00。</p>
+        <p><b>試著改：</b><span class="mono1">duty = raw * 16</span> 改成 <span class="mono1">duty = raw * 65535 // 4095</span>，轉到底印多少？</p>
+        <div class="btns"><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button type="button" class="copy" data-copy="c04m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c04m">
+# 04 旋鈕調亮度：ADC 讀進來的 0–4095，乘 16 就是 PWM 要的 0–65520。
+# 輸入端（ADC）和輸出端（PWM）用的尺不同，中間只差一個換算。
+from machine import ADC, Pin, PWM
+import time
+
+pot = ADC(Pin(34))              # 套件可變電阻 GPIO34（板面 IO2）
+pot.atten(ADC.ATTN_11DB)
+led = PWM(Pin(16), freq=1000)   # 套件紅燈 GPIO16（板面 IO4）
+
+print('旋鈕調亮度：raw x 16 = duty_u16')
+while True:
+    raw = pot.read()            # 0–4095
+    duty = raw * 16             # 0–65520（差 15 到不了 65535，眼睛看不出來）
+    led.duty_u16(duty)
+    print('raw', raw, ' → duty_u16', duty)
+    time.sleep(0.2)
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>05 蜂鳴器吹音階</h3>
+        <p><b>要做什麼：</b>無源蜂鳴器（GPIO14）吹 Do 到高音 Do 八個音（262–523 Hz），每個音 0.3 秒、中間用 <span class="mono1">duty_u16(0)</span> 休止，一輪吹完 <span class="mono1">deinit()</span>、兩秒後再來。</p>
+        <p><b>跑起來會看到：</b>序列埠依序印 Do 262 Hz、Re 294 Hz……Do 523 Hz，實跑 14 秒內完整三輪。實跑是程式自動檢查的、聽不到聲音：26 次裡有 17 次蜂鳴器有收到方波，休止的時候沒有。請自己開聲音聽一次；Wokwi 的 ESP32 第一個音可能不響（<a class="ref" href="#f-W6">W6</a>）。</p>
+        <p><b>試著改：</b>把 NOTES 改成從高音 Do 往下排，吹出來是什麼？</p>
+        <div class="btns"><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button type="button" class="copy" data-copy="c05m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c05m">
+# 05 蜂鳴器吹音階：無源蜂鳴器自己不會響，要餵它一個方波；方波的頻率就是音高。
+# 同一支 PWM，換 freq 就換音、duty_u16 給 50%（開一半關一半，方波最響）、duty_u16(0) 就是休止。
+from machine import Pin, PWM
+import time
+
+NOTES = [('Do', 262), ('Re', 294), ('Mi', 330), ('Fa', 349),
+         ('So', 392), ('La', 440), ('Si', 494), ('Do', 523)]   # Hz，中央 C 起的一個八度
+
+round_no = 0
+while True:
+    buzzer = PWM(Pin(14), freq=262, duty_u16=0)   # 套件無源蜂鳴器 GPIO14（板面 IO0）；先靜音
+    round_no = round_no + 1
+    print('第', round_no, '輪音階')
+    for name, freq in NOTES:
+        buzzer.freq(freq)           # 換音高
+        buzzer.duty_u16(32768)      # 50%：開始響
+        print(name, freq, 'Hz')
+        time.sleep(0.3)             # 每音 0.3 秒
+        buzzer.duty_u16(0)          # 休止：音與音之間斷開，聽得出是八個音
+        time.sleep_ms(60)
+    buzzer.deinit()                 # 收掉 PWM，腳位還回去；下一輪重新建
+    print('一輪吹完，deinit；兩秒後再來')
+    time.sleep(2)
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>06 旋鈕轉伺服</h3>
+        <p><b>要做什麼：</b><span class="mono1">PWM(Pin(27), freq=50)</span>，旋鈕讀數換成角度，再換成 544–2400 µs 的脈衝寬度，用 <span class="mono1">duty_ns()</span> 送出去。伺服馬達的 V+ 接 5 V。</p>
+        <p><b>跑起來會看到：</b>預設旋鈕在中間，實跑印 <span class="mono1">raw 2050  → 角度 90</span>，伺服轉到 90 度；轉到頭 0 度、轉到底 180 度。</p>
+        <p><b>試著改：</b>把 <span class="mono1">raw * 180</span> 的 180 改成 90，轉到底停在幾度？序列埠和擺臂會一致。<b>進階：</b><span class="mono1">MAX_US = 2400</span> 改成 <span class="mono1">2000</span>——序列埠照樣印 180，擺臂卻只到約 141 度（<a class="ref" href="#f-W5">W5</a>）：程式「要」的角度跟馬達「做到」的角度不一定一樣，這就是伺服要校正的原因。</p>
+        <div class="btns"><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button type="button" class="copy" data-copy="c06m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c06m">
+# 06 旋鈕轉伺服：伺服馬達看的是「脈衝多寬」，脈衝多寬就轉到多少度。
+# 本例用 50 Hz（每 20 ms 一個脈衝；常見 40–400 Hz 都行，角度只看脈衝寬）；脈衝寬度用 duty_ns 給（奈秒），比 duty_u16 好算。
+# 0 度與 180 度對應的脈衝寬度是實跑量出來的（見 README），不同伺服會差一點。
+from machine import ADC, Pin, PWM
+import time
+
+pot = ADC(Pin(34))              # 套件可變電阻 GPIO34（板面 IO2）
+pot.atten(ADC.ATTN_11DB)
+servo = PWM(Pin(27), freq=50)   # 套件空腳 GPIO27（板面 IO14）；套件沒附伺服，外接才有
+
+MIN_US = 544                    # 0 度的脈衝寬度（微秒）：Wokwi 伺服實跑 544 µs → 0 度（跟 Arduino Servo 程式庫預設一樣）
+MAX_US = 2400                   # 180 度的脈衝寬度（微秒）：實跑 2400 µs → 180 度；再寬也停在 180
+
+
+def angle_to_ns(angle):
+    us = MIN_US + (MAX_US - MIN_US) * angle / 180
+    return int(us * 1000)       # 微秒 → 奈秒
+
+
+print('旋鈕轉伺服：raw → 角度')
+while True:
+    raw = pot.read()                    # 0–4095
+    angle = raw * 180 // 4095           # 0–180 度
+    servo.duty_ns(angle_to_ns(angle))
+    print('raw', raw, ' → 角度', angle)
+    time.sleep(0.3)
+</pre>
+        </div></details>
+      </div>
+    </div>
+    <p class="tiny">Wokwi 的旋鈕讀數不抖、0–3.3 V 一直線到底（<a class="ref" href="#f-W2">W2</a>）；真板會抖、頭尾不準（<a class="ref" href="#f-A10">A10</a>、<a class="ref" href="#f-A11">A11</a>）。別拿 Wokwi 的數字當真板的證據。</p>
+  </section>
+  </details>
+
+  <details class="sect">
+  <summary>試試看：五個問題</summary>
+  <section aria-label="試試看">
+    <div class="cards">
+      <div class="card">
+        <h3>① 解析度切到 8 位元、旋鈕轉一半，數字是多少？</h3>
+        <p><b>127 或 128。</b>8 位元只有 256 格（0–255），轉一半剛好落在 127.5，兩格中間，這一頁放到 128。同一個電壓在 12 位元是 2048：格子粗了 16 倍，數字也小了 16 倍。</p>
+        <button type="button" class="try" data-preset="bits8">試試看：8 位元、轉一半</button>
+      </div>
+      <div class="card">
+        <h3>② PWM 頻率調到 5 Hz，燈會怎樣？</h3>
+        <p><b>一閃一閃，看得很清楚。</b>一秒只開關 5 次，工作週期 50% 時每次開 0.1 秒、關 0.1 秒，眼睛跟得上。頻率要到大約 48–60 Hz 以上，燈才會看起來「一直亮、只是比較暗」（<a class="ref" href="#f-E1">E1</a>）。</p>
+        <button type="button" class="try" data-preset="blink5">試試看：燈、5 Hz</button>
+      </div>
+      <div class="card">
+        <h3>③ 工作週期 100% 跟 Pin.value(1) 有什麼不同？</h3>
+        <p><b>對燈來說一樣：腳位一直開著，燈全亮。</b>差別在後面：PWM 隨時可以改工作週期讓燈變暗，<span class="mono1">Pin.value()</span> 只能開或關。反過來也要小心：已經當 PWM 用的腳位，用 <span class="mono1">Pin(16, Pin.OUT)</span> 重建一次，PWM 就被關掉了（<a class="ref" href="#f-P8">P8</a>）。</p>
+        <button type="button" class="try" data-preset="full">試試看：燈、工作週期 100%</button>
+      </div>
+      <div class="card">
+        <h3>④ 蜂鳴器頻率調到 30 kHz，聽得到嗎？</h3>
+        <p><b>聽不到。</b>頻率就是音高，愈高愈尖（<a class="ref" href="#f-W6">W6</a>）；30 kHz 已經高過人耳聽得到的範圍。腳位照樣一秒開關 3 萬次，只是你聽不到，這一頁到這麼高也不出聲。</p>
+        <button type="button" class="try" data-preset="hi30k">試試看：蜂鳴器、30 kHz</button>
+      </div>
+      <div class="card">
+        <h3>⑤ 旋鈕轉到 90%，這一頁讀 3686；真板會一樣嗎？</h3>
+        <p><b>不一定。</b>90% 是 2.97 V。Wokwi 在 11 dB 這一檔是 0–3.3 V 一直線到底（<a class="ref" href="#f-W2">W2</a>），所以讀得出 3686；真板 11 dB 讀數超過 3000（大約 2.45 V）以上就不準了（<a class="ref" href="#f-A10">A10</a>），每顆晶片也不一樣（<a class="ref" href="#f-A12">A12</a>）。按下面的鈕，看 2.97 V 落在電壓尺灰色那一段。</p>
+        <button type="button" class="try" data-preset="knob90">試試看：旋鈕 90%＋輸入範圍檔位</button>
+      </div>
+    </div>
+  </section>
+  </details>
+
+  <details class="sect">
+  <summary>想看更深：六個小問題</summary>
+  <section aria-label="想看更深">
+    <div class="cards">
+      <div class="card">
+        <h3>「輸入範圍檔位」到底在選什麼？</h3>
+        <p>選 ADC 量得準的電壓範圍。真板四個檔位大約是：0 dB 100–950 mV、2.5 dB 100–1250 mV、6 dB 150–1750 mV、11 dB 150–2450 mV（<a class="ref" href="#f-A9">A9</a>）。範圍外不是讀不到，是沒有官方表上那麼準：100 mV 以下都讀成 0，11 dB 讀數超過 3000 以上變不準（<a class="ref" href="#f-A10">A10</a>）。旋鈕轉到底時真板讀到多少，官方沒有給確切的數字，別自己假設是 3.3 V＝4095。</p>
+      </div>
+      <div class="card">
+        <h3>read_uv() 為什麼比自己乘 3.3 準？</h3>
+        <p>每顆晶片的參考電壓不一樣：設計是 1100 mV，實際從 1000 到 1200 mV 都有，晶片之間讀數差 ±6%（<a class="ref" href="#f-A12">A12</a>）。<span class="mono1">read_uv()</span> 用出廠校準值把讀數換成微伏（只準到毫伏）；官方說在量得準的範圍內，它比拿 <span class="mono1">read_u16()</span> 乘一個常數更準、更穩定（<a class="ref" href="#f-A6">A6</a>）。</p>
+        <pre class="code small">uv = pot.read_uv()   # 微伏
+print(uv // 1000, 'mV')</pre>
+      </div>
+      <div class="card">
+        <h3>真板會抖：多量幾次取平均</h3>
+        <p>ESP32 的 ADC 對雜訊很敏感，讀數會差很多；官方建議多量幾次，再濾波或取平均（<a class="ref" href="#f-A11">A11</a>）。最簡單的寫法：</p>
+        <pre class="code small">total = 0
+for i in range(16):
+    total = total + pot.read()
+raw = total // 16</pre>
+        <p>Wokwi 不抖（<a class="ref" href="#f-W2">W2</a>），這段在 Wokwi 看不出差別；實驗台①打開「真板會抖」、再勾「取 16 次平均」，看這一頁的示意。</p>
+      </div>
+      <div class="card">
+        <h3>ADC2 跟 Wi-Fi 為什麼打架？</h3>
+        <p>ADC1 在 GPIO32–39，ADC2 在 GPIO0、2、4、12–15、25–27（<a class="ref" href="#f-A2">A2</a>）。Wi-Fi 也要用 ADC2，Wi-Fi 開著的時候讀 ADC2 的腳會出錯（<a class="ref" href="#f-A3">A3</a>）。所以之後做連網的專案，類比感測器一律接 32–39；套件的旋鈕（34）和光感測器（39）本來就在 ADC1。</p>
+      </div>
+      <div class="card">
+        <h3>管 PWM 的硬體有幾路？頻率為什麼不剛好？</h3>
+        <p>ESP32 最多 16 路 PWM，但只有 8 種不同頻率，其餘 8 路要跟別人同頻率（<a class="ref" href="#f-P5">P5</a>）。硬體用 80 MHz 的時脈一格一格數，所以頻率愈高、工作週期能分的格數愈少（<a class="ref" href="#f-P6">P6</a>）；頻率也不一定剛好，要 1000 Hz 實際 998。改了參數，下一個週期才生效（<a class="ref" href="#f-P7">P7</a>）。</p>
+        <p>建 PWM 不必寫 <span class="mono1">Pin.OUT</span>；已經當 PWM 用的腳位，別再用 <span class="mono1">Pin(16, Pin.OUT)</span> 重建一次，那樣會把 PWM 關掉。要改參數，用 <span class="mono1">freq()</span>、<span class="mono1">duty_u16()</span>，一次改好幾個用 <span class="mono1">init()</span>（<a class="ref" href="#f-P8">P8</a>）。</p>
+      </div>
+      <div class="card">
+        <h3>真的類比輸出：DAC</h3>
+        <p>ESP32 另有兩個 8 位元的數位類比轉換器，只接在 GPIO25、26：寫 0–255，輸出電壓＝Vref × 值 ÷ 255，Vref 大約是供電的 3.3 V（<a class="ref" href="#f-D1">D1</a>）。它是真的中間電壓，不是快速開關；但只有 256 階、只有兩支腳。</p>
+        <pre class="code small">from machine import DAC, Pin
+dac = DAC(Pin(25))
+dac.write(128)       # 約 1.66 V</pre>
+        <p>Wokwi 的功能表沒列 DAC，有人回報模擬器裡沒反應（<a class="ref" href="#f-D2">D2</a>）：這段請在真板上試。</p>
+      </div>
+    </div>
+  </section>
+  </details>
+
+  <details class="sect" id="stuck">
+  <summary>卡住怎麼辦：七種常見狀況</summary>
+  <section aria-label="卡住怎麼辦">
+    <p class="muted">先看序列埠（Wokwi 右下角黑底那一格）：程式印的字、出錯的訊息都在那裡。錯誤訊息是白字、不是紅字，看最後一行開頭那個「○○Error」（例如 <span class="mono1">SyntaxError</span>）。</p>
+    <div class="cards">
+      <div class="card">
+        <h3>按了播放，序列埠一個字都沒有</h3>
+        <p>照順序查：<b>① 真的按了播放嗎</b>（綠色圓形鍵）；<b>② 兩份有沒有貼錯分頁</b>：電路貼在 <span class="mono1">diagram.json</span> 分頁、程式貼在 <span class="mono1">main.py</span> 分頁；<b>③ 開機要 3 到 5 秒</b>，等一下（<a class="ref" href="#f-W7">W7</a>）。</p>
+        <p>畫面停在「Compiling project...」一直在計時：Wokwi 在排隊，不是你的錯，別去改電路。等一下；太久就重新整理、再貼一次。等的時候，先用上面的實驗台看同一件事。</p>
+      </div>
+      <div class="card">
+        <h3>電路圖不對，或整個沒反應</h3>
+        <p>多半是 <span class="mono1">diagram.json</span> 沒換乾淨：原本的內容沒刪掉、或只貼了一半，Wokwi 就整份讀不懂。點 diagram.json 分頁，<b>全選（Ctrl＋A）再貼一次</b>，整份換掉；貼好第一個字是 <span class="mono1">{</span>、最後一個字是 <span class="mono1">}</span>。</p>
+      </div>
+      <div class="card">
+        <h3>改了數字，結果沒變</h3>
+        <p>Wokwi 不會自己重跑：<b>改完先按停止、再按播放</b>。光感測器的亮度在 diagram.json 光感那行的 <span class="mono1">"lux"</span> 改，改完一樣要重跑。</p>
+      </div>
+      <div class="card">
+        <h3>旋鈕轉了，讀數沒變</h3>
+        <p><b>先用滑鼠點一下旋鈕</b>，再按左右鍵微調、Home／End 跳到頭尾；也可以直接用滑鼠拖。01 每 0.5 秒才印一行、04 每 0.2 秒，轉完等一下。</p>
+      </div>
+      <div class="card">
+        <h3>伺服馬達不動</h3>
+        <p>先確認貼的是這一頁的 diagram.json：伺服的 PWM 接 27、<b>V+ 接 5 V</b>、GND 接地（<a class="ref" href="#f-W5">W5</a>）；自己改過接線的，V+ 一樣要接 5 V。旋鈕轉了要等 0.3 秒，下一輪才會動。真板：套件沒附伺服，要另外接。</p>
+      </div>
+      <div class="card">
+        <h3>蜂鳴器第一個音沒聲音</h3>
+        <p>Wokwi 的 ESP32 已知會這樣，不是程式錯；後面的音有響就對了（<a class="ref" href="#f-W6">W6</a>）。完全沒聲音：看瀏覽器分頁是不是靜音、電腦音量；序列埠有印音名，程式就有在送。</p>
+      </div>
+      <div class="card">
+        <h3>序列埠的中文少了字</h3>
+        <p>Wokwi 的序列埠可能會漏掉一些常用中文字、不報錯，例如「這、連、個、們、值、週」（<a class="ref" href="#f-W8">W8</a>）。不是你的程式錯：自己寫 <span class="mono1">print()</span> 時換個字（「這次」改「本次」），或印英文和數字。範例程式都避開了，所以印 <span class="mono1">raw</span>、不印「原值」。</p>
+      </div>
+    </div>
+  </section>
+  </details>
+
+  <section class="today leave" id="leave" aria-labelledby="leaveH">
+    <h2 id="leaveH">離開前</h2>
+    <ol>
+      <li><b>存檔：</b>登入 Wokwi 後按存檔（SAVE），網址就是你的專案；改過數字的那一支一定要存。</li>
+      <li><b>截圖留兩張：</b>01 讀旋鈕、04 旋鈕調亮度的序列埠（看得到讀數那幾行）。存不了檔的，截圖先存在自己電腦。</li>
+      <li><b>作業：</b>老師上課時會在 e學苑 開，到時再交。</li>
+    </ol>
+  </section>
+
+  <details class="sect" id="facts">
+  <summary>數字從哪裡來</summary>
+  <section aria-label="數字出處">
+    <p class="muted">頁面上每個數字都有出處，編號跟頁面裡的小標籤一樣（點小標籤會跳到這裡）。官方英文照原文引，旁邊是白話；標 ⚠️ 的是只有原始碼或轉述、文件沒明寫。下面另列這一頁為了畫圖做的簡化。</p>
+    <div class="tablewrap">
+      <table class="facts">
+        <thead><tr><th>編號</th><th>事</th><th>值</th><th>出處與白話</th></tr></thead>
+        <tbody>
+          <tr id="f-A1"><td class="id">A1</td><td>ESP32 的 ADC 硬體</td><td class="num">兩個 12 位元 ADC、共 18 個類比腳位</td><td>Datasheet v5.3 §4.9.1：「<span class="en" lang="en">ESP32 integrates two 12-bit … ADCs and supports measurements on 18 channels (analog-enabled pins).</span>」（ESP32 裡有兩個 12 位元的類比數位轉換器，可以量 18 支能讀類比的腳。）</td></tr>
+          <tr id="f-A2"><td class="id">A2</td><td>哪些腳能讀類比</td><td class="num">ADC1＝GPIO32–39；ADC2＝GPIO0、2、4、12–15、25–27</td><td>MicroPython ESP32 quickref：「<span class="en" lang="en">On the ESP32, ADC functionality is available on pins 32-39 (ADC block 1) and pins 0, 2, 4, 12-15 and 25-27 (ADC block 2).</span>」（ADC1 在 32–39 腳，ADC2 在 0、2、4、12–15、25–27 腳。）</td></tr>
+          <tr id="f-A3"><td class="id">A3</td><td>ADC2 跟 Wi-Fi 打架</td><td class="num">Wi-Fi 開著讀 ADC2 會出錯</td><td>同上：「<span class="en" lang="en">ADC block 2 is also used by WiFi and so attempting to read analog values from block 2 pins when WiFi is active will raise an exception.</span>」（Wi-Fi 也要用 ADC2，Wi-Fi 開著時讀 ADC2 的腳會出錯。）所以套件把旋鈕放 34、光感測器放 39，都是 ADC1。</td></tr>
+          <tr id="f-A4"><td class="id">A4</td><td><code>read()</code></td><td class="num">12 位元時 0–4095</td><td>quickref：「<span class="en" lang="en">This method returns the raw ADC value ranged according to the resolution of the block, e.g., 0-4095 for 12-bit resolution.</span>」（照解析度回傳原始讀值，12 位元就是 0–4095。）</td></tr>
+          <tr id="f-A5"><td class="id">A5</td><td><code>read_u16()</code></td><td class="num">0–65535（各家板子共用的尺）</td><td>machine.ADC：「<span class="en" lang="en">Take an analog reading and return an integer in the range 0-65535.</span>」（讀一次，回傳 0–65535 的整數。）原始碼的換算 <code>u16 = raw &lt;&lt; (16 - bits) | raw &gt;&gt; (2 * bits - 16)</code>；Wokwi 實跑 raw 2050 → 32808。</td></tr>
+          <tr id="f-A6"><td class="id">A6</td><td><code>read_uv()</code></td><td class="num">用出廠校準值換成微伏，只到毫伏解析度</td><td>quickref：「<span class="en" lang="en">…to return a calibrated input voltage (before attenuation) in microvolts. The returned value has only millivolt resolution…</span>」「<span class="en" lang="en">Within the linear range, however, more accurate and consistent results will be obtained than using read_u16() and scaling the result with a constant.</span>」（回傳校準過的輸入電壓，單位微伏，但只準到毫伏；在量得準的範圍內，比拿 read_u16() 乘一個常數更準、更穩定。）</td></tr>
+          <tr id="f-A7"><td class="id">A7</td><td>解析度能設多少</td><td class="num">原版 ESP32 可設 9–12 位元；沒設就是 12</td><td>quickref ADCBlock：「<span class="en" lang="en">…the specified resolution (9 to 12-bits depending on the ESP32 series) or the highest supported resolution if not specified.</span>」；TRM §31.3.2「<span class="en" lang="en">12-bit, 11-bit, 10-bit, 9-bit configurable resolution</span>」（可以設 9 到 12 位元；沒設就用最高的。）</td></tr>
+          <tr id="f-A8"><td class="id">A8</td><td>⚠️ 預設輸入範圍檔位</td><td class="num">11 dB（文件沒寫，原始碼是）</td><td>原始碼 <code>ports/esp32/machine_adc.c</code>：沒給檔位時用 <code>ADC_ATTEN_MAX</code>，<code>adc.h</code> 定義為 <code>ADC_ATTEN_DB_11</code>；<code>print(adc)</code> 會印 <code>atten=</code>。machine.ADC 文件只說「<span class="en" lang="en">If not given, these settings will take previous or default values.</span>」（沒給就沿用之前的值或預設值。）所以範例程式一律寫明 <code>atten(ADC.ATTN_11DB)</code>：程式裡寫清楚最保險。</td></tr>
+          <tr id="f-A9"><td class="id">A9</td><td>四檔輸入範圍（真板）</td><td class="num">0 dB 100–950 mV；2.5 dB 100–1250 mV；6 dB 150–1750 mV；11 dB 150–2450 mV</td><td>quickref：「<span class="en" lang="en">Valid values (and approximate linear measurement ranges) are: ADC.ATTN_0DB: No attenuation (100mV - 950mV) … ADC.ATTN_11DB: 11dB attenuation (150mV - 2450mV)</span>」；Datasheet Table 4-4 同一組（出廠校準後誤差 ±23／±30／±40／±60 mV）。（四個檔位各自量得準的大約範圍。）</td></tr>
+          <tr id="f-A10"><td class="id">A10</td><td>真板頭尾不準</td><td class="num">100 mV 以下讀 0；11 dB 讀數超過 3000（約 2.45 V）以上變不準</td><td>quickref：「<span class="en" lang="en">…has a minimum measurement voltage around 100mV, voltages at or below this will read as 0.</span>」；Datasheet Table 4-3 註：「<span class="en" lang="en">When atten = 3 and the measurement result is above 3000 (voltage at approx. 2450 mV), the ADC accuracy will be worse than described in the table above.</span>」（100 mV 以下都讀成 0；11 dB 那一檔讀數過 3000、大約 2450 mV 以上，就沒有表上那麼準。）</td></tr>
+          <tr id="f-A11"><td class="id">A11</td><td>真板會抖、官方建議平均</td><td class="num">對雜訊敏感；多量幾次取平均</td><td>ESP-IDF ADC 校準頁：「<span class="en" lang="en">The ESP32 ADC is sensitive to noise, leading to large discrepancies in ADC readings.</span>」；Datasheet Table 4-3 註：「<span class="en" lang="en">…users can take multiple sampling tests with a filter, or calculate the average value.</span>」（ESP32 的 ADC 對雜訊敏感，讀數會差很多；可以多量幾次再濾波，或取平均。）</td></tr>
+          <tr id="f-A12"><td class="id">A12</td><td>每顆晶片不一樣</td><td class="num">參考電壓設計 1100 mV、實際 1000–1200 mV；晶片之間差 ±6%</td><td>ESP-IDF：「<span class="en" lang="en">By design, the ADC reference voltage for ESP32 is 1100 mV. However, the true reference voltage can range from 1000 mV to 1200 mV among different chips.</span>」；Datasheet：「<span class="en" lang="en">By default, there are ±6% differences in measured results between chips.</span>」（設計是 1100 mV，每顆實際從 1000 到 1200 mV 都有；不校準的話，晶片之間量的結果差 ±6%。）</td></tr>
+          <tr id="f-A13"><td class="id">A13</td><td>輸入腳別超過</td><td class="num">絕對上限 3.6 V</td><td>quickref：「<span class="en" lang="en">Note that the absolute maximum voltage rating for input pins is 3.6V. Going near to this boundary risks damage to the IC!</span>」（輸入腳的絕對上限是 3.6 V，靠近它就有燒壞晶片的風險。）</td></tr>
+          <tr id="f-P1"><td class="id">P1</td><td>PWM 是什麼</td><td class="num">數位腳位上的「假類比」：快速開關，看頻率與工作週期</td><td>MicroPython ESP32 PWM 教學：「<span class="en" lang="en">Pulse width modulation (PWM) is a way to get an artificial analog output on a digital pin. It achieves this by rapidly toggling the pin from low to high. There are two parameters associated with this: the frequency of the toggling, and the duty cycle.</span>」（在數位腳位上做出假的類比輸出：很快地在低、高之間切換；兩個參數是切換的頻率和工作週期。）</td></tr>
+          <tr id="f-P2"><td class="id">P2</td><td>哪些腳、多快</td><td class="num">所有能輸出的腳；1 Hz–40 MHz；頻率愈高解析度愈低</td><td>quickref：「<span class="en" lang="en">PWM can be enabled on all output-enabled pins. The base frequency can range from 1Hz to 40MHz but there is a tradeoff; as the base frequency increases the duty resolution decreases.</span>」（能輸出的腳都能用；頻率 1 Hz 到 40 MHz，但頻率愈高，工作週期能分的格數愈少。）</td></tr>
+          <tr id="f-P3"><td class="id">P3</td><td>三種給工作週期的寫法</td><td class="num"><code>duty()</code> 0–1023（ESP32 專用，預設 512＝50%）；<code>duty_u16()</code> 0–65535；<code>duty_ns()</code> 奈秒，0 到 1_000_000_000/freq</td><td>quickref 範例註解：「<span class="en" lang="en">range 0-1023 (default 512, 50%)</span>」「<span class="en" lang="en">set duty cycle from 0 to 65535 as a ratio duty_u16/65535</span>」「<span class="en" lang="en">set pulse width in nanoseconds from 0 to 1_000_000_000/freq</span>」；machine.PWM 通用頁沒有 <code>duty()</code>。</td></tr>
+          <tr id="f-P4"><td class="id">P4</td><td>預設值</td><td class="num">頻率 5000 Hz、工作週期 50%</td><td>原始碼 <code>machine_pwm.c</code>：「<span class="en" lang="en">// 5khz is default frequency #define PWM_FREQ (5000)</span>」「<span class="en" lang="en">// default duty 50%</span>」（沒寫頻率就是 5 kHz，沒寫工作週期就是 50%。）</td></tr>
+          <tr id="f-P5"><td class="id">P5</td><td>幾路</td><td class="num">16 路 PWM，但只有 8 種不同頻率</td><td>quickref：「<span class="en" lang="en">A maximum number of PWM channels (Pins) are available on the ESP32 - 16 channels, but only 8 different PWM frequencies are available, the remaining 8 channels must have the same frequency.</span>」（最多 16 路，但只有 8 種不同頻率，其餘 8 路要跟別人同頻率。）</td></tr>
+          <tr id="f-P6"><td class="id">P6</td><td>頻率跟解析度打架</td><td class="num">80 MHz 時脈：1 kHz 最多 16 位元、5 kHz 13 位元、10 kHz 12 位元；40 MHz 只剩 1 位元（固定 50%）；近似＝log₂(80 MHz ÷ 頻率) 取整數、上限 20</td><td>TRM v5.8 Table 28.2-1（APB_CLK 80 MHz：1 kHz 16／5 kHz 13／10 kHz 12）；ESP-IDF LEDC：「<span class="en" lang="en">the maximum available frequency is 40 MHz with duty resolution of 1 bit. This means that the duty cycle is fixed at 50% and cannot be adjusted.</span>」；machine.PWM：「<span class="en" lang="en">a 300kHz PWM frequency can have a duty cycle resolution of 8 bit, not 16-bit as may be expected.</span>」（最高 40 MHz，但只剩 1 位元、固定 50%；300 kHz 只有 8 位元。）</td></tr>
+          <tr id="f-P7"><td class="id">P7</td><td>頻率不一定剛好、下一個週期才生效</td><td class="num">要 30000 Hz 實得 30030；要 1000 Hz 實得 998</td><td>machine.PWM：「<span class="en" lang="en">Not all frequencies can be generated with absolute accuracy due to the discrete nature of the computing hardware.</span>」；ESP32 PWM 教學：「<span class="en" lang="en">New PWM parameters take effect in the next PWM cycle.</span>」與該頁 16 通道範例的輸出。（硬體一格一格數，不是每個頻率都做得剛好；新參數下一個週期才生效。）</td></tr>
+          <tr id="f-P8"><td class="id">P8</td><td>建 PWM 不必寫 <code>Pin.OUT</code></td><td class="num">用 <code>Pin(5, Pin.OUT)</code> 重建一次反而把 PWM 關掉；改參數用 <code>init()</code></td><td>ESP32 PWM 教學：「<span class="en" lang="en">the Pin.OUT mode does not need to be specified.</span>」及同一段的錯誤、正確範例。（不必指定 Pin.OUT。）</td></tr>
+          <tr id="f-P9"><td class="id">P9</td><td>LED 用幾 Hz</td><td class="num">沒有權威規定；官方範例用 1 kHz／4 kHz／5 kHz。本課用 1 kHz</td><td>Arduino-ESP32 <code>analogWrite</code> 預設 1000 Hz、ESP-IDF ledc_basic 範例 4 kHz、MicroPython quickref 5 kHz。查不到規範，只是常見範例。</td></tr>
+          <tr id="f-D1"><td class="id">D1</td><td>真的類比輸出 DAC</td><td class="num">只有 GPIO25、26；8 位元 0–255；輸出＝Vref × 值 ÷ 255（Vref 約為供電 3.3 V）</td><td>ESP-IDF DAC：「<span class="en" lang="en">ESP32 has two 8-bit DAC (digital to analog converter) channels respectively connected to GPIO25 (Channel 1) and GPIO26 (Channel 2).</span>」「<span class="en" lang="en">out_voltage = Vref * digi_val / 255</span>」；MicroPython：<code>DAC(Pin(25))</code>、<code>write()</code> 0–255。（兩個 8 位元的數位類比轉換器，接在 GPIO25、26。）</td></tr>
+          <tr id="f-D2"><td class="id">D2</td><td>⚠️ Wokwi 的 DAC</td><td class="num">功能表沒列 DAC；有人回報模擬器裡沒反應</td><td>docs.wokwi.com 的 ESP32 周邊表沒有 DAC 這一列；wokwi-features #1046（使用者回報，未獲證實）。所以頁面寫「模擬器裡不一定有反應，以真板為準」，也不做 DAC 的 Wokwi 範例。</td></tr>
+          <tr id="f-E1"><td class="id">E1</td><td>人眼看不出閃</td><td class="num">大約 48–60 Hz 以上</td><td>Wikipedia〈Flicker fusion threshold〉：「<span class="en" lang="en">the human flicker fusion threshold is usually taken between 48 and 60 Hz</span>」（一般把人眼看不出閃的門檻算在 48 到 60 Hz 之間；這是轉述，所以寫「大約」。）</td></tr>
+          <tr id="f-E2"><td class="id">E2</td><td>亮度感覺不是一直線</td><td class="num">光量加倍，感覺只亮一點點；L* 用 1/3 次方</td><td>Wikipedia〈Lightness〉：「<span class="en" lang="en">Doubling the quantity of light does not result in a doubling in perceived lightness, only a modest increase.</span>」（光量加倍，感覺上不會亮一倍，只亮一點。）</td></tr>
+          <tr id="f-K1"><td class="id">K1</td><td>套件腳位</td><td class="num">可變電阻 GPIO34（IO2）、光感測器 GPIO39（IO1）、紅燈 16（IO4）、黃燈 12（IO5）、綠燈 13（IO6）、無源蜂鳴器 14（IO0）、空腳 27（IO14）</td><td>原廠 EZ Start Kit+ 腳位對照圖；GPIO34–39 只能輸入、沒有內建上下拉。</td></tr>
+          <tr id="f-W1"><td class="id">W1</td><td>Wokwi 可變電阻</td><td class="num">value 是位置 0–1023，不是電壓；Wokwi 不做完整類比模擬</td><td>docs.wokwi.com wokwi-potentiometer：「<span class="en" lang="en">Initial value of the potentiometer, between 0 and 1023</span>」「<span class="en" lang="en">Wokwi does not support full analog simulation…</span>」（value 是旋鈕的起始位置 0–1023；Wokwi 不做完整的類比模擬。）</td></tr>
+          <tr id="f-W2"><td class="id">W2</td><td>Wokwi 實跑：ADC</td><td class="num">位置 0／256／512／768／1023 → raw 0／1025／2050／3074／4095＝round(位置÷1023×4095)；11 dB 下 0–3.3 V 一直線到底、不會 2.45 V 就頂住；讀數不抖</td><td>2026-09-25 Wokwi 實跑 01（旋鈕五個位置）的序列埠紀錄；雜訊：wokwi-features #126（沒模擬雜訊）。</td></tr>
+          <tr id="f-W3"><td class="id">W3</td><td>Wokwi 實跑：光感測器</td><td class="num">接 3.3 V：1／10／100／400／10000 lux → 3938／3413／2045／1123／156（暗＝讀數大）；模型＝文件 5 V 表 × 3.3 ÷ 5；公式 R＝50 kΩ×(10÷lux)^0.7、AO＝3.3×R÷(R＋10 kΩ)，五點全對</td><td>2026-09-25 Wokwi 實跑 02（五種亮度）；文件的表與換算式：docs.wokwi.com wokwi-photoresistor-sensor（預設 rl10＝50、指數 0.7）。</td></tr>
+          <tr id="f-W4"><td class="id">W4</td><td>Wokwi 實跑：LED 亮度</td><td class="num">工作週期 50% → 亮度 0.78＝0.5^(1/2.8)；Wokwi 的燈預設照 2.8 這條曲線畫</td><td>2026-09-25 Wokwi 實跑 04（旋鈕在中間）；wokwi-led：「<span class="en" lang="en">The default gamma correction factor is 2.8.</span>」（預設的修正係數是 2.8，就是這一頁「眼睛看到的」那條曲線。）</td></tr>
+          <tr id="f-W5"><td class="id">W5</td><td>Wokwi 實跑：伺服</td><td class="num">脈寬 544 µs→0°、1000→44°、1500→93°、2000→141°、2400→180°、2500 仍 180°；V+ 接 5 V</td><td>2026-09-25 Wokwi 實跑（脈寬探針）；Wokwi 部落格：「<span class="en" lang="en">The usual frequency can be between 40 Hz and 400 Hz.</span>」「<span class="en" lang="en">Even if you change the frequency from 50 Hz to 100 Hz, the servo motor angle will remain the same.</span>」「<span class="en" lang="en">The actual pulse widths vary by type and make of servo motor.</span>」（常見頻率在 40 到 400 Hz；把 50 Hz 改成 100 Hz 角度不變；實際脈寬每款伺服不同。）</td></tr>
+          <tr id="f-W6"><td class="id">W6</td><td>Wokwi 蜂鳴器</td><td class="num">腳 1 負、腳 2 正；頻率＝音高；⚠️ ESP32 上第一個音可能不響</td><td>wokwi-buzzer 腳位表；wokwi-features #214（維護者推測是瀏覽器的聲音還沒準備好）。</td></tr>
+          <tr id="f-W7"><td class="id">W7</td><td>Wokwi 開機</td><td class="num">3.1–5.1 秒（2026-09-25 晚 20 趟）</td><td>2026-09-25 Wokwi 實跑紀錄。</td></tr>
+          <tr id="f-W8"><td class="id">W8</td><td>⚠️ Wokwi 序列埠漏字</td><td class="num">「這、連、個、們、老、者、而、怎、值、候、借、倒、思、怪、通、週、退、送」這類字印不出來，也不報錯</td><td>2026-09-21 Wokwi 實跑：<code>print('這一撥…')</code> 印出來是「一撥…」，同一行的「過、看、撥、的、是」都正常。只在無頭瀏覽器（沒有畫面的自動測試）看過，你的瀏覽器上可能不一樣；六個範例程式的 <code>print()</code> 都避開了這些字。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>這一頁的簡化</h3>
+    <ul class="simp">
+      <li>簡化：Wokwi 的旋鈕讀數不抖（<a class="ref" href="#f-W2">W2</a>），真板會抖（<a class="ref" href="#f-A11">A11</a>）；「真板會抖」開關的抖動幅度是示意，不是量出來的。</li>
+      <li>簡化：8 位元、4 位元是示意（ESP32 能設 9–12 位元，<a class="ref" href="#f-A7">A7</a>），為了讓格子粗到看得見。</li>
+      <li>簡化：電阻＋電容那條磨平的線是示意，電阻、電容的大小是為了畫得清楚挑的。</li>
+      <li>簡化：螢幕畫不出 30 Hz 以上的閃，這一頁 30 Hz 以上改畫平均亮度。</li>
+      <li>簡化：蜂鳴器的聲音用瀏覽器做的方波近似，音色跟真的蜂鳴器不一樣；工作週期影響音色、不影響音高。</li>
+      <li>簡化：電壓照 Wokwi 那條直線算（0–3.3 V 對 0–4095）；真板量得準的範圍看「輸入範圍檔位」。</li>
+      <li>簡化：程式每一行都當成一瞬間做完，只有 sleep 花時間；真的板子上每一行都還要花一點時間。</li>
+      <li>簡化：③ 管線上的數字即時跟著旋鈕走；真的程式要等下一次讀（04 每 0.2 秒）才會改燈。</li>
+      <li>簡化：伺服那一檔換頻率時，這一頁讓脈衝寬度維持不變，只改週期。</li>
+      <li>簡化：示波器是慢動作，畫面上 2 秒走完 4 個週期（2 Hz 以下照真實速度）。</li>
+    </ul>
+  </section>
+  </details>
+
+  <footer class="foot">
+    <span>資料來源：MicroPython 官方文件（ESP32 quickref、machine.ADC、machine.PWM、ESP32 PWM 教學）與原始碼（machine_adc.c、machine_pwm.c）；Espressif ESP32 Datasheet v5.3、Technical Reference Manual v5.8、ESP-IDF 文件；Wokwi 官方零件說明（docs.wokwi.com）與部落格；Wikipedia〈Flicker fusion threshold〉〈Lightness〉；原廠 EZ Start Kit+ 腳位對照圖；2026-09-21、09-25 Wokwi 實跑紀錄。</span>
+    <span>國立東華大學通識課《創客入門—智慧生活裝置實作》補充教材（W5，類比感測與 PWM 控制）。姊妹頁：〈<a href="../w04/esp32-pin-xray.html?preset=basic">ESP32 腳位透視鏡</a>〉、〈<a href="../w04/timer-interrupt.html?tab=clock">計時器與中斷實驗台</a>〉、〈<a href="button-bounce.html">按鈕彈跳實驗台</a>〉。</span>
+    <span>版本 2026-10-01。</span>
+  </footer>
+
+</div></div>
+
+<script>
+(function () {
+'use strict';
+var $ = function (id) { return document.getElementById(id); };
+
+/* ===== 數字（畫面上出現的，全部來自「數字從哪裡來」那張表；其餘是畫圖用的設定） ===== */
+var VREF = 3.3;                                      /* Wokwi：0–3.3 V 一直線對 0–4095（W2） */
+var DARK0 = 1500;                                    /* 02 的門檻 */
+var RL10 = 50000, LDR_EXP = 0.7, LDR_R = 10000;      /* 光感測器模型（W3） */
+var EYE = 2.8;                                       /* 眼睛看到的（W4） */
+var SV_MIN = 544, SV_MAX = 2400, SV_FLO = 40, SV_FHI = 400;   /* 伺服（W5） */
+var CLK = 80e6, BITS_CAP = 20;                       /* PWM 解析度（P6） */
+var F_MIN = 1, F_MAX = 40000;                        /* 頻率拉桿 1 Hz–40 kHz */
+var BLINK = 30;                                      /* 30 Hz 以下真的在畫面上閃 */
+var FL_LO = 48, FL_HI = 60;                          /* 人眼看不出閃（E1） */
+var NOTES = [['Do', 262], ['Re', 294], ['Mi', 330], ['Fa', 349], ['So', 392], ['La', 440], ['Si', 494], ['高音 Do', 523]];
+var NOTE_PRINT = ['Do', 'Re', 'Mi', 'Fa', 'So', 'La', 'Si', 'Do'];   /* 05 印的音名 */
+var ATTN = {
+  '0': { lo: 100, hi: 950, c: 'ADC.ATTN_0DB' }, '2.5': { lo: 100, hi: 1250, c: 'ADC.ATTN_2_5DB' },
+  '6': { lo: 150, hi: 1750, c: 'ADC.ATTN_6DB' }, '11': { lo: 150, hi: 2450, c: 'ADC.ATTN_11DB' }
+};                                                   /* 四檔輸入範圍（A9） */
+var JIT = 20;                                        /* 示意：真板抖動，12 位元下的標準差（格） */
+var TINY = 0.002;                                    /* 一瞬間做完的一行，算 2 µs（簡化） */
+var LUX_MIN = 0.1, LUX_MAX = 100000;                 /* 光的拉桿：全黑到大太陽 */
+var SWEEP = 2000;                                    /* 示波器慢動作：畫面上 2 秒走完 4 個週期 */
+var TABS = ['adc', 'pwm', 'link'];
+var CAPTION = {
+  adc: '旋鈕、光感測器都送進電壓，程式讀到的是「第幾格」。',
+  pwm: '同一招開開關關：燈有亮暗、蜂鳴器有音高、馬達有角度。',
+  knob: '讀進來的數字乘 16，就是送出去的亮度。',
+  night: '暗過門檻，才開燈。',
+  servo: '讀進來的數字換成角度，再換成脈衝寬度。'
+};
+var CARD = { adc: 'cc-analog', pwm: 'cc-pwm', link: 'cc-res' };
+var PRE = { p01: 'c01m', p02: 'c02m', p03: 'c03m', p04: 'c04m', p05: 'c05m', p06: 'c06m' };
+var FILE = {
+  p01: '01-adc-pot-read／main.py', p02: '02-adc-ldr-nightlight／main.py', p03: '03-pwm-breathing／main.py',
+  p04: '04-pot-dims-led／main.py', p05: '05-buzzer-notes／main.py', p06: '06-pot-servo／main.py'
+};
+var VAR = { led: 'led', buzzer: 'buzzer', servo: 'servo', rc: 'pwm' };
+
+var reduced = false;
+try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+
+var S = {
+  tab: 'adc', preset: null,
+  source: 'pot', knob: 0.5, lux: 400, bits: 12,
+  interval: 0.5, jitter: false, avg16: false, attnOpen: false, attn: '11',
+  load: 'led', freq: 1000, duty: 50, unit: 'pct', eye: false, servoUs: 1500, keep: null,
+  auto: false, lastPwm: 'duty',
+  linkMode: 'knob', dark: DARK0,
+  paused: reduced, manual: false
+};
+var realNow = 0;
+var dirty = { adc: true, pwm: true, link: true, serial: true, note: true };
+function markAll() { dirty.adc = dirty.pwm = dirty.link = dirty.serial = dirty.note = true; }
+
+/* ===== 小工具 ===== */
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function f(n) { return Math.round(n * 10) / 10; }
+function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+function maxOf(b) { return Math.pow(2, b) - 1; }
+function tw(s, size) { var w = 0; for (var i = 0; i < s.length; i++) { var c = s.charCodeAt(i); w += c > 0x2E7F ? size : (c === 32 ? size * 0.32 : size * 0.62); } return w; }
+function load(k) { try { return localStorage.getItem('adc-pwm-lab-' + k); } catch (e) { return null; } }
+function save(k, v) { try { localStorage.setItem('adc-pwm-lab-' + k, String(v)); } catch (e) {} }
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+var rng = mulberry32(20260926);
+function gauss() { var u = 1 - rng(), v = rng(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+function numS(n) { return Math.abs(n - Math.round(n)) < 1e-9 ? String(Math.round(n)) : n.toFixed(1); }
+function fmtHz(hz) { if (hz < 10) return numS(hz) + ' Hz'; if (hz < 10000) return Math.round(hz) + ' Hz'; return (Math.round(hz / 100) / 10) + ' kHz'; }
+function fmtT(ms) {
+  if (ms >= 1000) return (ms / 1000).toFixed(2) + ' 秒';
+  if (ms >= 10) return ms.toFixed(1) + ' ms';
+  if (ms >= 1) return ms.toFixed(2) + ' ms';
+  var us = ms * 1000; return (us >= 10 ? us.toFixed(1) : us.toFixed(2)) + ' µs';
+}
+function v2(v) { return (Math.round(v * 100 + 1e-9) / 100).toFixed(2); }            /* 電壓兩位小數，四捨五入 */
+function v3(v) { return (Math.round(v * 1000 + 1e-9) / 1000).toFixed(3).replace(/0$/, ''); }
+function fmtLux(l) { return l < 10 ? l.toFixed(1) : String(Math.round(l)); }
+function fmtMv(mv) { return mv < 100 ? mv.toFixed(2) + ' mV' : Math.round(mv) + ' mV'; }
+function grp(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function T(x, y, s, cls, anchor, extra) { return '<text x="' + f(x) + '" y="' + f(y) + '" class="' + cls + '"' + (anchor ? ' text-anchor="' + anchor + '"' : '') + (extra || '') + '>' + esc(s) + '</text>'; }
+function Rc(x, y, w, h, cls, extra) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(Math.max(0, w)) + '" height="' + f(h) + '" class="' + cls + '"' + (extra || '') + '/>'; }
+function Ln(x1, y1, x2, y2, cls, extra) { return '<line x1="' + f(x1) + '" y1="' + f(y1) + '" x2="' + f(x2) + '" y2="' + f(y2) + '" class="' + cls + '"' + (extra || '') + '/>'; }
+function Tri(x, y, s, up, cls) { return '<path class="' + cls + '" d="M' + f(x - s) + ',' + f(y) + ' L' + f(x + s) + ',' + f(y) + ' L' + f(x) + ',' + f(up ? y - s * 1.2 : y + s * 1.2) + ' Z"/>'; }
+function pt(cx, cy, r, deg) { var a = deg * Math.PI / 180; return [cx + r * Math.sin(a), cy - r * Math.cos(a)]; }
+function arc(cx, cy, r, d0, d1) {
+  var p0 = pt(cx, cy, r, d0), p1 = pt(cx, cy, r, d1);
+  return 'M' + f(p0[0]) + ',' + f(p0[1]) + ' A' + r + ',' + r + ' 0 ' + ((d1 - d0) > 180 ? 1 : 0) + ' 1 ' + f(p1[0]) + ',' + f(p1[1]);
+}
+function Placer(lo, hi) { this.iv = []; this.lo = lo; this.hi = hi; }
+Placer.prototype.put = function (x0, w) {
+  if (x0 < this.lo - 0.5 || x0 + w > this.hi + 0.5) return false;
+  for (var i = 0; i < this.iv.length; i++) { var a = this.iv[i]; if (x0 < a[1] + 6 && x0 + w > a[0] - 6) return false; }
+  this.iv.push([x0, x0 + w]); return true;
+};
+function setText(id, v) { var e = $(id); if (e && e.textContent !== String(v)) e.textContent = v; }
+function setHtml(id, v) { var e = $(id); if (e && e.innerHTML !== v) e.innerHTML = v; }
+function ref(id) { return '<a class="ref" href="#f-' + id + '">' + id + '</a>'; }
+
+/* ===== 模型（照規格表一算，別另創） ===== */
+function ldrFrac(lux) { var R = RL10 * Math.pow(10 / lux, LDR_EXP); return R / (R + LDR_R); }   /* AO ÷ 3.3 V */
+function inFrac() { return S.source === 'ldr' ? ldrFrac(S.lux) : S.knob; }
+function rawOf(b) { return Math.round(inFrac() * maxOf(b)); }
+function u16Of(raw, b) { if (b >= 8) return ((raw << (16 - b)) | (raw >> (2 * b - 16))) & 0xFFFF; return raw * Math.round(65535 / maxOf(b)); }
+function eyeOf(d) { return d <= 0 ? 0 : Math.pow(d, 1 / EYE); }
+function servoAngle(us) { return clamp((us - SV_MIN) / (SV_MAX - SV_MIN) * 180, 0, 180); }
+function pwmBitsOf(hz) { return Math.min(BITS_CAP, Math.floor(Math.log2(CLK / hz))); }
+function bitsNow() { return S.tab === 'link' ? 12 : S.bits; }
+function darkNow() { return S.tab === 'link' ? S.dark : (S.bits === 12 ? DARK0 : Math.round(DARK0 * maxOf(S.bits) / 4095)); }
+function intervalMs() { return S.tab === 'adc' ? S.interval * 1000 : 500; }
+function measure(b, jit) {
+  var mx = maxOf(b), x = inFrac() * mx;
+  if (!(jit && S.jitter)) return Math.round(x);
+  var sd = JIT * mx / 4095;
+  var one = function () { return clamp(Math.round(x + gauss() * sd), 0, mx); };
+  if (!S.avg16) return one();
+  var tot = 0; for (var i = 0; i < 16; i++) tot += one();
+  return Math.floor(tot / 16);
+}
+
+/* 燈閃的時鐘：照真實時間走；暫停、減少動態時停住；run(ms) 往前推 */
+var CK = { base: 0, stopAt: null, extra: 0 };
+function blinkNow() { var n = performance.now(); return (CK.stopAt !== null ? CK.stopAt : n) - CK.base + CK.extra; }
+function holdClock(stop) {
+  var n = performance.now();
+  if (stop) { if (CK.stopAt === null) CK.stopAt = n; }
+  else if (CK.stopAt !== null) { CK.base += n - CK.stopAt; CK.stopAt = null; }
+}
+function phaseOn(hz, d) { var ph = (blinkNow() / 1000 * hz) % 1; return ph < d; }
+
+/* 腳位上現在是什麼：分頁②看拉桿；分頁③看那一支程式（管線即時算，簡化） */
+function pwmNow() {
+  if (S.tab === 'link') {
+    var raw = rawOf(12);
+    if (S.source === 'ldr') return { freq: null, duty: raw > S.dark ? 1 : 0, raw: raw };
+    if (S.linkMode === 'servo') {
+      var ang = Math.floor(raw * 180 / 4095), us = SV_MIN + (SV_MAX - SV_MIN) * ang / 180;
+      return { freq: 50, duty: us / 20000, pulseUs: us, ang: ang, raw: raw };
+    }
+    var u = raw * 16;
+    return { freq: 1000, duty: u / 65535, u16: u, raw: raw };
+  }
+  var d = S.duty / 100;
+  return { freq: S.freq, duty: d, pulseUs: S.load === 'servo' ? S.servoUs : d * 1e6 / S.freq };
+}
+function servoState() {
+  var e = pwmNow(), period = 1e6 / e.freq;
+  if (e.freq < SV_FLO || e.freq > SV_FHI) return { ok: false, why: 'freq', us: e.pulseUs };
+  if (e.pulseUs > period) return { ok: false, why: 'long', us: e.pulseUs };
+  return { ok: true, us: e.pulseUs, ang: servoAngle(e.pulseUs) };
+}
+function ledOnNow() {
+  if (S.tab === 'link') {
+    if (S.source === 'ldr') return rawOf(12) > S.dark;
+    if (S.linkMode === 'servo') return false;
+    return rawOf(12) * 16 > 0;
+  }
+  if (S.tab === 'adc') return S.source === 'ldr' && !!(P && P.v.red);
+  if (S.load !== 'led') return false;
+  if (S.freq <= BLINK) return phaseOn(S.freq, S.duty / 100);
+  return S.duty > 0;
+}
+
+/* ===== 模擬的程式：一行一行跑，只有 sleep 花時間 ===== */
+var SRC = {}, LN = {};
+function loadSources() {
+  Object.keys(PRE).forEach(function (k) { SRC[k] = $(PRE[k]).textContent.replace(/^\n+/, '').replace(/\n+$/, '').split('\n'); });
+  function fd(k, needle, after) { var a = SRC[k]; for (var i = after || 0; i < a.length; i++) if (a[i].indexOf(needle) >= 0) return i + 1; return 0; }
+  LN.p01 = { imp1: fd('p01', 'from machine'), imp2: fd('p01', 'import time'), adc: fd('p01', 'pot = ADC('), atten: fd('p01', 'pot.atten('), width: fd('p01', 'pot.width('),
+    hdr: fd('p01', "print('旋鈕讀數"), loop: fd('p01', 'while True'), read: fd('p01', 'raw = pot.read()'), u16: fd('p01', 'pot.read_u16()'),
+    volt: fd('p01', 'volt = '), pct: fd('p01', 'pct = '), print: fd('p01', "print('raw'"), sleep: fd('p01', 'time.sleep(') };
+  LN.p02 = { imp1: fd('p02', 'from machine'), imp2: fd('p02', 'import time'), adc: fd('p02', 'ldr = ADC('), atten: fd('p02', 'ldr.atten('), red: fd('p02', 'red = Pin('),
+    dark: fd('p02', 'DARK = '), hdr: fd('p02', "print('小夜燈"), loop: fd('p02', 'while True'), read: fd('p02', 'raw = ldr.read()'), cond: fd('p02', 'if raw > DARK'),
+    on: fd('p02', 'red.value(1)'), st1: fd('p02', "state = '暗'"), els: fd('p02', 'else:'), off: fd('p02', 'red.value(0)'), st0: fd('p02', "state = '亮'"),
+    print: fd('p02', 'print(state'), sleep: fd('p02', 'time.sleep(') };
+  var f2 = fd('p03', 'for d in range(65535');
+  LN.p03 = { imp1: fd('p03', 'from machine'), imp2: fd('p03', 'import time'), pwm: fd('p03', 'led = PWM('), d0: fd('p03', 'led.duty_u16(0)'), step: fd('p03', 'STEP = '),
+    wait: fd('p03', 'WAIT = '), hdr: fd('p03', "print('呼吸燈"), n0: fd('p03', 'n = 0'), loop: fd('p03', 'while True'), for1: fd('p03', 'for d in range(0,'),
+    up: fd('p03', 'led.duty_u16(d)'), w1: fd('p03', 'time.sleep_ms(WAIT)'), max: fd('p03', 'led.duty_u16(65535)'), for2: f2,
+    down: fd('p03', 'led.duty_u16(d)', f2), w2: fd('p03', 'time.sleep_ms(WAIT)', f2), zero: fd('p03', 'led.duty_u16(0)', f2), inc: fd('p03', 'n = n + 1'),
+    print: fd('p03', "print('第'") };
+  LN.p04 = { imp1: fd('p04', 'from machine'), imp2: fd('p04', 'import time'), adc: fd('p04', 'pot = ADC('), atten: fd('p04', 'pot.atten('), pwm: fd('p04', 'led = PWM('),
+    hdr: fd('p04', "print('旋鈕調亮度"), loop: fd('p04', 'while True'), read: fd('p04', 'raw = pot.read()'), mul: fd('p04', 'duty = raw * 16'),
+    set: fd('p04', 'led.duty_u16(duty)'), print: fd('p04', "print('raw'"), sleep: fd('p04', 'time.sleep(') };
+  LN.p05 = { imp1: fd('p05', 'from machine'), imp2: fd('p05', 'import time'), notes: fd('p05', 'NOTES = ['), r0: fd('p05', 'round_no = 0'), loop: fd('p05', 'while True'),
+    pwm: fd('p05', 'buzzer = PWM('), inc: fd('p05', 'round_no = round_no + 1'), p1: fd('p05', "print('第'"), forn: fd('p05', 'for name, freq in NOTES'),
+    freq: fd('p05', 'buzzer.freq(freq)'), on: fd('p05', 'buzzer.duty_u16(32768)'), p2: fd('p05', 'print(name'), s1: fd('p05', 'time.sleep(0.3)'),
+    off: fd('p05', 'buzzer.duty_u16(0)'), s2: fd('p05', 'time.sleep_ms(60)'), deinit: fd('p05', 'buzzer.deinit()'), p3: fd('p05', "print('一輪"), s3: fd('p05', 'time.sleep(2)') };
+  LN.p06 = { imp1: fd('p06', 'from machine'), imp2: fd('p06', 'import time'), adc: fd('p06', 'pot = ADC('), atten: fd('p06', 'pot.atten('), pwm: fd('p06', 'servo = PWM('),
+    min: fd('p06', 'MIN_US = '), max: fd('p06', 'MAX_US = '), def: fd('p06', 'def angle_to_ns'), us: fd('p06', 'us = MIN_US'), ret: fd('p06', 'return int('),
+    hdr: fd('p06', "print('旋鈕轉伺服"), loop: fd('p06', 'while True'), read: fd('p06', 'raw = pot.read()'), ang: fd('p06', 'angle = raw * 180'),
+    call: fd('p06', 'servo.duty_ns('), print: fd('p06', "print('raw'"), sleep: fd('p06', 'time.sleep(') };
+}
+
+var P = null, MX = { lastExec: {}, cur: 0 };        /* MX：分頁②手動（沒有程式在跑）時亮哪一行 */
+function L(l, lab) { return { l: l, d: TINY, lab: lab || '' }; }
+function Z(l, ms, lab, kind) { return { l: l, d: ms, lab: lab || '', sleep: true, kind: kind || '' }; }
+function burstAt() { var st = reduced ? 0 : clamp(P.lastSleep / 9, 3, 45), base = P.burst === 0 ? Math.max(realNow, P.showEnd) : P.base; return { st: st, base: base, at: base + P.burst * st }; }
+function out(s) { var b = burstAt(); P.serial.push({ t: P.t, s: s, at: b.at }); if (P.serial.length > 30) P.serial.shift(); P.n += 1; dirty.serial = true; }
+function gotRead(raw, b) { P.v.raw = raw; P.lastRead = { raw: raw, bits: b, t: P.t }; dirty.adc = true; dirty.link = true; }
+function progDuty(u) { S.duty = u / 65535 * 100; dirty.pwm = true; }
+function progFreq(hz) { S.freq = hz; dirty.pwm = true; }
+
+function* g01() {
+  var N = LN.p01;
+  yield L(N.imp1, '載入 ADC、Pin'); yield L(N.imp2, '載入 time');
+  yield L(N.adc, '設定旋鈕的腳位 34'); yield L(N.atten, '設定輸入範圍檔位'); yield L(N.width, '設定 12 位元');
+  out('旋鈕讀數：raw / read_u16 / 電壓 / 百分比'); yield L(N.hdr, '印字');
+  while (true) {
+    yield L(N.loop, '回到迴圈開頭');
+    var b = S.bits, raw = measure(b, true); gotRead(raw, b); yield L(N.read, '量一次');
+    var u = u16Of(raw, b); yield L(N.u16, '換到 0–65535 的尺');
+    var mx = maxOf(b), volt = VREF * raw / mx; yield L(N.volt, '算電壓');
+    var pct = Math.floor(100 * raw / mx); yield L(N.pct, '算百分比');
+    out('raw ' + raw + '  u16 ' + u + '  電壓 ' + volt.toFixed(2) + ' V  ' + pct + '%'); yield L(N.print, '印字');
+    yield Z(N.sleep, intervalMs(), 'sleep', 'intv');
+  }
+}
+function* g02() {
+  var N = LN.p02;
+  yield L(N.imp1, '載入 ADC、Pin'); yield L(N.imp2, '載入 time');
+  yield L(N.adc, '設定光感測器的腳位 39'); yield L(N.atten, '設定輸入範圍檔位'); yield L(N.red, '設定紅燈的腳位 16');
+  yield L(N.dark, 'DARK＝門檻');
+  out('小夜燈：讀數超過 ' + darkNow() + ' 算暗，紅燈亮'); yield L(N.hdr, '印字');
+  while (true) {
+    yield L(N.loop, '回到迴圈開頭');
+    var b = bitsNow(), raw = measure(b, S.tab === 'adc'); gotRead(raw, b); yield L(N.read, '量一次');
+    var dark = raw > darkNow(); yield L(N.cond, '跟門檻比');
+    if (dark) { P.v.red = 1; dirty.link = true; yield L(N.on, '開紅燈'); yield L(N.st1, '記下「暗」'); }
+    else { yield L(N.els, '不然'); P.v.red = 0; dirty.link = true; yield L(N.off, '關紅燈'); yield L(N.st0, '記下「亮」'); }
+    out((dark ? '暗' : '亮') + '  raw ' + raw); yield L(N.print, '印字');
+    yield Z(N.sleep, intervalMs(), 'sleep', 'intv');
+  }
+}
+function* g03() {
+  var N = LN.p03, n = 0, d;
+  yield L(N.imp1, '載入 Pin、PWM'); yield L(N.imp2, '載入 time');
+  progFreq(1000); yield L(N.pwm, '建 PWM：1000 Hz');
+  progDuty(0); yield L(N.d0, '先關著');
+  yield L(N.step, 'STEP＝1024'); yield L(N.wait, 'WAIT＝15');
+  out('呼吸燈：duty_u16 從 0 到 65535 再回 0'); yield L(N.hdr, '印字');
+  yield L(N.n0, 'n＝0');
+  while (true) {
+    yield L(N.loop, '回到迴圈開頭');
+    for (d = 0; d < 65536; d += 1024) { yield L(N.for1, '漸亮'); progDuty(d); yield L(N.up, 'duty_u16(' + d + ')'); yield Z(N.w1, 15, '等 15 ms'); }
+    progDuty(65535); yield L(N.max, '最亮');
+    for (d = 65535; d > -1; d -= 1024) { yield L(N.for2, '漸暗'); progDuty(d); yield L(N.down, 'duty_u16(' + d + ')'); yield Z(N.w2, 15, '等 15 ms'); }
+    progDuty(0); yield L(N.zero, '關掉');
+    n += 1; yield L(N.inc, 'n 加一');
+    out('第 ' + n + ' 次呼吸完成'); yield L(N.print, '印字');
+  }
+}
+function* g04() {
+  var N = LN.p04;
+  yield L(N.imp1, '載入 ADC、Pin、PWM'); yield L(N.imp2, '載入 time');
+  yield L(N.adc, '設定旋鈕的腳位 34'); yield L(N.atten, '設定輸入範圍檔位'); yield L(N.pwm, '建 PWM：1000 Hz');
+  out('旋鈕調亮度：raw x 16 = duty_u16'); yield L(N.hdr, '印字');
+  while (true) {
+    yield L(N.loop, '回到迴圈開頭');
+    var raw = measure(12, false); gotRead(raw, 12); yield L(N.read, '量一次');
+    var duty = raw * 16; P.v.duty = duty; yield L(N.mul, '乘 16');
+    yield L(N.set, '寫給燈');
+    out('raw ' + raw + '  → duty_u16 ' + duty); yield L(N.print, '印字');
+    yield Z(N.sleep, 200, 'sleep');
+  }
+}
+function* g05() {
+  var N = LN.p05, round = 0, i;
+  yield L(N.imp1, '載入 Pin、PWM'); yield L(N.imp2, '載入 time');
+  yield L(N.notes, '八個音的表'); yield L(N.r0, 'round_no＝0');
+  while (true) {
+    yield L(N.loop, '回到迴圈開頭');
+    progFreq(262); progDuty(0); yield L(N.pwm, '建 PWM，先靜音');
+    round += 1; yield L(N.inc, '輪數加一');
+    out('第 ' + round + ' 輪音階'); yield L(N.p1, '印字');
+    for (i = 0; i < NOTES.length; i++) {
+      yield L(N.forn, '下一個音');
+      progFreq(NOTES[i][1]); yield L(N.freq, '換音高');
+      progDuty(32768); yield L(N.on, '開始響');
+      out(NOTE_PRINT[i] + ' ' + NOTES[i][1] + ' Hz'); yield L(N.p2, '印字');
+      yield Z(N.s1, 300, '響 0.3 秒');
+      progDuty(0); yield L(N.off, '休止');
+      yield Z(N.s2, 60, '停 60 ms');
+    }
+    progDuty(0); yield L(N.deinit, '收掉 PWM');
+    out('一輪吹完，deinit；兩秒後再來'); yield L(N.p3, '印字');
+    yield Z(N.s3, 2000, '等 2 秒');
+  }
+}
+function* g06() {
+  var N = LN.p06;
+  yield L(N.imp1, '載入 ADC、Pin、PWM'); yield L(N.imp2, '載入 time');
+  yield L(N.adc, '設定旋鈕的腳位 34'); yield L(N.atten, '設定輸入範圍檔位'); yield L(N.pwm, '建 PWM：50 Hz');
+  yield L(N.min, '0 度＝544 µs'); yield L(N.max, '180 度＝2400 µs'); yield L(N.def, '定義 angle_to_ns()');
+  out('旋鈕轉伺服：raw → 角度'); yield L(N.hdr, '印字');
+  while (true) {
+    yield L(N.loop, '回到迴圈開頭');
+    var raw = measure(12, false); gotRead(raw, 12); yield L(N.read, '量一次');
+    var ang = Math.floor(raw * 180 / 4095); P.v.ang = ang; yield L(N.ang, '算角度');
+    yield L(N.call, '換成脈衝寬度'); yield L(N.us, '算微秒'); yield L(N.ret, '換成奈秒'); yield L(N.call, '寫給伺服');
+    out('raw ' + raw + '  → 角度 ' + ang); yield L(N.print, '印字');
+    yield Z(N.sleep, 300, 'sleep');
+  }
+}
+var GEN = { p01: g01, p02: g02, p03: g03, p04: g04, p05: g05, p06: g06 };
+
+/* 一瞬間做完的那幾行，畫面上錯開一點點（每行最多 45 ms）一行一行亮，才看得出「量 → 算 → 寫 → 印 → 等」；程式的時間不受影響 */
+function nextOp() {
+  var o = P.gen.next().value; o.a = P.t; o.b = P.t + o.d; P.op = o;
+  if (o.sleep) { P.lastSleep = o.d; P.lastExec[o.l] = Math.max(realNow, P.showEnd); P.burst = 0; return; }
+  var b = burstAt();
+  if (P.burst === 0) P.base = b.base;
+  P.lastExec[o.l] = b.at; P.show.push({ l: o.l, a: b.at, b: b.at + b.st });
+  if (P.show.length > 80) P.show.shift();
+  P.showEnd = b.at + b.st; P.burst += 1;
+}
+function shownLine() {
+  if (!P) return MX.cur;
+  for (var i = P.show.length - 1; i >= 0; i--) { var e = P.show[i]; if (e.a > realNow) continue; if (realNow < e.b) return e.l; break; }
+  return P.op ? P.op.l : 0;
+}
+function collapseShow() {                             /* 驗收快轉之後：不用等畫面慢慢亮完 */
+  if (!P) return;
+  P.show = []; P.showEnd = 0; P.burst = 0;
+  P.serial.forEach(function (r) { if (r.at > realNow) r.at = realNow; });
+  Object.keys(P.lastExec).forEach(function (k) { if (P.lastExec[k] > realNow) P.lastExec[k] = realNow; });
+}
+function advanceTo(tEnd) {
+  var g = 0;
+  while (P && P.op.b <= tEnd && g++ < 400000) { P.t = P.op.b; nextOp(); }
+  if (P && tEnd > P.t) P.t = tEnd;
+}
+function progKey() {
+  if (S.tab === 'adc') return S.source === 'ldr' ? 'p02' : 'p01';
+  if (S.tab === 'link') return S.source === 'ldr' ? 'p02' : (S.linkMode === 'servo' ? 'p06' : 'p04');
+  if (S.auto) return S.load === 'buzzer' ? 'p05' : 'p03';
+  return null;
+}
+function newProg(k) {
+  P = { kind: k, t: 0, gen: GEN[k](), op: null, v: {}, serial: [], n: 0, lastExec: {}, lastRead: null, show: [], showEnd: 0, burst: 0, base: 0, lastSleep: 500 };
+  nextOp();
+  advanceTo(1);                                       /* 開機一下：印出第一行、量第一次 */
+}
+function syncProgram(force) {
+  var k = progKey();
+  if (!force && ((P && P.kind === k) || (!P && !k))) return;
+  if (k) newProg(k); else P = null;
+  buildCode(); if (!P) manualLine(S.lastPwm); markAll();
+}
+
+/* ===== 程式碼區 ===== */
+var CV = { key: null, rows: [null], trail: [''], cur: 0, mk: '' };
+function codeKey() {
+  if (P) return P.kind;
+  if (S.tab === 'pwm') return S.load === 'buzzer' ? 'p05' : (S.load === 'servo' ? 'p06' : 'p03');
+  return 'p01';
+}
+function buildCode() {
+  var k = codeKey(), box = $('codeView');
+  if (k === CV.key) return;
+  CV.key = k;
+  var lines = SRC[k], h = ['<div class="codeinner">'];
+  for (var i = 0; i < lines.length; i++) h.push('<div class="cl" data-line="' + (i + 1) + '"><span class="ln">' + (i + 1) + '</span><span class="tx">' + esc(lines[i]) + '</span></div>');
+  h.push('</div>');
+  box.innerHTML = h.join('');
+  CV.rows = [null]; CV.trail = [''];
+  Array.prototype.forEach.call(box.querySelectorAll('.cl'), function (r) { CV.rows.push(r); CV.trail.push(''); });
+  CV.cur = 0; CV.mk = '';
+  $('codeName').textContent = FILE[k];
+  var top = CV.rows[Math.max(1, (LN[k].loop || 1) - 4)];
+  box.scrollTop = top ? Math.max(0, top.offsetTop - 6) : 0;
+  dirty.note = true;
+}
+function keepVisible(row) {
+  var box = $('codeView'), top = row.offsetTop, h = row.offsetHeight, st = box.scrollTop, bh = box.clientHeight;
+  if (top < st + 6) box.scrollTop = Math.max(0, top - 30);
+  else if (top + h > st + bh - 6) box.scrollTop = top + h - bh + 30;
+}
+function markLines() {
+  var k = CV.key, N = LN[k], m = [];
+  if (!N) return m;
+  if (S.tab === 'adc') {
+    if (S.interval !== 0.5) m.push(N.sleep);
+    if (S.bits !== 12) { if (k === 'p01') m.push(N.width, N.volt, N.pct); else m.push(N.dark); }
+    if (S.attnOpen && S.attn !== '11') m.push(N.atten);
+    if (S.jitter && S.avg16) m.push(N.read);
+  } else if (S.tab === 'link' && k === 'p02' && S.dark !== DARK0) m.push(N.dark);
+  return m;
+}
+function syncCode() {
+  var ex = P ? P.lastExec : MX.lastExec, l = shownLine();
+  if (l !== CV.cur) {
+    if (CV.rows[CV.cur]) CV.rows[CV.cur].classList.remove('on');
+    CV.cur = l;
+    if (CV.rows[l]) { CV.rows[l].classList.add('on'); keepVisible(CV.rows[l]); }
+  }
+  for (var i = 1; i < CV.rows.length; i++) {
+    var le = ex[i], cls = '';
+    if (le !== undefined && realNow >= le) { var age = realNow - le; cls = age < 220 ? 't1' : age < 520 ? 't2' : age < 900 ? 't3' : ''; }
+    if (CV.trail[i] !== cls) {
+      if (CV.trail[i]) CV.rows[i].classList.remove(CV.trail[i]);
+      if (cls) CV.rows[i].classList.add(cls);
+      CV.trail[i] = cls;
+    }
+  }
+  var mk = markLines(), key = mk.join(',');
+  if (key !== CV.mk) {
+    CV.mk = key;
+    for (var j = 1; j < CV.rows.length; j++) CV.rows[j].classList.toggle('mk', mk.indexOf(j) >= 0);
+  }
+}
+function manualLine(which) {
+  var k = codeKey(), N = LN[k], l = 0;
+  if (!N) return;
+  if (k === 'p03') l = which === 'freq' ? N.pwm : N.up;
+  else if (k === 'p05') l = which === 'freq' ? N.freq : N.on;
+  else if (k === 'p06') l = which === 'freq' ? N.pwm : N.call;
+  if (l) { MX.cur = l; MX.lastExec[l] = realNow; }
+}
+
+/* 程式碼下面那一格：這一頁改了程式哪裡、拉桿等於哪一行 */
+function unitCall(v, e) {
+  var d = e.duty, u = S.unit;
+  if (S.load === 'servo' && u === 'pct') u = 'ns';
+  if (u === 'duty') return v + '.duty(' + Math.round(d * 1023) + ')';
+  if (u === 'ns') return v + '.duty_ns(' + Math.round(S.load === 'servo' ? S.servoUs * 1000 : d * 1e9 / e.freq) + ')';
+  return v + '.duty_u16(' + Math.round(d * 65535) + ')';
+}
+function noteHtml() {
+  var k = CV.key, N = LN[k] || {}, o = [];
+  if (S.tab === 'adc') {
+    var sec = S.interval.toFixed(2).replace(/0$/, ''), dk = k === 'p02' ? '；讀數大於 <code>DARK</code>（第 ' + N.dark + ' 行）就開紅燈' : '';
+    if (S.interval !== 0.5) o.push('拉桿把第 ' + N.sleep + ' 行的 0.5 秒換成 <b>' + sec + ' 秒</b>：每 ' + sec + ' 秒才量一次' + dk + '。');
+    else o.push('程式每 <b>0.5 秒</b>量一次（第 ' + N.sleep + ' 行）；兩次之間你轉什麼，它都不知道' + dk + '。');
+    if (S.bits !== 12) {
+      var ex = S.bits < 9 ? '（示意，' + ref('A7') + '）' : '';
+      if (k === 'p01') o.push('切到 <b>' + S.bits + ' 位元</b>' + ex + '：讀值最大 ' + maxOf(S.bits) + '；第 ' + N.width + ' 行要跟著改，第 ' + N.volt + '、' + N.pct + ' 行的 4095 換成 ' + maxOf(S.bits) + '。');
+      else o.push('切到 <b>' + S.bits + ' 位元</b>' + ex + '：門檻 1500 跟著換成 <b>' + darkNow() + '</b>（第 ' + N.dark + ' 行）。');
+    }
+    if (S.attnOpen && S.attn !== '11') o.push('檔位換成 <code>' + ATTN[S.attn].c + '</code>（第 ' + N.atten + ' 行）：真板量得準的只剩 ' + ATTN[S.attn].lo + '–' + ATTN[S.attn].hi + ' mV；Wokwi 讀數不變。');
+    if (S.jitter) o.push('真板會抖（示意）' + (S.avg16 ? '；取 16 次平均＝第 ' + N.read + ' 行改成量 16 次再除以 16。' : '；Wokwi 不抖。'));
+  } else if (S.tab === 'pwm') {
+    if (P) {
+      if (P.kind === 'p03') o.push('程式自己跑：每 15 ms 把 <code>duty_u16</code> 加 1024（第 ' + N.up + '、' + N.w1 + ' 行），64 步到最亮，再 64 步回到 0。');
+      else o.push('程式自己跑：每個音響 0.3 秒（第 ' + N.s1 + ' 行）、休止 60 ms；有按「聽聽看」就聽得到。');
+      o.push('你一動頻率或工作週期的拉桿，就換回自己調。');
+    } else {
+      var e = pwmNow(), v = VAR[S.load];
+      o.push('你的拉桿等於：<code>' + v + '.freq(' + (S.freq < 10 ? numS(S.freq) : Math.round(S.freq)) + ')</code>　<code>' + unitCall(v, e) + '</code>');
+      if (S.load === 'rc') o.push('電阻＋電容這一檔沒有 Wokwi 範例；程式跟燈一樣（03），只是腳位接的東西換了。');
+      else o.push('右邊亮的那一行，就是程式裡做同一件事的地方。');
+    }
+  } else {
+    if (k === 'p04') o.push('一圈：量（第 ' + N.read + ' 行）→ 乘 16（第 ' + N.mul + ' 行）→ 寫給燈（第 ' + N.set + ' 行）→ 印（第 ' + N.print + ' 行）→ 等 0.2 秒（第 ' + N.sleep + ' 行）。');
+    else if (k === 'p02') { o.push('一圈：量（第 ' + N.read + ' 行）→ 跟門檻比（第 ' + N.cond + ' 行）→ 開或關紅燈 → 印 → 等 0.5 秒。'); if (S.dark !== DARK0) o.push('門檻拉桿把第 ' + N.dark + ' 行的 1500 換成 <b>' + S.dark + '</b>。'); }
+    else if (k === 'p06') o.push('一圈：量（第 ' + N.read + ' 行）→ 算角度（第 ' + N.ang + ' 行）→ 換成脈衝寬度、寫給伺服（第 ' + N.call + ' 行）→ 印 → 等 0.3 秒。');
+  }
+  return o.map(function (s) { return '<p>' + s + '</p>'; }).join('');
+}
+function renderNote() { var h = noteHtml(), e = $('codeNote'); if (e.innerHTML === h) return false; e.innerHTML = h; return true; }
+
+/* ===== 序列埠 ===== */
+var NROWS = 6, serialShown = '';
+function visibleSerial() { if (!P) return []; var a = P.serial, j = a.length; while (j > 0 && a[j - 1].at > realNow) j--; return a.slice(0, j); }
+function renderSerial() {
+  var h = [], vis = visibleSerial(), hidden = P ? P.serial.length - vis.length : 0, lastAt = vis.length ? vis[vis.length - 1].at : -1e9, fresh = P && (realNow - lastAt < 450);
+  if (!P) {
+    h.push('<div class="row"><span class="msg idle">沒有程式在跑，序列埠不會印字。拉桿直接改，就等於程式執行亮的那一行。</span></div>');
+    for (var j = 1; j < NROWS; j++) h.push('<div class="row"></div>');
+  } else {
+    var rows = vis.slice(-NROWS);
+    for (var i = 0; i < NROWS; i++) {
+      var r = rows[i], last = (i === rows.length - 1);
+      h.push('<div class="row' + (last && fresh ? ' fresh' : '') + '"><span class="ts">' + (r ? (r.t / 1000).toFixed(3) + ' 秒' : '') + '</span><span class="msg">' + (r ? esc(r.s) : '') + '</span></div>');
+    }
+  }
+  var s = h.join('');
+  if (s !== serialShown) { $('serialRows').innerHTML = s; serialShown = s; }
+  setText('serN', P ? P.n - hidden : 0);
+}
+
+/* ===== ① 輸入：旋鈕或光感測器 ===== */
+function renderSrc() {
+  var o = [];
+  if (S.source === 'pot') {
+    var cx = 75, cy = 80, r = 56, deg = -135 + 270 * S.knob;
+    o.push('<path class="k-track" d="' + arc(cx, cy, r, -135, 135) + '"/>');
+    if (S.knob > 0.004) o.push('<path class="k-val" d="' + arc(cx, cy, r, -135, deg) + '"/>');
+    o.push('<circle class="k-body" cx="' + cx + '" cy="' + cy + '" r="40"/>');
+    var p = pt(cx, cy, 31, deg);
+    o.push(Ln(cx, cy, p[0], p[1], 'k-ptr'));
+    var a = pt(cx, cy, r, -135), b = pt(cx, cy, r, 135);
+    o.push(T(a[0], a[1] + 20, '0%', 'tm', 'middle'));
+    o.push(T(b[0], b[1] + 20, '100%', 'tm', 'middle'));
+    o.push(T(cx, 166, '旋鈕 ' + Math.round(S.knob * 100) + '%', 't13b', 'middle'));
+    o.push(T(cx, 186, 'GPIO34（IO2）', 't12', 'middle'));
+    o.push('<circle class="k-hit" data-hit="1" cx="' + cx + '" cy="' + cy + '" r="' + (r + 10) + '"/>');
+  } else {
+    var s = clamp((Math.log(S.lux) / Math.LN10 + 1) / 6, 0, 1), sr = 9 + 6 * s, op = Math.round((0.18 + 0.82 * s) * 100) / 100;
+    o.push('<g opacity="' + op + '">');
+    for (var i = 0; i < 8; i++) { var q0 = pt(75, 38, sr + 4, i * 45), q1 = pt(75, 38, sr + 7 + 9 * s, i * 45); o.push(Ln(q0[0], q0[1], q1[0], q1[1], 'sunray')); }
+    o.push('<circle class="sun" cx="75" cy="38" r="' + f(sr) + '"/></g>');
+    o.push(Rc(34, 80, 76, 46, 'pcb', ' rx="5"'));
+    o.push('<circle class="ldrcell" cx="58" cy="103" r="13"/>');
+    o.push('<path class="ldrzig" d="M49,99 h6 v4 h-6 v4 h12 v-4 h6 v-4 h-6 v-4 h-6"/>');
+    o.push(Rc(80, 94, 20, 18, 'bz-body', ' rx="2"'));
+    var red = !!(P && P.v.red);
+    if (red) o.push('<circle class="led-glow" cx="130" cy="103" r="15" opacity=".35"/>');
+    o.push('<circle class="led-off" cx="130" cy="103" r="8"/>');
+    if (red) o.push('<circle class="led-on" cx="130" cy="103" r="8"/>');
+    o.push(T(130, 132, '紅燈', 't12', 'middle'));
+    o.push(T(75, 148, '光感測器', 't13b', 'middle'));
+    o.push(T(75, 166, 'GPIO39（IO1）', 't12', 'middle'));
+    o.push(T(75, 186, fmtLux(S.lux) + ' lux', 'tmb', 'middle'));
+  }
+  $('knobSvg').innerHTML = o.join('');
+}
+
+/* ===== ① 電壓尺、格子尺、放大鏡 ===== */
+var RU = { W: 480 };
+function layoutRul() { RU.W = Math.max(240, Math.floor($('rulBox').clientWidth || 480)); }
+function renderRul() {
+  var W = RU.W, x0 = 12, x1 = W - 14, Lw = x1 - x0, b = S.bits, mx = maxOf(b);
+  var fr = inFrac(), volt = fr * VREF, raw = Math.round(fr * mx);
+  var XV = function (v) { return x0 + v / VREF * Lw; };
+  var XR = function (r) { return x0 + r / mx * Lw; };
+  var att = S.attnOpen ? ATTN[S.attn] : null;
+  var yA = 13, yV = 19, yAtt = 46, yB = att ? 62 : 46, yC = yB + 19, yG = yC + 6, yD = yG + 29, yM = yD + 11, yF = yM + 56, yH = yF + 17, H = yH + 7;
+  var o = [], xn = XV(volt);
+  var PA = new Placer(x0, x1), vs = v2(volt) + ' V', vw = tw(vs, 12), vx = clamp(xn - vw / 2, x0, x1 - vw);
+  PA.put(vx, vw); o.push(T(vx, yA, vs, 't12b tpri'));
+  var t1 = '電壓尺 0–3.3 V', t1w = tw(t1, 12);
+  if (PA.put(x0, t1w)) o.push(T(x0, yA, t1, 't12b'));
+  else if (PA.put(x1 - t1w, t1w)) o.push(T(x1, yA, t1, 't12b', 'end'));
+  o.push(Rc(x0, yV, Lw, 12, 'r-bar', ' rx="3"'));
+  if (att) {
+    o.push(Rc(x0, yV, XV(att.lo / 1000) - x0, 12, 'r-bad'));
+    o.push(Rc(XV(att.lo / 1000), yV, XV(att.hi / 1000) - XV(att.lo / 1000), 12, 'r-good'));
+    o.push(Rc(XV(att.hi / 1000), yV, x1 - XV(att.hi / 1000), 12, 'r-bad'));
+    var PT = new Placer(x0, x1), sA = '灰色＝真板在這裡不準（A10）', sB = '綠色＝' + att.lo + '–' + att.hi + ' mV 量得準';
+    if (PT.put(x0, tw(sA, 12))) o.push(T(x0, yAtt, sA, 't12 halo'));
+    if (PT.put(x1 - tw(sB, 12), tw(sB, 12))) o.push(T(x1, yAtt, sB, 't12 tmint halo', 'end'));
+  }
+  for (var v = 0; v <= 3.3001; v += 0.5) o.push(Ln(XV(v), yV + 12, XV(v), yV + 16, 'r-tick'));
+  var PB = new Placer(x0, x1);
+  [[3.3, '3.3 V', 'end'], [0, '0 V', 'start'], [1, '1 V', 'middle'], [2, '2 V', 'middle'], [3, '3 V', 'middle']].forEach(function (q) {
+    var s = q[1], w = tw(s, 12), xx = q[2] === 'end' ? XV(q[0]) - w : (q[2] === 'start' ? XV(q[0]) : XV(q[0]) - w / 2);
+    if (PB.put(xx, w)) o.push(T(xx, yB, s, 'tm'));
+  });
+  /* 指針：電壓尺那一段＋格子尺那一段 */
+  o.push(Ln(xn, yV - 3, xn, yV + 15, 'r-needle'));
+  o.push(Tri(xn, yV - 8, 4.5, false, 'r-head'));
+  o.push(Ln(xn, yV + 16, xn, yG - 2, 'r-needle', ' stroke-dasharray="2 3" opacity=".6"'));
+  /* 格子尺 */
+  var PC = new Placer(x0, x1), cs = '第 ' + raw + ' 格', cw = tw(cs, 12), cx0 = clamp(XR(raw) - cw / 2, x0, x1 - cw);
+  PC.put(cx0, cw); o.push(T(cx0, yC, cs, 't12b tpri halo'));
+  var t2 = '格子尺：' + b + ' 位元，0–' + mx, t2w = tw(t2, 12);
+  if (PC.put(x0, t2w)) o.push(T(x0, yC, t2, 't12b halo'));
+  else if (PC.put(x1 - t2w, t2w)) o.push(T(x1, yC, t2, 't12b halo', 'end'));
+  o.push(Rc(x0, yG, Lw, 12, 'r-bar', ' rx="3"'));
+  if (Lw / mx >= 5) { for (var c = 0; c < mx; c++) o.push(Ln(XR(c + 0.5), yG, XR(c + 0.5), yG + 12, 'r-cell')); }
+  else { var st = Math.pow(2, b - 3); for (var k = 1; k < 8; k++) o.push(Ln(XR(k * st), yG + 2, XR(k * st), yG + 10, 'r-tick')); }
+  var ca = clamp(XR(raw - 0.5), x0, x1), cb = clamp(XR(raw + 0.5), x0, x1);
+  if (cb - ca < 3) { var mid = (ca + cb) / 2; ca = mid - 1.5; cb = mid + 1.5; }
+  o.push(Rc(ca, yG, cb - ca, 12, 'r-cur'));
+  o.push(Ln(xn, yG - 2, xn, yG + 14, 'r-needle'));
+  /* 程式上次讀到（紫色三角） */
+  var lr = null;
+  if (P && P.lastRead && S.tab === 'adc') lr = P.lastRead.bits === b ? P.lastRead.raw : Math.round(P.lastRead.raw * mx / maxOf(P.lastRead.bits));
+  if (lr !== null) o.push(Tri(XR(lr), yG + 20, 5, true, 'r-read'));
+  /* 放大鏡的兩條虛線 */
+  var za = clamp(XR(raw - 6.5), x0, x1), zb = clamp(XR(raw + 6.5), x0, x1);
+  o.push('<path class="r-zoom" d="M' + f(za) + ',' + (yG + 12) + ' L' + x0 + ',' + yM + ' M' + f(zb) + ',' + (yG + 12) + ' L' + x1 + ',' + yM + '"/>');
+  var PD = new Placer(x0, x1), step4 = Math.pow(2, b) / 4;
+  [[mx, 'end'], [0, 'start'], [step4 * 2, 'middle'], [step4, 'middle'], [step4 * 3, 'middle']].forEach(function (q) {
+    var s = String(q[0]), w = tw(s, 12), xx = q[1] === 'end' ? XR(q[0]) - w : (q[1] === 'start' ? XR(q[0]) : XR(q[0]) - w / 2);
+    if (PD.put(xx, w)) o.push(T(xx, yD, s, 'tm halo'));
+  });
+  /* 放大鏡：指針附近 ±6 格 */
+  var cw13 = Lw / 13;
+  o.push(Rc(x0, yM, Lw, 38, 'r-mag', ' rx="5"'));
+  for (var i = 0; i < 13; i++) {
+    var cc = raw - 6 + i, X0 = x0 + i * cw13;
+    if (cc < 0 || cc > mx) o.push(Rc(X0 + 1, yM + 1, cw13 - 2, 36, 'r-none'));
+    else if (cc === raw) o.push(Rc(X0 + 1, yM + 1, cw13 - 2, 36, 'r-cur'));
+    if (i > 0) o.push(Ln(X0, yM + 1, X0, yM + 37, 'r-cell'));
+    if (cc >= 0 && cc <= mx && (cw13 >= 34 || i % 4 === 2)) o.push(T(X0 + cw13 / 2, yM + 31, String(cc), 'tm' + (cc === raw ? ' tpri' : ''), 'middle'));
+  }
+  var xm = x0 + (fr * mx - (raw - 6.5)) / 13 * Lw;
+  o.push(Ln(xm, yM - 2, xm, yM + 18, 'r-needle'));
+  o.push(Tri(xm, yM - 6, 4, false, 'r-head'));
+  if (lr !== null && Math.abs(lr - raw) <= 6) { var xl = x0 + (lr - raw + 6.5) * cw13; o.push(Tri(xl, yM + 46, 5, true, 'r-read')); }
+  var mc = '放大鏡：指針附近 ±6 格，一格約 ' + fmtMv(VREF * 1000 / mx), mc2 = mc + '；旋鈕轉一點點，數字就跳一格';
+  o.push(T(x0, yF, tw(mc2, 12) <= Lw ? mc2 : mc, 't12'));
+  if (lr !== null) {
+    var d = lr - raw, ls = '▲ 紫色＝程式上次讀到 ' + lr + (d === 0 ? '（就是指針這一格）' : '（差 ' + Math.abs(d) + ' 格' + (Math.abs(d) > 6 ? '，在放大鏡外' : '') + '）');
+    o.push(T(x0, yH, ls, 't12 tvio'));
+  }
+  var svg = $('rulSvg');
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('width', W); svg.setAttribute('height', H);
+  svg.innerHTML = o.join('');
+}
+function adcReadouts() {
+  var b = S.bits, raw = rawOf(b);
+  setText('mVolt', v2(inFrac() * VREF));
+  setText('mCell', raw); setText('mCellMax', '／' + maxOf(b));
+  setText('mRead', P && P.lastRead ? P.lastRead.raw : '—');
+  [12, 10, 8, 4].forEach(function (bb) { setText('bv-' + bb, rawOf(bb)); $('br-' + bb).classList.toggle('cur', bb === b); });
+  setText('knobTxt', Math.round(S.knob * 100) + '%');
+  setText('luxTxt', fmtLux(S.lux) + ' lux');
+  $('rngKnob').setAttribute('aria-valuetext', '旋鈕 ' + Math.round(S.knob * 100) + '%，電壓 ' + v2(S.knob * VREF) + ' 伏特，讀值 ' + Math.round(S.knob * maxOf(b)));
+  $('rngLux').setAttribute('aria-valuetext', fmtLux(S.lux) + ' lux，讀值 ' + raw);
+}
+
+/* ===== ② 示波器 ===== */
+function renderScope() {
+  var box = $('scopeBox'), W = Math.max(240, Math.floor((box.clientWidth || 360) - 12)), H = 158;
+  var x0 = 46, x1 = W - 10, Lw = x1 - x0, yHi = 40, yLo = 118, o = [];
+  var e = pwmNow(), hz = e.freq || 1000, d = e.duty, Tms = 1000 / hz, span = 4 * Tms;
+  var X = function (t) { return x0 + t / span * Lw; };
+  var Y = function (v) { return yLo - v / VREF * (yLo - yHi); };
+  for (var k = 0; k <= 4; k++) o.push(Ln(X(k * Tms), yHi - 4, X(k * Tms), yLo + 4, 'sc-grid'));
+  o.push(Ln(x0, yHi, x1, yHi, 'sc-grid')); o.push(Ln(x0, yLo, x1, yLo, 'sc-grid'));
+  o.push(T(x0 - 6, yHi + 4, '3.3 V', 'sc-m', 'end')); o.push(T(x0 - 6, yLo + 4, '0 V', 'sc-m', 'end'));
+  /* 方波 */
+  var p = 'M' + f(x0) + ',' + (d > 0 ? yHi : yLo);
+  if (d > 0 && d < 1) {
+    for (k = 0; k < 4; k++) {
+      var ta = k * Tms, tb = ta + d * Tms, tc = (k + 1) * Tms;
+      p += ' L' + f(X(ta)) + ',' + yHi + ' L' + f(X(tb)) + ',' + yHi + ' L' + f(X(tb)) + ',' + yLo + ' L' + f(X(tc)) + ',' + yLo + (k < 3 ? ' L' + f(X(tc)) + ',' + yHi : '');
+    }
+  } else p += ' L' + f(x1) + ',' + (d > 0 ? yHi : yLo);
+  o.push('<path class="sc-wave" d="' + p + '"/>');
+  /* 電阻＋電容磨平的線（示意：時間常數取 3 個週期） */
+  var rcOn = S.tab === 'pwm' && S.load === 'rc';
+  if (rcOn) {
+    var tau = 3 * Tms, q = '';
+    if (d <= 0 || d >= 1) q = 'M' + f(x0) + ',' + f(Y(d * VREF)) + ' L' + f(x1) + ',' + f(Y(d * VREF));
+    else {
+      var aa = Math.exp(-d * Tms / tau), bb = Math.exp(-(1 - d) * Tms / tau), vmax = VREF * (1 - aa) / (1 - aa * bb), vmin = vmax * bb;
+      for (k = 0; k < 4; k++) for (var j = 0; j <= 24; j++) {
+        var tt = j / 24 * Tms, vv = tt <= d * Tms ? VREF + (vmin - VREF) * Math.exp(-tt / tau) : vmax * Math.exp(-(tt - d * Tms) / tau);
+        q += (q ? ' L' : 'M') + f(X(k * Tms + tt)) + ',' + f(Y(vv));
+      }
+    }
+    o.push('<path class="sc-rc" d="' + q + '"/>');
+  }
+  /* 平均電壓 */
+  var ya = Y(d * VREF);
+  o.push(Ln(x0, ya, x1, ya, 'sc-avg'));
+  var as = '平均 ' + v3(d * VREF) + ' V';
+  o.push(T(x1 - 2, d > 0.82 ? ya + 15 : ya - 5, as, 'sc-tb sc-y sc-halo', 'end'));
+  /* 上面：開的時間；下面：一個週期 */
+  var top = S.load === 'servo' && S.tab === 'pwm' ? '脈衝寬度 ' + fmtT(e.pulseUs / 1000) : (d <= 0 ? '一直關' : (d >= 1 ? '一直開' : '開的時間 ' + fmtT(d * Tms)));
+  o.push(T(x0, 15, top, 'sc-tb'));
+  if (d > 0 && d < 1 && X(d * Tms) - x0 >= 8) {
+    var xb = X(d * Tms);
+    o.push('<path class="sc-br" d="M' + f(x0) + ',' + 22 + ' V30 M' + f(x0) + ',26 H' + f(xb) + ' M' + f(xb) + ',22 V30"/>');
+  }
+  o.push('<path class="sc-br" d="M' + f(x0) + ',' + (yLo + 8) + ' V' + (yLo + 16) + ' M' + f(x0) + ',' + (yLo + 12) + ' H' + f(X(Tms)) + ' M' + f(X(Tms)) + ',' + (yLo + 8) + ' V' + (yLo + 16) + '"/>');
+  var PB = new Placer(x0 - 40, x1 + 8), ps = '一個週期 ' + fmtT(Tms);
+  PB.put(x0, tw(ps, 12)); o.push(T(x0, yLo + 32, ps, 'sc-t'));
+  var ks = '4 個週期 ' + fmtT(span), kw = tw(ks, 12); if (PB.put(x1 - kw, kw)) o.push(T(x1, yLo + 32, ks, 'sc-m', 'end'));
+  /* 播放頭：慢動作，或 2 Hz 以下照真實速度 */
+  var tp = span >= SWEEP ? blinkNow() % span : (blinkNow() % SWEEP) / SWEEP * span, on = (tp % Tms) < d * Tms, xp = X(tp);
+  o.push(Ln(xp, yHi - 6, xp, yLo + 6, 'sc-play'));
+  o.push('<circle class="sc-dot" cx="' + f(xp) + '" cy="' + (on ? yHi : yLo) + '" r="4"/>');
+  var ns = '此刻：' + (on ? '開' : '關');
+  o.push(T(x1, 15, ns, 'sc-tb ' + (on ? 'sc-g' : 'sc-o'), 'end'));
+  var svg = $('scopeSvg');
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('width', W); svg.setAttribute('height', H);
+  svg.innerHTML = o.join('');
+  var cap = span >= SWEEP ? '真實速度：這 4 個週期花 <b>' + fmtT(span) + '</b>。' : '慢動作：畫面上 2 秒走完這 4 個週期；真實速度下只花 <b>' + fmtT(span) + '</b>。';
+  cap += ' 黃色虛線＝平均電壓＝工作週期 × 3.3 V。';
+  if (rcOn) cap += ' 橘線＝電阻＋電容後的電壓（示意）。';
+  setHtml('scopeCap', cap);
+}
+
+/* ===== ② 負載：燈、蜂鳴器、伺服、電阻＋電容 ===== */
+var loadShown = '';
+function ledSvg(bright, glowOnly) {
+  var o = [];
+  if (bright > 0.01) o.push('<circle class="led-glow" cx="52" cy="46" r="40" opacity="' + f(bright * 5.5) / 10 + '"/>');
+  var body = 'M36,76 V36 A16,16 0 0 1 68,36 V76 Z';
+  o.push('<path class="led-off" d="' + body + '"/>');
+  if (bright > 0.01) o.push('<path class="led-on" d="' + body + '" opacity="' + f(bright * 10) / 10 + '"/>');
+  o.push(Rc(32, 76, 40, 6, 'led-off', ' rx="2"'));
+  o.push(Ln(45, 82, 45, 104, 'leg')); o.push(Ln(59, 82, 59, 100, 'leg'));
+  if (!glowOnly) o.push(T(52, 116, '紅燈 GPIO16', 't12', 'middle'));
+  return o.join('');
+}
+function renderLoad() {
+  var e = pwmNow(), d = e.duty, o = [], key;
+  if (S.load === 'led') {
+    var blink = S.freq <= BLINK, bright = blink ? (phaseOn(S.freq, d) ? 1 : 0) : (S.eye ? eyeOf(d) : d);
+    o.push(ledSvg(bright));
+    var cx0 = 140, cx1 = 248, cy0 = 14, cy1 = 90, cw = cx1 - cx0, ch = cy1 - cy0;
+    o.push('<path class="c-axis" d="M' + cx0 + ',' + cy0 + ' V' + cy1 + ' H' + cx1 + '"/>');
+    o.push('<path class="c-lin" d="M' + cx0 + ',' + cy1 + ' L' + cx1 + ',' + cy0 + '"/>');
+    var cp = '';
+    for (var i = 0; i <= 40; i++) { var xx = i / 40; cp += (i ? ' L' : 'M') + f(cx0 + xx * cw) + ',' + f(cy1 - eyeOf(xx) * ch); }
+    o.push('<path class="c-eye" d="' + cp + '"/>');
+    o.push('<circle class="c-dot" cx="' + f(cx0 + d * cw) + '" cy="' + f(cy1 - (S.eye ? eyeOf(d) : d) * ch) + '" r="4.5"/>');
+    o.push(T(cx0 + 4, cy0 + 2, '亮度', 't12', 'start'));
+    o.push(T(cx1, cy1 + 16, '工作週期 →', 't12', 'end'));
+    key = 'led|' + o.length + '|' + o.join('');
+    var lt;
+    if (blink) lt = '一秒閃 ' + (S.freq < 10 ? numS(S.freq) : Math.round(S.freq)) + ' 次：真的在閃（開 ' + fmtT(d * 1000 / S.freq) + '、關 ' + fmtT((1 - d) * 1000 / S.freq) + '）。';
+    else if (S.freq < FL_LO) lt = '螢幕畫不出這麼快的閃，這裡改畫平均亮度；真的燈在這個頻率，眼睛可能還看得到閃（' + ref('E1') + '）。';
+    else if (S.freq < FL_HI) lt = '在眼睛跟得上、跟不上的交界（大約 48–60 Hz，' + ref('E1') + '），這裡畫平均亮度。';
+    else lt = '眼睛大約 48–60 Hz 以上就跟不上了（' + ref('E1') + '），只看到平均亮度。';
+    var bt = S.eye ? '眼睛看到的亮度 <b>' + eyeOf(d).toFixed(2) + '</b>：光量只有 ' + d.toFixed(2) + '，看起來卻亮得多（紅線，' + ref('E2') + '；Wokwi 的燈也照這條畫，' + ref('W4') + '）。'
+      : '亮度 <b>' + d.toFixed(2) + '</b>：跟開的時間成正比（虛線）。打開「眼睛看到的」看紅線。';
+    setHtml('ledTxt', lt + '<br>' + bt);
+    if (key !== loadShown) { $('ledSvg').innerHTML = o.join(''); loadShown = key; }
+  } else if (S.load === 'buzzer') {
+    var nm = noteName(S.freq), playing = AU.on && audible();
+    o.push('<circle class="bz-body" cx="42" cy="42" r="30"/><circle class="bz-hole" cx="42" cy="42" r="5"/>');
+    o.push(T(42, 20, '+', 'tmb', 'middle', ' fill="#FFF"'));
+    if (playing) { var ph = (blinkNow() / 180) % 1; for (var w = 0; w < 3; w++) { var rr = 14 + ((w + ph) % 3) * 9; o.push('<path class="bz-wave" opacity="' + f((1 - ((w + ph) % 3) / 3) * 10) / 10 + '" d="' + arcR(42, 42, 30 + rr) + '"/>'); } }
+    o.push(T(120, 36, nm || fmtHz(S.freq), 'tbig', 'start'));
+    o.push(T(120, 58, nm ? fmtHz(S.freq) : '不在 05 的音階表上', 't12', 'start'));
+    o.push(T(120, 78, '蜂鳴器 GPIO14', 't12', 'start'));
+    key = 'bz|' + o.join('');
+    if (key !== loadShown) { $('bzSvg').innerHTML = o.join(''); loadShown = key; }
+    Array.prototype.forEach.call($('keys').children, function (btn, k) { btn.setAttribute('aria-pressed', Math.abs(S.freq - NOTES[k][1]) < 0.5 ? 'true' : 'false'); });
+  } else if (S.load === 'servo') {
+    var ss = servoState(), ang = ss.ok ? ss.ang : servoAngle(ss.us), cx = 130, cy = 92, R = 66;
+    o.push('<g class="' + (ss.ok ? '' : 'sv-grey') + '">');
+    o.push('<path class="sv-dial" d="' + arc(cx, cy, R, -90, 90) + '"/>');
+    [0, 45, 90, 135, 180].forEach(function (a) { var p0 = pt(cx, cy, R - 8, a - 90), p1 = pt(cx, cy, R + 4, a - 90); o.push(Ln(p0[0], p0[1], p1[0], p1[1], 'sv-tick')); });
+    o.push(T(cx - R - 6, cy + 4, '0°', 'tm', 'end')); o.push(T(cx + R + 6, cy + 4, '180°', 'tm', 'start')); o.push(T(cx, cy - R - 8, '90°', 'tm', 'middle'));
+    o.push(Rc(cx - 34, cy + 2, 68, 22, 'sv-body', ' rx="3"'));
+    var tip = pt(cx, cy, R - 12, ang - 90);
+    o.push(Ln(cx, cy, tip[0], tip[1], 'sv-arm'));
+    o.push('<circle class="sv-hub" cx="' + cx + '" cy="' + cy + '" r="8"/></g>');
+    o.push(T(8, 20, ss.ok ? Math.round(ang) + '°' : '？', 'tbig', 'start'));
+    o.push(T(8, 112, 'GPIO27', 't12', 'start'));
+    key = 'sv|' + o.join('');
+    if (key !== loadShown) { $('svSvg').innerHTML = o.join(''); loadShown = key; }
+    var st = '伺服看的是<b>脈衝有多寬</b>，不是工作週期幾 %：' + fmtT(ss.us / 1000) + ' → ' + (ss.ok ? Math.round(ang) + '°' : '？') + '（544 µs＝0°、2400 µs＝180°，' + ref('W5') + '）。';
+    if (!ss.ok && ss.why === 'freq') st += '<br><b>超出伺服常見的 40–400 Hz</b>，擺臂變灰。';
+    else if (!ss.ok) st += '<br><b>脈衝比週期還長，伺服看不懂。</b>';
+    else st += '<br>頻率 ' + fmtHz(S.freq) + ' 在常見的 40–400 Hz 內，角度只看脈衝寬度；換頻率時這一頁讓脈衝寬度不變。';
+    setHtml('servoTxt', st);
+  } else {
+    o.push(T(6, 30, 'GPIO16', 'tmb', 'start'));
+    o.push('<path class="rc-wire" d="M58,26 H92 M136,26 H176 M176,26 V40 M176,56 V70 M164,70 H188 M168,75 H184 M172,80 H180"/>');
+    o.push(Rc(92, 18, 44, 16, 'rc-part', ' rx="3"'));
+    o.push(Ln(164, 41, 188, 41, 'rc-plate')); o.push(Ln(164, 55, 188, 55, 'rc-plate'));
+    o.push('<circle class="rc-dot" cx="176" cy="26" r="5"/>');
+    o.push(T(114, 50, '電阻', 't12', 'middle')); o.push(T(194, 52, '電容', 't12', 'start'));
+    o.push(T(186, 20, '量這裡', 't12b', 'start')); o.push(T(196, 80, '接地', 't12', 'start'));
+    key = 'rc|' + o.join('');
+    if (key !== loadShown) { $('rcSvg').innerHTML = o.join(''); loadShown = key; }
+    setHtml('rcTxt', '磨平後大約 <b>' + v3(d * VREF) + ' V</b>（就是平均電壓），上面還有一點上下起伏；起伏多大要看電阻、電容，這裡是示意。');
+  }
+}
+function arcR(cx, cy, r) { var p0 = pt(cx, cy, r, 55), p1 = pt(cx, cy, r, 125); return 'M' + f(p0[0]) + ',' + f(p0[1]) + ' A' + r + ',' + r + ' 0 0 1 ' + f(p1[0]) + ',' + f(p1[1]); }
+function noteName(hz) { for (var i = 0; i < NOTES.length; i++) if (Math.abs(hz - NOTES[i][1]) / NOTES[i][1] < 0.03) return NOTES[i][0]; return ''; }
+
+function pwmReadouts() {
+  var e = pwmNow(), d = e.duty, hz = S.freq, bits = pwmBitsOf(hz);
+  setText('freqTxt', fmtHz(hz));
+  setText('pwmBitsTxt', '現在最多 ' + bits + ' 位元');
+  setText('dutyTxt', S.duty.toFixed(1) + '%');
+  setText('uv-pct', S.duty.toFixed(1));
+  setText('uv-duty', Math.round(d * 1023));
+  setText('uv-u16', Math.round(d * 65535));
+  setText('uv-ns', Math.round(d * 1e9 / hz));
+  ['pct', 'duty', 'u16', 'ns'].forEach(function (u) { $('un-' + u).classList.toggle('cur', u === S.unit); });
+  var fm;
+  if (S.unit === 'duty') fm = '<code>duty</code>＝工作週期 × 1023＝' + d.toFixed(3) + ' × 1023 ≈ <b>' + Math.round(d * 1023) + '</b>（ESP32 專用，0–1023，' + ref('P3') + '）';
+  else if (S.unit === 'u16') fm = '<code>duty_u16</code>＝工作週期 × 65535＝' + d.toFixed(3) + ' × 65535 ≈ <b>' + Math.round(d * 65535) + '</b>（0–65535，' + ref('P3') + '）';
+  else if (S.unit === 'ns') fm = '<code>duty_ns</code>＝開的時間（奈秒）＝工作週期 × 1,000,000,000 ÷ 頻率 ≈ <b>' + grp(Math.round(d * 1e9 / hz)) + '</b>（' + ref('P3') + '）';
+  else fm = '工作週期 ' + S.duty.toFixed(1) + '%＝一個週期裡，開的時間佔 ' + S.duty.toFixed(1) + '%；平均電壓＝' + S.duty.toFixed(1) + '% × 3.3 V＝<b>' + v3(d * VREF) + ' V</b>。';
+  setHtml('unitFormula', fm);
+  var fv = Math.round(Math.log(hz) / Math.log(F_MAX) * 1000), fe = $('rngFreq');
+  if (Math.abs(+fe.value - fv) >= 1.5) fe.value = String(fv);
+  var de = $('rngDuty'); if (Math.abs(+de.value - S.duty) >= 0.1) de.value = String(Math.round(S.duty * 10) / 10);
+  fe.setAttribute('aria-valuetext', fmtHz(hz) + '，最多 ' + bits + ' 位元');
+  de.setAttribute('aria-valuetext', '工作週期 ' + S.duty.toFixed(1) + '%');
+  var pe = $('rngPulse'); if (Math.abs(+pe.value - S.servoUs) >= 5) pe.value = String(Math.round(S.servoUs));
+  setText('pulseTxt', (S.servoUs / 1000).toFixed(2) + ' ms');
+  pe.setAttribute('aria-valuetext', '脈衝寬度 ' + (S.servoUs / 1000).toFixed(2) + ' 毫秒');
+  setText('resNow', fmtHz(hz) + ' → ' + grp(Math.round(CLK / hz)) + ' 格 → ' + bits + ' 位元');
+  ['1k', '5k', '10k'].forEach(function (id, i) { $('rb-' + id).classList.toggle('cur', Math.abs(hz - [1000, 5000, 10000][i]) < 0.5); });
+  Array.prototype.forEach.call(document.querySelectorAll('#freqChips .chip'), function (c) { c.setAttribute('aria-pressed', Math.abs(+c.getAttribute('data-f') - hz) < 0.01 ? 'true' : 'false'); });
+  $('btnAuto').setAttribute('aria-pressed', S.auto ? 'true' : 'false');
+  $('btnAuto').textContent = S.load === 'buzzer' ? '讓程式自己跑：05 吹音階' : '讓程式自己跑：03 呼吸燈';
+  $('autoRow').hidden = !(S.load === 'led' || S.load === 'buzzer');
+  $('rcNote').hidden = S.load !== 'rc';
+  dirty.note = true;
+}
+
+/* ===== ③ 管線圖 ===== */
+var PIPE = { W: 600, shown: '' }, pipeDrag = null;
+function layoutPipe() { PIPE.W = Math.max(260, Math.floor(($('pipeBox').clientWidth || 600) - 12)); }
+function pipeNodes() {
+  var raw = rawOf(12), volt = inFrac() * VREF, e = pwmNow(), N = P ? LN[P.kind] : {}, ex = P ? P.lastExec : {};
+  var hw = P ? Math.max(80, 2.5 * clamp(P.lastSleep / 9, 3, 45)) : 0;
+  var hot = function (a, b) { return [a, b].some(function (l) { return l && ex[l] !== undefined && realNow >= ex[l] && realNow - ex[l] < hw; }); };
+  if (S.source === 'ldr') {
+    var on = raw > S.dark;
+    return [
+      { t: '光', v: fmtLux(S.lux) + ' lux', s: 'GPIO39', icon: 'sun' },
+      { t: '電壓', v: v2(volt) + ' V', s: '暗＝電壓高' },
+      { t: '讀值', v: String(raw), s: 'ldr.read()', hot: hot(N.read) },
+      { t: '比門檻', v: '> ' + S.dark + '？', s: on ? '是：暗' : '不是：亮', hot: hot(N.cond) },
+      { t: '寫腳位', v: 'value(' + (on ? 1 : 0) + ')', s: 'red', hot: hot(N.on, N.off) },
+      { t: '紅燈', v: on ? '開' : '關', s: 'GPIO16', icon: 'led', b: on ? 1 : 0, hot: hot(N.on, N.off) }
+    ];
+  }
+  if (S.linkMode === 'servo') {
+    return [
+      { t: '旋鈕', v: Math.round(S.knob * 100) + '%', s: 'GPIO34', icon: 'knob' },
+      { t: '電壓', v: v2(volt) + ' V', s: '0–3.3 V' },
+      { t: '讀值', v: String(raw), s: '0–4095', hot: hot(N.read) },
+      { t: '角度', v: e.ang + '°', s: '× 180 ÷ 4095', hot: hot(N.ang) },
+      { t: '脈衝寬度', v: Math.round(e.pulseUs) + ' µs', s: 'duty_ns()', hot: hot(N.call, N.us) },
+      { t: '伺服', v: Math.round(servoAngle(e.pulseUs)) + '°', s: 'GPIO27', icon: 'servo', a: servoAngle(e.pulseUs), hot: hot(N.call) }
+    ];
+  }
+  return [
+    { t: '旋鈕', v: Math.round(S.knob * 100) + '%', s: 'GPIO34', icon: 'knob' },
+    { t: '電壓', v: v2(volt) + ' V', s: '0–3.3 V' },
+    { t: '讀值', v: String(raw), s: '0–4095', hot: hot(N.read) },
+    { t: '換算', v: '× 16', s: 'raw * 16', hot: hot(N.mul) },
+    { t: 'duty_u16', v: String(raw * 16), s: '0–65535', hot: hot(N.set) },
+    { t: '燈', v: '亮度 ' + eyeOf(e.duty).toFixed(2), s: 'GPIO16', icon: 'led', b: eyeOf(e.duty), hot: hot(N.set) }
+  ];
+}
+function renderPipe() {
+  var nodes = pipeNodes(), W = PIPE.W, o = [], H, key = W + '|' + JSON.stringify(nodes);
+  if (key === PIPE.shown) return;
+  PIPE.shown = key;
+  var narrow = W < 600;
+  if (!narrow) {
+    var gap = 16, bw = (W - 8 - gap * 5) / 6, bh = 118, y = 4; H = bh + 8;
+    nodes.forEach(function (n, i) {
+      var x = 4 + i * (bw + gap), cx = x + bw / 2;
+      o.push(Rc(x, y, bw, bh, 'p-box' + (n.hot ? ' hot' : ''), ' rx="8"'));
+      o.push(T(cx, y + 18, n.t, n.t === 'duty_u16' ? 'tmb' : 't12b', 'middle'));
+      if (n.icon) o.push(pipeIcon(n, cx, y + 50));
+      o.push(T(cx, y + (n.icon ? 90 : 60), n.v, n.icon ? 'tmb tpri' : 'tbig tpri', 'middle'));
+      o.push(T(cx, y + (n.icon ? 108 : 84), n.s, /[A-Za-z_(]/.test(n.s) ? 'tm' : 't12', 'middle'));
+      if (i < 5) { var ax = x + bw + 2, ay = y + bh / 2; o.push(Ln(ax, ay, ax + gap - 6, ay, 'p-arrow')); o.push('<path class="p-ah" d="M' + f(ax + gap - 2) + ',' + ay + ' l-6,-4 v8 z"/>'); }
+    });
+  } else {
+    var rh = 46, rg = 14; H = 6 * rh + 5 * rg + 8;
+    nodes.forEach(function (n, i) {
+      var y2 = 4 + i * (rh + rg);
+      o.push(Rc(4, y2, W - 8, rh, 'p-box' + (n.hot ? ' hot' : ''), ' rx="8"'));
+      o.push(T(14, y2 + 20, n.t, n.t === 'duty_u16' ? 'tmb' : 't12b', 'start'));
+      o.push(T(14, y2 + 38, n.s, /[A-Za-z_(]/.test(n.s) ? 'tm' : 't12', 'start'));
+      if (n.icon) o.push(pipeIcon(n, W - 28, y2 + rh / 2, true));
+      o.push(T(W - (n.icon ? 52 : 14), y2 + 29, n.v, 'tbig tpri', 'end'));
+      if (i < 5) { var ax2 = W / 2, ay2 = y2 + rh + 2; o.push(Ln(ax2, ay2, ax2, ay2 + rg - 6, 'p-arrow')); o.push('<path class="p-ah" d="M' + ax2 + ',' + f(ay2 + rg - 1) + ' l-4,-6 h8 z"/>'); }
+    });
+  }
+  var svg = $('pipeSvg');
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('width', W); svg.setAttribute('height', H);
+  svg.innerHTML = o.join('');
+}
+function pipeIcon(n, cx, cy, small) {
+  var o = [], r = small ? 12 : 17;
+  if (n.icon === 'knob') {
+    var deg = -135 + 270 * S.knob, p = pt(cx, cy, r * 0.7, deg);
+    o.push('<path class="k-track" d="' + arc(cx, cy, r + 5, -135, 135) + '" style="stroke-width:4"/>');
+    if (S.knob > 0.004) o.push('<path class="k-val" d="' + arc(cx, cy, r + 5, -135, deg) + '" style="stroke-width:4"/>');
+    o.push('<circle class="k-body" cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + r + '"/>');
+    o.push(Ln(cx, cy, p[0], p[1], 'k-ptr', ' style="stroke-width:3"'));
+    o.push('<circle class="k-hit" data-drag="1" cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + (r + 10) + '"/>');
+  } else if (n.icon === 'sun') {
+    var s = clamp((Math.log(S.lux) / Math.LN10 + 1) / 6, 0, 1);
+    o.push('<circle class="sun" cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(r * (0.55 + 0.45 * s)) + '" opacity="' + f(2 + 8 * s) / 10 + '"/>');
+  } else if (n.icon === 'led') {
+    if (n.b > 0.01) o.push('<circle class="led-glow" cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + (r + 9) + '" opacity="' + f(n.b * 4.5) / 10 + '"/>');
+    o.push('<circle class="led-off" cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + (r * 0.7) + '"/>');
+    if (n.b > 0.01) o.push('<circle class="led-on" cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + (r * 0.7) + '" opacity="' + f(n.b * 10) / 10 + '"/>');
+  } else if (n.icon === 'servo') {
+    var tip = pt(cx, cy + r * 0.4, r + 4, n.a - 90);
+    o.push('<path class="sv-dial" d="' + arc(cx, cy + r * 0.4, r + 4, -90, 90) + '" style="stroke-width:3"/>');
+    o.push(Ln(cx, cy + r * 0.4, tip[0], tip[1], 'sv-arm', ' style="stroke-width:4"'));
+    o.push('<circle class="sv-hub" cx="' + f(cx) + '" cy="' + f(cy + r * 0.4) + '" r="4"/>');
+  }
+  return o.join('');
+}
+function linkReadouts() {
+  var night = S.source === 'ldr', servo = !night && S.linkMode === 'servo';
+  $('rowKnob2').hidden = night; $('rowLux2').hidden = !night; $('rowDark').hidden = !night;
+  setText('knob2Txt', Math.round(S.knob * 100) + '%'); setText('lux2Txt', fmtLux(S.lux) + ' lux'); setText('darkTxt', S.dark);
+  $('rngKnob2').setAttribute('aria-valuetext', '旋鈕 ' + Math.round(S.knob * 100) + '%，讀值 ' + Math.round(S.knob * 4095));
+  $('rngDark').setAttribute('aria-valuetext', '門檻 ' + S.dark);
+  var mode = night ? 'night' : (servo ? 'servo' : 'knob');
+  Array.prototype.forEach.call($('segLink').children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-link') === mode ? 'true' : 'false'); });
+  setText('caption', CAPTION[mode]);
+  if (mode === 'knob') {
+    setHtml('linkLead', '把①和②接起來：程式量一次旋鈕、換算一下、再寫給燈。04 只比 01 多一行換算：讀進來的尺是 0–4095，送出去的尺是 0–65535。');
+    setHtml('linkNote', '<b>4095 × 16 ＝ 65520，不是 65535。</b>差的那 15 沒人看得出來；真要滿刻度就寫 <code>raw * 65535 // 4095</code>。');
+    setHtml('linkWhen', '<b>燈跟著變：</b>04 每 0.2 秒量一次、寫一次；管線上的數字即時跟著旋鈕走，是簡化。燈照「眼睛看到的」曲線畫，跟 Wokwi 一樣：讀值一半時亮度 0.78（' + ref('W4') + '）。');
+  } else if (mode === 'night') {
+    setHtml('linkLead', '02 把讀數跟門檻比：比門檻大（暗）就開紅燈，不然就關。這裡的燈只有開、關，用的是 <code>red.value()</code>，沒有用 PWM。');
+    setHtml('linkNote', '<b>暗＝讀數大。</b>光感測器模組是光敏電阻串一顆 10 kΩ 分壓：愈暗，光敏電阻愈大，電壓愈高（' + ref('W3') + '）。02 的門檻 1500 落在 100 lux（讀 2045）和 400 lux（讀 1123）中間。');
+    setHtml('linkWhen', '<b>門檻拉桿：</b>拉高＝要更暗才開燈；拉低＝稍微暗一點就開。這裡跟 02 一樣，用 12 位元的讀值比。');
+  } else {
+    setHtml('linkLead', '06 把旋鈕讀數換成角度，再換成脈衝寬度：伺服馬達看的是脈衝有多寬。');
+    setHtml('linkNote', '<b>兩次換算：</b>角度＝<code>raw * 180 // 4095</code>；脈衝寬度＝544 ＋ (2400 − 544) × 角度 ÷ 180 微秒，再乘 1000 變奈秒交給 <code>duty_ns()</code>。');
+    setHtml('linkWhen', '<b>伺服看脈衝寬度：</b>544 µs＝0°、2400 µs＝180°（' + ref('W5') + '）。06 每 0.3 秒量一次旋鈕；伺服的 V+ 接 5 V。');
+  }
+}
+
+/* ===== 聲音：按了「聽聽看」才建立；音量很小；沒有 Web Audio 就靜靜不出聲 ===== */
+var HI_TONE = 16000;                                 /* 這一頁出聲的上限（再高就不出聲） */
+var AU = { ctx: null, osc: null, gain: null, on: false, f: -1, d: -1, ok: !!(window.AudioContext || window.webkitAudioContext) };
+function audible() { var e = pwmNow(); return S.tab === 'pwm' && S.load === 'buzzer' && e.duty > 0.001 && e.duty < 0.999 && S.freq <= HI_TONE; }
+function toneStart() {
+  if (!AU.ok) return;
+  try {
+    if (!AU.ctx) { var C = window.AudioContext || window.webkitAudioContext; AU.ctx = new C(); }
+    if (AU.ctx.state === 'suspended' && AU.ctx.resume) AU.ctx.resume();
+    AU.gain = AU.ctx.createGain(); AU.gain.gain.value = 0; AU.gain.connect(AU.ctx.destination);
+    AU.osc = AU.ctx.createOscillator(); AU.osc.connect(AU.gain); AU.f = AU.d = -1;
+    AU.on = true; toneUpdate(); AU.osc.start();
+  } catch (e) { AU.ok = false; toneStop(); }
+  toneUi();
+}
+function toneStop() {
+  try { if (AU.osc) { AU.osc.stop(); AU.osc.disconnect(); } if (AU.gain) AU.gain.disconnect(); } catch (e) {}
+  AU.osc = AU.gain = null; AU.on = false; toneUi();
+}
+function toneUpdate() {
+  if (!AU.on || !AU.osc || !AU.ctx) return;
+  try {
+    var e = pwmNow(), d = Math.round(e.duty * 200) / 200, now = AU.ctx.currentTime, ok = audible();
+    if (ok && Math.abs(S.freq - AU.f) > 0.01) { AU.osc.frequency.setTargetAtTime(S.freq, now, 0.004); AU.f = S.freq; }
+    if (ok && d !== AU.d) {
+      var n = 48, re = new Float32Array(n), im = new Float32Array(n);
+      for (var k = 1; k < n; k++) re[k] = 2 / (k * Math.PI) * Math.sin(k * Math.PI * d);
+      AU.osc.setPeriodicWave(AU.ctx.createPeriodicWave(re, im)); AU.d = d;
+    }
+    AU.gain.gain.setTargetAtTime(ok ? 0.06 : 0, now, 0.01);
+  } catch (err) {}
+}
+function toneUi() {
+  var b = $('btnTone');
+  if (!AU.ok) { b.disabled = true; b.textContent = '這個瀏覽器不能出聲'; setText('toneTxt', ''); return; }
+  b.textContent = AU.on ? '停' : '聽聽看';
+  b.setAttribute('aria-pressed', AU.on ? 'true' : 'false');
+  var e = pwmNow(), msg;
+  if (!AU.on) msg = '按了才會出聲（音量很小）。';
+  else if (S.freq > HI_TONE) msg = '太高了，這一頁不出聲；腳位照樣在開關。';
+  else if (e.duty <= 0.001 || e.duty >= 0.999) msg = '工作週期 0% 或 100%＝沒有在開關，沒有聲音。';
+  else msg = '正在響：頻率＝音高；工作週期只改音色。';
+  setText('toneTxt', msg);
+}
+
+/* ===== 各區更新 ===== */
+function flashes() {
+  var on = false;
+  if (P && S.tab === 'adc') { var rl = LN[P.kind].read, le = P.lastExec[rl]; on = le !== undefined && realNow >= le && realNow - le < 280; }
+  $('flash').classList.toggle('on', on);
+  if (P) { var vis = visibleSerial(), key = vis.length + '|' + (vis.length && realNow - vis[vis.length - 1].at < 450 ? 1 : 0); if (key !== flashes.k) { flashes.k = key; renderSerial(); } }
+}
+function runbar() {
+  var bp = $('btnPlay'), bs = $('btnStep');
+  bp.textContent = S.paused ? '播放' : '暫停';
+  bp.setAttribute('aria-pressed', S.paused ? 'true' : 'false');
+  bs.hidden = !S.paused;
+  var t;
+  if (P) t = S.paused ? '暫停中：按「走一步」跑到下一次印字。' : '程式照真實速度在跑。';
+  else t = S.paused ? '暫停中：「走一步」把示波器往前推 1/8 個週期。' : '沒有程式在跑：拉桿直接改腳位。';
+  if (reduced) t += '（系統設定了減少動態，所以預設暫停。）';
+  setText('runTxt', t);
+}
+function draw() {
+  if (S.tab === 'adc' && dirty.adc) { renderSrc(); renderRul(); adcReadouts(); dirty.adc = false; }
+  if (S.tab === 'pwm') { if (dirty.pwm) { pwmReadouts(); dirty.pwm = false; } renderScope(); renderLoad(); if (AU.on) { toneUpdate(); toneUi(); } }
+  if (S.tab === 'link') { if (dirty.link) { linkReadouts(); dirty.link = false; } renderPipe(); }
+  if (dirty.serial) { renderSerial(); dirty.serial = false; }
+  if (dirty.note) { var nc = renderNote(); runbar(); dirty.note = false; if (nc) fitCode(); }
+  syncCode(); flashes();
+}
+
+/* ===== 操作 ===== */
+function stopAuto() { if (S.auto) { S.auto = false; syncProgram(); } }
+function setTab(k) {
+  if (TABS.indexOf(k) < 0) k = 'adc';
+  if (k !== 'pwm') toneStop();
+  if (k !== 'pwm') S.auto = false;
+  S.tab = k;
+  TABS.forEach(function (t) {
+    var on = t === k, b = $('tb-' + t);
+    b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1;
+    $('tp-' + t).hidden = !on;
+  });
+  if (k !== 'link') setText('caption', CAPTION[k]);
+  ['cc-analog', 'cc-res', 'cc-pwm'].forEach(function (id) {
+    var hot = CARD[k] === id, card = $(id);
+    card.classList.toggle('hot', hot); card.querySelector('.tag').hidden = !hot; card.open = hot;
+  });
+  save('tab', k);
+  syncProgram(true);
+  layoutAll(); markAll();
+}
+function segPress(id, attr, val) { Array.prototype.forEach.call($(id).children, function (b) { b.setAttribute('aria-pressed', b.getAttribute(attr) === String(val) ? 'true' : 'false'); }); }
+function setSource(s) {
+  if (s !== 'pot' && s !== 'ldr') return;
+  S.source = s;
+  segPress('segSrc', 'data-src', s);
+  $('rowKnob').hidden = s !== 'pot'; $('rowLux').hidden = s !== 'ldr';
+  syncProgram(); markAll();
+}
+function setLinkMode(m) {
+  if (m === 'night') setSource('ldr');
+  else { S.linkMode = m === 'servo' ? 'servo' : 'knob'; if (S.source !== 'pot') setSource('pot'); else { syncProgram(); markAll(); } }
+}
+function setKnob(v) {
+  v = clamp(+v || 0, 0, 1); S.knob = v;
+  var sv = String(Math.round(v * 1000));
+  if ($('rngKnob').value !== sv) $('rngKnob').value = sv;
+  if ($('rngKnob2').value !== sv) $('rngKnob2').value = sv;
+  dirty.adc = dirty.link = true;
+}
+function luxToSlider(l) { return Math.round((Math.log(l) / Math.LN10 + 1) / 6 * 1000); }
+function setLux(n) {
+  n = clamp(+n || LUX_MIN, LUX_MIN, LUX_MAX); S.lux = n;
+  var sv = String(luxToSlider(n));
+  if ($('rngLux').value !== sv) $('rngLux').value = sv;
+  if ($('rngLux2').value !== sv) $('rngLux2').value = sv;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-lux]'), function (c) { c.setAttribute('aria-pressed', Math.abs(+c.getAttribute('data-lux') - n) < 1e-6 ? 'true' : 'false'); });
+  dirty.adc = dirty.link = true;
+}
+function setBits(b) { b = +b; if ([4, 8, 10, 12].indexOf(b) < 0) return; S.bits = b; segPress('segBits', 'data-bits', b); dirty.adc = dirty.note = true; }
+function setIntv(s) {
+  s = clamp(Math.round((+s || 0.5) * 20) / 20, 0.05, 2); S.interval = s;
+  setText('intvTxt', s.toFixed(2).replace(/0$/, '') + ' 秒');
+  $('rngIntv').setAttribute('aria-valuetext', '每 ' + s + ' 秒讀一次');
+  if (P && P.op && P.op.kind === 'intv' && S.tab === 'adc') P.op.b = Math.min(P.op.b, P.op.a + s * 1000);
+  dirty.note = true;
+}
+function setAttn(a) { if (!ATTN[a]) return; S.attn = a; segPress('segAttn', 'data-attn', a); ['0', '2.5', '6', '11'].forEach(function (k) { $('ar-' + k).classList.toggle('cur', k === a); }); dirty.adc = dirty.note = true; }
+function setFreq(hz, fromProg) {
+  hz = clamp(+hz || F_MIN, F_MIN, F_MAX);
+  if (!fromProg) stopAuto();
+  S.freq = hz;
+  if (S.load === 'servo') S.duty = Math.min(100, S.servoUs * hz / 1e4);
+  S.lastPwm = 'freq'; if (!P) manualLine('freq');
+  dirty.pwm = true;
+}
+function setDuty(pct) {
+  pct = clamp(+pct || 0, 0, 100);
+  stopAuto();
+  S.duty = pct;
+  if (S.load === 'servo') S.servoUs = pct / 100 * 1e6 / S.freq;
+  S.lastPwm = 'duty'; if (!P) manualLine('duty');
+  dirty.pwm = true;
+}
+function setPulseUs(us) {
+  us = clamp(+us || 0, 0, 1e6);
+  stopAuto();
+  S.servoUs = us; S.duty = Math.min(100, us * S.freq / 1e4);
+  S.lastPwm = 'duty'; if (!P) manualLine('duty');
+  dirty.pwm = true;
+}
+function setLoad(l) {
+  if (!VAR[l] || l === S.load) return;
+  if (S.load === 'buzzer') toneStop();
+  if (l === 'servo') { S.keep = { freq: S.freq, duty: S.duty }; S.freq = 50; S.duty = Math.min(100, S.servoUs * 50 / 1e4); }
+  else if (S.load === 'servo' && S.keep) { S.freq = S.keep.freq; S.duty = S.keep.duty; S.keep = null; }
+  S.load = l;
+  if (S.auto && l !== 'led' && l !== 'buzzer') S.auto = false;
+  segPress('segLoad', 'data-load', l);
+  ['led', 'buzzer', 'servo', 'rc'].forEach(function (k) { $('ld-' + k).hidden = k !== l; });
+  loadShown = '';
+  syncProgram(true); markAll(); toneUi();
+}
+function setAuto(on) {
+  S.auto = !!on && (S.load === 'led' || S.load === 'buzzer');
+  syncProgram(true); markAll();
+}
+function setUnit(u) { if (['pct', 'duty', 'u16', 'ns'].indexOf(u) < 0) return; S.unit = u; segPress('segUnit', 'data-unit', u); save('unit', u); dirty.pwm = dirty.note = true; }
+function setDark(v) { S.dark = clamp(Math.round(+v || DARK0), 0, 4095); if ($('rngDark').value !== String(S.dark)) $('rngDark').value = String(S.dark); dirty.link = dirty.note = true; }
+function setPaused(p) {
+  S.paused = !!p;
+  holdClock(S.paused);
+  dirty.note = true;
+}
+function stepOnce() {
+  realNow = performance.now();
+  if (P) { var n0 = P.n, tEnd = P.t + 6000; while (P.n === n0 && P.op.b <= tEnd) { P.t = P.op.b; nextOp(); } }
+  else { var hz = S.freq, span = 4000 / hz; CK.extra += span >= SWEEP ? 1000 / hz / 8 : SWEEP / 32; }
+  markAll(); draw();
+}
+
+var PRESETS = {
+  knob: { tab: 'adc', source: 'pot', bits: 12, knob: 0.5 },
+  ldr: { tab: 'adc', source: 'ldr', lux: 400 },
+  bits8: { tab: 'adc', source: 'pot', bits: 8, knob: 0.5 },
+  blink: { tab: 'pwm', load: 'led', freq: 2, duty: 50 },
+  breathe: { tab: 'pwm', load: 'led', freq: 1000, auto: true },
+  tone: { tab: 'pwm', load: 'buzzer', freq: 440, duty: 50 },
+  servo: { tab: 'pwm', load: 'servo', freq: 50, pulse: 1500 },
+  nightlight: { tab: 'link', source: 'ldr', lux: 400, dark: 1500 },
+  blink5: { tab: 'pwm', load: 'led', freq: 5, duty: 50 },
+  full: { tab: 'pwm', load: 'led', freq: 1000, duty: 100 },
+  hi30k: { tab: 'pwm', load: 'buzzer', freq: 30000, duty: 50 },
+  knob90: { tab: 'adc', source: 'pot', bits: 12, knob: 0.9, attn: true }
+};
+var URL_PRESETS = ['knob', 'ldr', 'bits8', 'blink', 'breathe', 'tone', 'servo', 'nightlight'];
+function applyPreset(k, fromUrl) {
+  var p = PRESETS[k]; if (!p) return false;
+  S.auto = false;
+  if (p.source) setSource(p.source);
+  if (p.tab === 'link' && p.source !== 'ldr') S.linkMode = 'knob';
+  setTab(p.tab);
+  if (p.bits) setBits(p.bits);
+  if (p.knob !== undefined) setKnob(p.knob);
+  if (p.lux !== undefined) setLux(p.lux);
+  if (p.load) setLoad(p.load);
+  if (p.freq !== undefined) setFreq(p.freq);
+  if (p.duty !== undefined) setDuty(p.duty);
+  if (p.pulse !== undefined) setPulseUs(p.pulse);
+  if (p.dark !== undefined) setDark(p.dark);
+  if (p.attn) { S.attnOpen = true; $('attnBox').open = true; setAttn('11'); }
+  if (p.auto) setAuto(true);
+  if (fromUrl) S.preset = k;
+  markAll();
+  return true;
+}
+
+/* 旋鈕拖曳（①的大旋鈕：照角度；③的小旋鈕：左右拖） */
+var kd = null;
+function knobFromPointer(e) {
+  var r = $('knobSvg').getBoundingClientRect(), sc = 150 / (r.width || 150);
+  var x = (e.clientX - r.left) * sc - 75, y = (e.clientY - r.top) * sc - 80;
+  var deg = Math.atan2(x, -y) * 180 / Math.PI, v;
+  if (deg > 135 || deg < -135) v = S.knob > 0.5 ? 1 : 0;
+  else v = (deg + 135) / 270;
+  if (S.knob > 0.85 && v < 0.15) v = 1;
+  if (S.knob < 0.15 && v > 0.85) v = 0;
+  return v;
+}
+$('knobSvg').addEventListener('pointerdown', function (e) {
+  if (S.source !== 'pot') return;
+  kd = { id: e.pointerId }; try { $('knobSvg').setPointerCapture(e.pointerId); } catch (err) {}
+  setKnob(knobFromPointer(e)); e.preventDefault();
+});
+$('knobSvg').addEventListener('pointermove', function (e) { if (kd && kd.id === e.pointerId) setKnob(knobFromPointer(e)); });
+['pointerup', 'pointercancel'].forEach(function (ev) { $('knobSvg').addEventListener(ev, function () { kd = null; }); });
+$('pipeSvg').addEventListener('pointerdown', function (e) {
+  if (!e.target || !e.target.getAttribute || e.target.getAttribute('data-drag') !== '1') return;
+  pipeDrag = { id: e.pointerId, x: e.clientX, k: S.knob }; try { $('pipeSvg').setPointerCapture(e.pointerId); } catch (err) {}
+  e.preventDefault();
+});
+$('pipeSvg').addEventListener('pointermove', function (e) { if (pipeDrag && pipeDrag.id === e.pointerId) setKnob(pipeDrag.k + (e.clientX - pipeDrag.x) / 160); });
+['pointerup', 'pointercancel'].forEach(function (ev) { $('pipeSvg').addEventListener(ev, function () { pipeDrag = null; }); });
+
+/* 拉桿與按鈕 */
+$('rngKnob').addEventListener('input', function (e) { setKnob(+e.target.value / 1000); });
+$('rngKnob2').addEventListener('input', function (e) { setKnob(+e.target.value / 1000); });
+function luxFromSlider(v) { var l = Math.pow(10, -1 + 6 * v / 1000); return +l.toPrecision(2); }
+$('rngLux').addEventListener('input', function (e) { setLux(luxFromSlider(+e.target.value)); });
+$('rngLux2').addEventListener('input', function (e) { setLux(luxFromSlider(+e.target.value)); });
+Array.prototype.forEach.call(document.querySelectorAll('[data-lux]'), function (c) { c.addEventListener('click', function () { setLux(+c.getAttribute('data-lux')); }); });
+$('rngIntv').addEventListener('input', function (e) { setIntv(+e.target.value); });
+$('chkJit').addEventListener('change', function (e) { S.jitter = e.target.checked; $('chkAvg').disabled = !S.jitter; $('togAvg').classList.toggle('off', !S.jitter); if (!S.jitter) { S.avg16 = false; $('chkAvg').checked = false; } setHtml('jitTxt', S.jitter ? '真板每次量都會上下跳（' + ref('A11') + '）；幅度是示意，不是量出來的。' : 'Wokwi 的讀數不抖，所以預設關著（' + ref('W2') + '）。'); dirty.adc = dirty.note = true; });
+$('chkAvg').addEventListener('change', function (e) { S.avg16 = e.target.checked && S.jitter; dirty.adc = dirty.note = true; });
+$('attnBox').addEventListener('toggle', function () { S.attnOpen = $('attnBox').open; dirty.adc = dirty.note = true; });
+Array.prototype.forEach.call($('segSrc').children, function (b) { b.addEventListener('click', function () { setSource(b.getAttribute('data-src')); }); });
+Array.prototype.forEach.call($('segBits').children, function (b) { b.addEventListener('click', function () { setBits(b.getAttribute('data-bits')); }); });
+Array.prototype.forEach.call($('segAttn').children, function (b) { b.addEventListener('click', function () { setAttn(b.getAttribute('data-attn')); }); });
+Array.prototype.forEach.call($('segLoad').children, function (b) { b.addEventListener('click', function () { setLoad(b.getAttribute('data-load')); }); });
+Array.prototype.forEach.call($('segUnit').children, function (b) { b.addEventListener('click', function () { setUnit(b.getAttribute('data-unit')); }); });
+Array.prototype.forEach.call($('segLink').children, function (b) { b.addEventListener('click', function () { setLinkMode(b.getAttribute('data-link')); }); });
+function freqFromSlider(v) { var hz = Math.pow(F_MAX, v / 1000); return hz < 10 ? Math.round(hz * 10) / 10 : +hz.toPrecision(3); }
+$('rngFreq').addEventListener('input', function (e) { setFreq(freqFromSlider(+e.target.value)); });
+Array.prototype.forEach.call(document.querySelectorAll('#freqChips .chip'), function (c) { c.addEventListener('click', function () { setFreq(+c.getAttribute('data-f')); }); });
+$('rngDuty').addEventListener('input', function (e) { setDuty(+e.target.value); });
+$('rngPulse').addEventListener('input', function (e) { setPulseUs(+e.target.value); });
+$('rngDark').addEventListener('input', function (e) { setDark(+e.target.value); });
+$('chkEye').addEventListener('change', function (e) { S.eye = e.target.checked; dirty.pwm = true; });
+$('btnAuto').addEventListener('click', function () { setAuto(!S.auto); });
+$('btnTone').addEventListener('click', function () { if (AU.on) toneStop(); else toneStart(); });
+(function () {
+  var box = $('keys');
+  NOTES.forEach(function (n) { var b = document.createElement('button'); b.type = 'button'; b.textContent = n[0]; b.setAttribute('aria-pressed', 'false'); b.title = n[1] + ' Hz'; b.addEventListener('click', function () { setFreq(n[1]); }); box.appendChild(b); });
+})();
+$('btnPlay').addEventListener('click', function () { setPaused(!S.paused); });
+$('btnStep').addEventListener('click', stepOnce);
+TABS.forEach(function (k) { $('tb-' + k).addEventListener('click', function () { setTab(k); }); });
+$('tablist').addEventListener('keydown', function (e) {
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+  var i = (TABS.indexOf(S.tab) + (e.key === 'ArrowRight' ? 1 : -1) + TABS.length) % TABS.length;
+  setTab(TABS[i]); $('tb-' + TABS[i]).focus(); e.preventDefault();
+});
+
+/* 試試看 */
+Array.prototype.forEach.call(document.querySelectorAll('.try'), function (b) {
+  b.addEventListener('click', function () {
+    applyPreset(b.getAttribute('data-preset'), false);
+    var top = $('bench');
+    if (top && top.scrollIntoView) top.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  });
+});
+
+/* 小標籤：打開「數字從哪裡來」，跳到那一列 */
+document.addEventListener('click', function (e) {
+  var a = e.target && e.target.closest ? e.target.closest('a.ref') : null;
+  if (!a) return;
+  var id = (a.getAttribute('href') || '').slice(1), row = $(id);
+  if (!row) return;
+  e.preventDefault();
+  $('facts').open = true;
+  row.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+  row.classList.add('flash'); setTimeout(function () { row.classList.remove('flash'); }, 1600);
+});
+
+/* 複製按鈕 */
+function selectText(pre) {
+  try { var r = document.createRange(); r.selectNodeContents(pre); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); return true; } catch (e) { return false; }
+}
+Array.prototype.forEach.call(document.querySelectorAll('.copy'), function (b) {
+  b.addEventListener('click', function () {
+    var pre = $(b.getAttribute('data-copy')), label = b.getAttribute('data-label');
+    var box = pre.closest('details');
+    var ok = function () { b.textContent = '已複製'; setTimeout(function () { b.textContent = label; }, 1800); };
+    var no = function () {
+      if (box && !box.open) box.open = true;
+      var outer = box && box.parentElement ? box.parentElement.closest('details') : null;
+      if (outer && !outer.open) outer.open = true;
+      var picked = selectText(pre);
+      if (pre.scrollIntoView) pre.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+      b.textContent = picked ? '已選取，按 Ctrl+C 複製' : '請自己選取程式碼';
+      setTimeout(function () { b.textContent = label; }, 3500);
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(pre.textContent.replace(/^\n+/, '')).then(ok, no);
+      else no();
+    } catch (err) { no(); }
+  });
+});
+
+/* ===== 版面：寬螢幕時程式碼區從它的上緣算到畫面底 ===== */
+function fitCode() {
+  var box = $('codeView');
+  if (window.innerWidth <= 1020) { box.style.height = '300px'; return; }
+  var top = box.getBoundingClientRect().top + (window.scrollY || 0);
+  var below = $('codeNote').offsetHeight + $('serialRows').parentNode.offsetHeight + box.parentNode.querySelector('.runbar').offsetHeight + 24;
+  box.style.height = Math.round(Math.max(220, Math.min(560, window.innerHeight - top - below))) + 'px';
+  if (CV.rows[CV.cur]) keepVisible(CV.rows[CV.cur]);
+}
+function layoutAll() { layoutRul(); layoutPipe(); PIPE.shown = ''; loadShown = ''; markAll(); }
+var rt = 0;
+window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layoutAll(); fitCode(); draw(); }, 120); });
+document.querySelector('.about').addEventListener('toggle', function () { fitCode(); });
+document.addEventListener('visibilitychange', function () { if (document.hidden) toneStop(); lastFrame = 0; });
+
+/* ===== 開跑 ===== */
+var lastFrame = 0;
+function frame(ts) {
+  requestAnimationFrame(frame);
+  realNow = ts;
+  if (document.hidden) { lastFrame = 0; return; }
+  var dt = lastFrame ? Math.min(50, ts - lastFrame) : 0; lastFrame = ts;
+  if (P && !S.paused && !S.manual && dt > 0) advanceTo(P.t + dt);
+  draw();
+}
+
+loadSources();
+realNow = performance.now();
+var u0 = load('unit'); if (['pct', 'duty', 'u16', 'ns'].indexOf(u0) >= 0) S.unit = u0;
+segPress('segUnit', 'data-unit', S.unit);
+setKnob(S.knob); setLux(S.lux); setIntv(S.interval); setDark(S.dark); setAttn('11');
+holdClock(S.paused);
+var t0 = load('tab');
+setTab(TABS.indexOf(t0) >= 0 ? t0 : 'adc');
+try {
+  var qs = new URLSearchParams(location.search), pr0 = qs.get('preset'), tb0 = qs.get('tab');
+  if (pr0 && URL_PRESETS.indexOf(pr0) >= 0) applyPreset(pr0, true);
+  else if (tb0 && TABS.indexOf(tb0) >= 0) setTab(tb0);
+} catch (e) {}
+toneUi();
+layoutAll(); draw(); fitCode(); draw();
+requestAnimationFrame(frame);
+
+/* ===== 給驗收腳本用的掛鉤（名字與欄位照規格，不影響一般使用）：一被呼叫，程式時鐘改由 run(ms) 推進 ===== */
+function hook() { S.manual = true; }
+function state() {
+  var e = pwmNow(), b = bitsNow(), dp = e.duty * 100, u16 = e.u16 !== undefined ? e.u16 : Math.round(e.duty * 65535);
+  var pulse = S.tab === 'link' ? (e.pulseUs !== undefined ? e.pulseUs : (e.freq ? e.duty * 1e6 / e.freq : null)) : e.pulseUs;
+  return {
+    tab: S.tab, preset: S.preset, source: S.source, knob: S.knob, lux: S.lux, bits: S.bits,
+    adc: rawOf(b), serialLines: P ? P.n : 0,
+    freq: e.freq, dutyPct: dp, duty: Math.round(e.duty * 1023), dutyU16: u16, avgV: e.duty * VREF,
+    load: S.load, pwmBits: e.freq ? pwmBitsOf(e.freq) : null, pulseUs: pulse,
+    ledOn: ledOnNow(), angle: pulse === null || pulse === undefined ? null : Math.round(servoAngle(pulse)),
+    t: P ? P.t : 0, program: P ? P.kind : null, paused: S.paused, manual: S.manual, linkMode: S.linkMode, dark: S.dark,
+    interval: S.interval, jitter: S.jitter, avg16: S.avg16, unit: S.unit, eye: S.eye, auto: S.auto,
+    lastRead: P && P.lastRead ? P.lastRead.raw : null, servoOk: S.tab === 'pwm' && S.load === 'servo' ? servoState().ok : null
+  };
+}
+function after() { markAll(); draw(); }
+window.__adcLab = {
+  state: state,
+  tab: function (k) { hook(); setTab(k); after(); },
+  setSource: function (s) { hook(); if (S.tab === 'link' && s === 'pot' && S.source === 'ldr') S.linkMode = 'knob'; setSource(s); after(); },
+  setKnob: function (v) { hook(); setKnob(v); after(); },
+  setLux: function (n) { hook(); setLux(n); after(); },
+  setBits: function (b) { hook(); setBits(b); after(); },
+  setFreq: function (hz) { hook(); setFreq(hz); after(); },
+  setDuty: function (p) { hook(); setDuty(p); after(); },
+  setPulseMs: function (ms) { hook(); setPulseUs(+ms * 1000); after(); },
+  setLoad: function (l) { hook(); setLoad(l); after(); },
+  run: function (ms) { hook(); realNow = performance.now(); ms = Math.max(0, +ms || 0); if (P) { advanceTo(P.t + ms); collapseShow(); } CK.extra += ms; after(); return state(); }
+};
+})();
+/* 投影片深連結 #wokwi（或任何折疊區的 id）：打開那一區再捲過去（2026-09-26 洄瀾整合時加） */
+(function () {
+  function openHash() {
+    var h = decodeURIComponent(location.hash.slice(1));
+    if (!h) return;
+    var el = document.getElementById(h === 'wokwi' ? 'sectWokwi' : h);
+    if (!el) return;
+    if (el.tagName === 'DETAILS') el.open = true;
+    setTimeout(function () { el.scrollIntoView({ block: 'start' }); }, 30);
+  }
+  window.addEventListener('hashchange', openHash);
+  openHash();
+})();
+</script>
+
+</body>
+</html>

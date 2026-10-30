@@ -1,0 +1,188 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>示範：AI 會毀滅人類？ · 資訊科技與應用 W2</title>
+<style>
+:root{--paper:#f6f5f1;--navy:#152e49;--muted:#526071;--amber:#b66505;--line:#b9c2ca;--ink:#152e49}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Segoe UI','Microsoft JhengHei','PingFang TC',sans-serif;line-height:1.75;scroll-snap-type:y proximity}
+a{color:#174c78;text-underline-offset:4px;overflow-wrap:anywhere}
+a:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+section.page{min-height:100svh;scroll-snap-align:start;padding:clamp(22px,4vw,54px) clamp(20px,5vw,72px) clamp(64px,8vh,90px);display:flex;flex-direction:column;justify-content:center;position:relative;border-bottom:1px solid var(--line)}
+.kicker{font-size:clamp(13px,1.6vw,18px);letter-spacing:.12em;font-weight:600;color:var(--muted);margin-bottom:10px}
+h1{font-size:clamp(1.6rem,4.4vw,3.1rem);line-height:1.25;margin:0 0 6px}
+h2{font-size:clamp(1.4rem,3.6vw,2.6rem);line-height:1.3;margin:0 0 18px}
+.lead{font-size:clamp(16px,2vw,21px);color:var(--muted);margin:0 0 22px;max-width:60ch}
+p,li,td,th{font-size:clamp(15px,1.55vw,18px)}
+li{margin:9px 0}
+ul,ol{padding-left:1.3em;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:clamp(14px,2vw,26px)}
+.card{background:#fff;border:1px solid var(--line);border-left:5px solid var(--amber);padding:clamp(14px,1.8vw,20px)}
+.card h3{margin:0 0 8px;font-size:clamp(16px,1.8vw,20px);line-height:1.4}
+.meta{font-size:clamp(13px,1.35vw,15px);color:var(--muted);margin:0 0 8px}
+blockquote{margin:10px 0;padding:10px 0 10px 16px;border-left:4px solid var(--navy);background:#fff;font-size:clamp(15px,1.6vw,18px)}
+blockquote .src{display:block;margin-top:6px;font-size:clamp(12.5px,1.3vw,14.5px);color:var(--muted)}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:560px;background:#fff}
+td,th{border:1px solid var(--line);padding:10px 13px;text-align:left;vertical-align:top}
+th{background:#e3e7e9}
+.tag{display:inline-block;background:var(--navy);color:var(--paper);font-size:clamp(12px,1.3vw,14px);padding:2px 9px;margin-right:6px;white-space:nowrap}
+.tag--warn{background:var(--amber)}
+.pagenum{position:absolute;right:clamp(16px,4vw,40px);bottom:clamp(16px,3vh,30px);font-size:clamp(13px,1.4vw,16px);color:var(--muted)}
+.foot{margin-top:18px;font-size:clamp(13.5px,1.4vw,16px);color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;gap:10px;justify-content:center;padding:8px;background:rgba(21,46,73,.93);z-index:9}
+.nav a{color:var(--paper);text-decoration:none;font-size:14px;padding:5px 11px;border:1px solid rgba(246,245,241,.45)}
+.nav a:hover{background:rgba(246,245,241,.15)}
+@media print{@page{size:A4 landscape;margin:12mm}body{background:#fff}.nav{display:none}section.page{min-height:0;break-after:page;border:0;padding:0 0 10mm;display:block}p,li,td,th{font-size:10.5pt}h1{font-size:22pt}h2{font-size:18pt}a{color:inherit}}
+</style></head><body>
+
+<section class="page" id="p1">
+  <div class="kicker">資訊科技與應用 W2・示範</div>
+  <h1>「AI 會毀滅人類」——這題我們先自己做一遍</h1>
+  <p class="lead">五個 AI 分頭去查：洄瀾、立霧、秀姑巒、木瓜溪、美崙溪。下面三則報導是真的存在的，每一個網址我們都自己點開、讀到那句話才留下來。</p>
+  <div class="table-scroll"><table>
+    <tr><th>日期</th><th>媒體</th><th>標題（原文）</th></tr>
+    <tr><td>2014/12/02</td><td>The Guardian</td><td><a href="https://www.theguardian.com/science/2014/dec/02/stephen-hawking-intel-communication-system-astrophysicist-software-predictive-text-type">Artificial intelligence could spell end of human race – Stephen Hawking</a></td></tr>
+    <tr><td>2022/10/14</td><td>Popular Mechanics</td><td><a href="https://www.popularmechanics.com/technology/security/a41507433/stop-ai-from-taking-over/">There’s a Damn Good Chance AI Will Destroy Humanity, Researchers Say in a New Study</a></td></tr>
+    <tr><td>2026/09/09</td><td>Axios／The Washington Times</td><td><a href="https://www.axios.com/2026/09/09/anthropic-insiders-warn-ai-could-kill-all-humans">Anthropic insiders warn AI could kill all humans</a>／<a href="https://www.washingtontimes.com/news/2026/sep/9/could-kill-us-end-decade-ai-researcher-says-hes-not-alone/">‘It could kill us all by the end of the decade,’ an AI researcher says</a></td></tr>
+  </table></div>
+  <p class="foot">作業要你做的四件事，就是接下來這四頁。第五頁是我們怎麼查的。</p>
+  <div class="pagenum">1 / 5</div>
+</section>
+
+<section class="page" id="p2">
+  <div class="kicker">第一步</div>
+  <h2>那句話，原本是誰說的？</h2>
+  <p class="lead">報導是二手的。追回到「他本人說出口的那個場合」，你才知道有沒有被改。三則追下去，結果不一樣。</p>
+  <div class="grid">
+    <div class="card">
+      <h3>追得到，而且點得進去</h3>
+      <p class="meta">2014・Hawking</p>
+      <p>Guardian 寫他對 BBC 說的話。追回去，他的原話是：</p>
+      <blockquote>「…could spell the end of the human race.」<span class="src">Hawking 受訪原話，引自 <a href="https://www.theguardian.com/science/2014/dec/02/stephen-hawking-intel-communication-system-astrophysicist-software-predictive-text-type">The Guardian, 2014/12/02</a></span></blockquote>
+    </div>
+    <div class="card">
+      <h3>追到論文，開放取用</h3>
+      <p class="meta">2022・Popular Mechanics</p>
+      <p>報導講的是一篇真的論文：Cohen、Hutter、Osborne，〈Advanced artificial agents intervene in the provision of reward〉，<em>AI Magazine</em> 43(3)。</p>
+      <p><a href="https://onlinelibrary.wiley.com/doi/10.1002/aaai.12064">doi.org/10.1002/aaai.12064</a>（免費，任何人都開得起來）</p>
+    </div>
+    <div class="card">
+      <h3><span class="tag tag--warn">追不到</span></h3>
+      <p class="meta">2026・Anthropic 研究員</p>
+      <p>兩家都寫 Jacob Coxon 是「在 X 上的一串貼文」講的，但報導內文沒有給可以點的貼文連結。</p>
+      <p>我們找不到可公開點閱的原始貼文 → <strong>就照實寫「找不到原始出處」</strong>，不要假裝追到了。</p>
+    </div>
+  </div>
+  <p class="foot">追得到就附連結；追不到就寫追不到。這一句本身就是分數。</p>
+  <div class="pagenum">2 / 5</div>
+</section>
+
+<section class="page" id="p3">
+  <div class="kicker">第二步</div>
+  <h2>「有可能」是怎麼變成「一定會」的</h2>
+  <p class="lead">差別常常只在一個字。左邊是當事人自己的說法，右邊是報導端寫出來的樣子。</p>
+  <div class="table-scroll"><table>
+    <tr><th style="width:34%">原本怎麼說</th><th>報導怎麼寫</th></tr>
+    <tr>
+      <td>Hawking：「full artificial intelligence <strong>could</strong> spell the end of the human race」</td>
+      <td>Guardian 副標：「Technology <strong>will eventually</strong> become self-aware and supersede humanity」<br><span class="tag">could → will</span>同一篇裡，大標還是 could，副標已經變成必然。</td>
+    </tr>
+    <tr>
+      <td>論文作者自己寫：「The following discussion is <strong>speculative</strong>」</td>
+      <td>Popular Mechanics 大標：「There’s a <strong>Damn Good Chance</strong> AI <strong>Will</strong> Destroy Humanity」<br><span class="tag">推測 → 很有機會</span>同一頁的瀏覽器分頁標題還少了 Damn，兩個標題自己就不一樣。</td>
+    </tr>
+    <tr>
+      <td>Anthropic 的 Evan Hubinger 自己給的是機率：「&gt;10% within the next decade」</td>
+      <td>標題是「could kill all humans」——這樣寫沒有錯。<br><span class="tag tag--warn">中譯才是坑</span>翻成中文常常整個掉了 could，變成「AI 將毀滅人類」。</td>
+    </tr>
+  </table></div>
+  <p class="foot">你要照抄的就是這種句子：<strong>照原文抄，不要先改寫成自己的話</strong>。改寫過的不算引用。</p>
+  <div class="pagenum">3 / 5</div>
+</section>
+
+<section class="page" id="p4">
+  <div class="kicker">第三步</div>
+  <h2>反面的說法，去哪裡找</h2>
+  <p class="lead">反面不是「另一個講得比較大聲的人」，是你點得進去、查得到的來源。三種難度：</p>
+  <div class="grid">
+    <div class="card">
+      <h3>最近的：同一篇裡就有</h3>
+      <p>Axios 那篇自己寫了一句降溫的話：</p>
+      <blockquote>「Nobody is warning AI is an imminent high-level threat.」<span class="src"><a href="https://www.axios.com/2026/09/09/anthropic-insiders-warn-ai-could-kill-all-humans">Axios, 2026/09/09</a></span></blockquote>
+      <p>同一篇報導裡就有反面——很多人只讀標題，所以看不到。</p>
+    </div>
+    <div class="card">
+      <h3>找一個不同意的專家</h3>
+      <p>Meta 的 AI 負責人 Yann LeCun 在 TIME 的專訪裡，把「AI 對人類構成生存風險」這個主張稱為 preposterous（荒謬）。</p>
+      <p><a href="https://time.com/6694432/yann-lecun-meta-ai-interview/">TIME 專訪全文</a></p>
+    </div>
+    <div class="card">
+      <h3>最硬的：查權威報告</h3>
+      <p><strong>International AI Safety Report 2026</strong>（2026/02/03 發布）：Turing Award 得主 Yoshua Bengio 領銜、100 位以上專家執筆、30 多個國家與國際組織背書。</p>
+      <p><a href="https://internationalaisafetyreport.org/">internationalaisafetyreport.org</a>（全文與三頁摘要都可下載）</p>
+    </div>
+  </div>
+  <p class="foot">一則新聞如果查不到任何有名有姓的反面說法，那通常不是因為沒有，是你還沒找。</p>
+  <div class="pagenum">4 / 5</div>
+</section>
+
+<section class="page" id="p5">
+  <div class="kicker">第四步・也是這份示範的重點</div>
+  <h2>我們是怎麼查的，還有我們自己出的包</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>查資料四步</h3>
+      <ol>
+        <li>用關鍵字找到<strong>報導本身</strong>——不要停在搜尋結果那兩行摘要，那是二手的二手。</li>
+        <li>從報導<strong>追回原始出處</strong>：論文、貼文、訪談、報告。</li>
+        <li>把關鍵句<strong>照抄</strong>，標明誰、在哪、哪一天說的。</li>
+        <li>再查一次<strong>反面</strong>，然後才輪到你下判斷。</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>摘要三條規矩</h3>
+      <ul>
+        <li>照抄關鍵句，別改寫完還當成引用。</li>
+        <li>「可能」「機率」「假設」這些字要留著——那就是意思本身，刪掉就變成另一句話。</li>
+        <li>追不到就寫追不到。誠實的空白，比漂亮的猜測值錢。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="tag tag--warn">AI 小組這次的包</span></h3>
+      <ul>
+        <li>美崙溪（Grok）這台沒登入、木瓜溪（OpenCode）上游回 502 ——<strong>AI 也會缺席</strong>。</li>
+        <li>好幾個新聞網站擋自動抓取（403），要用真的瀏覽器打開才讀得到。</li>
+        <li>網址是 AI 找的，但<strong>每一條都是我們自己點開、讀到那句話才留下</strong>。AI 給的連結沒點過就當真，遲早出事。</li>
+      </ul>
+    </div>
+  </div>
+  <p class="foot">所以這份示範不是要你相信 AI 查得比較好，是要你看到：<strong>同一套查證動作，人跟 AI 都得做。</strong>你交的那份，就照這五頁的順序寫。</p>
+  <div class="pagenum">5 / 5</div>
+</section>
+
+<nav class="nav" aria-label="頁面導覽">
+  <a href="#p1">1</a><a href="#p2">2</a><a href="#p3">3</a><a href="#p4">4</a><a href="#p5">5</a>
+  <a href="student.html">回本週學生頁</a>
+</nav>
+
+<script>
+(function(){
+  var ids=['p1','p2','p3','p4','p5'];
+  function cur(){
+    var best=0,bd=1e9;
+    for(var i=0;i<ids.length;i++){
+      var el=document.getElementById(ids[i]); if(!el) continue;
+      var d=Math.abs(el.getBoundingClientRect().top);
+      if(d<bd){bd=d;best=i;}
+    }
+    return best;
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey) return;
+    var k=e.key,i=cur(),n=null;
+    if(k==='ArrowRight'||k==='PageDown'||k===' ') n=Math.min(i+1,ids.length-1);
+    else if(k==='ArrowLeft'||k==='PageUp') n=Math.max(i-1,0);
+    if(n!==null){e.preventDefault();document.getElementById(ids[n]).scrollIntoView({behavior:'smooth'});}
+  });
+})();
+</script>
+</body></html>
