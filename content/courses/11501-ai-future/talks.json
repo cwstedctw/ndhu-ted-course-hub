@@ -258,7 +258,29 @@
       ],
       "poster": "/images/talks/t06-poster.webp",
       "worksheetUrl": null,
-      "materials": []
+      "materials": [
+        {
+          "label": "講者投影片（PDF，24 頁）",
+          "url": "https://drive.google.com/file/d/1BXMlPsh_R9-nDJPDoMR0yfL31JcRibBY/view"
+        },
+        {
+          "label": "講者的七支 TRIPO 提示詞與 LINE 群組（e學苑第 9 週，需登入）",
+          "url": "https://elearn4.ndhu.edu.tw/moodle/mod/page/view.php?id=161937"
+        },
+        {
+          "label": "講前導讀一頁卡（原圖，3 分鐘看完）",
+          "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/images/talks/t06-preread.webp"
+        },
+        {
+          "label": "30 秒預告短片（橫式）",
+          "url": "https://drive.google.com/file/d/14WJz8ozb-1XPz1vC14gayUqjfvqz4nhh/view"
+        }
+      ],
+      "preread": "/images/talks/t06-preread.webp",
+      "teaser": {
+        "src": "/videos/t06-teaser-720p.mp4",
+        "poster": "/images/talks/t06-teaser-poster.jpg"
+      }
     },
     {
       "id": "t07",
