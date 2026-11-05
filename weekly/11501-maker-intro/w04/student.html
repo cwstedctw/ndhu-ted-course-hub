@@ -1,0 +1,454 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W4 學生頁｜一顆按鈕，怎麼記住、怎麼不漏</title><style>
+:root{font-family:system-ui,'Microsoft JhengHei',sans-serif;color:#153d36;background:#f4f6ed;line-height:1.8}body{margin:0}main{max-width:880px;margin:auto;padding:30px 24px 90px}nav{display:flex;gap:10px 18px;flex-wrap:wrap}a{color:#09695b;text-underline-offset:4px;overflow-wrap:anywhere}header{padding:44px 0 28px;border-bottom:2px solid #1f6153}h1{font-size:clamp(30px,5vw,54px);line-height:1.25;max-width:700px}h2{font-size:26px;line-height:1.4;margin:44px 0 14px}h3{font-size:20px;margin:26px 0 8px}.eyebrow{letter-spacing:.09em;font-weight:700;color:#577565}.lead{font-size:21px}section{scroll-margin-top:20px}.note{padding:14px 20px;border-left:4px solid #c9963b;background:#fff9e8}.src{padding:12px 20px;border-left:4px solid #79958a;background:#eef2e7;font-size:15px;color:#3d574d}table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid #bbc9bf;padding:10px;text-align:left;vertical-align:top}th{background:#e0ece2}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#133e34;color:#f4f6ed;padding:18px;border-radius:8px;font:15px/1.7 ui-monospace,Consolas,monospace}code{background:#e6ece5;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;font:15px ui-monospace,Consolas,monospace}pre code{background:none;padding:0;color:inherit}ol,ul{padding-left:1.4em}li{margin:6px 0}.small{font-size:14px;color:#51695f}.steps{list-style:none;padding:0}.steps li{background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:12px 16px;margin:10px 0}.steps li b{color:#09695b}.term{background:#000;color:#e8e8e8;padding:12px 16px;border-radius:8px;font:15px/1.7 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.lat{font-family:'Segoe UI',Arial,'Helvetica Neue',Helvetica,sans-serif}
+.card{background:#fff;border:1px solid #bbc9bf;border-radius:10px;padding:6px 18px 16px;margin:16px 0}
+.card h3{margin-top:14px}
+.codehead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;color:#3d574d;margin:12px 0 4px}
+.codehead b{color:#153d36}
+textarea.code{display:block;width:100%;box-sizing:border-box;font:14px/1.6 ui-monospace,Consolas,'Microsoft JhengHei',monospace;background:#133e34;color:#f4f6ed;border:0;border-radius:8px;padding:12px 14px;resize:vertical;white-space:pre;overflow:auto}
+textarea.code:focus{outline:3px solid #c9963b;outline-offset:2px}
+details{margin:10px 0}summary{cursor:pointer;color:#09695b;font-weight:700}
+kbd{font:600 14px ui-monospace,Consolas,monospace;border:1px solid #9fb3a7;border-bottom-width:2px;border-radius:4px;padding:0 5px;background:#fff}
+@media print{nav,.no-print{display:none}main{max-width:none;padding:0}h1{font-size:30px}h2{break-after:avoid}pre,table,.note,.steps li,.card{break-inside:avoid}textarea.code{white-space:pre-wrap}}
+</style></head><body><main>
+<nav><a href="deck.html">投影片</a><a href="deck.pdf">下載投影片 PDF</a><a href="rs-latch.html">RS 閂鎖工作台</a><a href="timer-interrupt.html">計時器與中斷實驗台</a><a href="../w05/button-bounce.html">按鈕彈跳（補充）</a><a href="esp32-pin-xray.html?preset=basic">腳位透視鏡</a></nav>
+
+<header><p class="eyebrow">創客入門　WEEK 4　2026-09-29</p><h1>一顆按鈕，怎麼記住、怎麼不漏</h1>
+<p class="lead">上週你交了兩個專案：紅綠燈，和「一顆按鈕＋閂鎖（latch）」。今天兩個都往下挖一層：閂鎖為什麼記得住、兩腳按鈕行不行；你的紅綠燈加一顆按鈕，為什麼會漏。</p>
+<p>今天唯一的新觀念：<b><code>sleep</code> 不是「等」，是整支程式站在那一行什麼都不看。</b></p>
+<p class="note">今天的作業老師下課後會在 e學苑 開；上課先把兩個動手做出來、序列埠截圖留著。</p></header>
+
+<section id="review"><h2>1　作業回收：上週那兩題</h2>
+<p>上週作業最後要回答兩題，今天投影片第 3–5 頁就是答案：</p>
+<ol class="steps">
+<li><b>SR 閂鎖為什麼要接三腳的開關、兩腳的按鈕行不行？</b><br>閂鎖要兩個訊號：一個叫它記 1，叫<b>設定</b>；一個叫它回 0，叫<b>重設</b>（Set／Reset）。三腳開關有兩個接點，一邊給一個；兩腳按鈕只有一個接點，只給得出一個訊號，直接接不行——要有人替它補第二個訊號（投影片第 5、6 頁）。</li>
+<li><b>閂鎖為什麼不會抖？</b><br>Q 的值繞一圈回到自己的輸入，自己撐住自己；三腳開關的動片一次只碰一邊，抖的那一邊只是把同一件事再說一次（投影片第 3、4 頁）。</li></ol>
+<p class="small">開場請兩位同學用自己的投影片講紅綠燈，每位三分鐘。聽的時候比一比：怎麼輪、每顆亮多久、黃燈會不會閃。</p></section>
+
+<section id="latch"><h2>2　閂鎖：三個工作台</h2>
+<p>打開〈<a href="rs-latch.html">RS 閂鎖工作台</a>〉，下面三個連結會直接跳到對的工作台。</p>
+<ul>
+<li><a href="rs-latch.html?bench=ideal"><b>工作台一：閂鎖本體</b></a>——兩顆 NAND 閘（兩個輸入都是 1 才給 0）交叉接起來，Q 的值繞一圈回到自己的輸入，就記住了。<span class="lat">S̄</span> 給 0＝設定（Q 變 1）；<span class="lat">R̄</span> 給 0＝重設（Q 變 0）；兩個都放開＝保持。先猜：兩個都按著、再同時放開，Q 是多少？</li>
+<li><a href="rs-latch.html?bench=slide"><b>工作台二：三腳撥動開關</b></a>——開關碰上時金屬片會彈好幾下，叫<b>彈跳</b>（bounce）。彈跳只發生在動片正碰上、或正要離開的那一邊；另一邊在空中不動；閂鎖只認第一次碰到。老師在 Wokwi 實跑：每撥一下，直接接的腳位大多變 3 次，經過閂鎖只變 1 次。</li>
+<li><a href="rs-latch.html?bench=button"><b>工作台三：兩腳按鈕</b></a>——接法①只接 <span class="lat">S̄</span>：沒人重設，Q 只變 1 次、放開也不回 0。接法②多一顆 NOT 閘：兩邊來自同一個接點，一起抖（實跑每按 4–6 次）。接法③（<a href="rs-latch.html?bench=esp32">直接跳過去</a>）：ESP32 補 <span class="lat">R̄</span>，就是等一下的動手一。</li></ul>
+<h3>按鈕的三條解法</h3>
+<table><tr><th>解法</th><th>怎麼做</th><th>程式在忙的時候，會不會漏</th></tr>
+<tr><td>① ESP32 補一腳（05）</td><td>按鈕接 <span class="lat">S̄</span>，<span class="lat">R̄</span> 改由 ESP32 的 GPIO25 給</td><td>不會：第一次碰到就被閂鎖記住</td></tr>
+<tr><td>② 程式等一下（02）</td><td>讀到變化，等 20 ms 再讀一次</td><td>會：程式在 <code>sleep</code> 的時候沒人看按鈕</td></tr>
+<tr><td>③ 中斷（interrupt）＋20 ms 確認（09）</td><td>腳位一變，硬體先記下來；20 ms 後再確認一次</td><td>不會：主程式在 <code>sleep</code> 也接得到</td></tr></table>
+<p class="small">② 的完整程式在〈<a href="../w05/button-bounce.html?tab=soft1">按鈕彈跳實驗台</a>〉。</p></section>
+
+<section id="hands1"><h2>3　動手一：把你的閂鎖改成 ESP32 補腳（05）</h2>
+<p>接法：兩腳按鈕接閂鎖的 <span class="lat">S̄</span>，也接 GPIO27（讓程式讀按鈕）；閂鎖的輸出 Q 接 GPIO26；<span class="lat">R̄</span> 改由 GPIO25 給——平常給 1，給 0 一下＝重設。<b>Q 變 1 就開始計時，按鈕放開、而且安靜 20 ms，才把 Q 清回 0。</b></p>
+<ol class="steps">
+<li><b>開新專案：</b><a href="https://wokwi.com/projects/new/micropython-esp32" target="_blank" rel="noopener">wokwi.com/projects/new/micropython-esp32</a></li>
+<li><b>點 <code>diagram.json</code> 分頁</b>，全選、貼上下面第一格（蓋掉原本的）。</li>
+<li><b>點 <code>main.py</code> 分頁</b>，全選、貼上第二格，按綠色播放鍵。</li>
+<li><b>按按鈕 8 下：每按一下停半秒，等序列埠印出那一行再按下一下。</b>05 的程式要等按鈕安靜 300 ms 才印一行，連按會併成一行。看右下角那格黑底的序列埠。</li></ol>
+<p class="small">怎麼複製：下面這兩格，點進框裡按 <kbd>Ctrl</kbd>＋<kbd>A</kbd>（Mac 是 <kbd>⌘</kbd>＋<kbd>A</kbd>）只會選到框裡的字，再 <kbd>Ctrl</kbd>＋<kbd>C</kbd>。</p>
+<div class="codehead"><b>05 的 diagram.json</b><span>貼進 diagram.json 分頁</span></div>
+<textarea class="code" id="t05d" readonly rows="12" wrap="off" spellcheck="false" aria-label="05 的 diagram.json 全文">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": -60, "left": -330, "rotate": 90, "attrs": { "value": "10000" } },
+    { "type": "wokwi-pushbutton", "id": "btn", "top": 60, "left": -420, "attrs": { "color": "green" } },
+    { "type": "wokwi-gate-nand-2", "id": "nand1", "top": 40, "left": -200, "attrs": {} },
+    { "type": "wokwi-gate-nand-2", "id": "nand2", "top": 150, "left": -200, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "r1:2", "esp:3V3", "red", [] ],
+    [ "r1:1", "btn:1.r", "green", [] ],
+    [ "btn:2.r", "esp:GND.1", "black", [] ],
+    [ "btn:1.r", "nand1:A", "green", [] ],
+    [ "btn:1.r", "esp:27", "green", [] ],
+    [ "nand1:OUT", "nand2:A", "purple", [] ],
+    [ "nand2:OUT", "nand1:B", "purple", [] ],
+    [ "nand1:OUT", "esp:26", "orange", [] ],
+    [ "esp:25", "nand2:B", "blue", [] ]
+  ],
+  "dependencies": {}
+}
+</textarea>
+<div class="codehead"><b>05 的 main.py</b><span>貼進 main.py 分頁</span></div>
+<textarea class="code" id="t05m" readonly rows="16" wrap="off" spellcheck="false" aria-label="05 的 main.py 全文">
+# 05 兩腳按鈕 + 兩顆 NAND 閂鎖 + ESP32 補上「重設」。
+# 閂鎖要兩個輸入：S（設定）和 R（重設）。三腳開關有兩個接點，一邊接 S、一邊接 R；
+# 兩腳按鈕只有一個接點，只夠接 S。少掉的那一腳，由 ESP32 來當：
+#   按下去 → 第一次碰到就讓 Q 變 1（閂鎖自己做，不用等程式）；之後的彈跳只是重複「設定」，Q 不動。
+#   放開後 → ESP32 等按鈕安靜 20 ms，才給 R 一個 0，把 Q 清回 0，準備下一次。
+# 接法：按鈕那點（10k 上拉）→ NAND1 的 A，也接 GPIO27；Q（NAND1 輸出）→ GPIO26；GPIO25 → NAND2 的 B（R）。
+from machine import Pin
+import time
+
+raw = Pin(27, Pin.IN)               # 按鈕那一點：沒按＝1、按下＝0，會抖；只用來判斷「放開夠久了沒」
+q = Pin(26, Pin.IN)                 # 閂鎖輸出 Q：按下＝1，要等 ESP32 重設才回 0
+r = Pin(25, Pin.OUT, value=1)       # 接閂鎖的 R（低電位有效）：平常給 1；給 0 一下＝重設
+
+QUIET_MS = 20                       # 放開後要安靜多久才重設：跟 02 一樣用 20 ms
+
+
+def reset_latch():
+    r.value(0)                      # 放開那一腳「接通」一下
+    time.sleep_us(10)
+    r.value(1)
+
+
+reset_latch()                       # 開機先清一次，Q 從 0 開始
+
+presses = 0
+n_raw = 0                           # 按鈕那一點變了幾次（統計用）
+n_q = 0                             # 閂鎖輸出 Q 變了幾次（統計用）
+p_raw = raw.value()
+p_q = q.value()
+last_low = time.ticks_ms()          # 最後一次看到「還按著」的時間
+latched = False                     # 閂鎖正記著一次按下、還沒清
+last = time.ticks_ms()
+dirty = False
+
+print('按一下按鈕，看兩邊各數到幾次變化')
+while True:
+    now = time.ticks_ms()
+    a = raw.value()
+    if a == 0:
+        last_low = now              # 還按著，或還在彈
+
+    # ESP32 當「另一腳」：按鈕放開、而且安靜 QUIET_MS → 重設
+    if q.value() == 1:
+        if not latched:
+            # Q 剛變 1：從現在起算安靜。按下那一瞬間的彈跳很短，程式可能根本沒讀到 0，
+            # 只看 a 會把「彈開的那一下」誤當成已經放開很久，當場就清掉。
+            latched = True
+            last_low = now
+        elif a == 1 and time.ticks_diff(now, last_low) &gt;= QUIET_MS:
+            reset_latch()
+            latched = False
+    b = q.value()
+
+    # 以下只是統計，跟去彈跳無關
+    if a != p_raw:
+        n_raw = n_raw + 1
+        p_raw = a
+        last = now
+        dirty = True
+    if b != p_q:
+        n_q = n_q + 1
+        if b == 1:
+            presses = presses + 1
+        p_q = b
+        last = now
+        dirty = True
+    # 安靜超過 300 ms 才報告：只是用來把每次按的統計分開
+    if dirty and time.ticks_diff(now, last) &gt; 300:
+        print('第', presses, '次按：直接接的腳位變了', n_raw, '次；閂鎖 Q 變了', n_q, '次')
+        n_raw = 0
+        n_q = 0
+        dirty = False
+</textarea>
+<p>跑起來，每按一下，右下角印一行（這是老師 2026-09-25 在 Wokwi 實跑的第一行；出處 <code>w05/wokwi-bounce/_qa/run05-0925.log</code>）：</p>
+<div class="term">第 1 次按：直接接的腳位變了 4 次；閂鎖 Q 變了 2 次</div>
+<p>直接接的次數每次不一樣（Wokwi 的按鈕會隨機彈跳，實跑是每按 4～6 次）；<b>Q 應該每按都是 2 次</b>：變 1 一次、被 ESP32 清回 0 一次。做出來了，給旁邊的人看一眼，右下角截圖留著。</p></section>
+
+<section id="sleep"><h2>4　你的紅綠燈加一顆按鈕：會漏（06）</h2>
+<p>上週的紅綠燈加一顆按鈕：程式只在每一輪開頭看一眼按鈕，接著就去睡——綠燈睡 3 秒、黃燈 1 秒、紅燈 3 秒。睡著的那幾秒，按鈕沒有人看。一行沒做完、下一行就不會開始，這叫<b>阻塞</b>（blocking）；<code>time.sleep()</code> 是最常見的一種。</p>
+<p>06、07、08、09 四個專案用<b>同一份</b> <code>diagram.json</code>：紅燈 GPIO16、黃燈 GPIO12、綠燈 GPIO13（各串 220 Ω）、按鈕 GPIO5（套件按鍵 A），跟套件的腳位一樣。課堂上 06 由老師在〈<a href="timer-interrupt.html?tab=sleep">計時器與中斷實驗台</a>〉示範，你不用貼；06 留到課後自己試（步驟同動手一：開新專案、貼 diagram.json、貼 main.py、按播放）。</p>
+<div class="codehead"><b>四個專案共用的 diagram.json</b><span>06、07、08、09 都貼這一份</span></div>
+<textarea class="code" id="tdj" readonly rows="12" wrap="off" spellcheck="false" aria-label="06 到 09 共用的 diagram.json 全文">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-led", "id": "led_r", "top": 40, "left": 330, "attrs": { "color": "red", "label": "紅 16" } },
+    { "type": "wokwi-led", "id": "led_y", "top": 140, "left": 330, "attrs": { "color": "yellow", "label": "黃 12" } },
+    { "type": "wokwi-led", "id": "led_g", "top": 240, "left": 330, "attrs": { "color": "green", "label": "綠 13" } },
+    { "type": "wokwi-resistor", "id": "r_r", "top": 70, "left": 420, "attrs": { "value": "220" } },
+    { "type": "wokwi-resistor", "id": "r_y", "top": 170, "left": 420, "attrs": { "value": "220" } },
+    { "type": "wokwi-resistor", "id": "r_g", "top": 270, "left": 420, "attrs": { "value": "220" } },
+    { "type": "wokwi-pushbutton", "id": "btn", "top": 380, "left": 340, "attrs": { "color": "green", "label": "按鈕 → 5" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:16", "led_r:A", "red", [] ],
+    [ "esp:12", "led_y:A", "gold", [] ],
+    [ "esp:13", "led_g:A", "green", [] ],
+    [ "led_r:C", "r_r:1", "black", [] ],
+    [ "led_y:C", "r_y:1", "black", [] ],
+    [ "led_g:C", "r_g:1", "black", [] ],
+    [ "r_r:2", "esp:GND.3", "black", [] ],
+    [ "r_y:2", "esp:GND.3", "black", [] ],
+    [ "r_g:2", "esp:GND.3", "black", [] ],
+    [ "btn:1.l", "esp:5", "green", [] ],
+    [ "btn:2.l", "esp:GND.3", "black", [] ]
+  ],
+  "dependencies": {}
+}
+</textarea>
+<div class="codehead"><b>06 的 main.py（sleep 版：按鈕會漏）</b><span>貼進 main.py 分頁</span></div>
+<textarea class="code" id="t06m" readonly rows="16" wrap="off" spellcheck="false" aria-label="06 的 main.py 全文">
+# 06 紅綠燈＋按鈕（會漏按的版本）
+# 燈用 time.sleep() 一顆一顆輪；按鈕只在迴圈開頭看一眼。
+# 程式睡著的那幾秒什麼都看不到——按鈕按了，它也不知道。
+from machine import Pin
+import time
+
+red = Pin(16, Pin.OUT)              # 套件紅燈 GPIO16（板面 IO4）
+yellow = Pin(12, Pin.OUT)           # 套件黃燈 GPIO12（板面 IO5）
+green = Pin(13, Pin.OUT)            # 套件綠燈 GPIO13（板面 IO6）
+btn = Pin(5, Pin.IN, Pin.PULL_UP)   # 套件按鍵 A GPIO5（板面 IO11）：沒按＝1、按下＝0
+
+
+def only(light):
+    red.value(0)
+    yellow.value(0)
+    green.value(0)
+    light.value(1)
+
+
+seen = 0
+print('紅綠燈開始。按鈕只在每一輪開頭看一眼，其餘時間程式在睡')
+while True:
+    if btn.value() == 0:            # 只有跑到本行的那一瞬間才看得到按鈕
+        seen = seen + 1
+        print('看到按鈕了，第', seen, '次')
+    only(green)
+    print('綠燈 3 秒')
+    time.sleep(3)                   # 睡著：本行沒跑完，下面全部不動、按鈕也沒人看
+    only(yellow)
+    print('黃燈 1 秒')
+    time.sleep(1)
+    only(red)
+    print('紅燈 3 秒')
+    time.sleep(3)
+</textarea>
+<p>老師 2026-09-25 在 Wokwi 實跑：按 8 下（每下按住 150 ms），「看到按鈕了」只印出 1 行。在〈<a href="timer-interrupt.html?tab=sleep">計時器與中斷實驗台</a>〉第①個分頁按「自動按 8 下」，可以看見每一下落在哪裡。</p>
+<details><summary>先猜：兩個 sleep(3) 都改成 sleep(0.1)，還會漏嗎？（猜完再點開）</summary>
+<p>還是會，只是漏得少一點。睡得再短，睡著的時候主程式照樣不會往下看按鈕；解法不是「睡短一點」，是別在需要一直注意的地方睡。</p></details></section>
+
+<section id="fixes"><h2>5　紅綠燈不漏的三種寫法：07、08、09</h2>
+<p>三支都用第 4 節那份共用的 <code>diagram.json</code>，只換 <code>main.py</code>。課堂上大家做 07；08、09 老師會開〈<a href="timer-interrupt.html">計時器與中斷實驗台</a>〉展示，做完動手二的人再自己試。</p>
+
+<div class="card"><h3>07　不睡覺，改看時鐘</h3>
+<p>拿掉 <code>sleep(3)</code>。迴圈每一圈只做很短的事：看一眼按鈕、看一眼時鐘「該換燈了沒」，只睡 1 ms 就回來。像這樣一圈一圈輪流去看，叫<b>輪詢</b>（polling）。燈序寫成一張表 <code>plan</code>，<code>state</code> 記現在第幾列、<code>since</code> 記這一列幾點開始亮——<b>改順序、改時間，只改這張表。</b></p>
+<p class="small">老師 2026-09-25 實跑：按 8 下，剛好印到「看到按鈕了，第 8 次」。</p>
+<div class="codehead"><b>07 的 main.py</b><a href="timer-interrupt.html?tab=clock">在實驗台看它跑</a></div>
+<textarea class="code" id="t07m" readonly rows="16" wrap="off" spellcheck="false" aria-label="07 的 main.py 全文">
+# 07 紅綠燈＋按鈕（看時鐘、不睡覺）
+# 迴圈每一圈只做很短的事：看一眼按鈕、看一眼時鐘（ticks_ms）「該換燈了沒」。
+# 沒有 sleep(3)，所以按鈕每 1 ms 就被看一次，幾乎不會漏。
+from machine import Pin
+import time
+
+red = Pin(16, Pin.OUT)              # 套件紅燈 GPIO16（板面 IO4）
+yellow = Pin(12, Pin.OUT)           # 套件黃燈 GPIO12（板面 IO5）
+green = Pin(13, Pin.OUT)            # 套件綠燈 GPIO13（板面 IO6）
+btn = Pin(5, Pin.IN, Pin.PULL_UP)   # 套件按鍵 A GPIO5（板面 IO11）：沒按＝1、按下＝0
+
+
+def only(light):
+    red.value(0)
+    yellow.value(0)
+    green.value(0)
+    light.value(1)
+
+
+# 燈序寫成一張表：(哪顆燈, 亮幾毫秒, 名字)。改順序、改時間只改表。
+plan = [(green, 3000, '綠燈 3 秒'), (yellow, 1000, '黃燈 1 秒'), (red, 3000, '紅燈 3 秒')]
+state = 0                           # 現在輪到表的第幾列
+since = time.ticks_ms()             # 現在的燈是幾點幾分開始亮的
+only(plan[state][0])
+
+seen = 0
+prev = 1
+last_edge = 0                       # 上一次按鈕 0↔1 變化的時間
+print('看時鐘不睡覺：按鈕每 1 ms 看一次')
+print(plan[state][2])
+while True:
+    now = time.ticks_ms()
+
+    # 一、看按鈕：彈跳＝一堆變化擠在 1 ms 內（按下、放開都會抖）。
+    #    只有「離上一次變化超過 50 ms」的那個 1→0 才算按下；其餘變化只是把時間記下來。
+    v = btn.value()
+    if v != prev:
+        if v == 0 and time.ticks_diff(now, last_edge) &gt; 50:
+            seen = seen + 1
+            print('看到按鈕了，第', seen, '次')
+        last_edge = now
+        prev = v
+
+    # 二、看時鐘：現在的燈亮夠久了嗎？夠了就換下一列
+    if time.ticks_diff(now, since) &gt;= plan[state][1]:
+        state = (state + 1) % len(plan)
+        since = now
+        only(plan[state][0])
+        print(plan[state][2])
+
+    time.sleep_ms(1)                # 只睡 1 ms，馬上回來再看一次
+</textarea></div>
+
+<div class="card"><h3>08　燈交給計時器</h3>
+<p>晶片裡有一顆自己會走的碼表，叫<b>計時器</b>（timer）。<code>Timer(0)</code> 每 100 ms 叫一次 <code>tick()</code>，<code>tick()</code> 自己數還剩幾格，數到 0 就換燈（綠 30 格＝3 秒、黃 10 格＝1 秒、紅 30 格＝3 秒）；主迴圈只剩看按鈕。ESP32 寫 <code>Timer(0)</code>～<code>Timer(3)</code>，網路上常見的 <code>Timer(-1)</code> 在 ESP32 會出錯。</p>
+<p class="small">老師 2026-09-25 實跑：按 8 下，剛好印到「看到按鈕了，第 8 次」。</p>
+<div class="codehead"><b>08 的 main.py</b><a href="timer-interrupt.html?tab=timer">在實驗台看它跑</a></div>
+<textarea class="code" id="t08m" readonly rows="16" wrap="off" spellcheck="false" aria-label="08 的 main.py 全文">
+# 08 燈交給計時器（machine.Timer）
+# 計時器每 100 ms 叫一次 tick()，tick 自己數「還剩幾格」、到了就換燈。
+# 主迴圈只剩一件事：看按鈕。燈的節奏跟按鈕互不干擾。
+from machine import Pin, Timer
+import time
+
+red = Pin(16, Pin.OUT)              # 套件紅燈 GPIO16（板面 IO4）
+yellow = Pin(12, Pin.OUT)           # 套件黃燈 GPIO12（板面 IO5）
+green = Pin(13, Pin.OUT)            # 套件綠燈 GPIO13（板面 IO6）
+btn = Pin(5, Pin.IN, Pin.PULL_UP)   # 套件按鍵 A GPIO5（板面 IO11）：沒按＝1、按下＝0
+
+
+def only(light):
+    red.value(0)
+    yellow.value(0)
+    green.value(0)
+    light.value(1)
+
+
+# 燈序寫成一張表：(哪顆燈, 亮幾格, 名字)。一格＝100 ms，30 格＝3 秒。
+plan = [(green, 30, '綠燈 3 秒'), (yellow, 10, '黃燈 1 秒'), (red, 30, '紅燈 3 秒')]
+state = 0                           # 現在輪到表的第幾列
+left = plan[state][1]               # 現在的燈還剩幾格
+changed = 0                         # 旗標：tick 換了燈，主迴圈看到再印字
+
+
+def tick(t):
+    # 計時器叫的：要短，只改幾個數字和腳位；不 print、不建新東西
+    global state, left, changed
+    left = left - 1
+    if left &lt;= 0:
+        state = (state + 1) % len(plan)
+        left = plan[state][1]
+        only(plan[state][0])
+        changed = 1
+
+
+tim = Timer(0)                      # ESP32 的硬體計時器 0
+tim.init(period=100, mode=Timer.PERIODIC, callback=tick)   # 每 100 ms 叫一次 tick
+only(plan[state][0])
+
+seen = 0
+prev = 1
+last_edge = 0                       # 上一次按鈕 0↔1 變化的時間
+print('燈交給計時器；主迴圈只看按鈕')
+print(plan[state][2])
+while True:
+    now = time.ticks_ms()
+
+    # 看按鈕：只有「離上一次變化超過 50 ms」的那個 1→0 才算按下（按下、放開的彈跳都擋得住）
+    v = btn.value()
+    if v != prev:
+        if v == 0 and time.ticks_diff(now, last_edge) &gt; 50:
+            seen = seen + 1
+            print('看到按鈕了，第', seen, '次')
+        last_edge = now
+        prev = v
+
+    # 計時器換了燈，主迴圈替它印一行
+    if changed:
+        changed = 0
+        print(plan[state][2])
+
+    time.sleep_ms(1)
+</textarea></div>
+
+<div class="card"><h3>09　按鈕交給中斷</h3>
+<p>燈故意還用 <code>sleep</code> 輪。按鈕交給硬體：腳位一從 1 變 0，晶片就把 <code>on_edge()</code> 叫起來，主程式正在睡也一樣——程式睡著，硬體還醒著。被中斷叫起來的那一小段程式，叫<b>中斷處理函式</b>（interrupt handler），要短：不 <code>print</code>、不建新東西。按一下會彈好幾下，所以它只重新啟動一個 20 ms 的一次性計時器，時間到了再看一次按鈕，還是 0 才算按了一次。</p>
+<p class="small">老師 2026-09-25 實跑：按 8 下，右下角印「到目前中斷記到 8 次；被叫 170 次」——多出來的都是彈跳。按了當下序列埠不會馬上跳字，要等主程式換燈醒來才印出更新後的數字（最多等 3 秒），不是當機。</p>
+<div class="codehead"><b>09 的 main.py</b><a href="timer-interrupt.html?tab=irq">在實驗台看它跑</a></div>
+<textarea class="code" id="t09m" readonly rows="16" wrap="off" spellcheck="false" aria-label="09 的 main.py 全文">
+# 09 按鈕交給中斷（Pin.irq）＋ 一次性計時器確認
+# 按鈕 1→0 那一瞬間，硬體會把 on_edge() 叫起來——就算主程式正在 sleep 也一樣。
+# 燈故意還用 time.sleep() 輪（跟 06 一樣會卡住），證明中斷不受它影響。
+# 彈跳：按下、放開都會有一堆 1→0 的邊緣擠在 1 ms 內。所以 on_edge() 只做一件事——
+# 啟動一個 20 ms 的一次性計時器；20 ms 後 confirm() 再看一次按鈕，還是 0 才算真的按下一次。
+# 中斷處理函式要短：不 print、不建新東西（MicroPython 官方的規則）。
+from machine import Pin, Timer
+import time
+
+red = Pin(16, Pin.OUT)              # 套件紅燈 GPIO16（板面 IO4）
+yellow = Pin(12, Pin.OUT)           # 套件黃燈 GPIO12（板面 IO5）
+green = Pin(13, Pin.OUT)            # 套件綠燈 GPIO13（板面 IO6）
+btn = Pin(5, Pin.IN, Pin.PULL_UP)   # 套件按鍵 A GPIO5（板面 IO11）：沒按＝1、按下＝0
+
+
+def only(light):
+    red.value(0)
+    yellow.value(0)
+    green.value(0)
+    light.value(1)
+
+
+presses = 0                         # 確認過的按下次數
+edges = 0                           # 中斷被叫了幾次（含彈跳，統計用）
+deb = Timer(1)                      # 去彈跳用的一次性計時器（硬體計時器 1）
+
+
+def confirm(t):
+    # 最後一個邊緣之後 20 ms 才會跑到：按鈕還是 0 ＝ 真的按著，算一次
+    global presses
+    if btn.value() == 0:
+        presses = presses + 1
+
+
+def on_edge(pin):
+    # 硬體叫的：每個 1→0 邊緣都會進來（包括彈跳）。只做一件事：重新啟動 20 ms 的一次性計時器
+    global edges
+    edges = edges + 1
+    deb.init(period=20, mode=Timer.ONE_SHOT, callback=confirm)
+
+
+btn.irq(trigger=Pin.IRQ_FALLING, handler=on_edge)   # 按鈕 1→0 就叫 on_edge
+
+print('按鈕交給中斷；燈還是用 sleep 輪')
+while True:
+    only(green)
+    print('綠燈 3 秒；到目前中斷記到', presses, '次；被叫', edges, '次')
+    time.sleep(3)                   # 主程式在睡，中斷還醒著
+    only(yellow)
+    print('黃燈 1 秒；到目前中斷記到', presses, '次；被叫', edges, '次')
+    time.sleep(1)
+    only(red)
+    print('紅燈 3 秒；到目前中斷記到', presses, '次；被叫', edges, '次')
+    time.sleep(3)
+</textarea></div></section>
+
+<section id="hands2"><h2>6　動手二：把你的紅綠燈改成不漏的</h2>
+<ol class="steps">
+<li><b>開新專案</b>，<code>diagram.json</code> 貼第 4 節那份共用的，<code>main.py</code> 貼 07，按播放。</li>
+<li><b>按 8 下</b>，右下角要印到「看到按鈕了，第 8 次」。</li>
+<li><b>把 <code>plan</code> 改成你作業的燈序</b>：每一列是「哪顆燈、亮幾毫秒、印什麼」（3 秒寫 3000）。07 原本那一行長這樣：</li></ol>
+<pre><code>plan = [(green, 3000, '綠燈 3 秒'), (yellow, 1000, '黃燈 1 秒'), (red, 3000, '紅燈 3 秒')]</code></pre>
+<p>改完先按停止、再按綠色播放，右下角會重新從 0 數起，燈序才會換成你的。<b><code>plan</code> 一列只亮一顆燈；你的燈序有「全滅」那一段（例如黃燈閃）先舉手。</b></p>
+<ol class="steps" start="4">
+<li><b>再按 8 下</b>，確認還是 8 次；右下角截圖留著。</li></ol>
+<p class="note"><b>檢查：</b>07／08：看到第 8 次；09：記到 8 次；舉手說你選哪條、為什麼。做完的人：同一份 diagram.json，<code>main.py</code> 換成 08 或 09 再跑一次——08 印「看到」、09 印「記到」。</p>
+<p class="small">括號、逗號、引號要成對，少一個右下角就會出現白字的 <code>SyntaxError</code>。<code>plan</code> 裡印的字別用「這、連、個」這類字——Wokwi 的序列埠會把它們吃掉，印出來缺字。</p></section>
+
+<section id="stuck"><h2>7　卡住怎麼辦</h2>
+<ul>
+<li><b>錯誤訊息是白字</b>，在右下角那格黑底的序列埠，不是紅字；看最後一行開頭那個 <code>○○Error</code>。改完程式要重按播放，它不會自己重跑。</li>
+<li><b>右下角沒有黑底那格</b>：<code>diagram.json</code> 沒貼到。這頁的兩份 diagram.json 都已經接好序列埠。</li>
+<li><b>一直停在「Compiling project…」</b>：Wokwi 在排隊，等一下或重新整理。再不行，先開〈<a href="timer-interrupt.html">計時器與中斷實驗台</a>〉或〈<a href="rs-latch.html">RS 閂鎖工作台</a>〉按「自動按」看同一件事。</li>
+<li><b>按鈕找不到、電路太大</b>：點一下電路那一區，按 <kbd>F</kbd>（Fit），整張電路會縮進畫面。</li>
+<li><b>印出來的字少一個</b>：Wokwi 的序列埠會吃掉「這、連、個」這類字，換個字就好。</li>
+<li><b>看不懂某一行</b>：AI 只用網頁版、開在另一個分頁、只問「這一行在做什麼」；要改，你自己回 Wokwi 改。W11 才讓 AI 自己動手改程式。</li></ul></section>
+
+<section id="next"><h2>8　下週</h2>
+<p><b>W5（10/6）讀旋鈕、調亮度</b>：旋鈕轉一半，ESP32 讀到多少？燈怎麼只亮一半？W6（10/13）：把數字顯示在小螢幕上。</p>
+<p>想先玩的：〈<a href="../w05/button-bounce.html">按鈕彈跳實驗台</a>〉。<b>回家玩：腳位透視鏡——先把輸出腳位想成上下兩顆開關（簡化模型）</b>：〈<a href="esp32-pin-xray.html?preset=basic">燈接地，寫 1 亮</a>〉、〈<a href="esp32-pin-xray.html?preset=sink">燈接 3.3 V，寫 0 亮</a>〉。還有老師在 Falstad 畫的三張：<a href="https://www.falstad.com/circuit/circuitjs.html?ctz=CQAgzCAMB0l3BWEBGGAmOaDsWyQBxoBsAnCViAktZJQKYC0yyAUAEogAsc4aXPDMH1q1u4aBBFRoCFgHd+tNGO5KswlgHNFIbH1XhInKFHk7knYwYz5TCg0Ss8LxyGb0pLu9buWmAMigkfC4oCCFeUgBmAIYANgDOdOKS7j6cth6hblHe+rYGGSAkKDLSkGgsuR5oftZ+QqVIMBUsAEYoYEQgDI5cCLRgQ6YAHmHI4Mi2eCVCE8Z+AKIAygAKQgA6CQAiAPJbqwCWAHZmBqEIWN3ZLGOcJBDIuJRgxk-dC8bbIyMsALKUK6eYwIYLAkzIaCVACSQQiCx82Wk1BYQA" target="_blank" rel="noopener">腳位裡面</a>、<a href="https://www.falstad.com/circuit/circuitjs.html?ctz=CQAgzCAMB0l3BWEBGGAmOaDsWyQBxoBsAnCViAkZZZJQKYC0yyAUAGYiNpoAsIPfoxLVB4NCmhIYkNBy5je+LiJBKQJSdNhyA7gr5rl3Q8l79IrADJc8-M0LBplDqG-YBDADYBneuGgIS31hald8OlcwVhCxVxN+MWCVaiIhVVdk0JRzFIECKFYAczzsCWy7NyzVPjpsssKAJTzmamzGdTo6XjowQKqoKVZkIgkInP5xjGUJABN6TwBXLwAXRi96WZQBmTYSqawx3sgLQpDVVrynQoAnECmCg4levFYAI1teTUZRrl5qMA9QoADy4yCwyh6EEuPWoiX4AGUAPaLG4AY3oAB0fABhVE3egAOxWrFBjDAZnE0OQVHEcIE-AAogiAApObEAEQA8tiWQBLQmsACSthOEwM9lyXSklFYQA" target="_blank" rel="noopener">燈接地</a>、<a href="https://www.falstad.com/circuit/circuitjs.html?ctz=CQAgzCAMB0l3BWEBGGAmOaDsWyQBxoBsAnCViAktZJQKYC0yyAUMkWiBwCxe88o0+EJwAmdAGYBDAK4AbAC4M5dUSigaYkVgCUQ3OOE4HaDMJ1q0D4aBEtRoCFgHd9htNZMisFlgHM3WmxjQzxeSxdAlG5eLwxhSEivIljDZBioSODo3my0D0zXL3T+ApKUFgAZFHxecvZacvtpOQBnOhs7LJ99YWymlglvY2EvbmESFEcHSDRB4ZECuILzKaQtOb0BWgEzCw1rdc1HFgAnLgKdgpSNMDxIgXLHoUyAIxQwIhAGG+4EWjuXQAHiJkEhPl9PshwKR9CJeABlACWADsANYAHVaAGEZKdTnQUQosViWCCwdCwMhhHhJuZobleABRBEABXMWIAIgB5LGs1EsACSNTqGX6GUs0ycQA" target="_blank" rel="noopener">燈接高電位（Falstad 圖裡接的是 5 V）</a>（按「執行／停止」，改左邊的 L 看燈那一側怎麼變）。</p></section>
+
+<footer class="small"><p>國立東華大學　創客入門–智慧生活裝置實作<br>W4 學生頁，2026-09-25。這一頁沒有接 AI，也不收集你填的任何東西；離線打得開（Wokwi 與 Falstad 需要網路）。<br>框裡的五支程式與兩份 diagram.json，跟老師在 Wokwi 實跑過的檔案逐字一樣；實跑數字是 2026-09-25 跑出來的，Wokwi 的彈跳是隨機的，你按的時候直接接的次數會不一樣。</p></footer>
+</main></body></html>

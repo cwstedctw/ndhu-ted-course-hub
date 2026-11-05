@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W6 指令小抄｜借眼睛：攝影機走 USB 進板子，再把一條線變成網路</title>
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --ink:#132525; --mist:#5E7676; --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF;
+  --gold-tint:#FBF0D9; --red:#B4553F; --code-bg:#F3F6F5;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#0B1A1A;--surface:#112424;--ink:#E6F2F2;--mist:#8FA9A8;--line:#26403F;--teal:#5CC8C6;--teal-tint:#123A39;--gold-tint:#3A2F18;--red:#E58B74;--code-bg:#0D1F1F;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0B1A1A;--surface:#112424;--ink:#E6F2F2;--mist:#8FA9A8;--line:#26403F;--teal:#5CC8C6;--teal-tint:#123A39;--gold-tint:#3A2F18;--red:#E58B74;--code-bg:#0D1F1F;color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:15px;line-height:1.55}
+main{max-width:1100px;margin:0 auto;padding:16px 16px 40px}
+h1{font-size:22px;margin:0 0 2px}
+.sub{color:var(--mist);font-size:13.5px;margin:0 0 10px}
+.cols{columns:2 460px;column-gap:18px}
+.card{break-inside:avoid;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:0 0 12px}
+.card h2{font-size:15.5px;margin:0 0 4px;color:var(--teal)}
+.where{display:inline-block;font-size:12px;font-weight:700;padding:0 6px;border-radius:6px;background:var(--teal-tint);color:var(--teal);margin-right:4px}
+.where.b{background:var(--gold-tint);color:#7A5510}
+pre{margin:4px 0 6px;padding:6px 8px;background:var(--code-bg);border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere;font:12.8px/1.5 var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+code{font-family:var(--mono);font-size:.92em;background:var(--code-bg);border-radius:4px;padding:0 3px;font-variant-ligatures:none}
+p{margin:3px 0}
+.k{font-size:13px;color:var(--mist)}
+.warn{color:var(--red);font-weight:700}
+ul{margin:2px 0;padding-left:1.2em}
+nav{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;margin-bottom:8px}
+a{color:var(--teal)}
+@media print{
+  @page{size:A4;margin:7mm}
+  body{background:#fff;font-size:9.2px;line-height:1.28}
+  main{padding:0;max-width:none}
+  nav{display:none}
+  h1{font-size:13.5px}
+  .sub{font-size:8.6px;margin-bottom:4px}
+  .cols{columns:2;column-gap:7px}
+  .card{padding:3px 6px;margin:0 0 5px;border-radius:5px}
+  .card h2{font-size:10px;margin-bottom:1px}
+  pre{font-size:7.5px;line-height:1.3;padding:2px 4px;margin:2px 0 2px}
+  p{margin:2px 0}
+  .k{font-size:8.2px}
+  .where{font-size:7.8px}
+}
+</style>
+</head>
+<body>
+<main>
+<nav><a href="student.html">學生頁（完整步驟）</a><a href="concept.html">互動概念頁</a></nav>
+<h1>W6 指令小抄：借眼睛——攝影機走 USB 進板子，再把一條線變成網路</h1>
+<p class="sub">AIoT 智慧裝置實作 115-1・10/15（四）E307。照順序一行一行打；<span class="where">電腦</span>＝視窗 A（跑過找 adb 那段）、<span class="where b">板子</span>＝SSH 視窗 B。看不懂為什麼 → 學生頁同一節；卡住 → 學生頁第 9 節，或把完整錯誤訊息貼給 AI agent（板子密碼不要貼）。可以印成一張 A4。</p>
+<div class="cols">
+
+<div class="card"><h2>1　就位（接線、等心跳；視窗 A）</h2>
+<p><span class="where">電腦</span>USB 看得到（要有 <code>2341:0078</code>）</p>
+<pre>lsusb | grep -E '2341:0078|05c6:9008'</pre>
+<p><span class="where">電腦</span>找 adb（兩行一起貼）、列出板子（要有 <code>device</code>）</p>
+<pre>ADB=$(find "$HOME/.arduino15/packages/arduino/tools/adb" \
+    -type f -name adb -perm -u+x -print 2>/dev/null | sort -V | tail -n 1)
+"$ADB" devices -l</pre>
+<p><span class="where">電腦</span>開 2222 通道（不印字）；再開一個視窗 B，SSH 進板子（打 yes、板子密碼）</p>
+<pre>"$ADB" forward tcp:2222 tcp:22</pre>
+<pre>ssh -p 2222 arduino@127.0.0.1</pre>
+<p class="k">✅ 視窗 B 提示字元 <code>arduino@</code> 開頭。<code>"$ADB"</code> 開頭的都在 A 打、<code>arduino-app-cli</code>／<code>sudo</code> 都在 B 打。</p></div>
+
+<div class="card"><h2>2　把 App 放上板子</h2>
+<p><span class="where">電腦</span>抓下來、解開（第二行不印字）、推上板子</p>
+<pre>cd ~/Downloads
+curl -fsSL https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-aiot/w06/starter/w06-starter.tar.gz | tar xz
+ls w06-starter</pre>
+<pre>"$ADB" push w06-starter/face-usb-classroom /home/arduino/ArduinoApps/
+"$ADB" push w06-starter/w06-usbnet /home/arduino/</pre>
+<p><span class="where b">板子</span>跑起來（老師板 16 秒；出廠板第一次可能先拉 969 MB，<b>不要重按</b>）、看兩個容器、看 log</p>
+<pre>arduino-app-cli app start ~/ArduinoApps/face-usb-classroom
+docker ps --format "{{.Names}}"
+arduino-app-cli app logs ~/ArduinoApps/face-usb-classroom --tail 12</pre>
+<p class="k">✅ <code>started successfully</code>＋<code>face-usb-classroom-main-1</code>、<code>…-ei-video-obj-detection-runner-1</code> 兩列。</p></div>
+
+<div class="card"><h2>3　三條通道，開網頁</h2>
+<p><span class="where">電腦</span>17000 網頁、18080 影像、14912 AI 框選（不印字）；再列出來看</p>
+<pre>"$ADB" forward tcp:17000 tcp:7000
+"$ADB" forward tcp:18080 tcp:8080
+"$ADB" forward tcp:14912 tcp:4912
+"$ADB" forward --list</pre>
+<p class="k">Chrome 開 <code>http://127.0.0.1:17000</code>（一定要 127.0.0.1）→ 選攝影機 → 允許 → 開始辨識 → 右下有臉框。📸 證據 1：臉框＋六格同一張（送出 8.0 FPS、板子實際收到 8.0）。✋ 8.0 是誰定的？</p></div>
+
+<div class="card"><h2>4a　一條線變網卡：先看、核對、裝（裝進 adbd 的生命週期）</h2>
+<p><span class="where b">板子</span>先看三樣＋要裝的檔（lsmod 那行現在什麼都不印）</p>
+<pre>ls /sys/kernel/config/usb_gadget/g1/configs/c.1/
+ls /lib/modules/$(uname -r)/kernel/drivers/usb/gadget/function/
+lsmod | grep -E "ncm|u_ether"
+cat ~/w06-usbnet/10-extra-functions.conf</pre>
+<p><span class="where b">板子</span>核對（<b>沒印 OK 就不要裝</b>，留在 adb 路線）</p>
+<pre>grep -q 'ExecStopPost=/usr/lib/android-sdk/platform-tools/adbd-usb-gadget reset' /usr/lib/systemd/system/adbd.service &amp;&amp; echo OK</pre>
+<p><span class="where b">板子</span>七行 sudo：放檔案、重讀、enable（打板子密碼；最後一行印 non-existent unit 是正常）</p>
+<pre>cd ~/w06-usbnet
+sudo install -d -m 755 /home/arduino/usbnet
+sudo install -m 755 ncm-hook.sh /home/arduino/usbnet/ncm-hook.sh
+sudo install -d /etc/systemd/system/adbd.service.d
+sudo install -m 644 10-extra-functions.conf /etc/systemd/system/adbd.service.d/
+sudo install -m 644 usbnet-dhcp.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable usbnet-dhcp</pre>
+<p><span class="where b">板子</span>重啟 adbd——<span class="warn">SSH 會斷，正常；數 15 秒</span></p>
+<pre>sudo systemctl restart adbd</pre></div>
+
+<div class="card"><h2>4b　網卡起來了沒：電腦這頭、板上回頭看</h2>
+<p><span class="where">電腦</span>就在視窗 B（SSH 斷了就回到電腦）：多一張 <code>192.168.7.x</code> 網卡、ping、不用通道的 SSH（檢查腳本 <code>sh w06-starter/pc/check-usbnet.sh</code> 在視窗 A 跑，一次看五樣）</p>
+<pre>ip -4 -br addr
+ping -c 5 192.168.7.2
+ssh arduino@192.168.7.2</pre>
+<p><span class="where b">板子</span>四行回頭看：兩個 active、<code>c.1/</code> 多了 <code>ncm.usb0</code>、模組載了、hook 日誌</p>
+<pre>systemctl is-active adbd usbnet-dhcp
+ls /sys/kernel/config/usb_gadget/g1/configs/c.1/
+lsmod | grep -E "ncm|u_ether"
+cat /tmp/ncm-hook.log</pre>
+<p class="k">📸 證據 2：<code>ip -4 -br addr</code>＋<code>c.1/</code> 兩張。網卡是持久的，一台電腦一次只接一塊板。</p></div>
+
+<div class="card"><h2>5　量快慢（只有第一行必做）</h2>
+<p><span class="where">電腦</span>USB 網路的 ping（看最後一行 min/avg/max）</p>
+<pre>ping -c 10 192.168.7.2</pre>
+<p>有餘力：<span class="where b">板子</span>查 Wi-Fi IP（⚠️ 沒在板上跑過）→ <span class="where">電腦</span>ping 它（教室網路可能擋住）</p>
+<pre>nmcli -g IP4.ADDRESS dev show wlan0</pre>
+<pre>ping -c 10 &lt;板子的 Wi-Fi IP&gt;</pre>
+<p class="k">老師 10/14：USB 0–1 ms vs 家用 Wi-Fi 平均 156 ms；100 MB：0.8 秒 vs 52 秒。</p>
+<p>有餘力：<span class="where b">板子</span>100 MB（⚠️ 沒逐字跑過）→ <span class="where">電腦</span>抓 → 板子 Ctrl＋C、刪檔</p>
+<pre>dd if=/dev/urandom of=/tmp/blob100.bin bs=1M count=100
+python3 -m http.server 8000 --bind 192.168.7.2 --directory /tmp</pre>
+<pre>curl -o /dev/null -w "%{speed_download} B/s\n" http://192.168.7.2:8000/blob100.bin</pre>
+<pre>rm /tmp/blob100.bin</pre></div>
+
+<div class="card"><h2>6　同一個網頁改走 USB 網路（零 adb）</h2>
+<p class="k">先直連 <code>http://192.168.7.2:7000</code>：攝影機下拉只剩「這個瀏覽器不支援攝影機」（瀏覽器只在 localhost／HTTPS 給攝影機）。</p>
+<p><span class="where">電腦</span>拆光 forward（第二行要印空的，留在畫面上）、開轉接程式（會一直跑）</p>
+<pre>"$ADB" forward --remove-all
+"$ADB" forward --list</pre>
+<pre>python3 w06-starter/pc/usbnet-bridge.py</pre>
+<p class="k">印四行（<code>USB 網路轉接啟動…</code>＋三行對照）→ Chrome 開 <code>http://127.0.0.1:17000</code> → 臉框回來。📸 證據 3：空的 <code>forward --list</code>＋臉框同一張。</p></div>
+
+<div class="card"><h2>7　有餘力：改兩處 fps、看瓶頸</h2>
+<p><span class="where b">板子</span>8 → 20（兩處都改）、確認、重啟</p>
+<pre>cd ~/ArduinoApps/face-usb-classroom
+sed -i "s/^    fps=8,/    fps=20,/" python/main.py
+sed -i "s/^const TARGET_FPS = 8;/const TARGET_FPS = 20;/; s/max: 12 }/max: 30 }/" assets/app.js
+grep -n -E "fps=|TARGET_FPS = |max: " python/main.py assets/app.js</pre>
+<pre>arduino-app-cli app stop ~/ArduinoApps/face-usb-classroom
+arduino-app-cli app start ~/ArduinoApps/face-usb-classroom</pre>
+<p class="k">Chrome 重新整理 → 送 20.0／板子收 20.0；F12 主控台每行一次 <code>classification</code>（行尾＝毫秒）；板子看容器 CPU：</p>
+<pre>docker stats --no-stream</pre>
+<p class="k">送 8 → AI 5.5 次/秒（CPU 76%）；送 20 → 6.3 次/秒（113%）。瓶頸在 AI 那一層，不在線、不在 kernel。改回：把兩行 sed 的 20 和 8 對調（學生頁第 7 節）。</p></div>
+
+<div class="card"><h2>8　收尾</h2>
+<p><span class="where b">板子</span>停 App；<span class="where">電腦</span>轉接程式 Ctrl＋C、拆通道；網卡留著、線拔掉</p>
+<pre>arduino-app-cli app stop ~/ArduinoApps/face-usb-classroom</pre>
+<pre>"$ADB" forward --remove-all</pre>
+<p class="k">三張證據存好；作業老師上課時會在 e學苑 開。要拿掉網卡（五行、最後一行是 <code>sudo reboot</code>、不是 restart adbd）：學生頁第 8 節的摺疊。</p></div>
+
+</div>
+<p class="sub">本頁不印板子密碼、板子序號、Wi-Fi；<code>192.168.7.x</code> 是 USB 線上的私人網段，每塊板都一樣。</p>
+</main>
+</body>
+</html>

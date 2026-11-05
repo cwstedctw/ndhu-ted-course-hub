@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>上網怎麼講話實驗台</title>
+<meta name="description" content="互動模擬：ESP32 怎麼接上無線網路拿到門牌（WiFi）、怎麼照固定格式寫一封信給 Telegram（HTTP、JSON、狀態碼）、溫濕度感測器怎麼用一條線回 40 個位元（DHT11／DHT22）、多久寄一次才不會被擋（節奏與門檻）。四個分頁都是慢動作模擬，不真的連網；附四個可以貼進 Wokwi 自己跑的專案。創客入門 W7 補充教材。">
+</head>
+<body>
+<style>
+  :root {
+    --c-primary: #0E7C7B; --c-primary-deep: #0A5C5B; --c-primary-tint: #DDF0EF; --c-primary-pale: #F0F8F8;
+    --c-gold: #D9A441; --c-gold-deep: #8A6318; --c-gold-tint: #FFF2CE;
+    --c-violet: #7B61C9; --c-violet-tint: #EFEAFA;
+    --c-green: #23A26B; --c-green-tint: #E3F5EC;
+    --c-red: #D9453C; --c-red-tint: #FDE7EA;
+    --c-bg: #F7FAF9; --c-surface: #FFFFFF; --c-surface-2: #EEF4F3; --c-line: #D6E2E1; --c-line-soft: #E6EEED;
+    --c-ink: #132525; --c-ink-soft: #3A4F4E; --c-ink-faint: #7F9391;
+    --c-code-bg: #0B2B2B; --c-code-ink: #E6F2F2; --c-code-hl: rgba(217, 164, 65, .28);
+    --c-term-bg: #000; --c-term-ink: #E8E8E8;
+    --font-zh: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-primary: #7FD8BE; --c-primary-deep: #BFF0E0; --c-primary-tint: #1E3A33; --c-primary-pale: #16302B;
+      --c-gold: #E8BD67; --c-gold-deep: #F8E8B8; --c-gold-tint: #3A3220;
+      --c-violet: #B9A7E0; --c-violet-tint: #2A2440;
+      --c-green: #5ED39A; --c-green-tint: #1B3A2B;
+      --c-red: #FF8A80; --c-red-tint: #4A1F26;
+      --c-bg: #0F1A1A; --c-surface: #152424; --c-surface-2: #1B2E2E; --c-line: #2A4342; --c-line-soft: #223838;
+      --c-ink: #E6F2F2; --c-ink-soft: #C2D6D5; --c-ink-faint: #86A09E;
+      --c-code-bg: #061C1C; --c-code-ink: #E6F2F2; --c-code-hl: rgba(217, 164, 65, .30);
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-primary: #7FD8BE; --c-primary-deep: #BFF0E0; --c-primary-tint: #1E3A33; --c-primary-pale: #16302B;
+    --c-gold: #E8BD67; --c-gold-deep: #F8E8B8; --c-gold-tint: #3A3220;
+    --c-violet: #B9A7E0; --c-violet-tint: #2A2440;
+    --c-green: #5ED39A; --c-green-tint: #1B3A2B;
+    --c-red: #FF8A80; --c-red-tint: #4A1F26;
+    --c-bg: #0F1A1A; --c-surface: #152424; --c-surface-2: #1B2E2E; --c-line: #2A4342; --c-line-soft: #223838;
+    --c-ink: #E6F2F2; --c-ink-soft: #C2D6D5; --c-ink-faint: #86A09E;
+    --c-code-bg: #061C1C; --c-code-ink: #E6F2F2; --c-code-hl: rgba(217, 164, 65, .30);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--c-bg); color: var(--c-ink); font-family: var(--font-zh); line-height: 1.6; }
+  body { padding: 0 16px 48px; }
+  a { color: var(--c-primary-deep); }
+  h1 { font-size: clamp(26px, 4vw, 38px); margin: 0; line-height: 1.2; }
+  h2 { font-size: clamp(20px, 2.6vw, 26px); margin: 0 0 10px; }
+  h3 { font-size: 18px; margin: 0 0 6px; }
+  p { margin: 0 0 10px; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  header.top { padding: 28px 0 12px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: flex-end; }
+  .kicker { color: var(--c-primary); font-weight: 800; letter-spacing: .12em; font-size: 13px; text-transform: uppercase; }
+  .lead { color: var(--c-ink-soft); font-size: 17px; max-width: 760px; }
+  .topnav { display: flex; flex-wrap: wrap; gap: 8px; }
+  .topnav a { text-decoration: none; padding: 6px 12px; border: 1px solid var(--c-line); border-radius: 999px; background: var(--c-surface); font-size: 14px; font-weight: 700; color: var(--c-ink); }
+  .card { background: var(--c-surface); border: 1px solid var(--c-line); border-radius: 18px; padding: 18px 20px; }
+  .howto { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin: 14px 0 22px; }
+  .howto .card b { color: var(--c-primary); }
+  .howto .card small { color: var(--c-ink-faint); display: block; margin-top: 4px; }
+  /* 實驗台 */
+  .bench { margin-top: 10px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 2px solid var(--c-line); }
+  .tab { flex: 1 1 200px; border: 0; background: transparent; padding: 12px 14px; font: 800 17px/1.2 var(--font-zh); color: var(--c-ink-soft); cursor: pointer;
+         border-bottom: 4px solid transparent; margin-bottom: -2px; text-align: left; }
+  .tab small { display: block; font-weight: 600; color: var(--c-ink-faint); margin-top: 4px; font-size: 13px; }
+  .tab[aria-selected="true"] { color: var(--c-primary-deep); border-bottom-color: var(--c-primary); }
+  .tab:focus-visible { outline: 3px solid var(--c-gold); outline-offset: -3px; border-radius: 8px; }
+  .tabpanel { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; padding: 18px 0; }
+  .tabpanel[hidden] { display: none; }
+  .stage { background: var(--c-surface); border: 1px solid var(--c-line); border-radius: 18px; padding: 14px; min-height: 320px; }
+  .stage svg { width: 100%; height: auto; display: block; }
+  .stage .m, svg .m { font-family: var(--font-mono); }
+  .side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .ctl label { font-size: 14px; font-weight: 700; color: var(--c-ink-soft); display: flex; align-items: center; gap: 6px; }
+  button.b { font: 700 14px var(--font-zh); padding: 8px 14px; border-radius: 10px; border: 1px solid var(--c-line); background: var(--c-surface); color: var(--c-ink); cursor: pointer; }
+  button.b.primary { background: var(--c-primary); border-color: var(--c-primary); color: #fff; }
+  :root[data-theme="dark"] button.b.primary, html:not([data-theme="light"]) body button.b.primary { color: #0F1A1A; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) button.b.primary { color: #fff; } }
+  button.b:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--c-gold); outline-offset: 2px; }
+  .chip { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 800; }
+  .chip.ok { background: var(--c-green-tint); color: var(--c-green); }
+  .chip.bad { background: var(--c-red-tint); color: var(--c-red); }
+  .chip.wait { background: var(--c-gold-tint); color: var(--c-gold-deep); }
+  .codebox { background: var(--c-code-bg); color: var(--c-code-ink); border-radius: 14px; padding: 10px 0; font: 500 13.5px/1.6 var(--font-mono); overflow-x: auto; }
+  .codebox .ln { white-space: pre; padding: 0 14px; border-left: 4px solid transparent; }
+  .codebox .ln.hl { background: var(--c-code-hl); border-left-color: var(--c-gold); color: #FFF3D6; font-weight: 700; }
+  .codebox .cm { color: #8FB3B0; }
+  .term { background: var(--c-term-bg); color: var(--c-term-ink); border-radius: 12px; padding: 10px 14px; font: 500 13.5px/1.55 var(--font-mono); white-space: pre-wrap; min-height: 86px; max-height: 220px; overflow: auto; }
+  .term .dim { color: #8c8c8c; }
+  .term .warn { color: #FFD66B; }
+  .note { font-size: 14px; color: var(--c-ink-soft); }
+  .note b { color: var(--c-gold-deep); }
+  input[type="text"], select { font: 600 14px var(--font-mono); padding: 7px 10px; border: 1px solid var(--c-line); border-radius: 10px; background: var(--c-surface); color: var(--c-ink); min-width: 0; }
+  input[type="range"] { width: 160px; }
+  .field { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); min-width: 0; }
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fields .wide { grid-column: 1 / -1; }
+  .url { font: 700 13.5px/1.7 var(--font-mono); word-break: break-all; background: var(--c-surface-2); padding: 8px 12px; border-radius: 10px; }
+  .url .s1 { color: var(--c-primary-deep); } .url .s2 { color: var(--c-gold-deep); } .url .s3 { color: var(--c-violet); }
+  .json { font: 600 13.5px/1.6 var(--font-mono); white-space: pre-wrap; background: var(--c-surface-2); padding: 8px 12px; border-radius: 10px; }
+  .status { display: flex; gap: 8px; flex-wrap: wrap; }
+  .status span { padding: 6px 12px; border-radius: 10px; border: 1px solid var(--c-line); font-size: 13px; font-weight: 700; }
+  .status span.on { background: var(--c-primary-tint); border-color: var(--c-primary); color: var(--c-primary-deep); }
+  .status span.on.bad { background: var(--c-red-tint); border-color: var(--c-red); color: var(--c-red); }
+  /* 觀念 */
+  .concepts { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 6px 0 24px; }
+  .concepts .card h3 { color: var(--c-primary-deep); }
+  .concepts .card p { font-size: 15px; color: var(--c-ink-soft); margin: 0; }
+  .concepts .card[hidden] { display: none; }
+  /* 表格 */
+  .tablewrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; background: var(--c-surface); border-radius: 14px; overflow: hidden; }
+  th, td { border-top: 1px solid var(--c-line-soft); padding: 9px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--c-surface-2); font-weight: 800; }
+  td code, p code, li code, .note code { font: 600 .92em var(--font-mono); background: var(--c-primary-tint); color: var(--c-primary-deep); padding: 1px 6px; border-radius: 6px; }
+  /* Wokwi 卡 */
+  details.sect { margin: 22px 0; border: 1px solid var(--c-line); border-radius: 18px; background: var(--c-surface); }
+  details.sect > summary { cursor: pointer; padding: 16px 20px; font-size: 20px; font-weight: 900; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  details.sect > summary::after { content: "展開"; font-size: 13px; font-weight: 700; color: var(--c-primary); }
+  details.sect[open] > summary::after { content: "收合"; }
+  details.sect > div { padding: 0 20px 20px; }
+  .wk { border: 1px solid var(--c-line); border-radius: 14px; padding: 14px 16px; margin: 12px 0; background: var(--c-surface-2); }
+  .wk h3 { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .wk .see { font-size: 14px; color: var(--c-ink-soft); margin: 6px 0 10px; }
+  .wk .see b { color: var(--c-primary-deep); }
+  pre.code { background: var(--c-code-bg); color: var(--c-code-ink); border-radius: 12px; padding: 12px 14px; font: 500 12.5px/1.55 var(--font-mono); overflow: auto; max-height: 320px; margin: 0; }
+  .copyrow { display: flex; gap: 8px; align-items: center; margin: 8px 0 4px; flex-wrap: wrap; }
+  .copyrow span { font-size: 13px; color: var(--c-ink-faint); }
+  /* 找碴 */
+  .quiz { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  .quiz .card { display: flex; flex-direction: column; gap: 8px; }
+  .quiz .opts { display: flex; flex-direction: column; gap: 6px; }
+  .quiz .opts button { text-align: left; }
+  .quiz .ans { display: none; font-size: 14px; color: var(--c-ink-soft); border-left: 4px solid var(--c-gold); padding-left: 10px; }
+  .quiz .card.done .ans { display: block; }
+  .quiz .opts button.right { border-color: var(--c-green); background: var(--c-green-tint); }
+  .quiz .opts button.wrong { border-color: var(--c-red); background: var(--c-red-tint); }
+  footer { margin-top: 30px; font-size: 13px; color: var(--c-ink-faint); }
+  .sr { position: absolute; left: -9999px; }
+  @media (max-width: 860px) { .tabpanel { grid-template-columns: 1fr; } .fields { grid-template-columns: 1fr; } input[type="range"] { width: 120px; } }
+  @media (prefers-reduced-motion: reduce) { .anim { transition: none !important; } }
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div>
+    <div class="kicker">創客入門 W7 · 互動實驗台</div>
+    <h1>上網怎麼講話實驗台</h1>
+    <p class="lead">上週 ESP32 跟小螢幕講話只隔兩條線；今天它要跟你的手機講話，隔著整個網際網路。四個分頁都是<b>慢動作模擬</b>（不真的連網）：先看懂每一步在等什麼、對方回什麼，再去 Wokwi 真的跑。</p>
+  </div>
+  <nav class="topnav" aria-label="頁內捷徑">
+    <a href="#bench">實驗台</a><a href="#stuck">卡住怎麼辦</a><a href="#sectWokwi">Wokwi 動手做</a><a href="#quiz">找碴五題</a><a href="#sources">數字出處</a>
+  </nav>
+</header>
+
+<section class="howto" aria-label="今天怎麼走">
+  <div class="card"><b>① WiFi 報到</b>：喊名字、等點頭、拿門牌（IP 位址）。<small>對應 Wokwi 卡 01</small></div>
+  <div class="card"><b>② 寫一封信</b>：網址三段、信封裡的 JSON（「名字：內容」的寫法）、回信的狀態碼（三位數）。<small>對應 Wokwi 卡 02</small></div>
+  <div class="card"><b>③ 一條線回 40 位元</b>：溫濕度感測器怎麼把兩個數字排成 40 個 1 和 0。<small>對應 Wokwi 卡 03</small></div>
+  <div class="card"><b>④ 節奏與門檻</b>：多久寄一次、超過幾度才寄——期中「判斷」的雛形（模擬已含寄一封的 5 秒）。<small>對應 Wokwi 卡 03、04</small></div>
+</section>
+
+<section class="bench" id="bench" aria-label="互動模擬實驗台">
+  <div class="tabs" role="tablist" aria-label="四個分頁" id="tablist">
+    <button type="button" class="tab" role="tab" id="tb-wifi" data-tab="wifi" aria-selected="true" aria-controls="tp-wifi">① WiFi 報到<small>喊名字、等點頭、拿門牌</small></button>
+    <button type="button" class="tab" role="tab" id="tb-http" data-tab="http" aria-selected="false" aria-controls="tp-http" tabindex="-1">② 寫一封信<small>網址、信封、回信</small></button>
+    <button type="button" class="tab" role="tab" id="tb-dht" data-tab="dht" aria-selected="false" aria-controls="tp-dht" tabindex="-1">③ 一條線回 40 位元<small>DHT11／DHT22</small></button>
+    <button type="button" class="tab" role="tab" id="tb-loop" data-tab="loop" aria-selected="false" aria-controls="tp-loop" tabindex="-1">④ 節奏與門檻<small>多久寄一次、幾度才寄</small></button>
+  </div>
+
+  <!-- ① WiFi -->
+  <div class="tabpanel" id="tp-wifi" role="tabpanel" aria-labelledby="tb-wifi">
+    <div class="stage" id="wifiStage" aria-label="WiFi 連線慢動作：ESP32、基地台、門牌"></div>
+    <div class="side">
+      <div class="ctl">
+        <label>情境 <select id="wifiPreset" aria-label="WiFi 情境">
+          <option value="ok">名字對、閘道正常（連得上）</option>
+          <option value="noap">名字打錯：Wokwi-Guest（找不到基地台）</option>
+          <option value="gateway">Wokwi 閘道掛了（10/17 下午就是）</option>
+          <option value="wrongpass">真板：密碼打錯</option>
+        </select></label>
+        <button class="b primary" id="wifiPlay">▶ 播放</button>
+        <button class="b" id="wifiStep">單步</button>
+        <button class="b" id="wifiReset">重來</button>
+      </div>
+      <div class="status" id="wifiStatus" aria-live="polite"></div>
+      <div class="codebox" id="wifiCode"></div>
+      <div class="term" id="wifiTerm" aria-live="polite"></div>
+      <p class="note" id="wifiNote"></p>
+    </div>
+  </div>
+
+  <!-- ② HTTP -->
+  <div class="tabpanel" id="tp-http" role="tabpanel" aria-labelledby="tb-http" hidden>
+    <div class="stage" id="httpStage" aria-label="一封信怎麼走：ESP32、路由器、網際網路、Telegram 伺服器、手機"></div>
+    <div class="side">
+      <div class="fields">
+        <label class="field">token（bot 的密碼）<input type="text" id="httpToken" value="110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw" spellcheck="false"></label>
+        <label class="field">chat_id（寄給誰）<input type="text" id="httpChat" value="123456789" spellcheck="false"></label>
+        <label class="field wide">text（寄什麼）<input type="text" id="httpText" value="我上線了！IP 位址 10.10.0.2"></label>
+      </div>
+      <div class="ctl">
+        <label>怎麼寄 <select id="httpMode"><option value="post">POST：內容放信封裡（JSON）</option><option value="get">GET：內容寫在網址上</option></select></label>
+        <label>對方會回 <select id="httpPreset" aria-label="回信情境">
+          <option value="200">200 收下了</option><option value="401">401 token 不對</option><option value="400">400 chat_id 不對</option>
+          <option value="404">404 網址打錯</option><option value="offline">還沒接上網路</option>
+        </select></label>
+        <button class="b primary" id="httpSend">✉ 寄出</button>
+        <button class="b" id="httpReset">重來</button>
+      </div>
+      <div class="url" id="httpUrl"></div>
+      <div class="json" id="httpBody"></div>
+      <div class="status" id="httpStatus" aria-live="polite"></div>
+      <div class="json" id="httpReply" aria-live="polite"></div>
+      <div class="term" id="httpTerm"></div>
+      <p class="note" id="httpNote"></p>
+    </div>
+  </div>
+
+  <!-- ③ DHT -->
+  <div class="tabpanel" id="tp-dht" role="tabpanel" aria-labelledby="tb-dht" hidden>
+    <div class="stage" id="dhtStage" aria-label="感測器回 40 個位元：五個位元組與波形"></div>
+    <div class="side">
+      <div class="ctl">
+        <label>零件 <select id="dhtKind"><option value="dht22">DHT22（Wokwi 裡的）</option><option value="dht11">DHT11（套件上的）</option></select></label>
+        <label>溫度 <input type="range" id="dhtT" min="-20" max="60" step="0.1" value="24"> <output id="dhtTo">24.0</output> 度</label>
+        <label>濕度 <input type="range" id="dhtH" min="0" max="100" step="0.1" value="40"> <output id="dhtHo">40.0</output> %</label>
+      </div>
+      <div class="ctl">
+        <button class="b primary" id="dhtPlay">▶ 問一次（measure）</button>
+        <label><input type="checkbox" id="dhtNoise"> 線上有雜訊（翻一個位元）</label>
+      </div>
+      <div class="codebox" id="dhtCode"></div>
+      <div class="term" id="dhtTerm" aria-live="polite"></div>
+      <p class="note" id="dhtNote"></p>
+    </div>
+  </div>
+
+  <!-- ④ Loop -->
+  <div class="tabpanel" id="tp-loop" role="tabpanel" aria-labelledby="tb-loop" hidden>
+    <div class="stage" id="loopStage" aria-label="兩分鐘的溫度曲線與寄出的訊息"></div>
+    <div class="side">
+      <div class="ctl">
+        <label>EVERY（寄完等幾秒）<input type="range" id="loopEvery" min="1" max="60" step="1" value="10"> <output id="loopEveryO">10</output> 秒</label>
+      </div>
+      <div class="ctl">
+        <label>HOT（幾度算太熱）<input type="range" id="loopHot" min="20" max="40" step="1" value="30"> <output id="loopHotO">30</output> 度</label>
+      </div>
+      <div class="ctl">
+        <label>怎麼寄 <select id="loopMode"><option value="all">每次都寄（03 的寫法）</option><option value="edge">只在跨過門檻那一刻寄（判斷）</option></select></label>
+        <label>溫度怎麼走 <select id="loopScene"><option value="hot">冷氣壞了（慢慢升到 34 度）</option><option value="flat">正常（24 度上下）</option><option value="wobble">門檻附近晃（29–31 度）</option></select></label>
+      </div>
+      <div class="status" id="loopStatus" aria-live="polite"></div>
+      <div class="term" id="loopTerm"></div>
+      <p class="note" id="loopNote"></p>
+    </div>
+  </div>
+</section>
+
+<section class="concepts" aria-label="三個觀念，跟著上面的分頁換" id="concepts">
+  <div class="card" data-for="wifi"><h3>喊名字：SSID</h3><p>基地台有名字（無線網路名稱，SSID）。Wokwi 的叫 <code>Wokwi-GUEST</code>、沒密碼；真板要改成教室或家裡的名字和密碼。名字大小寫錯一個字就是另一個網路。</p></div>
+  <div class="card" data-for="wifi"><h3>等點頭：status 1001 → 1010</h3><p>喊完名字不會馬上好。程式用 <code>while not wlan.isconnected()</code> 一直問；1001＝還在連、1010＝拿到門牌、201＝找不到那個名字。</p></div>
+  <div class="card" data-for="wifi"><h3>拿門牌：IP 位址</h3><p>接上以後基地台給四樣東西：IP 位址（你的門牌，Wokwi 固定 10.10.0.2）、遮罩（哪些算同一條巷子）、閘道（出巷子一定經過的路由器）、DNS（把名字翻成號碼的服務）。</p></div>
+  <div class="card" data-for="http" hidden><h3>網址三段</h3><p><code>https://api.telegram.org</code> 寄到哪；<code>/bot&lt;token&gt;</code> 哪一個機器人（token 是它的密碼；寫網址時 <code>&lt;token&gt;</code> 整個換成那串，角括號不留）；<code>/sendMessage</code> 做什麼。</p></div>
+  <div class="card" data-for="http" hidden><h3>信封裡用 JSON</h3><p>「名字：內容」一對一對，像 <code>{"chat_id": "…", "text": "…"}</code>。用 <code>requests.post(url, json=…)</code> 會自動封好；寫在網址上（GET）中文會變成 %E6… 那種碼。</p></div>
+  <div class="card" data-for="http" hidden><h3>回信一定有 ok 和狀態碼</h3><p>200＝收下了，回 <code>"ok": true</code>；4 開頭＝你寫錯（401 token、400 chat_id、404 網址），回 <code>"ok": false</code> 和一句 description。網址本身被打壞（例如 token 裡有空格）對方回的就不是 JSON，程式會停在 ValueError。</p></div>
+  <div class="card" data-for="dht" hidden><h3>一條線、40 個位元</h3><p>ESP32 把線拉低一下＝「請回答」，感測器回五個位元組。短高＝0、長高＝1——跟上週的單線燈同一招。</p></div>
+  <div class="card" data-for="dht" hidden><h3>最後 8 位元是檢查碼</h3><p>前四個位元組加起來的尾數。對不上就整筆丟掉（驅動丟 <code>Exception: checksum error</code>），不會給你一個錯的數字。</p></div>
+  <div class="card" data-for="dht" hidden><h3>DHT11 跟 DHT22 差一個字</h3><p>DHT11 只有整數（±2 度，一秒問一次）；DHT22 到小數一位（±0.5 度，兩秒一次）。Wokwi 只有 DHT22 零件，程式寫 <code>dht.DHT22</code>；真板套件是 DHT11，改成 <code>dht.DHT11</code>。驅動選錯不報錯、數字是假的。</p></div>
+  <div class="card" data-for="loop" hidden><h3>同一間聊天室一秒別超過一則</h3><p>Telegram 的規矩（FAQ 原文是「避免超過」）：一個聊天室一秒別超過一則、群組一分鐘 20 則，再快會收到 429。但在 Wokwi 寄一封 HTTPS 要 5 秒左右、程式會停下來等回信——EVERY 設 1 實際也只有約 6 秒一則，快不起來；設 10 最乾淨。真板的 DHT11 也一秒才能問一次。</p></div>
+  <div class="card" data-for="loop" hidden><h3>每次都寄 vs 跨過才寄</h3><p>03 寄完等 10 秒再量，約 15 秒一則，兩分鐘約 9 則（從第 0 秒算起）。改成「只在跨過 30 度那一刻寄」，兩分鐘可能只有 1 則——這個「判斷」就是期中作品的中間那一段。</p></div>
+  <div class="card" data-for="loop" hidden><h3>門檻附近會抖</h3><p>溫度在 29–31 度晃，跨過門檻的那一刻會一直發生。真的裝置會加一點緩衝（例如超過 30 寄、要降到 28 才算回復）。</p></div>
+</section>
+
+<section id="stuck" aria-label="卡住怎麼辦">
+  <h2>卡住怎麼辦（看序列埠最後一行）</h2>
+  <div class="tablewrap"><table>
+    <tr><th>你看到</th><th>通常是</th><th>怎麼辦</th></tr>
+    <tr><td>紅燈一直閃、序列埠一直印 <code>.</code></td><td>還沒接上：名字打錯（status 201）、或 Wokwi 的閘道沒接上（status 一直 1001、畫面右上 WiFi 圖示打叉）</td><td>先對 <code>SSID</code> 是不是 <code>Wokwi-GUEST</code>；對了還連不上就是閘道那端——不是你的錯，等一下再按播放</td></tr>
+    <tr><td><code>OSError: -202</code></td><td>沒接上網路就去寄信（DNS 查不到）</td><td>回 01：先看到 IP 位址 10.10.0.2 再跑 02</td></tr>
+    <tr><td><code>HTTP 狀態碼 401</code>、<code>Unauthorized</code></td><td>token 貼錯、少字</td><td>回 BotFather 重抄，引號裡只放 token</td></tr>
+    <tr><td><code>ValueError</code>、<code>syntax error in JSON</code></td><td>token 裡多了空格或別的字，網址被切開，對方回的不是 JSON</td><td>檢查引號裡有沒有空格；02 停住就重貼再播放</td></tr>
+    <tr><td><code>HTTP 狀態碼 400</code>、<code>chat not found</code></td><td>chat_id 錯，或還沒跟自己的 bot 說過話</td><td>先在 Telegram 對 bot 說一句 hi，再開 getUpdates 抄 <code>"chat":{"id":…}</code></td></tr>
+    <tr><td><code>HTTP 狀態碼 404</code></td><td>網址打錯：<code>/bot</code> 少了、方法名拼錯、token 裡多了斜線（沒冒號的 token 程式一開始就會擋下）</td><td>對一次網址三段</td></tr>
+    <tr><td>序列埠 <code>先把 TOKEN 和 CHAT_ID 貼到第 12 和 13 行的引號裡</code></td><td>還沒貼 token 或 chat id（chat id 要是一串數字）</td><td>貼完再按播放（03 不貼也能跑，只印不寄）</td></tr>
+    <tr><td>序列埠 <code>等了 30 秒還沒接上</code></td><td>Wokwi 的閘道沒接上（10/17 下午就這樣）</td><td>不是你的錯；03 會自動改成只印不寄；等一下再按播放</td></tr>
+    <tr><td>溫度 <code>0.0</code>、濕度 <code>0.0</code></td><td>忘了 <code>sensor.measure()</code> 就讀</td><td>讀之前先 measure() 一次</td></tr>
+    <tr><td>溫度 <code>0</code>、濕度 <code>1</code></td><td>Wokwi 的 DHT22 零件用了 <code>dht.DHT11</code> 驅動（不報錯、數字是假的）</td><td>Wokwi 寫 DHT22；真板才改 DHT11</td></tr>
+    <tr><td><code>OSError: [Errno 116] ETIMEDOUT</code></td><td>感測器那條線接錯腳（程式的 Pin 跟 diagram 的接法不一樣）</td><td>Pin(15) 對 diagram 的 <code>esp:15</code></td></tr>
+    <tr><td><code>Exception: checksum error</code></td><td>40 位元收壞了（真板線太長、雜訊；Wokwi 不會發生）</td><td>03 的 try／except 會印「出錯了，下一輪再試」，下一輪就好</td></tr>
+    <tr><td>按播放停在 <code>Compiling project…</code></td><td>Wokwi 那端在排隊編譯</td><td>等；超過 4 分鐘先開空白範本按一次看會不會動</td></tr>
+  </table></div>
+</section>
+
+<details class="sect" id="sectWokwi">
+  <summary>Wokwi 動手做：四支程式＋一張共用電路（複製鈕）</summary>
+  <div>
+    <p class="note">開 <code>wokwi.com/projects/new/micropython-esp32</code>，<code>diagram.json</code> 分頁（在 main.py 分頁旁邊，跟前幾週一樣）整份換成下面那份、<code>main.py</code> 換成該卡的，按播放。四支共用同一張電路：ESP32＋DHT22（SDA→GPIO15）＋紅燈（GPIO16）＋按鈕 A（GPIO5）。<b>02、03、04 要先把第 12、13 行（TOKEN、CHAT_ID）貼進去；存檔前記得改回提示字。</b>這個 bot 只當練習用（Wokwi 免費帳號的網路走它的共用閘道，官方文件說流量被監看）：下課就 /token 換掉。Telegram Web 與 getUpdates 都在無痕視窗裡開，下課關掉視窗＝登出。</p>
+    <div class="wk" id="wkdj"><h3>共用 diagram.json <button class="b" data-copy="cdj">複製 diagram.json</button></h3>
+      <p class="see">應該看到：<b>8 條線</b>全畫出來（紅 3V3、黑 GND、綠 GPIO15 到 DHT22；橘 GPIO16 到紅燈；金 GPIO5 到按鈕）；少一條就是腳名打錯。</p>
+      <pre class="code" id="cdj">{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": {
+        "env": "micropython-20260406-v1.28.0"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn",
+      "top": -40,
+      "left": 330,
+      "attrs": {
+        "color": "green",
+        "label": "A 5"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_r",
+      "top": 92.4,
+      "left": 330,
+      "attrs": {
+        "color": "red",
+        "label": "紅 16"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_r",
+      "top": 128.4,
+      "left": 420,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht",
+      "top": 200,
+      "left": 330,
+      "attrs": {
+        "temperature": "24",
+        "humidity": "40"
+      }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:GND.3", "btn:1.l", "black", [ "h190", "v-113.4" ] ],
+    [ "esp:5", "btn:2.l", "gold", [ "h210", "v-123.2" ] ],
+    [ "btn:1.r", "r_r:2", "black", [] ],
+    [ "esp:16", "led_r:A", "orange", [] ],
+    [ "led_r:C", "r_r:1", "black", [] ],
+    [ "esp:15", "dht:SDA", "green", [ "h319.24", "v187.2", "h-65.5" ] ],
+    [ "esp:3V3", "dht:VCC", "red", [ "h-10", "v321.2", "h350.39" ] ],
+    [ "esp:GND.1", "dht:GND", "black", [ "h-20", "v226.4", "h495.4", "v-65.1" ] ]
+  ],
+  "dependencies": {}
+}</pre></div>
+    <div class="wk" id="wk01"><h3>01 接上無線網路，拿到門牌 <button class="b" data-copy="c01m">複製 main.py</button></h3>
+      <p class="see">應該看到：紅燈先閃、再常亮；序列埠 <b>開始找網路 Wokwi-GUEST</b> → 幾個 <code>.</code> → <b>接上了，花了 … ms</b> → <b>IP 位址 10.10.0.2</b> → 遮罩、閘道、DNS 各一行 → 每 5 秒一行「還在線上嗎？ True」。燈一直閃不停＝還沒接上（看上面「卡住怎麼辦」第一列）。</p>
+      <pre class="code" id="c01m"># 01 接上無線網路：先報到，再拿到門牌（IP 位址）
+# 前幾週 ESP32 都在跟旁邊的零件講話；今天第一次讓它跟網路另一端的電腦講話。
+# 四步：① 打開網路卡 ② 說出要上哪一個網路（名稱＋密碼）③ 等對方點頭 ④ 拿到自己的 IP 位址
+import network      # 無線網路卡的功能都在裡面
+import time
+from machine import Pin
+
+SSID = 'Wokwi-GUEST'   # 網路名稱（SSID）。Wokwi 的模擬網路就叫這名字；真板改成教室或家裡的
+PASSWORD = ''          # Wokwi-GUEST 沒有密碼；真板填密碼
+
+led = Pin(16, Pin.OUT)                 # 紅燈（套件板面 IO4）：等待中一閃一閃，接上後常亮
+
+wlan = network.WLAN(network.STA_IF)    # STA = 我是「用戶端」，去找別人的基地台（自己當基地台叫 AP）
+wlan.active(True)                      # 打開網路卡
+print('開始找網路', SSID)
+wlan.connect(SSID, PASSWORD)           # 丟出「我要上網」——不會馬上好，要等
+
+t0 = time.ticks_ms()
+while not wlan.isconnected():          # 還沒接上就一直問
+    led.value(1 - led.value())         # 閃燈：讓人看得出「正在等」
+    print('.', end='')
+    time.sleep(0.5)
+print()
+led.value(1)                           # 接上了：常亮
+print('接上了，花了', time.ticks_diff(time.ticks_ms(), t0), 'ms')
+
+ip, mask, gateway, dns = wlan.ifconfig()   # 四樣東西：門牌、遮罩、閘道、查名字的人
+print('IP 位址', ip)        # 門牌：網路上別人找得到你的號碼（Wokwi 固定給 10.10.0.2）
+print('遮罩   ', mask)      # 哪些號碼算「同一條巷子」
+print('閘道   ', gateway)   # 出巷子一定經過的那台（路由器）
+print('DNS    ', dns)       # 把 api.telegram.org 翻成號碼的服務
+
+while True:                            # 接上以後就一直亮著；每 5 秒報一次還在不在
+    print('還在線上嗎？', wlan.isconnected())
+    time.sleep(5)</pre></div>
+    <div class="wk" id="wk02"><h3>02 跟 Telegram 說「我上線了」 <button class="b" data-copy="c02m">複製 main.py</button></h3>
+      <p class="see">應該看到：<b>已上線，IP 位址 10.10.0.2</b> → <b>HTTP 狀態碼 200</b> → <b>ok = True</b> → <b>寄完了，去手機看</b>；手機的 Telegram 多一則「我上線了！IP 位址 10.10.0.2」。沒貼 token 會只印一行提示。</p>
+      <pre class="code" id="c02m"># 02 跟 Telegram 說「我上線了」
+# 01 讓 ESP32 拿到門牌；02 讓它寄出第一句話。
+# 寄出去的路：ESP32 → 無線基地台 → 網際網路 → Telegram 的伺服器 → 你手機上的 Telegram。
+# 你要先有一個 bot（跟 @BotFather 要）和一個 chat id（你跟 bot 那間聊天室的號碼）。
+import network
+import time
+import requests     # 幫你把「寄一封 HTTP 信」的細節包好（舊名 urequests）
+from machine import Pin
+
+SSID = 'Wokwi-GUEST'
+PASSWORD = ''
+TOKEN = '貼上 BotFather 給你的 token'   # 長得像 123456789:AAHxxxxxxxxxxxx（冒號前是 bot 的號碼）
+CHAT_ID = '貼上你的 chat id'             # 一串數字；怎麼拿到見投影片
+WAIT = 30                                # 最多等幾秒；等不到就是閘道那端沒接上，不是你的錯
+
+led = Pin(16, Pin.OUT)
+
+
+def connect():
+    # 跟 01 一樣：打開網路卡、說出網路名稱、等接上；只是多了「最多等 WAIT 秒」
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    if not wlan.isconnected():
+        print('接網路中', end='')
+        wlan.connect(SSID, PASSWORD)
+        t0 = time.ticks_ms()
+        while not wlan.isconnected():
+            if time.ticks_diff(time.ticks_ms(), t0) &gt; WAIT * 1000:
+                print()
+                print('等了', WAIT, '秒還沒接上：看投影片閘道掛了那一頁，等一下再按播放')
+                return None
+            led.value(1 - led.value())
+            print('.', end='')
+            time.sleep(0.5)
+        print()
+    led.value(1)
+    print('已上線，IP 位址', wlan.ifconfig()[0])
+    return wlan
+
+
+def send(text):
+    # 網址三段：固定的 https://api.telegram.org ＋ /bot＋token ＋ /要做的事（sendMessage）
+    url = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage'
+    # 要寄的內容用 JSON 包起來放在信封裡（POST）：chat_id 說寄給誰、text 說寄什麼
+    r = requests.post(url, json={'chat_id': CHAT_ID, 'text': text}, timeout=15)   # 最多等 15 秒
+    print('HTTP 狀態碼', r.status_code)     # 200 = 對方收下了；401 = token 不對；400 = chat_id 不對
+    try:
+        reply = r.json()                    # 對方回的也是 JSON：ok 是 True 或 False
+    finally:
+        r.close()                           # 用完一定要關（就算回的不是 JSON），不然記憶體會一直少
+    print('ok =', reply.get('ok'), reply.get('description', ''))
+    return reply.get('ok')
+
+
+if ':' not in TOKEN or not CHAT_ID.lstrip('-').isdigit():
+    print('先把 TOKEN 和 CHAT_ID 貼到第 12 和 13 行的引號裡，再按播放')
+else:
+    wlan = connect()
+    if wlan:
+        if send('我上線了！IP 位址 ' + wlan.ifconfig()[0]):
+            print('寄完了，去手機看')
+        else:
+            print('沒寄成，看投影片的卡住對照')</pre></div>
+    <div class="wk" id="wk03"><h3>03 隔一會兒寄一則溫濕度，太熱加一行 <button class="b" data-copy="c03m">複製 main.py</button></h3>
+      <p class="see">應該看到：約 15 秒一行（寄一封約 5 秒＋等 10 秒）<b>第 N 則：溫度 24.0 度，濕度 40 %</b>＋<b>HTTP 狀態碼 200 ｜ok = True</b>；點 Wokwi 的 DHT22 零件把溫度拉到 31，下一則多一行 <b>太熱了！超過 30 度</b>。沒貼 token：印「token 或 chat id 還沒填好：只印在序列埠，不寄 Telegram」，每 10 秒一行讀數（這時紅燈不會亮，正常）。</p>
+      <pre class="code" id="c03m"># 03 把溫度和濕度寄到 Telegram：寄完等 10 秒再量一次（約 15 秒一則），太熱就加一行警告
+# 輸入（感測器）→ 判斷（超過門檻？）→ 輸出（寄一則訊息）——期中作品就是這個形狀。
+# 沒填 token 也能跑：只印在序列埠、不寄（感測器那段不用網路）。
+import network
+import time
+import requests
+import dht          # 溫濕度感測器的驅動，韌體內建
+from machine import Pin
+
+SSID = 'Wokwi-GUEST'
+PASSWORD = ''
+TOKEN = '貼上 BotFather 給你的 token'
+CHAT_ID = '貼上你的 chat id'
+EVERY = 10          # 寄完等幾秒再量下一次（寄一封本身約 5 秒，所以大約 15 秒一則）
+HOT = 30            # 幾度算太熱（上課時把感測器的溫度拉過去試）
+WAIT = 30           # 接網路最多等幾秒；等不到就只印不寄
+
+sensor = dht.DHT22(Pin(15))   # Wokwi 只有 DHT22 零件；套件上是 DHT11（板面 IO7＝GPIO15），真板把 DHT22 改成 DHT11 就好
+led = Pin(16, Pin.OUT)
+HAS_TOKEN = ':' in TOKEN and CHAT_ID.lstrip('-').isdigit()   # 兩個都貼了才算
+
+
+def connect():
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    if not wlan.isconnected():
+        print('接網路中', end='')
+        wlan.connect(SSID, PASSWORD)
+        t0 = time.ticks_ms()
+        while not wlan.isconnected():
+            if time.ticks_diff(time.ticks_ms(), t0) &gt; WAIT * 1000:
+                print()
+                print('等了', WAIT, '秒還沒接上：先只印不寄（看投影片閘道掛了那一頁）')
+                return False
+            led.value(1 - led.value())
+            print('.', end='')
+            time.sleep(0.5)
+        print()
+    led.value(1)
+    print('已上線，IP 位址', wlan.ifconfig()[0])
+    return True
+
+
+def send(text):
+    url = 'https://api.telegram.org/bot' + TOKEN + '/sendMessage'
+    r = requests.post(url, json={'chat_id': CHAT_ID, 'text': text}, timeout=15)
+    try:
+        ok = r.json().get('ok')
+    finally:
+        r.close()                             # 回的不是 JSON 也要關
+    print('HTTP 狀態碼', r.status_code, '｜ok =', ok)
+    return ok
+
+
+def read():
+    sensor.measure()                          # 叫感測器量一次（它用一條線回 40 個位元）
+    return sensor.temperature(), sensor.humidity()
+
+
+if HAS_TOKEN:
+    ONLINE = connect()
+else:
+    ONLINE = False
+    print('token 或 chat id 還沒填好：只印在序列埠，不寄 Telegram')
+n = 0
+while True:
+    n = n + 1
+    try:
+        t, h = read()
+        text = '第 %d 則：溫度 %.1f 度，濕度 %.0f %%' % (n, t, h)
+        if t &gt;= HOT:                          # 判斷：超過門檻才多一行
+            text = text + '\n太熱了！超過 ' + str(HOT) + ' 度'
+        print(text)
+        if ONLINE:
+            send(text)
+    except Exception as e:                    # 感測器沒回（OSError）、檢查碼錯（Exception）、回信不是 JSON（ValueError）：印出來、下一輪再試
+        print('出錯了，下一輪再試：', e)
+    time.sleep(EVERY)</pre></div>
+    <div class="wk" id="wk04"><h3>04 回家玩：在手機上問，板子回答 <button class="b" data-copy="c04m">複製 main.py</button></h3>
+      <p class="see">應該看到：手機先收到「我醒了，可以用 /temp /on /off 跟我講話」；你送 <code>/temp</code> 它回溫濕度、<code>/on</code> 紅燈亮、<code>/off</code> 紅燈關；按住板子上的綠按鈕到序列埠出現「寄出」（一輪要問一次 Telegram、約 8 秒才看一次按鈕），它主動寄「按鈕被按了！…」；按住不放只算一次。</p>
+      <pre class="code" id="c04m"># 04 回家玩：在手機上問，ESP32 回答（雙向）
+# 02、03 都是 ESP32 主動寄。04 反過來：一直去 Telegram 問「有沒有人跟我講話」（getUpdates，每輪結束後等 3 秒），
+# 看到指令就回：/temp 回溫濕度、/on 和 /off 開關紅燈。按住板子上的按鈕（A）到序列埠出現「寄出」，也會主動寄一則。
+import network
+import time
+import requests
+import dht
+from machine import Pin
+
+SSID = 'Wokwi-GUEST'
+PASSWORD = ''
+TOKEN = '貼上 BotFather 給你的 token'
+CHAT_ID = '貼上你的 chat id'
+WAIT = 30
+
+sensor = dht.DHT22(Pin(15))
+led = Pin(16, Pin.OUT)
+btn = Pin(5, Pin.IN, Pin.PULL_UP)      # 按鈕 A（板面 IO11）：沒按是 1、按下是 0
+BASE = 'https://api.telegram.org/bot' + TOKEN + '/'
+last_id = 0                            # 處理完的訊息編號，下次從它的下一個開始要
+was_pressed = False                    # 上一輪按鈕有沒有按著：按住不放只算一次
+
+
+def connect():
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    if not wlan.isconnected():
+        print('接網路中', end='')
+        wlan.connect(SSID, PASSWORD)
+        t0 = time.ticks_ms()
+        while not wlan.isconnected():
+            if time.ticks_diff(time.ticks_ms(), t0) &gt; WAIT * 1000:
+                print()
+                print('等了', WAIT, '秒還沒接上：看投影片閘道掛了那一頁，等一下再按播放')
+                return False
+            print('.', end='')
+            time.sleep(0.5)
+        print()
+    print('已上線，IP 位址', wlan.ifconfig()[0])
+    return True
+
+
+def send(text):
+    r = requests.post(BASE + 'sendMessage', json={'chat_id': CHAT_ID, 'text': text}, timeout=15)
+    try:
+        reply = r.json()
+    finally:
+        r.close()
+    print('寄出', reply.get('ok'), text, reply.get('description', ''))
+
+
+def reading():
+    sensor.measure()
+    return '溫度 %.1f 度，濕度 %.0f %%' % (sensor.temperature(), sensor.humidity())
+
+
+def handle(text):
+    if text == '/temp':
+        send(reading())
+    elif text == '/on':
+        led.value(1)
+        send('紅燈亮了')
+    elif text == '/off':
+        led.value(0)
+        send('紅燈關了')
+    else:
+        send('看不懂，可以用 /temp /on /off')
+
+
+def ask():
+    # 去問 Telegram 有沒有新訊息；offset 說「編號比上次大的才給我」，不然同一則會一直收到
+    global last_id
+    r = requests.get(BASE + 'getUpdates?offset=' + str(last_id + 1) + '&amp;timeout=0', timeout=15)
+    try:
+        data = r.json()
+    finally:
+        r.close()
+    if not data.get('ok'):
+        print('問不到：', data.get('description', ''))
+    for u in data.get('result', []):
+        msg = u.get('message', {})
+        text = msg.get('text', '')
+        if str(msg.get('chat', {}).get('id')) == str(CHAT_ID):   # 只理你本人的聊天室
+            print('收到指令', text)
+            handle(text)
+        last_id = u['update_id']       # 處理完才記下編號：回覆途中出錯，下一輪會再拿到同一則
+
+
+if ':' not in TOKEN or not CHAT_ID.lstrip('-').isdigit():
+    print('先把 TOKEN 和 CHAT_ID 貼到第 12 和 13 行的引號裡，再按播放')
+elif connect():
+    try:                                   # 開機先跳過以前沒收走的舊訊息（只拿最後一則的編號）
+        r = requests.get(BASE + 'getUpdates?offset=-1&amp;timeout=0', timeout=15)
+        try:
+            old = r.json().get('result', [])
+        finally:
+            r.close()
+        if old:
+            last_id = old[-1]['update_id']
+    except Exception as e:
+        print('跳過舊訊息時出錯：', e)
+    send('我醒了，可以用 /temp /on /off 跟我講話')
+    while True:
+        try:
+            ask()
+            pressed = btn.value() == 0
+            if pressed and not was_pressed:    # 剛按下去那一刻才寄；按住不放不重複（一輪要問一次 Telegram、約 8 秒，所以要按住到序列埠出現「寄出」）
+                send('按鈕被按了！' + reading())
+            was_pressed = pressed
+        except Exception as e:
+            print('出錯了，下一輪再試：', e)
+        time.sleep(3)</pre></div>
+  </div>
+</details>
+
+<section id="quiz" aria-label="找碴五題">
+  <h2>找碴五題：這支程式會怎樣？</h2>
+  <div class="quiz" id="quizBox"></div>
+</section>
+
+<details class="sect" id="deeper">
+  <summary>想看更深（上課不講）</summary>
+  <div>
+    <h3>網址上的中文</h3><p class="note">GET 把內容寫在網址上時，空白和中文要先變成 <code>%E6%88%91…</code> 那種碼（每個 UTF-8 位元組一個 %）。POST 放信封裡就不用，所以 02 用 <code>json=</code>。上面「② 寫一封信」切到 GET 可以看。</p>
+    <h3>HTTPS 的第一趟比較久</h3><p class="note">網址開頭 https 的信是加密的：寄第一封之前要先跟對方交換鑰匙（握手），所以第一趟比後面慢（Wokwi 實跑：第一趟 6.5 秒、之後約 4.9 秒；純 HTTP 1.7 秒）。MicroPython 的 <code>requests</code> 預設不檢查對方證書（CERT_NONE），所以 ESP32 不用先對時也能寄；要檢查證書得自己多做幾步，這門課不做。</p>
+    <h3>門牌怎麼發的</h3><p class="note">接上基地台後，基地台用一套叫 DHCP 的規矩發門牌、遮罩、閘道、DNS 給你；Wokwi 的公用閘道固定發 10.10.0.2。真板在教室拿到的會是教室網段的號碼。</p>
+    <h3>問 vs 推</h3><p class="note">04 是「問一次、等回信、睡 3 秒，一輪約 8 秒」（getUpdates，短輪詢）；真的服務多半讓 Telegram 主動推到你的伺服器（webhook）。ESP32 沒有公開的門牌可以被推，所以用問的。沒收走的更新 Telegram 只留 24 小時。</p>
+    <h3>Wokwi 的公用閘道</h3><p class="note">免費帳號走 Wokwi 雲端的共用閘道（docs 寫：慢、穩定度中、流量被監看——別傳私人資料）。10/17 下午它回 503，整個下午連不上；上課若遇到，先用這頁把流程看完，Wokwi 回家補跑。</p>
+  </div>
+</details>
+
+<section id="sources" aria-label="數字出處">
+  <h2>數字出處（頁面上的每個數字只准來自這張表）</h2>
+  <div class="tablewrap"><table>
+    <tr><th>數字／事實</th><th>出處</th></tr>
+    <tr><td>Wokwi-GUEST、沒密碼、頻道 6、ESP32 拿到 10.10.0.2；公用閘道「慢、穩定度中、被監看」</td><td>docs.wokwi.com/guides/esp32-wifi</td></tr>
+    <tr><td>接上花 2806–3003 ms；ifconfig＝10.10.0.2／255.255.0.0／閘道 10.0.0.1／DNS 10.0.0.1；DNS 把 api.telegram.org 翻成 149.154.166.110（542 ms）；純 HTTP 一趟 1.7 秒、HTTPS 第一趟 6.5 秒、之後約 4.9 秒；假 token 回 401 {"ok":false,"error_code":401,"description":"Unauthorized"}</td><td><code>_qa/out/net-probe-serial.txt</code>、<code>01-serial.txt</code>（2026-10-17 15:0x 實跑，閘道恢復後）</td></tr>
+    <tr><td>status 1000／1001／1010／201／202／200／203／204</td><td>Wokwi 韌體 MicroPython v1.28.0 的 <code>network.STAT_*</code> 常數實印（<code>_qa/out/dht-probe-serial.txt</code>）</td></tr>
+    <tr><td>韌體內建 requests、urequests、ssl、dht、ntptime、umqtt</td><td><code>_qa/out/net-probe-serial.txt</code>（2026-10-17 實跑）</td></tr>
+    <tr><td>10/17 閘道 503、status 停 1001、scan 看得到 Wokwi-GUEST</td><td><code>_qa/out/diag-blank-result.json</code>、<code>diag-mqtt-result.json</code></td></tr>
+    <tr><td>名字打成 Wokwi-Guest：status 1001 → 5 秒內 201、40 秒連不上；假 token：02／03／04 都回 401 Unauthorized；03 溫度 31 → 每則多一行「太熱了」</td><td><code>_qa/out/noap-probe-serial.txt</code>、<code>02-fake-</code>／<code>03-fake-</code>／<code>03-t31-h70-</code>／<code>04-fake-serial.txt</code></td></tr>
+    <tr><td>網址格式、回應一定有 ok／description／error_code、sendMessage 的 chat_id 與 text（1–4096 字）、getUpdates 的 offset 與 24 小時</td><td>core.telegram.org/bots/api</td></tr>
+    <tr><td>/newbot 流程、帳號結尾 bot、token 範例 110201543:AAH…、「it can be used by anyone to control your bot」、/token 換新</td><td>core.telegram.org/bots/features</td></tr>
+    <tr><td>同一聊天室一秒別超過一則（原文 avoid）、群組一分鐘 20 則、整體約每秒 30 則</td><td>core.telegram.org/bots/faq</td></tr>
+    <tr><td>requests.post(json=…) 設 Content-Type、HTTPS 預設 CERT_NONE、status_code／text／json()</td><td>micropython-lib python-ecosys/requests（原始碼）</td></tr>
+    <tr><td>DHT11：20–80 % ±5 %、0–50 °C ±2 °C、一秒一次；DHT22：0–100 % ±2–5 %、−40–80 °C ±0.5 °C、兩秒一次</td><td>learn.adafruit.com/dht/overview</td></tr>
+    <tr><td>DHT 40 位元的排法、起始訊號 18 ms（DHT11）／1 ms（DHT22）、回應 80 µs 低＋80 µs 高、位元 50 µs 低＋26–28 µs 高＝0、70 µs 高＝1</td><td>Aosong DHT11／DHT22 資料手冊（通用規格；⚠️本頁沒另外實量）</td></tr>
+    <tr><td>Wokwi 只有 wokwi-dht22；預設 24／40；沒 measure 讀 0.0；DHT11 驅動讀到 0／1；接錯腳 OSError 116；0.2 秒連問都答</td><td>wokwi-cli 零件清單檔（diagram-lint registry）＋<code>_qa/out/dht-probe-serial.txt</code></td></tr>
+    <tr><td>Wokwi 免費方案＝公開專案</td><td>wokwi.com/pricing</td></tr>
+    <tr><td>套件 DHT11＝GPIO15（IO7）、紅燈 GPIO16（IO4）、按鈕 A GPIO5（IO11）</td><td>EZ Start Kit+ 原廠腳位對照圖</td></tr>
+  </table></div>
+</section>
+
+<footer>創客入門–智慧生活裝置實作（115-1）W7 補充教材。單檔、可離線；四個分頁都是模擬，不會真的連 Telegram。真的寄要在 Wokwi 做。</footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var SSID = 'Wokwi-GUEST', IP = '10.10.0.2';
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, children) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) { if (attrs.hasOwnProperty(k)) e.setAttribute(k, attrs[k]); }
+    if (children) { (Array.isArray(children) ? children : [children]).forEach(function (c) { e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); }); }
+    return e;
+  }
+  function txt(x, y, s, size, fill, weight, anchor, mono) {
+    var t = el('text', { x: x, y: y, 'font-size': size || 14, fill: fill || 'currentColor', 'font-weight': weight || 600, 'text-anchor': anchor || 'start' }, s);
+    if (mono) t.setAttribute('class', 'm');
+    return t;
+  }
+  function rect(x, y, w, h, fill, stroke, sw, rx) { return el('rect', { x: x, y: y, width: w, height: h, rx: rx || 0, fill: fill || 'none', stroke: stroke || 'none', 'stroke-width': sw || 0 }); }
+  function path(d, stroke, w, fill, dash) { var p = el('path', { d: d, fill: fill || 'none', stroke: stroke, 'stroke-width': w || 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }); if (dash) p.setAttribute('stroke-dasharray', dash); return p; }
+  function circ(cx, cy, r, fill, stroke, sw) { return el('circle', { cx: cx, cy: cy, r: r, fill: fill, stroke: stroke || 'none', 'stroke-width': sw || 0 }); }
+  var C = { teal: '#0E7C7B', gold: '#D9A441', brass: '#8A6318', red: '#D9453C', green: '#23A26B', violet: '#7B61C9', mist: '#5E7676', ink: 'var(--c-ink)', soft: 'var(--c-ink-soft)' };
+  function esp(g, x, y, w, h) { g.appendChild(rect(x, y, w, h, '#0B2B2B', '#062524', 2, 10)); g.appendChild(txt(x + w / 2, y + h / 2 + 7, 'ESP32', 18, '#fff', 800, 'middle')); }
+  function router(g, x, y, label, sub) {
+    g.appendChild(rect(x, y, 110, 46, 'var(--c-surface)', C.teal, 2.5, 10));
+    g.appendChild(path('M' + (x + 33) + ' ' + y + ' V' + (y - 24), C.teal, 3)); g.appendChild(path('M' + (x + 77) + ' ' + y + ' V' + (y - 24), C.teal, 3));
+    for (var i = 0; i < 3; i++) g.appendChild(circ(x + 22 + i * 18, y + 32, 4, C.green));
+    g.appendChild(txt(x + 55, y + 66, label, 14, C.ink, 800, 'middle'));
+    if (sub) g.appendChild(txt(x + 55, y + 84, sub, 12, C.mist, 700, 'middle', true));
+  }
+  function cloud(g, cx, cy, label) {
+    var p = path('M-70 20 a28 28 0 0 1 10 -54 a38 38 0 0 1 72 -14 a32 32 0 0 1 56 20 a26 26 0 0 1 -8 48 z', C.teal, 2.5, 'var(--c-surface-2)');
+    p.setAttribute('transform', 'translate(' + cx + ' ' + cy + ')'); g.appendChild(p);
+    g.appendChild(txt(cx, cy + 50, label, 14, C.ink, 800, 'middle'));
+  }
+  function phone(g, x, y, w, h, bubbles) {
+    g.appendChild(rect(x, y, w, h, '#0B2B2B', '#062524', 2, 18)); g.appendChild(rect(x + 8, y + 20, w - 16, h - 40, '#F3F7F7', null, 0, 8));
+    g.appendChild(rect(x + 8, y + 20, w - 16, 24, C.teal)); g.appendChild(txt(x + w / 2, y + 37, 'Telegram', 12, '#fff', 800, 'middle'));
+    var yy = y + 52;
+    bubbles.forEach(function (b) {
+      var lines = b.lines, mine = b.mine, bh = 10 + 16 * lines.length, bw = w - 40, bx = mine ? x + w - 12 - bw : x + 12;
+      g.appendChild(rect(bx, yy, bw, bh, mine ? '#DCF2E5' : '#fff', mine ? '#B8E0C8' : '#D6E2E2', 1, 8));
+      lines.forEach(function (ln, i) { g.appendChild(txt(bx + 8, yy + 14 + i * 16, ln, 11, '#132525', 600)); });
+      yy += bh + 6;
+    });
+  }
+  function led(g, cx, cy, on, id) {
+    if (on) { g.appendChild(circ(cx, cy, 24, 'rgba(217,69,60,.25)')); }
+    var c = circ(cx, cy, 11, on ? C.red : '#E9D4D2', '#8A2A22', 2); if (id) c.id = id; g.appendChild(c);
+  }
+  function codebox(container, lines, hl) {
+    container.innerHTML = '';
+    lines.forEach(function (ln, i) {
+      var d = document.createElement('div'); d.className = 'ln' + (hl === i ? ' hl' : '');
+      d.textContent = ln; if (ln.trim().charAt(0) === '#') d.className += ' cm'; container.appendChild(d);
+    });
+  }
+  function status(container, items) {
+    container.innerHTML = '';
+    items.forEach(function (it) { var s = document.createElement('span'); s.textContent = it.t; if (it.on) s.className = 'on' + (it.bad ? ' bad' : ''); container.appendChild(s); });
+  }
+  function termWrite(t, lines) { t.innerHTML = lines.map(function (l) { return typeof l === 'string' ? esc(l) : '<span class="' + l.c + '">' + esc(l.t) + '</span>'; }).join('\n'); t.scrollTop = t.scrollHeight; }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+  /* ───────── ① WiFi ───────── */
+  var WIFI_CODE = [
+    "wlan = network.WLAN(network.STA_IF)",
+    "wlan.active(True)",
+    "print('開始找網路', SSID)",
+    "wlan.connect(SSID, PASSWORD)",
+    "while not wlan.isconnected():",
+    "    led.value(1 - led.value())   # 閃燈",
+    "    print('.', end='')",
+    "    time.sleep(0.5)",
+    "led.value(1)                     # 常亮",
+    "ip, mask, gateway, dns = wlan.ifconfig()",
+    "print('IP 位址', ip)"
+  ];
+  var wifi = { preset: 'ok', step: 0, timer: null, dots: 0 };
+  var WIFI_PRESETS = {
+    ok: { ssid: SSID, pw: '', gw: true, note: '名字對、閘道正常：喊名字 → 1001 連線中（燈閃）→ 1010 拿到門牌（燈亮）→ 印四樣東西。Wokwi 的門牌固定 10.10.0.2。' },
+    noap: { ssid: 'Wokwi-Guest', pw: '', gw: true, note: '名字打成 Wokwi-Guest（大小寫不同＝另一個網路）：基地台不理你，status 變 201（找不到基地台），燈一直閃、序列埠一直印點。改回 Wokwi-GUEST 就好。' },
+    gateway: { ssid: SSID, pw: '', gw: false, note: '名字對，但 Wokwi 雲端的閘道沒接上（10/17 下午實測：netwi.wokwi.com 回 503）：status 停在 1001、燈一直閃、畫面右上 WiFi 圖示打叉。這不是你的程式錯——等一下再按播放，或先把後面的流程在這頁看完。' },
+    wrongpass: { ssid: SSID, pw: 'xxx', gw: true, note: '真板才會遇到（Wokwi-GUEST 沒密碼）：密碼錯，基地台不點頭，status 202。' }
+  };
+  function wifiDraw() {
+    var st = $('wifiStage'); clear(st);
+    var p = WIFI_PRESETS[wifi.preset], s = wifi.step;
+    var svg = el('svg', { viewBox: '0 0 640 330', role: 'img', 'aria-label': 'WiFi 連線慢動作' });
+    var g = el('g', { fill: 'currentColor' });
+    esp(g, 40, 120, 120, 90);
+    led(g, 100, 250, s >= 4 ? true : (s === 3 ? (wifi.dots % 2 === 0) : false), 'wifiLed');
+    g.appendChild(txt(100, 284, s >= 4 ? '紅燈常亮' : (s === 3 ? '紅燈一閃一閃' : '紅燈'), 12, C.mist, 700, 'middle'));
+    if (s >= 1) { // 網路卡打開：天線
+      g.appendChild(path('M160 150 l18 -14 M160 150 l18 14', C.teal, 3));
+      g.appendChild(txt(100, 110, s >= 1 ? '網路卡：開' : '', 12, C.teal, 800, 'middle'));
+    }
+    if (s >= 2 && s <= 3) { // 電波
+      for (var i = 0; i < 3; i++) { var r = 20 + i * 18; g.appendChild(path('M' + (178 + r * 0.6) + ' ' + (165 - r * 0.7) + ' A' + r + ' ' + r + ' 0 0 1 ' + (178 + r * 0.6) + ' ' + (165 + r * 0.7), C.teal, 3)); }
+      g.appendChild(txt(240, 120, '「' + p.ssid + '」' + (p.pw ? '＋密碼' : '，沒密碼'), 13, C.brass, 800, 'start', true));
+    }
+    router(g, 300, 140, '基地台（路由器）', SSID);
+    if (s >= 2 && p.ssid !== SSID) { g.appendChild(txt(355, 112, '？沒有叫這名字的', 13, C.red, 800, 'middle')); }
+    if (s >= 2 && p.ssid === SSID && p.pw) { g.appendChild(txt(355, 112, '？密碼不對', 13, C.red, 800, 'middle')); }
+    // 閘道／雲
+    cloud(g, 540, 165, '網際網路');
+    g.appendChild(path('M410 165 H470', p.gw ? C.teal : '#C9BFB8', 3, null, p.gw ? null : '6 6'));
+    if (!p.gw) { g.appendChild(txt(540, 100, '閘道：連不上（503）', 13, C.red, 800, 'middle')); g.appendChild(path('M525 110 l30 30 M555 110 l-30 30', C.red, 3)); }
+    if (s >= 4) { // 門牌
+      g.appendChild(rect(200, 215, 150, 36, 'var(--c-gold-tint)', C.gold, 2, 8));
+      g.appendChild(txt(275, 239, '門牌 ' + IP, 15, C.ink, 900, 'middle', true));
+      g.appendChild(path('M300 200 L250 215', C.gold, 2.5));
+    }
+    if (s >= 5) {
+      var cards = [['IP 位址', IP], ['遮罩', '255.255.0.0'], ['閘道', '10.0.0.1'], ['DNS', '10.0.0.1']];
+      cards.forEach(function (c, i) { var x = 40 + i * 150; g.appendChild(rect(x, 292, 140, 32, 'var(--c-surface-2)', C.teal, 1.5, 8)); g.appendChild(txt(x + 70, 313, c[0] + '  ' + c[1], 12, C.ink, 800, 'middle', true)); });
+    }
+    // 狀態標
+    var stText = s === 0 ? '還沒開始' : s === 1 ? 'active(True)' : s === 2 ? 'connect()' : s === 3 ? 'status 1001 連線中' : s === 4 ? 'status 1010 拿到門牌' : '印四樣東西';
+    if (s === 3 && p.ssid !== SSID) stText = 'status 201 找不到基地台';
+    if (s === 3 && p.pw) stText = 'status 202 密碼錯';
+    g.appendChild(txt(320, 40, stText, 18, s >= 4 ? C.green : (s === 3 && (p.ssid !== SSID || p.pw || !p.gw) ? C.red : C.ink), 900, 'middle', true));
+    svg.appendChild(g); st.appendChild(svg);
+    var hl = [-1, 1, 3, 5, 8, 10][s];
+    codebox($('wifiCode'), WIFI_CODE, hl);
+    var ok = p.ssid === SSID && !p.pw && p.gw;
+    status($('wifiStatus'), [
+      { t: '網路卡 ' + (s >= 1 ? '開' : '關'), on: s >= 1 },
+      { t: 'isconnected() ' + (s >= 4 ? 'True' : 'False'), on: s >= 4 },
+      { t: 'status ' + (s < 2 ? '1000' : s === 2 ? '1001' : s === 3 ? (p.ssid !== SSID ? '201' : p.pw ? '202' : '1001') : '1010'), on: s >= 2, bad: s === 3 && !ok }
+    ]);
+    var lines = [{ t: 'MicroPython v1.28.0 on 2026-04-06; Generic ESP32 module with ESP32', c: 'dim' }];
+    if (s >= 2) lines.push('開始找網路 ' + p.ssid);
+    if (s === 3) lines.push('.'.repeat(Math.min(wifi.dots + 1, 60)) + (ok ? '' : '   （一直印點＝一直在等）'));
+    if (s >= 4) { lines.push('......'); lines.push('接上了，花了 ' + (2800 + 100 * (wifi.dots % 3)) + ' ms   （10/17 實跑 2806–3003 ms）'); }
+    if (s >= 5) { lines.push('IP 位址 ' + IP); lines.push('遮罩    255.255.0.0'); lines.push('閘道    10.0.0.1'); lines.push('DNS     10.0.0.1'); lines.push('還在線上嗎？ True'); }
+    termWrite($('wifiTerm'), lines);
+    $('wifiNote').textContent = p.note + (s === 3 && !ok ? '  ← 卡在這一步：程式會一直在 while 迴圈裡等。' : '');
+  }
+  function wifiStepFn() {
+    var p = WIFI_PRESETS[wifi.preset], ok = p.ssid === SSID && !p.pw && p.gw;
+    if (wifi.step < 3) { wifi.step++; wifi.dots = 0; }
+    else if (wifi.step === 3) { wifi.dots++; if (ok && wifi.dots >= 4) wifi.step = 4; }
+    else if (wifi.step < 5) wifi.step++;
+    wifiDraw();
+  }
+  function wifiPlayFn() {
+    if (wifi.timer) { clearInterval(wifi.timer); wifi.timer = null; $('wifiPlay').textContent = '▶ 播放'; return; }
+    $('wifiPlay').textContent = '⏸ 暫停';
+    wifi.timer = setInterval(function () { wifiStepFn(); if (wifi.step >= 5 || (wifi.step === 3 && wifi.dots > 40)) { clearInterval(wifi.timer); wifi.timer = null; $('wifiPlay').textContent = '▶ 播放'; } }, 650);
+  }
+  function wifiReset() { if (wifi.timer) { clearInterval(wifi.timer); wifi.timer = null; $('wifiPlay').textContent = '▶ 播放'; } wifi.step = 0; wifi.dots = 0; wifiDraw(); }
+  $('wifiPreset').addEventListener('change', function () { wifi.preset = this.value; wifiReset(); });
+  $('wifiPlay').addEventListener('click', wifiPlayFn);
+  $('wifiStep').addEventListener('click', wifiStepFn);
+  $('wifiReset').addEventListener('click', wifiReset);
+
+  /* ───────── ② HTTP ───────── */
+  var http = { stage: 0, timer: null };
+  var HTTP_STAGES = ['還沒寄', 'DNS：把 api.telegram.org 翻成號碼', '交換鑰匙（https）', '把信送到 Telegram', '等回信', '回信到了'];
+  function httpUrlParts() {
+    var token = $('httpToken').value, chat = $('httpChat').value, text = $('httpText').value, mode = $('httpMode').value;
+    var base = 'https://api.telegram.org', mid = '/bot' + token, tail = '/sendMessage';
+    var q = mode === 'get' ? '?chat_id=' + encodeURIComponent(chat) + '&text=' + encodeURIComponent(text) : '';
+    return { base: base, mid: mid, tail: tail, q: q, token: token, chat: chat, text: text, mode: mode };
+  }
+  function httpDraw() {
+    var u = httpUrlParts(), pre = $('httpPreset').value, s = http.stage;
+    $('httpUrl').innerHTML = '<span class="s1">' + esc(u.base) + '</span><span class="s2">' + esc(u.mid) + '</span><span class="s3">' + esc(u.tail) + '</span>' + (u.q ? '<span class="s3">' + esc(u.q) + '</span>' : '');
+    $('httpBody').textContent = u.mode === 'post' ? '信封裡（JSON）：\n' + JSON.stringify({ chat_id: u.chat, text: u.text }, null, 1) : '信封裡：（空的，內容都寫在網址上；中文變成 %E6… 那種碼）';
+    status($('httpStatus'), HTTP_STAGES.slice(1).map(function (t, i) { return { t: t, on: s >= i + 1, bad: s === i + 1 && pre === 'offline' && i === 0 }; }));
+    var reply = '', term = [], note = '';
+    if (s >= 5) {
+      if (pre === '200') { reply = JSON.stringify({ ok: true, result: { message_id: 7, from: { id: parseInt(u.token.split(':')[0], 10) || 0, is_bot: true, first_name: 'my bot' }, chat: { id: parseInt(u.chat, 10) || u.chat, type: 'private' }, date: 1792200000, text: u.text } }, null, 1); term = ['HTTP 狀態碼 200', 'ok = True ', '寄完了，去手機看']; note = '200＝對方收下了，result 裡是它存的那則訊息（message_id、chat、text）。手機會叮一聲。'; }
+      else if (pre === '401') { reply = JSON.stringify({ ok: false, error_code: 401, description: 'Unauthorized' }, null, 1); term = ['HTTP 狀態碼 401', 'ok = False Unauthorized']; note = '401＝這把 token 不是任何一個 bot 的：貼錯、少字。回 BotFather 重抄（多了空格是另一種錯：網址被切開、程式停在 ValueError）。'; }
+      else if (pre === '400') { reply = JSON.stringify({ ok: false, error_code: 400, description: 'Bad Request: chat not found' }, null, 1); term = ['HTTP 狀態碼 400', 'ok = False Bad Request: chat not found']; note = '400＝token 對、但 chat_id 找不到：號碼抄錯，或你還沒跟這個 bot 說過話（Telegram 不讓 bot 先開口）。'; }
+      else if (pre === '404') { reply = JSON.stringify({ ok: false, error_code: 404, description: 'Not Found' }, null, 1); term = ['HTTP 狀態碼 404', 'ok = False Not Found']; note = '404＝網址打錯：/bot 少了、方法名拼錯、token 裡多了斜線（sendMessage 大小寫倒是不分；沒冒號的 token 程式一開始就會擋下）。'; }
+    }
+    if (pre === 'offline' && s >= 1) { reply = '（沒有回信）'; term = [{ t: 'Traceback (most recent call last):', c: 'warn' }, { t: '  File "main.py", line 60, in <module>', c: 'warn' }, { t: '  File "main.py", line 45, in send', c: 'warn' }, { t: 'OSError: -202', c: 'warn' }]; note = '還沒接上網路就寄：第一步 DNS 就查不到（-202），程式直接停在 Traceback。先回 01 看到 IP 位址再寄。（現版 02 會先在 connect() 等 30 秒、印「等了 30 秒還沒接上」就停，走不到這裡；接上之後網路才斷、或自己拿掉 connect()，才會看到 -202。）'; }
+    $('httpReply').textContent = reply ? '回信：\n' + reply : '回信：（還沒）';
+    termWrite($('httpTerm'), term.length ? term : [{ t: '（按「寄出」）', c: 'dim' }]);
+    $('httpNote').textContent = note || (u.mode === 'get' ? '切到 GET：內容寫在網址上，中文變成 %E6… 的碼、也看得到 token。02 用 POST 比較乾淨。' : 'POST：requests.post(url, json={…}) 會自動把 dict 變成 JSON、封進信封裡。');
+    // 舞台
+    var st = $('httpStage'); clear(st);
+    var svg = el('svg', { viewBox: '0 0 720 300', role: 'img', 'aria-label': '一封信的路' }), g = el('g', { fill: 'currentColor' });
+    esp(g, 20, 110, 100, 76); g.appendChild(txt(70, 206, IP, 12, C.teal, 800, 'middle', true));
+    g.appendChild(path('M120 148 H160', C.teal, 3));
+    router(g, 160, 125, '路由器', '閘道');
+    g.appendChild(path('M270 148 H300', C.teal, 3));
+    cloud(g, 350, 150, '網際網路');
+    g.appendChild(path('M400 148 H430', C.teal, 3));
+    g.appendChild(rect(432, 112, 130, 72, 'var(--c-surface)', C.teal, 2.5, 10));
+    g.appendChild(txt(497, 140, 'api.telegram.org', 12.5, C.ink, 900, 'middle', true)); g.appendChild(txt(497, 162, 'Telegram 伺服器', 12, C.mist, 800, 'middle'));
+    g.appendChild(rect(440, 224, 160, 40, 'var(--c-gold-tint)', C.gold, 1.5, 8)); g.appendChild(txt(520, 241, 'DNS 翻成號碼', 12, C.brass, 800, 'middle')); g.appendChild(txt(520, 257, s >= 1 && pre !== 'offline' ? '149.154.166.110' : '…', 11, C.ink, 700, 'middle', true));
+    phone(g, 600, 10, 110, 150, s >= 5 && pre === '200' ? [{ lines: [u.text.slice(0, 5), u.text.slice(5, 14), u.text.slice(14, 23)], mine: false }] : []);
+    // 信封位置
+    var xs = [60, 215, 350, 497, 497, 497], ys = [60, 60, 60, 60, 60, 60];
+    if (s >= 1 && s <= 4) {
+      var x = xs[s], y = ys[s];
+      g.appendChild(rect(x - 26, y - 16, 52, 32, 'var(--c-gold-tint)', C.gold, 2, 5)); g.appendChild(path('M' + (x - 26) + ' ' + (y - 16) + ' L' + x + ' ' + y + ' L' + (x + 26) + ' ' + (y - 16), C.gold, 2));
+      if (s === 2) g.appendChild(txt(350, 30, '🔑 先交換鑰匙，信才加密', 12, C.brass, 800, 'middle'));
+      if (s === 4) g.appendChild(txt(497, 95, '對方在讀信…', 12, C.mist, 700, 'middle'));
+    }
+    if (s >= 5) { var ok = pre === '200'; g.appendChild(circ(350, 60, 22, 'none', ok ? C.green : C.red, 3)); g.appendChild(txt(350, 66, ok ? '200' : pre, 15, ok ? C.green : C.red, 900, 'middle')); g.appendChild(path('M460 60 H380', ok ? C.green : C.red, 3)); if (ok) g.appendChild(path('M562 60 H596', C.green, 3)); }
+    if (pre === 'offline' && s >= 1) { g.appendChild(path('M120 148 H300', C.red, 3, null, '6 6')); g.appendChild(txt(215, 100, '沒接上網路：DNS 查不到', 12, C.red, 800, 'middle')); }
+    svg.appendChild(g); st.appendChild(svg);
+  }
+  function httpSendFn() {
+    if (http.timer) return;
+    http.stage = 0; httpDraw();
+    var pre = $('httpPreset').value;
+    http.timer = setInterval(function () { http.stage++; if (pre === 'offline' && http.stage >= 1) { http.stage = 1; } httpDraw(); if (http.stage >= 5 || (pre === 'offline')) { clearInterval(http.timer); http.timer = null; } }, 700);
+  }
+  ['httpToken', 'httpChat', 'httpText', 'httpMode', 'httpPreset'].forEach(function (id) { $(id).addEventListener('input', function () { http.stage = 0; httpDraw(); }); $(id).addEventListener('change', function () { http.stage = 0; httpDraw(); }); });
+  $('httpSend').addEventListener('click', httpSendFn);
+  $('httpReset').addEventListener('click', function () { if (http.timer) { clearInterval(http.timer); http.timer = null; } http.stage = 0; httpDraw(); });
+
+  /* ───────── ③ DHT ───────── */
+  var DHT_CODE22 = ["sensor = dht.DHT22(Pin(15))   # Wokwi 的零件", "sensor.measure()               # 拉低一下：請回答", "t = sensor.temperature()       # 24.0", "h = sensor.humidity()          # 40.0"];
+  var DHT_CODE11 = ["sensor = dht.DHT11(Pin(15))   # 套件上的（真板）", "sensor.measure()               # 拉低 18 ms：請回答", "t = sensor.temperature()       # 24（整數）", "h = sensor.humidity()          # 40（整數）"];
+  var dht = { playing: false, bitsShown: 40 };
+  function dhtBytes() {
+    var kind = $('dhtKind').value, T = parseFloat($('dhtT').value), H = parseFloat($('dhtH').value);
+    var b;
+    if (kind === 'dht11') {
+      T = Math.max(0, Math.min(50, Math.round(T))); H = Math.max(20, Math.min(80, Math.round(H)));
+      b = [H, 0, T, 0];
+    } else {
+      var h10 = Math.round(H * 10), t10 = Math.round(Math.abs(T) * 10), hi = (t10 >> 8) | (T < 0 ? 0x80 : 0);
+      b = [(h10 >> 8) & 0xFF, h10 & 0xFF, hi & 0xFF, t10 & 0xFF];
+    }
+    var sum = (b[0] + b[1] + b[2] + b[3]) & 0xFF;
+    return { kind: kind, T: T, H: H, bytes: b.concat([sum]) };
+  }
+  function dhtDraw() {
+    var d = dhtBytes(), noise = $('dhtNoise').checked;
+    $('dhtTo').textContent = d.kind === 'dht11' ? String(d.T) : d.T.toFixed(1);
+    $('dhtHo').textContent = d.kind === 'dht11' ? String(d.H) : d.H.toFixed(1);
+    var bits = d.bytes.map(function (v) { return ('00000000' + v.toString(2)).slice(-8); }).join('');
+    var recv = bits; if (noise) { var i = 13; recv = bits.slice(0, i) + (bits[i] === '1' ? '0' : '1') + bits.slice(i + 1); }
+    var recvBytes = []; for (var q0 = 0; q0 < 5; q0++) recvBytes.push(parseInt(recv.slice(q0 * 8, q0 * 8 + 8), 2));
+    var shownBytes = noise ? recvBytes : d.bytes;
+    var st = $('dhtStage'); clear(st);
+    var svg = el('svg', { viewBox: '0 0 640 330', role: 'img', 'aria-label': '40 個位元與波形' }), g = el('g', { fill: 'currentColor' });
+    esp(g, 20, 30, 90, 70);
+    g.appendChild(path('M110 65 H180', C.green, 4)); g.appendChild(txt(145, 56, '一條線', 12, C.green, 800, 'middle'));
+    g.appendChild(rect(180, 20, 70, 90, '#2F6FC9', '#1C4A8C', 2, 8)); g.appendChild(rect(192, 30, 46, 50, '#DCE8F6', null, 0, 4));
+    g.appendChild(txt(215, 102, d.kind === 'dht11' ? 'DHT11' : 'DHT22', 12, '#fff', 800, 'middle'));
+    g.appendChild(txt(300, 48, '溫度 ' + $('dhtTo').textContent + ' 度', 15, C.ink, 900)); g.appendChild(txt(300, 72, '濕度 ' + $('dhtHo').textContent + ' %', 15, C.ink, 900));
+    g.appendChild(txt(300, 96, '→ 排成 40 個位元（五個位元組）', 12, C.mist, 700));
+    var labels = d.kind === 'dht11' ? ['濕度整數', '濕度小數', '溫度整數', '溫度小數', '檢查碼'] : ['濕度×10 高', '濕度×10 低', '溫度×10 高', '溫度×10 低', '檢查碼'];
+    var cols = ['var(--c-primary-tint)', 'var(--c-surface-2)', 'var(--c-gold-tint)', 'var(--c-surface-2)', 'var(--c-violet-tint)'];
+    for (var k = 0; k < 5; k++) {
+      var x = 20 + k * 122;
+      g.appendChild(rect(x, 130, 116, 40, cols[k], C.teal, 1.5, 6));
+      g.appendChild(txt(x + 58, 147, labels[k], 11.5, C.ink, 800, 'middle'));
+      g.appendChild(txt(x + 58, 164, '0x' + ('0' + shownBytes[k].toString(16)).slice(-2) + ' = ' + shownBytes[k], 11.5, C.ink, 800, 'middle', true));
+      var bs = recv.slice(k * 8, k * 8 + 8);
+      for (var j = 0; j < 8; j++) {
+        var on = bs[j] === '1', shown = (k * 8 + j) < dht.bitsShown, bad = noise && (k * 8 + j) === 13;
+        g.appendChild(rect(x + j * 14.5, 178, 12, 18, shown ? (on ? C.gold : 'var(--c-surface-2)') : 'none', bad ? C.red : C.teal, bad ? 2 : 1, 2));
+        if (shown) g.appendChild(txt(x + j * 14.5 + 6, 192, bs[j], 11, on ? '#132525' : C.mist, 800, 'middle', true));
+      }
+    }
+    var okSum = ((d.bytes[0] + d.bytes[1] + d.bytes[2] + d.bytes[3]) & 0xFF) === d.bytes[4];
+    var recvSum = (recvBytes[0] + recvBytes[1] + recvBytes[2] + recvBytes[3]) & 0xFF;
+    var recvOk = recvSum === recvBytes[4];
+    g.appendChild(txt(20, 222, noise ? ('收到的前四個加起來：(' + recvBytes.slice(0, 4).join(' + ') + ') & 0xFF = ' + recvSum + '，收到的檢查碼是 ' + recvBytes[4] + (recvOk ? ' ✓（碰巧對上）' : ' ✗ 對不上')) : ('檢查碼＝前四個位元組加起來的最後 8 位元：(' + d.bytes.slice(0, 4).join(' + ') + ') & 0xFF = ' + d.bytes[4] + (okSum ? ' ✓' : '')), 12, noise && !recvOk ? C.red : C.soft, 700, 'start', true));
+    // 波形：前 8 個位元
+    var y0 = 262, hi = 244, lo = 280, xx = 20;
+    g.appendChild(txt(20, 240, '波形（前 8 個位元；短高＝0、長高＝1，每個位元前面 50 µs 低）：', 12, C.soft, 700));
+    var dpath = 'M' + xx + ' ' + lo;
+    for (var m = 0; m < 8; m++) { var one = recv[m] === '1'; xx += 18; dpath += ' H' + xx + ' V' + hi; xx += one ? 26 : 10; dpath += ' H' + xx + ' V' + lo; }
+    dpath += ' H' + (xx + 20);
+    g.appendChild(path(dpath, C.teal, 3));
+    g.appendChild(txt(20, 300, 'ESP32 先把線拉低 ' + (d.kind === 'dht11' ? '18 ms' : '1 ms') + '＝請回答 → 感測器回 80 µs 低、80 µs 高＝我在 → 40 個位元：0＝高 26–28 µs、1＝高 70 µs', 11.5, C.mist, 700));
+    g.appendChild(txt(20, 320, noise ? ('第 14 個位元被翻了：' + (recvOk ? '這次碰巧對上' : '檢查碼對不上 → 驅動丟 Exception: checksum error，不會給你假數字')) : '', 12, C.red, 800));
+    svg.appendChild(g); st.appendChild(svg);
+    codebox($('dhtCode'), d.kind === 'dht11' ? DHT_CODE11 : DHT_CODE22, dht.playing ? 1 : -1);
+    var lines = [];
+    if (dht.bitsShown >= 40) {
+      if (noise && !recvOk) lines = ['出錯了，下一輪再試： checksum error', { t: '（03 的 except 接住了 Exception，所以不會停；下一輪就正常）', c: 'dim' }];
+      else lines = ['第 1 則：溫度 ' + (d.kind === 'dht11' ? d.T.toFixed(1) : d.T.toFixed(1)) + ' 度，濕度 ' + Math.round(d.H) + ' %' + (d.T >= 30 ? '\n太熱了！超過 30 度' : '')];
+    } else lines = [{ t: '（收位元中… ' + dht.bitsShown + ' / 40）', c: 'dim' }];
+    termWrite($('dhtTerm'), lines);
+    $('dhtNote').textContent = d.kind === 'dht11'
+      ? 'DHT11：溫濕度都是整數（小數那兩個位元組固定 0），範圍 0–50 度、20–80 %，一秒最多問一次。套件上的就是它，程式寫 dht.DHT11(Pin(15))。'
+      : 'DHT22：兩個數字各乘 10 放進 16 位元（溫度最高位元是負號），到小數一位，範圍 −40–80 度、0–100 %，兩秒一次。Wokwi 只有這顆，程式寫 dht.DHT22；拿 DHT11 驅動去讀它會讀到 0／1（不報錯）。';
+  }
+  function dhtPlayFn() {
+    if (dht.playing) return; dht.playing = true; dht.bitsShown = 0; dhtDraw();
+    var t = setInterval(function () { dht.bitsShown += 2; dhtDraw(); if (dht.bitsShown >= 40) { clearInterval(t); dht.playing = false; dhtDraw(); } }, 60);
+  }
+  ['dhtKind', 'dhtT', 'dhtH', 'dhtNoise'].forEach(function (id) { $(id).addEventListener('input', function () { dht.bitsShown = 40; dhtDraw(); }); $(id).addEventListener('change', function () { dht.bitsShown = 40; dhtDraw(); }); });
+  $('dhtPlay').addEventListener('click', dhtPlayFn);
+
+  /* ───────── ④ Loop ───────── */
+  function loopTemps(scene) {
+    var t = [];
+    for (var s = 0; s <= 120; s++) {
+      var v;
+      if (scene === 'hot') v = 24 + 10 * Math.min(1, s / 90) + 0.3 * Math.sin(s / 3);
+      else if (scene === 'flat') v = 24 + 0.4 * Math.sin(s / 7) + 0.2 * Math.sin(s / 2.3);
+      else v = 30 + 1.2 * Math.sin(s / 6) + 0.5 * Math.sin(s / 1.7);
+      t.push(Math.round(v * 10) / 10);
+    }
+    return t;
+  }
+  function loopDraw() {
+    var every = parseInt($('loopEvery').value, 10), hot = parseInt($('loopHot').value, 10), mode = $('loopMode').value, scene = $('loopScene').value;
+    $('loopEveryO').textContent = every; $('loopHotO').textContent = hot;
+    var temps = loopTemps(scene), msgs = [], above = false, sent = 0, hotN = 0;
+    var SEND_S = 5;   // 寄一封 HTTPS 約 5 秒（10/17 net-probe 實跑 4.9–6.5 秒），程式會停下來等
+    for (var s = 0; s <= 120; s += every + SEND_S) {
+      var T = temps[s], isHot = T >= hot;
+      if (mode === 'all') { msgs.push({ s: s, T: T, hot: isHot }); if (isHot) hotN++; sent++; }
+      else { if (isHot && !above) { msgs.push({ s: s, T: T, hot: true }); hotN++; sent++; } above = isHot; }
+    }
+    var st = $('loopStage'); clear(st);
+    var svg = el('svg', { viewBox: '0 0 640 300', role: 'img', 'aria-label': '兩分鐘溫度曲線與寄出的訊息' }), g = el('g', { fill: 'currentColor' });
+    var X0 = 50, X1 = 620, Y0 = 220, Y1 = 30, tmin = 20, tmax = 36;
+    function px(s) { return X0 + (X1 - X0) * s / 120; } function py(T) { return Y0 - (Y0 - Y1) * (T - tmin) / (tmax - tmin); }
+    for (var tt = 20; tt <= 36; tt += 4) { g.appendChild(path('M' + X0 + ' ' + py(tt) + ' H' + X1, 'var(--c-line-soft)', 1)); g.appendChild(txt(X0 - 8, py(tt) + 4, tt + '°', 11, C.mist, 700, 'end', true)); }
+    for (var ss = 0; ss <= 120; ss += 30) g.appendChild(txt(px(ss), Y0 + 16, ss + ' s', 11, C.mist, 700, 'middle', true));
+    g.appendChild(path('M' + X0 + ' ' + py(hot) + ' H' + X1, C.red, 2, null, '6 5')); g.appendChild(txt(X1, py(hot) - 6, 'HOT ' + hot + ' 度', 12, C.red, 800, 'end'));
+    var d = ''; temps.forEach(function (T, i) { d += (i ? ' L' : 'M') + px(i).toFixed(1) + ' ' + py(T).toFixed(1); });
+    g.appendChild(path(d, C.teal, 2.5));
+    msgs.forEach(function (m) { g.appendChild(circ(px(m.s), py(m.T), 6, m.hot ? C.red : C.gold, 'var(--c-surface)', 2)); g.appendChild(path('M' + px(m.s) + ' ' + (py(m.T) + 8) + ' V' + (Y0 + 28), m.hot ? C.red : C.gold, 1.5)); g.appendChild(txt(px(m.s), Y0 + 40, '✉', 12, m.hot ? C.red : C.gold, 800, 'middle')); });
+    g.appendChild(txt(X0, 275, '●', 12, C.gold, 900)); g.appendChild(txt(X0 + 14, 275, '金＝一般訊息', 12, C.soft, 700));
+    g.appendChild(txt(X0 + 100, 275, '●', 12, C.red, 900)); g.appendChild(txt(X0 + 114, 275, '紅＝多了一行「太熱了」　兩分鐘共寄 ' + sent + ' 則（每則＝寄一封 5 秒＋等 EVERY 秒）', 12, C.soft, 700));
+    g.appendChild(txt(X0, 294, every <= 1 ? '⚠ EVERY=1 也只有約 6 秒一則：寄一封要 5 秒、程式停下來等回信；真的連發才會 429。' : (every < 3 ? '⚠ 寄一封要 5 秒左右，間隔比這短也快不起來。' : ''), 11.5, C.red, 800));
+    svg.appendChild(g); st.appendChild(svg);
+    status($('loopStatus'), [{ t: '兩分鐘寄 ' + sent + ' 則', on: true }, { t: '其中太熱 ' + hotN + ' 則', on: hotN > 0, bad: hotN > 0 }, { t: mode === 'edge' ? '每 ' + every + ' 秒量一次' : '實際約 ' + (every + SEND_S) + ' 秒一則', on: true, bad: every <= 1 }]);
+    var lines = msgs.slice(0, 8).map(function (m, i) { return '第 ' + (i + 1) + ' 則：溫度 ' + m.T.toFixed(1) + ' 度，濕度 40 %' + (m.hot ? '\n太熱了！超過 ' + hot + ' 度' : ''); });
+    if (msgs.length > 8) lines.push({ t: '…（還有 ' + (msgs.length - 8) + ' 則）', c: 'dim' }); if (!msgs.length) lines.push({ t: '（兩分鐘內一則都沒寄）', c: 'dim' });
+    termWrite($('loopTerm'), lines);
+    $('loopNote').textContent = mode === 'all' ? '03 的寫法：寄完等 EVERY 秒再寄下一則，不管溫度。資料全，但手機會一直叮。' : '只在「跨過門檻那一刻」寄：平常安靜、出事才叫。溫度在門檻附近晃（選第三種走法）會一直跨來跨去——真的裝置會加緩衝（超過 ' + hot + ' 寄、降到 ' + (hot - 2) + ' 才算回復）。';
+  }
+  ['loopEvery', 'loopHot', 'loopMode', 'loopScene'].forEach(function (id) { $(id).addEventListener('input', loopDraw); $(id).addEventListener('change', loopDraw); });
+
+  /* ───────── 找碴五題 ───────── */
+  var QUIZ = [
+    { code: "SSID = 'Wokwi-Guest'\nwlan.connect(SSID, '')", q: '貼進 Wokwi 按播放，會怎樣？', opts: ['燈一直閃、序列埠一直印點，status 201', '照常接上，門牌 10.10.0.2', '報錯 NameError'], ans: 0, why: '名字大小寫不同就是另一個網路：找不到基地台（status 201；10/17 實跑連 Wokwi-Guest，5 秒內 1001 → 201、40 秒都連不上），程式停在 while 迴圈一直等。對照 ① 情境「名字打錯」。' },
+    { code: "t = sensor.temperature()\nh = sensor.humidity()\nprint(t, h)", q: '沒有先 sensor.measure()，印出來是？', opts: ['0.0 0.0（不報錯）', '24.0 40.0', 'OSError'], ans: 0, why: 'Wokwi 實跑：沒 measure() 就讀，得到 0.0／0.0、不報錯。measure() 才真的去問感測器。' },
+    { code: "sensor = dht.DHT11(Pin(15))   # Wokwi 的 DHT22 零件\nsensor.measure()\nprint(sensor.temperature(), sensor.humidity())", q: 'Wokwi 的零件是 DHT22，驅動寫 DHT11，印出來是？', opts: ['假數字（例如 0 和 1），不報錯', '24 40', 'Exception: checksum error'], ans: 0, why: 'Wokwi 實跑：讀到 0／1、不報錯。驅動選錯＝排法對不上，數字是假的。Wokwi 寫 DHT22；真板才改 DHT11。' },
+    { code: "TOKEN = '110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsa'\n# 結尾少抄了一個字", q: '寄出去，HTTP 狀態碼是？', opts: ['401 Unauthorized', '200', '400 chat not found'], ans: 0, why: 'token 少一個字就不是任何 bot 的密碼：401（10/17 用假 token 實跑就是 401）。多了空格更糟：網址被切開，對方回的不是 JSON，程式會停在 ValueError——引號裡只放 token。' },
+    { code: "wlan = network.WLAN(network.STA_IF)\nwlan.active(True)\nsend('hi')   # 沒有先 connect、沒有等 isconnected", q: '會怎樣？', opts: ['OSError: -202（DNS 查不到）', '寄得出去', '401'], ans: 0, why: '沒接上網路就寄：第一步 DNS 就失敗，OSError -202（10/17 探針實印）。先看到 IP 位址再寄。' }
+  ];
+  (function buildQuiz() {
+    var box = $('quizBox');
+    QUIZ.forEach(function (qz, i) {
+      var card = document.createElement('div'); card.className = 'card';
+      var pre = document.createElement('pre'); pre.className = 'code'; pre.textContent = qz.code; card.appendChild(pre);
+      var p = document.createElement('p'); p.innerHTML = '<b>' + (i + 1) + '. ' + esc(qz.q) + '</b>'; card.appendChild(p);
+      var opts = document.createElement('div'); opts.className = 'opts';
+      qz.opts.forEach(function (o, j) {
+        var b = document.createElement('button'); b.className = 'b'; b.type = 'button'; b.textContent = o;
+        b.addEventListener('click', function () { card.classList.add('done'); b.className = 'b ' + (j === qz.ans ? 'right' : 'wrong'); if (j !== qz.ans) opts.children[qz.ans].className = 'b right'; });
+        opts.appendChild(b);
+      });
+      card.appendChild(opts);
+      var ans = document.createElement('div'); ans.className = 'ans'; ans.textContent = qz.why; card.appendChild(ans);
+      box.appendChild(card);
+    });
+  })();
+
+  /* ───────── 分頁、複製、網址參數 ───────── */
+  var TABS = ['wifi', 'http', 'dht', 'loop'];
+  function showTab(name, write) {
+    TABS.forEach(function (t) {
+      var on = t === name, tb = $('tb-' + t), tp = $('tp-' + t);
+      tb.setAttribute('aria-selected', on ? 'true' : 'false'); tb.tabIndex = on ? 0 : -1; tp.hidden = !on;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#concepts .card'), function (c) { c.hidden = c.getAttribute('data-for') !== name; });
+    if (write) { try { var u = new URL(location.href); u.searchParams.set('tab', name); history.replaceState(null, '', u); } catch (e) {} }
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (tb) {
+    tb.addEventListener('click', function () { showTab(tb.getAttribute('data-tab'), true); });
+    tb.addEventListener('keydown', function (e) { var i = TABS.indexOf(tb.getAttribute('data-tab')); if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); var n = TABS[(i + (e.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length]; showTab(n, true); $('tb-' + n).focus(); } });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-copy]'), function (b) {
+    b.addEventListener('click', function () {
+      var pre = $(b.getAttribute('data-copy')), t = pre.textContent, old = b.textContent;
+      function done(ok) { b.textContent = ok ? '已複製 ✓' : '請手動選取複製'; setTimeout(function () { b.textContent = old; }, 1600); }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { done(true); }, function () { fallback(); });
+      else fallback();
+      function fallback() { try { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); done(document.execCommand('copy')); } catch (e) { done(false); } }
+    });
+  });
+  var params; try { params = new URL(location.href).searchParams; } catch (e) { params = { get: function () { return null; } }; }
+  var tab = params.get('tab'), preset = params.get('preset');
+  if (preset) {
+    if (['ok', 'noap', 'gateway', 'wrongpass'].indexOf(preset) >= 0) { tab = 'wifi'; $('wifiPreset').value = preset; wifi.preset = preset; }
+    else if (['200', '401', '400', '404', 'offline'].indexOf(preset) >= 0) { tab = 'http'; $('httpPreset').value = preset; }
+    else if (preset === 'dht11' || preset === 'dht22') { tab = 'dht'; $('dhtKind').value = preset; }
+    else if (preset === 'badsum') { tab = 'dht'; $('dhtNoise').checked = true; }
+    else if (preset === 'fast') { tab = 'loop'; $('loopEvery').value = 1; }
+    else if (preset === 'edge') { tab = 'loop'; $('loopMode').value = 'edge'; }
+  }
+  showTab(TABS.indexOf(tab) >= 0 ? tab : 'wifi', false);
+  wifiDraw(); httpDraw(); dhtDraw(); loopDraw();
+  if (preset && ['200', '401', '400', '404', 'offline'].indexOf(preset) >= 0) httpSendFn();
+  if (preset && ['ok', 'noap', 'gateway', 'wrongpass'].indexOf(preset) >= 0) wifiPlayFn();
+  function openHash() { var h = location.hash.replace('#', ''); if (!h) return; var e = document.getElementById(h === 'wokwi' ? 'sectWokwi' : h); if (e && e.tagName === 'DETAILS') e.open = true; var d = e && e.closest ? e.closest('details') : null; if (d) d.open = true; if (e) setTimeout(function () { e.scrollIntoView({ block: 'start' }); }, 50); }
+  window.addEventListener('hashchange', openHash); openHash();
+})();
+</script>
+</body>
+</html>

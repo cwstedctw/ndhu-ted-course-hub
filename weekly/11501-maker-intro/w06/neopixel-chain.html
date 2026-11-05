@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>單線燈排隊實驗台</title>
+<meta name="description" content="互動模擬：為什麼一條線就能控制一整串 RGB 燈。從「燈多腳少」的問題開始，看一顆燈的 24 位元怎麼用高電位長短表示 0 和 1、一串燈怎麼接力傳話、送一次要多久要多少電，再到 8×8 矩陣的蛇形編號。附四個可以貼進 Wokwi 自己跑的專案。創客入門 W6 補充教材。">
+</head>
+<body>
+<style>
+  /* 顏色與字型：照抄〈腳位怎麼講話實驗台〉pin-talk.html 的同一組（亮、暗兩組），兩頁看起來是一家 */
+  :root {
+    --c-primary: #D13B00;
+    --c-primary-deep: #A32E00;
+    --c-primary-bright: #FF8A5C;
+    --c-primary-tint: #FFE3D6;
+    --c-primary-pale: #FFF1E8;
+    --c-mint: #7FD8BE;
+    --c-mint-deep: #2F8A6F;
+    --c-mint-tint: #DFF5EE;
+    --c-yellow: #FFD66B;
+    --c-yellow-deep: #9A6B00;
+    --c-yellow-tint: #FFF2CE;
+    --c-violet: #B9A7E0;
+    --c-violet-deep: #6B5BA0;
+    --c-violet-tint: #EFEAFA;
+    --c-alert: #B00020;
+    --c-alert-tint: #FDE7EA;
+    --c-bg: #FFF9F2;
+    --c-surface: #FFFFFF;
+    --c-surface-2: #FBF3EA;
+    --c-line: #EAD8C8;
+    --c-line-soft: #F3E4D8;
+    --c-ink: #2D3142;
+    --c-ink-soft: #4A4F63;
+    --c-ink-faint: #8A8FA3;
+    --c-code-bg: #F4F1FB;
+    --c-code-line: #E4DDF5;
+    --c-code-ink: #3B3457;
+    --c-wire: #2D3142;
+    --c-wire-off: #C9BFB8;
+    --c-chip: #FFFDF9;
+    --c-particle: #FF8A5C;
+    --c-particle-core: #D13B00;
+    --c-electron: #7FD8BE;
+    --c-electron-core: #1F6B54;
+    --c-meter-bg: #1E2230;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #8A8FA3;
+    --c-halo: rgba(45, 49, 66, 0.06);
+    --font-zh: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-primary: #FFA57D;
+      --c-primary-deep: #FFC0A0;
+      --c-primary-bright: #C9532A;
+      --c-primary-tint: #4A2A1C;
+      --c-primary-pale: #33211A;
+      --c-mint: #2A7D63;
+      --c-mint-deep: #7FD8BE;
+      --c-mint-tint: #1E3A33;
+      --c-yellow: #8A6B1E;
+      --c-yellow-deep: #FFD66B;
+      --c-yellow-tint: #3A3220;
+      --c-violet: #6B5BA0;
+      --c-violet-deep: #B9A7E0;
+      --c-violet-tint: #2A2440;
+      --c-alert: #FF6B7A;
+      --c-alert-tint: #4A1F26;
+      --c-bg: #1A1614;
+      --c-surface: #241E1B;
+      --c-surface-2: #2C2522;
+      --c-line: #3A302A;
+      --c-line-soft: #332A25;
+      --c-ink: #F2EAE4;
+      --c-ink-soft: #C9BFB8;
+      --c-ink-faint: #8C817A;
+      --c-code-bg: #1F1B2E;
+      --c-code-line: #332C4A;
+      --c-code-ink: #D6CFEA;
+      --c-wire: #F2EAE4;
+      --c-wire-off: #5E534C;
+      --c-chip: #201B18;
+      --c-particle: #FFB38A;
+      --c-particle-core: #FF7A3D;
+      --c-electron: #9FE8D0;
+      --c-electron-core: #2F8A6F;
+      --c-meter-bg: #12151E;
+      --c-meter-ink: #F4ECD8;
+      --c-meter-dim: #7E8398;
+      --c-halo: rgba(242, 234, 228, 0.07);
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-primary: #FFA57D;
+    --c-primary-deep: #FFC0A0;
+    --c-primary-bright: #C9532A;
+    --c-primary-tint: #4A2A1C;
+    --c-primary-pale: #33211A;
+    --c-mint: #2A7D63;
+    --c-mint-deep: #7FD8BE;
+    --c-mint-tint: #1E3A33;
+    --c-yellow: #8A6B1E;
+    --c-yellow-deep: #FFD66B;
+    --c-yellow-tint: #3A3220;
+    --c-violet: #6B5BA0;
+    --c-violet-deep: #B9A7E0;
+    --c-violet-tint: #2A2440;
+    --c-alert: #FF6B7A;
+    --c-alert-tint: #4A1F26;
+    --c-bg: #1A1614;
+    --c-surface: #241E1B;
+    --c-surface-2: #2C2522;
+    --c-line: #3A302A;
+    --c-line-soft: #332A25;
+    --c-ink: #F2EAE4;
+    --c-ink-soft: #C9BFB8;
+    --c-ink-faint: #8C817A;
+    --c-code-bg: #1F1B2E;
+    --c-code-line: #332C4A;
+    --c-code-ink: #D6CFEA;
+    --c-wire: #F2EAE4;
+    --c-wire-off: #5E534C;
+    --c-chip: #201B18;
+    --c-particle: #FFB38A;
+    --c-particle-core: #FF7A3D;
+    --c-electron: #9FE8D0;
+    --c-electron-core: #2F8A6F;
+    --c-meter-bg: #12151E;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #7E8398;
+    --c-halo: rgba(242, 234, 228, 0.07);
+  }
+  /* 這一頁多用的幾個顏色（波形、G／R／B 三色、螢幕與點陣），同樣分亮、暗兩組 */
+  :root {
+    --c-trace: #7FD8BE;
+    --c-trace2: #FF9E6B;
+    --c-avg: #FFD66B;
+    --c-gch: #1E8E4E;
+    --c-rch: #C62828;
+    --c-bch: #1565C0;
+    --c-gtint: #DDF3E6;
+    --c-rtint: #FBE2E2;
+    --c-btint: #DFE9FA;
+    --c-oled-bg: #0B1020;
+    --c-oled-off: #1C2438;
+    --c-oled-on: #BFE8FF;
+    --c-mx-bg: #1B1414;
+    --c-mx-off: #3E2626;
+    --c-mx-on: #FF4A3D;
+    --c-bus-hi: #2F8A6F;
+    --c-bus-lo: #2D3142;
+    --c-pix-body: #F4EFE9;
+    --c-pix-edge: #B8ADA5;
+    --c-pix-dark: #D9D0C8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-trace: #9FE8D0;
+      --c-trace2: #FFB38A;
+      --c-avg: #FFD66B;
+      --c-gch: #6FD99B;
+      --c-rch: #FF7B7B;
+      --c-bch: #8DB4FF;
+      --c-gtint: #1D3A2A;
+      --c-rtint: #46211F;
+      --c-btint: #1E2B47;
+      --c-oled-bg: #070A14;
+      --c-oled-off: #161D2E;
+      --c-oled-on: #BFE8FF;
+      --c-mx-bg: #120D0D;
+      --c-mx-off: #3A2323;
+      --c-mx-on: #FF5A4D;
+      --c-bus-hi: #7FD8BE;
+      --c-bus-lo: #8C817A;
+      --c-pix-body: #3A332F;
+      --c-pix-edge: #6E625A;
+      --c-pix-dark: #51463F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-trace: #9FE8D0;
+    --c-trace2: #FFB38A;
+    --c-avg: #FFD66B;
+    --c-gch: #6FD99B;
+    --c-rch: #FF7B7B;
+    --c-bch: #8DB4FF;
+    --c-gtint: #1D3A2A;
+    --c-rtint: #46211F;
+    --c-btint: #1E2B47;
+    --c-oled-bg: #070A14;
+    --c-oled-off: #161D2E;
+    --c-oled-on: #BFE8FF;
+    --c-mx-bg: #120D0D;
+    --c-mx-off: #3A2323;
+    --c-mx-on: #FF5A4D;
+    --c-bus-hi: #7FD8BE;
+    --c-bus-lo: #8C817A;
+    --c-pix-body: #3A332F;
+    --c-pix-edge: #6E625A;
+    --c-pix-dark: #51463F;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-behavior: smooth; }
+  body { margin: 0; background: var(--c-bg); color: var(--c-ink); font-family: var(--font-zh); font-size: 14px; line-height: 1.65; }
+  button, select, input, output { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .5; }
+  :focus-visible { outline: 3px solid var(--c-primary); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  code { font-family: var(--font-mono); font-size: max(12px, .9em); background: var(--c-code-bg); color: var(--c-code-ink); border-radius: 5px; padding: 0 4px; overflow-wrap: anywhere; }
+  a { color: var(--c-primary); }
+  a.ref { font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-decoration: none; border-bottom: 1px dotted currentColor; white-space: nowrap; }
+  p { margin: 0; }
+  h1 { margin: 0; font-size: 21px; line-height: 1.3; font-weight: 800; }
+  h2 { margin: 0; font-size: 18px; line-height: 1.35; font-weight: 800; }
+  h3 { margin: 0; font-size: 14.5px; font-weight: 800; }
+  .muted { color: var(--c-ink-soft); }
+  .tiny { font-size: 12px; color: var(--c-ink-faint); line-height: 1.5; }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .wrap { padding: 10px 16px 40px; display: flex; justify-content: center; }
+  .col { width: 100%; max-width: 1180px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--c-primary); }
+  .kicker .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c-primary-bright); }
+  .appbar { display: flex; flex-direction: column; gap: 4px; padding: 2px 4px 0; }
+  .sub1 { font-size: 14px; color: var(--c-ink-soft); font-weight: 600; }
+  .oneline { font-size: 14px; color: var(--c-ink-soft); max-width: 62em; }
+  .oneline b { color: var(--c-ink); }
+  .toc { display: flex; flex-wrap: wrap; gap: 6px; }
+  .toc a { text-decoration: none; border: 2px solid var(--c-line); background: var(--c-surface-2); color: var(--c-ink-soft); border-radius: 10px; padding: 2px 10px; font-size: 13px; font-weight: 700; }
+  .toc a:hover { border-color: var(--c-primary); color: var(--c-primary-deep); }
+  .kitnote { font-size: 13px; background: var(--c-mint-tint); border: 1.5px solid var(--c-mint); border-radius: 10px; padding: 6px 12px; }
+  .kitnote b { color: var(--c-ink); }
+
+  .step { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 16px; padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; scroll-margin-top: 10px; }
+  .step > header { display: flex; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
+  .step .no { font-family: var(--font-mono); font-size: 13px; font-weight: 800; color: #FFF7F2; background: var(--c-primary); border-radius: 8px; padding: 0 8px; }
+  .step .lead { color: var(--c-ink-soft); max-width: 62em; }
+  .step .lead b { color: var(--c-ink); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+  @media (max-width: 900px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+  .panel { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 12px; padding: 8px 12px; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .panel h3 { font-size: 13.5px; }
+  .note { font-size: 13px; line-height: 1.6; padding: 6px 10px; border-radius: 10px; border: 1.5px solid var(--c-line-soft); background: var(--c-surface-2); color: var(--c-ink-soft); }
+  .note b { color: var(--c-ink); }
+  .note.warn { background: var(--c-yellow-tint); border-color: var(--c-yellow); color: var(--c-ink); }
+  .note.key { background: var(--c-primary-pale); border-color: var(--c-primary-tint); color: var(--c-ink); }
+  .ctl { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
+  .btn { border: 2px solid var(--c-line); background: var(--c-surface); border-radius: 8px; padding: 3px 10px; font-weight: 700; font-size: 13px; color: var(--c-ink); }
+  .btn:hover:not(:disabled) { border-color: var(--c-primary); }
+  .btn.main { border-color: var(--c-primary); color: var(--c-primary-deep); }
+  .btn[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary-deep); }
+  .btn code { background: transparent; padding: 0; color: inherit; }
+  .lbl { font-size: 13px; font-weight: 800; color: var(--c-ink-soft); }
+  .rng { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); min-width: 0; flex-wrap: wrap; }
+  .rng input[type=range] { width: min(240px, 52vw); accent-color: var(--c-primary); margin: 0; }
+  .rng output { font-family: var(--font-mono); color: var(--c-ink); min-width: 3.2em; }
+  .tog { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); cursor: pointer; }
+  .tog input { width: 16px; height: 16px; accent-color: var(--c-primary); margin: 0; }
+  select.sel { border: 2px solid var(--c-line); background: var(--c-surface); border-radius: 8px; padding: 2px 6px; font-size: 13px; font-weight: 700; max-width: 100%; }
+  .fig { margin: 0; background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 12px; padding: 6px 8px; min-width: 0; }
+  .fig svg { display: block; width: 100%; height: auto; }
+  .fig figcaption { font-size: 12.5px; color: var(--c-ink-soft); padding: 2px 2px 0; }
+  .sv text { user-select: none; -webkit-user-select: none; }
+  .t12 { font-family: var(--font-zh); font-size: 12px; fill: var(--c-ink-soft); }
+  .t12b { font-family: var(--font-zh); font-size: 12px; font-weight: 800; fill: var(--c-ink); }
+  .t13b { font-family: var(--font-zh); font-size: 13px; font-weight: 800; fill: var(--c-ink); }
+  .tm { font-family: var(--font-mono); font-size: 12px; fill: var(--c-ink-soft); }
+  .tmb { font-family: var(--font-mono); font-size: 12px; font-weight: 800; fill: var(--c-ink); }
+  .tw { font-family: var(--font-zh); font-size: 12px; font-weight: 800; fill: #1E2230; }
+
+  /* ① 問題 */
+  .cmp2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+  @media (max-width: 560px) { .cmp2 { grid-template-columns: minmax(0, 1fr); } }
+  .bigcard { background: var(--c-surface); border: 2px solid var(--c-line-soft); border-radius: 12px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .bigcard .big { font-family: var(--font-mono); font-size: 28px; font-weight: 800; line-height: 1.1; color: var(--c-ink); }
+  .bigcard .big small { font-family: var(--font-zh); font-size: 14px; font-weight: 700; color: var(--c-ink-soft); }
+  .bigcard.bad .big { color: var(--c-alert); }
+  .bigcard.good .big { color: var(--c-mint-deep); }
+  .pinbar { display: flex; flex-wrap: wrap; gap: 2px; min-height: 12px; }
+  .pinbar i { display: block; width: 7px; height: 12px; border-radius: 2px; background: var(--c-line); }
+  .pinbar i.r { background: var(--c-rch); } .pinbar i.g { background: var(--c-gch); } .pinbar i.b { background: var(--c-bch); }
+  .pinbar i.d { background: var(--c-primary); }
+  .pinbar .more { font-size: 12px; color: var(--c-ink-faint); line-height: 12px; }
+
+  /* ② 24 位元 */
+  .rgbin { display: grid; grid-template-columns: auto minmax(0, 1fr) 3em; gap: 4px 8px; align-items: center; font-size: 13px; font-weight: 800; }
+  .rgbin input { width: 100%; margin: 0; }
+  .rgbin output { font-family: var(--font-mono); text-align: right; }
+  .rgbin .r { color: var(--c-rch); } .rgbin .g { color: var(--c-gch); } .rgbin .b { color: var(--c-bch); }
+  .rgbin input.r { accent-color: var(--c-rch); } .rgbin input.g { accent-color: var(--c-gch); } .rgbin input.b { accent-color: var(--c-bch); }
+  .swatch { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--c-pix-edge); flex: 0 0 auto; background: var(--c-pix-dark); }
+  .writeline { font-family: var(--font-mono); font-size: 13px; background: var(--c-code-bg); color: var(--c-code-ink); border-radius: 8px; padding: 4px 8px; overflow-wrap: anywhere; }
+  .grb { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  @media (max-width: 560px) { .grb { grid-template-columns: minmax(0, 1fr); } }
+  .bytebox { border-radius: 10px; padding: 4px 8px; border: 1.5px solid transparent; min-width: 0; }
+  .bytebox.G { background: var(--c-gtint); border-color: var(--c-gch); }
+  .bytebox.R { background: var(--c-rtint); border-color: var(--c-rch); }
+  .bytebox.B { background: var(--c-btint); border-color: var(--c-bch); }
+  .bytebox .bh { font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; gap: 6px; flex-wrap: wrap; }
+  .bytebox.G .bh { color: var(--c-gch); } .bytebox.R .bh { color: var(--c-rch); } .bytebox.B .bh { color: var(--c-bch); }
+  .bytebox .bits { font-family: var(--font-mono); font-size: 15px; font-weight: 800; letter-spacing: .08em; color: var(--c-ink); overflow-wrap: anywhere; }
+  .bytebox .bits span.z { color: var(--c-ink-faint); font-weight: 600; }
+  .bytebox .bits span.hot { background: var(--c-avg); color: #1E2230; border-radius: 3px; }
+  .presets { display: flex; flex-wrap: wrap; gap: 5px; }
+  table.tol { border-collapse: collapse; font-size: 12.5px; width: 100%; }
+  table.tol th, table.tol td { padding: 3px 6px; border-bottom: 1px solid var(--c-line-soft); text-align: left; }
+  table.tol th { font-size: 12px; color: var(--c-ink-faint); }
+  table.tol td.mono { white-space: nowrap; }
+  .tblscroll { overflow-x: auto; min-width: 0; }
+
+  /* ③ 接力 */
+  .ledrow { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 6px 4px; }
+  .led { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+  .led .bulb { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--c-pix-edge); background: var(--c-pix-dark); transition: background .25s, box-shadow .25s; }
+  .led .bulb.on { border-color: transparent; }
+  .led .k { font-size: 12px; color: var(--c-ink-faint); font-weight: 700; white-space: nowrap; }
+  .led .kept { width: 30px; height: 10px; border-radius: 3px; border: 1.5px dashed var(--c-ink-faint); }
+  .led .kept.full { border-style: solid; border-color: var(--c-ink); }
+  .led.hot .k { color: var(--c-primary-deep); }
+  .codebox { font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 6px 0; color: var(--c-code-ink); overflow-x: auto; }
+  .codebox div { padding: 0 10px; border-left: 3px solid transparent; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .codebox div.on { background: var(--c-primary-tint); border-left-color: var(--c-primary); }
+  .codebox div.cm { color: var(--c-ink-faint); }
+  .status { font-size: 13.5px; font-weight: 700; color: var(--c-ink); background: var(--c-surface); border: 1.5px solid var(--c-line); border-radius: 10px; padding: 6px 10px; min-height: 3.4em; }
+  .status.latch { border-color: var(--c-mint-deep); background: var(--c-mint-tint); }
+  .status.warn { border-color: var(--c-yellow); background: var(--c-yellow-tint); }
+  .membuf { font-family: var(--font-mono); font-size: 12.5px; color: var(--c-ink-soft); overflow-wrap: anywhere; }
+  .membuf b { color: var(--c-ink); }
+
+  /* ④ 算算看 */
+  .calcin { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+  .calcin input[type=number] { width: 6.5em; border: 2px solid var(--c-line); border-radius: 8px; background: var(--c-surface); padding: 2px 6px; font-family: var(--font-mono); font-weight: 800; }
+  .results { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr)); gap: 8px; }
+  .res { background: var(--c-surface); border: 2px solid var(--c-line-soft); border-radius: 12px; padding: 6px 10px; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .res .rt { font-size: 12.5px; font-weight: 800; color: var(--c-ink-soft); }
+  .res .rv { font-family: var(--font-mono); font-size: 20px; font-weight: 800; color: var(--c-ink); line-height: 1.25; overflow-wrap: anywhere; }
+  .res .rf { font-size: 12px; color: var(--c-ink-faint); overflow-wrap: anywhere; }
+  .res.alert { border-color: var(--c-alert); }
+  .res.alert .rv { color: var(--c-alert); }
+  .res.ok .rv { color: var(--c-mint-deep); }
+  .verdict { font-size: 13.5px; font-weight: 700; }
+
+  /* ⑤ 對照表 */
+  .tablewrap { overflow-x: auto; border: 2px solid var(--c-line); border-radius: 14px; max-width: 100%; }
+  table.facts { border-collapse: collapse; width: 100%; font-size: 13px; }
+  table.facts th, table.facts td { text-align: left; padding: 7px 10px; border-bottom: 1.5px solid var(--c-line-soft); vertical-align: top; }
+  table.facts th { font-size: 12px; letter-spacing: .04em; color: var(--c-ink-faint); font-weight: 700; background: var(--c-surface-2); }
+  table.facts tr:last-child td { border-bottom: 0; }
+  table.facts td.id { font-family: var(--font-mono); font-weight: 800; color: var(--c-primary-deep); white-space: nowrap; }
+  table.facts td.num { font-family: var(--font-mono); font-weight: 700; }
+  table.facts tr.flash td { background: var(--c-yellow-tint); }
+  table.cmp { min-width: 560px; }
+  table.big { min-width: 720px; }
+  .en { color: var(--c-ink); }
+
+  /* ⑥ 矩陣 */
+  .mxwrap { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+  .mxbox { position: relative; flex: 0 0 auto; background: #15110F; border-radius: 12px; padding: 8px; }
+  .mxgrid { display: grid; grid-template-columns: repeat(8, 34px); grid-auto-rows: 34px; gap: 4px; position: relative; z-index: 1; }
+  .mxc { width: 34px; height: 34px; border-radius: 6px; border: 0; padding: 0; background: #2C2522; color: #8C817A; font-family: var(--font-mono); font-size: 11px; font-weight: 700; display: flex; align-items: flex-end; justify-content: flex-end; padding: 0 3px 1px 0; line-height: 1; }
+  .mxc.on { background: #FF4A5E; color: #3A0710; box-shadow: 0 0 8px rgba(255, 74, 94, .65); }
+  .mxc.pick { outline: 3px solid var(--c-avg); outline-offset: 1px; }
+  .mxpath { position: absolute; left: 8px; top: 8px; z-index: 2; pointer-events: none; }
+  .mxside { flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+  @media (max-width: 420px) {
+    .mxgrid { grid-template-columns: repeat(8, 30px); grid-auto-rows: 30px; gap: 3px; }
+    .mxc { width: 30px; height: 30px; font-size: 10px; }
+  }
+
+  /* ⑦ Wokwi 卡 */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 12px; }
+  .card { background: var(--c-surface); border: 2px solid var(--c-line-soft); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .card h3 { font-size: 15px; }
+  .card p { font-size: 13px; color: var(--c-ink-soft); }
+  .card p b { color: var(--c-ink); }
+  .card .btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tagk { font-size: 12px; font-weight: 800; border-radius: 8px; padding: 0 8px; align-self: flex-start; }
+  .tagk.kit { background: var(--c-mint-tint); color: var(--c-mint-deep); border: 1.5px solid var(--c-mint); }
+  .tagk.sim { background: var(--c-violet-tint); color: var(--c-violet-deep); border: 1.5px solid var(--c-violet); }
+  .copy { border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 8px; padding: 2px 10px; font-weight: 700; font-size: 12.5px; white-space: nowrap; }
+  .copy:hover { background: var(--c-primary-tint); }
+  .serialout { background: var(--c-meter-bg); color: var(--c-meter-ink); border-radius: 10px; padding: 6px 10px; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+  .adv { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 5px 10px; min-width: 0; }
+  .adv > summary { cursor: pointer; font-weight: 800; font-size: 13px; }
+  .adv .inner { padding-top: 6px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .code { margin: 0; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 8px 10px; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; color: var(--c-code-ink); overflow-x: auto; white-space: pre; max-width: 100%; max-height: 420px; }
+  .steps { margin: 0; padding-left: 1.3em; font-size: 13px; color: var(--c-ink-soft); }
+  .mono1 { font-family: var(--font-mono); font-size: 12px; background: var(--c-code-bg); border-radius: 5px; padding: 1px 5px; color: var(--c-code-ink); overflow-wrap: anywhere; }
+
+  .sect { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 14px; padding: 0 16px; min-width: 0; }
+  .sect > summary { cursor: pointer; font-size: 16px; font-weight: 800; padding: 12px 0; }
+  .sect[open] > summary { border-bottom: 2px solid var(--c-line-soft); margin-bottom: 12px; }
+  .sect > section { padding-bottom: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .simp { margin: 0; padding-left: 1.3em; font-size: 13px; color: var(--c-ink-soft); display: flex; flex-direction: column; gap: 3px; }
+  .foot { font-size: 12px; color: var(--c-ink-faint); border-top: 2px solid var(--c-line-soft); padding-top: 10px; display: flex; flex-direction: column; gap: 3px; }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap"><div class="col">
+
+  <header class="appbar">
+    <span class="kicker"><span class="dot"></span><span>創客入門 · W6 補充教材</span></span>
+    <h1>一條線，點亮一整串燈</h1>
+    <span class="sub1">單線 RGB 燈為什麼只要一支腳：從「燈多腳少」到排隊送、接力傳、真的拿來用</span>
+    <p class="oneline"><b>燈很多、腳很少，所以不讓每顆燈各占一支腳，而是把所有顏色排成一長串，從同一條線依序送出去。</b>每顆燈收下排在最前面的 24 位元，剩下的整理好往下一顆傳；線停在低電位夠久，全部一起換色。這種每顆都能單獨指定顏色的燈，叫可定址 RGB 燈（WS2812／NeoPixel）。</p>
+    <nav class="toc" aria-label="這一頁的七段">
+      <a href="#problem">① 燈多腳少</a><a href="#bits">② 0 和 1 怎麼說</a><a href="#chain">③ 接力傳話</a><a href="#calc">④ 算算看</a><a href="#compare">⑤ 跟 I2C 比</a><a href="#matrix">⑥ 排成矩陣</a><a href="#wokwi">⑦ Wokwi 動手</a>
+    </nav>
+    <p class="kitnote"><b>套件上就是這種燈：三顆串在一起，只接 GPIO26（板面印 IO16）</b>（<a class="ref" href="#f-K2">K2</a>）。這一頁的 16 顆環形燈、8×8 矩陣、300 顆燈條，套件都沒有，只在 Wokwi 和計算機裡看。姊妹頁：〈<a href="pin-talk.html?tab=wire&amp;preset=chain">腳位怎麼講話實驗台・② 一條線</a>〉、〈<a href="../w05/adc-pwm.html?tab=link">讀旋鈕、調亮度實驗台</a>〉。</p>
+  </header>
+
+  <!-- ① 問題 -->
+  <section class="step" id="problem" aria-labelledby="h-problem">
+    <header><span class="no">1</span><h2 id="h-problem">問題：燈很多，腳很少</h2></header>
+    <p class="lead">一顆 RGB 燈裡面其實是<b>紅、綠、藍三顆小燈</b>。上週學過：一支腳用 PWM 可以調一顆燈的亮度。所以最直接的接法是<b>一顆 RGB 燈占三支腳</b>（R、G、B 各一支）。燈一多，腳就不夠了。</p>
+    <div class="ctl">
+      <label class="rng">要幾顆燈<input type="range" id="pN" min="0" max="5" step="1" value="1" aria-label="要幾顆燈"><output id="pNo">3 顆</output></label>
+      <span class="tiny">（拉桿六格：1、3、8、16、64、300 顆）</span>
+    </div>
+    <div class="cmp2">
+      <div class="bigcard bad" id="pDirect">
+        <h3>每顆燈直接接：一顆三支腳</h3>
+        <div class="big" id="pDirectN">9 <small>支腳</small></div>
+        <div class="pinbar" id="pDirectBar" aria-hidden="true"></div>
+        <p class="tiny" id="pDirectTxt"></p>
+      </div>
+      <div class="bigcard good">
+        <h3>排隊送：所有燈共用一條資料線</h3>
+        <div class="big">1 <small>支腳（另外接電源、接地）</small></div>
+        <div class="pinbar" aria-hidden="true"><i class="d"></i></div>
+        <p class="tiny" id="pQueueTxt"></p>
+      </div>
+    </div>
+    <p class="note key"><b>解法：不讓每顆燈各占一支腳，改成「排隊送」（serial，一個接一個送）。</b>ESP32 把所有燈的顏色排成一長串 1 和 0，從同一支腳依序送出去；燈自己知道「最前面那一份是我的」。下面四段，一段回答一個問題：一條線怎麼說 0 和 1？一長串怎麼分給每一顆？送一次要多久、要多少電？排成方陣時誰是第幾顆？</p>
+  </section>
+
+  <!-- ② 0 和 1 -->
+  <section class="step" id="bits" aria-labelledby="h-bits">
+    <header><span class="no">2</span><h2 id="h-bits">一條線怎麼說 0 和 1：看高電位多長</h2></header>
+    <p class="lead">I2C 有一條專門打拍子的線（SCL）。單線燈<b>沒有拍子線</b>，所以大家事先約好時間：<b>每一位元約 1.25 µs（微秒，百萬分之一秒）；高電位「短」是 0、「長」是 1</b>。資料表寫的是：0＝高 0.40 µs、1＝高 0.80 µs，每段可以差 ±0.15 µs（<a class="ref" href="#f-P11">P11</a>）。燈裡的小晶片就靠量「高了多久」分辨 0 和 1。</p>
+    <div class="grid2">
+      <figure class="fig sv" aria-label="0 和 1 的脈衝形狀">
+        <svg id="pulseSvg" viewBox="0 0 520 170" role="img" aria-label="左：0 是高電位 0.40 微秒再低 0.85 微秒；右：1 是高電位 0.80 微秒再低 0.45 微秒；兩個都是一位元 1.25 微秒；高電位結束的地方前後 0.15 微秒是允許的誤差"></svg>
+        <figcaption>灰色帶＝資料表允許的誤差（±0.15 µs）。高電位落在灰色帶裡結束，燈就認得出來。</figcaption>
+      </figure>
+      <div class="panel">
+        <h3>資料表的數字（WS2812B，<a class="ref" href="#f-P11">P11</a>）與 MicroPython 實際送的（<a class="ref" href="#f-M10">M10</a>）</h3>
+        <div class="tblscroll"><table class="tol">
+          <thead><tr><th>這一段</th><th>資料表</th><th>MicroPython 送</th></tr></thead>
+          <tbody>
+            <tr><td>0 的高電位</td><td class="mono">0.40 µs ±0.15</td><td class="mono">0.40 µs</td></tr>
+            <tr><td>0 的低電位</td><td class="mono">0.85 µs ±0.15</td><td class="mono">0.85 µs</td></tr>
+            <tr><td>1 的高電位</td><td class="mono">0.80 µs ±0.15</td><td class="mono">0.80 µs</td></tr>
+            <tr><td>1 的低電位</td><td class="mono">0.45 µs ±0.15</td><td class="mono">0.45 µs</td></tr>
+            <tr><td>一位元合計</td><td class="mono">1.25 µs ±0.6</td><td class="mono">1.25 µs</td></tr>
+            <tr><td>停多久才換色</td><td class="mono">舊版 ≥ 50 µs；新版 V5 &gt; 280 µs</td><td class="mono">送完就停在低電位</td></tr>
+          </tbody>
+        </table></div>
+        <p class="tiny">上表「資料表」那欄是舊版 WS2812B。新版（V5）的數字不同：0 的高電位 0.22–0.38 µs、1 的高電位 0.58–1 µs、送完要停在低電位 &gt; 280 µs（<a class="ref" href="#f-P11b">P11b</a>）。<b>本頁一律保守抓：送完後維持低電位至少約 300 µs，燈才換色。</b>投影片寫的 50 µs 是舊版資料表；新版要更久，保守抓 300。</p>
+        <p class="note warn">⚠️ <b>依 V5 資料表，MicroPython 送的「0 的高電位」0.40 µs 已經超過上限 0.38 µs。</b>Wokwi 能跑，不代表真板保證成功；套件那三顆是哪一版沒查到，W10 拿到真板再確認料號或量測（<a class="ref" href="#f-P11b">P11b</a>）。</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>動手：挑一個顏色，看它變成哪 24 位元</h3>
+      <div class="grid2">
+        <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+          <div class="presets" id="cPresets" role="group" aria-label="快選顏色"></div>
+          <div style="display:flex;gap:12px;align-items:center;min-width:0">
+            <div class="swatch" id="cSwatch" aria-hidden="true"></div>
+            <div class="rgbin" style="flex:1;min-width:0">
+              <span class="r">R 紅</span><input type="range" class="r" id="cR" min="0" max="255" value="128" aria-label="紅"><output class="r" id="cRo">128</output>
+              <span class="g">G 綠</span><input type="range" class="g" id="cG" min="0" max="255" value="0" aria-label="綠"><output class="g" id="cGo">0</output>
+              <span class="b">B 藍</span><input type="range" class="b" id="cB" min="0" max="255" value="0" aria-label="藍"><output class="b" id="cBo">0</output>
+            </div>
+          </div>
+          <div class="writeline" id="cWrite"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+          <p class="tiny">送出去的順序是<b>綠先、紅、藍</b>（G、R、B），每個顏色 8 位元、高位先送（<a class="ref" href="#f-P10">P10</a>）。你寫 (r, g, b)，neopixel 模組幫你排成 G、R、B（<a class="ref" href="#f-M10">M10</a>）：</p>
+          <div class="grb" id="cGRB"></div>
+        </div>
+      </div>
+      <figure class="fig sv" style="background:var(--c-surface)">
+        <svg id="waveSvg" viewBox="0 0 760 150" role="img" aria-label="這個顏色的 24 位元波形"></svg>
+        <figcaption id="waveCap">把滑鼠移到（或點）波形上，看那一位元是多少。</figcaption>
+      </figure>
+      <p class="note"><b>程式不用自己數這些微秒。</b><code>neopixel</code> 是 ESP32 的 MicroPython 韌體內建的模組（今天在 Wokwi 列出的模組清單裡就有它，<a class="ref" href="#f-M12">M12</a>）。你寫 <code>np[0] = (r, g, b)</code>，它把顏色存進記憶體（MicroPython 的 neopixel 模組、三色燈：緩衝區照 G、R、B 排）；<code>np.write()</code> 再把整串交給 ESP32 裡一塊專門發精準脈衝的硬體去送，一位元只有 1.25 µs，靠程式一行一行開關腳位來不及（<a class="ref" href="#f-M11">M11</a>）。</p>
+    </div>
+  </section>
+
+  <!-- ③ 接力 -->
+  <section class="step" id="chain" aria-labelledby="h-chain">
+    <header><span class="no">3</span><h2 id="h-chain">接力傳話：第一顆留下前 24 位元，其餘往下傳</h2></header>
+    <p class="lead">燈一顆接一顆串起來：ESP32 → 第 1 顆的 DIN（資料進）→ 第 1 顆的 DOUT（資料出）→ 第 2 顆的 DIN……。<b>第 1 顆收下最前面 24 位元，後面的整理好（重新整形）從 DOUT 送給第 2 顆；第 2 顆再收下它看到的最前面 24 位元……</b>（<a class="ref" href="#f-P12">P12</a>）。所以燈不需要名字：<b>排第幾個，就拿第幾份</b>。收到的顏色先放著，<b>等線停在低電位夠久（保守抓至少約 300 µs），所有燈才一起換色</b>（<a class="ref" href="#f-P11">P11</a>、<a class="ref" href="#f-P11b">P11b</a>）。</p>
+    <div class="ctl">
+      <label class="rng">串幾顆<input type="range" id="chN" min="3" max="30" step="1" value="3" aria-label="串幾顆燈"><output id="chNo">3 顆</output></label>
+      <span class="lbl">改記憶體（<code>np[i] = …</code>）：</span>
+      <span class="presets" id="chPresets" role="group" aria-label="改記憶體：選一組顏色"></span>
+    </div>
+    <div class="ctl">
+      <button type="button" class="btn main" id="chWrite"><code>np.write()</code> 送出</button>
+      <button type="button" class="btn" id="chStep" disabled>走一步</button>
+      <button type="button" class="btn" id="chPlay" aria-pressed="false" disabled>自動播放</button>
+      <button type="button" class="btn" id="chSkip" disabled>跳到送完</button>
+    </div>
+    <div class="grid2">
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+        <div class="panel">
+          <h3>燈現在的顏色（上排）・每顆收下、還沒顯示的 24 位元（下面小條）</h3>
+          <div class="ledrow" id="chLeds"></div>
+          <p class="membuf" id="chMem"></p>
+        </div>
+        <div class="status" id="chStatus" aria-live="polite"></div>
+      </div>
+      <div class="codebox" id="chCode" aria-label="對應的程式"></div>
+    </div>
+    <figure class="fig sv">
+      <svg id="cascadeSvg" viewBox="0 0 760 200" role="img" aria-label="接力圖：每一排是進到那一顆燈的資料；每一格是一顆燈的 24 位元；每往下一顆，最前面那一格就被留下"></svg>
+      <figcaption>每一排＝那一條線上流過的資料；一格＝一顆燈的 24 位元（30 µs），顏色是要給哪一顆的那個顏色。<b>每往下一顆，最前面那一格就被留下（粗框），所以下一排少一格</b>——資料表畫的就是這張圖（<a class="ref" href="#f-P12">P12</a>）。</figcaption>
+    </figure>
+    <p class="note"><b><code>np[i] = (r, g, b)</code> 只改 ESP32 記憶體裡的數字（下面那行 <code>np.buf</code>）；<code>np.write()</code> 才把整串送上線。</b>試試看：先按上面任一組顏色、不要按 <code>np.write()</code>——燈不會變，因為根本沒送。跟 OLED 的 <code>show()</code> 是同一個道理。實驗台也有同一件事：〈<a href="pin-talk.html?tab=wire&amp;preset=nowrite">只改不 write()</a>〉。</p>
+  </section>
+
+  <!-- ④ 算算看 -->
+  <section class="step" id="calc" aria-labelledby="h-calc">
+    <header><span class="no">4</span><h2 id="h-calc">算算看：串 3 顆跟串 300 顆，差在哪</h2></header>
+    <p class="lead">一條線很省腳，但代價有三個：<b>串愈多，送一次愈久</b>（資料每顆 24 位元 × 1.25 µs＝30 µs，送完還要停在低電位約 300 µs 才換色）；<b>記憶體</b>每顆要 3 個位元組；<b>電流</b>估電源時每顆全白抓 60 mA（<a class="ref" href="#f-A1">A1</a>）。改數字看看。</p>
+    <div class="calcin">
+      <label class="lbl">串幾顆 <input type="number" id="kN" min="1" max="5000" value="3" aria-label="串幾顆燈"></label>
+      <span class="presets" id="kNPresets" role="group" aria-label="快選顆數"></span>
+    </div>
+    <div class="calcin">
+      <span class="lbl">每顆的顏色：</span>
+      <span class="presets" id="kVPresets" role="group" aria-label="快選亮度"></span>
+      <label class="rng">每色亮度<input type="range" id="kV" min="0" max="255" value="255" aria-label="每色亮度（三色一樣，也就是白光）"><output id="kVo">255</output></label>
+    </div>
+    <div class="results" id="kOut"></div>
+    <p class="verdict note" id="kVerdict"></p>
+    <details class="adv"><summary>這些數字怎麼算的</summary><div class="inner">
+      <p class="tiny">資料脈衝時間＝顆數 × 24 位元 × 1.25 µs。一個完整畫面＝資料時間＋停在低電位的時間，本頁保守抓 300 µs（新版 V5 要 &gt; 280 µs；舊版資料表寫 ≥ 50 µs，投影片寫的就是這個，<a class="ref" href="#f-P11">P11</a>、<a class="ref" href="#f-P11b">P11b</a>）。每秒最多換幾次＝1 秒 ÷ 一個完整畫面——只看傳輸時間的理論上限；Python 程式本身（算顏色、呼叫 <code>write()</code>）也要時間，實際會更少。資料表自己寫：每秒 30 張畫面時，可以串到 1024 顆以上（<a class="ref" href="#f-P19">P19</a>），跟 1024 × 30 µs ≈ 31 ms 對得起來。</p>
+      <p class="tiny">記憶體＝顆數 × 3 個位元組：neopixel 模組開一塊 <code>bytearray(n * 3)</code> 存顏色（<a class="ref" href="#f-M10">M10</a>）。</p>
+      <p class="tiny">電流（保守估）＝顆數 × 60 mA × 亮度 ÷ 255。<b>每顆 60 mA 是保守的估電源算法</b>（Adafruit：全白最亮時每顆最多），不是每顆燈都會量到這麼多；日常混色他們用每顆 20 mA 粗估（<a class="ref" href="#f-A1">A1</a>）。⚠️ 亮度和電流當成近似直線估算（燈用開關快慢調亮度，平均電流大致跟著亮度走），<b>不是量測值</b>，真板沒量過。</p>
+    </div></details>
+  </section>
+
+  <!-- ⑤ 跟 I2C 比 -->
+  <section class="step" id="compare" aria-labelledby="h-compare">
+    <header><span class="no">5</span><h2 id="h-compare">跟 I2C 比：一個喊名字，一個看排隊位置</h2></header>
+    <p class="lead">I2C 用兩條線，每顆裝置有自己的位址，開頭先喊名字、被喊到的回「收到」。單線燈只有一條資料線（另接電源、接地），<b>沒有名字、也不回話</b>，靠的是「你排第幾個」。跟投影片第 11 頁那張對照表同一件事，多加幾列：</p>
+    <div class="tablewrap">
+      <table class="facts cmp">
+        <thead><tr><th></th><th>I2C（套件的小螢幕）</th><th>單線燈（套件的三顆 RGB 燈）</th><th>SPI（Wokwi 點陣）</th></tr></thead>
+        <tbody>
+          <tr><td><b>幾條線</b></td><td>2：SDA 資料、SCL 時脈</td><td>1：資料線（另接電源、接地）</td><td>4：SCK、MOSI、MISO、CS</td></tr>
+          <tr><td><b>怎麼挑對象</b></td><td>喊位址（螢幕是 0x3C）</td><td>排隊：第幾個就拿第幾份 24 位元（<a class="ref" href="#f-P12">P12</a>）</td><td>CS 拉低的那顆才聽</td></tr>
+          <tr><td><b>誰打拍子</b></td><td>ESP32 在 SCL 上打</td><td>沒有拍子線：看高電位多長（<a class="ref" href="#f-P11">P11</a>）</td><td>ESP32 在 SCK 上打</td></tr>
+          <tr><td><b>對方回不回話</b></td><td>回：第 9 拍拉低＝收到</td><td>不回：送了就算</td><td>MAX7219 不回</td></tr>
+          <tr><td><b>多掛一顆要付什麼</b></td><td>那一顆要有不同的位址</td><td>多 24 位元、多 30 µs；中間一顆壞了，後面全收不到（資料要經過每一顆）</td><td>多一條 CS 線</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ⑥ 矩陣 -->
+  <section class="step" id="matrix" aria-labelledby="h-matrix">
+    <header><span class="no">6</span><h2 id="h-matrix">排成矩陣：64 顆還是一條隊伍，只是折成 8 列</h2></header>
+    <p class="lead">8×8 的燈板，裡面還是一條線串 64 顆。位置用「第 x 欄、第 y 列（橫的一排）」來說，x、y 都從 0 數起。大部分買得到的燈板是<b>蛇形接法（serpentine）</b>：第 0 列由左往右，到底了折回來，第 1 列由右往左，再折回來……（<a class="ref" href="#f-W8">W8</a>）。所以第 x 欄、第 y 列那顆是隊伍裡的第幾顆，要換算一下：</p>
+    <div class="mxwrap">
+      <div class="mxbox" id="mxBox">
+        <div class="mxgrid" id="mxGrid" role="grid" aria-label="8×8 燈板：點一格開或關"></div>
+        <svg class="mxpath" id="mxPath" aria-hidden="true"></svg>
+      </div>
+      <div class="mxside">
+        <div class="ctl">
+          <label class="lbl">燈板怎麼接 <select class="sel" id="mxPanel"><option value="s">蛇形（一列往右、一列往左）</option><option value="p">每列都由左往右</option></select></label>
+          <label class="lbl">程式怎麼算 index <select class="sel" id="mxProg"><option value="s">蛇形</option><option value="p">每列都由左往右</option></select></label>
+        </div>
+        <div class="ctl">
+          <button type="button" class="btn main" id="mxHeart">畫 13 的愛心</button>
+          <button type="button" class="btn" id="mxClear">清空</button>
+          <label class="tog"><input type="checkbox" id="mxShowPath" checked> 畫出資料線怎麼走</label>
+        </div>
+        <div class="codebox" id="mxCode"></div>
+        <p class="status" id="mxStatus" aria-live="polite">點一格看看：它是隊伍裡的第幾顆？</p>
+        <p class="note"><b>兩個選單要一樣，畫面才會對。</b>試試把「程式怎麼算」改成「每列都由左往右」、燈板維持蛇形：奇數列會左右翻——Wokwi 13 把 <code>SERPENTINE</code> 改成 <code>False</code> 跑出來就是這樣（<a class="ref" href="#f-W13">W13</a>），這是故意讓你看錯的樣子。每格右下角的小數字＝燈板上它排第幾顆。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑦ Wokwi -->
+  <section class="step" id="wokwi" aria-labelledby="h-wokwi">
+    <header><span class="no">7</span><h2 id="h-wokwi">在 Wokwi 上自己跑（10–13）</h2></header>
+    <p class="lead">四個專案<b>各有自己的電路</b>，所以兩個檔都要換。燈一律接 GPIO26，跟套件同一支腳。11 跟套件一樣是三顆；10、12 的 16 顆環形燈、13 的 8×8 矩陣<b>套件沒有，只在 Wokwi 有</b>。</p>
+    <ol class="steps">
+      <li>開新專案：<span class="mono1">wokwi.com/projects/new/micropython-esp32</span></li>
+      <li>點 <span class="mono1">diagram.json</span> 分頁，全選、貼上（覆蓋原本的內容）</li>
+      <li>點 <span class="mono1">main.py</span> 分頁，全選、貼上，按播放，看右下角的序列埠</li>
+    </ol>
+    <div class="cards">
+      <div class="card">
+        <span class="tagk kit">跟套件一樣：三顆</span>
+        <h3>11 三顆燈，印出真的送出去的位元組</h3>
+        <p><b>要做什麼：</b>一步一步改三顆的顏色，每一步印出你寫的 (r, g, b)，和 <span class="mono1">np.buf</span>——MicroPython 的 neopixel 模組放顏色的緩衝區（三色燈照 G R B 排），<span class="mono1">write()</span> 送上線的就是這 9 個位元組。</p>
+        <p><b>跑起來會看到</b>（實跑原文，<a class="ref" href="#f-W11">W11</a>）：</p>
+<pre class="serialout">D 第 0 顆寫 (10, 20, 30)
+  你寫的 (r, g, b)： (10, 20, 30) (0, 128, 0) (0, 0, 128)
+  buf (dec)： [20, 10, 30, 128, 0, 0, 0, 0, 128]
+  buf (hex)： 14 0a 1e 80 00 00 00 00 80</pre>
+        <p>你寫紅 10、綠 20、藍 30，送出去卻是 <b>20, 10, 30</b>：綠排第一。E 步改了第 2 顆、還沒 <span class="mono1">write()</span>，<span class="mono1">buf</span> 已經變了，燈卻還是藍的；F 步 <span class="mono1">write()</span> 之後才變黃（實跑讀到的燈色，<a class="ref" href="#f-W11">W11</a>）。</p>
+        <p><b>試著改：</b>把第 0 顆改成 (1, 2, 3)，先猜 buf 前三格會印什麼。</p>
+        <div class="btns"><button type="button" class="copy" data-copy="c11d">複製 diagram.json</button><button type="button" class="copy" data-copy="c11m">複製 main.py</button></div>
+        <details class="adv"><summary>看一眼 main.py／diagram.json</summary><div class="inner">
+          <pre class="code" id="c11m">
+# 11 三顆燈，印出「真的送出去的位元組」
+# 你寫 np[i] = (r, g, b)；neopixel 模組把它存進 np.buf，排成 G、R、B（綠先），write() 才照這個順序送上線。
+# np.buf 是 MicroPython neopixel 模組（三色燈）的內部緩衝區，write() 送出去的就是它：3 顆 × 3 個位元組 = 9 個位元組 = 72 位元。
+# （別的韌體、RGBW 四色燈或排列不同的燈，不一定照 G R B。）
+from machine import Pin
+import neopixel
+import time
+
+NUM = 3                                   # 跟套件一樣：三顆串在一起
+np = neopixel.NeoPixel(Pin(26), NUM)      # 套件 RGB 燈 GPIO26（板面 IO16）
+
+
+def dump(label):
+    print(label)
+    print('  你寫的 (r, g, b)：', np[0], np[1], np[2])
+    print('  buf (dec)：', list(np.buf))
+    print('  buf (hex)：', ' '.join('%02x' % b for b in np.buf))
+
+
+print('三顆燈：看你寫的 (r, g, b) 和 write() 真的發出的位元組')
+np.write()                                # 開機先全暗
+dump('A 全暗')
+time.sleep(2)
+
+np[0] = (128, 0, 0)                       # 第 0 顆紅
+np.write()
+dump('B 第 0 顆紅：buf 前 3 格是 綠 紅 藍')
+time.sleep(2)
+
+np[1] = (0, 128, 0)                       # 第 1 顆綠
+np[2] = (0, 0, 128)                       # 第 2 顆藍
+np.write()
+dump('C 紅 綠 藍')
+time.sleep(2)
+
+np[0] = (10, 20, 30)                      # 三個數字都不一樣，最容易看出順序
+np.write()
+dump('D 第 0 顆寫 (10, 20, 30)')
+time.sleep(2)
+
+np[2] = (128, 128, 0)                     # 只改記憶體，沒有 write()
+dump('E 第 2 顆改黃，但還沒 write()')
+time.sleep(2)
+
+np.write()                                # 現在才送出去
+dump('F write() 之後')
+print('完成')
+while True:
+    time.sleep(1)
+</pre>
+          <pre class="code" id="c11d">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-neopixel", "id": "rgb1", "top": 150, "left": -50, "attrs": {} },
+    { "type": "wokwi-neopixel", "id": "rgb2", "top": 150, "left": -90, "attrs": {} },
+    { "type": "wokwi-neopixel", "id": "rgb3", "top": 150, "left": -130, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:26", "rgb1:DIN", "magenta", [] ],
+    [ "rgb1:DOUT", "rgb2:DIN", "magenta", [] ],
+    [ "rgb2:DOUT", "rgb3:DIN", "magenta", [] ],
+    [ "esp:GND.1", "rgb1:VSS", "black", [ "h-20", "v10.4" ] ],
+    [ "rgb2:VSS", "rgb1:VSS", "black", [ "v8", "h40" ] ],
+    [ "rgb3:VSS", "rgb2:VSS", "black", [ "v8", "h40" ] ],
+    [ "esp:3V3", "rgb3:VDD", "red", [] ],
+    [ "rgb3:VDD", "rgb2:VDD", "red", [ "v-8", "h40" ] ],
+    [ "rgb2:VDD", "rgb1:VDD", "red", [ "v-8", "h40" ] ]
+  ],
+  "dependencies": {}
+}
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <span class="tagk sim">只在 Wokwi：16 顆環形燈</span>
+        <h3>10 環形燈彩虹</h3>
+        <p><b>要做什麼：</b>16 顆排成一圈，彩虹每 0.1 秒轉一格。程式跟套件的三顆幾乎一樣，只有 <span class="mono1">NUM = 16</span>。每色最大只給 80（不給到 255），16 顆一起亮比較省電（第④段）。</p>
+        <p><b>跑起來會看到</b>（實跑原文，<a class="ref" href="#f-W10">W10</a>）：每轉一圈印一行第 0、4、8、12 顆的顏色——</p>
+<pre class="serialout">第 1 圈 (80, 0, 0) (20, 60, 0) (0, 40, 40) (20, 0, 60)
+第 2 圈 (80, 0, 0) (20, 60, 0) (0, 40, 40) (20, 0, 60)</pre>
+        <p><b>試著改：</b><span class="mono1">NUM</span> 改成 8、<span class="mono1">diagram.json</span> 的 <span class="mono1">"pixels"</span> 留 16：只有前 8 顆會亮——燈不知道自己有幾顆，送幾份就亮幾顆。</p>
+        <div class="btns"><button type="button" class="copy" data-copy="c10d">複製 diagram.json</button><button type="button" class="copy" data-copy="c10m">複製 main.py</button></div>
+        <details class="adv"><summary>看一眼 main.py／diagram.json</summary><div class="inner">
+          <pre class="code" id="c10m">
+# 10 環形燈彩虹：16 顆單線 RGB 燈排成一圈，還是只接一支腳（GPIO26）
+# 套件只有 3 顆燈；16 顆的環形燈只在 Wokwi 上有，程式寫法完全一樣，只是 NUM 從 3 變 16。
+# 16 顆 × 24 位元 = 384 位元，一次 write() 全部排隊送出去；第 1 顆留前 24 位元，其餘往下傳。
+from machine import Pin
+import neopixel
+import time
+
+NUM = 16                                  # 環上有幾顆
+BRIGHT = 80                               # 每色最大給 80（0–255）：16 顆一起亮，別給到 255
+ring = neopixel.NeoPixel(Pin(26), NUM)    # 跟套件同一支腳：GPIO26（板面 IO16）
+
+
+def wheel(h):
+    """色相 0–359 → (r, g, b)：紅 → 綠 → 藍 → 紅 繞一圈，每色最大 BRIGHT"""
+    h = h % 360
+    up = BRIGHT * (h % 120) // 120        # 這一段要變亮的那個顏色
+    down = BRIGHT - up                    # 這一段要變暗的那個顏色
+    if h &lt; 120:
+        return (down, up, 0)              # 紅 → 綠
+    if h &lt; 240:
+        return (0, down, up)              # 綠 → 藍
+    return (up, 0, down)                  # 藍 → 紅
+
+
+print('環形燈彩虹：', NUM, '顆，一支腳 GPIO26，每 0.1 秒轉一格')
+step = 0
+while True:
+    for i in range(NUM):
+        ring[i] = wheel((i + step) * 360 // NUM)   # 第 i 顆的顏色：彩虹排一圈，再往前推 step 格
+    ring.write()                                    # 到這一刻才把 384 位元送出去
+    if step % NUM == 0:                             # 每轉完一圈印一次：環上四個方位的燈（16 顆時是第 0、4、8、12 顆）
+        print('第', step // NUM + 1, '圈', ring[0], ring[NUM // 4], ring[NUM // 2], ring[3 * NUM // 4])
+    step += 1
+    time.sleep(0.1)
+</pre>
+          <pre class="code" id="c10d">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-led-ring", "id": "ring", "top": -70, "left": -260, "attrs": { "pixels": "16" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:26", "ring:DIN", "magenta", [] ],
+    [ "esp:5V", "ring:VCC", "red", [] ],
+    [ "esp:GND.1", "ring:GND", "black", [] ]
+  ],
+  "dependencies": {}
+}
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <span class="tagk sim">只在 Wokwi：旋鈕＋16 顆環形燈</span>
+        <h3>12 旋鈕決定亮幾顆</h3>
+        <p><b>要做什麼：</b>W5 的旋鈕（GPIO34，0–4095）換算成 0–16 顆：前 10 顆綠、接著 3 顆黃、最後 3 顆紅，像音量表。輸入 → 判斷 → 輸出，期中作品的三段都在。</p>
+        <p><b>跑起來會看到</b>（實跑，<a class="ref" href="#f-W12">W12</a>）：旋鈕 0／256／512／768／1023 → <span class="mono1">raw 0／1025／2050／3074／4095</span> → 亮 0／4／8／12／16 顆。預設在中間：</p>
+<pre class="serialout">raw 2050 → 亮 8 顆</pre>
+        <p><b>注意：</b>Wokwi 的旋鈕轉得到 4095；真旋鈕常到不了端點，W10 真板要校正上限（把程式裡的 4095 換成實際量到的最大值）。</p>
+        <p><b>試著改：</b>把 <span class="mono1">color_of()</span> 的 10 和 13 改掉，讓紅色早一點出現。</p>
+        <div class="btns"><button type="button" class="copy" data-copy="c12d">複製 diagram.json</button><button type="button" class="copy" data-copy="c12m">複製 main.py</button></div>
+        <details class="adv"><summary>看一眼 main.py／diagram.json</summary><div class="inner">
+          <pre class="code" id="c12m">
+# 12 旋鈕決定亮幾顆：W5 的旋鈕（GPIO34，0–4095）＋ 16 顆環形燈（GPIO26）
+# 輸入（旋鈕）→ 判斷（換算成幾顆）→ 輸出（燈）：期中作品的三段，這支都有。
+# 前面亮綠、中間黃、最後幾顆紅，像音量表；亮度給小一點（每色最大 80）。
+from machine import Pin, ADC
+import neopixel
+import time
+
+NUM = 16
+knob = ADC(Pin(34), atten=ADC.ATTN_11DB)   # 套件可變電阻 GPIO34（板面 IO2）；11 dB 才量得到整段 0–3.3 V
+ring = neopixel.NeoPixel(Pin(26), NUM)     # 跟套件同一支腳：GPIO26（板面 IO16）
+
+GREEN = (0, 80, 0)
+YELLOW = (80, 60, 0)
+RED = (80, 0, 0)
+OFF = (0, 0, 0)
+
+
+def color_of(i):
+    """第 i 顆亮的時候是什麼顏色：0–9 綠、10–12 黃、13–15 紅"""
+    if i &lt; 10:
+        return GREEN
+    if i &lt; 13:
+        return YELLOW
+    return RED
+
+
+print('旋鈕決定亮幾顆：raw 0 到 4095 → 0 到 16 顆')
+last = -1
+while True:
+    raw = knob.read()                      # 0–4095
+    n = raw * NUM // 4095                  # 換算：轉到底 4095 → 16 顆
+    # Wokwi 的旋鈕轉得到 4095；真旋鈕常到不了端點，W10 真板要校正上限（把 4095 換成實際量到的最大值）
+    for i in range(NUM):
+        ring[i] = color_of(i) if i &lt; n else OFF
+    ring.write()                           # 16 顆的顏色一次送出去
+    if n != last:                          # 顆數變了才印，不然會洗版
+        print('raw', raw, '→ 亮', n, '顆')
+        last = n
+    time.sleep(0.1)
+</pre>
+          <pre class="code" id="c12d">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-led-ring", "id": "ring", "top": -70, "left": -260, "attrs": { "pixels": "16" } },
+    { "type": "wokwi-potentiometer", "id": "pot", "top": -120, "left": -90, "attrs": { "value": "512" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:26", "ring:DIN", "magenta", [] ],
+    [ "esp:5V", "ring:VCC", "red", [] ],
+    [ "esp:GND.1", "ring:GND", "black", [] ],
+    [ "esp:34", "pot:SIG", "limegreen", [] ],
+    [ "esp:3V3", "pot:VCC", "red", [] ],
+    [ "esp:GND.1", "pot:GND", "black", [] ]
+  ],
+  "dependencies": {}
+}
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <span class="tagk sim">只在 Wokwi：8×8 矩陣</span>
+        <h3>13 8×8 矩陣畫愛心</h3>
+        <p><b>要做什麼：</b>64 顆燈的蛇形燈板，用 <span class="mono1">index(x, y)</span> 把「第 x 欄、第 y 列（橫的一排）」換成隊伍裡的第幾顆，畫一顆愛心。</p>
+        <p><b>跑起來會看到</b>（實跑原文，<a class="ref" href="#f-W13">W13</a>）：</p>
+<pre class="serialout">(x, y) → index：(0, 0) → 0  (7, 0) → 7  (0, 1) → 15  (7, 1) → 8
+愛心畫好了：亮 27 顆</pre>
+        <p><b>試著改：</b><span class="mono1">SERPENTINE = False</span>：電路還是蛇形，所以奇數列會左右翻，愛心的第 1、3、5 列歪掉——<b>這是故意讓你看錯的樣子</b>（第⑥段把兩個選單弄成不一樣，就是這個畫面）。</p>
+        <div class="btns"><button type="button" class="copy" data-copy="c13d">複製 diagram.json</button><button type="button" class="copy" data-copy="c13m">複製 main.py</button></div>
+        <details class="adv"><summary>看一眼 main.py／diagram.json</summary><div class="inner">
+          <pre class="code" id="c13m">
+# 13 8×8 單線燈矩陣畫愛心：64 顆燈還是排成「一條隊伍」，只是隊伍折成 8 列
+# 位置用「第 x 欄、第 y 列（橫的一排）」來說；大部分買得到的燈板是蛇形接法（serpentine）：
+# 第 0 列由左往右，第 1 列折回來由右往左，再折回來……
+# 所以第 x 欄、第 y 列不是直接 y*8+x，要用 index(x, y) 換算成隊伍裡的第幾顆。
+from machine import Pin
+import neopixel
+import time
+
+W, H = 8, 8
+SERPENTINE = True                          # 試著改成 False：電路還是蛇形，所以奇數列會左右翻——這是故意讓你看錯的樣子
+mat = neopixel.NeoPixel(Pin(26), W * H)    # 跟套件同一支腳：GPIO26；64 顆 × 24 位元 = 1536 位元
+RED = (80, 0, 16)                          # 亮度給小一點：64 顆一起亮很耗電
+
+HEART = [                                  # 7 格寬、靠左放：左右不對稱，排錯了一眼看得出來
+    '........',
+    '.##.##..',
+    '#######.',
+    '#######.',
+    '.#####..',
+    '..###...',
+    '...#....',
+    '........',
+]
+
+
+def index(x, y):
+    """第 x 欄（0–7，左到右）、第 y 列（0–7，上到下）→ 隊伍裡的第幾顆"""
+    if SERPENTINE and y % 2 == 1:
+        return y * W + (W - 1 - x)         # 奇數列折回來：由右往左
+    return y * W + x                       # 偶數列：由左往右
+
+
+print('8×8 矩陣愛心：蛇形接法', SERPENTINE)
+print('(x, y) → index：(0, 0) →', index(0, 0), ' (7, 0) →', index(7, 0),
+      ' (0, 1) →', index(0, 1), ' (7, 1) →', index(7, 1))
+for y in range(H):
+    for x in range(W):
+        mat[index(x, y)] = RED if HEART[y][x] == '#' else (0, 0, 0)
+mat.write()                                # 64 顆的顏色一次送出去
+lit = sum(row.count('#') for row in HEART)
+print('愛心畫好了：亮', lit, '顆')
+while True:
+    time.sleep(1)
+</pre>
+          <pre class="code" id="c13d">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-led-matrix", "id": "mat", "top": -170, "left": -260, "attrs": { "rows": "8", "cols": "8", "layout": "serpentine" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:26", "mat:DIN", "magenta", [] ],
+    [ "esp:5V", "mat:VDD", "red", [] ],
+    [ "esp:GND.1", "mat:VSS", "black", [] ]
+  ],
+  "dependencies": {}
+}
+</pre>
+        </div></details>
+      </div>
+    </div>
+    <p class="tiny">四個專案都在 Wokwi 實跑過（無頭瀏覽器、沒登入、沒存檔）：開機、序列埠沒有錯誤訊息，燈色用兩條路讀回來跟程式算的一樣（<a class="ref" href="#f-W10">W10</a>–<a class="ref" href="#f-W13">W13</a>）。沒在真板跑過。</p>
+  </section>
+
+  <details class="sect">
+    <summary>想看更深：三個真的拿來用會遇到的事</summary>
+    <section>
+      <div class="cards">
+        <div class="card">
+          <h3>燈多了，電源要另外接、地要接在一起</h3>
+          <p>幾十顆以上，別靠開發板供電：另外接 5 V 電源供應器（大小照第④段算出來的電流挑），而且<b>電源的 GND、燈的 GND、ESP32 的 GND 要接在一起</b>，不然資料線的 0 和 1 沒有共同的基準。接線時先接地、再接 5 V、最後接資料線（<a class="ref" href="#f-A2">A2</a>）。</p>
+        </div>
+        <div class="card">
+          <h3>3.3 V 的腳，叫得動 5 V 的燈嗎？</h3>
+          <p>舊版資料表要求資料線的「1」至少是燈電源的 0.7 倍（<a class="ref" href="#f-P17">P17</a>）：燈接 5 V 時要 3.5 V，ESP32 的腳只有 3.3 V，差一點點。很多人照接也能用，但不保證；常見做法是加一顆電位轉換晶片。⚠️ 套件上那三顆怎麼供電，本頁沒查；套件程式上學期在真板跑過（<a class="ref" href="#f-K2">K2</a>）。</p>
+        </div>
+        <div class="card">
+          <h3>接力只慢一點點</h3>
+          <p>每顆把資料從 DIN 傳到 DOUT，最多慢 0.3 µs（<a class="ref" href="#f-P18">P18</a>），而且每顆都會把波形重新整形（<a class="ref" href="#f-P12">P12</a>），所以串很長也不會愈傳愈糊。真正花時間的是「每顆 24 位元」本身：第④段算的就是這個。</p>
+        </div>
+      </div>
+    </section>
+  </details>
+
+  <details class="sect" id="facts">
+    <summary>數字從哪裡來</summary>
+    <section aria-label="數字出處">
+      <p class="muted">頁面上每個數字都有出處，編號跟頁面裡的小標籤一樣（點小標籤會跳到這裡）。官方英文照原文引，旁邊是白話。標 ⚠️ 的是版本會變、或本頁沒驗證的。編號跟〈腳位怎麼講話實驗台〉同一件事用同一個號碼。</p>
+      <div class="tablewrap">
+        <table class="facts big">
+          <thead><tr><th>編號</th><th>事</th><th>值</th><th>出處與白話</th></tr></thead>
+          <tbody>
+            <tr id="f-K2"><td class="id">K2</td><td>套件的 RGB 燈</td><td class="num">三顆 WS2812 串在一起，接 GPIO26（板面 IO16）</td><td>原廠 EZ Start Kit+ 腳位對照圖；課程真板程式庫 <code>ezkit.py</code>：<code>NUM_PIXELS = 3</code>、<code>np = neopixel.NeoPixel(Pin(26), NUM_PIXELS)</code>（上學期在真板跑過；同〈腳位怎麼講話實驗台〉K2）。</td></tr>
+            <tr id="f-P10"><td class="id">P10</td><td>一顆 24 位元的順序</td><td class="num">G、R、B，高位元先送</td><td>WS2812B 資料表：「<span class="en" lang="en">Follow the order of GRB to sent data and the high bit sent at first.</span>」V5 版：「<span class="en" lang="en">Data transmit in order of GRB, high bit data at first.</span>」（照綠、紅、藍的順序送，高位先送。）</td></tr>
+            <tr id="f-P11"><td class="id">P11</td><td>WS2812B 時序（舊版）</td><td class="num">800 Kbps；T0H 0.4 µs、T1H 0.8 µs、T0L 0.85 µs、T1L 0.45 µs，各 ±150 ns；TH+TL＝1.25 µs ±600 ns；重設（送完了）低電位 ≥ 50 µs</td><td>WS2812B 資料表（Worldsemi；Adafruit 存放的那份 <code>cdn-shop.adafruit.com/datasheets/WS2812B.pdf</code>）：「<span class="en" lang="en">Send data at speeds of 800Kbps.</span>」時序表「<span class="en" lang="en">Data transfer time( TH+TL=1.25µs±600ns)</span>」、RES「<span class="en" lang="en">Above 50µs</span>」。（每秒 800 K 位元；一位元高加低共 1.25 µs；重設要 50 µs 以上的低電位。）</td></tr>
+            <tr id="f-P11b"><td class="id">P11b</td><td>⚠️ 新版 WS2812B-V5 時序</td><td class="num">T0H 220–380 ns、T1H 580 ns–1 µs、T0L／T1L 580 ns–1 µs；RES &gt; 280 µs</td><td>Worldsemi WS2812B-V5/W 資料表（修訂紀錄到 2020-07-22）時序表；說明文字「<span class="en" lang="en">RESET time&gt;280µs</span>」。⚠️ 版本不同數字不同。依這份 V5 資料表，MicroPython 送的「0 的高電位」400 ns 已超出 T0H 上限 380 ns：Wokwi 能跑不代表真板保證成功，W10 拿到真板要確認料號或量測。套件那三顆是哪一版沒查到。本頁換色等待時間保守取 300 µs（比 280 µs 多留一點）。</td></tr>
+            <tr id="f-P12"><td class="id">P12</td><td>串接：第一顆吃 24 位元</td><td class="num">第一顆留下前 24 位元，其餘整形後從 DO 送給下一顆</td><td>WS2812B：「<span class="en" lang="en">…the first pixel collect initial 24bit data then sent to the internal data latch, the other data which reshaping by the internal signal reshaping amplification circuit sent to the next cascade pixel through the DO port. After transmission for each pixel, the signal to reduce 24bit.</span>」（第一顆收下最前面 24 位元放進自己裡面；其餘資料經內部整形放大，從 DO 送給下一顆；每經過一顆，訊號就少 24 位元。）資料表的「Cascade method」圖就是第③段那張接力圖。</td></tr>
+            <tr id="f-P17"><td class="id">P17</td><td>資料線的「1」要多高</td><td class="num">VIH ≥ 0.7 VDD（舊版）</td><td>WS2812B 資料表電氣特性「<span class="en" lang="en">Input voltage level VIH … 0.7VDD</span>」；Adafruit：「<span class="en" lang="en">The manufacturer recommends a minimum signal voltage of 70% of the NeoPixel voltage.</span>」（廠商建議訊號至少是燈電源電壓的 70%。）⚠️ V5 版這一列的數字不同，本頁沒逐字核對。</td></tr>
+            <tr id="f-P18"><td class="id">P18</td><td>每顆轉傳的延遲</td><td class="num">DIN → DOUT 最多 300 ns</td><td>WS2812B 資料表 Switching characteristics「<span class="en" lang="en">Transmission delay time tPLZ … 300 ns</span>」（從 DIN 到 DOUT 最多慢 300 奈秒。）</td></tr>
+            <tr id="f-P19"><td class="id">P19</td><td>能串多少</td><td class="num">每秒 30 張畫面時，至少 1024 顆</td><td>WS2812B 資料表特色：「<span class="en" lang="en">When the refresh rate is 30fps, cascade number are not less than1024 points.</span>」（每秒更新 30 次時，可以串 1024 顆以上。）</td></tr>
+            <tr id="f-M9"><td class="id">M9</td><td>neopixel 模組（文件）</td><td class="num"><code>NeoPixel(pin, n, *, bpp=3, timing=1)</code>；<code>write()</code> 才真的送出</td><td>MicroPython neopixel 文件：「<span class="en" lang="en">timing is 0 for 400KHz, and 1 for 800kHz LEDs (most are 800kHz).</span>」「<span class="en" lang="en">Writes the current pixel data to the strip.</span>」（timing 1 是 800 kHz 的燈，大多數是這種；write() 把目前的顏色送到燈上。）</td></tr>
+            <tr id="f-M10"><td class="id">M10</td><td>neopixel 模組（原始碼）</td><td class="num"><code>ORDER = (1, 0, 2, 3)</code>（G R B W）；<code>self.buf = bytearray(n * bpp)</code>；800 kHz 脈衝＝(400, 850, 800, 450) ns；<code>write()</code> 呼叫 <code>bitstream(self.pin, 0, self.timing, self.buf)</code></td><td>micropython-lib <code>micropython/drivers/led/neopixel/neopixel.py</code>（MIT，Damien P. George、Jim Mussared）。<code>np[i] = (r, g, b)</code> 只是照 ORDER 寫進 <code>buf</code>；送出去的就是 <code>buf</code>（11 實跑印出來的那一串）。這是 MicroPython neopixel 模組、三色燈的實作；別的韌體、RGBW 四色燈或排列不同的燈不一定照 G R B。</td></tr>
+            <tr id="f-M11"><td class="id">M11</td><td>ESP32 怎麼送出這麼準的脈衝</td><td class="num">有 RMT 就用 RMT（ESP32 裡專門發脈衝的周邊），不行才退回 CPU 自己數時間；送完把線停在低電位</td><td>MicroPython <code>ports/esp32/machine_bitstream.c</code>：<code>machine_bitstream_high_low_rmt()</code> 以 40 MHz 計時、<code>.flags.msb_first = 1</code>（高位先）、<code>.flags.eot_level = 0</code>（送完停在低電位），失敗才用 <code>machine_bitstream_high_low_bitbang()</code>。ESP32 quickref：「<span class="en" lang="en">This low-level driver uses an RMT channel by default.</span>」</td></tr>
+            <tr id="f-M12"><td class="id">M12</td><td>neopixel 是韌體內建</td><td class="num">ESP32 韌體打包時就放進去；Wokwi 的 MicroPython v1.28.0 模組清單裡有 neopixel</td><td><code>ports/esp32/boards/manifest.py</code>：<code>require("neopixel")</code>；2026-10-12 在 Wokwi 實跑的模組探針（<code>wokwi-i2c-spi/_qa/run-20261012.log</code>：<code>'neopixel': 'yes'</code>）。</td></tr>
+            <tr id="f-A1"><td class="id">A1</td><td>一顆燈吃多少電</td><td class="num">估電源時：全白最亮每顆抓 60 mA（保守估法，不是每顆都會量到）；混色粗估每顆 20 mA；60 顆 × 60 mA＝3.6 A</td><td>Adafruit NeoPixel Überguide〈Powering NeoPixels〉：「<span class="en" lang="en">Each individual NeoPixel draws up to 60 milliamps at maximum brightness white (red + green + blue).</span>」「<span class="en" lang="en">60 NeoPixels × 60 mA ÷ 1,000 = 3.6 Amps minimum</span>」（每顆全白最亮最多 60 mA；60 顆要 3.6 A 以上。）⚠️ V5 資料表寫的工作電流是每色 12 mA，不同型號、版本差很多，這裡用 Adafruit 較保守的數字。</td></tr>
+            <tr id="f-A2"><td class="id">A2</td><td>分開供電時要共地</td><td class="num">兩邊的 GND 一定要接在一起；先接地、再接 5 V、最後資料</td><td>Adafruit NeoPixel Überguide〈Best Practices〉：「<span class="en" lang="en">there must be a ground connection between the two.</span>」「<span class="en" lang="en">always connect ground first, then +5V, then data.</span>」（微控制器和燈分開供電時，兩邊一定要有接地相連；接線先接地、再接 +5V、最後資料線。）</td></tr>
+            <tr id="f-W8"><td class="id">W8</td><td>Wokwi 的環形燈、矩陣</td><td class="num"><code>wokwi-led-ring</code>（GND／VCC／DIN／DOUT，<code>pixels</code> 預設 16）；<code>wokwi-led-matrix</code>（DIN／VDD／VSS／DOUT，<code>rows</code>、<code>cols</code>、<code>layout</code>：空白＝每列都由左往右、<code>"serpentine"</code>＝蛇形）</td><td>docs.wokwi.com wokwi-led-matrix：「<span class="en" lang="en">Most real-world WS2812 matrix panels use serpentine wiring.</span>」（大部分實際的 WS2812 燈板是蛇形接法。）腳名以 wokwi-cli diagram-lint 零件登錄檔為準；兩種排法 2026-10-12 用探針實跑確認（<code>wokwi-neopixel-more/_qa/out/probe-*</code>）。</td></tr>
+            <tr id="f-W10"><td class="id">W10</td><td>10 環形燈彩虹（2026-10-12 實跑）</td><td class="num">每圈印「第 N 圈 (80, 0, 0) (20, 60, 0) (0, 40, 40) (20, 0, 60)」；16 顆的顏色每拍都對上程式算的彩虹、而且一直在轉；變體 <code>NUM = 8</code>（環還是 16 顆）：只有前 8 顆亮、沒有錯誤訊息</td><td><code>wokwi-neopixel-more/README.md</code>、<code>_qa/out/10-*</code>。</td></tr>
+            <tr id="f-W11"><td class="id">W11</td><td>11 三顆燈印位元組（2026-10-12 實跑）</td><td class="num">寫 (10, 20, 30) → buf 印 20, 10, 30；改了沒 write()，buf 變、燈不變；write() 之後燈才變</td><td><code>wokwi-neopixel-more/README.md</code>、<code>_qa/out/11-*</code>。</td></tr>
+            <tr id="f-W12"><td class="id">W12</td><td>12 旋鈕決定亮幾顆（2026-10-12 實跑）</td><td class="num">旋鈕 0／256／512／768／1023 → raw 0／1025／2050／3074／4095 → 亮 0／4／8／12／16 顆</td><td><code>wokwi-neopixel-more/README.md</code>、<code>_qa/out/12-pot*</code>。</td></tr>
+            <tr id="f-W13"><td class="id">W13</td><td>13 矩陣愛心（2026-10-12 實跑）</td><td class="num">蛇形：燈板上的圖跟程式裡的愛心逐點相同、亮 27 顆；<code>SERPENTINE = False</code>：第 1、3、5 列左右翻（電路仍是蛇形）</td><td><code>wokwi-neopixel-more/README.md</code>、<code>_qa/out/13*</code>。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>這一頁的簡化</h3>
+      <ul class="simp">
+        <li>簡化：波形只畫 0 和 1 兩種電壓、直角轉換。</li>
+        <li>簡化：接力圖把「每顆轉傳慢 0.3 µs」省略，每一排的同一格畫在同一個時間（<a class="ref" href="#f-P18">P18</a>）。</li>
+        <li>簡化：畫面上的燈色放大到看得清楚，不代表真的亮度；例如 (10, 20, 30) 真的燈很暗。</li>
+        <li>簡化：電流照「亮度幾成、電流幾成」直線估算，每顆全白抓 60 mA 是保守的估電源算法（⚠️ 不是量測值）。</li>
+        <li>簡化：送完後停在低電位的時間一律保守抓 300 µs（新版 V5 要 &gt; 280 µs；舊版資料表 ≥ 50 µs，投影片寫的是這個，<a class="ref" href="#f-P11">P11</a>、<a class="ref" href="#f-P11b">P11b</a>）。</li>
+      </ul>
+    </section>
+  </details>
+
+  <footer class="foot">
+    <span>資料來源：WS2812B 資料表（舊版，Adafruit 存放）與 WS2812B-V5/W 資料表（Worldsemi）；MicroPython 官方文件（neopixel、ESP32 quickref）與原始碼（micropython-lib neopixel.py、ports/esp32/machine_bitstream.c、ports/esp32/boards/manifest.py）；Adafruit NeoPixel Überguide；Wokwi 官方零件說明與 wokwi-cli 零件登錄檔；原廠 EZ Start Kit+ 腳位對照圖；課程真板程式庫 esp32_ai。</span>
+    <span>國立東華大學通識課《創客入門—智慧生活裝置實作》補充教材（W6，單線 RGB 燈）。姊妹頁：〈<a href="pin-talk.html?tab=wire&amp;preset=chain">腳位怎麼講話實驗台</a>〉、〈<a href="../w05/adc-pwm.html?tab=link">讀旋鈕、調亮度實驗台</a>〉。</span>
+    <span>版本 2026-10-12。</span>
+  </footer>
+
+</div></div>
+
+<script>
+(function () {
+'use strict';
+var $ = function (id) { return document.getElementById(id); };
+var SVGNS = 'http://www.w3.org/2000/svg';
+
+/* ===== 數字（全部來自「數字從哪裡來」；其餘是畫圖用的設定） ===== */
+var T0H = 0.40, T0L = 0.85, T1H = 0.80, T1L = 0.45, TOL = 0.15;  /* µs（P11、M10） */
+var BIT_US = 1.25;                 /* 一位元（P11） */
+var BITS_PER_LED = 24;             /* G、R、B 各 8（P10） */
+var LED_US = BITS_PER_LED * BIT_US;   /* 一顆 30 µs */
+var RESET_US = 300;                   /* 送完後停在低電位：保守抓 300 µs（新版 V5 > 280 µs，P11b；舊版 ≥ 50 µs，P11） */
+var MA_PER_LED = 60, MA_RULE = 20;    /* A1 */
+var HEART = ["........", ".##.##..", "#######.", "#######.", ".#####..", "..###...", "...#....", "........"];              /* 13-matrix/main.py 的 HEART（建置時從程式抄進來） */
+
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function hx(v) { return (v < 16 ? '0' : '') + v.toString(16); }
+function b8(v) { var s = v.toString(2); while (s.length < 8) s = '0' + s; return s; }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function el(tag, attrs, text) {
+  var e = document.createElementNS(SVGNS, tag);
+  for (var k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+/* 顯示用的燈色：放大到看得清楚（簡化，見「這一頁的簡化」） */
+function showColor(c) {
+  var m = Math.max(c[0], c[1], c[2]);
+  if (!m) return null;
+  var k = 255 / m;
+  return 'rgb(' + Math.round(c[0] * k) + ',' + Math.round(c[1] * k) + ',' + Math.round(c[2] * k) + ')';
+}
+function tup(c) { return '(' + c[0] + ', ' + c[1] + ', ' + c[2] + ')'; }
+function fmtNum(v) { return v.toLocaleString('zh-TW'); }
+function fmtTime(us) { return us < 1000 ? (Math.round(us * 10) / 10) + ' µs' : (Math.round(us / 10) / 100) + ' ms'; }
+
+/* ===== ① 燈多腳少 ===== */
+var P_STEPS = [1, 3, 8, 16, 64, 300];
+function renderProblem() {
+  var n = P_STEPS[+$('pN').value];
+  $('pNo').textContent = n + ' 顆';
+  var pins = n * 3;
+  $('pDirectN').innerHTML = fmtNum(pins) + ' <small>支腳</small>';
+  var bar = $('pDirectBar'); bar.innerHTML = '';
+  var show = Math.min(pins, 48);
+  for (var i = 0; i < show; i++) { var x = document.createElement('i'); x.className = ['r', 'g', 'b'][i % 3]; bar.appendChild(x); }
+  if (pins > show) { var m = document.createElement('span'); m.className = 'more'; m.textContent = '…還有 ' + fmtNum(pins - show) + ' 支'; bar.appendChild(m); }
+  $('pDirectTxt').textContent = n === 1 ? '一顆燈：R、G、B 三支腳，各用 PWM 調亮度。' :
+    n <= 3 ? n + ' 顆就要 ' + pins + ' 支腳——套件這三顆如果這樣接，板子上能用的腳就被吃掉一大半。' :
+    n + ' 顆要 ' + fmtNum(pins) + ' 支腳：整塊開發板的腳加起來都不夠。';
+  $('pQueueTxt').textContent = n + ' 顆的顏色排成 ' + fmtNum(n * 24) + ' 位元，從同一支腳依序送出去（第②段起看怎麼做到）。';
+}
+$('pN').addEventListener('input', renderProblem);
+
+/* ===== ② 0 和 1、24 位元 ===== */
+function drawPulse() {
+  var s = $('pulseSvg'); clear(s);
+  var box = s.getBoundingClientRect(), narrow = box.width > 0 && box.width < 480;
+  var sc = 150, X0 = 30, rowH = 182;   /* 1 µs = 150 px；窄螢幕把 0 和 1 上下疊，字才不會縮太小 */
+  s.setAttribute('viewBox', narrow ? '0 0 270 ' + (2 * rowH) : '0 0 520 ' + rowH);
+  [[0, '0', T0H, T0L], [1, '1', T1H, T1L]].forEach(function (p, i) {
+    var ox = narrow ? 18 : [18, 272][i], oy = narrow ? i * rowH : 0;
+    var x = ox + X0, hi = oy + 60, lo = oy + 128, xh = x + p[2] * sc, xe = x + (p[2] + p[3]) * sc;
+    s.appendChild(el('rect', { x: xh - TOL * sc, y: hi - 6, width: 2 * TOL * sc, height: lo - hi + 12, fill: 'var(--c-ink-faint)', opacity: '.3' }));
+    s.appendChild(el('path', { d: 'M' + (x - 14) + ' ' + lo + ' H' + x + ' V' + hi + ' H' + xh + ' V' + lo + ' H' + (xe + 10), fill: 'none', stroke: 'var(--c-primary)', 'stroke-width': 3, 'stroke-linejoin': 'round' }));
+    s.appendChild(el('text', { x: x + p[2] * sc / 2, y: hi - 10, 'text-anchor': 'middle', 'class': 'tmb' }, '高 ' + p[2].toFixed(2) + ' µs'));
+    s.appendChild(el('text', { x: xh + p[3] * sc / 2, y: lo + 18, 'text-anchor': 'middle', 'class': 'tm' }, '低 ' + p[3].toFixed(2)));
+    s.appendChild(el('text', { x: x - 14, y: oy + 22, 'class': 't13b' }, p[1] === '0' ? '送 0：短短的高' : '送 1：長長的高'));
+    s.appendChild(el('path', { d: 'M' + x + ' ' + (oy + 160) + ' H' + xe, stroke: 'var(--c-ink-faint)', 'stroke-width': 1.5 }));
+    s.appendChild(el('path', { d: 'M' + x + ' ' + (oy + 155) + ' V' + (oy + 165) + ' M' + xe + ' ' + (oy + 155) + ' V' + (oy + 165), stroke: 'var(--c-ink-faint)', 'stroke-width': 1.5 }));
+    s.appendChild(el('text', { x: (x + xe) / 2, y: oy + 178, 'text-anchor': 'middle', 'class': 't12' }, '一位元 1.25 µs'));
+  });
+}
+
+var COLOR = [128, 0, 0];
+var C_PRESETS = [['04 的紅', [128, 0, 0]], ['綠', [0, 128, 0]], ['藍', [0, 0, 128]], ['黃', [128, 128, 0]], ['全白 255', [255, 255, 255]], ['11 的 (10, 20, 30)', [10, 20, 30]], ['全暗', [0, 0, 0]]];
+var waveHot = -1;
+function grbBits(c) { return b8(c[1]) + b8(c[0]) + b8(c[2]); }
+function renderColor() {
+  $('cRo').textContent = COLOR[0]; $('cGo').textContent = COLOR[1]; $('cBo').textContent = COLOR[2];
+  $('cR').value = COLOR[0]; $('cG').value = COLOR[1]; $('cB').value = COLOR[2];
+  var sc = showColor(COLOR), sw = $('cSwatch');
+  sw.style.background = sc || ''; sw.style.boxShadow = sc ? '0 0 14px ' + sc : '';
+  $('cWrite').innerHTML = 'np[0] = ' + esc(tup(COLOR)) + '　→　送出去：' + hx(COLOR[1]) + ' ' + hx(COLOR[0]) + ' ' + hx(COLOR[2]) + '（hex）';
+  var parts = [['G', '綠', COLOR[1], 0], ['R', '紅', COLOR[0], 8], ['B', '藍', COLOR[2], 16]], h = [];
+  parts.forEach(function (p) {
+    var bits = b8(p[2]), s = '';
+    for (var i = 0; i < 8; i++) s += '<span class="' + (bits[i] === '0' ? 'z' : '') + (waveHot === p[3] + i ? ' hot' : '') + '">' + bits[i] + '</span>';
+    h.push('<div class="bytebox ' + p[0] + '"><div class="bh"><span>第 ' + (p[3] + 1) + '–' + (p[3] + 8) + ' 位元：' + p[0] + ' ' + p[1] + '</span><span class="mono">' + p[2] + '＝0x' + hx(p[2]) + '</span></div><div class="bits">' + s + '</div></div>');
+  });
+  $('cGRB').innerHTML = h.join('');
+  drawWave();
+}
+function drawWave() {
+  var s = $('waveSvg'); clear(s);
+  var box = s.getBoundingClientRect(), narrow = box.width > 0 && box.width < 600;
+  var bits = grbBits(COLOR), rows = narrow ? 3 : 1, per = 24 / rows;
+  var W = narrow ? 320 : 760, rowH = narrow ? 112 : 128, X0 = 30, X1 = W - 10;
+  s.setAttribute('viewBox', '0 0 ' + W + ' ' + (rows * rowH + 8));
+  var bw = (X1 - X0) / per;
+  var tint = { G: 'var(--c-gtint)', R: 'var(--c-rtint)', B: 'var(--c-btint)' }, ink = { G: 'var(--c-gch)', R: 'var(--c-rch)', B: 'var(--c-bch)' };
+  for (var r = 0; r < rows; r++) {
+    var y0 = r * rowH + 6, hi = y0 + 34, lo = y0 + 70;
+    for (var j = 0; j < per; j++) {
+      var k = r * per + j, ch = 'GRB'[Math.floor(k / 8)], x = X0 + j * bw;
+      s.appendChild(el('rect', { x: x, y: y0 + 14, width: bw, height: lo - y0 - 10, fill: tint[ch], opacity: k === waveHot ? '1' : '.75' }));
+      if (k === waveHot) s.appendChild(el('rect', { x: x + 1, y: y0 + 14, width: bw - 2, height: lo - y0 - 10, fill: 'none', stroke: 'var(--c-avg)', 'stroke-width': 3 }));
+      s.appendChild(el('text', { x: x + bw / 2, y: y0 + 26, 'text-anchor': 'middle', 'class': bits[k] === '1' ? 'tmb' : 'tm' }, bits[k]));
+      var hit = el('rect', { x: x, y: y0, width: bw, height: rowH - 6, fill: 'transparent', 'data-k': k, style: 'cursor:pointer' });
+      s.appendChild(hit);
+    }
+    var d = 'M' + X0 + ' ' + lo;
+    for (var j2 = 0; j2 < per; j2++) {
+      var k2 = r * per + j2, xb = X0 + j2 * bw, th = (bits[k2] === '1' ? T1H : T0H) / BIT_US * bw;
+      d += ' H' + xb + ' V' + hi + ' H' + (xb + th) + ' V' + lo;
+    }
+    d += ' H' + X1;
+    s.appendChild(el('path', { d: d, fill: 'none', stroke: 'var(--c-ink)', 'stroke-width': 2.2, 'stroke-linejoin': 'round', 'pointer-events': 'none' }));
+    for (var g = 0; g < per / 8; g++) {
+      var kk = r * per + g * 8, chn = 'GRB'[Math.floor(kk / 8)];
+      s.appendChild(el('text', { x: X0 + (g * 8 + 4) * bw, y: lo + 16, 'text-anchor': 'middle', 'class': 't12b', fill: ink[chn], style: 'fill:' + ink[chn] }, { G: 'G 綠 8 位元', R: 'R 紅 8 位元', B: 'B 藍 8 位元' }[chn]));
+    }
+    var t0 = r * per * BIT_US;
+    s.appendChild(el('text', { x: X0, y: lo + 32, 'text-anchor': 'start', 'class': 'tm' }, t0 + ' µs'));
+    s.appendChild(el('text', { x: X1, y: lo + 32, 'text-anchor': 'end', 'class': 'tm' }, (t0 + per * BIT_US) + ' µs'));
+  }
+  s.appendChild(el('text', { x: 4, y: 6 + 38, 'class': 'tm' }, '高'));
+  s.appendChild(el('text', { x: 4, y: 6 + 74, 'class': 'tm' }, '低'));
+}
+function waveCaption(k) {
+  if (k < 0) { $('waveCap').textContent = '把滑鼠移到（或點）波形上，看那一位元是多少。一顆燈 24 位元＝30 µs。'; return; }
+  var bits = grbBits(COLOR), ch = ['G 綠', 'R 紅', 'B 藍'][Math.floor(k / 8)], v = bits[k];
+  $('waveCap').textContent = '第 ' + (k + 1) + ' 位元（' + ch + '的第 ' + (k % 8 + 1) + ' 位，' + (k % 8 === 0 ? '最高位' : k % 8 === 7 ? '最低位' : '中間') + '）＝' + v + '：高 ' + (v === '1' ? T1H : T0H).toFixed(2) + ' µs、低 ' + (v === '1' ? T1L : T0L).toFixed(2) + ' µs；這一位元從 ' + (k * BIT_US).toFixed(2) + ' µs 開始。';
+}
+function waveEvt(e) {
+  var t = e.target; if (!t || !t.getAttribute) return;
+  var k = t.getAttribute('data-k'); if (k === null) return;
+  waveHot = +k; waveCaption(waveHot); renderColor();
+}
+$('waveSvg').addEventListener('mousemove', waveEvt);
+$('waveSvg').addEventListener('click', waveEvt);
+['cR', 'cG', 'cB'].forEach(function (id, i) { $(id).addEventListener('input', function (e) { COLOR[i] = +e.target.value; renderColor(); waveCaption(waveHot); }); });
+C_PRESETS.forEach(function (p) {
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = p[0];
+  b.addEventListener('click', function () { COLOR = p[1].slice(); renderColor(); waveCaption(waveHot); });
+  $('cPresets').appendChild(b);
+});
+
+/* ===== ③ 接力 ===== */
+var RED = [128, 0, 0], GREEN = [0, 128, 0], BLUE = [0, 0, 128], OFF = [0, 0, 0];
+function wheel(h, m) { h = ((h % 360) + 360) % 360; var up = Math.floor(m * (h % 120) / 120), dn = m - up; return h < 120 ? [dn, up, 0] : h < 240 ? [0, dn, up] : [up, 0, dn]; }
+var CH_PRESETS = {
+  rgb: ['紅綠藍輪流', function (i) { return [RED, GREEN, BLUE][i % 3].slice(); }],
+  rainbow: ['彩虹', function (i, n) { return wheel(Math.floor(i * 360 / n), 128); }],
+  red: ['全紅', function () { return RED.slice(); }],
+  off: ['全暗', function () { return OFF.slice(); }]
+};
+var CH = { n: 3, mem: [], shown: [], kept: [], stream: null, t: -1, timer: null, last: 'init', dirty: false };
+function chResize(n) {
+  var old = CH.n; CH.n = n;
+  for (var i = 0; i < n; i++) {
+    if (!CH.mem[i]) CH.mem[i] = OFF.slice();
+    if (!CH.shown[i]) CH.shown[i] = OFF.slice();
+  }
+  CH.mem.length = n; CH.shown.length = n; CH.kept = []; CH.stream = null; CH.t = -1; chStop();
+  CH.dirty = CH.mem.some(function (c, i) { return c.join() !== CH.shown[i].join(); });
+  CH.last = old !== n ? 'resize' : CH.last;
+}
+function chSet(key) {
+  var f = CH_PRESETS[key][1];
+  for (var i = 0; i < CH.n; i++) CH.mem[i] = f(i, CH.n);
+  CH.last = 'mem:' + key; CH.dirty = CH.mem.some(function (c, i) { return c.join() !== CH.shown[i].join(); });
+  if (CH.stream) { /* 送到一半又改記憶體：線上那串不變（已經送出去了） */ }
+  chRender();
+}
+function chWrite() {
+  chStop();
+  CH.stream = CH.mem.map(function (c) { return c.slice(); });
+  CH.kept = []; CH.t = 0; CH.last = 'write'; chRender();
+}
+function chStepFn() {
+  if (!CH.stream) return;
+  if (CH.t < CH.n) { CH.kept[CH.t] = CH.stream[CH.t].slice(); CH.t++; CH.last = 'step'; }
+  else if (CH.t === CH.n) {
+    CH.t = CH.n + 1; CH.shown = CH.kept.map(function (c) { return c.slice(); }); CH.last = 'latch';
+    CH.dirty = CH.mem.some(function (c, i) { return c.join() !== CH.shown[i].join(); });
+    chStop();
+  }
+  chRender();
+}
+function chStop() { if (CH.timer) { clearInterval(CH.timer); CH.timer = null; } $('chPlay').setAttribute('aria-pressed', 'false'); $('chPlay').textContent = '自動播放'; }
+function chPlay() {
+  if (CH.timer) { chStop(); return; }
+  if (!CH.stream || CH.t > CH.n) chWrite();
+  var ms = CH.n > 12 ? 260 : 700;
+  CH.timer = setInterval(function () { chStepFn(); if (!CH.stream || CH.t > CH.n) chStop(); }, ms);
+  $('chPlay').setAttribute('aria-pressed', 'true'); $('chPlay').textContent = '暫停';
+}
+function chSkip() { if (!CH.stream) return; while (CH.stream && CH.t <= CH.n) chStepFn(); }
+function chRender() {
+  var n = CH.n, sending = !!CH.stream && CH.t >= 0 && CH.t <= CH.n;
+  $('chNo').textContent = n + ' 顆';
+  $('chStep').disabled = !sending; $('chSkip').disabled = !sending; $('chPlay').disabled = false;
+  /* 燈列 */
+  var h = [];
+  for (var i = 0; i < n; i++) {
+    var c = CH.shown[i], sc = showColor(c), kp = CH.kept[i], ks = kp ? showColor(kp) : null;
+    var hot = sending && CH.t === i + 1;
+    h.push('<div class="led' + (hot ? ' hot' : '') + '"><div class="bulb' + (sc ? ' on' : '') + '" style="' + (sc ? 'background:' + sc + ';box-shadow:0 0 10px ' + sc : '') + '" title="第 ' + (i + 1) + ' 顆：' + tup(c) + '"></div><span class="k">第 ' + (i + 1) + ' 顆</span><div class="kept' + (kp ? ' full' : '') + '" style="' + (kp ? 'background:' + (ks || 'var(--c-surface)') : '') + '" title="' + (kp ? '收下了 ' + tup(kp) + '，還沒顯示' : '還沒收到') + '"></div></div>');
+  }
+  $('chLeds').innerHTML = h.join('');
+  /* 記憶體 */
+  var bytes = [];
+  for (var j = 0; j < Math.min(n, 4); j++) bytes.push('<b style="white-space:nowrap">' + hx(CH.mem[j][1]) + ' ' + hx(CH.mem[j][0]) + ' ' + hx(CH.mem[j][2]) + '</b>');
+  $('chMem').innerHTML = '記憶體 np.buf（MicroPython 的 neopixel 模組、三色燈：每顆照 G R B 排，hex）：' + bytes.join(' │ ') + (n > 4 ? ' │ …（共 ' + n * 3 + ' 個位元組）' : '');
+  /* 程式 */
+  var lines = [['np = neopixel.NeoPixel(Pin(26), ' + n + ')', false, false]];
+  var show = n <= 4 ? n : 3;
+  var memHot = CH.last.indexOf('mem:') === 0;
+  for (var k = 0; k < show; k++) lines.push(['np[' + k + '] = ' + tup(CH.mem[k]), memHot, false]);
+  if (n > show) { lines.push(['# …第 3 到第 ' + (n - 2) + ' 顆省略…', false, true]); lines.push(['np[' + (n - 1) + '] = ' + tup(CH.mem[n - 1]), memHot, false]); }
+  lines.push(['np.write()      # 這一行才送出 ' + n + ' × 24 = ' + n * 24 + ' 位元', sending || CH.last === 'latch', false]);
+  $('chCode').innerHTML = lines.map(function (l) { return '<div class="' + (l[1] ? 'on' : '') + (l[2] ? ' cm' : '') + '">' + esc(l[0]) + '</div>'; }).join('');
+  /* 狀態 */
+  var st = $('chStatus'), msg, cls = '';
+  if (CH.last === 'latch') {
+    msg = '送完 ' + n * 24 + ' 位元（' + fmtTime(n * LED_US) + '），線維持低電位至少約 300 µs：<b>所有燈同時換成剛剛收下的顏色</b>。（新版燈要 ≥ 280 µs，保守抓 300；投影片寫的 50 µs 是舊版資料表）';
+    cls = 'latch';
+  } else if (sending && CH.t === 0) {
+    msg = '<code>np.write()</code>：把記憶體裡的 ' + n * 3 + ' 個位元組排成一串，開始從 GPIO26 送出去。按「走一步」：每一步＝一顆燈的 24 位元（30 µs）。';
+  } else if (sending) {
+    var t = CH.t;
+    msg = '時間 ' + fmtTime(t * LED_US) + '：第 ' + t + ' 顆收滿自己的 24 位元、先放著；' + (t < n ? '後面還有 ' + (n - t) + ' 份（' + (n - t) * 24 + ' 位元），往第 ' + (t + 1) + ' 顆送；每顆會把訊號重新整成乾淨的高低電位再往後送。' : '最後一份也送到了。') + '<b>燈還沒換色</b>——要等線停在低電位夠久。';
+  } else if (CH.dirty) {
+    msg = '記憶體改了，<b>燈還沒變</b>：因為還沒 <code>np.write()</code>，線上什麼都沒送。';
+    cls = 'warn';
+  } else {
+    msg = '先按上面一組顏色（改記憶體），再按 <code>np.write()</code> 送出。';
+  }
+  st.className = 'status ' + cls; st.innerHTML = msg;
+  drawCascade();
+}
+function drawCascade() {
+  var s = $('cascadeSvg'); clear(s);
+  var n = CH.n, box = s.getBoundingClientRect(), narrow = box.width > 0 && box.width < 600;
+  var W = narrow ? 330 : 760, X0 = narrow ? 58 : 104, RW = narrow ? 30 : 80, X1 = W - RW - 8;
+  var cw = (X1 - X0) / n, rowH = 26;
+  var rows = [];
+  if (n <= 7) { for (var r = 0; r < n; r++) rows.push(r); }
+  else rows = [0, 1, 2, -1, n - 1];
+  var H = 24 + rows.length * (rowH + 6) + 40;
+  s.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  var stream = CH.stream || CH.mem, t = CH.stream ? CH.t : -1, latched = CH.last === 'latch';
+  s.appendChild(el('text', { x: 4, y: 14, 'class': 't12b' }, narrow ? '線上的資料' : '哪一條線上的資料'));
+  s.appendChild(el('text', { x: X0, y: 14, 'class': 't12' }, CH.stream ? '先送 →' : (narrow ? '（還沒送：下面是記憶體）' : '（還沒 write()：線上沒東西，下面是記憶體裡排好的）')));
+  rows.forEach(function (r, ri) {
+    var y = 22 + ri * (rowH + 6);
+    if (r < 0) { s.appendChild(el('text', { x: X0 + (X1 - X0) / 2, y: y + 18, 'text-anchor': 'middle', 'class': 't12' }, '⋯ 每往下一顆，少最前面一格 ⋯')); return; }
+    s.appendChild(el('text', { x: 4, y: y + 17, 'class': 't12b' }, r === 0 ? (narrow ? 'ESP32→1' : 'ESP32 → 第 1 顆') : (narrow ? r + '→' + (r + 1) : '第 ' + r + ' → 第 ' + (r + 1) + ' 顆')));
+    for (var j = r; j < n; j++) {
+      var arrived = t < 0 ? false : (j < t || latched);
+      var c = stream[j], sc = showColor(c) || 'var(--c-pix-dark)';
+      var x = X0 + j * cw;
+      var keep = j === r;
+      s.appendChild(el('rect', { x: x + 1, y: y, width: Math.max(cw - 2, 1), height: rowH, rx: 3, fill: sc, opacity: CH.stream ? (arrived ? (keep ? '1' : '.55') : '.12') : '.18', stroke: keep ? 'var(--c-ink)' : 'none', 'stroke-width': keep ? 2.2 : 0 }));
+      if (keep && cw > 34 && (arrived || !CH.stream)) s.appendChild(el('text', { x: x + cw / 2, y: y + 17, 'text-anchor': 'middle', 'class': 'tw' }, '留下'));
+    }
+    if (r === 0) {
+      var rx = X1 + 4;
+      s.appendChild(el('rect', { x: rx, y: y, width: RW, height: rowH, rx: 3, fill: 'var(--c-mint-tint)', stroke: 'var(--c-mint-deep)', 'stroke-dasharray': latched ? '' : '4 3', opacity: latched ? '1' : '.6' }));
+      s.appendChild(el('text', { x: rx + RW / 2, y: y + 17, 'text-anchor': 'middle', 'class': 't12b' }, narrow ? '低' : '低 ≥300µs'));
+    }
+  });
+  /* 時間軸 */
+  var ya = 22 + rows.length * (rowH + 6) + 6;
+  s.appendChild(el('path', { d: 'M' + X0 + ' ' + ya + ' H' + X1, stroke: 'var(--c-ink-faint)', 'stroke-width': 1.5 }));
+  /* 刻度：頭、尾一定標；中間平均標幾個，太靠近尾巴的那個不標（字會疊在一起） */
+  var every = Math.ceil(n / (narrow ? 3 : 8)), ticks = [];
+  for (var q = 0; q < n; q += every) ticks.push(q);
+  if (ticks.length > 1 && (n - ticks[ticks.length - 1]) * cw < (narrow ? 70 : 80)) ticks.pop();
+  ticks.push(n);
+  ticks.forEach(function (q) {
+    var xq = X0 + q * cw;
+    s.appendChild(el('path', { d: 'M' + xq + ' ' + (ya - 4) + ' V' + (ya + 4), stroke: 'var(--c-ink-faint)', 'stroke-width': 1.5 }));
+    s.appendChild(el('text', { x: xq, y: ya + 18, 'text-anchor': q === 0 ? 'start' : q === n ? 'end' : 'middle', 'class': 'tm' }, (q * LED_US) + ' µs'));
+  });
+  if (t >= 0 && t <= n) {
+    var xt = X0 + t * cw;
+    s.appendChild(el('path', { d: 'M' + xt + ' 18 V' + (ya + 2), stroke: 'var(--c-primary)', 'stroke-width': 2.5, 'stroke-dasharray': '5 3' }));
+  }
+}
+$('chN').addEventListener('input', function (e) { chResize(+e.target.value); var k = CH.last.indexOf('mem:') === 0 ? CH.last.slice(4) : null; if (k) chSet(k); else chRender(); });
+Object.keys(CH_PRESETS).forEach(function (k) {
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = CH_PRESETS[k][0];
+  b.addEventListener('click', function () { chSet(k); });
+  $('chPresets').appendChild(b);
+});
+$('chWrite').addEventListener('click', chWrite);
+$('chStep').addEventListener('click', chStepFn);
+$('chPlay').addEventListener('click', chPlay);
+$('chSkip').addEventListener('click', chSkip);
+
+/* ===== ④ 算算看 ===== */
+var K_N = [3, 16, 64, 300, 1024], K_V = [['全白 255', 255], ['04 的 128', 128], ['10 的 80', 80]];
+function renderCalc() {
+  var n = clamp(Math.round(+$('kN').value || 1), 1, 5000), v = +$('kV').value;
+  $('kVo').textContent = v;
+  var bits = n * 24, us = n * LED_US, frame = us + RESET_US, fps = Math.floor(1e6 / frame);
+  var ma = n * MA_PER_LED * v / 255, maRule = n * MA_RULE;
+  var amp = ma >= 1000 ? (Math.round(ma / 10) / 100) + ' A' : Math.round(ma) + ' mA';
+  var cards = [
+    ['一次 write() 送幾位元', fmtNum(bits) + ' 位元', n + ' 顆 × 24', ''],
+    ['資料脈衝時間', fmtTime(us), n + ' × 24 × 1.25 µs：只算資料本身', ''],
+    ['一個完整畫面', fmtTime(frame), '資料時間 ＋ 停在低電位約 300 µs（才換色）', ''],
+    ['每秒最多換幾次（理論上限）', fmtNum(fps) + ' 次', '只看傳輸時間：1 秒 ÷ ' + fmtTime(frame) + '；Python 程式本身也要時間，實際會更少', fps < 30 ? 'alert' : ''],
+    ['記憶體 np.buf', fmtNum(n * 3) + ' 位元組', n + ' 顆 × 3（MicroPython 的 neopixel 模組、三色燈：照 G R B 排）', ''],
+    ['電流（保守估，三色都給 ' + v + '）', amp, '估電源用：' + n + ' × 60 mA × ' + v + ' ÷ 255，不是量測值；混色粗估 ' + (maRule >= 1000 ? (maRule / 1000) + ' A' : maRule + ' mA'), ma >= 1000 ? 'alert' : ma < 300 ? 'ok' : '']
+  ];
+  $('kOut').innerHTML = cards.map(function (c) { return '<div class="res ' + c[3] + '"><span class="rt">' + c[0] + '</span><span class="rv">' + c[1] + '</span><span class="rf">' + esc(c[2]) + '</span></div>'; }).join('');
+  var vd;
+  if (ma >= 1000) vd = '<b>' + amp + '：要另外接 5 V 電源，而且電源、燈、ESP32 的 GND 要接在一起（共地）</b>（<a class="ref" href="#f-A2">A2</a>）。這就是範例不給 255 的原因：04 用 128，這一頁的 10、12、13 用 80。';
+  else if (ma >= 300) vd = '<b>' + amp + '：已經不小了。</b>燈再多一點就要另外接 5 V 電源、記得共地（<a class="ref" href="#f-A2">A2</a>）；先把亮度調低是最省事的辦法。';
+  else vd = '<b>' + amp + '：量不大。</b>套件三顆全白最亮，用保守估法最多約 180 mA（3 × 60 mA）。';
+  if (fps < 30) vd += ' 另外，光是傳輸，每秒最多只能換 ' + fmtNum(fps) + ' 次（程式本身還要時間），動畫會開始卡——串太長就分成幾條、用不同的腳各送各的。';
+  $('kVerdict').innerHTML = vd;
+}
+K_N.forEach(function (n) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = n + ' 顆'; b.addEventListener('click', function () { $('kN').value = n; renderCalc(); }); $('kNPresets').appendChild(b); });
+K_V.forEach(function (p) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = p[0]; b.addEventListener('click', function () { $('kV').value = p[1]; renderCalc(); }); $('kVPresets').appendChild(b); });
+$('kN').addEventListener('input', renderCalc); $('kV').addEventListener('input', renderCalc);
+
+/* ===== ⑥ 矩陣 ===== */
+var MX = { pic: [], pick: null };
+function blankPic() { var p = []; for (var y = 0; y < 8; y++) p.push([0, 0, 0, 0, 0, 0, 0, 0]); return p; }
+MX.pic = blankPic();
+function idxOf(x, y, mode) { return mode === 's' && y % 2 === 1 ? y * 8 + (7 - x) : y * 8 + x; }
+function posOf(i, mode) { var y = Math.floor(i / 8), x = i % 8; if (mode === 's' && y % 2 === 1) x = 7 - x; return [x, y]; }
+function renderMatrix() {
+  var panel = $('mxPanel').value, prog = $('mxProg').value;
+  var lit = new Array(64).fill(0);
+  for (var y = 0; y < 8; y++) for (var x = 0; x < 8; x++) if (MX.pic[y][x]) lit[idxOf(x, y, prog)] = 1;
+  var g = $('mxGrid'); g.innerHTML = '';
+  for (var Y = 0; Y < 8; Y++) for (var X = 0; X < 8; X++) {
+    var i = idxOf(X, Y, panel), b = document.createElement('button');
+    b.type = 'button'; b.className = 'mxc' + (lit[i] ? ' on' : '') + (MX.pick && MX.pick[0] === X && MX.pick[1] === Y ? ' pick' : '');
+    b.textContent = i; b.setAttribute('aria-label', '第 ' + X + ' 欄、第 ' + Y + ' 列：燈板上第 ' + i + ' 顆' + (lit[i] ? '，亮' : '，暗'));
+    b.dataset.x = X; b.dataset.y = Y;
+    g.appendChild(b);
+  }
+  drawPath(panel);
+  var prg = prog === 's' ? ['def index(x, y):', '    if y % 2 == 1:   # 奇數列折回來', '        return y * 8 + (7 - x)', '    return y * 8 + x'] : ['def index(x, y):', '    return y * 8 + x   # 每列都由左往右'];
+  $('mxCode').innerHTML = prg.map(function (l) { return '<div>' + esc(l) + '</div>'; }).join('') + '<div class="cm">mat[index(x, y)] = RED   # 想點亮第 x 欄、第 y 列</div>';
+}
+function drawPath(panel) {
+  var s = $('mxPath'), grid = $('mxGrid');
+  var show = $('mxShowPath').checked; clear(s);
+  var gw = grid.offsetWidth, gh = grid.offsetHeight;
+  s.setAttribute('width', gw); s.setAttribute('height', gh); s.setAttribute('viewBox', '0 0 ' + gw + ' ' + gh);
+  if (!show) return;
+  var cells = grid.children, pts = [];
+  for (var i = 0; i < 64; i++) {
+    var p = posOf(i, panel), c = cells[p[1] * 8 + p[0]];
+    if (c) pts.push((c.offsetLeft + c.offsetWidth / 2) + ',' + (c.offsetTop + c.offsetHeight / 2));
+  }
+  s.appendChild(el('polyline', { points: pts.join(' '), fill: 'none', stroke: '#FFD66B', 'stroke-width': 2, 'stroke-opacity': '.75', 'stroke-linejoin': 'round' }));
+  var first = pts[0].split(',');
+  s.appendChild(el('circle', { cx: first[0], cy: first[1], r: 5, fill: '#FFD66B' }));
+}
+$('mxGrid').addEventListener('click', function (e) {
+  var b = e.target.closest('.mxc'); if (!b) return;
+  var x = +b.dataset.x, y = +b.dataset.y, panel = $('mxPanel').value, prog = $('mxProg').value;
+  MX.pic[y][x] = MX.pic[y][x] ? 0 : 1; MX.pick = [x, y];
+  var iProg = idxOf(x, y, prog), where = posOf(iProg, panel);
+  var same = where[0] === x && where[1] === y;
+  var f = prog === 's' && y % 2 === 1 ? y + ' × 8 + (7 − ' + x + ')' : y + ' × 8 + ' + x;
+  $('mxStatus').innerHTML = '你想' + (MX.pic[y][x] ? '點亮' : '關掉') + '第 ' + x + ' 欄、第 ' + y + ' 列：程式算 index(' + x + ', ' + y + ') ＝ ' + f + ' ＝ <b>' + iProg + '</b>。' + (same ? '燈板上第 ' + iProg + ' 顆就在那裡，對了。' : '<b>可是燈板上第 ' + iProg + ' 顆在第 ' + where[0] + ' 欄、第 ' + where[1] + ' 列</b>——亮錯地方了：程式和燈板的接法不一樣。');
+  renderMatrix();
+});
+$('mxHeart').addEventListener('click', function () {
+  MX.pic = HEART.map(function (row) { return row.split('').map(function (ch) { return ch === '#' ? 1 : 0; }); });
+  MX.pick = null;
+  var n = HEART.join('').split('#').length - 1;
+  $('mxStatus').innerHTML = '13 的愛心：' + n + ' 顆。程式一格一格算 <code>index(x, y)</code>，再 <code>mat.write()</code> 一次送出 64 × 24 ＝ 1536 位元。';
+  renderMatrix();
+});
+$('mxClear').addEventListener('click', function () { MX.pic = blankPic(); MX.pick = null; $('mxStatus').textContent = '清空了。點一格看看：它是隊伍裡的第幾顆？'; renderMatrix(); });
+$('mxPanel').addEventListener('change', renderMatrix); $('mxProg').addEventListener('change', renderMatrix); $('mxShowPath').addEventListener('change', renderMatrix);
+
+/* ===== 複製鈕、出處標籤 ===== */
+document.querySelectorAll('.copy').forEach(function (b) {
+  var label = b.textContent;
+  b.addEventListener('click', function () {
+    var pre = $(b.getAttribute('data-copy')); if (!pre) return;
+    var txt = pre.textContent.replace(/^\n/, '');
+    var done = function () { b.textContent = '已複製'; setTimeout(function () { b.textContent = label; }, 1400); };
+    var fallback = function () {
+      var ta = document.createElement('textarea'); ta.value = txt; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.left = '-9999px';
+      document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (err) { b.textContent = '請手動選取'; } document.body.removeChild(ta);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, fallback); else fallback();
+  });
+});
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('a.ref'); if (!a) return;
+  var id = a.getAttribute('href').slice(1), row = $(id); if (!row) return;
+  $('facts').open = true;
+  row.classList.add('flash'); setTimeout(function () { row.classList.remove('flash'); }, 1600);
+});
+
+/* ===== 開場 ===== */
+renderProblem(); drawPulse(); renderColor(); waveCaption(-1);
+chResize(3); chSet('rgb'); CH.shown = CH.mem.map(function () { return OFF.slice(); }); CH.dirty = true; CH.last = 'init'; chRender();
+renderCalc(); renderMatrix();
+var rt = null;
+addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { drawPulse(); drawWave(); drawCascade(); renderMatrix(); }, 120); });
+if (location.hash === '#facts') $('facts').open = true;
+})();
+</script>
+</body>
+</html>

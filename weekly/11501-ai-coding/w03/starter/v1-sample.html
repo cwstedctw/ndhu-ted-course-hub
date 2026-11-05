@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>我的一週小面板 v1</title>
+<style>
+/* ── 顏色：淺色一組、深色一組。切換時只換 data-theme，不必改每一個元素 ── */
+:root{
+  --bg:#f4f6ed; --card:#ffffff; --ink:#153d36; --dim:#5d7268;
+  --line:#c3d0c6; --main:#175b4a; --bar:#9fc2b0; --today:#175b4a; --warn:#8a4b1f;
+}
+:root[data-theme="dark"]{
+  --bg:#12211d; --card:#1b2f29; --ink:#e7efe8; --dim:#9db3a8;
+  --line:#33544a; --main:#7fc9ae; --bar:#3c6a5b; --today:#7fc9ae; --warn:#e0a86b;
+}
+*{box-sizing:border-box}
+body{margin:0;padding:16px 14px 40px;background:var(--bg);color:var(--ink);
+  font:16px/1.7 system-ui,'Microsoft JhengHei',sans-serif;max-width:560px;margin:0 auto}
+.top{display:flex;align-items:flex-start;gap:8px}
+.top h1{flex:1 1 auto;min-width:0;font-size:20px;margin:0 0 2px;word-break:break-word}
+#theme{flex:0 0 auto;font-size:14px;padding:7px 10px;border:1px solid var(--line);
+  border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer}
+.date{margin:0 0 14px;color:var(--dim);font:15px ui-monospace,monospace;letter-spacing:.04em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:14px;margin:0 0 14px}
+.big{margin:0;text-align:center;font-size:15px;color:var(--dim)}
+#count{display:block;font-size:52px;line-height:1.1;font-weight:700;color:var(--main)}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+.row button{flex:0 0 auto;font-size:17px;padding:11px 18px;border:0;border-radius:8px;
+  background:var(--main);color:var(--bg);cursor:pointer}
+.row button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+h2{font-size:15px;margin:0 0 10px;color:var(--dim);font-weight:700}
+/* ── 長條圖：七根，等寬，用高度百分比表示杯數 ── */
+.chart{display:flex;align-items:flex-end;gap:4px;height:120px}
+.col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;
+  align-items:center;height:100%}
+.col .n{font-size:12px;color:var(--dim);margin-bottom:2px}
+.col .bar{width:100%;background:var(--bar);border-radius:4px 4px 0 0;min-height:3px}
+.col.now .bar{background:var(--today)}
+.col.now .n{color:var(--today);font-weight:700}
+.labels{display:flex;gap:4px;margin-top:6px}
+.labels div{flex:1 1 0;min-width:0;text-align:center;font-size:11px;color:var(--dim);
+  overflow-wrap:anywhere}
+.labels div.now{color:var(--today);font-weight:700}
+/* ── 清除：確認的話直接長在畫面上，不跳視窗 ── */
+#ask{display:none;border:1px solid var(--warn);border-radius:10px;padding:12px;margin-top:10px}
+#ask.open{display:block}
+#ask p{margin:0 0 10px;color:var(--warn);font-size:15px}
+.tip{font-size:13px;color:var(--dim);margin:10px 0 0}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>我的一週小面板</h1>
+  <button id="theme" type="button">深色／淺色</button>
+</div>
+<p class="date" id="today"></p>
+
+<div class="card">
+  <p class="big"><span id="count">0</span>今天喝了幾杯水</p>
+  <div class="row">
+    <button id="add" type="button">記一杯水</button>
+  </div>
+</div>
+
+<div class="card">
+  <h2>最近七天</h2>
+  <div class="chart" id="chart"></div>
+  <div class="labels" id="labels"></div>
+</div>
+
+<div class="card">
+  <h2>資料</h2>
+  <div class="row">
+    <button id="clear" type="button" class="ghost">清除全部資料</button>
+  </div>
+  <div id="ask">
+    <p id="askText">確定要清除全部資料嗎？七天的紀錄都會不見，而且救不回來。</p>
+    <div class="row">
+      <button id="yes" type="button">確定清除</button>
+      <button id="no" type="button" class="ghost">取消</button>
+    </div>
+  </div>
+  <p class="tip">數字存在這台瀏覽器裡，不會上傳，換一台電腦看不到。</p>
+</div>
+
+<script>
+/* ===== 1 日期：固定用西元 YYYY-MM-DD，不用英文月份、不帶時分秒 ===== */
+function ymd(d) {
+  var m = String(d.getMonth() + 1).padStart(2, "0");
+  var day = String(d.getDate()).padStart(2, "0");
+  return d.getFullYear() + "-" + m + "-" + day;
+}
+var TODAY = ymd(new Date());
+
+/* ===== 2 存取：讀寫瀏覽器的小抽屜，外面包一層保護，壞掉也不讓整頁死掉 ===== */
+var KEY_DAYS = "panel-v1-days";
+var KEY_THEME = "panel-v1-theme";
+function load(key, fallback) {
+  try {
+    var raw = window.localStorage.getItem(key);
+    return raw === null ? fallback : JSON.parse(raw);
+  } catch (e) { return fallback; }
+}
+function save(key, value) {
+  try { window.localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+}
+
+/* ===== 3 七天：每天自己一格，今天沒紀錄就是 0；只留最近七天，舊的丟掉 ===== */
+var days = load(KEY_DAYS, {});
+if (typeof days !== "object" || days === null) { days = {}; }
+function lastSeven() {
+  var out = [];
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date();
+    d.setDate(d.getDate() - i);
+    out.push(ymd(d));
+  }
+  return out;
+}
+function trim() {
+  var keep = lastSeven();
+  var clean = {};
+  keep.forEach(function (k) { if (days[k]) { clean[k] = days[k]; } });
+  days = clean;
+}
+function today() { return days[TODAY] || 0; }
+function bump() {
+  days[TODAY] = today() + 1;
+  trim();
+  save(KEY_DAYS, days);
+  render();
+}
+
+/* ===== 4 長條圖：七根，高度＝當天杯數 ÷ 這七天的最大值；今天那根換顏色 ===== */
+function drawChart() {
+  var keys = lastSeven();
+  var max = 1;
+  keys.forEach(function (k) { if ((days[k] || 0) > max) { max = days[k]; } });
+  var chart = document.getElementById("chart");
+  var labels = document.getElementById("labels");
+  chart.textContent = "";
+  labels.textContent = "";
+  keys.forEach(function (k) {
+    var n = days[k] || 0;
+    var isNow = (k === TODAY);
+    var col = document.createElement("div");
+    col.className = isNow ? "col now" : "col";
+    var num = document.createElement("div");
+    num.className = "n";
+    num.textContent = n;
+    var bar = document.createElement("div");
+    bar.className = "bar";
+    bar.style.height = Math.round(n / max * 88) + "%";
+    col.appendChild(num);
+    col.appendChild(bar);
+    chart.appendChild(col);
+    var lab = document.createElement("div");
+    lab.className = isNow ? "now" : "";
+    lab.textContent = isNow ? "今天" : k.slice(5).replace("-", "/");
+    labels.appendChild(lab);
+  });
+}
+
+/* ===== 5 深色：換 data-theme 就整頁換色；選擇記在小抽屜裡，重新整理還在 ===== */
+function setTheme(name) {
+  document.documentElement.setAttribute("data-theme", name);
+  save(KEY_THEME, name);
+}
+setTheme(load(KEY_THEME, "light") === "dark" ? "dark" : "light");
+document.getElementById("theme").addEventListener("click", function () {
+  var now = document.documentElement.getAttribute("data-theme");
+  setTheme(now === "dark" ? "light" : "dark");
+});
+
+/* ===== 6 清除：先在畫面上長出一段確認文字，按了「確定清除」才真的清 ===== */
+var ask = document.getElementById("ask");
+document.getElementById("clear").addEventListener("click", function () {
+  ask.classList.add("open");
+});
+document.getElementById("no").addEventListener("click", function () {
+  ask.classList.remove("open");
+});
+document.getElementById("yes").addEventListener("click", function () {
+  days = {};
+  save(KEY_DAYS, days);
+  ask.classList.remove("open");
+  render();
+});
+
+/* ===== 7 畫面：所有數字都從 days 重畫一次，不各自記一份 ===== */
+function render() {
+  document.getElementById("today").textContent = TODAY;
+  document.getElementById("count").textContent = today();
+  drawChart();
+}
+document.getElementById("add").addEventListener("click", function () { bump(); });
+trim();
+save(KEY_DAYS, days);
+render();
+</script>
+</body>
+</html>
