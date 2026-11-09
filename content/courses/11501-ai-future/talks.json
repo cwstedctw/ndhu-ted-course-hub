@@ -304,7 +304,25 @@
       ],
       "poster": "/images/talks/t07-poster.webp",
       "worksheetUrl": null,
-      "materials": []
+      "materials": [
+        {
+          "label": "講者講義（PDF，146 頁，11/08 初稿；當天講者另用 html 簡報、互動頁不在這份裡）",
+          "url": "https://drive.google.com/file/d/11bhx4AULQ6H36IBlZq7cIW7vhOFesjjm/view"
+        },
+        {
+          "label": "講前導讀一頁卡（原圖，3 分鐘看完）",
+          "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/images/talks/t07-preread.webp"
+        },
+        {
+          "label": "30 秒預告短片（橫式）",
+          "url": "https://drive.google.com/file/d/1lSiJFJm-tiHIgcPqhKebx3Ln5bkKO7J1/view"
+        }
+      ],
+      "preread": "/images/talks/t07-preread.webp",
+      "teaser": {
+        "src": "/videos/t07-teaser-720p.mp4",
+        "poster": "/images/talks/t07-teaser-poster.jpg"
+      }
     },
     {
       "id": "t08",
