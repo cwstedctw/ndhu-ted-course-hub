@@ -524,7 +524,7 @@
       },
       {
         "platform": "other",
-        "use": "W10 加課（AB 11/10、AA 下次上課）：先用手操作 Gemini Notebook，再讓 AI agent 透過 Google Cloud API 建筆記本、放來源",
+        "use": "W10 補充教材（AB 11/10 上課用；AA 自己參考）：先用手操作 Gemini Notebook，再讓 AI agent 透過 Google Cloud API 建筆記本、放來源",
         "label": "讓 AI agent 接上 Gemini Notebook",
         "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-it-apply/w10/notebook-agent/student.html",
         "urlStatus": "confirmed"
