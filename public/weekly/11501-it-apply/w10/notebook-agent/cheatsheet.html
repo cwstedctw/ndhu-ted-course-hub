@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>指令小抄｜讓 AI agent 接上 Gemini Notebook</title>
+<style>
+:root{--bg:#FAF8F2;--surface:#FFFFFF;--ink:#132525;--soft:#3E5656;--line:#D6E2E1;--teal:#0E7C7B;--tint:#E2F0EF;--gold:#7A5510;--goldt:#FBF0D9;--red:#B4553F;--redt:#F7E4DE;--term:#133E34;--termink:#F4F6ED;color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0B1A1A;--surface:#112424;--ink:#E6F2F2;--soft:#BBD0CF;--line:#26403F;--teal:#5CC8C6;--tint:#123A39;--gold:#F3D08A;--goldt:#3A2F18;--red:#E58B74;--redt:#3A2019;--term:#071F1A;--termink:#E6F2F2;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B1A1A;--surface:#112424;--ink:#E6F2F2;--soft:#BBD0CF;--line:#26403F;--teal:#5CC8C6;--tint:#123A39;--gold:#F3D08A;--goldt:#3A2F18;--red:#E58B74;--redt:#3A2019;--term:#071F1A;--termink:#E6F2F2;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:0 0 2px}
+h2{font-size:16px;margin:0 0 6px;color:var(--teal)}
+p{margin:4px 0}
+.sub{color:var(--soft);font-size:13.5px;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;break-inside:avoid}
+.wide{grid-column:1/-1}
+pre{margin:6px 0;background:var(--term);color:var(--termink);border-radius:8px;padding:8px 10px;font:13px/1.55 Consolas,"Cascadia Mono",Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+code{font-family:Consolas,"Cascadia Mono",Menlo,monospace;font-size:.92em;background:var(--tint);border-radius:4px;padding:0 4px;overflow-wrap:anywhere}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+th{white-space:nowrap}
+.tw{overflow-x:auto}
+.warn{background:var(--redt);border-left:4px solid var(--red);border-radius:0 8px 8px 0;padding:6px 10px;margin:6px 0}
+.note{background:var(--goldt);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:6px 10px;margin:6px 0}
+ol,ul{margin:4px 0;padding-left:20px}
+footer{color:var(--soft);font-size:12.5px;margin-top:12px}
+@media (max-width:720px){.grid{grid-template-columns:1fr}}
+@media print{body{background:#fff;font-size:11.5px}main{padding:0}.card{border-color:#999}pre{background:#f2f2f2;color:#000;border:1px solid #bbb;font-size:10.5px}@page{size:A4;margin:10mm}}
+</style>
+</head>
+<body>
+<main>
+<h1>指令小抄｜讓 AI agent 接上 Gemini Notebook</h1>
+<p class="sub">資訊科技與應用（115-1）　完整步驟在 <a href="student.html">學生頁</a>；觀念在 <a href="concept.html">互動概念頁</a>。API 是公開預覽，內容依 Google 官方文件 2026-11-10 的版本。</p>
+<div class="grid">
+
+<div class="card">
+<h2>一　用手（網頁）</h2>
+<ol>
+<li>無痕視窗開 <code>https://notebook.google.com</code>，<b>個人 Gmail</b> 登入。</li>
+<li><b>＋ 新增筆記本</b> → <b>＋ 新增來源</b> → <b>網站</b> → 貼網址（多個用換行或空格分開）→ <b>插入</b>。</li>
+<li><b>＋ 新增來源</b> → <b>複製的文字</b> → 貼你自己的三句。</li>
+<li>在「提問或創作內容」框提問 → <b>點回答後面的小數字</b> → 左邊看原文反白。</li>
+<li>把一句話拆成兩半，各自對引用的原文。</li>
+</ol>
+</div>
+
+<div class="card">
+<h2>二　四個詞</h2>
+<div class="tw"><table>
+<tr><th>API</th><td>服務開給程式用的窗口：<code>https://notebook.googleapis.com/v1</code></td></tr>
+<tr><th>專案</th><td>Google Cloud 的戶頭，API 用量記在它名下</td></tr>
+<tr><th>OAuth 同意</th><td>瀏覽器裡按「允許」——只有你能按</td></tr>
+<tr><th>權杖</th><td>一小時有效的通行證；<code>ya29.</code> 開頭，不印、不存、不貼</td></tr>
+</table></div>
+<p class="note"><b>API 做得到：</b>建／看／列／改名筆記本；加網頁、YouTube、文字、Markdown 來源；查狀態。<br><b>還做不到：</b>提問、刪除、上傳檔案、語音摘要、學校帳號。</p>
+</div>
+
+<div class="card wide">
+<h2>三　交給 agent（提示詞在起始檔 <code>agent-prompt.zh-TW.md</code>）</h2>
+<p>三條規矩：<b>先給計畫，我說可以才動手</b>／<b>權杖不准印</b>／<b>不動我原本的筆記本</b>。agent 會依序跑：</p>
+<pre>winget install --id Google.CloudSDK -e                      （Windows 裝 gcloud；裝完開新視窗）
+gcloud --version
+gcloud auth login                                           （第 1 次瀏覽器登入：你來按）
+gcloud projects create nb-你的代號
+gcloud config set project nb-你的代號
+gcloud services enable notebook.googleapis.com --project=nb-你的代號
+（你自己做）console.cloud.google.com/auth/overview：開始→外部→同意；目標對象加自己為測試使用者；
+            用戶端→電腦版應用程式→下載 JSON，改名 client.json 放進起始檔資料夾
+gcloud auth application-default login --client-id-file=client.json --scopes="https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/notebook"
+                                                            （第 2 次瀏覽器登入：進階→前往→允許）
+gcloud auth application-default print-access-token          （拿權杖，放變數、不印）</pre>
+<p>每個請求帶兩個標頭：<code>Authorization: Bearer 權杖</code>、<code>x-goog-user-project: nb-你的代號</code></p>
+<div class="tw"><table>
+<tr><th>做什麼</th><th>動作與網址</th><th>內容（JSON）</th></tr>
+<tr><td>列出筆記本</td><td><code>GET /v1/notebooks</code></td><td>—</td></tr>
+<tr><td>建筆記本</td><td><code>POST /v1/notebooks</code></td><td><code>{"displayName":"W10-agent-空氣品質"}</code></td></tr>
+<tr><td>加網頁／YouTube</td><td><code>POST /v1/notebooks/你的ID/sources</code></td><td><code>{"webContent":{"url":"https://…"}}</code></td></tr>
+<tr><td>加文字</td><td>同上</td><td><code>{"displayName":"我的筆記","mimeType":"text/markdown","textContent":{"content":"…"}}</code></td></tr>
+<tr><td>查來源狀態</td><td><code>GET /v1/notebooks/你的ID/sources</code></td><td>看每一筆的 <code>state</code>：<code>PROCESSING</code> → <code>ACTIVE</code> 或 <code>FAILED</code></td></tr>
+</table></div>
+</div>
+
+<div class="card">
+<h2>路線 B　自己貼（起始檔 <code>nb.ps1</code>）</h2>
+<p>在起始檔資料夾開 PowerShell：</p>
+<pre>powershell -ExecutionPolicy Bypass -File .\nb.ps1 check
+powershell -ExecutionPolicy Bypass -File .\nb.ps1 new "W10-agent-空氣品質"
+powershell -ExecutionPolicy Bypass -File .\nb.ps1 add notebooks/你的ID "https://…"
+powershell -ExecutionPolicy Bypass -File .\nb.ps1 addtext notebooks/你的ID .\my-notes.md "我的筆記"
+powershell -ExecutionPolicy Bypass -File .\nb.ps1 wait notebooks/你的ID
+powershell -ExecutionPolicy Bypass -File .\nb.ps1 list</pre>
+</div>
+
+<div class="card">
+<h2>四　讀回＋收尾</h2>
+<ol>
+<li>回 <code>notebook.google.com</code> 重新整理：找到 agent 建的那一本、來源數對、中文沒亂碼、原本那本沒被動。</li>
+<li>在那一本自己問一題、點引用。</li>
+<li>撤銷這台電腦的登入：</li>
+</ol>
+<pre>gcloud auth application-default revoke
+gcloud auth revoke --all</pre>
+<p>刪掉 <code>client.json</code>；關掉無痕視窗；不要的筆記本自己到網頁刪（API 刪不了）。</p>
+</div>
+
+<div class="card wide">
+<h2>常見錯誤</h2>
+<div class="tw"><table>
+<tr><th>看到</th><th>原因</th><th>處置</th></tr>
+<tr><td>「系統已封鎖這個應用程式」</td><td>登入沒帶自己的用戶端（官方那行實測被擋）</td><td>建 <code>client.json</code>，登入加 <code>--client-id-file=client.json</code></td></tr>
+<tr><td>「未完成 Google 驗證程序」</td><td>帳號不在測試使用者清單</td><td>目標對象 → 測試使用者加自己，等儲存轉完</td></tr>
+<tr><td><code>401 UNAUTHENTICATED</code></td><td>沒帶權杖或權杖過期（一小時）</td><td>請 agent 重新取權杖</td></tr>
+<tr><td><code>403 … WORKSPACE_ACCOUNT_NOT_SUPPORTED</code></td><td>用了學校帳號</td><td>兩次登入都改個人 Gmail</td></tr>
+<tr><td><code>404 … Account not found for user.</code></td><td>帳號沒在網頁登入過 Gemini Notebook</td><td>先到 notebook.google.com 登入一次</td></tr>
+<tr><td><code>429 RESOURCE_EXHAUSTED</code></td><td>送太快（每人每分鐘加來源 20 次）</td><td>等一分鐘，不要重複加</td></tr>
+</table></div>
+</div>
+
+</div>
+<footer>國立東華大學　資訊科技與應用（115-1）。本頁不印任何真的權杖、專案 ID 或帳號。</footer>
+</main>
+</body>
+</html>
