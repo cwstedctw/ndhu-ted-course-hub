@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W7 學生步驟｜換核心的兩種方法＋板子的藍牙健康手環</title>
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --surface-2:#F1F5F4; --ink:#132525; --ink-soft:#3E5656; --mist:#5E7676;
+  --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF; --gold:#D9A441; --gold-deep:#7A5510; --gold-tint:#FBF0D9;
+  --dark:#062524; --red:#B4553F; --red-tint:#F7E4DE; --violet:#5B4B9A; --violet-tint:#ECE8F7;
+  --term-bg:#133E34; --term-ink:#F4F6ED; --out-bg:#F3F6F5; --out-ink:#1B3433;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC","Heiti TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono","Liberation Mono","Noto Sans Mono CJK TC",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#8FA9A8;
+    --line:#26403F; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+    --dark:#041716; --red:#E58B74; --red-tint:#3A2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+    --term-bg:#071F1A; --term-ink:#E6F2F2; --out-bg:#0D1F1F; --out-ink:#D5E6E5;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#8FA9A8;
+  --line:#26403F; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+  --dark:#041716; --red:#E58B74; --red-tint:#3A2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+  --term-bg:#071F1A; --term-ink:#E6F2F2; --out-bg:#0D1F1F; --out-ink:#D5E6E5;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:16.5px;line-height:1.8}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+a{color:var(--teal);text-underline-offset:3px}
+main{max-width:900px;margin:0 auto;padding:0 16px 80px}
+header.hero{background:var(--dark);color:#E6F2F2;padding:26px 0 20px}
+header.hero .in{max-width:900px;margin:0 auto;padding:0 16px}
+.kicker{font-weight:800;font-size:13px;letter-spacing:.18em;color:var(--gold)}
+h1{font-size:clamp(27px,5vw,44px);line-height:1.25;margin:6px 0 10px;font-weight:900}
+.hero p{margin:6px 0;color:#BFD6D5}
+.hero nav{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px}
+.hero nav a{color:#F3D08A}
+h2{font-size:clamp(21px,3.4vw,26px);line-height:1.4;margin:0 0 6px}
+h3{font-size:18px;margin:22px 0 4px}
+section.sec{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:20px 0;scroll-margin-top:64px}
+.goal{margin:2px 0 4px;font-weight:700}
+.why{margin:2px 0 10px;color:var(--ink-soft)}
+.small{font-size:14.5px;color:var(--mist)}
+/* 進度列 */
+.progress{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.progress .in{max-width:900px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar{flex:1 1 160px;height:10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.progress .lbl{font-weight:800;font-size:14.5px;white-space:nowrap}
+.progress .toc{display:flex;gap:4px 10px;flex-wrap:wrap;font-size:14px}
+.progress .toc a{text-decoration:none}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:4px 10px;font-size:14px;line-height:1.4}
+.btn:hover{border-color:var(--teal)}
+/* 指令框與輸出框 */
+.box{position:relative;margin:8px 0 10px}
+pre{margin:0;white-space:pre;overflow-x:auto;border-radius:10px;padding:12px 14px;font:15px/1.65 var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+code{font-family:var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;font-size:.92em;background:var(--surface-2);color:var(--ink);border-radius:5px;padding:0 4px;overflow-wrap:anywhere}
+pre.cmd{background:var(--term-bg);color:var(--term-ink);padding-top:34px}
+pre.cmd::before{position:absolute;left:14px;right:84px;top:8px;font:700 13px/1.4 var(--zh);letter-spacing:.05em;color:#A8D8C8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+pre.cmd[data-where="電腦"]::before{content:"在電腦（Ubuntu）打——視窗 A"}
+pre.cmd[data-where="電腦B"]::before{content:"在電腦打——視窗 B（SSH 斷了就回到電腦）"}
+pre.cmd[data-where="板子"]::before{content:"在板子裡打——SSH 視窗 B";color:#F1D58F}
+pre.cmd[data-where="Windows"]::before{content:"在自己的 Windows（PowerShell）打"}
+pre.cmd[data-where="macOS"]::before{content:"在自己的 Mac（終端機）打"}
+pre.cmd[data-where="agy"]::before{content:"貼給 agy（不是指令）";color:#C9BDF5}
+pre.out{background:var(--out-bg);color:var(--out-ink);border:2px dashed var(--line);padding-top:30px}
+pre.out::before{content:"你應該看到（例）——不用打";position:absolute;left:14px;top:6px;font:700 13px/1.4 var(--zh);color:var(--mist)}
+.copy{position:absolute;right:8px;top:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;border-radius:8px;padding:1px 10px;font-size:13px}
+.copy:hover{background:rgba(255,255,255,.25)}
+/* 步驟 */
+ol.steps{padding-left:0;list-style:none;counter-reset:st;margin:8px 0}
+ol.steps > li{counter-increment:st;position:relative;padding:4px 0 6px 40px;margin:6px 0}
+ol.steps > li::before{content:counter(st);position:absolute;left:0;top:4px;width:28px;height:28px;border-radius:50%;background:var(--teal-tint);color:var(--teal);font-weight:900;display:grid;place-items:center;font-size:15px}
+.check{display:flex;gap:10px;align-items:flex-start;margin:12px 0 2px;padding:10px 14px;border-radius:12px;background:var(--teal-tint);border:1px solid var(--teal);font-weight:700}
+.check input{width:22px;height:22px;margin-top:3px;flex:0 0 auto;accent-color:var(--teal)}
+.check.done{opacity:.75}
+.note{padding:10px 14px;border-left:4px solid var(--gold);background:var(--gold-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.warn{padding:10px 14px;border-left:4px solid var(--red);background:var(--red-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.deep{font-size:14.5px;margin:10px 0 0;color:var(--ink-soft)}
+details{border:1px solid var(--line);border-radius:12px;padding:6px 14px;margin:10px 0;background:var(--surface)}
+details > summary{cursor:pointer;font-weight:700;padding:4px 0;color:var(--ink)}
+details[open] > summary{margin-bottom:6px}
+details.stuck > summary::before{content:"🆘 ";}
+details.reveal > summary::before{content:"👀 ";}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px;margin:10px 0}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.files td:first-child code{white-space:nowrap}
+.route{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0}
+.stop{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--surface-2);text-decoration:none;color:var(--ink)}
+.stop b{display:block;color:var(--teal);font-size:13px;letter-spacing:.08em}
+.stop span{display:block;font-weight:800;line-height:1.4}
+.stop small{display:block;color:var(--mist);font-size:13.5px;line-height:1.5;margin-top:4px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:8px 0}
+.legend > div{border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:15px}
+figure.real{margin:12px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface-2)}
+figure.real img{display:block;width:100%;height:auto}
+figure.real figcaption{padding:8px 12px;font-size:14px;color:var(--ink-soft)}
+figure.real figcaption b{color:var(--teal)}
+.search{width:100%;padding:8px 12px;border:2px solid var(--teal);border-radius:10px;background:var(--surface);font-size:16px}
+.nomatch{display:none;margin:8px 0;color:var(--red);font-weight:700}
+.ev{display:inline-block;background:var(--gold-tint);color:var(--gold-deep);border:1px solid var(--gold);border-radius:8px;padding:0 8px;font-weight:800;font-size:14px}
+footer{margin:30px 0 0;color:var(--mist);font-size:14px}
+@media (max-width:640px){
+  section.sec{padding:16px 14px}
+  .route{grid-template-columns:repeat(2,minmax(0,1fr))}
+  pre{font-size:14px;padding:10px 12px}
+  pre.cmd{padding-top:32px}
+  ol.steps > li{padding-left:34px}
+  .progress .toc{display:none}
+}
+@media print{
+  .progress,.copy,.search{display:none}
+  header.hero{background:none;color:#000}
+  .hero p{color:#333}
+  section.sec{border:0;padding:0}
+  details{border:0}
+  details > *{display:block}
+  pre{white-space:pre-wrap;overflow-wrap:anywhere;break-inside:avoid}
+}
+/* W7：每步四欄（做什麼、打什麼、應該看到、多久） */
+ol.steps > li > p{margin:2px 0}
+.lab{display:inline-block;margin-right:8px;padding:0 8px;border-radius:7px;font-size:13px;font-weight:800;letter-spacing:.04em;line-height:1.6;vertical-align:1px}
+.do-l{background:var(--teal-tint);color:var(--teal)}
+.type-l{background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--line)}
+.see-l{background:var(--gold-tint);color:var(--gold-deep)}
+.dur-l{background:var(--violet-tint);color:var(--violet)}
+.dur{display:inline-block;margin-left:8px;padding:0 8px;border-radius:7px;background:var(--violet-tint);color:var(--violet);font-size:13.5px;font-weight:700}
+.dur::before{content:"⏱ "}
+/* W7 v3：三部分 */
+pre.cmd[data-where="板子A"]::before{content:"在板子裡打——視窗 A 的 adb shell";color:#F1D58F}
+pre.cmd[data-where="板子C"]::before{content:"在板子裡打——SSH 視窗 C（第二個）";color:#F1D58F}
+.part{margin:34px 0 -4px;padding:12px 18px;border-radius:16px;background:var(--dark);color:#E6F2F2;scroll-margin-top:64px}
+.part b{display:block;color:var(--gold);font-size:13px;letter-spacing:.12em}
+.part span{display:block;font-size:clamp(19px,3vw,23px);font-weight:900;line-height:1.4}
+.pending{background:var(--red-tint);color:var(--red);border-radius:6px;padding:0 5px;font-weight:700;overflow-wrap:anywhere}
+.progress .toc .tg{color:var(--mist);font-weight:800;margin-left:4px}
+ol.steps.marked > li{padding-left:56px}
+ol.steps.marked > li::before{content:attr(data-n);width:auto;min-width:28px;padding:0 6px;border-radius:14px;font-size:14px}
+@media (max-width:640px){ol.steps.marked > li{padding-left:50px}}
+</style>
+<body>
+<header class="hero"><div class="in">
+  <div class="kicker">AIoT 智慧裝置實作　WEEK 7　學生步驟（完整版）</div>
+  <h1>換核心的兩種方法<br>＋板子的藍牙健康手環</h1>
+  <p>10/22（四）14:10–17:00，理工二館 E307（Ubuntu 教室機）。三節課、三個部分。</p>
+  <p>W12 我們要讓板子變成一張 USB 音效卡，可是那兩個模組只認 <code>7.0.0-g122c2c22d838</code> 這顆核心。今天用兩種方法換核心：<b>第一部分</b>用官方套件只換「核心」這一個零件，換上去、再親手退回來；<b>第二部分</b>用跳線帽讓板子進救援通道，把<b>整個系統</b>刷成課程映像 <code>20260528-558</code>，系統和核心一起統一；<b>第三部分</b>讓刷好的板子用藍牙，把自己的體溫、負載每秒送到你的手機。原則跟前幾週一樣：<b>畫面說成功不算，你親眼看到才算。</b>卡住了，先把<b>完整錯誤訊息貼給 AI agent</b>（板子密碼不要貼），再舉手。</p>
+  <nav><a href="cheatsheet.html">指令小抄（A4 兩頁）</a><a href="concept.html">互動概念頁（apt 與刷機、工具、名詞、藍牙）</a><a href="#basics">基礎知識補給站</a><a href="deck.html">投影片</a><a href="deck.pdf">投影片 PDF</a></nav>
+</div></header>
+
+<div class="progress" aria-label="進度"><div class="in">
+  <span class="lbl" id="plbl">完成 0／0</span>
+  <span class="bar" aria-hidden="true"><i id="pbar"></i></span>
+  <span class="toc"><a href="#s0">0 就位</a><span class="tg">一 apt</span><a href="#p1-1">1</a><a href="#p1-2">2</a><a href="#p1-3">3</a><a href="#p1-4">4</a><a href="#p1-5">5</a><a href="#p1-6">6</a><span class="tg">二 刷機</span><a href="#p2-1">1</a><a href="#p2-2">2</a><a href="#p2-3">3</a><a href="#p2-4">4</a><a href="#p2-5">5</a><span class="tg">三 藍牙</span><a href="#p3-1">1</a><a href="#p3-2">2</a><a href="#p3-3">3</a><a href="#p3-4">4</a><a href="#p3-5">5</a><a href="#p3-6">6</a><a href="#faq">卡住了</a><a href="#basics">基礎</a></span>
+  <button type="button" class="btn" id="preset">清除勾選</button>
+</div></div>
+
+<main>
+
+<section class="sec" id="how">
+  <h2>怎麼讀這一頁</h2>
+  <div class="legend">
+    <div><b>每一步分四欄</b>：<span class="lab do-l">做什麼</span>（這一步要做的事，和為什麼）、<span class="lab type-l">打什麼</span>（深色指令框，或寫「不用打」）、<span class="lab see-l">應該看到</span>（老師板上實際看到的；你的數字、時間可能不同）、<span class="lab dur-l">多久</span>（老師量到的時間；沒量過的照實寫）。</div>
+    <div><b>深色框＝指令</b>。左上角寫在哪裡打：<b>電腦（視窗 A）</b>、<b>板子（SSH 視窗 B）</b>、刷完機那一段的<b>視窗 A 的 adb shell</b>、第三部分的<b>SSH 視窗 C</b>。右上角有「複製」鈕。一次打（或貼）一行，按 Enter，看完它回什麼再打下一行。</div>
+    <div><b>淺色虛線框＝畫面上會看到的樣子</b>，不用打。標「現場為準」的是老師還沒在 E307 Ubuntu 上驗過的。</div>
+    <div><b>刷機那一段的字樣、秒數</b>是老師 10/22 早上用一塊出廠板實際刷 558 量的（msi 筆電）；教室電腦的秒數會不同，<b>以老師台上講的為準</b>。</div>
+    <div><b>🆘 卡住了</b>：每一節最後都有，點開看常見狀況；全部整理在<a href="#faq">卡關總表</a>，可以搜尋。</div>
+    <div><b>綠色勾選框＝檢查點</b>。親眼看到了才勾；最上面的進度列會跟著動（只存在你這台電腦的瀏覽器）。</div>
+  </div>
+  <ul>
+    <li>Ubuntu 終端機裡，複製是 <b>Ctrl＋Shift＋C</b>、貼上是 <b>Ctrl＋Shift＋V</b>。少了 Shift 的 Ctrl＋C 是「中斷」（第三部分停藍牙程式就是用它）。</li>
+    <li>今天會打好幾次<b>板子的密碼</b>（<code>ssh</code>、<code>sudo</code>）：打的時候畫面不會動，打完按 Enter。密碼不要貼給 AI、不要截進作業。</li>
+    <li>今天動的是板子的<b>核心</b>和<b>整個系統</b>。只照這一頁和老師的指令做；網路上或 AI 給的其他刷法、別的參數、改開機設定，<b>先給老師看</b>。</li>
+    <li>標 ⚠️ 的地方老師還沒在學生板或 E307 上驗過，照做不行就叫老師。</li>
+  </ul>
+</section>
+
+<section class="sec" id="s0">
+  <h2>0　今天的路線、三張證據、就位</h2>
+  <p class="goal">目標：知道今天三部分各做什麼；視窗 A 留在電腦、開好 2222 通道；視窗 B 的提示字元變成 <code>arduino@</code> 開頭。</p>
+  <div class="route">
+    <a class="stop" href="#p1-1"><b>第一部分 14:10</b><span>apt 換一個零件</span><small>6.16.7 → 7.0.0，看模組從拒收變收，再退回來</small></a>
+    <a class="stop" href="#p2-1"><b>第二部分 15:10</b><span>跳線帽刷機</span><small>整個系統換成課程映像 558，補回四合一</small></a>
+    <a class="stop" href="#p3-1"><b>第三部分 16:10</b><span>藍牙健康手環</span><small>板子把板況每秒送到手機</small></a>
+    <a class="stop" href="#p3-6"><b>收尾 16:50</b><span>三張證據</span><small>加一行 RESULT、回家挑戰</small></a>
+  </div>
+  <p><b>完成線＝三張證據</b>（作業老師上課時會在 e學苑 開，先存好）：</p>
+  <div class="tw"><table>
+    <tr><th>#</th><th>證據</th><th>在哪一節</th></tr>
+    <tr><td><span class="ev">證據 1</span></td><td><b>apt 前後</b>：上半＝升級前的身分證＋<code>insmod</code> 被拒；下半＝重開機前、後各一行 <code>uname -r</code>＋<code>lsmod</code> 兩行</td><td>1-1～1-5</td></tr>
+    <tr><td><span class="ev">證據 2</span></td><td><b>刷機前後</b>：<code>cat /etc/buildinfo</code> 與 <code>uname -r</code> 刷機前（1-1 已截）、刷機後各一張＋<code>c.1</code> 四個名字＋電腦看到音效卡</td><td>2-5</td></tr>
+    <tr><td><span class="ev">證據 3</span></td><td><b>藍牙</b>：手機 Plotter 截圖＋溫度三個數字（起點、最高、停掉後 2 分鐘）</td><td>3-4</td></tr>
+  </table></div>
+  <p><b>要帶</b>：自己的板子、USB-C <b>資料線</b>（只能充電的線不算）、<b>板子的密碼</b>（W3、W6 都打過）、<b>手機</b>（先裝好免費的 <b>nRF Connect</b> 和 <b>Bluefruit Connect</b>）。有自己筆電的人也帶來（刷機的備案）。</p>
+  <p class="why">今天至少開兩個終端機視窗：<b>視窗 A</b> 留在教室電腦，下載、推檔案、刷機（<code>"$ADB"</code> 開頭的都在這裡）；<b>視窗 B</b> SSH 進板子，<code>sudo</code> 大多在這裡。跟 W4–W6 一樣的四行。</p>
+
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>接線、等心跳：USB-C 資料線把板子直接插在電腦上（不要經過 hub）。<span class="dur">多久：等到心跳動畫出現（W4–W6 都等過）</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>點陣從旋轉的圖案變成心跳動畫。還在轉就先等，不要拔。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>打開終端機（Ctrl＋Alt＋T），這是<b>視窗 A</b>；找出 App Lab 附的 adb（前兩行是同一個指令，要一起貼）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">ADB=$(find "$HOME/.arduino15/packages/arduino/tools/adb" \
+    -type f -name adb -perm -u+x -print 2>/dev/null | sort -V | tail -n 1)
+"$ADB" devices -l</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>最後一行列出<b>剛好一塊板</b>、狀態是 <code>device</code>。<code>$ADB</code> 只在跑過這段的視窗有值，換視窗要重跑。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>開 2222 通道（同一個視窗 A）。<span class="dur">多久：打完馬上回來</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">"$ADB" forward tcp:2222 tcp:22</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>成功時不印字。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>再開一個終端機（<b>視窗 B</b>），SSH 進板子。<span class="dur">多久：打完密碼就進去</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">ssh -p 2222 arduino@127.0.0.1</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>問密碼時打<b>板子的密碼</b>；提示字元變成 <code>arduino@</code> 開頭。裝過 W6 網卡的人，也可以直接 <code>ssh arduino@192.168.7.2</code>（不用通道）。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：找不到 adb、連不上、密碼</summary>
+    <ul>
+      <li><code>bash: : command not found</code>：<code>$ADB</code> 是空的，這個視窗沒跑過第 2 步，重跑一次。</li>
+      <li><code>Connection refused</code>：2222 通道沒開。回<b>視窗 A</b> 再打一次 <code>forward</code>。</li>
+      <li><code>WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</code>：這台電腦記著別塊板的鑰匙。在電腦打 <code>ssh-keygen -R "[127.0.0.1]:2222"</code>，再連一次。</li>
+      <li>忘了板子密碼：問老師，<b>不要貼給 AI</b>。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="s0">視窗 B 的提示字元是 <code>arduino@</code> 開頭，視窗 A 留在電腦；手機兩個 App 都裝好了。</label>
+</section>
+
+<div class="part" id="part1"><b>第一部分　14:10–15:00</b><span>apt：只換核心這一個零件，再退回來</span></div>
+
+<section class="sec" id="p1-1">
+  <h2>1-1　升級前的身分證</h2>
+  <p class="goal">目標：把板子「現在的樣子」記下來，截圖＝<span class="ev">證據 1</span> 的上半，也是<span class="ev">證據 2</span> 的「刷機前」。</p>
+  <p class="why">沒看過原本的樣子，就不知道改了什麼。五行都在<b>視窗 B（板子）</b>打，一行一行來；每一行都只是「看」，不改任何東西。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>看<b>現在在用</b>的核心版本。這行也是開場的閘門：老師會請全班舉手統計。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">uname -r</pre></div>
+      <div class="box"><pre class="out" data-src="out">6.16.7-g0dd6551ae96b</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>老師的出廠板印上面這一行。⚠️ 學生板沒有一塊實查過，老師推論也是 6.16.7。<b>如果你印的已經是 <code>7.0.0-g122c2c22d838</code></b>：舉手給老師看，跳到 <a href="#p1-5">1-5</a> 看模組對版；<a href="#p1-6">1-6</a> 的退回等老師看過再決定做不做；第二部分照常刷機。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看板子裝了哪個核心<b>套件</b>。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="rewrite:new" data-note="附錄 X §〇 A 出廠核心列「dpkg -l 只有 linux-image-6.16.7-g0dd6551ae96b」；grep 寫法照 §一 14:25 列">dpkg -l | grep linux-image</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>一行，裡面有 <code>linux-image-6.16.7-g0dd6551ae96b</code>（前後還有版本、架構、說明幾欄）。只有一個核心套件。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看板子的映像是哪一天做的（刷機之後會再看一次）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">cat /etc/buildinfo</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>老師的出廠板有一行 <code>BUILD_ID=20251210-442</code>；你的板可能不同，照實截下來就好。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看開機項：開機時能選的核心，一個核心一個 <code>.conf</code>。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">ls /boot/efi/loader/entries/</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>現在只有一個，檔名結尾是 <code>-6.16.7-g0dd6551ae96b.conf</code>（前面那串是這塊板的機器編號，每塊不一樣）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看第一個房間 <code>/boot/efi</code> 有多大、用了多少。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="rewrite:new" data-note="附錄 X §〇 A 三個分割區列（df -h 讀的）；只看 /boot/efi 這一間，寫法照 §一 14:25 列">df -h /boot/efi</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>老師的出廠板：大小約 488 MB、升級前用了約 113 MB（升級後會變約 172 MB）。</p></li>
+  </ol>
+  <p class="note">📸 <b>五行一起截一張</b>＝證據 1 的上半（也是證據 2 的「刷機前」）。截圖裡不要有板子密碼。</p>
+  <details class="stuck"><summary>卡住了：印的跟老師不一樣</summary>
+    <ul>
+      <li><code>uname -r</code> 已經是 <code>7.0.0-g122c2c22d838</code>：舉手，跳 1-5。</li>
+      <li><code>dpkg -l</code> 列出兩個 <code>linux-image</code>：舉手給老師看，先別往下做。</li>
+      <li>其他數字、日期不一樣：照實截下來，沒關係。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：三個房間各放什麼 → <a href="concept.html#s0">概念頁 §0 全路徑地圖</a>。</p>
+  <label class="check"><input type="checkbox" data-ck="p1-1">身分證五行截好了，我知道我的板現在是哪一版核心、哪一天的映像。</label>
+</section>
+
+<section class="sec" id="p1-2">
+  <h2>1-2　拿 starter、推模組上板、看它拒收</h2>
+  <p class="goal">目標：親眼看到同一個模組檔，核心不對版就載不進；拒收的畫面也放進<span class="ev">證據 1</span> 的上半。</p>
+  <p class="why">W12 的音效卡要兩個核心模組（kernel module）：<code>u_audio.ko</code>、<code>usb_f_uac2.ko</code>。模組身上蓋了一個章（vermagic），寫它只配哪一版核心；章跟 <code>uname -r</code> 對不上，核心就不收。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>從課程網抓 starter、解開（視窗 A）。第一行走到下載資料夾，第二行抓壓縮包並直接解開，第三行看解開了什麼。<span class="dur">多久：檔很小（91,143 bytes），沒單獨量過</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§四 發布：starter/w07-starter/ 內容與 Hub 路徑；網址照 W6 學生頁第 2 節同一個寫法，w06 換 w07">cd ~/Downloads
+curl -fsSL https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-aiot/w07/starter/w07-starter.tar.gz | tar xz
+ls w07-starter</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>四樣：<code>README.md</code>、<code>get-kernel.sh</code>（1-3 的另一條路）、<code>health_ble.py</code>（第三部分的藍牙程式）、<code>uac2-soundcard</code>（兩個模組檔）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>把模組資料夾推上板子（視窗 A）。位置一定要是 <code>/home/arduino/uac2-soundcard/</code>：W6 裝的 hook 只認這個路徑。<code>/home</code> 刷機也會保留，第二部分還用得到。<span class="dur">多久：沒單獨量過，兩個小檔</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="附錄 X §〇 C「放哪」列：/home/arduino/uac2-soundcard/（寫死在 W6 hook 的 UAC2_DIR）；push 資料夾的寫法照 W6 學生頁第 2 節">"$ADB" push w07-starter/uac2-soundcard /home/arduino/</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>最後一行寫它推了幾個檔（<code>files pushed</code>）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>讀模組身上的章（視窗 B）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">modinfo -F vermagic ~/uac2-soundcard/u_audio.ko</pre></div>
+      <div class="box"><pre class="out" data-src="out">7.0.0-g122c2c22d838 SMP preempt mod_unload aarch64</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>上面這一行。開頭是 <code>7.0.0-g122c2c22d838</code>——跟 1-1 的 <code>uname -r</code> 比一比：<b>對不上</b>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>明知對不上，還是試著載一次，親眼看它拒收（順序：先 <code>u_audio</code>；第一個失敗，<code>&amp;&amp;</code> 後面那個就不會跑）。<span class="dur">多久：打完密碼馬上回</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">sudo insmod ~/uac2-soundcard/u_audio.ko &amp;&amp; sudo insmod ~/uac2-soundcard/usb_f_uac2.ko</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>一行錯誤，模組沒載進去。⚠️ <b>確切的字老師沒驗過</b>（推測會有 <code>Invalid module format</code>）——你看到什麼就截什麼，這就是證據 1 上半的最後一塊。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看核心自己的日誌，最後幾行有沒有提到版本對不上。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">dmesg | tail</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>⚠️ 老師沒驗過。推測會有一行提到 <code>version magic</code>，後面寫它要的版本和你現在的版本。有就一起截進證據 1；沒有也照實寫。</p></li>
+  </ol>
+  <p class="note">✋ <b>先猜：換好核心之後，同一行 <code>insmod</code> 會怎樣？</b>記住你的答案，1-5 揭曉。</p>
+  <details class="stuck"><summary>卡住了：curl、push、sudo</summary>
+    <ul>
+      <li><code>curl:</code> 開頭的錯誤：教室網路可能擋住了。舉手，老師有隨身碟備份。</li>
+      <li><code>push</code> 說 <code>No such file or directory</code>：你不在 <code>~/Downloads</code>，先 <code>cd ~/Downloads</code>、<code>ls w07-starter</code> 看得到再推。</li>
+      <li><code>modinfo</code> 說找不到檔：模組沒推到 <code>/home/arduino/uac2-soundcard/</code>，在板子打 <code>ls ~/uac2-soundcard</code> 看看。</li>
+      <li><code>sudo</code> 一直說密碼錯：要打<b>板子</b>的密碼，不是教室電腦的。</li>
+      <li><code>insmod</code> 竟然成功了：你的核心已經是 7.0.0，回 1-1 再看一次 <code>uname -r</code>，舉手。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：vermagic 對版的動畫 → <a href="concept.html#s1">概念頁 §1 核心與模組</a>。</p>
+  <label class="check"><input type="checkbox" data-ck="p1-2">證據 1 上半存好：身分證五行＋<code>insmod</code> 被拒的畫面。</label>
+</section>
+
+<section class="sec" id="p1-3">
+  <h2>1-3　下載核心套件、比對指紋、推上板</h2>
+  <p class="goal">目標：板子的家目錄裡有一個核心套件，電腦和板子兩邊算的指紋（SHA256）都對得上。</p>
+  <p class="why">核心也是一個套件（package）：官方套件庫 <code>apt-repo.arduino.cc</code> 裡的 <code>linux-image-7.0.0-g122c2c22d838</code>，一個 33,792,024 bytes 的 <code>.deb</code> 檔。要裝進板子的核心，一個位元組都不能錯——所以先比對指紋，<b>對不上別裝</b>。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>下載核心套件（視窗 A，還在 <code>~/Downloads</code>）。<span class="dur">多久：老師在 msi 約 10 秒；⚠️ 全班 30 台同時抓沒測過，可能慢很多</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">curl -LO https://apt-repo.arduino.cc/pool/main/l/linux-upstream/linux-image-7.0.0-g122c2c22d838_7.0.0-g122c2c22d838-1_arm64.deb</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>一條下載進度，跑完回到提示字元；資料夾多一個 <code>linux-image-7.0.0-g122c2c22d838_7.0.0-g122c2c22d838-1_arm64.deb</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>算這個檔的指紋。<span class="dur">多久：沒單獨量過</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">sha256sum linux-image-7.0.0-g122c2c22d838_7.0.0-g122c2c22d838-1_arm64.deb</pre></div>
+      <div class="box"><pre class="out" data-src="out">fb878aa55e3d3fa05f439c8b6f395749e5177c4c15eaea5f0be415678e26f183</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>一長串，開頭 <code>fb878aa5</code>、結尾 <code>26f183</code>，要跟上面這串<b>一字不差</b>（後面還會接檔名）。<b>對不上：刪掉這個檔重抓，別裝。</b></p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>把核心套件推上板子（視窗 A）。<span class="dur">多久：老師板 0.24 秒</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">"$ADB" push linux-image-7.0.0-g122c2c22d838_7.0.0-g122c2c22d838-1_arm64.deb /home/arduino/</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>最後一行裡有 <code>1 file pushed</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>在板子上再算一次指紋（視窗 B）。檔案從電腦走 USB 線進板子，到了再比一次，兩邊都對才裝。<span class="dur">多久：沒單獨量過</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">sha256sum ~/linux-image-7.0.0-g122c2c22d838_7.0.0-g122c2c22d838-1_arm64.deb</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>同一串：開頭 <code>fb878aa5</code>、結尾 <code>26f183</code>。</p></li>
+  </ol>
+  <details><summary>另一條路：starter 裡的 <code>get-kernel.sh</code>（下載＋比對一次做完）</summary>
+    <p>同一件事寫成一支小腳本：檔案不在就下載，再比對指紋，印 <code>OK</code> 才往下；不合會印 <code>FAIL</code> 並告訴你怎麼辦。</p>
+    <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="starter/w07-starter/get-kernel.sh 與其 README（curl＋sha256 核對）；路徑接 1-2 解開的位置">sh w07-starter/get-kernel.sh</pre></div>
+    <p>老師的隨身碟也有同一個檔（教室網路塞住時用）：拿到之後一樣要跑上面的 <code>sha256sum</code> 比對。</p>
+  </details>
+  <details><summary>裝過 W6 網卡的人：也可以走 USB 網路推（不用 adb）</summary>
+    <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="附錄 X §〇 B 步 2 括號：走 USB 網路也可 scp … arduino@192.168.7.2:（… 展開成同一個檔名）">scp linux-image-7.0.0-g122c2c22d838_7.0.0-g122c2c22d838-1_arm64.deb arduino@192.168.7.2:</pre></div>
+    <p>會問板子的密碼。推完一樣在板子上跑 <code>sha256sum</code> 比對。</p>
+  </details>
+  <details class="stuck"><summary>卡住了：下載很慢、指紋不合、push 失敗</summary>
+    <ul>
+      <li>下載一直沒動：全班同時在抓。等一下，或舉手拿老師隨身碟那份。</li>
+      <li>指紋對不上：<b>不要裝</b>。刪掉檔案（<code>rm linux-image-7.0.0-g122c2c22d838_7.0.0-g122c2c22d838-1_arm64.deb</code>）重抓；還是不合，用老師隨身碟那份。</li>
+      <li><code>push</code> 說 <code>more than one device</code>：拔掉手機或別人的板子，再推一次。</li>
+      <li>板子算出來的指紋跟電腦不一樣：在板子刪掉那個檔，重推一次。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：套件庫、相依樹、為什麼 App Lab 更新沒換核心 → <a href="concept.html#s2">概念頁 §2</a>。</p>
+  <label class="check"><input type="checkbox" data-ck="p1-3">電腦和板子兩邊的指紋都是 <code>fb878aa5…26f183</code>。</label>
+</section>
+
+<section class="sec" id="p1-4">
+  <h2>1-4　<code>sudo dpkg -i</code> 裝核心、看開機項、重開機、驗</h2>
+  <p class="goal">目標：重開機<b>前</b> <code>uname -r</code> 還是舊的、重開機<b>後</b>變 <code>7.0.0-g122c2c22d838</code>（兩張截圖＝<span class="ev">證據 1</span> 的下半）。</p>
+  <p class="why"><code>dpkg -i</code> 把套件解開後，有三支小程式自動接力：做 initrd（開機用的小檔案系統，initramfs）、把描述板子硬體的檔（DTB）搬進開機區、複製核心並寫一個新的開機項。你的家目錄 <code>/home/arduino</code> 是另一個分割區（partition），不會被動到。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>裝（視窗 B；<code>sudo</code> 要打板子的密碼）。裝的時候<b>不要拔線、不要關視窗</b>。<span class="dur">多久：老師板 29 秒</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">sudo dpkg -i ~/linux-image-7.0.0-g122c2c22d838_7.0.0-g122c2c22d838-1_arm64.deb</pre></div>
+      <div class="box"><pre class="out" data-src="out">Unpacking…
+Setting up…
+update-initramfs: Generating /boot/initrd.img-7.0.0-g122c2c22d838
+W: Possible missing firmware …
+Updating kernel version 7.0.0-g122c2c22d838 in systemd-boot...
+uboot-efi-dtb: updating /boot/efi/dtb using /usr/lib/linux-image-7.0.0-g122c2c22d838
+Installing kernel version 7.0.0-g122c2c22d838 in systemd-boot...</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>依序出現上面這幾行（節錄；<code>Unpacking…</code>、<code>Setting up…</code> 後面還有字）。<code>W: Possible missing firmware …</code> 實際會有 <b>8 行</b>，講的是別家板子的驅動（mscc、r8a779x、tegra）——<b>正常，不用管</b>。看到最後一行 <code>Installing kernel version …</code> 回到提示字元，就裝好了。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看開機項、核心檔、模組資料夾是不是都變兩個。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">ls /boot/efi/loader/entries/
+ls /boot/efi/*/
+ls /lib/modules/</pre></div>
+      <div class="box"><pre class="out" data-src="out">…-6.16.7-g0dd6551ae96b.conf
+…-7.0.0-g122c2c22d838.conf</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行：兩個開機項（上面兩個，前面那串機器編號省略）。第二、三行：各兩個資料夾，一個 <code>6.16.7-…</code>、一個 <code>7.0.0-…</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>✋ 先猜再打：裝好了，現在在用的是哪一顆？<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">uname -r</pre></div>
+      <div class="box"><pre class="out" data-src="out">6.16.7-g0dd6551ae96b</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b><b>還是舊的</b>。裝了≠開機在用：核心只是放進房間，重開機時開機鏈才會去選它。📸 <b>截下來＝證據 1 下半的「前」</b>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>重開機（視窗 B）。開機項有兩個時，開機鏈選版本最高的那個（<code>loader.conf</code> 的 <code>default</code> 規則）。<span class="dur">多久：老師板 adb 約 28 秒回來；等 30 秒</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">sudo reboot</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>SSH 斷線、視窗 B 回到教室電腦的提示字元——<b>正常</b>。數 30 秒，不要拔線。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>回<b>視窗 A</b>，確認板子回來了、重開 2222 通道。<span class="dur">多久：打完馬上回</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">"$ADB" devices -l
+"$ADB" forward tcp:2222 tcp:22</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行列出你的板、狀態 <code>device</code>（還沒出現就再等一下重打）；第二行不印字。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>視窗 B 重新 SSH 進板子（裝過 W6 網卡的人也可以 <code>ssh arduino@192.168.7.2</code>）。<span class="dur">多久：打完密碼就進去</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦B" data-src="src">ssh -p 2222 arduino@127.0.0.1</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>提示字元又是 <code>arduino@</code> 開頭。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>驗新核心，順便看開機時載了哪一個 initrd（視窗 B）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">uname -r
+cat /proc/cmdline</pre></div>
+      <div class="box"><pre class="out" data-src="out">7.0.0-g122c2c22d838</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行是上面這一行，📸 <b>截下來＝證據 1 下半的「後」</b>。第二行一長行，開頭是 <code>initrd=\&lt;machine-id&gt;\7.0.0-g122c2c22d838\initrd.img-7.0.0-…</code>：開機鏈真的選了新的開機項。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>確認沒壞的東西：系統狀態、有沒有服務掛掉、App Lab 工具還在。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">systemctl is-system-running
+systemctl --failed
+arduino-app-cli version</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行印 <code>running</code>；第二行的清單是空的（沒有掛掉的服務）；第三行照舊印出工具版本。老師板 10/21 還確認了藍牙、docker、Wi-Fi 網卡、家目錄、主機名稱都沒變。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：dpkg 鎖住、重開機沒回來、還是舊核心</summary>
+    <ul>
+      <li><code>dpkg: error: dpkg frontend lock</code>：板子上有別的 apt 正在跑（例如自動更新）。等它跑完再裝，不要強制刪鎖。</li>
+      <li>其他紅字、或最後沒看到 <code>Installing kernel version</code>：<b>不要重開機</b>，整段截圖舉手。</li>
+      <li>等了 60 秒 <code>"$ADB" devices -l</code> 還是沒有板子：拔線、重插一次，再等；還是沒有，舉手。</li>
+      <li><code>Connection refused</code>：重開機後 2222 通道要重開，回視窗 A 打 <code>forward</code>。</li>
+      <li>重開機後 <code>uname -r</code> 還是 <code>6.16.7-…</code>：把 <code>ls /boot/efi/loader/entries/</code> 的結果截給老師看。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：三支小程式各做什麼、開機項長什麼樣 → <a href="concept.html#s3">概念頁 §3 開機鏈</a>、<a href="concept.html#s4">§4 裝了≠開機在用</a>。</p>
+  <label class="check"><input type="checkbox" data-ck="p1-4">重開機前 <code>6.16.7-…</code>、後 <code>7.0.0-g122c2c22d838</code>，兩張都截好了；<code>running</code>。</label>
+</section>
+
+<section class="sec" id="p1-5">
+  <h2>1-5　模組對版：這次收了</h2>
+  <p class="goal">目標：<code>lsmod</code> 列出兩行（<code>u_audio</code>、<code>usb_f_uac2</code>），截圖放進<span class="ev">證據 1</span> 的下半。</p>
+  <p class="why">核心換成 7.0.0，模組的章對上了，同一個檔這次就收。裝過 W6 hook 的板，hook 會在開機時自己去 <code>~/uac2-soundcard/</code> 載模組——所以先看、別急著載。音效卡「四合一」的完整驗收留到第二部分刷機之後再做。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>先看兩個模組是不是<b>已經</b>載好了。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">lsmod | grep -E "u_audio|uac2"</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b><b>有兩行</b>（一行 <code>u_audio</code>、一行 <code>usb_f_uac2</code>）＝裝過 W6 hook 的板，重開機進 7.0.0 時 hook 已經替你載好了——<b>這就是對版的證據</b>（老師板 10/21 實測就是這樣），截圖，做第 2 步看章、<b>跳過第 3 步</b>（再 <code>insmod</code> 會報「已經在了」）。<b>什麼都沒印</b>＝沒裝 W6 hook，第 2、3 步都做，手動載。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>再讀一次章，跟現在的核心比。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">modinfo -F vermagic ~/uac2-soundcard/u_audio.ko
+uname -r</pre></div>
+      <div class="box"><pre class="out" data-src="out">7.0.0-g122c2c22d838 SMP preempt mod_unload aarch64
+7.0.0-g122c2c22d838</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>兩行開頭一樣：<b>對上了</b>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b><b>只有第 1 步什麼都沒印的人做</b>：跟 1-2 一模一樣的指令，再載一次。剛才猜對了嗎？<span class="dur">多久：打完密碼馬上回</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">sudo insmod ~/uac2-soundcard/u_audio.ko &amp;&amp; sudo insmod ~/uac2-soundcard/usb_f_uac2.ko
+lsmod | grep -E "u_audio|uac2"
+dmesg | tail</pre></div>
+      <div class="box"><pre class="out" data-src="out">u_audio: loading out-of-tree module taints kernel</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行沒有錯誤（老師板兩個都成功）；<code>lsmod</code> 列出兩行；<code>dmesg | tail</code> 裡有上面這一句（前面有時間戳）——它說「載了一個不是跟核心一起編的模組」，<b>正常</b>。📸 <code>lsmod</code> 兩行截進證據 1 下半。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：insmod 還是被拒、說已經在了</summary>
+    <ul>
+      <li><code>insmod</code> 說 <code>Invalid module format</code>：你還在舊核心。<code>uname -r</code> 看一下，回 1-4。</li>
+      <li><code>insmod</code> 說模組已經在了：hook 已經替你載好，<code>lsmod</code> 有兩行就好。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p1-5">證據 1 下半存好：重開機前後 <code>uname -r</code>＋<code>lsmod</code> 兩行。</label>
+</section>
+
+<section class="sec" id="p1-6">
+  <h2>1-6　退回：<code>sudo dpkg -r</code>（全班都做）</h2>
+  <p class="goal">目標：親手把核心退回 6.16.7——apt 只換一個零件，所以退得回來。</p>
+  <p class="why">移除新核心套件，那三支小程式會反向做一次：刪 initrd、把 DTB 換回舊核心的、拿掉新的開機項。重開機就回到 6.16.7。老師 10/21 實際走過整圈。退回之後，第二部分要用另一種方法把整個系統換掉。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>移除新核心套件（視窗 B）。<b>只移除核心套件</b>，<code>~/uac2-soundcard/</code> 留著別刪（第二部分還要用）。<span class="dur">多久：沒單獨量過</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">sudo dpkg -r linux-image-7.0.0-g122c2c22d838</pre></div>
+      <div class="box"><pre class="out" data-src="out">update-initramfs: Deleting …
+uboot-efi-dtb: updating /boot/efi/dtb using /usr/lib/linux-image-6.16.7-…
+Removing kernel version 7.0.0-… from systemd-boot...</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>上面這三行（節錄）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>重開機，再照 1-4 第 5、6 步回來（視窗 A 看板子、重開通道；視窗 B 再 SSH）。<span class="dur">多久：等 30 秒（老師板 adb 約 28 秒回來）</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">sudo reboot</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>SSH 斷線，正常。回來之後提示字元又是 <code>arduino@</code> 開頭。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看核心退回去了沒。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">uname -r</pre></div>
+      <div class="box"><pre class="out" data-src="out">6.16.7-g0dd6551ae96b</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>回到舊核心。裝過 W6 hook 的板，<code>cat /tmp/ncm-hook.log</code> 會看到 <code>[add] uac2 模組載不進（vermagic？）跳過</code>，<b>網卡照常</b>（<code>192.168.7.2</code>）——只有音效卡被跳過。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>✋ 想一想再休息：apt 只換一個零件、退得回來，那為什麼還要刷機？（提示：1-1 的 <code>cat /etc/buildinfo</code> 從頭到尾有沒有變？）<span class="dur">多久：休息前 1 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，想好答案。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>你的答案會在第二部分的 apt 與刷機對照表揭曉。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：退不回去</summary>
+    <ul>
+      <li><code>dpkg -r</code> 印了上面以外的紅字：截圖舉手，<b>先別重開機</b>。</li>
+      <li>重開機後 <code>uname -r</code> 還是 <code>7.0.0-…</code>：<code>ls /boot/efi/loader/entries/</code> 截給老師看。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：退路有幾層、哪一招不成立 → <a href="concept.html#s6">概念頁 §6</a>。</p>
+  <label class="check"><input type="checkbox" data-ck="p1-6"><code>uname -r</code> 回到 <code>6.16.7-g0dd6551ae96b</code>；<code>~/uac2-soundcard/</code> 還在。</label>
+</section>
+
+<div class="part" id="part2"><b>第二部分　15:10–16:00</b><span>跳線帽刷機：整個系統換成課程映像 558</span></div>
+
+<section class="sec" id="p2-1">
+  <h2>2-1　準備：刷機工具、映像、空間</h2>
+  <p class="goal">目標：<code>~/Downloads</code> 裡有刷機工具 <code>arduino-flasher-cli</code>（0.5.4）和課程映像 <code>arduino-unoq-debian-image-20260528-558.tar.zst</code>，家目錄至少 12 GB 可用；教室電腦補好 EDL 的權限設定（第 6 步）。</p>
+  <p class="why">刷機（flash）是把整個 Linux 系統——一個映像（image）——重新寫進板子：核心、系統、<code>/etc</code> 的設定一起換成映像的樣子。加 <code>--preserve-user</code> 保留 <code>/home/arduino</code> 那個分割區。課程鎖定 <code>20260528-558</code> 這一版，全班刷出來的系統才會一樣。</p>
+  <div class="tw"><table>
+    <tr><th></th><th>apt 換核心（第一部分）</th><th>跳線帽刷機（第二部分）</th></tr>
+    <tr><td>換什麼</td><td>核心這一個套件（<code>/boot/efi</code> 和 <code>/</code> 的一部分）</td><td>整個 Linux 系統（<code>/boot/efi</code> 和 <code>/</code> 整個換掉）</td></tr>
+    <tr><td>留什麼</td><td>其他全部照舊；<code>/etc/buildinfo</code> 不變</td><td>只留 <code>/home/arduino</code>（加 <code>--preserve-user</code>）；Wi-Fi、<code>/etc</code> 的設定、apt 裝的東西回到映像的樣子</td></tr>
+    <tr><td>在哪裡做</td><td>板子裡（<code>sudo dpkg</code>）</td><td>電腦上的刷機工具；板子要先進 EDL（跳線帽）</td></tr>
+    <tr><td>多久</td><td>裝 29 秒＋重開機約 28 秒</td><td>本地映像約 3–12 分鐘（老師 10/22 msi 實測 204 秒）</td></tr>
+    <tr><td>退路</td><td><code>sudo dpkg -r</code>（1-6 剛做過）</td><td>刷壞了再刷一次：EDL 在晶片裡，作業系統壞了也進得去</td></tr>
+  </table></div>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>從官方直接下載兩個檔到 <code>~/Downloads</code>（「下載」資料夾，視窗 A）：刷機工具（約 14 MB）和映像（約 2.1 GB）。網址就是 e學苑 Week 7 老師貼的那兩個。全班同時抓會慢，映像抓的時候先往下讀第 6 步。<span class="dur">多久：工具幾秒；映像看教室網路，沒量過</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 I 刷機工具直連、映像直連（Ted 10/22 e學苑 Week 7 標籤）">cd ~/Downloads
+curl -LO https://github.com/arduino/arduino-flasher-cli/releases/download/v0.5.4/arduino-flasher-cli-0.5.4-linux-amd64.tar.gz
+curl -LO https://downloads.arduino.cc/debian-im/Stable/20260528-558/arduino-unoq-debian-image-20260528-558.tar.zst</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>每個檔各跑一條進度，跑完回到提示字元。映像要等它跑到底（2,278,254,042 bytes）。網路塞住、一直不動：舉手，老師講台區網或隨身碟有同樣的檔（下面摺疊）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>比對兩個檔的指紋（視窗 A）。指紋（SHA256）是從檔案內容算出來的一串字，差一個位元組就完全不同。<b>對不上別刷。</b><span class="dur">多久：映像 2.1 GB 要算一下，沒量過</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 I 兩檔一起核對">sha256sum arduino-flasher-cli-0.5.4-linux-amd64.tar.gz arduino-unoq-debian-image-20260528-558.tar.zst</pre></div>
+      <div class="box"><pre class="out" data-src="out">c174c5c800f4b95f3e267c3a9b37f8c2716ea87b7dfa491d810753bbba31b6b5  arduino-flasher-cli-0.5.4-linux-amd64.tar.gz
+d692a12fab2b60acab3138db32c270ad29827c394553c97079b0d2a5c00dc0c8  arduino-unoq-debian-image-20260528-558.tar.zst</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>上面兩行，一字不差（看開頭 <code>c174c5c8</code>、<code>d692a12f</code> 和結尾 <code>31b6b5</code>、<code>c0c8</code> 最快）。不一樣：刪掉那個檔重抓，<b>別刷</b>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>解開刷機工具，問它是哪一版。解開會多一個執行檔 <code>arduino-flasher-cli</code>（和授權檔）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">tar xzf arduino-flasher-cli-0.5.4-linux-amd64.tar.gz
+./arduino-flasher-cli version</pre></div>
+      <div class="box"><pre class="out" data-src="out">Arduino Flasher CLI version 0.5.4</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>上面這一行。前面的 <code>./</code> 是「執行目前資料夾裡的這支」。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看家目錄還有多少空間：映像解開約 8.2 GB，<b>至少要 12 GB</b>。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§一 15:20–15:25 列：df -h ~ 至少 12 GB（§〇 F 映像檔列）">df -h ~</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b><code>Avail</code>（可用）那一欄 12G 以上。不夠就舉手，老師會告訴你換哪個資料夾當暫存（工具有 <code>--temp-dir</code> 這個選項）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看工具認得哪些版本（要連網路；連不上就跳過這步，我們用本地檔）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 F 有哪些版本列：arduino-flasher-cli list；./ 因為工具在目前資料夾">./arduino-flasher-cli list</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>一串版本，裡面有 <code>20260528-558</code>（老師 10/22 早上看到它是清單裡最新的那一個），還有 <code>20260407-523</code> 等更舊的。我們<b>指名 558 的本地檔</b>，不用「最新」那個標籤：最新會一直變，先刷、後刷的人會拿到不同系統。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b><b>讓教室電腦碰得到 EDL 的板子</b>（E307 Ubuntu，每台電腦做一次；今天上課老師在現場試出來的）。兩件事：① 一份權限規則（udev），讓一般帳號能碰 Arduino（<code>2341</code>）和 EDL（<code>05c6</code>）的 USB 裝置；② 把 Linux 內建的 <code>qcserial</code> 驅動拿掉——它會把 EDL 的板子（<code>05c6:9008</code>）當成一般序列埠先接走，刷機工具就只能一直等。每一行都要 <code>sudo</code>，會問這台電腦帳號的密碼。<span class="dur">多久：一分鐘內</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 I udev 規則（一行寫好）、dialout 群組、qcserial（Ted 10/22 e學苑 Week 7 標籤)">printf '%s\n' 'SUBSYSTEM=="usb", ATTRS{idVendor}=="2341", MODE="0666", GROUP="dialout"' 'SUBSYSTEM=="usb", ATTRS{idVendor}=="05c6", MODE="0666", GROUP="dialout"' | sudo tee /etc/udev/rules.d/99-arduino-uno-q.rules && sudo udevadm control --reload-rules && sudo udevadm trigger
+sudo usermod -a -G dialout $USER
+sudo rmmod qcserial
+echo "blacklist qcserial" | sudo tee /etc/modprobe.d/blacklist-qcserial.conf</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行把兩條規則印回畫面（<code>tee</code> 寫進檔案、也印出來）；最後一行印 <code>blacklist qcserial</code>。<code>rmmod</code> 說 <code>Module qcserial is not currently loaded</code>＝本來就沒載，不要緊。<code>usermod</code> 下次登入才算數，<b>今天不用登出</b>。<code>sudo</code> 不讓你用（<code>is not in the sudoers file</code>）：舉手請老師打。</p></li>
+  </ol>
+  <details><summary>備案：網路抓不動，改用老師講台區網或隨身碟的檔</summary>
+    <p>老師那份有三個檔：刷機工具、映像、指紋清單 <code>SHA256SUMS.txt</code>。用檔案管理員拖進「下載」，然後一次比對（<code>-c</code> 逐一算、逐一比；<code>--ignore-missing</code>＝清單上有、你沒拷的就跳過）：</p>
+    <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 F 映像檔列與刷機工具下載列；SHA256SUMS.txt 跟映像放在老師隨身碟同一夾">cd ~/Downloads
+sha256sum -c SHA256SUMS.txt --ignore-missing</pre></div>
+    <p>每個檔一行、後面都是 <code>OK</code> 才用。刷機工具也可以從 Arduino 自己的下載站抓（跟 GitHub 那份是同一個檔、同一個指紋）：</p>
+    <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 F 刷機工具下載列：Linux 直連網址；curl -LO 寫法同附錄 X §〇 B 步 1">cd ~/Downloads
+curl -LO https://downloads.arduino.cc/arduino-flasher-cli/arduino-flasher-cli-0.5.4-linux-amd64.tar.gz</pre></div>
+    <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 F 刷機工具下載列：Linux 版 SHA256；寫法同附錄 X §〇 B 步 1 的 sha256sum">sha256sum arduino-flasher-cli-0.5.4-linux-amd64.tar.gz</pre></div>
+    <div class="box"><pre class="out" data-src="out">c174c5c800f4b95f3e267c3a9b37f8c2716ea87b7dfa491d810753bbba31b6b5</pre></div>
+    <p>指紋一字不差才用；接著做上面第 3 步解開。</p>
+  </details>
+  <details><summary>自己的 Windows／Mac 筆電（備案用）：工具哪裡拿</summary>
+    <p>官方軟體頁 <code>https://www.arduino.cc/en/software/</code> 的「Arduino Flasher CLI」區塊；老師隨身碟也有。版本都是 0.5.4：</p>
+    <ul>
+      <li><b>Windows</b>：<code>…-0.5.4-windows-amd64.zip</code>（14,733,628 bytes，SHA256 開頭 <code>a3f411e0</code>）。解開後在那個資料夾開 PowerShell。</li>
+      <li><b>macOS（Apple 晶片）</b>：<code>…-0.5.4-darwin-arm64.tar.gz</code>（SHA256 開頭 <code>9683d219</code>）。⚠️ Mac 上老師沒實跑過，不行就叫老師。</li>
+    </ul>
+    <p>映像一樣跟老師拿，空間一樣至少 12 GB。刷機指令見 <a href="#p2-3">2-3</a> 的摺疊。</p>
+  </details>
+  <details class="stuck"><summary>卡住了：下載、解開、空間</summary>
+    <ul>
+      <li>指紋對不上（或 <code>sha256sum -c</code> 有一行不是 <code>OK</code>）：那個檔沒抓完整。刪掉重抓，<b>別刷</b>。</li>
+      <li><code>curl</code> 停住不動：全班同時在抓。等一下，或改用老師的區網／隨身碟（上面摺疊）。</li>
+      <li><code>./arduino-flasher-cli</code> 說 <code>Permission denied</code>：檔案沒有執行權限（從隨身碟拷的常見）。打 <code>chmod +x arduino-flasher-cli</code> 再試；還不行舉手。</li>
+      <li><code>No such file or directory</code>：視窗 A 不在 <code>~/Downloads</code>，先 <code>cd ~/Downloads</code>。</li>
+      <li>空間不到 12 GB：舉手，不要硬刷（刷到一半空間不夠會失敗）。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：apt 與刷機各換了哪個房間、每個工具做什麼 → <a href="concept.html">互動概念頁</a>的「apt 與刷機」和「工具百科」。</p>
+  <label class="check"><input type="checkbox" data-ck="p2-1">兩個指紋一字不差；<code>Arduino Flasher CLI version 0.5.4</code>；空間 12 GB 以上；權限規則和 <code>qcserial</code> 那四行跑過了。</label>
+</section>
+
+<section class="sec" id="p2-2">
+  <h2>2-2　進 EDL：拔線、短接、插線、拔跳線帽</h2>
+  <p class="goal">目標：<code>lsusb</code> 看到 <code>05c6:9008</code>——板子停在救援通道，等刷機工具來寫。</p>
+  <p class="why">EDL（Emergency Download Mode，緊急下載模式）是晶片內建、比作業系統低一層的救援通道。平常開機，電腦看到的是 <code>2341:0078</code>（Arduino）；進了 EDL，看到的是 <code>05c6:9008</code>（Qualcomm）。進入的方法：<b>斷電時</b>用跳線帽把板上兩根 EDL pin 接在一起，<b>短接著插電</b>。</p>
+  <p class="warn">⚠️ <b>只碰那兩根 EDL pin</b>（下面第 3 步有官方圖）。碰錯成電源腳，可能弄壞板子。不確定位置，先舉手讓老師看一眼再插。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>先看「正常」的樣子（視窗 A）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">lsusb | grep -E '2341:0078|05c6:9008'</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>一行，裡面有 <code>2341:0078</code>（正常開機）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b><b>拔線</b>（板子斷電）。視窗 B 的 SSH 會斷，正常。<span class="dur">多久：馬上</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>板子沒電、視窗 B 回到電腦的提示字元。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>拿老師發的跳線帽，把板上<b>那兩根 EDL pin</b> 接在一起（套上去）。<span class="dur">多久：幾秒</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。依官方圖：<b>POWER 鍵右邊、標 JCTL 的 2×4 黑色排針，最右邊那一直排的上下兩根</b>（圖中橘框）。</p>
+      <figure class="real"><img src="data:image/png;base64,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" width="650" height="413" alt="UNO Q 板子正面：左上 POWER 鍵右邊是標 JCTL 的 2×4 黑色排針，最右邊那一直排的上下兩根用橘框圈起來"><figcaption><b>EDL 腳位</b>：橘框＝要短接的兩根。圖：Arduino 官方文件，CC BY-SA 4.0。</figcaption></figure>
+      <figure class="real"><img src="data:image/jpeg;base64,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" width="585" height="285" alt="放大：POWER 鍵右邊的 JCTL 排針，最右邊一直排的上下兩根在橘框裡"><figcaption><b>放大</b>：同一張圖裁切放大。左邊是 POWER 鍵，下面印 JCTL；跳線帽直直套在<b>橘框那一直排</b>的上下兩根。圖：Arduino 官方文件，CC BY-SA 4.0。</figcaption></figure>
+      <p class="see"><b class="lab see-l">應該看到</b>跳線帽穩穩套在橘框那兩根上，沒碰到旁邊的腳。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b><b>短接著</b>把線插回電腦。<span class="dur">多久：馬上</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>板子通電；這次<b>不會</b>進到平常的心跳畫面。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>插上之後就可以<b>拔掉跳線帽</b>（交給下一組）。板子會停在 EDL，直到下一次「沒短接」的開機。<span class="dur">多久：幾秒</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>跳線帽拿下來了，線還插著。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>確認進了 EDL（視窗 A）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">lsusb | grep -E '2341:0078|05c6:9008'</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>這次是 <code>05c6:9008</code>。還是 <code>2341:0078</code>＝沒進 EDL：拔線，從第 3 步重來。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：進不了 EDL</summary>
+    <ul>
+      <li>還是 <code>2341:0078</code>：插線時沒短接好。拔線 → 套好跳線帽 → 短接著插 → 再看。</li>
+      <li>什麼都沒印：線可能只能充電，或沒插好。換一條資料線、換一個 USB 孔。</li>
+      <li>不確定是哪兩根 pin：對照第 3 步的放大圖；還是不確定就<b>先停手</b>，舉手。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p2-2"><code>lsusb</code> 看到 <code>05c6:9008</code>；跳線帽已經拔下來交出去了。</label>
+</section>
+
+<section class="sec" id="p2-3">
+  <h2>2-3　刷！</h2>
+  <p class="goal">目標：刷機工具把 558 映像寫進板子，跑完說成功。</p>
+  <p class="why">指令吃的是你 <code>~/Downloads</code> 裡的<b>本地映像檔</b>，不從網路下載；<code>--preserve-user</code> 保留 <code>/home/arduino</code>（你的 W6 檔、<code>~/uac2-soundcard/</code> 都會留著）。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>開始刷（視窗 A，在 <code>~/Downloads</code>）。<code>flash</code> 後面的 <code>unoq</code> 是板子名稱，要寫。用本地映像加 <code>--preserve-user</code>，工具<b>不會問確認、直接開刷</b>，不用打 y。<span class="dur">多久：打完馬上開始</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">cd ~/Downloads
+./arduino-flasher-cli flash unoq ~/Downloads/arduino-unoq-debian-image-20260528-558.tar.zst --preserve-user</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>先解開映像（老師機器約 22 秒），然後印 <code>Checking board size and image version. Please connect the board in EDL mode.</code>，找到 EDL 中的板子就開始寫。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>等它寫完。<b>不要拔線、不要碰板子、不要關視窗。</b>等的時候去玩<a href="concept.html">互動概念頁</a>的「apt 與刷機」和「EDL 三動作」，或回答投影片的想一想。<span class="dur">多久：約 3–12 分鐘（老師 10/22 早上在 msi 實測 204 秒；教室電腦會不同）</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <div class="box"><pre class="out" data-src="out">Checking board size and image version. Please connect the board in EDL mode.
+Waiting for EDL device
+waiting for programmer...
+flashed "rootfs" successfully at 21047kB/s
+13 patches applied
+partition 0 is now bootable
+The board has been successfully flashed. You can now power-cycle the board (unplug and re-plug). Remember to remove the jumper.</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>上面這幾行（節錄；中間還有一長串 <code>flashed "…" successfully</code>，32 個小分割區約 15 秒；最久的是 <code>rootfs</code> 那一行，約 2.5 分鐘，速度數字每台不同）。最後一行說刷好了，要你<b>拔線再插回、記得拆跳線帽</b>。<b>看到這一行再做 2-4</b>；中途出錯看下面卡住了。</p></li>
+  </ol>
+  <details><summary>自己的 Windows／Mac 筆電怎麼刷（同一個映像、同一個保留參數）</summary>
+    <p><b>Windows（PowerShell，在解開工具的資料夾）</b>：第一次刷，工具會自動用<b>系統管理員權限</b>裝驅動（會跳出詢問）；沒有管理員權限就裝不了。映像放在你的「下載」資料夾：</p>
+    <div class="box"><pre class="cmd" data-where="Windows" data-src="rewrite:new" data-note="§〇 F 指令（學生版）列 Windows 版 arduino-flasher-cli.exe flash unoq &lt;映像路徑&gt; --preserve-user；映像路徑填「下載」資料夾的完整檔名；PowerShell 執行目前資料夾的程式要加 .\">.\arduino-flasher-cli.exe flash unoq $HOME\Downloads\arduino-unoq-debian-image-20260528-558.tar.zst --preserve-user</pre></div>
+    <p><b>macOS（終端機）</b>：工具和映像都放在「下載」，跟 Linux 同一行（解開用 <code>tar xzf</code> 加 Mac 版的檔名）。⚠️ Mac 上老師沒實跑過：</p>
+    <div class="box"><pre class="cmd" data-where="macOS" data-src="src">./arduino-flasher-cli flash unoq ~/Downloads/arduino-unoq-debian-image-20260528-558.tar.zst --preserve-user</pre></div>
+    <p>進 EDL 的三動作一樣（拔線 → 短接 → 插線 → 拔跳線帽）；Windows／Mac 沒有 <code>lsusb</code>，沒進 EDL 時工具會一直停在 <code>Waiting for EDL device</code>。刷完之後的 adb 指令，Windows 一律改成 <code>&amp; $ADB</code> 開頭（找 adb 的寫法在 W6 學生頁第 1 節的摺疊）。</p>
+  </details>
+  <details><summary>E307 刷不了怎麼辦（備案）</summary>
+    <p>先確認 <a href="#p2-1">2-1</a> 第 6 步那四行跑過（權限規則＋拿掉 <code>qcserial</code>；少了任何一個，工具都會卡在 <code>Waiting for EDL device</code>）。還是不行（空間不夠、工具卡住、不能 <code>sudo</code>），照這個順序：</p>
+    <ol>
+      <li><b>有自己 Windows／macOS 筆電的人</b>：改用自己的筆電刷，同一條指令（上面的摺疊）。Windows 第一次要系統管理員權限裝驅動。</li>
+      <li><b>都不行</b>：老師在講台示範刷一塊，你把每一步看到的記下來；<b>課後老師收板代刷</b>（一樣加 <code>--preserve-user</code>，你的 <code>/home</code> 會保留）。</li>
+      <li><b>第三部分照常做</b>：沒刷成的出廠板也有藍牙。</li>
+    </ol>
+  </details>
+  <details><summary>另一條路：App Lab 內建的 Flash Board（課堂不用）</summary>
+    <p>App Lab 的設定（齒輪）→ Operating system → <b>Flash Board</b>，對話框勾 <b>Preserve user data during the board flashing process</b>，它會引導你進 EDL 並<b>下載最新的映像</b>。今天不用它：最新的映像會一直變，課程要鎖定 558；而且 E307 的 App Lab 有沒有這顆鈕、畫面寫什麼，老師沒驗過。</p>
+  </details>
+  <details class="stuck"><summary>卡住了：一直等、刷到一半斷了</summary>
+    <ul>
+      <li>一直停在 <code>Waiting for EDL device</code>：① 板子沒進 EDL（回 2-2 重來）；② 2-1 第 6 步沒做——Ctrl-C，跑那四行，<b>拔線重進 EDL</b> 再刷；③ 都做了還卡：舉手，走上面的備案。</li>
+      <li>印一句 <code>flashing an image without naming the board is deprecated</code> 開頭的警告：<code>flash</code> 後面漏了 <code>unoq</code>。Ctrl-C，照上面那行重打。</li>
+      <li>刷到一半斷了、出錯：<b>不要慌</b>。換線、換 USB 孔，從 2-2 的拔線、短接那步重來——可以一直重試，EDL 在晶片裡，作業系統刷壞了也進得去。</li>
+      <li>空間不夠的錯誤：舉手，老師告訴你暫存放哪。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p2-3">刷機工具跑完、說成功。</label>
+</section>
+
+<section class="sec" id="p2-4">
+  <h2>2-4　開機、手動佈建五步、SSH 回來</h2>
+  <p class="goal">目標：刷好的板子開機，照<b>五步</b>補回來（①補 SSH ②設密碼 ③W6 七行 ④重開機 ⑤SSH 回來、驗），視窗 B 重新 SSH 進板子。</p>
+  <p class="why">刷機換掉的是 <code>/home</code> 以外的全部。老師 10/22 早上實測，刷完的 558：<b><code>arduino</code> 帳號沒有密碼</b>；<b>SSH 是關的，而且一把主機鑰匙都沒有</b>；<code>/etc</code> 裡 W6 hook 的設定檔和發 IP 的服務不見了，<code>c.1</code> 只剩 <code>acm.GS0</code>、<code>ffs.adb</code>。<code>/home/arduino</code> 全部保留：<code>~/w06-usbnet/</code> 的三個檔、<code>~/uac2-soundcard/</code>、第一部分推的 <code>.deb</code> 都還在。映像預先開了幾條<b>不用密碼</b>的 <code>sudo</code>（產生 SSH 鑰匙、開關 SSH、設密碼），所以先走 <code>adb shell</code> 進板子。下面左邊的圓圈就是五步的編號，跟投影片同一套。</p>
+  <ol class="steps marked">
+    <li data-n="開機"><p class="do"><b class="lab do-l">做什麼</b>工具說 <code>The board has been successfully flashed.</code> 之後：<b>拔線 → 確認跳線帽已經拆掉 → 插回</b>。跳線帽沒拆，板子會再進 EDL、開不了機。<span class="dur">多久：老師板拔插後約 39 秒 adb 就回來</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，等心跳。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>點陣跑到心跳動畫。</p></li>
+    <li data-n="進板"><p class="do"><b class="lab do-l">做什麼</b>視窗 A 確認板子回來，用 adb 直接進板子（刷完 SSH 是關的）。<b>沒上 W6 的人</b>（<code>~/w06-usbnet/</code> 不在），先做下面的摺疊再進板子。<span class="dur">多久：打完馬上回</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">"$ADB" devices -l
+"$ADB" shell</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行列出板子、狀態 <code>device</code>；第二行打完，視窗 A 變成板子裡的提示字元（①～④ 都在這裡打）。</p>
+      <details><summary>沒上 W6 的人：進板子之前，先在電腦把 W6 的三個檔推上去</summary>
+        <p>還在視窗 A、提示字元還是電腦的時候打（W6 學生頁第 2 節同三行）：</p>
+        <div class="box"><pre class="cmd" data-where="電腦" data-src="src">cd ~/Downloads
+curl -fsSL https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-aiot/w06/starter/w06-starter.tar.gz | tar xz
+"$ADB" push w06-starter/w06-usbnet /home/arduino/</pre></div>
+        <p>最後一行印 <code>files pushed</code> 就好，再打上面那兩行進板子。</p>
+      </details></li>
+    <li data-n="①"><p class="do"><b class="lab do-l">做什麼</b><b>① 補 SSH</b>：產生這塊板自己的 SSH 主機鑰匙、設成開機啟動、現在就打開。這三行<b>不用密碼</b>（映像預先允許的）。<span class="dur">多久：第一行老師板約 17 秒，後兩行馬上回</span></p>
+      <div class="box"><pre class="cmd" data-where="板子A" data-src="src">sudo dpkg-reconfigure openssh-server
+sudo systemctl enable ssh
+sudo systemctl start ssh</pre></div>
+      <div class="box"><pre class="out" data-src="out">Creating SSH2 RSA key; this may take some time ...</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行印出上面這句，一共產三把鑰匙（其他兩把印的字類似）；後兩行回到提示字元、沒有紅字。</p></li>
+    <li data-n="②"><p class="do"><b class="lab do-l">做什麼</b><b>② 設密碼</b>：刷完的帳號沒有密碼，不設就不能用一般的 <code>sudo</code>。<b>用你原本那組板子密碼就好</b>（W3、W6 打過的），比較不會忘。這一行也不用密碼。<span class="dur">多久：打完密碼馬上回</span></p>
+      <div class="box"><pre class="cmd" data-where="板子A" data-src="src">sudo /usr/local/bin/arduino-passwd</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b><b>沒有任何提示字</b>，游標停在下一行：直接打新密碼（畫面不會動）、按 Enter，回到提示字元。<b>打錯了</b>：再跑一次同一行，打新的就蓋過去（它不用密碼；⚠️ 重跑老師沒實測）。⚠️ 「設完密碼之後一般的 <code>sudo</code> 就能用」是老師讀這支程式推的，老師課前會用自己的板先跑一次；③ 的 <code>sudo</code> 密碼不對就停手舉手，<b>不要猜</b>。密碼不要貼給 AI。</p></li>
+    <li data-n="③"><p class="do"><b class="lab do-l">做什麼</b><b>③ W6 七行</b>：裝回 W6 的 hook。先核對這塊板的 adbd 跟 W6 驗過的一樣（印 <code>OK</code> 才裝），再打 W6 那七行 <code>sudo</code>（三個檔在 <code>/home</code> 留下來的 <code>~/w06-usbnet/</code>；<code>sudo</code> 打 ② 剛設的密碼）。<span class="dur">多久：打完馬上回</span></p>
+      <div class="box"><pre class="cmd" data-where="板子A" data-src="src">grep -q 'ExecStopPost=/usr/lib/android-sdk/platform-tools/adbd-usb-gadget reset' /usr/lib/systemd/system/adbd.service &amp;&amp; echo OK</pre></div>
+      <div class="box"><pre class="cmd" data-where="板子A" data-src="src">cd ~/w06-usbnet
+sudo install -d -m 755 /home/arduino/usbnet
+sudo install -m 755 ncm-hook.sh /home/arduino/usbnet/ncm-hook.sh
+sudo install -d /etc/systemd/system/adbd.service.d
+sudo install -m 644 10-extra-functions.conf /etc/systemd/system/adbd.service.d/
+sudo install -m 644 usbnet-dhcp.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable usbnet-dhcp</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一框印 <code>OK</code>（沒印就<b>不要裝</b>，舉手）。第二框除了最後一行都不印字；<code>enable</code> 那行會印一句 <code>non-existent unit</code>，跟 W6 一樣，正常。每行在做什麼，見 W6 學生頁第 4 節 ③。</p></li>
+    <li data-n="④"><p class="do"><b class="lab do-l">做什麼</b><b>④ 重開機</b>，讓 hook 跟著 adbd 一起起來。<span class="dur">多久：老師板之後每次重開機 adb 約 29 秒回來；等 30 秒</span></p>
+      <div class="box"><pre class="cmd" data-where="板子A" data-src="src">sudo reboot</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>adb shell 自己斷掉，視窗 A 回到教室電腦的提示字元（不是 <code>arduino@</code> 開頭）。<b>不要再打 <code>exit</code></b>：會把電腦的終端機關掉，<code>$ADB</code> 也跟著沒了。</p></li>
+    <li data-n="⑤"><p class="do"><b class="lab do-l">做什麼</b><b>⑤ SSH 回來</b>（上半）：讓電腦忘掉舊的板子鑰匙（視窗 B，現在是電腦）。① 產生的是<b>新</b>鑰匙，不忘掉舊的一定會跳 <code>WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</code>（老師實測）。<span class="dur">多久：打完馬上回</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦B" data-src="src">ssh-keygen -R "[127.0.0.1]:2222"
+ssh-keygen -R 192.168.7.2</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>各印一兩行說已經更新了 <code>known_hosts</code>；以前沒連過的那個會說找不到，也沒關係。</p></li>
+    <li data-n="⑤"><p class="do"><b class="lab do-l">做什麼</b><b>⑤ SSH 回來</b>（下半）：SSH 回板子（視窗 B），走 USB 網路；回來之後到 2-5 驗收。<span class="dur">多久：打完密碼就進去</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦B" data-src="src">ssh arduino@192.168.7.2</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>先問 <code>Are you sure you want to continue connecting</code>，打完整的 <code>yes</code>、Enter；再打 ② 設的密碼；提示字元變回 <code>arduino@</code> 開頭。連不上（網卡還沒起來）就走 2222：視窗 A <code>"$ADB" forward tcp:2222 tcp:22</code>，視窗 B <code>ssh -p 2222 arduino@127.0.0.1</code>。</p></li>
+  </ol>
+  <details><summary>另一條路：用 App Lab 設密碼</summary>
+    <p>刷完之後 App Lab 第一次連這塊板，會有設定畫面可以設密碼。⚠️ E307 的 App Lab 那個畫面寫什麼，老師沒驗過；課堂上用 ② 那一行就好。</p>
+  </details>
+  <details class="stuck"><summary>卡住了：開不了機、adb 找不到、密碼、SSH 連不上</summary>
+    <ul>
+      <li><code>lsusb</code> 還是 <code>05c6:9008</code>、等不到心跳：跳線帽沒拆。拔線、拆掉跳線帽、插回。</li>
+      <li><code>"$ADB" devices -l</code> 沒有板子：再等一下（老師板約 39 秒）；拔線重插一次；還是沒有，舉手。</li>
+      <li>①、② 的 <code>sudo</code> 竟然問密碼：打錯字了（要跟框裡一模一樣，例如 <code>enable ssh</code> 不能改成別的寫法）。用複製鈕貼上。</li>
+      <li>③ 的 <code>sudo</code> 密碼不對：② 可能沒設成功，再跑一次 ② 那一行重設；還是不對就<b>停手舉手</b>，不要一直猜。</li>
+      <li><code>cd: … w06-usbnet: No such file or directory</code>：沒上 W6，三個檔不在。先 <code>exit</code> 離開 adb shell（<b>只有提示字元還是板子的時候才打</b>），做「進板」那步的摺疊，再回來。</li>
+      <li><code>Connection refused</code>：SSH 還沒打開（回 ①），或 2222 通道沒開。</li>
+      <li><code>WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</code>：⑤ 的 <code>ssh-keygen -R</code> 沒做，或做的是另一個位址。兩行都打一次。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：刷機後哪些回出廠、哪些留著 → <a href="concept.html">互動概念頁</a>「apt 與刷機」按「跳線帽刷機（保留 /home）」。</p>
+  <label class="check"><input type="checkbox" data-ck="p2-4">①補 SSH ②設密碼 ③W6 七行 ④重開機 ⑤SSH 回來（<code>arduino@</code>），五步都做完。</label>
+</section>
+
+<section class="sec" id="p2-5">
+  <h2>2-5　身分證後半、四合一、電腦看到音效卡</h2>
+  <p class="goal">目標：證明系統真的換了——<code>/etc/buildinfo</code> 變 558、核心是 7.0.0、<code>c.1</code> 四個名字、電腦看到音效卡（全部截下來＝<span class="ev">證據 2</span> 的「刷機後」）。</p>
+  <p class="why">跟 1-1 的「刷機前」擺在一起比：apt 只動了核心，<code>buildinfo</code> 沒變；刷機之後連 <code>buildinfo</code> 都換了——整個系統是新的。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>身分證後半（視窗 B）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">cat /etc/buildinfo
+uname -r</pre></div>
+      <div class="box"><pre class="out" data-src="out">BUILD_ID=20260528-558
+7.0.0-g122c2c22d838</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>老師板 10/22 刷完印的就是這兩樣（<code>buildinfo</code> 還有別的行，例如 <code>VARIANT_ID=xfce</code>）。核心不用你裝，558 自己就是 7.0.0。📸 截下來，跟 1-1 那張擺一起。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看家目錄的東西是不是都留著。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="rewrite:new" data-note="§〇 F「刷完之後 /home 以外回出廠」列與 §H「/home/arduino 保留了哪些」列：全部保留">ls ~</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>都還在：<code>uac2-soundcard</code>、<code>usbnet</code>、<code>w06-usbnet</code>、第一部分推的 <code>.deb</code>，還有你以前的 App 資料夾（老師板 10/22 實測全部保留）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看 <code>c.1</code> 有幾個 USB 身分、hook 自己寫的日誌。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">ls /sys/kernel/config/usb_gadget/g1/configs/c.1/
+cat /tmp/ncm-hook.log</pre></div>
+      <div class="box"><pre class="out" data-src="out">acm.GS0 ffs.adb ncm.usb0 uac2.usb0
+[add] ncm 已掛
+[add] uac2 已掛</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b><code>c.1</code> 四個名字：序列埠、adb、網卡、音效卡——一條線四個身分（旁邊幾個設定檔不用管）。日誌每行前面有日期時間，裡面有 <code>[add] ncm 已掛</code>、<code>[add] uac2 已掛</code>（老師板 10/22 刷完、手動佈建後實測）。板子沒連網路時，時鐘會停在映像那天（日期印成 05-28），<b>正常</b>。📸 截下來。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>電腦那頭：列出播放、錄音裝置和 USB 裝置（視窗 A）。視窗 A 的提示字元<b>不是</b> <code>arduino@</code> 開頭＝已經在電腦上：板子重開機時 adb shell 會自己斷、回到電腦。<b>不要打 <code>exit</code></b>——會把電腦的終端機關掉，<code>$ADB</code> 也跟著沒了。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">aplay -l
+arecord -l
+lsusb</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>⚠️ <b>現場為準</b>：預期 <code>aplay -l</code> 和 <code>arecord -l</code> 的清單裡各有一張名字含 <code>UNO Q Audio</code> 的卡。老師只在 Windows 驗過（喇叭、麥克風各一個 <code>UNO Q Audio</code>，網卡 <code>UsbNcm Host Device</code>），Ubuntu 印出來的確切樣子還不知道——<b>你就是第一批驗證的人</b>。看不到也照實截圖、寫「沒看到」，不扣分。📸 <b>這一步加上前三步＝證據 2 的「刷機後」</b>。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：buildinfo 沒變、c.1 少了、電腦看不到</summary>
+    <ul>
+      <li><code>BUILD_ID</code> 還是舊的：刷機沒成功。截圖舉手。</li>
+      <li><code>c.1</code> 只有 <code>acm.GS0 ffs.adb</code>：hook 沒裝回去（刷完本來就是這樣），回 2-4 的 ③。</li>
+      <li><code>c.1</code> 有 <code>ncm.usb0</code> 沒有 <code>uac2.usb0</code>：日誌如果寫 <code>[add] uac2 模組載不進（vermagic？）跳過</code>，看 <code>uname -r</code> 和 <code>ls ~/uac2-soundcard</code>（模組要在那裡）。</li>
+      <li>板子有 <code>uac2.usb0</code>、電腦 <code>aplay -l</code> 沒有：拔線、等心跳、插回再看；還是沒有，照實截圖寫「沒看到」，舉手讓老師記下來。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：四合一怎麼組起來 → <a href="concept.html#s5">概念頁 §5 USB gadget 四合一</a>。</p>
+  <label class="check"><input type="checkbox" data-ck="p2-5">證據 2 存好：刷機前（1-1）和刷機後（<code>buildinfo</code>、<code>uname -r</code>、<code>c.1</code>、電腦那頭）。</label>
+</section>
+
+<div class="part" id="part3"><b>第三部分　16:10–17:00</b><span>藍牙健康手環：板子把板況每秒送到你的手機</span></div>
+
+<section class="sec" id="p3-1">
+  <h2>3-1　推 <code>health_ble.py</code>、讓板子開始喊</h2>
+  <p class="goal">目標：板上印出 <code>advertising as</code> 加上你自己取的名字。</p>
+  <p class="why">板子沒有螢幕，手機就是它的螢幕。今天走藍牙低功耗（BLE）：不用線、不用 IP，手機直接連。板子當<b>周邊</b>（peripheral）：開好服務、一直「喊」——這叫<b>廣播</b>（advertising），像一直發名片；手機當<b>中心</b>（central）：掃描、挑一個連上去。程式是一支 Python，用板上現成的藍牙服務，不用裝套件。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>把程式推上板子（視窗 A，在 <code>~/Downloads</code>；1-2 解開的 starter 裡就有）。<span class="dur">多久：一個小檔，沒單獨量過</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">"$ADB" push w07-starter/health_ble.py /home/arduino/</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>最後一行有 <code>1 file pushed</code>。也可以走 USB 網路：<code>scp w07-starter/health_ble.py arduino@192.168.7.2:</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>取名字：<code>UNOQ-</code>＋組別兩位數＋座位字母，例如 <code>UNOQ-G03A</code>。全班 30 塊板同時喊，名字要分得出誰是誰；最多 12 個英數字。<b>不准用學號、姓名。</b><span class="dur">多久：1 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，寫在紙上。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>你和同組同學的名字都不一樣。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>開始廣播（視窗 B）。<b>把 <code>G03A</code> 換成你的</b>。這個視窗接下來一直讓它跑，不要關。<span class="dur">多久：打完幾秒內印出前三行</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">python3 ~/health_ble.py --name UNOQ-G03A</pre></div>
+      <div class="box"><pre class="out" data-src="out">HH:MM:SS ready. health now: T=… L=… M=… D=… W=… U=… C=…
+GATT application registered (6e400001-b5a3-f393-e0a9-e50e24dcca9e)
+advertising as 'UNOQ-G03A'
+TX  -> 43.2,0.31,38,61,72  (no subscriber)</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>前三行（時間、數字會不同）；之後沒人連的時候每秒一行 <code>TX  -&gt;</code> 加 <code>(no subscriber)</code>（數字是示意）。記下 <code>ready.</code> 那行的 <code>T=</code>（溫度），3-2 要用。老師 10/22 在刷好的 558 上實測：藍牙服務、<code>python3-gi</code>、<code>bluetooth</code> 群組都在，<b>不用 <code>sudo</code>、不用裝套件</b>就跑起來，第一行像 <code>ready. health now: T=48.1 L=2.38 M=13 D=66 W=0 U=65 C=0</code>。刷完 Wi-Fi 設定回到出廠（沒連），所以 <code>W=0</code>，正常。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：跑不起來</summary>
+    <ul>
+      <li><code>Permission denied</code>、<code>AccessDenied</code>：帳號不在 <code>bluetooth</code> 群組（558 老師板是在的；沒刷成的舊板可能不在）。改用 <code>sudo</code> 跑：</li>
+    </ul>
+    <div class="box"><pre class="cmd" data-where="板子" data-src="rewrite:new" data-note="v1 規格 §一「學生板跑不起來」：bluetooth 群組 NG → sudo python3 health_ble.py --name …；路徑照 §〇 G 的 ~/health_ble.py">sudo python3 ~/health_ble.py --name UNOQ-G03A</pre></div>
+    <ul>
+      <li><code>ModuleNotFoundError</code>（提到 <code>gi</code>）或 <code>RegisterApplication failed</code>、<code>RegisterAdvertisement failed</code>：截圖舉手；先跟同組同學併用一塊板，證據照交（標「用同組的板」）。</li>
+      <li><code>No such file or directory</code>：程式沒推上去，回第 1 步。</li>
+    </ul>
+  </details>
+  <p class="deep">想深入：三條路（USB、Wi-Fi、藍牙）、周邊與中心 → <a href="concept.html">互動概念頁</a>的藍牙那幾節。</p>
+  <label class="check"><input type="checkbox" data-ck="p3-1">板上印 <code>advertising as '</code> 加我的名字。</label>
+</section>
+
+<section class="sec" id="p3-2">
+  <h2>3-2　手機找到自己（nRF Connect）</h2>
+  <p class="goal">目標：在 30 個名字裡找到你的板，記下訊號強度，把名片上的 7 個 bytes 手算成溫度。</p>
+  <p class="why">廣播封包（名片）最多只有 31 bytes：名字、服務代碼、再加幾個 bytes 的自訂資料。這支程式在名片裡塞了 <b>廠商資料</b>（Manufacturer Data）：公司代碼 <code>0xFFFF</code>（保留給測試用）＋7 bytes 的板況。App 的按鈕、欄位名稱大概長這樣，<b>以你手機上的為準</b>。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>打開 <b>nRF Connect</b> 的掃描頁，用名字過濾（打 <code>UNOQ-G03</code> 這種你的組別）。<b>不要去手機的「設定 → 藍牙」配對</b>，今天全部在 App 裡掃、連。<span class="dur">多久：幾秒</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>手機上：過濾欄打你的名字開頭。Android 12 以上要允許「附近的裝置」權限；更舊的 Android 要開定位。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>清單裡有你的名字。老師 10/22 用筆電的藍牙代替手機掃 558 的板，8 秒掃到；⚠️ 手機 App 的畫面是 10/15 用 iPhone 測的，Android 版老師沒測過。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>記下 RSSI（手機收到的訊號強度）：貼著板子、1 公尺、3 公尺、手掌包住手機，四個數字。<span class="dur">多久：3 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，抄在紙上。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>負數，<b>越接近 0 越強</b>；離越遠、被手掌包住，數字越小（越負）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>點開你的板，找 <code>0xFFFF</code> 後面那串 7 個 bytes，照下表手算，跟 3-1 板上 <code>ready.</code> 那行的 <code>T=</code> 比。<span class="dur">多久：4 分鐘（落後時改成看老師算一次）</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。順序：<code>[溫度×10 低位, 溫度×10 高位, 負載×10, 記憶體%, 容器數, 開機分鐘 低位, 開機分鐘 高位]</code>，低位在前（小端序）。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>示意（不是實測）：<code>B0 01 03 26 02 7D 00</code> → 溫度 <code>0x01B0</code>＝432 → 43.2 °C、負載 3 → 0.3、記憶體 <code>0x26</code>＝38%、容器 2、開機 <code>0x007D</code>＝125 分。老師 10/22 在 558 上實際掃到的是 <code>db 01 17 0d 00 01 00</code> → 47.5 °C、負載 2.3、記憶體 13%、容器 0、開機 1 分。你算出來的溫度要跟板上的 <code>T=</code> 對得上。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>✋ 先猜：兩分鐘後再掃一次，名片上的溫度會不會變？猜完真的再掃一次。<span class="dur">多久：2 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>⚠️ 老師沒實測（推論不會變：名片是開始廣播那一刻的快照）。不管結果如何，要講得出為什麼。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：掃不到、名字一樣</summary>
+    <ul>
+      <li>掃不到：板上那個視窗還在跑嗎？有沒有印 <code>advertising as</code>？手機藍牙開了嗎？Android 權限給了嗎？</li>
+      <li>兩個一樣的名字：你們組別或座位寫重了。Ctrl-C 停掉，換名字重跑。</li>
+      <li>找不到 <code>0xFFFF</code>：App 畫面跟這頁寫的不一樣，找「Manufacturer」字樣那一欄；還是找不到，看隔壁同學的手機一起算。</li>
+      <li>點開之後看到好幾個服務：<b>正常</b>。558 映像自己還帶了一個 BLE-MIDI 服務（<code>03b80e5a</code> 開頭）和 <code>1800</code>、<code>1801</code>、<code>180A</code> 幾個標準服務；我們的是 <code>6E400001</code> 開頭那個。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p3-2">找到自己；四個 RSSI 記好；手算的溫度跟 <code>T=</code> 對上。</label>
+</section>
+
+<section class="sec" id="p3-3">
+  <h2>3-3　連上、問它（Bluefruit Connect 的 UART）</h2>
+  <p class="goal">目標：手機每秒收到一行板況；打 <code>help</code>、<code>health</code>、<code>apps</code>、<code>ip</code> 板子都會回。</p>
+  <p class="why">廣播是一對全部、單向；<b>連線</b>是一對一、雙向。連上之後手機看到一棵小樹（GATT）：服務下面掛特徵（characteristic）。這支程式用 Nordic UART Service：<b>RX</b>（手機寫進來）、<b>TX</b>（板子<b>通知</b>（notify）出去）——RX／TX 是站在板子看的。通知一包最多 20 bytes，長的切開送。連上之後如果看到好幾個服務是正常的（558 自帶 BLE-MIDI 和幾個標準服務），<b>找 <code>6E400001</code> 開頭那個</b>。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>打開 <b>Bluefruit Connect</b>，在清單裡選你的板、連上，切到 <b>UART</b> 頁。<span class="dur">多久：1 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>手機上點選，不用打字。</p>
+      <div class="box"><pre class="out" data-src="out">phone subscribed (StartNotify)</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>手機 UART 頁每秒一行數字；板上視窗 B 印出上面這一行。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>在 UART 頁打字問板子：<code>help</code>、<code>health</code>、<code>apps</code>、<code>ip</code>，最後試 <code>HELP</code>（大寫）。<span class="dur">多久：3 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>手機 UART 輸入框一次打一個，送出。</p>
+      <div class="box"><pre class="out" data-src="out">RX  &lt;- 'help'</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>每個都有回：<code>health</code> 回一行帶標籤的板況（像 <code>T=43.2 L=0.31 M=38 D=61 W=72 U=7512 C=2</code>，數字是示意）；<code>apps</code> 回正在跑的容器名（剛刷好的板沒在跑 App，回 <code>none</code>）；<code>ip</code> 回板子的 IP（老師板回 <code>192.168.7.2/24 172.17.0.1/16</code>）；<code>HELP</code> 也有回（程式先轉小寫）。板上每打一次印一行 <code>RX  &lt;-</code>。清單以外的字回 <code>unknown: '…' (try help)</code>，不會執行。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：連上了沒數字、打字沒回</summary>
+    <ul>
+      <li>清單裡好幾個服務、不知道選哪個：選 <code>6E400001</code> 開頭那個（Nordic UART Service）；BLE-MIDI 那個是映像自帶的，不用管。</li>
+      <li>連上了但沒有每秒一行：還沒切到 UART 頁（或沒訂閱 TX）；板上沒印 <code>phone subscribed</code> 就是還沒訂閱。</li>
+      <li>回 <code>unknown:</code>：拼錯字，或那個字不在清單裡。先打 <code>help</code> 看清單。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p3-3"><code>help</code>、<code>health</code>、<code>apps</code>、<code>ip</code> 都有回，板上看到 <code>phone subscribed</code>。</label>
+</section>
+
+<section class="sec" id="p3-4">
+  <h2>3-4　Plotter、讓四顆核心一起忙</h2>
+  <p class="goal">目標：手機 Plotter 上看到溫度爬上去、再降下來（截圖＋三個數字＝<span class="ev">證據 3</span>）。</p>
+  <p class="why">板子每秒送一行純數字、逗號分隔：<b>溫度°C、負載、記憶體%、硬碟%、Wi-Fi%</b>（Wi-Fi 是 0–100% 的訊號強度，不是 dBm；刷完 Wi-Fi 沒連，這條線會一直是 0）。Plotter 只認純數字、沒有標籤，所以靠<b>順序</b>認哪條線是誰。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>Bluefruit Connect 切到 <b>Plotter</b>；想只看溫度，回 UART 頁打 <code>plot temp</code>（回 <code>plot order: temp</code>），再切回 Plotter。記下現在的溫度（<b>起點</b>）。<span class="dur">多久：2 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>手機上：UART 頁打 <code>plot temp</code>（想看全部五條打 <code>plot all</code>）。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>五條線（或只剩一條溫度線）一直往右畫。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>再開一個終端機（<b>視窗 C</b>），SSH 進板子。視窗 B 的程式繼續跑，不要動它。<span class="dur">多久：打完密碼就進去</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">ssh arduino@192.168.7.2</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>視窗 C 的提示字元是 <code>arduino@</code> 開頭。連不上（USB 網卡沒起來）就走 2222：先確認視窗 A 打過 <code>"$ADB" forward tcp:2222 tcp:22</code>，視窗 C 改打下面這行。</p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">ssh -p 2222 arduino@127.0.0.1</pre></div></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>讓四顆核心一起忙：開四支 <code>yes</code>（每支一直印 y 到黑洞），看 Plotter <b>3 分鐘</b>，記下<b>最高</b>溫度。<span class="dur">多久：3 分鐘</span></p>
+      <div class="box"><pre class="cmd" data-where="板子C" data-src="src">for i in 1 2 3 4; do yes > /dev/null & done</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>Plotter 上的溫度和負載往上爬。⚠️ 爬多高、爬多快老師沒量過，自己量。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>停掉四支 <code>yes</code>，再看 <b>2 分鐘</b>，記下停掉後 2 分鐘的溫度。<b>一定用 <code>-x</code></b>（只停名字剛好是 <code>yes</code> 的），別用 <code>-f</code>，會連你的 SSH 一起停掉。<span class="dur">多久：2 分鐘</span></p>
+      <div class="box"><pre class="cmd" data-where="板子C" data-src="src">pkill -x yes</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>負載先掉下來，溫度慢慢降。📸 <b>Plotter 截圖＋起點、最高、停掉後 2 分鐘三個數字＝證據 3</b>。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：Plotter 沒線、SSH 斷了</summary>
+    <ul>
+      <li>Plotter 沒有線：要先連上、訂閱（3-3 的 UART 有每秒一行才行）。</li>
+      <li><code>pkill</code> 之後 SSH 也斷了：用了 <code>-f</code>。重新 SSH 進去，用 <code>pkill -x yes</code>。</li>
+      <li>溫度看起來沒變：五條線的第一條才是溫度；或打 <code>plot temp</code> 只留一條。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p3-4">證據 3 存好：Plotter 截圖＋起點、最高、停掉後 2 分鐘三個溫度。</label>
+</section>
+
+<section class="sec" id="p3-5">
+  <h2>3-5　誰都連得上你的板</h2>
+  <p class="goal">目標：講得出為什麼程式只認清單上的字。</p>
+  <p class="why">這支程式的 RX／TX 沒設加密：<b>不用配對、不用密碼</b>，範圍內任何手機都連得上、寫得進來。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>你先在 Bluefruit Connect 按 <b>Disconnect</b>（斷線）；同組同學再用<b>他的</b>手機連<b>你的</b>板、打 <code>apps</code>。<b>輪流</b>，一次一支手機，前一位斷線了下一位才連。<span class="dur">多久：3 分鐘（落後時改成老師口頭講 2 分鐘）</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>同學的手機：UART 頁打 <code>apps</code>。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>他看得到你板子上在跑什麼。⚠️ 第一支手機斷線後第二支連不連得上、幾支手機能同時連，老師都沒測。<b>連不上</b>：在板上視窗 B 按 Ctrl-C，再重跑 3-1 第 3 步那一行，讓它重新開始喊。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>想一想：如果程式把手機傳來的字直接丟給 shell 執行，會怎樣？這支程式怎麼避免？<span class="dur">多久：2 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>（你的答案）程式的 <code>handle_command()</code> 先把字去空白、轉小寫，<b>只跟清單比</b>：比到才回、比不到回 <code>unknown</code>，<b>絕不執行</b>手機傳來的字。老師 10/22 故意送了一串刪檔指令進去，板子只回 <code>unknown: '…' (try help)</code>，什麼都沒執行。</p></li>
+  </ol>
+  <label class="check"><input type="checkbox" data-ck="p3-5">同學連過我的板；我講得出「只認清單」為什麼重要。</label>
+</section>
+
+<section class="sec" id="p3-6">
+  <h2>3-6　收尾、交作業、回家挑戰</h2>
+  <p class="goal">目標：板子關乾淨、三張證據＋一行 <code>RESULT</code> 交上 e學苑。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>再確認一次四支 <code>yes</code> 都停了（視窗 C）。<span class="dur">多久：馬上</span></p>
+      <div class="box"><pre class="cmd" data-where="板子C" data-src="src">pkill -x yes</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>不印字（已經停了也一樣）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>視窗 B 按 <b>Ctrl-C</b> 停掉藍牙程式；手機在 App 裡斷線。<span class="dur">多久：馬上</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>視窗 B 按 Ctrl-C（不用 Shift）。</p>
+      <div class="box"><pre class="out" data-src="out">bye</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>程式收掉廣播和服務，最後印 <code>bye</code>（前面有時間）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>查板子的序號，寫作業那一行（視窗 A）。<span class="dur">多久：打完馬上印</span></p>
+      <div class="box"><pre class="cmd" data-where="電腦" data-src="src">"$ADB" devices -l</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>行首那串英數字就是序號。把它填進下面這一行，貼在 e學苑 作業的文字欄（<b>不是</b>貼在截圖上）：<br><code>RESULT board=&lt;序號&gt; kernel=7.0.0-g122c2c22d838 usb4=OK</code><br><span class="small"><code>usb4=OK</code>＝2-5 的 <code>c.1</code> 有四個名字；不是四個就寫實際看到的，例如 <code>usb4=NO</code>，並說明卡在哪。沒刷成的寫實際的 <code>uname -r</code>。</span></p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>交作業：三張證據＋<code>RESULT</code> 那一行。作業老師上課時在 e學苑 開。<span class="dur">多久：5 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打，上傳截圖、貼那一行。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>證據 1（apt 前後）、證據 2（刷機前後）、證據 3（Plotter）都在。</p></li>
+  </ol>
+  <h3>回家挑戰：替板子多教一個指令 <code>freq</code></h3>
+  <p>目標：手機打 <code>freq</code>，板子回第 0 顆核心現在跑多快，例如 <code>cpu0 … MHz</code>。</p>
+  <ul>
+    <li>在哪改：<code>health_ble.py</code> 的 <code>handle_command()</code>，加在 <code>if cmd == "help":</code> 前面；<code>help</code> 回的那串也要加上 <code>freq</code>。</li>
+    <li>數字從哪來：<code>/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq</code>，單位 kHz（⚠️ 這個檔老師沒在板上讀過，先自己 <code>cat</code> 一次看看）。</li>
+    <li>改完：存檔 → 視窗 B Ctrl-C → 重跑 3-1 第 3 步 → 手機打 <code>freq</code>。</li>
+    <li>可以請 AI 幫忙，給它目標就好；它寫完你要核對三件事：① 沒有用 <code>os.system</code> 或 <code>subprocess</code> 去執行手機傳來的字；② <code>help</code> 有更新；③ 手機實際打 <code>freq</code> 有回。</li>
+  </ul>
+  <h3>收尾</h3>
+  <ul>
+    <li><b>板子現在是課程映像 558、核心 7.0.0</b>：W12 的音效卡就靠它。音效卡和網卡也留著，插電就有。</li>
+    <li>板子上那個 34 MB 的 <code>.deb</code> 已經用不到，想清掉可以在板子刪：<code>rm ~/linux-image-7.0.0-g122c2c22d838_7.0.0-g122c2c22d838-1_arm64.deb</code>（不刪也沒關係）。<code>~/uac2-soundcard/</code> 要留著。</li>
+    <li>電腦 <code>~/Downloads</code> 裡的 2.1 GB 映像可以刪掉（教室電腦空間大家共用）。</li>
+    <li>下週 W8 期中整理、W9 展示，老師會說明。</li>
+  </ul>
+  <label class="check"><input type="checkbox" data-ck="p3-6">看到 <code>bye</code>；三張證據＋<code>RESULT</code> 那一行交上 e學苑。</label>
+</section>
+
+<section class="sec" id="faq">
+  <h2>卡關總表（可以搜尋）</h2>
+  <p class="why">先把<b>整段錯誤訊息</b>複製下來，貼進搜尋框找；表上找不到，就把完整錯誤訊息貼給 AI agent（板子密碼不要貼），再不行舉手叫老師。</p>
+  <input type="search" class="search" id="q" placeholder="貼上錯誤訊息或關鍵字，例如 lock、EDL、c.1、unknown" aria-label="搜尋卡關對照">
+  <p class="nomatch" id="nomatch">表上沒有這一條：把完整錯誤訊息貼給 AI agent（板子密碼不要貼），或舉手叫老師。</p>
+  <div class="tw"><table id="faq-table">
+    <tr><th>看到什麼</th><th>先做這個</th></tr>
+    <tr><td><code>bash: : command not found</code></td><td><code>$ADB</code> 是空的：這個視窗沒跑過第 0 節找 adb 那段，重跑一次。</td></tr>
+    <tr><td><code>Connection refused</code>（<code>ssh</code>）</td><td>2222 通道沒開（重開機之後都要重開）：回<b>視窗 A</b> 打 <code>"$ADB" forward tcp:2222 tcp:22</code>。刷機之後：SSH 是關的、也沒有鑰匙，走 2-4 的「進板」和 ①（<code>"$ADB" shell</code> → <code>sudo dpkg-reconfigure openssh-server</code>、<code>sudo systemctl enable ssh</code>、<code>sudo systemctl start ssh</code>）。</td></tr>
+    <tr><td><code>WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</code></td><td>這台電腦記著舊鑰匙（換板、刷機都會）：<code>ssh-keygen -R "[127.0.0.1]:2222"</code>、<code>ssh-keygen -R 192.168.7.2</code>，再連一次。</td></tr>
+    <tr><td><code>sudo</code> 一直說密碼錯</td><td>要打<b>板子</b>的密碼，不是教室電腦的。刷機之後帳號<b>沒有密碼</b>：先做 2-4 的 ② <code>sudo /usr/local/bin/arduino-passwd</code> 設好（打錯可以再跑一次蓋過去）；還不對就停手舉手，不要一直猜。忘了問老師，不要貼給 AI。</td></tr>
+    <tr><td><code>curl:</code> 開頭的錯誤</td><td>教室網路可能擋住了。舉手，老師有區網和隨身碟備份（starter、核心套件、刷機工具、映像都有）。</td></tr>
+    <tr><td><code>sha256sum</code> 的指紋對不上（sha 不合）</td><td><b>不要用</b>。刪掉檔案重抓；還是不合，用老師隨身碟那份。</td></tr>
+    <tr><td><code>push</code> 說 <code>more than one device</code></td><td>拔掉手機或別人的板子，再推一次。</td></tr>
+    <tr><td><code>push</code> 說 <code>No such file or directory</code></td><td>視窗 A 不在 <code>~/Downloads</code>：先 <code>cd ~/Downloads</code>。</td></tr>
+    <tr><td><code>dpkg: error: dpkg frontend lock</code></td><td>板子上有別的 apt 正在跑：等上一個 apt 跑完再裝，不要強制刪鎖。</td></tr>
+    <tr><td><code>W: Possible missing firmware …</code> 一直跳</td><td>正常，會有 8 行（別家板子的驅動），等它跑完。</td></tr>
+    <tr><td><code>dpkg -i</code> 印紅字、沒看到 <code>Installing kernel version</code></td><td><b>不要重開機</b>，整段截圖舉手。</td></tr>
+    <tr><td>裝完 <code>uname -r</code> 還是 <code>6.16.7-…</code></td><td>正常——還沒重開機。裝了≠開機在用，做 1-4 第 4 步。</td></tr>
+    <tr><td>重開機 60 秒沒回來（<code>devices -l</code> 列不出板子）</td><td>拔線、重插一次，再等；還是沒有，舉手。</td></tr>
+    <tr><td><code>insmod</code> 說 <code>Invalid module format</code></td><td>看 <code>uname -r</code>：你還在舊核心。1-2 本來就該被拒；1-5 還被拒，回 1-4。</td></tr>
+    <tr><td><code>insmod</code> 說模組已經在了</td><td>W6 的 hook 開機時已經替你載好：<code>lsmod</code> 有兩行就好。</td></tr>
+    <tr><td><code>modinfo</code> 找不到檔</td><td>模組沒推到 <code>/home/arduino/uac2-soundcard/</code>：回 1-2 第 2 步。</td></tr>
+    <tr><td><code>dpkg -r</code> 之後還是 <code>7.0.0-…</code></td><td>有沒有重開機？<code>ls /boot/efi/loader/entries/</code> 截給老師看。</td></tr>
+    <tr><td><code>./arduino-flasher-cli</code> 說 <code>Permission denied</code></td><td>沒有執行權限：<code>chmod +x arduino-flasher-cli</code> 再試。</td></tr>
+    <tr><td>家目錄空間不到 12 GB</td><td>舉手，不要硬刷；老師告訴你暫存放哪（<code>--temp-dir</code>）。</td></tr>
+    <tr><td><code>lsusb</code> 還是 <code>2341:0078</code>（沒進 EDL）</td><td>拔線 → 跳線帽短接那兩根 pin → <b>短接著</b>插線 → 拔跳線帽 → 再看（2-2）。</td></tr>
+    <tr><td><code>Waiting for EDL device</code></td><td>板子沒進 EDL（回 2-2），或教室電腦還沒做 2-1 第 6 步（權限規則＋拿掉 <code>qcserial</code>）：做完拔線重進 EDL 再刷；還不行舉手，走 2-3 的備案。</td></tr>
+    <tr><td>刷到一半斷了、出錯</td><td>換線、換孔，從 2-2 拔線、短接重來；可以一直重試。</td></tr>
+    <tr><td>刷完開不了機，<code>lsusb</code> 是 <code>05c6:9008</code></td><td>跳線帽沒拆：拔線、拆掉跳線帽、插回。</td></tr>
+    <tr><td>刷完 <code>BUILD_ID</code> 沒變</td><td>刷機沒成功：截圖舉手。</td></tr>
+    <tr><td>刷完 <code>sudo</code> 問密碼、怎麼打都不對</td><td>刷完帳號沒有密碼，要先做 2-4 的 ② <code>sudo /usr/local/bin/arduino-passwd</code> 設一組（用你原本的板子密碼；打錯再跑一次蓋過去）。</td></tr>
+    <tr><td>連上藍牙看到好幾個服務（BLE-MIDI、<code>1800</code>、<code>1801</code>、<code>180A</code>）</td><td>正常，558 映像自帶的。找 <code>6E400001</code> 開頭那個。</td></tr>
+    <tr><td><code>c.1</code> 只有 <code>acm.GS0 ffs.adb</code></td><td>hook 沒裝回去：2-4 的 ③ W6 七行（沒上 W6 的先做 2-4「進板」那步的摺疊，抓 W6 的三個檔）。</td></tr>
+    <tr><td>日誌寫 <code>[add] uac2 模組載不進（vermagic？）跳過</code></td><td>核心不是 7.0.0，或模組不在 <code>~/uac2-soundcard/</code>。看 <code>uname -r</code>、<code>ls ~/uac2-soundcard</code>。（1-6 退回之後看到這句是<b>正常</b>的。）</td></tr>
+    <tr><td>電腦 <code>aplay -l</code> 看不到 <code>UNO Q Audio</code></td><td>先確認板上 <code>c.1</code> 有 <code>uac2.usb0</code>；有的話拔線重插再看。Ubuntu 這邊老師還沒驗過，照實截圖寫「沒看到」。</td></tr>
+    <tr><td><code>Permission denied</code>、<code>AccessDenied</code>（跑 <code>health_ble.py</code>）</td><td>不在 <code>bluetooth</code> 群組：改 <code>sudo python3 ~/health_ble.py --name …</code>。</td></tr>
+    <tr><td><code>ModuleNotFoundError</code>（<code>gi</code>）、<code>RegisterApplication failed</code>、<code>RegisterAdvertisement failed</code></td><td>截圖舉手；先跟同組同學併用一塊板，證據照交（標「用同組的板」）。</td></tr>
+    <tr><td>手機掃不到我的板</td><td>板上有沒有 <code>advertising as</code>？藍牙開了嗎？Android 要允許「附近的裝置」（舊版開定位）。<b>不要去手機設定頁配對。</b></td></tr>
+    <tr><td>掃到兩個一樣的名字</td><td>名字撞了：Ctrl-C，換名字重跑。</td></tr>
+    <tr><td>連上了沒有每秒一行</td><td>還沒切到 UART 頁／沒訂閱 TX；板上要印 <code>phone subscribed</code>。</td></tr>
+    <tr><td>手機回 <code>unknown:</code></td><td>那個字不在清單裡：打 <code>help</code> 看清單。</td></tr>
+    <tr><td>Plotter 沒線</td><td>要先連上、訂閱；Plotter 只畫純數字。</td></tr>
+    <tr><td><code>pkill</code> 之後 SSH 斷了</td><td>用了 <code>-f</code>：重新 SSH，改用 <code>pkill -x yes</code>。</td></tr>
+    <tr><td>改完程式沒變（回家挑戰）</td><td>要 Ctrl-C 再重跑；<code>IndentationError</code> 是縮排沒對齊。</td></tr>
+    <tr><td>AI 叫你換別的刷法、加別的參數、改開機設定、短路別的腳</td><td><b>先給老師看。</b>今天的刷機只照 2-2、2-3。</td></tr>
+  </table></div>
+  <h3>問 AI 可以，但照這三條</h3>
+  <ol>
+    <li><b>把事實給足</b>：你打的完整指令、原本預期看到什麼、實際看到的完整錯誤原文、<code>uname -r</code> 和 <code>cat /etc/buildinfo</code> 的結果。</li>
+    <li><b>板子密碼不給 AI。</b>貼 log 之前看一眼。</li>
+    <li><b>AI 叫你換刷法、改 <code>/boot</code>、改開機設定、碰板子別的腳，先給老師看。</b></li>
+  </ol>
+</section>
+
+<section class="sec" id="basics">
+  <h2>基礎知識補給站：看不懂某個詞，來這裡查</h2>
+  <p class="why">做步驟的時候不用先讀完這一節。做到一半想知道「這到底在做什麼」，再跳去<a href="concept.html">互動概念頁</a>——每一節都可以點、可以玩，數字都標了出處。</p>
+
+  <h3>核心與模組</h3>
+  <p><b>核心（kernel）</b>是作業系統最底層的那支程式：管 CPU、記憶體、USB、網路。<code>uname -r</code> 印的是「現在正在跑的」核心版本。<b>核心模組（kernel module）</b>是可以隨時插上去的零件，一個 <code>.ko</code> 檔，例如今天的 <code>u_audio.ko</code>、<code>usb_f_uac2.ko</code>。每個模組身上蓋著一個章，叫 <b>vermagic</b>，寫它只配哪一版核心；章跟 <code>uname -r</code> 開頭對不上，<code>insmod</code> 就不收。→ <a href="concept.html#s1">概念頁 §1</a></p>
+
+  <h3>套件與 SHA256</h3>
+  <p><b>套件（package）</b>＝一個 <code>.deb</code> 檔，裡面是要裝的檔案＋「裝好之後要做什麼」的小程式。<code>apt</code> 會自己去套件庫抓、順便把相依（Depends）的套件一起裝；今天我們用 <code>dpkg -i</code> 直接裝一個抓好的 <code>.deb</code>、<code>dpkg -r</code> 移除它。<b>SHA256</b> 是檔案的指紋：檔案差一個位元組，指紋就完全不同，所以比對指紋＝確認拿到的就是官方那一份。→ <a href="concept.html#s2">概念頁 §2</a></p>
+
+  <h3>分割區與開機鏈</h3>
+  <p>板子的儲存空間切成好幾個<b>分割區（partition）</b>，今天有關的三間：<code>/boot/efi</code>（開機用的核心與開機項，488 MB）、<code>/</code>（系統與 <code>/lib/modules</code>，9.8 GB）、<code>/home/arduino</code>（你的檔）。通電之後：韌體 U-Boot → <b>開機載入器（boot loader）</b>systemd-boot → 讀 <code>/boot/efi/loader/entries/</code> 裡的開機項 → 載入核心和 <b>initrd</b>（開機用的小檔案系統，initramfs）。開機項有兩個時，選版本最高的那個。→ <a href="concept.html#s3">概念頁 §3</a></p>
+
+  <h3>apt 與刷機：換一個零件 vs 換整個系統</h3>
+  <p>apt（<code>dpkg</code>）只換核心這個套件，其他照舊、退得回來；<b>刷機</b>把整個<b>映像（image）</b>寫進板子，<code>/boot/efi</code> 和 <code>/</code> 整個換成映像的樣子，只有加了 <code>--preserve-user</code> 的 <code>/home/arduino</code> 留下。所以刷完之後 <code>/etc</code> 裡的東西（SSH 開機啟用、W6 hook 的設定、Wi-Fi）都要重新設定——這就是 2-4 的「手動佈建」。課程映像鎖定 <code>20260528-558</code>，全班刷出來才一樣。</p>
+
+  <h3>EDL 與跳線帽</h3>
+  <p><b>EDL</b>（緊急下載模式）是晶片內建、比作業系統低一層的救援通道：斷電時用<b>跳線帽</b>短接兩根 EDL pin、短接著插電，板子就停在 EDL，電腦看到 <code>05c6:9008</code>（平常是 <code>2341:0078</code>）。作業系統刷壞了也進得去，所以刷機可以一直重試。Linux 電腦要有一條權限規則（<b>udev</b>）讓一般使用者碰得到 <code>05c6</code> 這個裝置；少了它，刷機工具會一直停在 <code>Waiting for EDL device</code>。</p>
+
+  <h3>USB gadget 四合一</h3>
+  <p>板子接到電腦時，是「被插的那一方」，可以同時對電腦報好幾個身分——這叫 <b>USB gadget</b>。設定放在 <code>/sys/kernel/config/usb_gadget/g1/</code>，<code>configs/c.1/</code> 底下一個名字＝一個身分：<code>acm.GS0</code>（序列埠）、<code>ffs.adb</code>（adb）、<code>ncm.usb0</code>（W6 的網卡）、<code>uac2.usb0</code>（今天的音效卡）。W6 的 hook 跟著 adbd 一起起來，負責把後兩個掛上去。→ <a href="concept.html#s5">概念頁 §5</a></p>
+
+  <h3>藍牙低功耗（BLE）</h3>
+  <p>板子當<b>周邊</b>（peripheral）一直<b>廣播</b>（advertising）名片，名片最多 31 bytes；手機當<b>中心</b>（central）掃描、連上。連上之後看到 <b>GATT</b> 這棵小樹：服務下面掛<b>特徵</b>（characteristic），每個都有自己的 <b>UUID</b>。板子有新資料就主動<b>通知</b>（notify），一包最多 20 bytes。<b>RSSI</b> 是手機收到的訊號強度，負數，越接近 0 越強。程式在板子上透過 D-Bus（Linux 裡程式之間傳話的匯流排）請 BlueZ（Linux 的藍牙服務）幫它廣播。</p>
+
+  <h3>今天新出現的指令（W3–W6 教過的 cd、ls、cat、grep、sudo、ssh、adb push 不再列）</h3>
+  <div class="tw"><table class="files">
+    <tr><th>指令</th><th>做什麼</th><th>在哪一節</th></tr>
+    <tr><td><code>uname -r</code></td><td>印出現在正在跑的核心版本</td><td>1-1、1-4、1-6、2-5</td></tr>
+    <tr><td><code>cat /etc/buildinfo</code></td><td>看板子的映像是哪一天、哪一版做的</td><td>1-1、2-5</td></tr>
+    <tr><td><code>dpkg -l</code></td><td>列出板子裝了哪些套件</td><td>1-1</td></tr>
+    <tr><td><code>df -h 資料夾</code></td><td>那個資料夾所在的分割區有多大、還剩多少（<code>-h</code> 用 MB、GB 顯示）</td><td>1-1、2-1</td></tr>
+    <tr><td><code>modinfo -F vermagic 檔.ko</code></td><td>讀模組身上的章（只印 vermagic 那一欄）</td><td>1-2、1-5</td></tr>
+    <tr><td><code>sudo insmod 檔.ko</code>、<code>lsmod</code></td><td>把一個模組檔載進核心；列出已載入的模組</td><td>1-2、1-5</td></tr>
+    <tr><td><code>dmesg | tail</code></td><td>看核心日誌的最後幾行</td><td>1-2、1-5</td></tr>
+    <tr><td><code>curl -LO 網址</code></td><td>下載一個檔，用網址最後那段當檔名（<code>-L</code> 跟著轉址、<code>-O</code> 存成檔）</td><td>1-3、2-1</td></tr>
+    <tr><td><code>sha256sum 檔</code></td><td>算檔案的指紋</td><td>1-3、2-1</td></tr>
+    <tr><td><code>sudo dpkg -i 檔.deb</code>／<code>sudo dpkg -r 套件名</code></td><td>裝一個 <code>.deb</code>／移除一個套件</td><td>1-4、1-6</td></tr>
+    <tr><td><code>sudo reboot</code>、<code>cat /proc/cmdline</code></td><td>重開機；看這次開機時開機鏈交給核心的參數</td><td>1-4、1-6、2-4</td></tr>
+    <tr><td><code>systemctl is-system-running</code>、<code>systemctl --failed</code></td><td>系統整體狀態；列出掛掉的服務</td><td>1-4</td></tr>
+    <tr><td><code>tar xzf 檔.tar.gz</code></td><td>解開一個壓縮包</td><td>2-1</td></tr>
+    <tr><td><code>arduino-flasher-cli</code> 的 <code>version</code>／<code>list</code>／<code>flash</code></td><td>刷機工具：印自己的版本／列出有哪些映像版本／把映像寫進 EDL 中的板子</td><td>2-1、2-3</td></tr>
+    <tr><td><code>lsusb</code></td><td>列出電腦看到的 USB 裝置（廠商代碼:產品代碼）</td><td>2-2、2-5</td></tr>
+    <tr><td><code>"$ADB" shell</code></td><td>不用 SSH，直接走 adb 進板子打指令</td><td>2-4</td></tr>
+    <tr><td><code>sudo dpkg-reconfigure openssh-server</code></td><td>重新設定 SSH 伺服器；刷完用它產生這塊板自己的主機鑰匙</td><td>2-4</td></tr>
+    <tr><td><code>sudo systemctl enable ssh</code>、<code>sudo systemctl start ssh</code></td><td>設成開機自動啟動 SSH；現在就啟動 SSH</td><td>2-4</td></tr>
+    <tr><td><code>sudo /usr/local/bin/arduino-passwd</code></td><td>558 映像附的設密碼小程式：沒有提示字，直接打新密碼、Enter</td><td>2-4</td></tr>
+    <tr><td><code>ssh-keygen -R 位址</code></td><td>讓電腦忘掉某個位址的舊鑰匙</td><td>2-4</td></tr>
+    <tr><td><code>aplay -l</code>、<code>arecord -l</code></td><td>列出電腦的播放裝置、錄音裝置</td><td>2-5</td></tr>
+    <tr><td><code>python3 檔.py</code></td><td>用 Python 跑一支程式；Ctrl-C 停</td><td>3-1</td></tr>
+    <tr><td><code>yes &gt; /dev/null &amp;</code>、<code>pkill -x yes</code></td><td>開一支一直忙的程式丟到背景；只停名字剛好是 <code>yes</code> 的程式</td><td>3-4</td></tr>
+  </table></div>
+</section>
+
+<section class="sec" id="terms">
+  <h2>名詞小抄</h2>
+  <div class="tw"><table>
+    <tr><th>名詞</th><th>英文</th><th>一句話</th></tr>
+    <tr><td>核心</td><td>kernel</td><td>作業系統最底層的程式；<code>uname -r</code> 印它的版本</td></tr>
+    <tr><td>核心模組</td><td>kernel module</td><td>可以隨時載入的零件，一個 <code>.ko</code> 檔；<code>lsmod</code> 看載了哪些</td></tr>
+    <tr><td>vermagic</td><td>—</td><td>模組上的核心版本印記；跟核心對不上就載不進</td></tr>
+    <tr><td>套件、套件庫</td><td>package</td><td>一個 <code>.deb</code> 就是一個套件；官方套件庫是 <code>apt-repo.arduino.cc</code></td></tr>
+    <tr><td>分割區</td><td>partition</td><td>儲存空間切出來的一塊；刷機換掉 <code>/boot/efi</code> 和 <code>/</code>，保留 <code>/home/arduino</code></td></tr>
+    <tr><td>initrd</td><td>initramfs</td><td>開機時先用的小檔案系統；裝核心時自動做一個</td></tr>
+    <tr><td>開機載入器</td><td>boot loader</td><td>U-Boot → systemd-boot → 開機項：決定開哪一顆核心</td></tr>
+    <tr><td>映像</td><td>image</td><td>整個系統打包成的一個檔；今天是 <code>20260528-558</code></td></tr>
+    <tr><td>緊急下載模式</td><td>EDL</td><td>晶片內建的救援通道；跳線帽短接著插電進入，電腦看到 <code>05c6:9008</code></td></tr>
+    <tr><td>裝置權限規則</td><td>udev</td><td>Linux 決定「誰能碰哪個 USB 裝置」的規則；刷機要 <code>05c6</code> 那條，還要把搶走 EDL 板子的 <code>qcserial</code> 驅動拿掉（2-1 第 6 步）</td></tr>
+    <tr><td>保留使用者資料</td><td>--preserve-user</td><td>刷機時不動 <code>/home/arduino</code></td></tr>
+    <tr><td>主機鑰匙</td><td>host key</td><td>板子的 SSH 身分證；刷機後換了，電腦要 <code>ssh-keygen -R</code> 忘掉舊的</td></tr>
+    <tr><td>USB gadget</td><td>—</td><td>板子扮演的 USB 身分；四合一＝序列埠、adb、網卡、音效卡</td></tr>
+    <tr><td>藍牙低功耗</td><td>BLE</td><td>不用線、不用 IP，手機直接連；今天板子當周邊、手機當中心</td></tr>
+    <tr><td>廣播</td><td>advertising</td><td>一直發名片，最多 31 bytes，範圍內誰都收得到</td></tr>
+    <tr><td>周邊／中心</td><td>peripheral／central</td><td>等人來連的一方／去掃描、連上的一方</td></tr>
+    <tr><td>GATT、特徵</td><td>characteristic</td><td>連上後看到的小樹：服務下面掛特徵，例如 RX、TX</td></tr>
+    <tr><td>通知</td><td>notify</td><td>板子有新資料就主動推，一包最多 20 bytes</td></tr>
+    <tr><td>UUID</td><td>—</td><td>服務和特徵的代碼；今天的服務是 Nordic UART Service</td></tr>
+    <tr><td>訊號強度</td><td>RSSI</td><td>手機收到的訊號強度，負數，越接近 0 越強</td></tr>
+  </table></div>
+  <p class="small">adb、SSH、sudo、容器是前幾週的詞。</p>
+</section>
+
+<footer>國立東華大學　AIoT 智慧裝置實作（115-1）　W7 學生步驟（完整版）。這一頁沒有接 AI、不收集任何資料，離線打得開；勾選進度只存在你這台電腦的瀏覽器。板子密碼、板子序號、Wi-Fi 本頁都不印；<code>192.168.7.x</code> 是 USB 線上的私人網段，每塊板都一樣。</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  // 複製鈕：只複製指令本身（框上方的「在電腦／在板子」是 CSS 畫的，不會被複製）
+  var pres = document.querySelectorAll("pre.cmd");
+  for (var i = 0; i < pres.length; i++) {
+    (function(pre){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "copy"; b.textContent = "複製";
+      b.addEventListener("click", function(){
+        var t = pre.textContent;
+        function done(ok){ b.textContent = ok ? "已複製" : "請手動選取"; setTimeout(function(){ b.textContent = "複製"; }, 1500); }
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(t).then(function(){ done(true); }, function(){ done(fallback(t)); });
+        } else { done(fallback(t)); }
+      });
+      pre.parentNode.appendChild(b);
+    })(pres[i]);
+  }
+  function fallback(t){
+    try {
+      var ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.top = "-1000px"; document.body.appendChild(ta);
+      ta.select(); var ok = document.execCommand("copy"); document.body.removeChild(ta); return ok;
+    } catch (e) { return false; }
+  }
+
+  // 進度：勾選框存在這台電腦的瀏覽器（存不了也照常運作）
+  var KEY = "w07-aiot-progress-v3";
+  var boxes = document.querySelectorAll("input[data-ck]");
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function paint(){
+    var n = 0;
+    for (var i = 0; i < boxes.length; i++) {
+      var on = !!state[boxes[i].getAttribute("data-ck")];
+      boxes[i].checked = on; boxes[i].parentNode.classList.toggle("done", on); if (on) n++;
+    }
+    document.getElementById("plbl").textContent = "完成 " + n + "／" + boxes.length;
+    document.getElementById("pbar").style.width = (boxes.length ? (100 * n / boxes.length) : 0) + "%";
+  }
+  for (var j = 0; j < boxes.length; j++) {
+    boxes[j].addEventListener("change", function(){ state[this.getAttribute("data-ck")] = this.checked; save(); paint(); });
+  }
+  document.getElementById("preset").addEventListener("click", function(){ state = {}; save(); paint(); });
+  paint();
+
+  // 卡關搜尋
+  var q = document.getElementById("q"), rows = document.querySelectorAll("#faq-table tr"), nm = document.getElementById("nomatch");
+  q.addEventListener("input", function(){
+    var v = q.value.trim().toLowerCase(), shown = 0;
+    for (var k = 1; k < rows.length; k++) {
+      var txt = rows[k].textContent.toLowerCase();
+      var hit = !v || txt.indexOf(v) >= 0 || v.split(/\s+/).filter(function(w){ return w.length > 2; }).some(function(w){ return txt.indexOf(w) >= 0; });
+      rows[k].style.display = hit ? "" : "none"; if (hit) shown++;
+    }
+    nm.style.display = (v && !shown) ? "block" : "none";
+  });
+})();
+</script>
+</body>
+</html>

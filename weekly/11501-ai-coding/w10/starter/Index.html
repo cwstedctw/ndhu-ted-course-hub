@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="zh-Hant" data-mode="<?= 'cloud' ?>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>哪一關想看老師再做一次？</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: system-ui, sans-serif;
+      background: #f4f7f3;
+      color: #1b2c29;
+      line-height: 1.6;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { width: min(100% - 2rem, 38rem); margin: 2rem auto; }
+    h1 { margin: .3rem 0; font-size: clamp(1.75rem, 6vw, 2.5rem); line-height: 1.2; }
+    h2, legend { font-size: 1.15rem; font-weight: 700; }
+    p { margin: .65rem 0; }
+    .mode {
+      display: inline-block;
+      padding: .15rem .65rem;
+      border: 1px solid #b2cec4;
+      border-radius: 1rem;
+      background: #e0f2ea;
+      color: #145747;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+    .card {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: white;
+      border: 1px solid #ccd8d3;
+      border-radius: 1rem;
+    }
+    fieldset { margin: 0 0 1rem; border: 0; padding: 0; min-width: 0; }
+    legend { padding: 0; margin-bottom: .4rem; }
+    label {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      min-height: 48px;
+      margin-top: .5rem;
+      padding: .55rem .75rem;
+      background: #f3f8f5;
+      border: 1px solid #ccd8d3;
+      border-radius: .6rem;
+      cursor: pointer;
+    }
+    input[type="radio"] { flex: none; margin: 0; accent-color: #0c6255; }
+    button {
+      min-height: 44px;
+      padding: .45rem .9rem;
+      border: 1px solid #0c6255;
+      border-radius: .55rem;
+      background: #0c6255;
+      color: white;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+    button.secondary { background: white; color: #0c6255; }
+    button:disabled { opacity: .65; cursor: default; }
+    :focus-visible { outline: 3px solid #955500; outline-offset: 3px; }
+    .results-heading {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+    }
+    .results-heading h2 { margin: 0; }
+    ul { padding: 0; margin: .5rem 0 0; list-style: none; }
+    li {
+      display: flex;
+      justify-content: space-between;
+      gap: .75rem;
+      border-top: 1px solid #dbe5df;
+      padding: .55rem 0;
+    }
+    li strong { white-space: nowrap; }
+    #status { min-height: 1.6em; color: #304e47; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <span class="mode" id="mode-label">載入中</span>
+      <h1 id="board-title">哪一關想看老師再做一次？</h1>
+      <p id="mode-description"></p>
+      <p>場次 <strong id="round">載入中</strong></p>
+    </header>
+
+    <form class="card" id="vote-form">
+      <fieldset id="vote-options" disabled>
+        <legend>選一個想再看一次的步驟</legend>
+        <div id="choices"></div>
+      </fieldset>
+      <button type="submit" id="submit-vote" disabled>送出一票</button>
+    </form>
+
+    <section class="card" aria-labelledby="results-title">
+      <div class="results-heading">
+        <h2 id="results-title">目前票數</h2>
+        <button type="button" class="secondary" id="refresh-votes" disabled>更新票數</button>
+      </div>
+      <ul id="results" role="list"></ul>
+    </section>
+    <p id="status" role="status" aria-live="polite" aria-atomic="true">載入投票板中。</p>
+    <noscript>請啟用 JavaScript，才能讀取選項和送出投票。</noscript>
+  </main>
+  <script>
+    const isCloud = document.documentElement.dataset.mode === 'cloud';
+    // 只供直接開啟 HTML 時預覽。雲端選項一律從 Code.gs 讀取。
+    const previewBoard = {
+      round: 'W10-1',
+      title: '哪一關想看老師再做一次？',
+      options: [
+        { id: 'deploy', label: '找不到部署按鈕' },
+        { id: 'sheet', label: '送出後試算表沒新增一筆' },
+        { id: 'phone', label: '同學的手機打不開' },
+      ],
+    };
+    const storageKey = 'w10-help-board-preview:' + previewBoard.round;
+    let previewCounts = {};
+    let canUseStorage = true;
+    let currentRound = '';
+    let busy = false;
+    const form = document.getElementById('vote-form');
+    const fieldset = document.getElementById('vote-options');
+    const choices = document.getElementById('choices');
+    const results = document.getElementById('results');
+    const submitButton = document.getElementById('submit-vote');
+    const refreshButton = document.getElementById('refresh-votes');
+    const status = document.getElementById('status');
+
+    document.getElementById('mode-label').textContent = isCloud ? '雲端投票' : '本機預覽';
+    document.getElementById('mode-description').textContent = isCloud
+      ? '每票只記場次和選項。'
+      : '這裡的票只在這個瀏覽器模擬，不會寫入 Google 試算表。';
+
+    function setBusy(value) {
+      busy = value;
+      fieldset.disabled = busy || !currentRound;
+      submitButton.disabled = busy || !currentRound;
+      refreshButton.disabled = busy;
+    }
+
+    function readPreviewCounts() {
+      if (canUseStorage) {
+        try {
+          previewCounts = JSON.parse(localStorage.getItem(storageKey)) || {};
+        } catch (error) {
+          canUseStorage = false;
+        }
+      }
+      return previewCounts;
+    }
+
+    function previewCount(counts, id) {
+      const count = counts[id];
+      return Number.isSafeInteger(count) && count >= 0 ? count : 0;
+    }
+
+    function readPreviewBoard() {
+      const counts = readPreviewCounts();
+      return {
+        ...previewBoard,
+        options: previewBoard.options.map((item) => ({
+          ...item,
+          count: previewCount(counts, item.id),
+        })),
+      };
+    }
+
+    function writePreviewVote(optionId) {
+      const counts = readPreviewCounts();
+      previewCounts = { ...counts, [optionId]: previewCount(counts, optionId) + 1 };
+      if (canUseStorage) {
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(previewCounts));
+        } catch (error) {
+          canUseStorage = false;
+        }
+      }
+      return { ok: true };
+    }
+
+    function callServer(action, ...args) {
+      return new Promise((resolve, reject) => {
+        if (!window.google || !google.script || !google.script.run) {
+          reject(new Error('無法連線'));
+          return;
+        }
+        const runner = google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);
+        runner[action](...args);
+      });
+    }
+
+    function showBoard(board) {
+      const selected = currentRound === board.round
+        ? choices.querySelector('input:checked')?.value
+        : null;
+      currentRound = board.round;
+      document.getElementById('board-title').textContent = board.title;
+      document.getElementById('round').textContent = board.round;
+      choices.replaceChildren();
+      results.replaceChildren();
+      for (const option of board.options) {
+        const label = document.createElement('label');
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'vote';
+        radio.value = option.id;
+        radio.checked = option.id === selected;
+        radio.required = true;
+        label.append(radio, document.createTextNode(option.label));
+        choices.append(label);
+
+        const row = document.createElement('li');
+        const count = document.createElement('strong');
+        count.textContent = option.count + ' 票';
+        row.append(document.createTextNode(option.label), count);
+        results.append(row);
+      }
+    }
+
+    async function updateResults() {
+      const board = isCloud ? await callServer('getBoard') : readPreviewBoard();
+      if (board.error) {
+        return board.error;
+      }
+      showBoard(board);
+      return '';
+    }
+
+    async function refreshResults() {
+      if (busy) return;
+      setBusy(true);
+      status.textContent = '正在讀取票數。';
+      try {
+        status.textContent = (await updateResults()) || '票數已更新。';
+      } catch (error) {
+        status.textContent = '暫時讀不到票數，請稍後按「更新票數」。';
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const selection = choices.querySelector('input:checked');
+      if (busy || !selection) return;
+      setBusy(true);
+      status.textContent = '正在送出。';
+      try {
+        const reply = isCloud
+          ? await callServer('submitVote', currentRound, selection.value)
+          : writePreviewVote(selection.value);
+        if (!reply.ok) {
+          status.textContent = reply.error || '暫時無法確認是否寫入，請先更新票數。';
+          return;
+        }
+
+        selection.checked = false;
+        const success = isCloud ? '已送出一票。' : '已在本機模擬一票。';
+        status.textContent = success;
+        try {
+          if (await updateResults()) {
+            status.textContent = success + ' 目前讀不到最新票數，請稍後更新。';
+          }
+        } catch (error) {
+          status.textContent = success + ' 目前讀不到最新票數，請稍後更新。';
+        }
+      } catch (error) {
+        status.textContent = '暫時無法確認是否寫入，請先更新票數，再請老師查看試算表。';
+      } finally {
+        setBusy(false);
+      }
+    });
+
+    refreshButton.addEventListener('click', refreshResults);
+    refreshResults();
+  </script>
+</body>
+</html>

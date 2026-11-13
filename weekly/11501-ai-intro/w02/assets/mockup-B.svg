@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-labelledby="pt-B">
+<title id="pt-B">Teaching mockup B: Book Swap, 22 September 2026, 16:30, Library lobby. BRING ONE BOOK · TAKE ONE BOOK. Fictional event.</title>
+<rect width="600" height="800" fill="#ef6d59"/><path d="M0 540 L600 438 L600 800 L0 800Z" fill="#f8f2e8"/>
+<g fill="#202121" font-family="Arial, sans-serif"><text x="44" y="55" font-size="18" letter-spacing="3">CAMPUS / COMMUNITY / BOOKS</text>
+<text id="poster-title" x="39" y="143" font-size="83" font-weight="900" letter-spacing="-5">BOOK SWAP</text>
+<text id="poster-tagline" x="45" y="184" font-size="21" letter-spacing="1.3">A NEW READER. A NEW CHAPTER.</text></g>
+<g transform="translate(0 10)"><path d="M108 390 L352 351 L488 392 L250 437Z" fill="#202121"/>
+<path d="M108 390 L108 430 L249 479 L250 437Z" fill="#c84e3d"/>
+<path d="M250 437 L488 392 L488 432 L249 479Z" fill="#faf5eb" stroke="#202121" stroke-width="5"/>
+<path d="M129 331 L370 298 L486 337 L243 379Z" fill="#f5e5a8" stroke="#202121" stroke-width="5"/>
+<path d="M129 331 L129 370 L243 413 L243 379Z" fill="#202121"/>
+<path d="M243 379 L486 337 L486 375 L243 413Z" fill="#fffaf1" stroke="#202121" stroke-width="5"/>
+<path d="M142 263 L356 228 L466 267 L250 307Z" fill="#f8f2e8" stroke="#202121" stroke-width="5"/>
+<path d="M142 263 L142 299 L250 343 L250 307Z" fill="#6c7f79" stroke="#202121" stroke-width="5"/>
+<path d="M250 307 L466 267 L466 303 L250 343Z" fill="#f8f2e8" stroke="#202121" stroke-width="5"/>
+<path d="M280 284 L312 279 L312 338 L294 326 L280 344Z" fill="#ef6d59"/>
+<path d="M269 390 L466 356 M269 451 L467 413 M264 323 L446 289" stroke="#b5afa6" stroke-width="3"/>
+</g><g fill="#202121" font-family="Arial, sans-serif"><text x="44" y="563" font-size="28" font-weight="700">22 SEPT 2026</text>
+<text id="poster-time" x="40" y="634" font-size="75" font-weight="900">16:30</text>
+<text id="poster-venue" x="44" y="678" font-size="32">LIBRARY LOBBY</text>
+<text id="poster-claim" x="44" y="722" font-size="22" font-weight="700">BRING ONE BOOK · TAKE ONE BOOK</text>
+<path d="M44 742 H556" stroke="#202121"/><text x="44" y="772" font-size="16">FICTIONAL EVENT · TEACHING MOCKUP B</text></g></svg>

@@ -1,0 +1,274 @@
+<!doctype html><html lang="zh-Hant-TW"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>人工智慧概論 W4 · AB</title><style>
+:root{--paper:#fffdf8;--ink:#16343b;--muted:#526b70;--wash:#edf7f3;--sea:#087e8b;--coral:#e76f51;--sun:#f4b942;--leaf:#3a8d5d;--line:#cbded9;--card:#ffffff;--deep:#224a51;--scale:1}
+*{box-sizing:border-box}
+html,body{margin:0;font-family:"Segoe UI","Microsoft JhengHei","Noto Sans TC",Arial,sans-serif;color:var(--ink)}
+body{background:#0f2327;overflow:hidden}
+a{color:inherit;text-underline-offset:6px}
+button{font:inherit;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:4px solid var(--sun);outline-offset:4px}
+code{font-family:Consolas,"Cascadia Mono",monospace}
+#stage{position:fixed;left:50%;top:calc(50% - 26px);width:1280px;height:720px;transform:translate(-50%,-50%) scale(var(--scale));transform-origin:center}
+.slide{display:none;width:1280px;height:720px;background:var(--paper);color:var(--ink);padding:44px 78px 64px;position:relative;overflow:hidden}
+.slide.active{display:block}
+.slide--dark{background:var(--ink);color:var(--paper)}
+.kicker{display:flex;justify-content:space-between;font-size:18px;letter-spacing:.12em;font-weight:700;color:var(--muted);border-top:2px solid currentColor;padding-top:12px}
+.slide--dark .kicker{color:#c9dcd8}
+.title{font-size:50px;line-height:1.16;font-weight:800;letter-spacing:-.01em;margin:18px 0 10px;max-width:1124px}
+html[lang="en"] .title{font-size:44px;margin-bottom:8px}
+.pg-learn .title{font-size:44px}
+.title .support{display:block;font-size:24px;font-weight:500;letter-spacing:0;margin-top:2px;opacity:.82}
+.support{display:block;font-size:21px;line-height:1.35;font-weight:500;margin-top:2px;opacity:.85}
+.zs{display:block;font-size:.72em;line-height:1.35;font-weight:500;opacity:.8;margin-top:1px}
+.why{font-size:31px;line-height:1.4;font-weight:700;color:var(--sea);margin:0 0 18px;max-width:1124px}
+html[lang="en"] .why{font-size:28px;margin-bottom:14px}
+.why .support{color:var(--ink)}
+.slide--dark .why{color:var(--sun)}
+.slide--dark .why .support{color:var(--paper)}
+.cap{font-size:25px;line-height:1.45;margin:16px 0 0;max-width:1124px}
+html[lang="en"] .cap{font-size:23px;margin-top:12px}
+.cap .support{font-size:19px}
+.cap.small{font-size:21px;color:var(--muted)}
+.cap.small .support{font-size:17px}
+.cap.next{font-weight:700;color:#c9dcd8}
+.simp{display:inline-block;font-size:20px;line-height:1.4;margin:14px 0 0;padding:4px 14px;border:2px dashed var(--muted);border-radius:8px;color:var(--muted)}
+.simp .support{font-size:17px}
+.slide--dark .simp{color:#c9dcd8;border-color:#8fb3ad}
+.tag{display:inline-block;font-size:17px;font-weight:600;letter-spacing:.04em;border:1px solid currentColor;border-radius:99px;padding:1px 12px;color:var(--muted)}
+.slide--dark .tag{color:#c9dcd8}
+.check{position:absolute;left:78px;right:190px;bottom:58px;display:flex;align-items:baseline;gap:16px;font-size:26px;line-height:1.3;font-weight:700;padding:10px 20px;border-left:8px solid var(--coral);background:var(--wash);color:var(--ink)}
+.check .k{flex:0 0 auto;color:var(--coral);font-weight:800}
+.check .t{flex:1 1 auto;min-width:0}
+.check .support{display:inline-block;font-size:19px;margin:0 0 0 12px;font-weight:600;white-space:nowrap}
+html[lang="en"] .check{font-size:23px;padding:8px 18px}
+.slide--dark .check{background:var(--deep);color:var(--paper);border-color:var(--sun)}
+.slide--dark .check .k{color:var(--sun)}
+.footer-org{position:absolute;left:78px;bottom:24px;font-size:15px;letter-spacing:.06em;color:var(--muted)}
+.slide--dark .footer-org{color:#c9dcd8}
+.number{position:absolute;right:78px;bottom:22px;font-size:20px;font-variant-numeric:tabular-nums}
+.ico{flex:0 0 auto;display:block}
+.ico .x{stroke:var(--coral);stroke-width:6}
+/* 1 封面 */
+.cover .title{font-size:58px;margin-top:34px}
+html[lang="en"] .cover .title{font-size:48px}
+.cover-vis{display:flex;align-items:center;gap:34px;margin-top:8px}
+.card{flex:0 0 auto;border:2px solid var(--line);border-radius:18px;background:var(--card);padding:14px 24px;box-shadow:6px 8px 0 rgba(8,126,139,.12)}
+.hist{width:290px}
+.hist-head{display:flex;align-items:center;gap:10px;font-size:24px;border-bottom:2px solid var(--line);padding-bottom:8px;margin-bottom:4px}
+.hist-head b{font-size:32px}
+.hist p{display:flex;align-items:center;gap:14px;margin:0;padding:6px 0;font:700 24px Consolas,"Cascadia Mono",monospace}
+.hist p i{flex:0 0 14px;height:14px;border-radius:50%;background:var(--sea)}
+.bigarrow{flex:0 0 auto;font-size:60px;color:var(--coral);font-weight:800}
+.objs{display:flex;gap:34px;padding:18px 30px}
+.obj{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:24px;font-weight:700}
+.obj .ico{color:var(--sea)}
+/* 2 查作業 */
+.split{display:flex;gap:34px;align-items:flex-start}
+.gh{flex:0 0 440px;border:2px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden}
+.gh-head{display:flex;align-items:center;gap:12px;padding:10px 20px;background:#f3f6f5;border-bottom:2px solid var(--line);font-size:24px}
+.gh-head .tag{margin-left:auto}
+.gh p{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin:0;padding:11px 20px;border-bottom:1px solid var(--line);font-size:25px}
+.gh p:last-child{border-bottom:0}
+.gh code{flex:0 0 auto;color:var(--muted);font-size:21px}
+.gh .msg b{color:var(--sea);font-family:Consolas,"Cascadia Mono",monospace}
+.aside{flex:1 1 auto;min-width:0;font-size:24px;line-height:1.4;border-left:6px solid var(--sun);padding:2px 0 2px 20px}
+html[lang="en"] .aside{font-size:22px}
+.aside>b{display:block;font-size:27px;margin-bottom:6px}
+html[lang="en"] .aside>b{font-size:24px}
+.aside p{margin:0 0 6px}
+.aside .say{font-size:25px;font-weight:700;margin:2px 0 10px;color:var(--sea)}
+html[lang="en"] .aside .say{font-size:22px}
+.slide--dark .aside .say{color:var(--sun)}
+.mini-ol{margin:0;padding-left:1.3em}
+.mini-ol li{margin:0 0 6px}
+html[lang="en"] .mini-ol .zs{display:inline-block;margin-left:10px;white-space:nowrap}
+.aside .later{font-size:20px;color:var(--muted);margin-top:8px}
+html[lang="en"] .aside .later{font-size:19px}
+/* 3 差異（深底） */
+.diffbox{flex:0 0 560px;border:2px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card);color:var(--ink)}
+.diffbox .file{display:flex;justify-content:space-between;align-items:baseline;padding:8px 18px;background:#f3f6f5;border-bottom:2px solid var(--line);font:700 22px Consolas,"Cascadia Mono",monospace}
+.diffbox .file span{font:600 20px "Segoe UI","Microsoft JhengHei",sans-serif;color:var(--muted)}
+.diffbox .file em{font-style:normal;margin-left:14px}
+.diffbox p{margin:0;padding:6px 18px;font:24px/1.35 Consolas,"Cascadia Mono",monospace;display:flex;gap:16px}
+.diffbox .del{background:#fbe4e0;color:#8a2d1c}
+.diffbox .add{background:#e1f1e6;color:#1f5a3a}
+.diffbox p b{flex:0 0 18px}
+/* 4 觀念＋今天的界線 */
+.flow3{display:flex;align-items:stretch}
+.flow3 .cell{flex:1 1 0;min-width:0;border:3px solid var(--sea);border-radius:16px;padding:12px 20px;background:var(--card)}
+.flow3 .cell b{display:block;font-size:29px;margin-bottom:4px;color:var(--sea)}
+html[lang="en"] .flow3 .cell b{font-size:27px}
+.flow3 .cell span.t{display:block;font-size:24px;line-height:1.35}
+html[lang="en"] .flow3 .cell span.t{font-size:22px}
+.flow3 .arrow{flex:0 0 132px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:46px;line-height:1;color:var(--coral);font-weight:800}
+.flow3 .arrow small{font-size:20px;line-height:1.3;color:var(--ink);font-weight:700;text-align:center;margin-top:6px}
+.rulestrip{display:flex;align-items:center;gap:14px;margin-top:16px;padding:10px 20px;border-radius:14px;background:#fdf0ec;border:2px solid var(--coral)}
+.rulestrip .ok{display:flex;gap:10px;color:var(--leaf)}
+.rulestrip .no{display:flex;gap:10px;color:var(--ink);margin-right:10px}
+.rulestrip p{flex:1 1 auto;min-width:0;margin:0;font-size:24px;font-weight:700;line-height:1.35}
+html[lang="en"] .rulestrip p{font-size:22px}
+/* 5 動手 A：Teachable Machine */
+.stepline{font-size:22px;font-weight:600;margin:0 0 12px;color:var(--ink)}
+.stepline code{font-weight:700;color:var(--sea)}
+.stepline.url{margin-bottom:2px}
+.stepline .zs{font-size:.8em}
+.stepline .st{white-space:nowrap;margin-right:6px}
+.tm{display:flex;align-items:stretch}
+.tm-col{flex:1 1 0;min-width:0;border:2px solid var(--line);border-radius:14px;background:var(--card);padding:10px 16px}
+.tm-h{font-size:24px;font-weight:800;color:var(--sea);margin-bottom:4px}
+.tm-h small{font-size:19px;color:var(--coral);font-weight:700}
+.tm-arrow{flex:0 0 54px;display:flex;align-items:center;justify-content:center;font-size:38px;color:var(--coral);font-weight:800}
+.cls{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:8px;padding:3px 12px;margin:6px 0;font-size:21px}
+.cls i{font-style:normal;font-size:18px;color:var(--muted)}
+.cls.more{border-style:dashed;color:var(--muted)}
+.tm-col small.cam{display:block;font-size:18px;line-height:1.35;color:var(--muted);margin-top:6px}
+.tm-btn{background:var(--sea);color:#fff;border-radius:10px;text-align:center;padding:10px;font-size:25px;font-weight:800;margin:10px 0 8px}
+.tm-col small.wait{display:block;font-size:19px;color:var(--muted);text-align:center}
+.bar{display:grid;grid-template-columns:78px 1fr 52px;align-items:center;gap:8px;font-size:19px;margin:7px 0}
+.bar .track{height:16px;background:#e7efec;border-radius:8px;overflow:hidden}
+.bar .fill{display:block;height:100%;background:var(--sea)}
+.bar .pc{text-align:right;font-variant-numeric:tabular-nums}
+/* 6 找錯例＋三種原因（深底） */
+.pred{flex:0 0 470px;border-radius:16px;padding:14px 22px;background:var(--deep);border:3px solid var(--coral);position:relative}
+.pred .tag{position:absolute;right:14px;top:12px}
+.pred .in{font-size:25px;font-weight:700;margin:0 0 6px}
+.pred .bar{font-size:20px;grid-template-columns:96px 1fr 56px}
+html[lang="en"] .pred .bar{grid-template-columns:70px 1fr 56px}
+.slide--dark .bar .track{background:#35626a}
+.slide--dark .bar .fill{background:#9fd3c7}
+.pred .bar:first-of-type .fill{background:var(--coral)}
+.pred .verdict{font-size:27px;font-weight:800;margin:6px 0 0;color:#ffb4a2}
+.fixes{flex:1 1 auto;min-width:0}
+.fixes .fix{display:flex;justify-content:space-between;align-items:baseline;gap:14px;margin:0;padding:9px 0;border-bottom:1px solid #3f5a5f;font-size:25px}
+html[lang="en"] .fixes .fix{font-size:22px}
+.fixes .fix b{font-weight:800}
+.fixes span.fx{flex:0 0 auto;color:var(--sun);font-weight:700;text-align:right}
+.fixes .simp{margin-top:12px}
+/* 7 只改一件事 */
+.ba{display:flex;align-items:center}
+.ba .box{flex:1 1 0;min-width:0;border:2px solid var(--line);border-radius:14px;padding:12px 18px;background:var(--card);font-size:23px;line-height:1.4}
+html[lang="en"] .ba .box{font-size:21px}
+.ba .mid{flex-grow:1.7;border:3px solid var(--coral)}
+.ba .box>b{display:block;font-size:25px;margin-bottom:4px;color:var(--sea)}
+.ba .mid>b{color:var(--coral)}
+.ba .box p{margin:6px 0}
+.ba .opt{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:baseline;margin:8px 0}
+.ba .opt b{color:var(--coral);font-weight:800}
+.ba .opt i{font-style:normal;color:var(--muted);font-size:.85em;white-space:nowrap}
+.ba .arrow{flex:0 0 54px;text-align:center;font-size:38px;color:var(--coral);font-weight:800}
+/* 8 分享 */
+.badges{display:flex;gap:30px}
+.badge{flex:1 1 0;min-width:0;border:3px solid var(--sea);border-radius:18px;padding:12px 24px;background:var(--card)}
+.badge>b{display:block;font-size:30px;color:var(--sea);margin-bottom:4px}
+.badge p{font-size:23px;margin:8px 0;border-bottom:2px dotted #9fb6b2;padding-bottom:5px}
+/* 9 今天兩句話（深底） */
+.two{display:flex;gap:40px}
+.two>div{flex:1 1 0;min-width:0;border-top:5px solid var(--sun);padding-top:10px}
+.two>div>b{display:block;font-size:32px;margin-bottom:4px;color:var(--sun)}
+.two p{margin:6px 0;font-size:27px;line-height:1.3}
+html[lang="en"] .two p{font-size:24px}
+html[lang="en"] .two .zs{display:inline;margin-left:12px}
+html[lang="en"] .cls{margin:4px 0}
+/* AA 英文比較長：第 2、5 頁收行距，讓正文底離底部那行至少 6px（qa_browser.py 量） */
+html[lang="en"] .aside>b{margin-bottom:4px}
+html[lang="en"] .mini-ol li{margin-bottom:3px}
+html[lang="en"] .aside .later{margin-top:4px}
+html[lang="en"] .stepline{margin-bottom:8px;font-size:20px}
+html[lang="en"] .tm-col{padding:8px 16px}
+html[lang="en"] .cap.small{margin-top:8px}
+html[lang="en"] .cap.small .support{display:inline;margin-left:12px}
+/* 翻頁殼（照 W3） */
+.controls{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:4;background:#fffdf8ee;border:1px solid #9fb6b2;border-radius:9px;padding:5px;box-shadow:0 4px 20px #0003}
+.controls button{border:0;background:none;color:var(--ink);border-radius:4px;padding:6px 11px;font-size:14px}
+.controls button:hover{background:#dfe9e6}
+.controls .counter{padding:6px 12px;min-width:68px;text-align:center;font-size:14px}
+.menu{position:fixed;inset:0;background:#16343bd9;z-index:10;padding:5vh 5vw;display:grid;place-items:center}
+.menu[hidden]{display:none}
+.menu-inner{background:var(--paper);padding:24px 32px;max-width:1040px;width:100%;max-height:90vh;overflow:auto}
+.menu-header{display:flex;justify-content:space-between;align-items:center;font-size:24px}
+.menu-header button{font-size:20px;padding:6px 14px}
+.toc{display:grid;grid-template-columns:1fr 1fr;gap:4px 30px;margin-top:18px}
+.toc button{border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;font-size:19px;padding:13px 4px;line-height:1.45}
+.toc button:hover{background:#e7efec}
+.toc span{color:var(--coral);margin-right:13px}
+.single-slide{background:var(--paper);overflow:visible}
+.single-slide .slide{display:block}
+@media(max-width:600px){.controls{gap:0;width:max-content;max-width:98vw}.controls button{padding:7px 8px}.toc{grid-template-columns:1fr}.menu-inner{padding:18px}.toc button{font-size:16px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{@page{size:13.333333in 7.5in;margin:0}html,body{width:1280px;height:auto;margin:0;padding:0;background:white;overflow:visible;-webkit-print-color-adjust:exact;print-color-adjust:exact}#stage{position:static;transform:none;width:1280px;height:auto}.slide,.slide.active{display:block!important;width:1280px;height:720px;break-after:page;page-break-after:always}.slide:last-child{break-after:auto;page-break-after:auto}.controls,.menu{display:none!important}}
+
+.steps{margin:0;padding-left:1.4em;font-size:28px;line-height:1.5}
+.steps li{margin:0 0 8px}
+.steps b{color:var(--sea)}
+.slide--dark .steps b{color:var(--sun)}
+.cards3{display:flex;gap:26px;margin-top:6px}
+.pc3{flex:1 1 0;border:2px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);padding:16px 22px}
+.pc3 .nm{font-size:30px;font-weight:800}
+.pc3 .nm small{display:block;font-size:20px;font-weight:600;color:var(--muted)}
+.pc3 .v{font-size:40px;font-weight:800;color:var(--coral);margin:4px 0}
+.pc3 p{font-size:22px;line-height:1.4;margin:6px 0 0}
+.pc3 .q{font-size:18px;color:var(--muted);font-style:italic}
+.exp{border-collapse:collapse;font-size:25px;margin-top:4px}
+.exp th,.exp td{border:2px solid var(--line);padding:8px 18px;text-align:left}
+.exp th{background:var(--wash);color:var(--ink)}
+.slide--dark .exp th{background:#2b5058;color:var(--paper)}
+.exp td.v{font-weight:800;color:var(--coral)}
+.folders{display:flex;gap:20px;margin:6px 0 10px}
+.fd{flex:1 1 0;border:2px solid var(--line);border-radius:12px;background:var(--card);padding:12px 16px;font-size:23px}
+.fd b{display:block;font-family:Consolas,monospace;font-size:22px}
+.fd .sw{display:inline-block;width:26px;height:26px;vertical-align:-5px;margin-right:8px}
+.curves{display:flex;gap:30px;align-items:flex-start}
+.curves figure{margin:0;flex:1 1 0;border:2px solid var(--line);border-radius:12px;background:var(--card);padding:10px 14px}
+.curves figcaption{font-size:22px;font-weight:700;color:var(--ink)}
+.curves svg{width:100%;height:190px}
+.lg{font-size:18px;color:var(--muted)}
+.big{font-size:34px;font-weight:800;line-height:1.5;margin:4px 0}
+.big em{font-style:normal;color:var(--coral)}
+</style></head><body data-deck="人工智慧概論 W4 · AB"><main id="stage"><section class="slide slide--light cover" data-title="用例子教 AI，再調它怎麼學" aria-label="1. 用例子教 AI，再調它怎麼學"><div class="kicker"><span>AI INTRO · WEEK 4</span><span>AB · 2026.09.29</span></div><div class="title">用例子教 AI，再調它怎麼學</div><div class="body"><p class="why">今天：訓練一個認圖模型，再一次改一個設定，看它怎麼變。</p><div class="folders"><div class="fd"><b><span class="sw" style="background:#d33;border-radius:50%"></span>red-circle</b>紅圓 × 24</div><div class="fd"><b><span class="sw" style="background:#2a5bd7;"></span>blue-square</b>藍方 × 24</div><div class="fd"><b><span class="sw" style="background:#2a9d4b;clip-path:polygon(50% 0,100% 100%,0 100%)"></span>green-triangle</b>綠三角 × 24</div></div></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">兩人一台電腦，先坐好</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">01 / 15</div></section><section class="slide slide--light pg-learn" data-title="有些 AI 的規則不是逐條寫出來，而是從例子學出來" aria-label="2. 有些 AI 的規則不是逐條寫出來，而是從例子學出來"><div class="kicker"><span>W04 · LEARN</span><span>AB · 2026.09.29</span></div><div class="title">有些 AI 的規則不是逐條寫出來，而是從例子學出來</div><div class="body"><p class="why">給它例子，它自己找規律。</p><div class="flow3"><div class="cell"><b>資料（data）</b><span class="t">圖片</span></div><div class="arrow">→<small>訓練（train）</small></div><div class="cell"><b>模型（model）</b><span class="t">找到的規律</span></div><div class="arrow">→</div><div class="cell"><b>預測（predict）</b><span class="t">猜新圖片，會猜錯</span></div></div><p class="simp">簡化說法：訓練＝從例子裡找規律。</p></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">說得出三格的順序</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">02 / 15</div></section><section class="slide slide--light pg-pack" data-title="今天的資料：圖片包" aria-label="3. 今天的資料：圖片包"><div class="kicker"><span>W04 · DATA</span><span>AB · 2026.09.29</span></div><div class="title">今天的資料：圖片包</div><div class="body"><p class="why">程式畫的圖形，沒有照片、沒有人臉。</p><ol class="steps"><li>從學生頁下載 <b>image-pack.zip</b>，解壓縮</li><li>三個資料夾各 24 張：先只用 <b>01–12</b> 訓練</li><li><b>test</b> 夾每類 2 張較難的：只拿來測，不拿去訓練</li></ol></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">解壓好，看得到四個資料夾</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">03 / 15</div></section><section class="slide slide--light pg-upload" data-title="建兩類，上傳圖片" aria-label="4. 建兩類，上傳圖片"><div class="kicker"><span>W04 · HANDS-ON 1</span><span>AB · 2026.09.29</span></div><div class="title">建兩類，上傳圖片</div><div class="body"><p class="why">兩人一組、一台電腦、一個模型。</p><p class="stepline url"><code>teachablemachine.withgoogle.com</code></p><ol class="steps"><li><b>Get Started</b> → <b>Image Project</b> → <b>Standard image model</b></li><li>把 Class 1、Class 2 改名：red-circle、blue-square</li><li>每類按 <b>Upload</b> → 選 01–12（12 張）</li></ol><p class="cap small">第三類 green-triangle：有餘力再加（Add a class）。</p></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">每類顯示 12 張</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">04 / 15</div></section><section class="slide slide--light pg-preview" data-title="按 Train，再用檔案測" aria-label="5. 按 Train，再用檔案測"><div class="kicker"><span>W04 · HANDS-ON 1</span><span>AB · 2026.09.29</span></div><div class="title">按 Train，再用檔案測</div><div class="body"><p class="why">第一次先不改設定，用預設值。</p><ol class="steps"><li>按 <b>Train Model</b>，跑完前別關分頁</li><li><b>Preview</b> 的 <b>Input</b>：webcam 改成 <b>file</b></li><li>把 <b>test</b> 夾的圖一張張丟進去，記下百分比</li></ol></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">Preview 有結果 → 截一張圖</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">05 / 15</div></section><section class="slide slide--dark pg-words" data-title="按下 Train 時發生什麼事" aria-label="6. 按下 Train 時發生什麼事"><div class="kicker"><span>W04 · WORDS</span><span>AB · 2026.09.29</span></div><div class="title">按下 Train 時發生什麼事</div><div class="body"><p class="why">Teachable Machine 把你的圖分成兩堆。</p><ul class="steps"><li><b>訓練樣本</b>（training samples）：拿來學</li><li><b>測試樣本</b>（test samples）：留著考它</li><li><b>一輪</b>（epoch）：每張訓練圖都看過一次</li></ul></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">說說看：一輪是什麼？</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">06 / 15</div></section><section class="slide slide--light pg-params" data-title="展開 Advanced：三個參數" aria-label="7. 展開 Advanced：三個參數"><div class="kicker"><span>W04 · SETTINGS</span><span>AB · 2026.09.29</span></div><div class="title">展開 Advanced：三個參數</div><div class="body"><p class="why">在 Training 底下點 Advanced。</p><div class="cards3"><div class="pc3"><div class="nm">Epochs<small>一輪數</small></div><div class="v">50</div><p>看幾輪。</p><p class="q">官方：通常往上調</p></div><div class="pc3"><div class="nm">Batch Size<small>批次大小</small></div><div class="v">16</div><p>一次看幾張。</p><p class="q">官方：多半不用改</p></div><div class="pc3"><div class="nm">Learning Rate<small>學習率</small></div><div class="v">0.001</div><p>每次修正多大步。</p><p class="q">官方：小心調</p></div></div><p class="cap small">預設值 2026-09-29 官網實查。先到參數實驗台 params-lab.html 玩一次。</p></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">在你的畫面上找到這三個</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">07 / 15</div></section><section class="slide slide--light pg-batch" data-title="批次和一輪：算一次" aria-label="8. 批次和一輪：算一次"><div class="kicker"><span>W04 · SETTINGS</span><span>AB · 2026.09.29</span></div><div class="title">批次和一輪：算一次</div><div class="body"><p class="why">工具自己舉的例子：</p><p class="big">80 張 ÷ batch 16 = <em>5</em> 批 = 1 epoch</p><p class="big">50 epochs × 5 = <em>250</em> 次修正</p><p class="simp">簡化說法：每一批＝修正一次。</p></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">換成 batch 32，一輪幾批？</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">08 / 15</div></section><section class="slide slide--light pg-hood" data-title="看懂兩條曲線" aria-label="9. 看懂兩條曲線"><div class="kicker"><span>W04 · UNDER THE HOOD</span><span>AB · 2026.09.29</span></div><div class="title">看懂兩條曲線</div><div class="body"><p class="why">Advanced 旁邊點 Under the hood。</p><div class="curves"><figure><figcaption>Accuracy per epoch <span class="tag">示意</span></figcaption><svg viewBox="0 0 400 190" aria-hidden="true"><path d="M10 5V180H395" fill="none" stroke="#9bb" stroke-width="2"/><path d="M10 170 C 60 60, 120 30, 390 20" fill="none" stroke="#087e8b" stroke-width="5"/><path d="M10 175 C 70 90, 130 60, 390 50" fill="none" stroke="#e76f51" stroke-width="5" stroke-dasharray="12 8"/></svg><div class="lg">越高越好</div></figure><figure><figcaption>Loss per epoch <span class="tag">示意</span></figcaption><svg viewBox="0 0 400 190" aria-hidden="true"><path d="M10 5V180H395" fill="none" stroke="#9bb" stroke-width="2"/><path d="M10 20 C 60 130, 120 160, 390 172" fill="none" stroke="#087e8b" stroke-width="5"/><path d="M10 25 C 70 110, 130 135, 390 145" fill="none" stroke="#e76f51" stroke-width="5" stroke-dasharray="12 8"/></svg><div class="lg">越低越好</div></figure></div><p class="cap small">實線＝訓練、虛線＝測試；兩條差很多，可能是過度配適（overfit）。</p></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">截你自己的兩條曲線</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">09 / 15</div></section><section class="slide slide--light pg-exp1" data-title="實驗一：只改 Epochs" aria-label="10. 實驗一：只改 Epochs"><div class="kicker"><span>W04 · EXPERIMENT 1</span><span>AB · 2026.09.29</span></div><div class="title">實驗一：只改 Epochs</div><div class="body"><p class="why">其他全部維持預設。</p><table class="exp"><tr><th>Epochs</th><th>test 圖對幾張</th><th>曲線長怎樣</th></tr><tr><td class="v">5</td><td>＿＿＿</td><td>＿＿＿</td></tr><tr><td class="v">50</td><td>＿＿＿</td><td>＿＿＿</td></tr><tr><td class="v">200</td><td>＿＿＿</td><td>＿＿＿</td></tr></table></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">三列都填 → 截一張圖</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">10 / 15</div></section><section class="slide slide--dark pg-exp2" data-title="實驗二：只改學習率" aria-label="11. 實驗二：只改學習率"><div class="kicker"><span>W04 · EXPERIMENT 2</span><span>AB · 2026.09.29</span></div><div class="title">實驗二：只改學習率</div><div class="body"><p class="why">Epochs 改回 50，盯著 Loss 曲線。</p><table class="exp"><tr><th>Learning Rate</th><th>test 圖對幾張</th><th>曲線長怎樣</th></tr><tr><td class="v">0.0001</td><td>＿＿＿</td><td>＿＿＿</td></tr><tr><td class="v">0.001</td><td>＿＿＿</td><td>＿＿＿</td></tr><tr><td class="v">0.1</td><td>＿＿＿</td><td>＿＿＿</td></tr></table></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">哪一個的 Loss 亂跳？</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">11 / 15</div></section><section class="slide slide--light pg-exp3" data-title="實驗三：補資料，還是調參數？" aria-label="12. 實驗三：補資料，還是調參數？"><div class="kicker"><span>W04 · EXPERIMENT 3</span><span>AB · 2026.09.29</span></div><div class="title">實驗三：補資料，還是調參數？</div><div class="body"><p class="why">按 Reset Defaults，每類補上 13–24。</p><ol class="steps"><li>再訓一次，用同一批 test 圖測</li><li>Under the hood 按 <b>Accuracy per class</b>、<b>Confusion Matrix</b></li><li>哪個幫比較多：資料，還是參數？</li></ol></div><div class="check" data-kind="check"><span class="k">檢查點</span><span class="t">混淆矩陣 → 截一張圖</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">12 / 15</div></section><section class="slide slide--light pg-wrong" data-title="找一張它判錯的，再對照原因" aria-label="13. 找一張它判錯的，再對照原因"><div class="kicker"><span>W04 · FIND ONE</span><span>AB · 2026.09.29</span></div><div class="title">找一張它判錯的，再對照原因</div><div class="body"><p class="why">判錯不是失敗，是線索。</p><ul class="steps"><li>① 例子太少 → 補圖</li><li>② test 圖跟訓練圖不像（變小、偏色、轉角度、雜訊）</li><li>③ 參數（輪數太少、步子太大）</li></ul><p class="simp">簡化說法：原因不只這三種。</p></div><div class="check" data-kind="hand"><span class="k">✋</span><span class="t">每組一張錯的：是哪一種？</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">13 / 15</div></section><section class="slide slide--light pg-share" data-title="每組兩分鐘，再接一個提問" aria-label="14. 每組兩分鐘，再接一個提問"><div class="kicker"><span>W04 · SHARE</span><span>AB · 2026.09.29</span></div><div class="title">每組兩分鐘，再接一個提問</div><div class="body"><p class="why">改哪個參數、改成多少、結果怎樣。</p><div class="badges"><div class="badge"><b>第 1 組</b><p>改了：＿＿＿</p><p>結果：＿＿＿</p><p>提問：＿＿＿</p></div><div class="badge"><b>第 2 組</b><p>改了：＿＿＿</p><p>結果：＿＿＿</p><p>提問：＿＿＿</p></div><div class="badge"><b>第 3 組</b><p>改了：＿＿＿</p><p>結果：＿＿＿</p><p>提問：＿＿＿</p></div></div></div><div class="check" data-kind="hand"><span class="k">✋</span><span class="t">聽的人：問一個問題</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">14 / 15</div></section><section class="slide slide--dark pg-today" data-title="今天三句話" aria-label="15. 今天三句話"><div class="kicker"><span>W04 · TODAY</span><span>AB · 2026.09.29</span></div><div class="title">今天三句話</div><div class="body"><p class="why">資料教會 AI；參數決定它怎麼學。</p><ul class="steps"><li>資料教會它</li><li>參數決定它怎麼學</li><li>一次只改一件</li></ul><p class="cap next">下次上課：10/06（二）。</p></div><div class="check" data-kind="hw"><span class="k">作業</span><span class="t">老師課後會在 e學苑 開</span></div><div class="footer-org">國立東華大學 · 人工智慧概論 · W04</div><div class="number">15 / 15</div></section></main><div class="controls" aria-label="投影片導覽"><button data-action="prev" aria-label="上一頁">←</button><span class="counter" aria-live="polite"></span><button data-action="next" aria-label="下一頁">→</button><button data-action="menu" aria-expanded="false" aria-controls="slide-menu">目錄 M</button><button data-action="print">列印全份</button></div><div class="menu" id="slide-menu" role="dialog" aria-modal="true" aria-label="投影片目錄" hidden><div class="menu-inner"><div class="menu-header"><strong>人工智慧概論 W4 · AB</strong><button data-action="close" aria-label="關閉目錄">×</button></div><div class="toc"><button data-page="0"><span>01</span>用例子教 AI，再調它怎麼學</button><button data-page="1"><span>02</span>有些 AI 的規則不是逐條寫出來，而是從例子學出來</button><button data-page="2"><span>03</span>今天的資料：圖片包</button><button data-page="3"><span>04</span>建兩類，上傳圖片</button><button data-page="4"><span>05</span>按 Train，再用檔案測</button><button data-page="5"><span>06</span>按下 Train 時發生什麼事</button><button data-page="6"><span>07</span>展開 Advanced：三個參數</button><button data-page="7"><span>08</span>批次和一輪：算一次</button><button data-page="8"><span>09</span>看懂兩條曲線</button><button data-page="9"><span>10</span>實驗一：只改 Epochs</button><button data-page="10"><span>11</span>實驗二：只改學習率</button><button data-page="11"><span>12</span>實驗三：補資料，還是調參數？</button><button data-page="12"><span>13</span>找一張它判錯的，再對照原因</button><button data-page="13"><span>14</span>每組兩分鐘，再接一個提問</button><button data-page="14"><span>15</span>今天三句話</button></div></div></div><script type="application/json" id="speaker-notes">[{"page": 1, "title": "用例子教 AI，再調它怎麼學", "notes": "13:10–13:15。E403 沒攝影機，全班走圖片包。今天不查 git 作業。"}, {"page": 2, "title": "有些 AI 的規則不是逐條寫出來，而是從例子學出來", "notes": "13:15–13:25。有些 AI 的規則是從例子學出來的，不是逐條寫的（要講這是簡化說法）。"}, {"page": 3, "title": "今天的資料：圖片包", "notes": "13:25–13:30。一定要先解壓，Upload 不吃 zip。"}, {"page": 4, "title": "建兩類，上傳圖片", "notes": "13:30–13:45。巡堂。常見卡關：選到 zip 而不是圖片。"}, {"page": 5, "title": "按 Train，再用檔案測", "notes": "13:45–13:55。Preview 的 Input 有 file 選項（2026-09-29 實查 Teachable Machine 2.4.17）。"}, {"page": 6, "title": "按下 Train 時發生什麼事", "notes": "13:55–14:00。用詞照工具自己的 Under the hood 說明。講完就下課（14:00）。"}, {"page": 7, "title": "展開 Advanced：三個參數", "notes": "14:10–14:25。預設值與三句提醒都是 Advanced 面板上的原文意思。改亂了可以按 Reset Defaults。"}, {"page": 8, "title": "批次和一輪：算一次", "notes": "14:25–14:30。80÷16＝5 是工具說明裡的例子。檢查點答案：80÷32＝2.5，要 3 批（最後一批比較小）。"}, {"page": 9, "title": "看懂兩條曲線", "notes": "14:30–14:40。準確率＝答對數÷全部（工具的例子：100 張對 70 張＝0.7）。官網實際配色可能跟示意圖不同。"}, {"page": 10, "title": "實驗一：只改 Epochs", "notes": "14:40–14:55。一次只改一個。200 輪會跑比較久，時間不夠就只做 5 和 50。"}, {"page": 11, "title": "實驗二：只改學習率", "notes": "14:55–15:00 先設好，15:00 下課；15:10–15:25 跑完。步子太大會衝過頭、太小學得慢（簡化說法）。"}, {"page": 12, "title": "實驗三：補資料，還是調參數？", "notes": "15:25–15:35。混淆矩陣（Confusion Matrix）看它把哪兩類搞混。"}, {"page": 13, "title": "找一張它判錯的，再對照原因", "notes": "15:35–15:40。"}, {"page": 14, "title": "每組兩分鐘，再接一個提問", "notes": "15:40–15:50。大約輪三組，落後就一組。"}, {"page": 15, "title": "今天三句話", "notes": "15:50–16:00。作業老師課後在 e學苑 開。下次上課 10/06（二）。"}]</script><script>(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const menu = document.querySelector('.menu');
+  const counter = document.querySelector('.counter');
+  const toggle = document.querySelector('[data-action="menu"]');
+  const deckName = document.body.dataset.deck;
+  let index = 0;
+  const fromHash = () => Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+  function show(next, changeHash = true) {
+    index = Math.max(0, Math.min(slides.length - 1, next));
+    slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.setAttribute('aria-hidden', String(i !== index)); });
+    counter.textContent = `${index + 1} / ${slides.length}`;
+    document.title = `${index + 1}. ${slides[index].dataset.title} · ${deckName}`;
+    if (changeHash) history.replaceState(null, '', `#${index + 1}`);
+  }
+  function resize() {
+    document.documentElement.style.setProperty('--scale', String(Math.min(innerWidth / 1280, (innerHeight - 52) / 720)));
+  }
+  function openMenu() { menu.hidden = false; toggle.setAttribute('aria-expanded', 'true'); menu.querySelector(`[data-page="${index}"]`).focus(); }
+  function closeMenu() { menu.hidden = true; toggle.setAttribute('aria-expanded', 'false'); toggle.focus(); }
+  document.querySelectorAll('[data-page]').forEach(button => button.addEventListener('click', () => { show(Number(button.dataset.page)); closeMenu(); }));
+  document.querySelector('[data-action="close"]').addEventListener('click', closeMenu);
+  toggle.addEventListener('click', () => menu.hidden ? openMenu() : closeMenu());
+  document.querySelector('[data-action="prev"]').addEventListener('click', () => show(index - 1));
+  document.querySelector('[data-action="next"]').addEventListener('click', () => show(index + 1));
+  document.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
+  addEventListener('keydown', event => {
+    if (!menu.hidden) {
+      if (event.key === 'Escape') { event.preventDefault(); closeMenu(); }
+      if (event.key === 'Tab') {
+        const buttons = [...menu.querySelectorAll('button')];
+        if (event.shiftKey && document.activeElement === buttons[0]) { event.preventDefault(); buttons.at(-1).focus(); }
+        else if (!event.shiftKey && document.activeElement === buttons.at(-1)) { event.preventDefault(); buttons[0].focus(); }
+      }
+      return;
+    }
+    const target = event.target instanceof Element ? event.target : null;
+    if (target && target.closest('input,textarea,select')) return;
+    if (event.key === ' ' && target && target.closest('a,button')) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); show(index + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(event.key)) { event.preventDefault(); show(index - 1); }
+    if (event.key === 'Home') { event.preventDefault(); show(0); }
+    if (event.key === 'End') { event.preventDefault(); show(slides.length - 1); }
+    if (event.key.toLowerCase() === 'm') { event.preventDefault(); openMenu(); }
+  });
+  addEventListener('hashchange', () => show(fromHash(), false));
+  addEventListener('resize', resize);
+  show(fromHash(), false); resize();
+})();</script></body></html>

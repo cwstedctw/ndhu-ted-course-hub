@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>按鈕彈跳實驗台</title>
+<meta name="description" content="互動模擬：按一下按鈕，程式為什麼算成好幾次？看見接點彈跳的波形，再比較四種治法——軟體等一下再讀、軟體連續幾次一樣才算、電容加施密特觸發器、兩顆 NAND 閘接成閂鎖。創客入門補充教材。">
+</head>
+<body>
+<style>
+  :root {
+    --c-primary: #D13B00;
+    --c-primary-deep: #A32E00;
+    --c-primary-bright: #FF8A5C;
+    --c-primary-tint: #FFE3D6;
+    --c-primary-pale: #FFF1E8;
+    --c-mint: #7FD8BE;
+    --c-mint-deep: #2F8A6F;
+    --c-mint-tint: #DFF5EE;
+    --c-yellow: #FFD66B;
+    --c-yellow-deep: #9A6B00;
+    --c-yellow-tint: #FFF2CE;
+    --c-violet: #B9A7E0;
+    --c-violet-deep: #6B5BA0;
+    --c-violet-tint: #EFEAFA;
+    --c-alert: #B00020;
+    --c-alert-tint: #FDE7EA;
+    --c-bg: #FFF9F2;
+    --c-surface: #FFFFFF;
+    --c-surface-2: #FBF3EA;
+    --c-line: #EAD8C8;
+    --c-line-soft: #F3E4D8;
+    --c-ink: #2D3142;
+    --c-ink-soft: #4A4F63;
+    --c-ink-faint: #8A8FA3;
+    --c-code-bg: #F4F1FB;
+    --c-code-line: #E4DDF5;
+    --c-code-ink: #3B3457;
+    --c-wire: #2D3142;
+    --c-wire-off: #C9BFB8;
+    --c-chip: #FFFDF9;
+    --c-particle: #FF8A5C;
+    --c-particle-core: #D13B00;
+    --c-electron: #7FD8BE;
+    --c-electron-core: #1F6B54;
+    --c-meter-bg: #1E2230;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #8A8FA3;
+    --c-halo: rgba(45, 49, 66, 0.06);
+    --font-zh: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-primary: #FFA57D;
+      --c-primary-deep: #FFC0A0;
+      --c-primary-bright: #C9532A;
+      --c-primary-tint: #4A2A1C;
+      --c-primary-pale: #33211A;
+      --c-mint: #2A7D63;
+      --c-mint-deep: #7FD8BE;
+      --c-mint-tint: #1E3A33;
+      --c-yellow: #8A6B1E;
+      --c-yellow-deep: #FFD66B;
+      --c-yellow-tint: #3A3220;
+      --c-violet: #6B5BA0;
+      --c-violet-deep: #B9A7E0;
+      --c-violet-tint: #2A2440;
+      --c-alert: #FF6B7A;
+      --c-alert-tint: #4A1F26;
+      --c-bg: #1A1614;
+      --c-surface: #241E1B;
+      --c-surface-2: #2C2522;
+      --c-line: #3A302A;
+      --c-line-soft: #332A25;
+      --c-ink: #F2EAE4;
+      --c-ink-soft: #C9BFB8;
+      --c-ink-faint: #8C817A;
+      --c-code-bg: #1F1B2E;
+      --c-code-line: #332C4A;
+      --c-code-ink: #D6CFEA;
+      --c-wire: #F2EAE4;
+      --c-wire-off: #5E534C;
+      --c-chip: #201B18;
+      --c-particle: #FFB38A;
+      --c-particle-core: #FF7A3D;
+      --c-electron: #9FE8D0;
+      --c-electron-core: #2F8A6F;
+      --c-meter-bg: #12151E;
+      --c-meter-ink: #F4ECD8;
+      --c-meter-dim: #7E8398;
+      --c-halo: rgba(242, 234, 228, 0.07);
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-primary: #FFA57D;
+    --c-primary-deep: #FFC0A0;
+    --c-primary-bright: #C9532A;
+    --c-primary-tint: #4A2A1C;
+    --c-primary-pale: #33211A;
+    --c-mint: #2A7D63;
+    --c-mint-deep: #7FD8BE;
+    --c-mint-tint: #1E3A33;
+    --c-yellow: #8A6B1E;
+    --c-yellow-deep: #FFD66B;
+    --c-yellow-tint: #3A3220;
+    --c-violet: #6B5BA0;
+    --c-violet-deep: #B9A7E0;
+    --c-violet-tint: #2A2440;
+    --c-alert: #FF6B7A;
+    --c-alert-tint: #4A1F26;
+    --c-bg: #1A1614;
+    --c-surface: #241E1B;
+    --c-surface-2: #2C2522;
+    --c-line: #3A302A;
+    --c-line-soft: #332A25;
+    --c-ink: #F2EAE4;
+    --c-ink-soft: #C9BFB8;
+    --c-ink-faint: #8C817A;
+    --c-code-bg: #1F1B2E;
+    --c-code-line: #332C4A;
+    --c-code-ink: #D6CFEA;
+    --c-wire: #F2EAE4;
+    --c-wire-off: #5E534C;
+    --c-chip: #201B18;
+    --c-particle: #FFB38A;
+    --c-particle-core: #FF7A3D;
+    --c-electron: #9FE8D0;
+    --c-electron-core: #2F8A6F;
+    --c-meter-bg: #12151E;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #7E8398;
+    --c-halo: rgba(242, 234, 228, 0.07);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--c-bg); color: var(--c-ink); font-family: var(--font-zh); font-size: 14px; line-height: 1.6; }
+  button, select, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--c-primary); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+
+  .wrap { padding: 12px 16px 36px; display: flex; justify-content: center; }
+  .col { width: 100%; max-width: 1400px; display: flex; flex-direction: column; gap: 12px; }
+
+  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--c-primary); white-space: nowrap; }
+  .kicker .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c-primary-bright); }
+  h1 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 800; letter-spacing: .01em; }
+  .appbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 2px 4px 0; }
+  .appbar-title { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .sub1 { font-size: 14px; color: var(--c-ink-soft); font-weight: 600; }
+  .about { font-size: 13px; color: var(--c-ink-soft); max-width: 46em; }
+  .about summary { cursor: pointer; font-weight: 700; color: var(--c-primary); list-style: none; }
+  .about summary::-webkit-details-marker { display: none; }
+  .about summary::before { content: "＋ "; }
+  .about[open] summary::before { content: "－ "; }
+  .about p { margin: 6px 0 0; line-height: 1.6; }
+  .about b { color: var(--c-ink); }
+  h2 { margin: 0; font-size: 18px; font-weight: 800; line-height: 1.3; }
+  h3 { margin: 0; font-size: 14px; font-weight: 800; }
+  p { margin: 0; }
+  .muted { color: var(--c-ink-soft); }
+  .tiny { font-size: 13px; color: var(--c-ink-faint); }
+  a { color: var(--c-primary); }
+
+  .sect { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 14px; padding: 0 16px; }
+  .sect > summary { cursor: pointer; font-size: 16px; font-weight: 800; padding: 12px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .sect > summary::-webkit-details-marker { display: none; }
+  .sect > summary::after { content: "展開 ＋"; font-size: 12px; font-weight: 600; color: var(--c-ink-faint); white-space: nowrap; }
+  .sect[open] > summary::after { content: "收起 －"; }
+  .sect[open] > summary { border-bottom: 2px solid var(--c-line-soft); margin-bottom: 14px; }
+  .sect > section { padding-bottom: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ===== 工作台 ===== */
+  .bench { display: grid; grid-template-columns: minmax(0, 1fr) 272px; gap: 12px; align-items: start; }
+  @media (max-width: 980px) { .bench { grid-template-columns: 1fr; } }
+  .stage { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 16px; padding: 8px 12px 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .statehint { margin: 0; font-size: 13px; line-height: 1.5; color: var(--c-ink); border-bottom: 2px solid var(--c-line-soft); padding-bottom: 6px; }
+  .statehint b { color: var(--c-primary); }
+  .statehint .look { display: inline-block; margin-left: 6px; padding: 0 8px; border-radius: 10px; background: var(--c-yellow-tint); color: var(--c-ink); font-size: 12px; font-weight: 700; }
+  .statehint .look.alert { background: var(--c-alert-tint); }
+  .benchgrid { display: grid; grid-template-columns: 206px minmax(0, 1fr); gap: 12px; align-items: start; }
+  @media (max-width: 720px) { .benchgrid { grid-template-columns: 1fr; } }
+  .side { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .bigbtn { width: 100%; padding: 13px 10px; border-radius: 14px; border: 3px solid var(--c-primary); background: var(--c-primary-pale); color: var(--c-primary-deep); font-size: 17px; font-weight: 800; line-height: 1.25; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .bigbtn small { display: block; font-size: 11px; font-weight: 600; color: var(--c-ink-faint); margin-top: 2px; }
+  .bigbtn[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary-deep); }
+  .bigbtn[aria-pressed="true"] small { color: #FFF7F2; opacity: .85; }
+  .mini { width: 100%; max-width: 206px; height: auto; display: block; margin: 0 auto; }
+  .meters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .meters.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .meter { background: var(--c-meter-bg); color: var(--c-meter-ink); border-radius: 10px; padding: 5px 8px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .meter .lbl { font-size: 10px; letter-spacing: .04em; color: var(--c-meter-dim); line-height: 1.3; min-height: 26px; }
+  .meter .val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 700; line-height: 1.1; }
+  .meter.hot .val { color: #FF6B7A; }
+  .meter.good .val { color: #7FD8BE; }
+  .rowbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .btn { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 8px; padding: 5px 10px; font-weight: 700; font-size: 13px; }
+  .btn:hover { border-color: var(--c-primary); }
+  .btn[aria-pressed="true"] { background: var(--c-ink); color: var(--c-bg); border-color: var(--c-ink); }
+  .scopewrap { margin: 0; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .scopewrap svg { width: 100%; height: auto; display: block; }
+  figcaption { font-size: 12px; line-height: 1.5; color: var(--c-ink-soft); }
+  figcaption b { color: var(--c-ink); }
+
+  /* ===== 分頁 ===== */
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; border-top: 2px solid var(--c-line-soft); padding-top: 8px; }
+  .tab { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 10px; padding: 5px 10px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); line-height: 1.3; }
+  .tab small { display: block; font-size: 11px; font-weight: 600; opacity: .8; }
+  .tab[aria-selected="true"] { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary-deep); }
+  .tabpanel { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+  .tabpanel .lead { color: var(--c-ink-soft); line-height: 1.6; max-width: 62em; }
+  .tabpanel .lead b { color: var(--c-ink); }
+  .when { font-size: 13px; background: var(--c-mint-tint); border: 1.5px solid var(--c-mint); border-radius: 10px; padding: 6px 12px; }
+  .when b { font-weight: 800; }
+  .ctlrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 7px 12px; font-size: 13px; font-weight: 600; color: var(--c-ink-soft); }
+  .ctlrow input[type="range"] { flex: 1 1 140px; min-width: 110px; accent-color: var(--c-primary); }
+  .ctlrow .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 800; color: var(--c-ink); min-width: 4.6em; text-align: right; }
+  .hwbox { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start; }
+  .hwbox svg { flex: 0 1 auto; max-width: 100%; height: auto; }
+  .hwside { flex: 1 1 230px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .truth { border-collapse: collapse; font-size: 13px; }
+  .truth th, .truth td { border: 1.5px solid var(--c-line); padding: 3px 12px; text-align: center; font-family: var(--font-mono); font-weight: 700; }
+  .truth th { background: var(--c-surface-2); font-family: var(--font-zh); font-size: 12px; color: var(--c-ink-faint); }
+  .adv { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 6px 12px; }
+  .adv > summary { cursor: pointer; font-weight: 800; font-size: 13px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .adv > summary::-webkit-details-marker { display: none; }
+  .adv > summary::after { content: "＋"; color: var(--c-ink-faint); }
+  .adv[open] > summary::after { content: "－"; }
+  .adv .inner { padding-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+  .codehead { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 12px; color: var(--c-ink-faint); font-weight: 700; }
+  .code { margin: 0; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 10px 12px; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; color: var(--c-code-ink); overflow-x: auto; white-space: pre; }
+  .copy { border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 8px; padding: 3px 10px; font-weight: 700; font-size: 12px; white-space: nowrap; }
+  .copy:hover { background: var(--c-primary-tint); }
+
+  /* ===== 控制板 ===== */
+  .panel { display: flex; flex-direction: column; gap: 8px; position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; padding-right: 2px; }
+  @media (max-width: 980px) { .panel { position: static; max-height: none; } }
+  .group { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 12px; padding: 8px 12px 10px; display: flex; flex-direction: column; gap: 7px; }
+  .group h3 { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .group h3 .hint { font-size: 12px; font-weight: 600; color: var(--c-ink-faint); }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 2px solid var(--c-line); border-radius: 12px; overflow: hidden; background: var(--c-surface-2); }
+  .seg button { border: 0; background: transparent; padding: 5px 4px; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--c-ink-soft); border-right: 2px solid var(--c-line); }
+  .seg button:last-child { border-right: 0; }
+  .seg button[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; }
+  .seg button small { display: block; font-size: 10px; font-weight: 600; opacity: .85; }
+  .field { display: grid; grid-template-columns: 3.4em minmax(0, 1fr); align-items: center; gap: 6px; font-size: 13px; }
+  .field label { color: var(--c-ink-soft); font-weight: 600; }
+  .field select, .field input[type="range"] { width: 100%; min-width: 0; max-width: 100%; }
+  .field select { text-overflow: ellipsis; }
+  .field.wide { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  select { padding: 5px 8px; border-radius: 8px; border: 2px solid var(--c-line); background: var(--c-surface-2); font-weight: 600; font-size: 13px; }
+  .check { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--c-ink-soft); cursor: pointer; }
+  .check input { width: 16px; height: 16px; accent-color: var(--c-primary); }
+  input[type="range"] { accent-color: var(--c-primary); }
+  .speedrow { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+  .speedrow .spd { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; font-size: 13px; }
+  .note { font-size: 13px; line-height: 1.5; padding: 7px 11px; border-radius: 10px; border: 1.5px solid var(--c-line-soft); background: var(--c-surface-2); color: var(--c-ink-soft); }
+  .note.warn { background: var(--c-yellow-tint); border-color: var(--c-yellow); color: var(--c-ink); }
+  .note b { color: var(--c-ink); }
+
+  /* ===== 卡片與表格 ===== */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 14px; }
+  .card { background: var(--c-surface); border: 2px solid var(--c-line-soft); border-radius: 16px; padding: 14px 16px 13px; display: flex; flex-direction: column; gap: 8px; }
+  .card h3 { font-size: 15px; line-height: 1.4; }
+  .card p { font-size: 13px; color: var(--c-ink-soft); }
+  .card p b { color: var(--c-ink); }
+  .card .try { margin-top: auto; align-self: flex-start; border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 10px; padding: 5px 12px; font-weight: 700; font-size: 13px; }
+  .card .try:hover { background: var(--c-primary-tint); }
+  .card .btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; }
+  .steps { margin: 0; padding-left: 1.3em; font-size: 13px; color: var(--c-ink-soft); }
+  .steps code, .mono1 { font-family: var(--font-mono); font-size: 12px; background: var(--c-code-bg); border-radius: 5px; padding: 1px 5px; color: var(--c-code-ink); }
+  .tablewrap { overflow-x: auto; border: 2px solid var(--c-line); border-radius: 14px; }
+  table.facts { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 13px; }
+  table.facts th, table.facts td { text-align: left; padding: 8px 12px; border-bottom: 1.5px solid var(--c-line-soft); vertical-align: top; }
+  table.facts th { font-size: 12px; letter-spacing: .06em; color: var(--c-ink-faint); font-weight: 700; background: var(--c-surface-2); }
+  table.facts tr:last-child td { border-bottom: 0; }
+  table.facts td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; }
+  .foot { font-size: 12px; color: var(--c-ink-faint); border-top: 2px solid var(--c-line-soft); padding-top: 10px; display: flex; flex-direction: column; gap: 3px; }
+
+  /* ===== SVG ===== */
+  .wire { stroke: var(--c-wire); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .wire.hi { stroke: var(--c-primary); }
+  .wire.lo { stroke: var(--c-wire-off); }
+  .rail-vdd { stroke: var(--c-primary); stroke-width: 3; fill: none; }
+  .gndsym { stroke: var(--c-ink); stroke-width: 2.4; }
+  .node { fill: var(--c-wire); }
+  .node.hi { fill: var(--c-primary); }
+  .node.lo { fill: var(--c-wire-off); }
+  .res { stroke: var(--c-wire); stroke-width: 2.2; fill: none; stroke-linejoin: round; }
+  .box { fill: var(--c-surface-2); stroke: var(--c-line); stroke-width: 2; }
+  .bubble { fill: var(--c-surface); stroke: var(--c-primary); stroke-width: 2; }
+  .lbl { font-family: var(--font-zh); font-size: 11px; fill: var(--c-ink-soft); }
+  .lbl-b { font-family: var(--font-zh); font-size: 12px; font-weight: 700; fill: var(--c-ink); }
+  .lbl-s { font-family: var(--font-zh); font-size: 10px; fill: var(--c-ink-faint); }
+  .digit { font-family: var(--font-mono); font-size: 15px; font-weight: 800; fill: var(--c-primary); }
+  .dig1 { fill: var(--c-primary); }
+  .dig0 { fill: var(--c-mint-deep); }
+  .gate { fill: var(--c-surface-2); stroke: var(--c-wire); stroke-width: 2.2; stroke-linejoin: round; }
+  .plate { stroke: var(--c-wire); stroke-width: 3; fill: none; }
+  .lanebg { fill: var(--c-surface-2); }
+  .lax { stroke: var(--c-line); stroke-width: 1.2; }
+  .band { fill: var(--c-ink-faint); opacity: .16; }
+  .thl { stroke: var(--c-ink-faint); stroke-width: 1; stroke-dasharray: 4 3; }
+  .ln { font-family: var(--font-zh); font-size: 11px; font-weight: 700; fill: var(--c-ink); }
+  .ln2 { font-family: var(--font-zh); font-size: 10px; fill: var(--c-ink-faint); }
+  .lnum { font-family: var(--font-mono); font-size: 9px; fill: var(--c-ink-faint); }
+  #scope.sm .ln { font-size: 16px; }
+  #scope.sm .ln2 { font-size: 14px; }
+  #scope.sm .lnum { font-size: 14px; }
+  .trace { fill: none; stroke: var(--c-primary); stroke-width: 2; stroke-linejoin: round; }
+  .trace.b { stroke: var(--c-violet-deep); }
+  .trace.c { stroke: var(--c-mint-deep); }
+  .trace.ghost { stroke: var(--c-wire-off); stroke-width: 1.4; }
+  .trace.dim { opacity: .28; }
+  .win { fill: var(--c-yellow); opacity: .35; }
+  .dotm { fill: var(--c-violet-deep); }
+  .mk { fill: var(--c-alert); }
+  .nowline { stroke: var(--c-primary-bright); stroke-width: 1.4; }
+  .hit { fill: transparent; cursor: pointer; }
+  .bar-anim { transition: transform .06s linear; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bar-anim { transition: none; }
+  }
+</style>
+
+<div class="wrap"><div class="col">
+
+  <header class="appbar">
+    <div class="appbar-title">
+      <span class="kicker"><span class="dot"></span><span>創客入門 · 補充教材</span></span>
+      <h1>按鈕彈跳實驗台</h1>
+      <span class="sub1">按一下，為什麼程式算成好幾次？</span>
+    </div>
+    <details class="about">
+      <summary>這一頁在做什麼</summary>
+      <p>按鈕裡面是兩片金屬，碰上的那一瞬間會<b>彈幾下</b>（彈跳，bounce），一下接上、一下分開。程式讀得比彈跳快，就把一次手指的動作算成好幾次。左邊按下去，右邊的示波器把那幾毫秒放慢畫給你看：上面一條是腳位的電壓，下面一條是程式讀到的值。下面四個分頁是四種治法，兩種改程式、兩種加零件，切過去示波器就換成對應的波形。</p>
+    </details>
+  </header>
+
+  <section class="bench" aria-label="互動模擬工作台">
+    <div class="stage">
+      <p class="statehint" id="stateLine">現在：<b>內建上拉、按鈕接地</b></p>
+
+      <div class="benchgrid">
+        <div class="side">
+          <button class="bigbtn" id="btnPress" aria-pressed="false">按住我<small>滑鼠按住，或用鍵盤空白鍵、Enter</small></button>
+          <svg class="mini" id="miniCkt" viewBox="0 0 206 228" role="img" aria-label="小電路圖：3.3 V 經內建上拉電阻接到腳位，腳位另一邊接按鈕再到接地">
+            <g id="mcTop">
+              <path class="rail-vdd" d="M28 18 H178"/>
+              <text class="lbl-b" x="103" y="11" text-anchor="middle">3.3 V</text>
+            </g>
+            <g id="mcTopG" hidden>
+              <path class="gndsym" d="M76 14 H130 M84 19 H122 M92 24 H114"/>
+              <text class="lbl-b" x="103" y="10" text-anchor="middle">接地</text>
+            </g>
+            <path class="wire" d="M52 18 V44"/>
+            <path class="res" d="M52 44 L44 50 L60 58 L44 66 L60 74 L52 80"/>
+            <path class="wire" d="M52 80 V104"/>
+            <text class="lbl" x="44" y="56" text-anchor="end">內建</text>
+            <text class="lbl" x="44" y="70" text-anchor="end" id="mcPullTxt">上拉</text>
+            <text class="lbl-s" x="44" y="82" text-anchor="end">45 kΩ</text>
+            <circle class="node" id="mcNode" cx="52" cy="104" r="3.4"/>
+            <path class="wire" id="mcW1" d="M52 104 H112"/>
+            <rect class="box" x="112" y="88" width="80" height="32" rx="7"/>
+            <text class="lbl-b" x="152" y="108" text-anchor="middle">GPIO5</text>
+            <rect class="bubble" x="104" y="40" width="94" height="30" rx="10"/>
+            <path class="bubble" d="M142 69 H158 L148 80 Z"/>
+            <text class="lbl" x="112" y="60">程式讀到</text>
+            <text class="digit" id="mcDigit" x="178" y="61" text-anchor="middle">1</text>
+            <path class="wire" id="mcW2" d="M52 104 V152"/>
+            <circle class="node" cx="52" cy="152" r="3"/>
+            <circle class="node" cx="88" cy="152" r="3"/>
+            <g id="mcBar" class="bar-anim">
+              <path class="plate" d="M42 143 H98"/>
+              <path class="wire" d="M70 143 V132"/>
+              <rect class="box" x="58" y="120" width="24" height="12" rx="5"/>
+            </g>
+            <path class="wire" d="M88 152 V178"/>
+            <g id="mcBotG">
+              <path class="gndsym" d="M64 178 H112 M72 184 H104 M80 190 H96"/>
+              <text class="lbl-b" x="88" y="206" text-anchor="middle">接地</text>
+            </g>
+            <g id="mcBot3" hidden>
+              <path class="rail-vdd" d="M28 178 H178"/>
+              <text class="lbl-b" x="103" y="198" text-anchor="middle">3.3 V</text>
+            </g>
+            <text class="lbl-s" x="103" y="220" text-anchor="middle">套件的按鍵 A：板面印 IO11，程式寫 5</text>
+          </svg>
+          <p style="margin:6px 0 0;font-size:12px;line-height:1.5;text-align:center;color:var(--c-ink-soft)">想看腳位「讀」按鈕時裡面那兩顆電晶體怎麼動：老師畫的 Falstad 電路「ESP32 Digit Input」——<a href="https://www.falstad.com/circuit/circuitjs.html?ctz=CQAgzCAMB0l3BWEBGGAmOaDsWyQBxoBsAnCViAkZZZJQKYC0yyAUAGYiN4AsIafbkXz8+yFNCQxIaDl14pIgsMMV8waCVNiyA7vKUgiyw6j6RW+7oYEG+xqKwCSXZCU0Pr981EmVL8qo8dEIiDhZWKiL4IqFG5qwASoHRKVz4dJkgweDQEFkwCKwA5mnIGGX4PhYAsmmePDnhErIARlw8JLEk1Mw8EMSZrAAeHSTiAuLWmgJ8fLYAogDKAAoaADoAzgAiAJbFuwAuW04AdgAOAK6HI65oEDHpmuPZoiDbw8MBzO7xHWEJZI-TTcEFuEFUKBQnJgPJQzKSVgAJ1cv1BqM0PBEdFQcFYm3+f0YWP4BCh4kOSMu9BKhIwsRJAgKrDqxIB4A8PjQiPajDQyCQjCIFGYRGoGUcoz5yBFOFcniwcxQ1BWlwANmqtgBVFbfcHZWL68KsIA" target="_blank" rel="noopener">上拉、按鈕接地</a>（這一頁的接法）／<a href="https://www.falstad.com/circuit/circuitjs.html?ctz=CQAgzCAMB0l3BWEBGGAmOaDsWyQBxoBsAnCViACwkhIKS0CmAtMsgFABmIz2aI+BszBgiAhshTQkMSGi48+KIkJFjkK8P2TSoseQHdFWbRmPbNkdkd4nx5lGasBJHholnbphj90JrPGogJGLCoo4+AWHqlJSB4chO7ABK8WJEcdGKcT5UDGDQELkw-gDmaShYoUFolMXsALIViUJ1+BFQUvIARjyURKF1bmzgGlDsAB59CDRo5Mb5cFQgtSAAogDKAApgaAA6AM4AIgCWpScALofOAHYADgCuF5NuS8iU-MwzKJRIcatHCYTKLuDq8OItcYAJzcmkhrE0aFWEng7AO2RWmVWkIkIAuUIejHY5QRDCRmVBaF2nSsTXBHUo7RxK2k7F6rHwklQ7VY1LQCBkL14kAo2CQrGQSGw7Qh7S2DwANgrDkcAPIAdQAcikMat6cU8rQaXp-EA" target="_blank" rel="noopener">下拉、按鈕接 +5 V</a>（真的電路模擬器，載入要等幾秒）</p>
+          <div class="meters" id="meters">
+            <div class="meter"><span class="lbl" id="m1l">你真的按了</span><span class="val" id="m1v">0</span></div>
+            <div class="meter hot"><span class="lbl" id="m2l">沒防的程式數到</span><span class="val" id="m2v">0</span></div>
+            <div class="meter good" id="m3" hidden><span class="lbl" id="m3l">這個治法算到</span><span class="val" id="m3v">0</span></div>
+          </div>
+          <div class="rowbtns">
+            <button class="btn" id="btnReset">重來</button>
+            <button class="btn" id="btnAuto">自動按 5 下</button>
+          </div>
+        </div>
+
+        <figure class="scopewrap">
+          <svg id="scope" viewBox="0 0 680 190" role="img" aria-label="示波器：把按鈕給的電壓與程式讀到的值畫成波形，時間軸從左到右，最右邊是現在"></svg>
+          <figcaption id="scopeCap">時間軸整個畫面是 60 ms，最右邊是「現在」。上面那條是腳位電壓，下面那條是程式每 0.1 ms 讀到的值；紅色小三角是被程式算進去的一次「按下」。</figcaption>
+        </figure>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="四種治法">
+        <button class="tab" role="tab" id="tb-none" data-tab="none" aria-selected="true" aria-controls="tp-none">先看問題<small>什麼都不防</small></button>
+        <button class="tab" role="tab" id="tb-soft1" data-tab="soft1" aria-selected="false" aria-controls="tp-soft1">軟體①<small>等一下再讀</small></button>
+        <button class="tab" role="tab" id="tb-soft2" data-tab="soft2" aria-selected="false" aria-controls="tp-soft2">軟體②<small>連續幾次一樣才算</small></button>
+        <button class="tab" role="tab" id="tb-hw1" data-tab="hw1" aria-selected="false" aria-controls="tp-hw1">硬體①<small>電容＋施密特觸發器</small></button>
+        <button class="tab" role="tab" id="tb-hw2" data-tab="hw2" aria-selected="false" aria-controls="tp-hw2">硬體②<small>兩顆 NAND 閘接成閂鎖</small></button>
+      </div>
+
+      <div class="tabpanel" id="tp-none" role="tabpanel" aria-labelledby="tb-none">
+        <p class="lead">這一支程式什麼都不防：接上電就<b>一直讀</b>（polling），每 0.1 ms 讀一次腳位，只要看到值從 1 變成 0 就算一次按下。手指按下去的瞬間，兩片金屬在彈，它每彈一下就算一次——所以按一下，常常數到三、五次。</p>
+        <details class="adv"><summary><span>這支程式（MicroPython）</span></summary><div class="inner">
+          <div class="codehead"><span>01-bounce-count／main.py</span><button class="copy" data-copy="c01m" data-label="複製程式">複製程式</button></div>
+          <pre class="code" id="c01m">
+# 01 彈跳計數：按一下按鈕，程式數到幾次？
+# 接法：按鈕一腳接 GPIO5、另一腳接 GND；程式開內建上拉（沒按＝1，按下＝0）。
+# 這支程式「故意」什麼都不防：讀到 1 變 0 就算一次。
+from machine import Pin
+import time
+
+btn = Pin(5, Pin.IN, Pin.PULL_UP)   # 沒按＝1，按下去＝0
+led = Pin(16, Pin.OUT)              # 紅燈 16（跟閃爍那支一樣）
+
+count = 0                           # 程式數到幾次
+led_on = 0
+prev = btn.value()                  # 上一次讀到的值
+
+print('按一下按鈕，看右下角數到幾次')
+while True:
+    now = btn.value()
+    if prev == 1 and now == 0:      # 從 1 變 0 ＝ 按下去的那一刻
+        count = count + 1
+        led_on = 1 - led_on         # 燈換一次狀態
+        led.value(led_on)
+        print('第', count, '次')
+    prev = now
+</pre>
+        </div></details>
+        <p class="when"><b>什麼時候用：</b>多算幾次也沒關係的場合才敢這樣寫，例如只是把訊號印出來看。要拿來數次數、開關燈，就一定要治。</p>
+      </div>
+
+      <div class="tabpanel" id="tp-soft1" role="tabpanel" aria-labelledby="tb-soft1" hidden>
+        <p class="lead">最省事的一招：<b>讀到變化先不要信，等一下再讀一次</b>。等的這段時間裡金屬片已經彈完、貼穩了，再讀到的值才算數。示波器上黃色那塊就是「等待窗」，窗右邊那一點就是再讀的時刻。<b>等太短</b>（比彈跳還短）會照樣多算；<b>等太久</b>會漏掉連按——把拉桿拉到 200 ms、再按那顆「連按兩下」自己看。等待窗比畫面還寬的時候，黃色那塊會一路延伸到「現在」，等程式醒來再讀，才會出現那一點。</p>
+        <div class="ctlrow">
+          <label for="rngWait">等多久再讀</label>
+          <input id="rngWait" type="range" min="1" max="200" step="1" value="20">
+          <span class="v" id="vWait">20 ms</span>
+          <button class="btn" id="btnDouble">連按兩下（間隔 100 ms）</button>
+        </div>
+        <details class="adv"><summary><span>這支程式（MicroPython）</span></summary><div class="inner">
+          <div class="codehead"><span>02-software-debounce／main.py</span><button class="copy" data-copy="c02m" data-label="複製程式">複製程式</button></div>
+          <pre class="code" id="c02m">
+# 02 軟體去彈跳（等一下再讀）：讀到變化先等 20 ms，再讀一次才算數。
+# 接法跟 01 一樣：按鈕一腳接 GPIO5、另一腳接 GND，程式開內建上拉。
+from machine import Pin
+import time
+
+btn = Pin(5, Pin.IN, Pin.PULL_UP)   # 沒按＝1，按下去＝0
+led = Pin(16, Pin.OUT)
+
+count = 0
+led_on = 0
+prev = btn.value()
+wait_ms = 20                        # 等彈跳過去的時間：20 ms 是常見起點，真的開關要自己試
+
+print('按一下按鈕，多半會剛好數一次')
+while True:
+    now = btn.value()
+    if now != prev:                 # 讀到變化
+        time.sleep_ms(wait_ms)      # 等彈跳過去
+        now = btn.value()           # 再讀一次，這次才算數
+        if prev == 1 and now == 0:  # 真的從 1 變 0
+            count = count + 1
+            led_on = 1 - led_on
+            led.value(led_on)
+            print('第', count, '次')
+        prev = now
+</pre>
+        </div></details>
+        <p class="when"><b>什麼時候用：</b>程式簡單、停下來等個 20 ms 也沒關係的時候。缺點是等的那段時間程式什麼都不能做。</p>
+      </div>
+
+      <div class="tabpanel" id="tp-soft2" role="tabpanel" aria-labelledby="tb-soft2" hidden>
+        <p class="lead">不想讓程式停下來，就改成<b>每 5 ms 瞄一眼</b>：連續好幾次都讀到跟現在不一樣的值，才承認它真的變了。示波器中間那條上的紫色小圓點就是每一次瞄的結果，最下面那條是程式「承認」的值。次數調少會太敏感，調多會變鈍——自己拉拉看。</p>
+        <div class="ctlrow">
+          <label for="rngNeed">連續幾次一樣才算</label>
+          <input id="rngNeed" type="range" min="2" max="8" step="1" value="4">
+          <span class="v" id="vNeed">4 次</span>
+          <span class="tiny" id="vNeedMs">＝ 20 ms</span>
+        </div>
+        <details class="adv"><summary><span>這支程式（MicroPython）</span></summary><div class="inner">
+          <div class="codehead"><span>02-software-debounce／main-stable.py</span><button class="copy" data-copy="c02s" data-label="複製程式">複製程式</button></div>
+          <pre class="code" id="c02s">
+# 02b 軟體去彈跳（連續幾次一樣才算）：每 5 ms 讀一次，連續 4 次都跟現在不一樣才承認它變了。
+# 好處：不用一口氣停 20 ms；每隔 5 ms 看一眼，之後要把別的工作插進迴圈也比較容易。接法跟 01 一樣。
+from machine import Pin
+import time
+
+btn = Pin(5, Pin.IN, Pin.PULL_UP)
+led = Pin(16, Pin.OUT)
+
+count = 0
+led_on = 0
+state = btn.value()                 # 目前承認的狀態
+same = 0                            # 連續幾次讀到不一樣
+
+print('按一下按鈕，要 4 次都讀到 0 才算按下')
+while True:
+    now = btn.value()
+    if now == state:
+        same = 0                    # 跟承認的狀態一樣，重新數
+    else:
+        same = same + 1
+        if same >= 4:               # 連續 4 次（20 ms）都不一樣，承認它變了
+            state = now
+            same = 0
+            if state == 0:          # 變成 0 ＝ 按下
+                count = count + 1
+                led_on = 1 - led_on
+                led.value(led_on)
+                print('第', count, '次')
+    time.sleep_ms(5)
+</pre>
+        </div></details>
+        <details class="adv"><summary><span>再往下一步：不用 sleep 也不用一直數</span></summary><div class="inner">
+          <p class="tiny">也可以不用數次數，改用時間戳記：把「上一次看到變化的時刻」記在 <span class="mono1">time.ticks_ms()</span> 裡，每次讀到變化就用 <span class="mono1">time.ticks_diff()</span> 算距離上次多久，太近的一律不理。另外也能用中斷（<span class="mono1">Pin.irq()</span>）處理，這裡先不展開。</p>
+        </div></details>
+        <p class="when"><b>什麼時候用：</b>不想讓程式一口氣停 20 ms 的時候；之後想把別的工作插進迴圈也比較容易。</p>
+      </div>
+
+      <div class="tabpanel" id="tp-hw1" role="tabpanel" aria-labelledby="tb-hw1" hidden>
+        <p class="lead">不改程式，改接法：在腳位旁邊加一顆電容，電壓就不能說變就變，得慢慢爬（電阻乘電容，RC）。圖上有兩顆 10 kΩ：上面那顆負責充電、下面那顆負責放電——<b>兩顆電阻讓充電、放電都慢慢來</b>，少了下面那顆，按鈕一按下去電容會被直接短路、瞬間放光，就白加了。但光是爬得慢還不夠——電壓爬到中間那段灰色地帶時，晶片<b>不保證</b>讀到什麼，值會亂跳。再加一顆<b>施密特觸發器</b>（Schmitt trigger，例如 74HC14 這類零件）就穩了：它往上要超過 2.475 V 才肯翻成 1，往下要低過 0.825 V 才肯翻成 0，中間怎麼晃都不理，所以一次按下只翻一次。</p>
+        <div class="hwbox">
+          <svg viewBox="0 0 390 124" width="390" height="124" role="img" aria-label="電路圖：3.3 V 經 10 kΩ 接到節點，節點下方接 100 奈法電容到接地，節點右邊再經一顆 10 kΩ 接按鈕到接地，節點也接到施密特觸發器後進 GPIO5">
+            <text class="lbl-b" x="8" y="34">3.3 V</text>
+            <path class="wire" d="M44 30 H60"/>
+            <path class="res" d="M60 30 L66 22 L78 38 L90 22 L102 38 L108 30 H112"/>
+            <path class="wire" d="M112 30 H150"/>
+            <text class="lbl" x="86" y="16" text-anchor="middle">10 kΩ</text>
+            <circle class="node" cx="150" cy="30" r="3.4"/>
+            <path class="wire" d="M150 30 V66 M150 66 H104 M104 66 V80 M104 88 V104 M150 66 H166"/>
+            <path class="res" d="M166 66 L172 58 L184 74 L196 58 L208 74 L214 66 H222"/>
+            <text class="lbl" x="192" y="88" text-anchor="middle">10 kΩ</text>
+            <path class="plate" d="M88 80 H120 M88 88 H120"/>
+            <text class="lbl" x="84" y="92" text-anchor="end">100 nF</text>
+            <path class="gndsym" d="M84 104 H124 M90 109 H118 M96 114 H112"/>
+            <circle class="node" cx="226" cy="66" r="3"/>
+            <circle class="node" cx="266" cy="66" r="3"/>
+            <path class="plate" d="M218 56 H274"/>
+            <path class="wire" d="M246 56 V48"/>
+            <rect class="box" x="234" y="38" width="24" height="10" rx="5"/>
+            <path class="wire" d="M266 66 V98"/>
+            <path class="gndsym" d="M242 98 H290 M250 104 H282 M258 110 H274"/>
+            <text class="lbl" x="296" y="70">按鈕</text>
+            <path class="wire" d="M150 30 H268"/>
+            <path class="gate" d="M268 14 V46 L302 30 Z"/>
+            <path class="res" d="M276 36 H281 V24 H287"/>
+            <path class="wire" d="M302 30 H318"/>
+            <rect class="box" x="318" y="16" width="68" height="28" rx="7"/>
+            <text class="lbl-b" x="352" y="35" text-anchor="middle">GPIO5</text>
+            <text class="lbl-s" x="285" y="8" text-anchor="middle">施密特觸發器</text>
+          </svg>
+          <div class="hwside">
+            <div class="ctlrow">
+              <span>重點看</span>
+              <div class="seg" role="group" aria-label="重點看哪一種讀法" id="segFocus" style="flex:1 1 180px">
+                <button data-focus="both" aria-pressed="true">兩個都看</button>
+                <button data-focus="plain" aria-pressed="false">只加電容</button>
+                <button data-focus="schmitt" aria-pressed="false">加施密特</button>
+              </div>
+            </div>
+            <p class="tiny">電容像一個小水桶：電要先把它灌滿，電壓才爬得上去，所以那幾下彈跳被磨成一條慢慢爬的曲線。施密特觸發器則像有段差的翹翹板——要推過頭才翻得過去，想翻回來也要推過另一邊。</p>
+            <details class="adv"><summary><span>想看數字怎麼算</span></summary><div class="inner">
+              <div class="ctlrow">
+                <label for="rngTau">電容充放電快慢</label>
+                <input id="rngTau" type="range" min="1" max="100" step="1" value="10">
+                <span class="v" id="vTau">1.0 ms</span>
+              </div>
+              <p class="tiny" id="capLine">電容上的電壓：3.30 V。電阻乘電容 ＝ 10 kΩ × 100 nF ＝ 1 ms。</p>
+            </div></details>
+            <p class="tiny">想看清楚腳位怎麼把電壓讀成 1 或 0、中間那段為什麼不保證，去隔壁那一頁：<a href="../w04/esp32-pin-xray.html?io=in">ESP32 腳位透視鏡（輸入模式）</a>。</p>
+          </div>
+        </div>
+        <p class="when"><b>什麼時候用：</b>程式改不動（別人寫的、或已經忙到沒空等）、或者同一條訊號要給好幾個地方用的時候。代價是多兩顆零件、多一點錢。</p>
+        <p class="tiny">簡化：圖上的施密特觸發器畫成不反相的樣子，方便對照門檻；實際的 74HC14 輸出會跟輸入相反，接了之後程式判斷要跟著反過來。</p>
+      </div>
+
+      <div class="tabpanel" id="tp-hw2" role="tabpanel" aria-labelledby="tb-hw2" hidden>
+        <p class="lead">換一種開關：三隻腳的<b>撥動開關</b>（單刀雙擲，SPDT），中間那隻腳固定接地，動片一次只碰左邊或右邊。關鍵在這裡——<b>彈跳發生在動片正在碰上、或正要離開的那一邊；動片在空中的時候碰不到另一邊</b>。再用兩顆 NAND 閘交叉接成<b>閂鎖</b>（SR latch）：它會記住「第一次碰到」是哪一邊，之後那一邊再怎麼抖，它都不理。圖上<b>直接接的那條線接在 A 側</b>，所以離開 A 和回到 A 都會抖；閂鎖只認第一次碰到。點圖上的開關撥撥看，每個輸入輸出的 1／0 會即時標出來。</p>
+        <div class="hwbox">
+          <svg id="latchSvg" viewBox="0 0 520 276" width="520" height="276" role="img" aria-label="互動電路圖：撥動開關接兩顆 10 千歐姆上拉電阻，兩顆 NAND 閘交叉接成閂鎖，輸出 Q 接 ESP32 的 GPIO5，開關那一腳另外直接接 GPIO4">
+            <path class="rail-vdd" d="M140 26 H230"/>
+            <text class="lbl-b" x="238" y="30">3.3 V</text>
+            <path class="wire" d="M140 26 V40"/>
+            <path class="res" d="M140 40 L132 46 L148 54 L132 62 L148 70 L140 76"/>
+            <path class="wire" d="M140 76 V88"/>
+            <text class="lbl-s" x="118" y="60" text-anchor="end">10 kΩ</text>
+            <path class="wire" d="M230 26 V82"/>
+            <path class="wire" d="M230 82 Q240 88 230 94"/>
+            <path class="wire" d="M230 94 V104"/>
+            <path class="res" d="M230 104 L222 110 L238 118 L222 126 L238 134 L230 140"/>
+            <path class="wire" d="M230 140 V236"/>
+            <text class="lbl-s" x="246" y="124">10 kΩ</text>
+            <path class="wire hi" id="wA" d="M140 88 H285 M140 88 V112"/>
+            <path class="wire hi" id="wB" d="M140 236 H285 M140 236 V200"/>
+            <circle class="node hi" id="nA" cx="140" cy="88" r="3.4"/>
+            <circle class="node hi" id="nB" cx="140" cy="236" r="3.4"/>
+            <circle class="node" cx="140" cy="112" r="3.6"/>
+            <circle class="node" cx="140" cy="200" r="3.6"/>
+            <path class="wire" d="M78 156 V246"/>
+            <path class="gndsym" d="M58 246 H98 M64 251 H92 M70 256 H86"/>
+            <line class="wire" id="wiper" x1="78" y1="156" x2="136" y2="112" stroke-width="3"/>
+            <circle class="node" cx="78" cy="156" r="4"/>
+            <text class="lbl-s" x="70" y="140" text-anchor="end">動片</text>
+            <text class="lbl" x="150" y="106">A 側</text>
+            <text class="digit" id="vA" x="184" y="106">1</text>
+            <text class="lbl" x="150" y="220">B 側</text>
+            <text class="digit" id="vB" x="184" y="220">1</text>
+            <path class="gate" d="M285 76 H312 C330 76 334 90 334 98 C334 106 330 120 312 120 H285 Z"/>
+            <circle class="gate" cx="339" cy="98" r="5"/>
+            <text class="lbl-s" x="302" y="102" text-anchor="middle">NAND 1</text>
+            <path class="gate" d="M285 202 H312 C330 202 334 216 334 224 C334 232 330 246 312 246 H285 Z"/>
+            <circle class="gate" cx="339" cy="224" r="5"/>
+            <text class="lbl-s" x="302" y="228" text-anchor="middle">NAND 2</text>
+            <path class="wire hi" id="wQ" d="M344 98 H372 V152 H266 V214 H285 M372 140 H420"/>
+            <path class="wire lo" id="wQb" d="M344 224 H392 V176 H272 M260 176 H252 V108 H285"/>
+            <path class="wire lo" d="M272 176 Q266 166 260 176"/>
+            <circle class="node hi" cx="372" cy="140" r="3.4"/>
+            <text class="lbl-b" x="346" y="84">Q</text>
+            <text class="digit" id="vQ" x="362" y="84">1</text>
+            <text class="digit" id="vN1B" x="277" y="104" text-anchor="end">0</text>
+            <text class="digit" id="vN2A" x="277" y="210" text-anchor="end">1</text>
+            <path class="wire hi" id="wRaw" d="M180 88 V12 H410 V104 H420"/>
+            <circle class="node hi" cx="180" cy="88" r="3.4"/>
+            <rect class="box" x="420" y="60" width="86" height="190" rx="8"/>
+            <text class="lbl-b" x="463" y="82" text-anchor="middle">ESP32</text>
+            <text class="lbl-b" x="428" y="108">GPIO4</text>
+            <text class="lbl-s" x="428" y="122">直接接開關</text>
+            <text class="lbl-b" x="428" y="144">GPIO5</text>
+            <text class="lbl-s" x="428" y="158">接閂鎖輸出 Q</text>
+            <rect class="hit" id="swHit" x="56" y="74" width="122" height="186" rx="10" role="button" tabindex="0" aria-label="撥動開關，點一下撥到另一邊"/>
+          </svg>
+          <div class="hwside">
+            <button class="btn" id="btnFlip">撥到另一邊</button>
+            <p class="when">彈跳只發生在<b>動片碰得到的那一邊</b>，另一邊在空中；閂鎖只認第一次碰到，之後再怎麼抖，它都不理。</p>
+            <p class="tiny">橘線是高電位（1），灰線是低電位（0）；線上的圓點表示接在一起，跨過去的小橋表示沒接。兩顆 10 kΩ 電阻平常把兩邊都拉到 1，動片碰到哪一邊，哪一邊才變 0。</p>
+            <details class="adv"><summary><span>想看邏輯推導</span></summary><div class="inner">
+              <table class="truth">
+                <caption class="lbl" style="caption-side:top;text-align:left;font-size:12px;padding-bottom:4px">NAND 閘：兩個輸入都是 1 才輸出 0</caption>
+                <thead><tr><th>輸入</th><th>輸入</th><th>輸出</th></tr></thead>
+                <tbody>
+                  <tr><td>0</td><td>0</td><td>1</td></tr>
+                  <tr><td>0</td><td>1</td><td>1</td></tr>
+                  <tr><td>1</td><td>0</td><td>1</td></tr>
+                  <tr><td>1</td><td>1</td><td>0</td></tr>
+                </tbody>
+              </table>
+              <p class="tiny">動片碰到 A 側：A 側＝0，NAND 1 有一個輸入是 0，不管另一個是什麼都輸出 1，所以 Q＝1。動片離開 A 側、還沒碰到 B 側時兩邊都是 1，但 NAND 1 的另一個輸入這時是 0，Q 還是 1——這就是「記住」。碰到 B 側：B 側＝0，NAND 2 輸出 1，Q 才翻成 0；B 側再彈回 1，兩個輸入都是 1，Q 也翻不回去。</p>
+            </div></details>
+          </div>
+        </div>
+        <details class="adv"><summary><span>這支程式（MicroPython）：同一顆開關，兩條路比數字</span></summary><div class="inner">
+          <div class="codehead"><span>03-nand-latch／main.py</span><button class="copy" data-copy="c03m" data-label="複製程式">複製程式</button></div>
+          <pre class="code" id="c03m">
+# 03 硬體去彈跳：兩顆 NAND 閘接成閂鎖（SR latch），配一顆三腳的撥動開關。
+# 同一顆開關、兩條路：GPIO4 直接接在開關上（會抖）、GPIO5 接在閂鎖輸出（不抖）。
+# 程式什麼都不防，只數「值變了幾次」，兩邊一比就知道硬體有沒有擋住彈跳。
+from machine import Pin
+import time
+
+raw = Pin(4, Pin.IN)                # 直接接在開關的 A 側那一腳（有 10k 上拉）：離開 A、回到 A 都會抖
+clean = Pin(5, Pin.IN)              # 接在閂鎖的輸出 Q
+
+n_raw = 0                           # 直接接的腳位變了幾次
+n_clean = 0                         # 閂鎖輸出變了幾次
+p_raw = raw.value()
+p_clean = clean.value()
+last = time.ticks_ms()
+dirty = False
+
+print('撥一下開關，看兩邊各數到幾次變化')
+while True:
+    a = raw.value()
+    b = clean.value()
+    if a != p_raw or b != p_clean:
+        if a != p_raw:
+            n_raw = n_raw + 1
+        if b != p_clean:
+            n_clean = n_clean + 1
+        p_raw = a
+        p_clean = b
+        last = time.ticks_ms()
+        dirty = True
+    # 安靜超過 300 ms 才報告：這 300 ms 只是用來把每次撥動的統計分開，跟去彈跳無關
+    if dirty and time.ticks_diff(time.ticks_ms(), last) > 300:
+        print('本次：直接接的腳位變了', n_raw, '次；經過閂鎖只變了', n_clean, '次')
+        n_raw = 0
+        n_clean = 0
+        dirty = False
+</pre>
+        </div></details>
+        <p class="when"><b>什麼時候用：</b>程式一行都不想改、手邊又有多的閘可以用的時候。代價是要換成三腳的撥動開關，普通的兩腳按鈕接不出這個效果。</p>
+      </div>
+    </div>
+
+    <aside class="panel" aria-label="控制板">
+      <div class="group">
+        <h3>按鈕與接法</h3>
+        <div class="seg" role="group" aria-label="彈跳程度" id="segBounce">
+          <button data-b="ideal" aria-pressed="false">理想<small>不彈</small></button>
+          <button data-b="light" aria-pressed="false">輕<small>約 1 ms</small></button>
+          <button data-b="mid" aria-pressed="true">中<small>約 5 ms</small></button>
+          <button data-b="heavy" aria-pressed="false">重<small>約 20 ms</small></button>
+        </div>
+        <div class="field wide">
+          <label for="selWiring">接法</label>
+          <select id="selWiring">
+            <option value="up">上拉，按鈕接地（按下＝0）</option>
+            <option value="down">下拉，按鈕接 3.3 V（按下＝1）</option>
+          </select>
+        </div>
+        <label class="check"><input type="checkbox" id="chkTh" checked>顯示門檻線 2.475 V／0.825 V</label>
+      </div>
+
+      <div class="group">
+        <h3>時間<span class="hint" id="rateHint">1 秒 ＝ 20 ms</span></h3>
+        <div class="speedrow">
+          <input id="rngSpeed" type="range" min="0.5" max="5" step="0.5" value="1" aria-label="慢動作倍率">
+          <span class="spd" id="spdTxt">慢 1.0×</span>
+        </div>
+        <button class="btn" id="btnPause" aria-pressed="false">暫停</button>
+      </div>
+
+      <div class="group">
+        <h3>試試看</h3>
+        <div class="field">
+          <label for="selPreset">情境</label>
+          <select id="selPreset">
+            <option value="">自己調</option>
+            <option value="count">燈按一下沒反應</option>
+            <option value="short">等 5 ms 夠嗎</option>
+            <option value="long">等太久會怎樣</option>
+            <option value="schmitt">只加電容行不行</option>
+            <option value="latch">閂鎖為什麼不抖</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="note warn"><b>模擬器裡也會抖。</b>Wokwi 的按鈕預設就會彈跳，官方說明寫：開關閉合時兩片接點其實會分開又接上，約 1 ms 內來回 10 到 100 次。所以貼上去跑，數字一樣會亂跳——那不是壞掉。</p>
+      <p class="note">這裡的波形是<b>慢動作示意</b>：彈幾下、每下多長都是照實測範圍隨機生出來的，不是某一顆開關的真實錄影。按「重來」會從同一組隨機數重跑。</p>
+    </aside>
+  </section>
+
+  <details class="sect">
+  <summary>在 Wokwi 上自己跑一次（三個專案）</summary>
+  <section aria-label="Wokwi 動手做">
+    <p class="muted">上面的模擬是畫給你看的，真正的手感要自己跑。三個專案都用同一種貼法：</p>
+    <ol class="steps">
+      <li>開新專案：<span class="mono1">wokwi.com/projects/new/micropython-esp32</span></li>
+      <li>點 <span class="mono1">diagram.json</span> 分頁，全選、貼上（覆蓋原本的內容）</li>
+      <li>點 <span class="mono1">main.py</span> 分頁，全選、貼上，按綠色播放鍵</li>
+    </ol>
+    <div class="cards">
+      <div class="card">
+        <h3>① 先看問題：一按數到幾次</h3>
+        <p><b>要做什麼：</b>按鈕接 GPIO5、另一腳接地，程式什麼都不防，讀到 1 變 0 就數一次、順便把燈換一次狀態。</p>
+        <p><b>先猜再跑：</b>你按 5 下，右下角會印到「第幾次」？</p>
+        <p><b>看什麼：</b>右下角黑底那塊印出來的行數。按一下常常跳好幾行，按完幾下，印出來的次數會比你真正按的多上好幾倍——而且燈亮暗看起來像沒反應，因為多算的次數常常是偶數。<b>Wokwi 的按鈕預設就會彈跳</b>，所以在模擬器裡跑，數字一樣會亂跳；這不是壞掉，是它照真實開關做的。</p>
+        <div class="btns">
+          <button class="copy" data-copy="c01d" data-label="複製 diagram.json">複製 diagram.json</button>
+          <button class="copy" data-copy="c01m" data-label="複製 main.py">複製 main.py</button>
+        </div>
+        <details class="adv"><summary><span>看一眼 diagram.json</span></summary><div class="inner">
+          <pre class="code" id="c01d">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 250, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-led", "id": "led16", "top": 130, "left": 500, "attrs": { "color": "red", "label": "16", "flip": "1" } },
+    { "type": "wokwi-resistor", "id": "r16", "top": 260, "left": 520, "rotate": 90, "attrs": { "value": "220" } },
+    { "type": "wokwi-pushbutton", "id": "btn", "top": 360, "left": 540, "attrs": { "color": "green", "label": "按鈕 → 5" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:16", "led16:A", "orange", [] ],
+    [ "led16:C", "r16:1", "black", [] ],
+    [ "r16:2", "esp:GND.3", "black", [] ],
+    [ "btn:1.l", "esp:5", "green", [] ],
+    [ "btn:2.l", "esp:GND.3", "black", [] ]
+  ],
+  "dependencies": {}
+}
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>② 軟體治法：同一張電路圖，換程式</h3>
+        <p><b>要做什麼：</b>電路完全不動，只換 <span class="mono1">main.py</span>。兩支都試：一支等一下再讀，一支連續幾次一樣才算。</p>
+        <p><b>先猜再跑：</b>把程式裡的 <span class="mono1">wait_ms</span> 從 20 改成 2，還擋得住嗎？</p>
+        <p><b>看什麼：</b>兩支程式大多會一按印一次、不多不少；改成 2 ms 之後，多算的情形又會冒出來。</p>
+        <div class="btns">
+          <button class="copy" data-copy="c02d" data-label="複製 diagram.json">複製 diagram.json</button>
+          <button class="copy" data-copy="c02m" data-label="複製 main.py">複製 main.py</button>
+          <button class="copy" data-copy="c02s" data-label="複製 main-stable.py">複製 main-stable.py</button>
+        </div>
+        <details class="adv"><summary><span>看一眼 diagram.json</span></summary><div class="inner">
+          <pre class="code" id="c02d">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 250, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-led", "id": "led16", "top": 130, "left": 500, "attrs": { "color": "red", "label": "16", "flip": "1" } },
+    { "type": "wokwi-resistor", "id": "r16", "top": 260, "left": 520, "rotate": 90, "attrs": { "value": "220" } },
+    { "type": "wokwi-pushbutton", "id": "btn", "top": 360, "left": 540, "attrs": { "color": "green", "label": "按鈕 → 5" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:16", "led16:A", "orange", [] ],
+    [ "led16:C", "r16:1", "black", [] ],
+    [ "r16:2", "esp:GND.3", "black", [] ],
+    [ "btn:1.l", "esp:5", "green", [] ],
+    [ "btn:2.l", "esp:GND.3", "black", [] ]
+  ],
+  "dependencies": {}
+}
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>③ 硬體治法：兩顆 NAND 閘接成閂鎖</h3>
+        <p><b>要做什麼：</b>撥動開關、兩顆 NAND 閘、兩顆 10 kΩ 電阻。同一顆開關拉兩條路：GPIO4 直接接開關那一腳，GPIO5 接閂鎖輸出。</p>
+        <p><b>先猜再跑：</b>撥一下開關，兩條路各會數到幾次變化？</p>
+        <p><b>看什麼：</b>每撥一下會印一行「本次：直接接的腳位變了 N 次；經過閂鎖只變了 M 次」。往左撥、往右撥都會看到直接接的那邊變了好幾次，經過閂鎖每次都只變 1 次。</p>
+        <div class="btns">
+          <button class="copy" data-copy="c03d" data-label="複製 diagram.json">複製 diagram.json</button>
+          <button class="copy" data-copy="c03m" data-label="複製 main.py">複製 main.py</button>
+        </div>
+        <details class="adv"><summary><span>看一眼 diagram.json</span></summary><div class="inner">
+          <pre class="code" id="c03d">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-slide-switch", "id": "sw", "top": 60, "left": 420, "attrs": {} },
+    { "type": "wokwi-resistor", "id": "r1", "top": 20, "left": 340, "rotate": 90, "attrs": { "value": "10000" } },
+    { "type": "wokwi-resistor", "id": "r2", "top": 20, "left": 560, "rotate": 90, "attrs": { "value": "10000" } },
+    { "type": "wokwi-gate-nand-2", "id": "nand1", "top": 220, "left": 380, "attrs": {} },
+    { "type": "wokwi-gate-nand-2", "id": "nand2", "top": 320, "left": 380, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "sw:2", "esp:GND.1", "black", [] ],
+    [ "sw:1", "nand1:A", "green", [] ],
+    [ "sw:3", "nand2:B", "blue", [] ],
+    [ "r1:1", "sw:1", "red", [] ],
+    [ "r1:2", "esp:3V3", "red", [] ],
+    [ "r2:1", "sw:3", "red", [] ],
+    [ "r2:2", "esp:3V3", "red", [] ],
+    [ "nand1:OUT", "nand2:A", "purple", [] ],
+    [ "nand2:OUT", "nand1:B", "purple", [] ],
+    [ "nand1:OUT", "esp:5", "orange", [] ],
+    [ "sw:1", "esp:4", "green", [] ]
+  ],
+  "dependencies": {}
+}
+</pre>
+        </div></details>
+      </div>
+    </div>
+    <p class="tiny">Wokwi 的按鈕與撥動開關都可以把彈跳關掉（零件屬性 <span class="mono1">bounce</span> 設成 <span class="mono1">"0"</span>）。先別關——關掉就看不到問題了。</p>
+  </section>
+  </details>
+
+  <details class="sect">
+  <summary>試試看：五個上課常被問的問題</summary>
+  <section aria-label="常見疑問">
+    <div class="cards">
+      <div class="card">
+        <h3>為什麼燈按一下沒反應？</h3>
+        <p>程式每數到一次就把燈換一次狀態。彈跳讓一次按下被算成<b>偶數次</b>時，燈換過去又換回來，看起來就是「沒反應」；算成奇數次才會留下變化。所以「燈有時候有反應、有時候沒有」，往往不是燈壞了。</p>
+        <button class="try" data-preset="count">試試看：按一下，數數看</button>
+      </div>
+      <div class="card">
+        <h3>等 5 ms 夠嗎？</h3>
+        <p>要看你的開關。實測 18 顆開關，閉合時平均約 1.6 ms，去掉兩顆極端值之後最長 6.2 ms，最壞的那一顆甚至 157 ms。這張卡把彈跳調到「重」、等待只留 5 ms，連按三下給你看：同樣的設定，<b>有的擋得住、有的擋不住</b>，治法算到的次數會比你按的多。想看「剛好夠」的樣子，把彈跳調回「中」再按一次。</p>
+        <button class="try" data-preset="short">試試看：重彈跳只等 5 ms</button>
+      </div>
+      <div class="card">
+        <h3>等太久會怎樣？</h3>
+        <p>等待時間拉到 200 ms，再用「連按兩下（間隔 100 ms）」——那是人真的按得出來的節奏，可是第二下整個落在等待窗裡面，程式醒來時只看到一個穩定的值，兩下就被併成一下。玩遊戲、打拍子的場合，這比多算一次更惱人。</p>
+        <button class="try" data-preset="long">試試看：等 200 ms 再連按兩下</button>
+      </div>
+      <div class="card">
+        <h3>只加電容、不加施密特觸發器行不行？</h3>
+        <p>電容讓電壓爬得慢，但爬過 0.825 V 到 2.475 V 中間那段灰色地帶時，晶片<b>不保證</b>讀到什麼——波形上會看到讀值在那段亂跳，有時候反而比不加電容更慘。要就加一顆施密特觸發器，不然乾脆用軟體治。</p>
+        <button class="try" data-preset="schmitt">試試看：只看普通輸入</button>
+      </div>
+      <div class="card">
+        <h3>閂鎖為什麼不會抖？</h3>
+        <p>動片離開 A 側的時候，接點會先斷開、再碰一下才真的走（放開時的彈跳通常比閉合短），所以<b>直接接的那一腳兩個方向都會抖</b>。可是那一刻 B 側還是 1，閂鎖記得「上一次碰到的是 A」，輸出動都不動；直到真的碰上 B 側才翻過去，B 側再怎麼彈回 1 也不理。<b>閂鎖只認第一次碰到</b>，另一邊在空中怎麼樣它都看不到，這就是它能治的原因。</p>
+        <button class="try" data-preset="latch">試試看：撥一下開關</button>
+      </div>
+    </div>
+  </section>
+  </details>
+
+  <details class="sect">
+  <summary>數字從哪裡來</summary>
+  <section aria-label="數字出處">
+    <p class="muted">頁面上每個數字都有出處；標 ⚠️ 的是為了畫圖做的簡化，實際的板子量到的值會有出入。</p>
+    <div class="tablewrap">
+      <table class="facts">
+        <thead><tr><th>事</th><th>值</th><th>出處與備註</th></tr></thead>
+        <tbody>
+          <tr><td>一顆開關會彈多久</td><td class="num">平均約 1.6 ms（1,557 µs）；去掉兩顆極端值後最長 6.2 ms；最壞的一顆 157 ms</td><td>Jack Ganssle《A Guide to Debouncing》（ganssle.com/debouncing.htm）對 18 顆開關的實測；放開時通常比閉合短。</td></tr>
+          <tr><td>模擬用的三檔彈跳</td><td class="num">輕 1 ms／中 5 ms／重 20 ms</td><td>照上面那組實測值挑的代表值。<span class="tiny">⚠️ 簡化：彈幾下（3 到 12 下）、每下間隔（0.05 到 0.6 ms）都是隨機生的；按鈕放開時長度取閉合的一半、次數 1 到 5 下；撥動開關離開接點時同樣會彈 1 到 3 下。</span></td></tr>
+          <tr><td>Wokwi 的按鈕會不會彈跳</td><td class="num">會，預設開著</td><td>docs.wokwi.com 的 wokwi-pushbutton 說明：開關閉合時兩片接點其實會分開又接上，約 1 ms 內來回 10 到 100 次；零件屬性 bounce 設成 "0" 才關掉。撥動開關（wokwi-slide-switch）同樣預設會彈跳。</td></tr>
+          <tr><td>電壓讀成 1 或 0 的門檻</td><td class="num">≥ 2.475 V 讀 1；≤ 0.825 V 讀 0</td><td>Espressif《ESP32 Series Datasheet》v5.3 表 5-3（0.75 × 3.3 V 與 0.25 × 3.3 V）；中間那段手冊不保證。</td></tr>
+          <tr><td>內建上拉電阻</td><td class="num">約 45 kΩ</td><td>同上，表 5-3 的 RPU。</td></tr>
+          <tr><td>只能當輸入的腳位</td><td class="num">GPIO34–39</td><td>這幾支沒有內建上拉、下拉電阻，接按鈕一定要外接一顆。出處：ESP32 手冊腳位表附註、MicroPython ESP32 quickref。</td></tr>
+          <tr><td>套件上的按鍵</td><td class="num">按鍵 A ＝ GPIO5（板面印 IO11）</td><td>原廠 EZ Start Kit+ 腳位對照圖。<span class="tiny">⚠️ 板子上有沒有另外接電阻還沒核對，這一頁只講 GPIO5 這一支。按鍵 B 是 GPIO36（板面印 IO15），那一支沒有內建上拉。</span></td></tr>
+          <tr><td>紅燈接哪一支腳</td><td class="num">GPIO16</td><td>沿用燈會閃那一支的接法；01、02 兩個專案的 diagram.json 就是這樣接。</td></tr>
+          <tr><td>紅燈串的限流電阻</td><td class="num">220 Ω</td><td>同上，沿用閃爍那支的值。<span class="tiny">⚠️ 一般指示燈的常見值，不是唯一解。</span></td></tr>
+          <tr><td>閂鎖示範直接接的那一腳</td><td class="num">GPIO4</td><td>03 的 diagram.json：撥動開關的 A 側（sw:1）同時接 NAND 1 的輸入與 esp:4，所以那一腳讀到的就是沒治過的訊號。</td></tr>
+          <tr><td>程式用到的東西</td><td class="num">Pin(5, Pin.IN, Pin.PULL_UP)、time.sleep_ms()、time.ticks_ms()、time.ticks_diff()、Pin.irq()</td><td>MicroPython 官方文件 machine.Pin 與 time。</td></tr>
+          <tr><td>電阻乘電容的例子</td><td class="num">10 kΩ × 100 nF ＝ 1 ms</td><td>乘出來的。<span class="tiny">⚠️ 這是範例值不是規格，實際要配合你的開關有多會抖。</span></td></tr>
+          <tr><td>NAND 閘</td><td class="num">兩個輸入都是 1 才輸出 0</td><td>基本邏輯；其餘三種組合都輸出 1。</td></tr>
+          <tr><td>Wokwi 零件名與腳位</td><td class="num">wokwi-pushbutton（1.l／2.l／1.r／2.r）、wokwi-slide-switch（1／2／3）、wokwi-gate-nand-2（A／B／OUT）、wokwi-resistor（1／2）</td><td>Wokwi 自己的零件登錄檔（wokwi-cli 的 diagram-lint 目錄）。按鈕按下去是把 1 和 2 接通；撥動開關的 2 是公共腳，撥左邊接 1、撥右邊接 3。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tiny">其他簡化：時間軸是慢動作示意，不是實際速度；施密特觸發器的兩個門檻直接借用上面那兩個電壓值；電容用最簡單的一階充放電算，沒有畫線路上的寄生效應；閂鎖的兩顆閘假設瞬間反應。</p>
+  </section>
+  </details>
+
+  <footer class="foot">
+    <span>資料來源：Jack Ganssle《A Guide to Debouncing》；Wokwi 官方零件說明（docs.wokwi.com）與零件登錄檔；Espressif《ESP32 Series Datasheet》v5.3 表 5-3；MicroPython 官方文件 machine.Pin 與 time。</span>
+    <span>國立東華大學通識課《創客入門—智慧生活裝置實作》補充教材（W5 數位輸入與按鈕互動）。姊妹頁：<a href="../w04/esp32-pin-xray.html?io=in">ESP32 腳位透視鏡（輸入模式）</a>。</span>
+    <span>版本 2026-09-21。</span>
+  </footer>
+
+</div></div>
+
+<script>
+(function () {
+'use strict';
+var $ = function (id) { return document.getElementById(id); };
+
+/* ===== 數字（全部來自「數字從哪裡來」那張表） ===== */
+var VDD = 3.3, VIH = 0.75 * VDD, VIL = 0.25 * VDD;      /* 2.475 V／0.825 V */
+var B_US = { ideal: 0, light: 1000, mid: 5000, heavy: 20000 };
+var B_TXT = { ideal: '理想開關、不會彈', light: '輕、約 1 ms', mid: '中、約 5 ms', heavy: '重、約 20 ms' };
+var DT = 10;          /* 模擬步長 0.01 ms */
+var MIN_HOLD = 60000; /* 每次按下在電路時間裡至少算 60 ms：畫面按一下只有零點幾秒，換算成電路時間太短，治法會看起來沒作用 */
+var SAMPLE = 100;     /* 程式每 0.1 ms 讀一次 */
+var S2DT = 5000;      /* 軟體②每 5 ms 讀一次 */
+var WIN = 60000;      /* 示波器一個畫面 60 ms */
+var BASE = 20000;     /* 慢動作 1×：1 秒實際時間 ＝ 20 ms 電路時間 */
+var KEEP = 78000;
+var SEED = 20260921;
+var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+var S = { tab: 'none', bounce: 'mid', speed: 1, wiring: 'up', showTh: true, wait: 20, need: 4, tau: 1, focus: 'both', paused: false, preset: '' };
+
+/* ===== 可重設的亂數（按「重來」會從同一組數重跑） ===== */
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+var rnd = mulberry32(SEED);
+function rr(a, b) { return a + rnd() * (b - a); }
+function ri(a, b) { return Math.floor(a + rnd() * (b - a + 1)); }
+
+function idleV() { return S.wiring === 'up' ? 1 : 0; }   /* 沒按的時候腳位是 1 還是 0 */
+function actV() { return S.wiring === 'up' ? 0 : 1; }    /* 按下去之後 */
+
+/* ===== 訊號線：一串 {時間, 值} 的轉態 ===== */
+function mkLine(v) { return { ev: [{ t: 0, v: v }], i: 0, v: v, busy: 0, span: 0 }; }
+function levelAt(L, t) {
+  while (L.i + 1 < L.ev.length && L.ev[L.i + 1].t <= t) L.i++;
+  L.v = L.ev[L.i].v;
+  return L.v;
+}
+/* 在 t0 排一段彈跳，最後落在 target */
+function addBounce(L, t0, target, span, toggles) {
+  if (span <= 0 || toggles <= 0) { L.ev.push({ t: Math.round(t0), v: target }); L.busy = t0; L.span = 0; return; }
+  var gaps = [], sum = 0, i, g;
+  for (i = 0; i <= toggles; i++) { g = rr(50, 600); gaps.push(g); sum += g; }   /* 多留最後一段，收尾才落在 target */
+  var k = span / sum, tt = t0, v = target, last = t0 - 20;
+  var pushAt = function (time, val) {
+    if (time < last + 20) time = last + 20;                                     /* 兩個轉態至少差 0.02 ms，不然會互相蓋掉 */
+    last = time; L.ev.push({ t: Math.round(time), v: val });
+  };
+  pushAt(t0, target);
+  for (i = 0; i < toggles; i++) { tt += gaps[i] * k; v = v ? 0 : 1; pushAt(tt, v); }
+  if (v !== target) pushAt(t0 + span, target);
+  L.busy = Math.max(t0 + span, last); L.span = span;
+}
+function put(sig, t, v) { var n = sig.length; if (n && sig[n - 1].v === v) return; sig.push({ t: t, v: v }); }
+function prune(sig, t) { var cut = t - KEEP, k = 0; while (k + 1 < sig.length && sig[k + 1].t < cut) k++; if (k > 0) sig.splice(0, k); }
+function pruneT(arr, t) { var cut = t - KEEP; while (arr.length && (arr[0].t !== undefined ? arr[0].t : arr[0].b) < cut) arr.shift(); }
+
+/* ===== 模擬狀態 ===== */
+var M;
+function reset() {
+  rnd = mulberry32(SEED);
+  var v = idleV();
+  M = {
+    t: 0, acc: 0, q: [],
+    btn: mkLine(v), lineA: mkLine(0), lineB: mkLine(1),
+    pin: [{ t: 0, v: v }], prog: [{ t: 0, v: v }], s1: [{ t: 0, v: v }], s2: [{ t: 0, v: v }],
+    plain: [{ t: 0, v: v }], sch: [{ t: 0, v: v }], cap: [{ t: 0, v: v ? VDD : 0 }],
+    swA: [{ t: 0, v: 0 }], swB: [{ t: 0, v: 1 }], qsig: [{ t: 0, v: 1 }],
+    wins: [], dots: [], marks: [],
+    vc: v ? VDD : 0, schV: v, plainV: v, lastSample: v,
+    s1state: v, s1wait: -1, winStart: 0,
+    s2state: v, s2same: 0,
+    down: false, pressT: -MIN_HOLD, side: 'A', Q: 1, Qb: 0, lastA: 0, lastQ: 1,
+    n: { user: 0, raw: 0, s1: 0, s2: 0, plain: 0, sch: 0, flips: 0, swraw: 0, swq: 0 },
+    base: null, flipBase: null
+  };
+}
+
+/* ===== 手指：按下與放開 ===== */
+function setPress(down) {
+  if (!M || down === M.down) return;
+  M.down = down;
+  var L = M.btn, t0 = Math.max(M.t, L.busy), B = B_US[S.bounce];
+  if (down) {
+    M.n.user++;
+    M.pressT = t0;
+    M.base = { raw: M.n.raw, s1: M.n.s1, s2: M.n.s2, plain: M.n.plain, sch: M.n.sch };
+    addBounce(L, t0, actV(), B ? rr(B / 2, B) : 0, B ? ri(3, 12) : 0);
+  } else {
+    t0 = Math.max(t0, (M.pressT || 0) + MIN_HOLD);      /* 畫面上按鈕先彈起來，電路裡的接點晚一點才斷開 */
+    addBounce(L, t0, idleV(), L.span ? L.span / 2 : 0, B ? ri(1, 5) : 0);
+  }
+  var b = $('btnPress');
+  if (S.tab !== 'hw2') b.setAttribute('aria-pressed', String(down));
+}
+
+/* ===== 撥動開關：離開這一邊、飛過去、碰上那一邊才彈 ===== */
+function flipSwitch() {
+  if (!M) return;
+  var to = M.side === 'A' ? 'B' : 'A';
+  var Lf = M.side === 'A' ? M.lineA : M.lineB;
+  var Lt = to === 'A' ? M.lineA : M.lineB;
+  var t0 = Math.max(M.t, M.lineA.busy, M.lineB.busy);
+  var B = B_US[S.bounce], span = B ? rr(B / 2, B) : 0;
+  /* 離開的那一邊：接點斷開時也會再碰一下，長度取閉合的一半、次數 1 到 3 下 */
+  addBounce(Lf, t0, 1, span / 2, B ? ri(1, 3) : 0);
+  var travel = ri(2000, 6000);                                 /* 在空中：兩邊都是 1，閂鎖保持原狀 */
+  addBounce(Lt, Lf.busy + travel, 0, span, B ? ri(3, 12) : 0); /* 碰上那一邊才是主要的彈跳 */
+  M.side = to;
+  M.n.flips++;
+  M.flipBase = { raw: M.n.swraw, q: M.n.swq };
+}
+
+/* ===== 一步 0.01 ms ===== */
+function step() {
+  var t = M.t, i;
+  while (M.q.length && M.q[0].t <= t) { (M.q.shift().fn)(); }
+
+  var v = levelAt(M.btn, t);
+  put(M.pin, t, v);
+
+  /* 硬體①：電容慢慢充放電，施密特觸發器要過門檻才翻 */
+  var tau = Math.max(100, S.tau * 1000);
+  M.vc += ((v ? VDD : 0) - M.vc) * (DT / tau);
+  if (M.vc > VIH && M.schV !== 1) { M.schV = 1; if (actV() === 1) M.n.sch++; put(M.sch, t, 1); }
+  else if (M.vc < VIL && M.schV !== 0) { M.schV = 0; if (actV() === 0) M.n.sch++; put(M.sch, t, 0); }
+
+  /* 硬體②：開關兩邊 → 兩顆 NAND 交叉接，算到穩定為止 */
+  var a = levelAt(M.lineA, t), b = levelAt(M.lineB, t);
+  put(M.swA, t, a); put(M.swB, t, b);
+  for (i = 0; i < 6; i++) {
+    var q = (a && M.Qb) ? 0 : 1, qb = (q && b) ? 0 : 1;
+    if (q === M.Q && qb === M.Qb) break;
+    M.Q = q; M.Qb = qb;
+  }
+  put(M.qsig, t, M.Q);
+
+  if (t % SAMPLE === 0) {
+    /* 什麼都不防的程式 */
+    if (v !== M.lastSample) {
+      if (v === actV()) { M.n.raw++; M.marks.push({ t: t }); }
+      M.lastSample = v; put(M.prog, t, v);
+    }
+    /* 硬體①：只加電容、用普通輸入讀（灰帶內不保證） */
+    var pv;
+    if (M.vc > VIH) pv = 1; else if (M.vc < VIL) pv = 0; else pv = rnd() < 0.5 ? 1 : 0;
+    if (pv !== M.plainV) { if (pv === actV()) M.n.plain++; M.plainV = pv; put(M.plain, t, pv); }
+    /* 軟體①：讀到變化 → 等 W ms → 再讀一次才算 */
+    if (M.s1wait < 0) {
+      if (v !== M.s1state) { M.s1wait = t + S.wait * 1000; M.winStart = t; }
+    } else if (t >= M.s1wait) {
+      if (v !== M.s1state) { M.s1state = v; if (v === actV()) M.n.s1++; put(M.s1, t, v); }
+      M.wins.push({ a: M.winStart, b: t, v: v });
+      M.s1wait = -1;
+    }
+    /* 硬體②：兩條路各數「值變了幾次」 */
+    if (a !== M.lastA) { M.n.swraw++; M.lastA = a; }
+    if (M.Q !== M.lastQ) { M.n.swq++; M.lastQ = M.Q; }
+    /* 軟體②：每 5 ms 瞄一眼，連續 N 次不一樣才承認 */
+    if (t % S2DT === 0) {
+      M.dots.push({ t: t, v: v });
+      if (v === M.s2state) M.s2same = 0;
+      else {
+        M.s2same++;
+        if (M.s2same >= S.need) {
+          M.s2state = v; M.s2same = 0;
+          if (v === actV()) M.n.s2++;
+          put(M.s2, t, v);
+        }
+      }
+    }
+    if (t % 10000 === 0) {
+      var sigs = [M.pin, M.prog, M.s1, M.s2, M.plain, M.sch, M.cap, M.swA, M.swB, M.qsig];
+      for (i = 0; i < sigs.length; i++) prune(sigs[i], t);
+      while (M.dots.length && M.dots[0].t < t - KEEP) M.dots.shift();
+      while (M.marks.length && M.marks[0].t < t - KEEP) M.marks.shift();
+      while (M.wins.length && M.wins[0].b < t - KEEP) M.wins.shift();
+    }
+    M.cap.push({ t: t, v: M.vc });
+  }
+}
+
+/* ===== 排程：自動按幾下 ===== */
+function schedule(t, fn) { M.q.push({ t: t, fn: fn }); M.q.sort(function (x, y) { return x.t - y.t; }); }
+function autoPress(n, hold, gap, delay) {
+  var t = M.t + (delay || 3000), i;
+  for (i = 0; i < n; i++) {
+    schedule(t, function () { setPress(true); });
+    schedule(t + hold, function () { setPress(false); });
+    t += hold + gap;
+  }
+}
+function autoFlip(delay) { schedule(M.t + (delay || 3000), flipSwitch); }
+
+/* ===== 示波器 ===== */
+var SW = 680, LEFT = 66, RIGHT = 10, TOP = 14, LH = 56, LH0 = 74, GAP = 8, PW = 0;
+var scope = $('scope'), V = {};
+
+function lanes() {
+  if (S.tab === 'hw2') return [
+    { n: 'A 側', s: '開關這邊', sig: M.swA },
+    { n: 'B 側', s: '開關那邊', sig: M.swB },
+    { n: 'Q', s: '閂鎖輸出', sig: M.qsig }];
+  if (S.tab === 'hw1') return [
+    { n: '電容電壓', s: '灰線是按鈕', sig: M.cap, analog: 1, ghost: M.pin },
+    { n: '普通輸入', s: '讀到的值', sig: M.plain, dim: S.focus === 'schmitt' },
+    { n: '施密特', s: '讀到的值', sig: M.sch, dim: S.focus === 'plain' }];
+  if (S.tab === 'soft1') return [
+    { n: '腳位電壓', s: '按鈕給的', sig: M.pin },
+    { n: '程式讀到', s: '每 0.1 ms', sig: M.prog, win: 1 },
+    { n: '算數的值', s: '等完再讀', sig: M.s1 }];
+  if (S.tab === 'soft2') return [
+    { n: '腳位電壓', s: '按鈕給的', sig: M.pin },
+    { n: '每 5 ms 瞄', s: '瞄到的值', sig: M.prog, dot: 1 },
+    { n: '承認的值', s: '連續幾次', sig: M.s2 }];
+  return [
+    { n: '腳位電壓', s: '按鈕給的', sig: M.pin },
+    { n: '程式讀到', s: '每 0.1 ms', sig: M.prog, mark: 1 }];
+}
+function laneY(i) {
+  var top = TOP + (i === 0 ? 0 : LH0 + GAP + (i - 1) * (LH + GAP)), hh = i === 0 ? LH0 : LH;
+  return { top: top, h: hh, hi: top + 10, lo: top + hh - 14 };
+}
+function volt2y(y, v) { return y.lo - (v / VDD) * (y.lo - y.hi); }
+
+function buildScope() {
+  var L = lanes(), n = L.length, i, y;
+  var narrow = window.innerWidth < 640;
+  SW = narrow ? 420 : 680;
+  LEFT = narrow ? 84 : 66;
+  scope.setAttribute('class', narrow ? 'sm' : '');
+  PW = SW - LEFT - RIGHT;
+  var yLast = laneY(n - 1), ax = yLast.top + yLast.h + 12, H = ax + 24, s = '';
+  for (i = 0; i < n; i++) {
+    y = laneY(i);
+    s += '<rect class="lanebg" x="' + LEFT + '" y="' + y.top + '" width="' + PW + '" height="' + y.h + '" rx="6"/>';
+    s += '<text class="ln" x="' + (LEFT - 7) + '" y="' + (y.top + 22) + '" text-anchor="end">' + L[i].n + '</text>';
+    s += '<text class="ln2" x="' + (LEFT - 7) + '" y="' + (y.top + 36) + '" text-anchor="end">' + L[i].s + '</text>';
+    s += '<line class="lax" x1="' + LEFT + '" y1="' + y.lo + '" x2="' + (SW - RIGHT) + '" y2="' + y.lo + '"/>';
+    s += '<text class="lnum" x="' + (LEFT + 4) + '" y="' + (y.hi - 3) + '">' + (i === 0 ? '3.3 V' : '1') + '</text>';
+    s += '<text class="lnum" x="' + (LEFT + 4) + '" y="' + (y.lo + 10) + '">' + (i === 0 ? '0 V' : '0') + '</text>';
+  }
+  y = laneY(0);
+  if (S.showTh) {
+    var yH = volt2y(y, VIH), yL = volt2y(y, VIL);
+    s += '<rect class="band" x="' + LEFT + '" y="' + yH + '" width="' + PW + '" height="' + (yL - yH) + '"/>';
+    s += '<line class="thl" x1="' + LEFT + '" y1="' + yH + '" x2="' + (SW - RIGHT) + '" y2="' + yH + '"/>';
+    s += '<line class="thl" x1="' + LEFT + '" y1="' + yL + '" x2="' + (SW - RIGHT) + '" y2="' + yL + '"/>';
+    s += '<text class="lnum" x="' + (SW - RIGHT - 4) + '" y="' + (yH + 10) + '" text-anchor="end">2.475 V 以上讀 1</text>';
+    s += '<text class="lnum" x="' + (SW - RIGHT - 4) + '" y="' + (yL - 3) + '" text-anchor="end">0.825 V 以下讀 0</text>';
+  }
+  s += '<g id="gwin"></g><polyline class="trace ghost" id="trG" points=""/>';
+  for (i = 0; i < n; i++) {
+    s += '<polyline class="trace' + (i === 1 ? ' b' : i === 2 ? ' c' : '') + (L[i].dim ? ' dim' : '') + '" id="tr' + i + '" points=""/>';
+  }
+  s += '<g id="gdot"></g><g id="gmark"></g>';
+  s += '<line class="lax" x1="' + LEFT + '" y1="' + ax + '" x2="' + (SW - RIGHT) + '" y2="' + ax + '"/>';
+  for (i = 0; i <= 3; i++) {
+    var xx = LEFT + PW * i / 3, lab = i === 3 ? '現在' : ('−' + (60 - i * 20) + ' ms');
+    s += '<line class="lax" x1="' + xx + '" y1="' + ax + '" x2="' + xx + '" y2="' + (ax + 4) + '"/>';
+    s += '<text class="lnum" x="' + xx + '" y="' + (ax + 15) + '" text-anchor="' + (i === 3 ? 'end' : 'middle') + '">' + lab + '</text>';
+  }
+  s += '<line class="nowline" x1="' + (SW - RIGHT) + '" y1="' + TOP + '" x2="' + (SW - RIGHT) + '" y2="' + (ax - 2) + '"/>';
+  scope.setAttribute('viewBox', '0 0 ' + SW + ' ' + H);
+  scope.innerHTML = s;
+  V = { n: n, L: L, tr: [], g: $('gwin'), d: $('gdot'), m: $('gmark'), ghost: $('trG') };
+  for (i = 0; i < n; i++) V.tr.push($('tr' + i));
+}
+
+function xAt(t, t0) { return LEFT + (t - t0) / WIN * PW; }
+function stepPts(sig, t0, t1, y) {
+  var i, idx = 0, v = sig.length ? sig[0].v : 0, p = [];
+  for (i = 0; i < sig.length; i++) { if (sig[i].t <= t0) { v = sig[i].v; idx = i; } else break; }
+  p.push(xAt(t0, t0).toFixed(1) + ',' + (v ? y.hi : y.lo));
+  for (i = idx + 1; i < sig.length; i++) {
+    if (sig[i].t > t1) break;
+    var x = xAt(sig[i].t, t0).toFixed(1);
+    p.push(x + ',' + (v ? y.hi : y.lo));
+    v = sig[i].v;
+    p.push(x + ',' + (v ? y.hi : y.lo));
+  }
+  p.push(xAt(t1, t0).toFixed(1) + ',' + (v ? y.hi : y.lo));
+  return p.join(' ');
+}
+function analogPts(sig, t0, t1, y) {
+  var i, p = [];
+  for (i = 0; i < sig.length; i++) {
+    if (sig[i].t < t0) continue;
+    if (sig[i].t > t1) break;
+    p.push(xAt(sig[i].t, t0).toFixed(1) + ',' + volt2y(y, sig[i].v).toFixed(1));
+  }
+  return p.join(' ');
+}
+
+function drawScope() {
+  var t1 = M.t, t0 = t1 - WIN, i, y, L = V.L;
+  for (i = 0; i < V.n; i++) {
+    y = laneY(i);
+    V.tr[i].setAttribute('points', L[i].analog ? analogPts(L[i].sig, t0, t1, y) : stepPts(L[i].sig, t0, t1, y));
+    if (L[i].dim !== undefined) {
+      var c = 'trace' + (i === 1 ? ' b' : i === 2 ? ' c' : '') + (L[i].dim ? ' dim' : '');
+      if (V.tr[i].getAttribute('class') !== c) V.tr[i].setAttribute('class', c);
+    }
+  }
+  V.ghost.setAttribute('points', L[0].ghost ? stepPts(L[0].ghost, t0, t1, laneY(0)) : '');
+  var s = '', k;
+  if (L[1] && L[1].win) {
+    y = laneY(1);
+    for (k = 0; k < M.wins.length; k++) {
+      var w = M.wins[k];
+      if (w.b < t0) continue;
+      var xa = Math.max(LEFT, xAt(w.a, t0)), xb = xAt(w.b, t0);
+      s += '<rect class="win" x="' + xa.toFixed(1) + '" y="' + y.top + '" width="' + Math.max(0, xb - xa).toFixed(1) + '" height="' + y.h + '"/>';
+      s += '<circle class="dotm" cx="' + xb.toFixed(1) + '" cy="' + (w.v ? y.hi : y.lo) + '" r="3.2"/>';
+    }
+    if (M.s1wait >= 0) {
+      var xa2 = Math.max(LEFT, xAt(M.winStart, t0));
+      s += '<rect class="win" x="' + xa2.toFixed(1) + '" y="' + y.top + '" width="' + Math.max(0, xAt(t1, t0) - xa2).toFixed(1) + '" height="' + y.h + '"/>';
+    }
+  }
+  V.g.innerHTML = s;
+  s = '';
+  if (L[1] && L[1].dot) {
+    y = laneY(1);
+    for (k = 0; k < M.dots.length; k++) {
+      if (M.dots[k].t < t0) continue;
+      s += '<circle class="dotm" cx="' + xAt(M.dots[k].t, t0).toFixed(1) + '" cy="' + (M.dots[k].v ? y.hi : y.lo) + '" r="2.6"/>';
+    }
+  }
+  V.d.innerHTML = s;
+  s = '';
+  if (L[1] && L[1].mark) {
+    y = laneY(1);
+    for (k = 0; k < M.marks.length; k++) {
+      if (M.marks[k].t < t0) continue;
+      var xm = xAt(M.marks[k].t, t0);
+      s += '<path class="mk" d="M' + (xm - 4).toFixed(1) + ' ' + (y.top + 1) + ' h8 l-4 7 Z"/>';
+    }
+  }
+  V.m.innerHTML = s;
+}
+
+/* ===== 小電路圖與閂鎖圖 ===== */
+function updMini() {
+  var v = M.pin[M.pin.length - 1].v, closed = v === actV();
+  var cls = v ? 'hi' : 'lo';
+  $('mcNode').setAttribute('class', 'node ' + cls);
+  $('mcW1').setAttribute('class', 'wire ' + cls);
+  $('mcW2').setAttribute('class', 'wire ' + cls);
+  $('mcBar').setAttribute('transform', closed ? 'translate(0,9)' : 'translate(0,0)');
+  var d = $('mcDigit');
+  d.textContent = String(M.lastSample);
+  d.setAttribute('class', 'digit ' + (M.lastSample ? 'dig1' : 'dig0'));
+}
+function updLatch() {
+  var a = M.swA[M.swA.length - 1].v, b = M.swB[M.swB.length - 1].v;
+  var set = function (id, v) { var e = $(id); e.textContent = String(v); e.setAttribute('class', 'digit ' + (v ? 'dig1' : 'dig0')); };
+  set('vA', a); set('vB', b); set('vQ', M.Q); set('vN1B', M.Qb); set('vN2A', M.Q);
+  $('wA').setAttribute('class', 'wire ' + (a ? 'hi' : 'lo'));
+  $('wRaw').setAttribute('class', 'wire ' + (a ? 'hi' : 'lo'));
+  $('nA').setAttribute('class', 'node ' + (a ? 'hi' : 'lo'));
+  $('wB').setAttribute('class', 'wire ' + (b ? 'hi' : 'lo'));
+  $('nB').setAttribute('class', 'node ' + (b ? 'hi' : 'lo'));
+  $('wQ').setAttribute('class', 'wire ' + (M.Q ? 'hi' : 'lo'));
+  $('wQb').setAttribute('class', 'wire ' + (M.Qb ? 'hi' : 'lo'));
+  var w = $('wiper');
+  var y2 = a === 0 ? 112 : (b === 0 ? 200 : 156);
+  w.setAttribute('x2', y2 === 156 ? 140 : 136);
+  w.setAttribute('y2', y2);
+}
+
+/* ===== 數字、狀態列、說明 ===== */
+var METER = {
+  none: ['你真的按了', '沒防的程式數到', null],
+  soft1: ['你真的按了', '沒防的數到', '等一下再讀'],
+  soft2: ['你真的按了', '沒防的數到', '連續幾次算到'],
+  hw1: ['你真的按了', '只加電容數到', '加施密特數到'],
+  hw2: ['你撥了幾下', '直接接的變了', '經過閂鎖變了']
+};
+var CAPS = {
+  none: '時間軸整個畫面是 60 ms，最右邊是「現在」。上面那條是腳位電壓，下面那條是程式每 0.1 ms 讀到的值；紅色小三角是被程式算進去的一次「按下」。',
+  soft1: '黃色那塊是「等待窗」，窗右邊那一點是再讀一次的時刻；最下面那條才是算數的值。',
+  soft2: '紫色小圓點是每 5 ms 瞄到的值；最下面那條是程式承認的值。',
+  hw1: '上面那條是電容上的電壓（細灰線是按鈕原本給的方波），灰帶是 0.825 V 到 2.475 V 之間的不保證區；中間是普通輸入讀到的值，最下面是加了施密特觸發器之後的值。',
+  hw2: '三條線分別是開關 A 側、B 側，還有閂鎖輸出 Q。A 側離開和回來都會抖，B 側碰上的時候也會抖——但每撥一次，Q 只翻一次。'
+};
+function m2v() { return S.tab === 'hw1' ? M.n.plain : S.tab === 'hw2' ? M.n.swraw : M.n.raw; }
+function m3v() { return S.tab === 'soft1' ? M.n.s1 : S.tab === 'soft2' ? M.n.s2 : S.tab === 'hw1' ? M.n.sch : S.tab === 'hw2' ? M.n.swq : 0; }
+function updMeters() {
+  var t = METER[S.tab];
+  $('m1l').textContent = t[0]; $('m2l').textContent = t[1];
+  $('m1v').textContent = String(S.tab === 'hw2' ? M.n.flips : M.n.user);
+  $('m2v').textContent = String(m2v());
+  if (t[2]) { $('m3l').textContent = t[2]; $('m3v').textContent = String(m3v()); }
+}
+function updState() {
+  var parts, hint = '', warn = false;
+  if (S.tab === 'hw2') {
+    parts = ['現在：<b>動片在 ' + M.side + ' 側</b>', '彈跳<b>' + B_TXT[S.bounce] + '</b>', '兩條路都每 0.1 ms 讀一次'];
+    if (M.flipBase) {
+      var r = M.n.swraw - M.flipBase.raw, q = M.n.swq - M.flipBase.q;
+      hint = '這一撥：直接接的變了 ' + r + ' 次、經過閂鎖 ' + q + ' 次';
+      warn = r > 1;
+    } else hint = '點圖上的開關撥撥看';
+  } else {
+    var w = S.wiring === 'up' ? '內建上拉、按鈕接地' : '外接下拉、按鈕接 3.3 V';
+    parts = ['現在：<b>' + w + '</b>', '彈跳<b>' + B_TXT[S.bounce] + '</b>', '程式每 0.1 ms 讀一次'];
+    if (S.tab === 'soft1') parts.push('讀到變化先等 <b>' + S.wait + ' ms</b>');
+    if (S.tab === 'soft2') parts.push('每 5 ms 瞄一眼、要連續 <b>' + S.need + '</b> 次');
+    if (S.tab === 'hw1') parts.push('電容快慢 <b>' + S.tau.toFixed(1) + ' ms</b>');
+    if (M.base) {
+      var n2 = m2v() - (S.tab === 'hw1' ? M.base.plain : M.base.raw);
+      hint = '這一按：' + (S.tab === 'hw1' ? '只加電容數到 ' : '沒防的程式數到 ') + n2 + ' 次';
+      if (S.tab !== 'none') {
+        var b3 = S.tab === 'soft1' ? M.base.s1 : S.tab === 'soft2' ? M.base.s2 : M.base.sch;
+        hint += '、這個治法 ' + (m3v() - b3) + ' 次';
+      }
+      warn = n2 > 1;
+    } else hint = '按住左邊那顆按鈕試試';
+  }
+  if (S.tab !== 'hw2') parts.push('<span class="tiny">（模擬把每次按下至少算 60 ms）</span>');
+  $('stateLine').innerHTML = parts.join('；') + '<span class="look' + (warn ? ' alert' : '') + '">' + hint + '</span>';
+  if (S.tab === 'hw1') $('capLine').textContent = '電容上的電壓：' + M.vc.toFixed(2) + ' V。電阻乘電容 ＝ ' + S.tau.toFixed(1) + ' ms（10 kΩ × 100 nF 就是 1 ms）。';
+}
+function drawAll() { drawScope(); updMini(); updLatch(); updMeters(); updState(); }
+
+/* ===== 分頁 ===== */
+var TABS = ['none', 'soft1', 'soft2', 'hw1', 'hw2'];
+function setTab(k) {
+  if (TABS.indexOf(k) < 0) k = 'none';
+  S.tab = k;
+  TABS.forEach(function (x) {
+    $('tb-' + x).setAttribute('aria-selected', String(x === k));
+    $('tp-' + x).hidden = x !== k;
+  });
+  var three = !!METER[k][2];
+  $('m3').hidden = !three;
+  $('meters').className = three ? 'meters' : 'meters two';
+  if (k === 'hw2') $('miniCkt').setAttribute('hidden', ''); else $('miniCkt').removeAttribute('hidden');
+  var bp = $('btnPress');
+  if (k === 'hw2') {
+    bp.innerHTML = '撥到另一邊<small>點一下，或用鍵盤空白鍵、Enter</small>';
+    bp.setAttribute('aria-pressed', 'false');
+    $('btnAuto').textContent = '自動撥 3 下';
+  } else {
+    bp.innerHTML = '按住我<small>滑鼠按住，或用鍵盤空白鍵、Enter</small>';
+    bp.setAttribute('aria-pressed', String(M ? M.down : false));
+    $('btnAuto').textContent = '自動按 5 下';
+  }
+  $('scopeCap').textContent = CAPS[k];
+  buildScope();
+}
+function resetAll() { reset(); buildScope(); }
+
+/* ===== 控制 ===== */
+function pressSeg(box, attr, val) {
+  var bs = box.querySelectorAll('button'), i;
+  for (i = 0; i < bs.length; i++) bs[i].setAttribute('aria-pressed', String(bs[i].getAttribute(attr) === String(val)));
+}
+function clearPreset() { S.preset = ''; $('selPreset').value = ''; }
+function syncControls() {
+  pressSeg($('segBounce'), 'data-b', S.bounce);
+  pressSeg($('segFocus'), 'data-focus', S.focus);
+  $('selWiring').value = S.wiring;
+  $('chkTh').checked = S.showTh;
+  $('rngSpeed').value = String(S.speed);
+  $('spdTxt').textContent = '慢 ' + S.speed.toFixed(1) + '×';
+  $('rateHint').textContent = '1 秒 ＝ ' + (BASE / S.speed / 1000).toFixed(1) + ' ms';
+  $('rngWait').value = String(S.wait);
+  $('vWait').textContent = S.wait + ' ms';
+  $('rngNeed').value = String(S.need);
+  $('vNeed').textContent = S.need + ' 次';
+  $('vNeedMs').textContent = '＝ ' + S.need * 5 + ' ms';
+  $('rngTau').value = String(Math.round(S.tau * 10));
+  $('vTau').textContent = S.tau.toFixed(1) + ' ms';
+}
+
+$('segBounce').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  S.bounce = b.getAttribute('data-b'); pressSeg(this, 'data-b', S.bounce); clearPreset();
+});
+$('segFocus').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  S.focus = b.getAttribute('data-focus'); pressSeg(this, 'data-focus', S.focus); buildScope();
+});
+$('selWiring').addEventListener('change', function (e) { S.wiring = e.target.value; clearPreset(); resetAll(); });
+$('chkTh').addEventListener('change', function (e) { S.showTh = e.target.checked; buildScope(); });
+$('rngSpeed').addEventListener('input', function (e) {
+  S.speed = parseFloat(e.target.value);
+  $('spdTxt').textContent = '慢 ' + S.speed.toFixed(1) + '×';
+  $('rateHint').textContent = '1 秒 ＝ ' + (BASE / S.speed / 1000).toFixed(1) + ' ms';
+});
+$('btnPause').addEventListener('click', function () {
+  S.paused = !S.paused;
+  this.setAttribute('aria-pressed', String(S.paused));
+  this.textContent = S.paused ? '繼續' : '暫停';
+});
+$('rngWait').addEventListener('input', function (e) { S.wait = parseInt(e.target.value, 10); $('vWait').textContent = S.wait + ' ms'; clearPreset(); });
+$('rngNeed').addEventListener('input', function (e) {
+  S.need = parseInt(e.target.value, 10);
+  $('vNeed').textContent = S.need + ' 次';
+  $('vNeedMs').textContent = '＝ ' + S.need * 5 + ' ms';
+  clearPreset();
+});
+$('rngTau').addEventListener('input', function (e) { S.tau = parseInt(e.target.value, 10) / 10; $('vTau').textContent = S.tau.toFixed(1) + ' ms'; clearPreset(); });
+$('btnReset').addEventListener('click', function () { resetAll(); });
+$('btnAuto').addEventListener('click', function () {
+  if (S.tab === 'hw2') { var i, t = 3000; for (i = 0; i < 3; i++) { schedule(M.t + t, flipSwitch); t += 60000; } }
+  else autoPress(5, 60000, 60000);
+});
+$('btnDouble').addEventListener('click', function () { autoPress(2, 60000, 100000); });
+$('btnFlip').addEventListener('click', flipSwitch);
+$('swHit').addEventListener('click', flipSwitch);
+$('swHit').addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flipSwitch(); } });
+TABS.forEach(function (k) { $('tb-' + k).addEventListener('click', function () { setTab(k); }); });
+
+var bp = $('btnPress');
+bp.addEventListener('pointerdown', function (e) {
+  if (S.tab === 'hw2') return;
+  try { bp.setPointerCapture(e.pointerId); } catch (err) {}
+  setPress(true);
+});
+bp.addEventListener('pointerup', function () { if (S.tab !== 'hw2') setPress(false); });
+bp.addEventListener('pointercancel', function () { if (S.tab !== 'hw2') setPress(false); });
+bp.addEventListener('click', function () { if (S.tab === 'hw2') flipSwitch(); });
+bp.addEventListener('keydown', function (e) {
+  if (S.tab === 'hw2' || (e.key !== ' ' && e.key !== 'Enter')) return;
+  e.preventDefault(); if (!e.repeat) setPress(true);
+});
+bp.addEventListener('keyup', function (e) {
+  if (S.tab === 'hw2' || (e.key !== ' ' && e.key !== 'Enter')) return;
+  e.preventDefault(); setPress(false);
+});
+window.addEventListener('blur', function () { setPress(false); });
+
+/* ===== 複製按鈕 ===== */
+function selectText(pre) {
+  try {
+    var r = document.createRange(); r.selectNodeContents(pre);
+    var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    return true;
+  } catch (e) { return false; }
+}
+Array.prototype.forEach.call(document.querySelectorAll('.copy'), function (b) {
+  b.addEventListener('click', function () {
+    var pre = $(b.getAttribute('data-copy')), label = b.getAttribute('data-label');
+    var box = pre.closest('details'), panel = pre.closest('.tabpanel');
+    var ok = function () { b.textContent = '已複製'; setTimeout(function () { b.textContent = label; }, 1800); };
+    var no = function () {
+      if (panel && panel.hidden) setTab(panel.id.replace('tp-', ''));   /* 程式碼在別的分頁就先切過去 */
+      if (box && !box.open) box.open = true;
+      var picked = selectText(pre);
+      if (pre.scrollIntoView) pre.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+      b.textContent = picked ? '已選取程式碼，按 Ctrl+C 複製' : '請自己選取程式碼';
+      setTimeout(function () { b.textContent = label; }, 3500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(pre.textContent).then(ok, no);
+    } else no();
+  });
+});
+
+/* ===== 試試看 ===== */
+var PRESETS = {
+  count: { tab: 'none', bounce: 'mid', go: function () { autoPress(1, 60000, 0); } },
+  short: { tab: 'soft1', bounce: 'heavy', wait: 5, go: function () { autoPress(3, 60000, 60000); } },
+  long: { tab: 'soft1', bounce: 'mid', wait: 200, go: function () { autoPress(2, 60000, 100000); } },
+  schmitt: { tab: 'hw1', bounce: 'mid', tau: 1, focus: 'plain', go: function () { autoPress(1, 60000, 0); } },
+  latch: { tab: 'hw2', bounce: 'mid', go: function () { autoFlip(3000); } }
+};
+function applyPreset(key) {
+  var p = PRESETS[key]; if (!p) return;
+  S.bounce = p.bounce;
+  if (p.wait !== undefined) S.wait = p.wait;
+  if (p.tau !== undefined) S.tau = p.tau;
+  S.focus = p.focus || 'both';
+  S.preset = key;
+  syncControls();
+  reset();
+  setTab(p.tab);
+  $('selPreset').value = key;
+  p.go();
+}
+$('selPreset').addEventListener('change', function (e) { if (e.target.value) applyPreset(e.target.value); });
+Array.prototype.forEach.call(document.querySelectorAll('.card .try'), function (b) {
+  b.addEventListener('click', function () {
+    applyPreset(b.getAttribute('data-preset'));
+    var top = document.querySelector('.bench');
+    if (top && top.scrollIntoView) top.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  });
+});
+
+/* ===== 開跑 ===== */
+var last = 0;
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (!last) { last = now; return; }
+  var dt = (now - last) / 1000; last = now;
+  if (document.hidden) return;
+  if (!S.paused) {
+    if (dt > 0.05) dt = 0.05;
+    M.acc += dt * BASE / S.speed;
+    var guard = 0;
+    while (M.acc >= DT && guard < 8000) { M.acc -= DT; M.t += DT; step(); guard++; }
+    if (guard >= 8000) M.acc = 0;
+  }
+  drawAll();
+}
+document.addEventListener('visibilitychange', function () { last = 0; });
+var rt = 0;
+window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(buildScope, 200); });
+
+reset();
+syncControls();
+setTab('none');
+try {
+  var qs = new URLSearchParams(location.search);
+  var pr = qs.get('preset'), tb = qs.get('tab');
+  if (pr && PRESETS[pr]) applyPreset(pr);
+  else if (tb && TABS.indexOf(tb) > 0) setTab(tb);
+} catch (e) {}
+drawAll();
+requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>

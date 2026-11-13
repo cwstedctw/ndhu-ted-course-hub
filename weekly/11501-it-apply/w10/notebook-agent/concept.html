@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>互動概念頁：讓 AI agent 接上 Gemini Notebook</title>
+<meta name="description" content="資訊科技與應用互動概念頁：手動與 agent 走 API 的全景地圖、Gemini Notebook 的引用、API 能做與還不能做、API／專案／OAuth／權杖四個詞、一個請求長什麼樣、來源狀態、錯誤對照、監督 agent 三件事、MCP 對照、名詞表與想一想。">
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --surface-2:#F1F5F4; --ink:#132525; --ink-soft:#3E5656; --mist:#5A7272;
+  --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF; --gold:#D9A441; --gold-deep:#7A5510; --gold-tint:#FBF0D9;
+  --dark:#062524; --red:#B0503A; --red-tint:#F7E4DE; --violet:#5B4B9A; --violet-tint:#ECE8F7;
+  --pc:#2F5B9E; --pc-tint:#E5EDF8;
+  --code-bg:#F3F6F5; --code-ink:#1B3433;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC","Heiti TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono","Liberation Mono","Noto Sans Mono CJK TC",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#93ADAC;
+    --line:#2A4544; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+    --dark:#041716; --red:#EC9580; --red-tint:#3D2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+    --pc:#8DB4F0; --pc-tint:#16273F;
+    --code-bg:#0D1F1F; --code-ink:#D5E6E5;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#93ADAC;
+  --line:#2A4544; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+  --dark:#041716; --red:#EC9580; --red-tint:#3D2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+  --pc:#8DB4F0; --pc-tint:#16273F;
+  --code-bg:#0D1F1F; --code-ink:#D5E6E5;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:16.5px;line-height:1.8;overflow-wrap:break-word}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{cursor:default}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+a{color:var(--teal);text-underline-offset:3px}
+code,pre,kbd{font-family:var(--mono);font-variant-ligatures:none}
+code{font-size:.92em;background:var(--code-bg);color:var(--code-ink);border-radius:5px;padding:0 4px;overflow-wrap:anywhere}
+pre{margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--code-bg);color:var(--code-ink);font-size:14px;line-height:1.6;white-space:pre;overflow-x:auto;max-width:100%}
+pre.wrapit{white-space:pre-wrap;overflow-wrap:anywhere}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+header.hero{background:var(--dark);color:#E6F2F2;padding:26px 0 20px}
+.hero .kicker{font-weight:800;font-size:13px;letter-spacing:.08em;color:#E8B85A}
+.hero h1{font-size:clamp(26px,5vw,40px);line-height:1.25;margin:6px 0 10px;font-weight:900}
+.hero p{margin:6px 0;color:#BFD6D5}
+.hero a{color:#8FE0C9}
+.hero .back{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:15px}
+/* 置頂導覽 */
+.topnav{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.topnav .row{display:flex;gap:8px;align-items:center;max-width:960px;margin:0 auto;padding:6px 16px}
+.topnav .links{display:flex;gap:4px;overflow-x:auto;flex:1 1 auto;min-width:0;white-space:nowrap;scrollbar-width:thin;padding:2px 0}
+.topnav .links a{flex:0 0 auto;padding:2px 10px;border-radius:999px;font-size:14px;text-decoration:none;color:var(--ink-soft);border:1px solid transparent}
+.topnav .links a:hover{border-color:var(--teal)}
+.topnav .links a[aria-current="true"]{background:var(--teal);color:var(--bg);font-weight:800}
+.topnav .links a.seen:not([aria-current="true"]){color:var(--teal)}
+.topnav .meta{flex:0 0 auto;display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mist)}
+.pbar{height:4px;background:var(--line)}
+.pbar > i{display:block;height:100%;width:0;background:var(--gold)}
+@media (max-width:560px){.topnav .meta .cnt{display:none}}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:5px 12px;font-size:14.5px;line-height:1.5;flex:0 0 auto;max-width:100%}
+.btn:hover:not(:disabled){border-color:var(--teal)}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:var(--bg);font-weight:800}
+.btn[aria-pressed="true"]{background:var(--gold-tint);border-color:var(--gold);color:var(--gold-deep);font-weight:800}
+.btn.right{border-color:var(--teal);background:var(--teal-tint);color:var(--teal);font-weight:800}
+.btn.wrong{border-color:var(--red);background:var(--red-tint);color:var(--red);font-weight:800}
+.btn:disabled{opacity:.75}
+section.sec{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:20px 0;scroll-margin-top:60px}
+section.sec h2{font-size:clamp(21px,3.4vw,26px);line-height:1.4;margin:0 0 6px}
+section.sec h2 .n{color:var(--gold-deep);margin-right:8px}
+h3{font-size:18px;margin:18px 0 4px}
+.why{margin:2px 0 10px;color:var(--ink-soft)}
+.why b{color:var(--teal)}
+.small{font-size:14.5px;color:var(--mist)}
+.note{padding:10px 14px;border-left:4px solid var(--gold);background:var(--gold-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.warn{padding:10px 14px;border-left:4px solid var(--red);background:var(--red-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.think{padding:10px 14px;border-left:4px solid var(--violet);background:var(--violet-tint);border-radius:0 10px 10px 0;margin:14px 0 0}
+.think b{color:var(--violet)}
+.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface-2);padding:12px 16px;margin:10px 0;min-width:0}
+.panel h4{margin:0 0 4px;font-size:16.5px}
+.panel p{margin:4px 0}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.simtag{display:inline-block;padding:0 8px;border-radius:8px;background:var(--gold-tint);color:var(--gold-deep);font-size:13px;font-weight:800;line-height:1.8}
+.chip{display:inline-block;padding:0 8px;margin:0 4px 0 0;border-radius:8px;font-size:13px;font-weight:800;line-height:1.8}
+.chip.ok{background:var(--teal-tint);color:var(--teal)}
+.chip.no{background:var(--red-tint);color:var(--red)}
+.chip.mid{background:var(--gold-tint);color:var(--gold-deep)}
+.fb{min-height:1.8em;margin:8px 0 0}
+.fb.ok{color:var(--teal);font-weight:800}
+.fb.no{color:var(--red);font-weight:800}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+@media (max-width:700px){.two{grid-template-columns:minmax(0,1fr)}}
+/* SVG */
+svg.fig{display:block;width:100%;height:auto;max-width:440px;margin:0 auto;font-family:var(--zh)}
+svg.fig text{fill:var(--ink)}
+svg.fig .mono{font-family:var(--mono)}
+svg.fig .soft{fill:var(--mist)}
+svg.fig .lane{fill:var(--surface-2);stroke:var(--line);stroke-width:1.5}
+svg.fig .box{fill:var(--surface);stroke:var(--line);stroke-width:2}
+svg.fig .box.pc{fill:var(--pc-tint);stroke:var(--pc)}
+svg.fig .box.bd{fill:var(--teal-tint);stroke:var(--teal)}
+svg.fig .box.gold{fill:var(--gold-tint);stroke:var(--gold)}
+svg.fig .box.vio{fill:var(--violet-tint);stroke:var(--violet)}
+svg.fig .wire{stroke:var(--mist);stroke-width:2.5;fill:none}
+svg.fig .ah{fill:var(--mist)}
+svg.fig [role="button"]{cursor:pointer}
+svg.fig [role="button"]:focus{outline:none}
+svg.fig [role="button"]:focus-visible .box,svg.fig .sel .box{stroke:var(--gold);stroke-width:4}
+/* §1 */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;max-width:100%}
+.seg button{border:0;background:var(--surface-2);padding:6px 14px;font-size:15px}
+.seg button[aria-pressed="true"]{background:var(--teal);color:var(--bg);font-weight:800}
+.bubble{border:1px solid var(--line);border-radius:14px;padding:10px 14px;background:var(--surface);margin:8px 0}
+.bubble.q{border-left:6px solid var(--pc)}
+.bubble.a{border-left:6px solid var(--violet)}
+.cite{border:1px solid var(--teal);background:var(--teal-tint);color:var(--teal);border-radius:7px;font-size:13px;font-weight:800;padding:0 7px;margin:0 2px;line-height:1.6;vertical-align:1px}
+.cite[aria-pressed="true"]{background:var(--gold-tint);border-color:var(--gold);color:var(--gold-deep)}
+.src p{margin:6px 0;padding:4px 8px;border-radius:8px;border-left:4px solid transparent}
+.src p.hit{background:var(--gold-tint);border-left-color:var(--gold)}
+.src .no{font-family:var(--mono);color:var(--mist);margin-right:6px;font-size:13.5px}
+.doubt{text-decoration:underline wavy var(--red);text-underline-offset:4px}
+/* §2 */
+.sort{list-style:none;margin:8px 0;padding:0;display:grid;gap:8px}
+.sort li{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--surface);min-width:0}
+.sort li.ok{border-left:6px solid var(--teal)}
+.sort li.no{border-left:6px solid var(--red)}
+.sort .t{font-weight:800}
+.sort .why2{font-size:14.5px;color:var(--ink-soft);margin-top:4px}
+/* §3 */
+ol.seq{list-style:none;padding:0;margin:8px 0;display:flex;flex-wrap:wrap;gap:6px}
+ol.seq li button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 12px;font-size:14.5px}
+ol.seq li button[aria-current="step"]{background:var(--teal);border-color:var(--teal);color:var(--bg);font-weight:800}
+.meter{height:18px;border-radius:999px;background:var(--line);overflow:hidden;margin:8px 0}
+.meter > i{display:block;height:100%;width:0;background:var(--teal)}
+.meter.low > i{background:var(--gold)}
+.meter.dead > i{background:var(--red)}
+.big{font-size:20px;font-weight:900}
+.big.ok{color:var(--teal)}
+.big.no{color:var(--red)}
+/* §4 */
+.fields{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin:8px 0}
+.fields label{display:flex;flex-direction:column;font-size:14.5px;gap:2px;min-width:0}
+.fields input,.fields textarea{width:100%;padding:6px 10px;border:2px solid var(--teal);border-radius:10px;background:var(--surface);font-size:15px;min-width:0}
+.fields textarea{min-height:70px;resize:vertical;font-family:var(--mono)}
+pre.req .m{color:var(--violet);font-weight:800}
+pre.req .h{color:var(--gold-deep)}
+/* §5 */
+.states{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.st{border:2px solid var(--line);border-radius:10px;padding:2px 10px;font-family:var(--mono);font-size:14px;background:var(--surface);opacity:.5}
+.st.on{opacity:1;border-color:var(--gold);background:var(--gold-tint);color:var(--gold-deep);font-weight:800}
+.st.on.good{border-color:var(--teal);background:var(--teal-tint);color:var(--teal)}
+.st.on.bad{border-color:var(--red);background:var(--red-tint);color:var(--red)}
+pre.term{background:var(--dark);color:#D5E6E5;border:1px solid #244443;min-height:120px;white-space:pre-wrap;overflow-wrap:anywhere}
+/* §6 §8 */
+.match{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+@media (max-width:640px){.match{grid-template-columns:minmax(0,1fr)}}
+.match .col{display:grid;gap:8px;align-content:start}
+.match h4{margin:0;font-size:15.5px;color:var(--ink-soft)}
+.mbtn{text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:8px 12px;font-size:15px;min-width:0;overflow-wrap:anywhere}
+.mbtn:hover:not(:disabled){border-color:var(--teal)}
+.mbtn[aria-pressed="true"],.mbtn.hl{border-color:var(--gold);background:var(--gold-tint)}
+.mbtn.done{border-color:var(--teal);background:var(--teal-tint)}
+.mbtn code{background:transparent;padding:0}
+/* §7 */
+.msg{border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:10px 0;background:var(--surface);border-left:6px solid var(--violet)}
+.msg.ok{border-left-color:var(--teal)}
+.msg.no{border-left-color:var(--red)}
+.msg .say{font-weight:800}
+.msg .who{font-size:13px;color:var(--mist)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px;margin:10px 0}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.gloss td:first-child{font-weight:800;white-space:nowrap}
+ol.open{padding-left:24px}
+ol.open li{margin:8px 0}
+footer.sec{color:var(--mist);font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 22px;margin:20px 0 40px}
+@media (max-width:560px){
+  section.sec,footer.sec{padding:16px 13px}
+  body{font-size:15.5px}
+  .panel{padding:10px 12px}
+}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+@media print{.topnav{position:static}.topnav .meta{display:none}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">資訊科技與應用　讓 AI agent 接上 Gemini Notebook　互動概念頁</div>
+    <h1>agent 負責搬，你負責同意、檢查、提問</h1>
+    <p>這一頁不用安裝任何東西。每一節先講「為什麼要懂這個」，再給你一個可以點、可以試的小東西，最後留一題想一想。照順序看最順，也可以從上面那排直接跳。</p>
+    <p class="back">
+      <a href="student.html">← 回上課步驟（student.html）</a>
+      <a href="cheatsheet.html">速查表（cheatsheet.html）</a>
+      <a href="deck.html">投影片（deck.html）</a>
+    </p>
+  </div>
+</header>
+
+<nav class="topnav" aria-label="章節導覽">
+  <div class="row">
+    <div class="links" id="navlinks">
+      <a href="#s0">0 全景</a>
+      <a href="#s1">1 筆記本</a>
+      <a href="#s2">2 能與不能</a>
+      <a href="#s3">3 四個詞</a>
+      <a href="#s4">4 請求</a>
+      <a href="#s5">5 來源狀態</a>
+      <a href="#s6">6 錯誤</a>
+      <a href="#s7">7 監督</a>
+      <a href="#s8">8 MCP</a>
+      <a href="#s9">9 名詞</a>
+      <a href="#s10">10 想一想</a>
+    </div>
+    <div class="meta">
+      <span class="cnt" id="seenCnt" aria-live="off">已看 0／11 節</span>
+      <button class="btn" id="themeBtn" type="button" aria-label="切換配色，目前跟隨系統">配色：跟系統</button>
+    </div>
+  </div>
+  <div class="pbar" aria-hidden="true"><i id="pbar"></i></div>
+</nav>
+
+<main class="wrap">
+
+<!-- §0 -->
+<section class="sec" id="s0">
+  <h2><span class="n">0</span>全景地圖：兩條路，到同一本筆記本</h2>
+  <p class="why"><b>為什麼要懂這個：</b>先看清楚「誰在跟誰講話」，後面每一個詞才有地方放。</p>
+  <div class="two">
+    <div>
+      <svg class="fig" id="mapsvg" viewBox="0 0 380 440" role="group" aria-label="左邊是手動路線，右邊是 agent 走 API 的路線，最後都到同一本筆記本">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0 0L10 5L0 10z"/></marker>
+        </defs>
+        <rect class="lane" x="6" y="6" width="178" height="346" rx="14"/>
+        <rect class="lane" x="196" y="6" width="178" height="346" rx="14"/>
+        <text x="95" y="29" text-anchor="middle" font-size="15" font-weight="900">手動</text>
+        <text x="285" y="29" text-anchor="middle" font-size="15" font-weight="900">agent 走 API</text>
+
+        <path class="wire" d="M95 80V148" marker-end="url(#ah)"/>
+        <path class="wire" d="M95 190V288" marker-end="url(#ah)"/>
+        <path class="wire" d="M95 338V368" marker-end="url(#ah)"/>
+        <path class="wire" d="M285 80V98" marker-end="url(#ah)"/>
+        <path class="wire" d="M285 140V158" marker-end="url(#ah)"/>
+        <path class="wire" d="M285 200V218" marker-end="url(#ah)"/>
+        <path class="wire" d="M285 260V288" marker-end="url(#ah)"/>
+        <path class="wire" d="M285 338V368" marker-end="url(#ah)"/>
+
+        <g role="button" tabindex="0" data-node="youl" aria-label="手動路線的你">
+          <rect class="box pc" x="15" y="40" width="160" height="40" rx="10"/>
+          <text x="95" y="66" text-anchor="middle" font-size="16" font-weight="800">你</text>
+        </g>
+        <g role="button" tabindex="0" data-node="browser" aria-label="瀏覽器">
+          <rect class="box" x="15" y="150" width="160" height="40" rx="10"/>
+          <text x="95" y="176" text-anchor="middle" font-size="16" font-weight="800">瀏覽器</text>
+        </g>
+        <g role="button" tabindex="0" data-node="web" aria-label="筆記本網頁 notebook.google.com">
+          <rect class="box bd" x="15" y="290" width="160" height="48" rx="10"/>
+          <text x="95" y="310" text-anchor="middle" font-size="14.5" font-weight="800">筆記本網頁</text>
+          <text class="mono" x="95" y="328" text-anchor="middle" font-size="12">notebook.google.com</text>
+        </g>
+
+        <g role="button" tabindex="0" data-node="your" aria-label="agent 路線的你">
+          <rect class="box pc" x="205" y="40" width="160" height="40" rx="10"/>
+          <text x="285" y="66" text-anchor="middle" font-size="16" font-weight="800">你</text>
+        </g>
+        <g role="button" tabindex="0" data-node="agent" aria-label="agent">
+          <rect class="box vio" x="205" y="100" width="160" height="40" rx="10"/>
+          <text x="285" y="126" text-anchor="middle" font-size="16" font-weight="800">agent</text>
+        </g>
+        <g role="button" tabindex="0" data-node="gcloud" aria-label="gcloud">
+          <rect class="box" x="205" y="160" width="160" height="40" rx="10"/>
+          <text class="mono" x="285" y="186" text-anchor="middle" font-size="16" font-weight="800">gcloud</text>
+        </g>
+        <g role="button" tabindex="0" data-node="token" aria-label="權杖">
+          <rect class="box gold" x="205" y="220" width="160" height="40" rx="10"/>
+          <text x="285" y="246" text-anchor="middle" font-size="16" font-weight="800">權杖</text>
+        </g>
+        <g role="button" tabindex="0" data-node="api" aria-label="API 窗口 notebook.googleapis.com">
+          <rect class="box bd" x="205" y="290" width="160" height="48" rx="10"/>
+          <text x="285" y="310" text-anchor="middle" font-size="14.5" font-weight="800">API 窗口</text>
+          <text class="mono" x="285" y="328" text-anchor="middle" font-size="11.5">notebook.googleapis.com</text>
+        </g>
+
+        <g role="button" tabindex="0" data-node="nb" aria-label="同一本筆記本">
+          <rect class="box gold" x="50" y="370" width="280" height="54" rx="12"/>
+          <text x="190" y="395" text-anchor="middle" font-size="16" font-weight="900">同一本筆記本</text>
+          <text class="soft" x="190" y="414" text-anchor="middle" font-size="12.5">兩條路到的是同一個地方</text>
+        </g>
+      </svg>
+      <p class="small" style="text-align:center">點任何一個方塊（鍵盤：Tab 移動、Enter 選）</p>
+    </div>
+    <div>
+      <div class="panel" aria-live="polite">
+        <h4 id="mapT">先點左邊的方塊</h4>
+        <p id="mapD">每一塊都有一句白話說明。建議先從左邊「手動」那一條點下來，再點右邊。</p>
+      </div>
+      <div class="note">記住一句話：<b>右邊那條路只是幫你把東西搬進去</b>。真正要問問題、點引用回原文，還是回到左邊的網頁。</div>
+    </div>
+  </div>
+  <div class="think"><b>想一想：</b>右邊那條路多了四個方塊。如果只要放一個來源，你會走哪一條？要放三十個呢？</div>
+</section>
+
+<!-- §1 -->
+<section class="sec" id="s1">
+  <h2><span class="n">1</span>Gemini Notebook 是什麼</h2>
+  <p class="why"><b>為什麼要懂這個：</b>它只根據你給的來源回答，所以「來源放對」是後面所有事情的基礎。</p>
+  <p>Gemini Notebook（原本叫 NotebookLM）是 Google 的 AI 研究工具。它跟一般聊天 AI 最大的不同：回覆內容一律根據<b>你提供的來源</b>生成，而且附上編號引用，點下去可以回到原文那一句。</p>
+  <div class="ctrl">
+    <span>同一個問題，換一種方式回答：</span>
+    <div class="seg" role="group" aria-label="回答方式">
+      <button type="button" id="modeChat" aria-pressed="true">一般聊天</button>
+      <button type="button" id="modeNb" aria-pressed="false">筆記本</button>
+    </div>
+  </div>
+  <div class="two">
+    <div>
+      <div class="bubble q"><span class="small">你問</span><br>空氣品質指標（AQI）的等級變高時，我該怎麼調整戶外活動？</div>
+      <div class="bubble a" id="ansBox" aria-live="polite"></div>
+      <p class="fb small" id="ansNote"></p>
+    </div>
+    <div class="panel src" id="srcPanel">
+      <h4>來源面板 <span class="simtag">示意，不是真的來源</span></h4>
+      <p class="small">下面四句是為了示範而編的短文，不是任何機關的公告，請不要當成真的規定。</p>
+      <p id="src1"><span class="no">[1]</span>這份示意手冊把空氣品質指標分成幾個等級，每個等級配一種顏色。</p>
+      <p id="src2"><span class="no">[2]</span>等級愈高，代表空氣愈不好，建議的戶外活動量也愈少。</p>
+      <p id="src3"><span class="no">[3]</span>手冊提醒：敏感族群在中間的等級，就應該開始減少長時間的戶外劇烈運動。</p>
+      <p id="src4"><span class="no">[4]</span>這份手冊沒有寫各等級對應的數字範圍，要查數字請看主管機關的公告。</p>
+    </div>
+  </div>
+  <div class="note">引用對得上，只代表「這句話真的出自你給的來源」，不代表來源本身是對的。放進去的東西不可靠，回答也不會可靠。</div>
+  <div class="think"><b>想一想：</b>「筆記本」那個回答的最後一句說「來源沒有寫」。一個會承認沒寫的工具，和一個什麼都答得出來的工具，寫報告時你比較敢用哪一個？為什麼？</div>
+</section>
+
+<!-- §2 -->
+<section class="sec" id="s2">
+  <h2><span class="n">2</span>API 能做／還不能做</h2>
+  <p class="why"><b>為什麼要懂這個：</b>知道 agent 走 API 做得到哪些事，你才知道哪些要交給它、哪些一定得自己來。</p>
+  <p>API（應用程式介面）是程式跟服務講話的窗口。Gemini Notebook 的 API 目前是公開預覽階段（Public Preview），功能還不多。下面每一項，你覺得是哪一邊？</p>
+  <ul class="sort" id="sortList"></ul>
+  <div class="ctrl">
+    <span class="big" id="sortScore" aria-live="polite">已答 0／13</span>
+    <button class="btn" type="button" id="sortReset">重來一次</button>
+  </div>
+  <div class="note">整理起來：API 現在只會「建筆記本、放來源、查狀態」。<b>提問、刪除、產生語音摘要，都還是要你自己在網頁做。</b>這剛好是分工：agent 搬，人問。</div>
+  <div class="think"><b>想一想：</b>API 不能刪除筆記本。如果 agent 不小心建了十本空的，誰要去收？這會怎麼影響你批准它動手之前想問的問題？</div>
+</section>
+
+<!-- §3 -->
+<section class="sec" id="s3">
+  <h2><span class="n">3</span>四個詞一次懂：用一間旅館來想</h2>
+  <p class="why"><b>為什麼要懂這個：</b>agent 安裝設定時畫面上會一直出現這四個詞，看得懂才知道現在該不該按同意。</p>
+  <ol class="seq" id="hotelSeq" aria-label="四個詞"></ol>
+  <div class="panel" aria-live="polite">
+    <h4 id="hotelT"></h4>
+    <p id="hotelA"></p>
+    <p id="hotelB" class="small"></p>
+  </div>
+  <div class="ctrl">
+    <button class="btn" type="button" id="hotelPrev">← 上一個</button>
+    <button class="btn primary" type="button" id="hotelNext">下一個 →</button>
+  </div>
+
+  <h3>房卡一小時就失效：玩玩看</h3>
+  <p class="small">真實世界是 60 分鐘。這裡加速：畫面上 1 秒＝2 分鐘，大約 30 秒就過期。<span class="simtag">模擬，不會真的拿權杖</span></p>
+  <div class="panel">
+    <div class="ctrl">
+      <button class="btn primary" type="button" id="tkGet">拿一張權杖</button>
+      <button class="btn" type="button" id="tkUse">讓 agent 送一個請求</button>
+      <button class="btn" type="button" id="tkSkip">快轉到過期</button>
+    </div>
+    <div class="meter" id="tkMeter" role="progressbar" aria-label="權杖剩餘時間" aria-valuemin="0" aria-valuemax="60" aria-valuenow="0"><i id="tkBar"></i></div>
+    <p class="big" id="tkLeft">還沒有權杖</p>
+    <p class="fb" id="tkMsg" aria-live="polite">先按「讓 agent 送一個請求」看看沒帶權杖會怎樣，再按「拿一張權杖」。</p>
+  </div>
+  <p>過期之後，agent 要做的事只有一件——重新拿一張：</p>
+  <pre>gcloud auth application-default print-access-token</pre>
+  <div class="warn">權杖就是房卡。<b>不要印在畫面上、不要存成檔案、不要貼到聊天室。</b>誰拿到，在它過期之前誰就能用你的名義進你的筆記本。</div>
+  <div class="think"><b>想一想：</b>一小時就過期很麻煩。但如果權杖永遠不過期，哪一種意外會變得更嚴重？</div>
+</section>
+
+<!-- §4 -->
+<section class="sec" id="s4">
+  <h2><span class="n">4</span>一個請求長什麼樣</h2>
+  <p class="why"><b>為什麼要懂這個：</b>agent 替你送出去的每一個請求就是這幾行字，看得懂就能檢查它有沒有照你說的做。</p>
+  <p>一個請求有四個部分：<b>動作</b>（POST＝送資料進去、GET＝拿資料回來）、<b>網址</b>、<b>標頭</b>（附在請求上的說明，這裡有兩個）、<b>內容</b>（用大括號寫成的資料）。選一個動作，改一改欄位，看右邊跟著變。<span class="simtag">模擬，不會真的送出</span></p>
+  <div class="ctrl" role="group" aria-label="選一個動作" id="rqActs">
+    <button class="btn" type="button" data-act="nb" aria-pressed="true">建筆記本</button>
+    <button class="btn" type="button" data-act="web" aria-pressed="false">加網頁來源</button>
+    <button class="btn" type="button" data-act="txt" aria-pressed="false">加文字來源</button>
+    <button class="btn" type="button" data-act="get" aria-pressed="false">查狀態</button>
+  </div>
+  <div class="two">
+    <div>
+      <div class="fields">
+        <label id="rqTitleL">名稱（displayName）
+          <input type="text" id="rqTitle" value="期中報告資料" maxlength="80" autocomplete="off">
+        </label>
+        <label id="rqUrlL">網址（只收 https:// 開頭的公開網頁）
+          <input type="text" id="rqUrl" value="https://example.com/article" maxlength="200" autocomplete="off" inputmode="url">
+        </label>
+        <label id="rqTextL">要貼進去的文字（Markdown 也可以）
+          <textarea id="rqText" maxlength="2000"># 我的筆記
+這是我自己寫的一段文字。</textarea>
+        </label>
+      </div>
+      <p class="small" id="rqHint" aria-live="polite"></p>
+      <div class="ctrl"><button class="btn primary" type="button" id="rqSend">模擬送出</button></div>
+    </div>
+    <div>
+      <pre class="req wrapit" id="rqOut" aria-label="請求內容"></pre>
+      <pre class="term" id="rqResp" aria-live="polite" style="min-height:70px">（按「模擬送出」看回應）</pre>
+    </div>
+  </div>
+  <ul class="small">
+    <li><code>Authorization: Bearer ……</code> 後面接的就是權杖。這一頁永遠只顯示遮住的樣子。</li>
+    <li><code>x-goog-user-project</code> 寫的是你的 Google Cloud 專案代號，告訴 Google 這次用量記在哪個專案。</li>
+    <li>網址裡的 <code>{筆記本id}</code> 是建筆記本成功之後系統給的那一串，要先建才有。</li>
+    <li>「查狀態」的完整網址寫法這裡是示意，實際以 Google 官方文件為準。</li>
+  </ul>
+  <div class="think"><b>想一想：</b>agent 說「我已經加了來源」。對照上面四個部分，你會請它把哪一部分貼給你看？哪一部分<b>絕對不要</b>請它貼？</div>
+</section>
+
+<!-- §5 -->
+<section class="sec" id="s5">
+  <h2><span class="n">5</span>來源狀態：送進去不等於能用</h2>
+  <p class="why"><b>為什麼要懂這個：</b>來源是送出後才慢慢處理的，「送出成功」和「真的能用」是兩回事。</p>
+  <p>來源送進去之後先是 <code>PROCESSING</code>（處理中），之後變成 <code>ACTIVE</code>（可以用了）或 <code>FAILED</code>（失敗，會附原因）。有些東西連門都進不去，當場就被退回（HTTP 400）。選一種來源試試看：</p>
+  <div class="ctrl" role="group" aria-label="來源種類" id="srcTypes"></div>
+  <div class="states" aria-hidden="true">
+    <span class="st" id="st400">400 當場退回</span>
+    <span class="st" id="stP">PROCESSING</span>
+    <span>→</span>
+    <span class="st" id="stA">ACTIVE</span>
+    <span>／</span>
+    <span class="st" id="stF">FAILED</span>
+  </div>
+  <pre class="term" id="srcLog" aria-live="polite">（選一種來源，再按「送出這個來源」）</pre>
+  <div class="ctrl">
+    <button class="btn primary" type="button" id="srcRun">送出這個來源</button>
+    <span class="simtag">模擬，不會真的送出</span>
+  </div>
+  <p class="fb" id="srcWhy" aria-live="polite"></p>
+  <div class="note">所以 agent 加完來源之後，要每隔 2 秒查一次狀態，查到 <code>ACTIVE</code> 才算完成。只回報「已送出」不算做完。</div>
+  <div class="think"><b>想一想：</b>agent 回報「三個來源都加好了」。你要它再給你看哪一個詞，才相信真的能用？</div>
+</section>
+
+<!-- §6 -->
+<section class="sec" id="s6">
+  <h2><span class="n">6</span>錯誤對照遊戲</h2>
+  <p class="why"><b>為什麼要懂這個：</b>這四個錯誤最常出現，看到數字就知道該怎麼辦，不必每次都等 agent 猜。</p>
+  <p>先點左邊一個錯誤，再點右邊你認為對的處理方式。</p>
+  <div class="match">
+    <div class="col" id="errCol"><h4>看到的錯誤</h4></div>
+    <div class="col" id="fixCol"><h4>該怎麼辦</h4></div>
+  </div>
+  <p class="fb" id="errFb" aria-live="polite"></p>
+  <div class="ctrl">
+    <span class="big" id="errScore">配對 0／4</span>
+    <button class="btn" type="button" id="errReset">重來一次</button>
+  </div>
+  <div class="think"><b>想一想：</b>403 和 404 這兩個錯誤，agent 自己都修不好，一定要你本人處理。為什麼？</div>
+</section>
+
+<!-- §7 -->
+<section class="sec" id="s7">
+  <h2><span class="n">7</span>監督 agent 三件事</h2>
+  <p class="why"><b>為什麼要懂這個：</b>你讓 agent 在你的電腦裝東西、連你的帳號，出了事負責的是你，不是它。</p>
+  <div class="panel">
+    <p><span class="chip ok">一</span><b>先看計畫</b>：動手之前請它先列出要做什麼，看過再說好。</p>
+    <p><span class="chip mid">二</span><b>登入同意只有你能按</b>：瀏覽器跳出來的那一步，要你本人看清楚再按。</p>
+    <p><span class="chip no">三</span><b>做完自己讀回</b>：打開筆記本網頁，自己確認真的有、數量對。</p>
+  </div>
+  <p>下面是 agent 可能對你說的六句話。每一句你會怎麼處理？</p>
+  <div id="supList"></div>
+  <div class="ctrl">
+    <span class="big" id="supScore" aria-live="polite">已答 0／6</span>
+    <button class="btn" type="button" id="supReset">重來一次</button>
+  </div>
+  <div class="think"><b>想一想：</b>「先去驗」和「退回」差在哪裡？哪一種情況是 agent 可能沒做錯，但你還是不能直接相信？</div>
+</section>
+
+<!-- §8 -->
+<section class="sec" id="s8">
+  <h2><span class="n">8</span>MCP 一張圖：同一組功能，換一種接法</h2>
+  <p class="why"><b>為什麼要懂這個：</b>MCP 只是把同樣七件事包成 agent 可以直接拿來用的工具，並沒有多出新功能。</p>
+  <p>前面講的做法，是 agent 自己一行一行組出請求（這種「網址加動作」的呼叫方式叫 REST）。MCP 是讓 agent 把一組工具直接接上的規格：接好之後，agent 的工具箱裡就多了七個現成的工具。點任何一邊，看它對到另一邊的哪一個。</p>
+  <div class="match">
+    <div class="col" id="restCol"><h4>自己組請求（REST 的七個方法）</h4></div>
+    <div class="col" id="mcpCol"><h4>MCP 的七個工具</h4></div>
+  </div>
+  <p class="fb" id="mapFb" aria-live="polite">七對七，一個不多、一個不少。</p>
+  <div class="note">MCP 伺服器的位置是 <code>notebook.googleapis.com/mcp</code>，用的是<b>同一張權杖、同樣兩個標頭</b>。所以權杖過期了，MCP 這邊也要重新設定；API 還不能做的事（提問、刪除、語音摘要），MCP 一樣不能做。</div>
+  <div class="think"><b>想一想：</b>左右兩邊能做的事完全一樣。那接 MCP 到底省了誰的力氣？</div>
+</section>
+
+<!-- §9 -->
+<section class="sec" id="s9">
+  <h2><span class="n">9</span>名詞表</h2>
+  <p class="why"><b>為什麼要懂這個：</b>這一課只有八個英文詞，認得它們就看得懂 agent 在說什麼。</p>
+  <div class="tw">
+    <table class="gloss">
+      <thead><tr><th>詞</th><th>白話</th></tr></thead>
+      <tbody>
+        <tr><td>Gemini Notebook</td><td>Google 的 AI 研究工具（原 NotebookLM）。只根據你給的來源回答，每句可以點回原文。</td></tr>
+        <tr><td>API</td><td>應用程式介面：程式跟服務講話的窗口。</td></tr>
+        <tr><td>Google Cloud 專案</td><td>英文 project：API 用量記在誰頭上的那個戶頭。本頁範例代號寫成 <code>nb-你的代號</code>。</td></tr>
+        <tr><td>gcloud</td><td>Google Cloud 的命令列工具，用打字下指令。</td></tr>
+        <tr><td>OAuth</td><td>你在瀏覽器按「允許」那一步的規格。</td></tr>
+        <tr><td>權杖</td><td>英文 access token：一小時有效的通行證。</td></tr>
+        <tr><td>MCP</td><td>讓 agent 把一組工具直接接上的規格。</td></tr>
+        <tr><td>agent</td><td>會自己動手做事的 AI 助理：讀指示、下指令、看結果，再決定下一步。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- §10 -->
+<section class="sec" id="s10">
+  <h2><span class="n">10</span>想一想（沒有標準答案）</h2>
+  <p class="why"><b>為什麼要想這些：</b>工具會一直換，但「什麼交給它、什麼自己來」這個判斷可以帶著走。</p>
+  <ol class="open">
+    <li>今天的分工是「agent 搬、人問」。如果有一天 API 也能替你提問、替你寫摘要，你還會想自己問嗎？哪一種問題你不想交出去？</li>
+    <li>Gemini Notebook 只根據你放的來源回答。如果你放進去的三個來源立場都一樣，它的回答會有什麼盲點？你要怎麼補？</li>
+    <li>你按下「允許」的那一刻，同意了什麼？做完之後，為什麼老師要你去撤銷授權、在教室電腦登出？</li>
+    <li>API 目前只收個人 Google 帳號、不收學校帳號。從學校和 Google 各自的角度想，這樣限制可能在保護什麼？</li>
+    <li>agent 說「全部完成」。請寫下你會做的三個檢查動作，而且每一個都不能只是「再問它一次」。</li>
+  </ol>
+</section>
+
+<footer class="sec">國立東華大學　資訊科技與應用（115-1）。這一頁沒有接 AI、不收集任何資料、不會真的呼叫 API；API 內容依 Google 官方文件 2026-11-10 的版本，Public Preview 期間可能改。</footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+function $(s,r){return (r||document).querySelector(s);}
+function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
+function lsGet(k){try{return window.localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{window.localStorage.setItem(k,v);}catch(e){}}
+function lsDel(k){try{window.localStorage.removeItem(k);}catch(e){}}
+
+/* ---------- 配色 ---------- */
+(function(){
+  var btn=$("#themeBtn"),order=["auto","light","dark"],names={auto:"跟系統",light:"淺色",dark:"深色"};
+  var cur=lsGet("nbc-theme");if(order.indexOf(cur)<0)cur="auto";
+  function apply(){
+    if(cur==="auto")document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme",cur);
+    btn.textContent="配色："+names[cur];
+    btn.setAttribute("aria-label","切換配色，目前"+names[cur]);
+  }
+  btn.addEventListener("click",function(){
+    cur=order[(order.indexOf(cur)+1)%order.length];
+    if(cur==="auto")lsDel("nbc-theme");else lsSet("nbc-theme",cur);
+    apply();
+  });
+  apply();
+})();
+
+/* ---------- 導覽與進度 ---------- */
+(function(){
+  var links=$$("#navlinks a"),secs=links.map(function(a){return document.getElementById(a.getAttribute("href").slice(1));});
+  var seen={},bar=$("#pbar"),cnt=$("#seenCnt");
+  try{var s=JSON.parse(lsGet("nbc-seen")||"{}");if(s&&typeof s==="object")seen=s;}catch(e){seen={};}
+  function paintSeen(){
+    var n=0;
+    links.forEach(function(a,i){var id=secs[i].id;if(seen[id]){n++;a.classList.add("seen");}});
+    cnt.textContent="已看 "+n+"／"+secs.length+" 節";
+  }
+  function onScroll(){
+    var h=document.documentElement,max=h.scrollHeight-h.clientHeight;
+    bar.style.width=(max>0?Math.min(100,Math.max(0,h.scrollTop/max*100)):0)+"%";
+    var mid=window.innerHeight*0.35,curI=0;
+    secs.forEach(function(sec,i){if(sec.getBoundingClientRect().top<=mid)curI=i;});
+    links.forEach(function(a,i){
+      if(i===curI){
+        if(a.getAttribute("aria-current")!=="true"){
+          a.setAttribute("aria-current","true");
+          var box=a.parentNode;
+          box.scrollLeft=a.offsetLeft-box.offsetLeft-box.clientWidth/2+a.offsetWidth/2;
+        }
+      }else a.removeAttribute("aria-current");
+    });
+    var id=secs[curI].id;
+    if(!seen[id]){seen[id]=1;lsSet("nbc-seen",JSON.stringify(seen));paintSeen();}
+  }
+  var tick=false;
+  window.addEventListener("scroll",function(){if(tick)return;tick=true;window.requestAnimationFrame(function(){tick=false;onScroll();});},{passive:true});
+  window.addEventListener("resize",onScroll);
+  paintSeen();onScroll();
+})();
+
+/* ---------- §0 全景地圖 ---------- */
+(function(){
+  var info={
+    youl:["你（手動）","自己動手：開網頁、建筆記本、貼來源、提問，全部一下一下自己點。優點是每一步都看得到；缺點是來源一多就很花時間。"],
+    browser:["瀏覽器","你平常上網用的那個程式。手動這條路全靠它，不用另外安裝任何東西。"],
+    web:["筆記本網頁　notebook.google.com","Gemini Notebook（原 NotebookLM）給人用的入口。建筆記本、放來源、提問、點引用回原文、語音摘要，都在這裡做。"],
+    your:["你（請 agent 幫忙）","你做四件事：說清楚要什麼、看它的計畫、在瀏覽器親手按同意、最後自己打開網頁檢查。"],
+    agent:["agent","會自己動手做事的 AI 助理。它能在你的電腦上下指令、讀結果，再決定下一步。它很勤快，但它不是你，同意要你自己按。"],
+    gcloud:["gcloud","Google Cloud 的命令列工具（用打字下指令）。agent 靠它做三件事：啟用 API、開啟登入畫面、拿權杖。"],
+    token:["權杖","一小時有效的通行證。agent 每送一個請求都要帶著它，Google 才知道「這是你同意過的」。過期就要重新拿。"],
+    api:["API 窗口　notebook.googleapis.com","Gemini Notebook 給程式用的入口。目前是公開預覽階段，只會三類事：建筆記本、放來源、查狀態。提問還不行。"],
+    nb:["同一本筆記本","兩條路到的是同一個地方。agent 透過 API 建的那一本，你打開筆記本網頁就看得到，接下來就可以自己提問。"]
+  };
+  var nodes=$$("#mapsvg [data-node]"),T=$("#mapT"),D=$("#mapD");
+  function pick(g){
+    nodes.forEach(function(n){n.classList.remove("sel");n.setAttribute("aria-pressed","false");});
+    g.classList.add("sel");g.setAttribute("aria-pressed","true");
+    var d=info[g.getAttribute("data-node")];T.textContent=d[0];D.textContent=d[1];
+  }
+  nodes.forEach(function(g){
+    g.setAttribute("aria-pressed","false");
+    g.addEventListener("click",function(){pick(g);});
+    g.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(g);}});
+  });
+})();
+
+/* ---------- §1 聊天 vs 筆記本 ---------- */
+(function(){
+  var box=$("#ansBox"),note=$("#ansNote"),bC=$("#modeChat"),bN=$("#modeNb"),panel=$("#srcPanel");
+  function clearHit(){$$(".src p.hit").forEach(function(p){p.classList.remove("hit");});}
+  function cite(n){
+    var b=el("button","cite",String(n));b.type="button";b.setAttribute("aria-pressed","false");
+    b.setAttribute("aria-label","引用 "+n+"，點了會標出來源面板的第 "+n+" 句");
+    b.addEventListener("click",function(){
+      clearHit();$$(".cite",box).forEach(function(c){c.setAttribute("aria-pressed","false");});
+      b.setAttribute("aria-pressed","true");
+      var p=document.getElementById("src"+n);p.classList.add("hit");
+      note.textContent="引用 ["+n+"] 對到來源面板第 "+n+" 句（已標出來）。自己讀一次，看回答有沒有講得比原文多。";
+      if(p.scrollIntoView&&window.innerWidth<=700)p.scrollIntoView({block:"nearest"});
+    });
+    return b;
+  }
+  function show(mode){
+    bC.setAttribute("aria-pressed",mode==="chat"?"true":"false");
+    bN.setAttribute("aria-pressed",mode==="nb"?"true":"false");
+    box.textContent="";clearHit();
+    var lab=el("span","small",mode==="chat"?"一般聊天的回答（示意）":"筆記本的回答（示意）");
+    box.appendChild(lab);box.appendChild(document.createElement("br"));
+    if(mode==="chat"){
+      panel.style.opacity=".45";
+      box.appendChild(document.createTextNode("一般來說，等級愈高就愈要減少戶外活動。"));
+      var d=el("span","doubt","到了第三級，所有人就一律不能出門。");box.appendChild(d);
+      note.textContent="讀起來很順，但沒有任何來源可以點。畫波浪線那一句是從哪裡來的？你沒辦法查，它也可能是錯的。";
+    }else{
+      panel.style.opacity="1";
+      box.appendChild(document.createTextNode("等級愈高代表空氣愈不好，戶外活動量要跟著減少"));box.appendChild(cite(2));
+      box.appendChild(document.createTextNode("。敏感族群在中間的等級就該開始減少長時間的戶外劇烈運動"));box.appendChild(cite(3));
+      box.appendChild(document.createTextNode("。至於各等級對應的數字範圍，你提供的來源沒有寫"));box.appendChild(cite(4));
+      box.appendChild(document.createTextNode("。"));
+      note.textContent="每一句後面都有編號。點編號，看右邊（手機在下面）哪一句被標出來。";
+    }
+  }
+  bC.addEventListener("click",function(){show("chat");});
+  bN.addEventListener("click",function(){show("nb");});
+  show("chat");
+})();
+
+/* ---------- §2 能做／還不能做 ---------- */
+(function(){
+  var items=[
+    ["建一本新筆記本",true,"做得到。這是七個方法之一（筆記本 create）。"],
+    ["改筆記本的名字",true,"做得到（筆記本 patch），而且 patch 只能改名字，別的改不了。"],
+    ["列出我有哪些筆記本",true,"做得到（筆記本 list）。"],
+    ["加入公開網頁當來源",true,"做得到。條件是 https:// 開頭的公開網頁，不能有登入牆或付費牆。"],
+    ["加入 YouTube 影片當來源",true,"做得到。公開或不公開的影片都可以，但要有字幕。"],
+    ["貼入一段文字或 Markdown",true,"做得到。內容直接放在請求裡，上限 500,000 字而且不超過 1,000,000 bytes。"],
+    ["查某個來源處理好了沒",true,"做得到（來源 get）。會看到 PROCESSING、ACTIVE 或 FAILED。"],
+    ["上傳 PDF 檔案",false,"還不行。上傳檔案被官方列為未來才會有的功能，現在要自己在網頁上傳。"],
+    ["刪除筆記本",false,"還不行。刪除筆記本與來源都還沒開放，要自己到網頁刪。所以別讓 agent 亂建。"],
+    ["向筆記本提問、把回答拿回來",false,"還不行。提問要你自己在網頁做，這正是「agent 搬、人問」的分工。"],
+    ["產生語音摘要",false,"還不行。語音摘要這類產出，目前要在網頁自己按。"],
+    ["加入 Google 雲端硬碟的文件",false,"還不行。雲端硬碟或 Google 文件的網址送進去會被退回（HTTP 400）。"],
+    ["用學校帳號來做",false,"不行。API 只支援個人 Google 帳號，學校這類 Workspace 帳號會得到 403（WORKSPACE_ACCOUNT_NOT_SUPPORTED）。"]
+  ];
+  var list=$("#sortList"),score=$("#sortScore"),done=0,right=0;
+  function build(){
+    list.textContent="";done=0;right=0;score.textContent="已答 0／"+items.length;score.className="big";
+    items.forEach(function(it){
+      var li=el("li"),t=el("div","t",it[0]),c=el("div","ctrl"),w=el("div","why2");
+      var bY=el("button","btn","API 做得到"),bN=el("button","btn","還是要自己來");
+      bY.type="button";bN.type="button";w.setAttribute("aria-live","polite");
+      function ans(v,me,other){
+        var ok=(v===it[1]);done++;if(ok)right++;
+        me.disabled=true;other.disabled=true;
+        me.classList.add(ok?"right":"wrong");
+        if(!ok)other.classList.add("right");
+        li.className=ok?"ok":"no";
+        w.textContent=(ok?"答對了。":"不是喔。")+it[2];
+        score.textContent=done<items.length?("已答 "+done+"／"+items.length+"，答對 "+right):("全部答完：答對 "+right+"／"+items.length+(right===items.length?"，全對！":"。錯的那幾題再讀一次原因。"));
+        if(done===items.length)score.className="big "+(right===items.length?"ok":"");
+      }
+      bY.addEventListener("click",function(){ans(true,bY,bN);});
+      bN.addEventListener("click",function(){ans(false,bN,bY);});
+      c.appendChild(bY);c.appendChild(bN);
+      li.appendChild(t);li.appendChild(c);li.appendChild(w);list.appendChild(li);
+    });
+  }
+  $("#sortReset").addEventListener("click",build);
+  build();
+})();
+
+/* ---------- §3 旅館四步 ---------- */
+(function(){
+  var steps=[
+    ["API","API＝旅館的櫃檯窗口","你不能自己走進旅館後場拿東西，只能到櫃檯，照櫃檯規定的說法提出要求。程式要用 Gemini Notebook 也一樣：只能照 API 規定的格式送請求。","對應到這一課：notebook.googleapis.com 就是那個窗口。"],
+    ["Google Cloud 專案","Google Cloud 專案＝訂房登記的那個戶頭","櫃檯要知道這筆帳記在誰名下。專案就是那個戶頭：用了幾次 API，都記在它頭上。預覽期間不收費，但次數有上限。","對應到這一課：每個專案每分鐘讀、寫各 100 次；請求裡的 x-goog-user-project 寫的就是它。"],
+    ["OAuth 同意","OAuth 同意＝你本人在櫃檯簽名","入住要本人出示證件、親手簽名，朋友不能代簽。瀏覽器跳出「允許」的那個畫面就是這一步：只有你能按，agent 不能替你按。","對應到這一課：agent 會開啟登入畫面，然後停下來等你。"],
+    ["權杖","權杖＝房卡，一小時就失效","簽完名，櫃檯給你一張房卡。之後進出只看卡，不再看證件。這張卡一小時後自動失效，要回櫃檯重領。卡掉了，撿到的人在失效前都進得去。","對應到這一課：所以不印、不存檔、不貼給別人。"]
+  ];
+  var seq=$("#hotelSeq"),i=0,btns=[];
+  steps.forEach(function(s,k){
+    var li=el("li"),b=el("button",null,(k+1)+" "+s[0]);b.type="button";
+    b.addEventListener("click",function(){i=k;paint();});
+    li.appendChild(b);seq.appendChild(li);btns.push(b);
+  });
+  function paint(){
+    btns.forEach(function(b,k){if(k===i)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current");});
+    $("#hotelT").textContent=steps[i][1];$("#hotelA").textContent=steps[i][2];$("#hotelB").textContent=steps[i][3];
+    $("#hotelPrev").disabled=(i===0);$("#hotelNext").disabled=(i===steps.length-1);
+  }
+  $("#hotelPrev").addEventListener("click",function(){if(i>0){i--;paint();}});
+  $("#hotelNext").addEventListener("click",function(){if(i<steps.length-1){i++;paint();}});
+  paint();
+})();
+
+/* ---------- §3 權杖倒數 ---------- */
+(function(){
+  var state="none",t0=0,timer=null,serial=0;
+  var bar=$("#tkBar"),meter=$("#tkMeter"),left=$("#tkLeft"),msg=$("#tkMsg");
+  function minsLeft(){return Math.max(0,60-(Date.now()-t0)/1000*2);}
+  function say(t,cls){msg.textContent=t;msg.className="fb"+(cls?" "+cls:"");}
+  function paint(){
+    if(state==="none"){bar.style.width="0%";meter.className="meter";left.textContent="還沒有權杖";left.className="big";meter.setAttribute("aria-valuenow","0");return;}
+    var m=minsLeft();
+    if(m<=0){
+      state="dead";stop();bar.style.width="100%";meter.className="meter dead";
+      left.textContent="權杖已過期（滿 60 分鐘）";left.className="big no";meter.setAttribute("aria-valuenow","0");
+      say("這張權杖失效了。agent 現在送請求會被拒絕。它該做的事：重新拿一張。","no");
+      return;
+    }
+    bar.style.width=(m/60*100)+"%";meter.className="meter"+(m<=10?" low":"");
+    left.textContent="第 "+serial+" 張權杖，還剩 "+Math.ceil(m)+" 分鐘";left.className="big ok";
+    meter.setAttribute("aria-valuenow",String(Math.ceil(m)));
+  }
+  function stop(){if(timer){clearInterval(timer);timer=null;}}
+  $("#tkGet").addEventListener("click",function(){
+    stop();state="live";t0=Date.now();serial++;timer=setInterval(paint,250);paint();
+    say("拿到新的權杖，從 60 分鐘開始倒數。（真實世界要先經過你本人登入同意，才拿得到。）","ok");
+  });
+  $("#tkUse").addEventListener("click",function(){
+    if(state==="live"&&minsLeft()<=0)paint();
+    if(state==="none")say("被拒絕：401 UNAUTHENTICATED（CREDENTIALS_MISSING）。沒帶權杖，窗口不認得你是誰。","no");
+    else if(state==="dead")say("被拒絕（401）。權杖過期了，舊的那張再送幾次都沒用，要重新拿一張。","no");
+    else say("請求通過。權杖還有效，窗口照辦。","ok");
+  });
+  $("#tkSkip").addEventListener("click",function(){
+    if(state!=="live"){say("現在沒有還在倒數的權杖，先按「拿一張權杖」。","");return;}
+    t0=Date.now()-31000;paint();
+  });
+  paint();
+})();
+
+/* ---------- §4 請求產生器 ---------- */
+(function(){
+  var ROOT="https://notebook.googleapis.com/v1",act="nb";
+  var title=$("#rqTitle"),url=$("#rqUrl"),text=$("#rqText"),out=$("#rqOut"),resp=$("#rqResp"),hint=$("#rqHint");
+  function bytes(s){
+    if(window.TextEncoder)return new TextEncoder().encode(s).length;
+    return unescape(encodeURIComponent(s)).length;
+  }
+  function span(cls,t){return el("span",cls,t);}
+  function build(){
+    var m,u,body=null;
+    if(act==="nb"){m="POST";u=ROOT+"/notebooks";body={displayName:title.value};}
+    else if(act==="web"){m="POST";u=ROOT+"/notebooks/{筆記本id}/sources";body={displayName:title.value,webContent:{url:url.value}};}
+    else if(act==="txt"){m="POST";u=ROOT+"/notebooks/{筆記本id}/sources";body={displayName:title.value,mimeType:"text/markdown",textContent:{content:text.value}};}
+    else{m="GET";u=ROOT+"/notebooks/{筆記本id}/sources/{來源id}";}
+    $("#rqTitleL").style.display=(act==="get")?"none":"";
+    $("#rqUrlL").style.display=(act==="web")?"":"none";
+    $("#rqTextL").style.display=(act==="txt")?"":"none";
+    out.textContent="";
+    out.appendChild(span("m",m));out.appendChild(document.createTextNode(" "+u+"\n"));
+    out.appendChild(span("h","Authorization: Bearer ••••••••••（權杖，已遮住）\n"));
+    out.appendChild(span("h","x-goog-user-project: nb-你的代號\n"));
+    out.appendChild(document.createTextNode("\n"+(body?JSON.stringify(body,null,2):"（GET 只是拿資料回來，不用附內容）")));
+    if(act==="txt"){
+      var n=Array.from?Array.from(text.value).length:text.value.length;
+      hint.textContent="目前 "+n+" 字、"+bytes(text.value)+" bytes。上限是 500,000 字而且不超過 1,000,000 bytes（中文一個字佔比較多 bytes）。";
+    }else if(act==="web"){
+      hint.textContent="只收公開網頁：不能要登入、不能有付費牆。雲端硬碟的網址不收。";
+    }else if(act==="get"){
+      hint.textContent="查狀態不用填東西，只要知道筆記本和來源各自的 id。";
+    }else hint.textContent="建筆記本只需要一個名稱。";
+  }
+  function send(){
+    var t=title.value.replace(/^\s+|\s+$/g,""),L=[];
+    if(act!=="get"&&!t){resp.textContent="（模擬）名稱是空的。先在「名稱」填幾個字再送。";return;}
+    if(act==="nb"){
+      L=["（模擬）成功。","回來一份筆記本資料：裡面有系統給的筆記本 id，","以及你取的 displayName「"+t+"」。","","下一步：把那個 id 放進「加來源」的網址。"];
+    }else if(act==="web"){
+      var u=url.value.replace(/^\s+|\s+$/g,"");
+      if(u.indexOf("https://")!==0)L=["（模擬）這個網址不是 https:// 開頭。","公開網頁來源要用 https:// 的網址，請改一下再送。"];
+      else if(/^https:\/\/(docs|drive)\.google\.com(\/|$)/.test(u))L=["（模擬）HTTP 400，當場退回。","Google 雲端硬碟／文件的網址，API 不收。"];
+      else L=["（模擬）來源收下了，狀態：PROCESSING","","處理是送出之後才慢慢進行的。","接下來要「查狀態」，直到變成 ACTIVE 或 FAILED。"];
+    }else if(act==="txt"){
+      if(!text.value)L=["（模擬）內容是空的，先貼一點文字。"];
+      else L=["（模擬）來源收下了，狀態：PROCESSING","","接下來要「查狀態」，直到變成 ACTIVE 或 FAILED。"];
+    }else{
+      L=["（模擬）狀態：ACTIVE","","看到 ACTIVE 才代表這個來源可以用了。","如果是 FAILED，回應裡的 error.code 和 message 會說原因。"];
+    }
+    resp.textContent=L.join("\n");
+  }
+  $$("#rqActs button").forEach(function(b){
+    b.addEventListener("click",function(){
+      act=b.getAttribute("data-act");
+      $$("#rqActs button").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});
+      resp.textContent="（按「模擬送出」看回應）";build();
+    });
+  });
+  [title,url,text].forEach(function(i){i.addEventListener("input",build);});
+  $("#rqSend").addEventListener("click",send);
+  build();
+})();
+
+/* ---------- §5 來源狀態 ---------- */
+(function(){
+  var types=[
+    {k:"pub",n:"公開網頁",r:"active",why:"公開、不用登入、沒有付費牆的網頁：處理完就變成 ACTIVE。"},
+    {k:"login",n:"要登入才看得到的網頁",r:"failed",why:"API 只收公開網頁，有登入牆的不行。會失敗，訊息以現場為準。"},
+    {k:"pay",n:"有付費牆的網頁",r:"failed",code:7,msg:"…behind a paywall…",why:"有付費牆的網頁讀不到內容，處理後變成 FAILED；原因訊息裡會提到 behind a paywall（error.code 7）。"},
+    {k:"dead",n:"連不上的網址",r:"failed",code:9,msg:"The source is unreachable.",why:"對方網站連不上，處理後變成 FAILED；error.code 9，訊息是 The source is unreachable."},
+    {k:"yt",n:"沒有字幕的 YouTube",r:"failed",why:"YouTube 來源要有字幕才讀得到內容。會失敗，訊息以現場為準。"},
+    {k:"drive",n:"雲端硬碟文件網址",r:"400",why:"Google 雲端硬碟／文件的網址 API 不收，當場就退回（HTTP 400），連 PROCESSING 都不會進。"},
+    {k:"long",n:"超過長度的文字",r:"reject",why:"內嵌文字上限是 500,000 字而且不超過 1,000,000 bytes。超過會失敗，訊息以現場為準。"}
+  ];
+  var cur=types[0],box=$("#srcTypes"),log=$("#srcLog"),why=$("#srcWhy"),timers=[];
+  var st={x:$("#st400"),p:$("#stP"),a:$("#stA"),f:$("#stF")};
+  function reset(){
+    timers.forEach(clearTimeout);timers=[];
+    Object.keys(st).forEach(function(k){st[k].className="st";});
+    why.textContent="";why.className="fb";
+  }
+  function line(t){log.textContent+=(log.textContent?"\n":"")+t;log.scrollTop=log.scrollHeight;}
+  function later(ms,fn){timers.push(setTimeout(fn,ms));}
+  types.forEach(function(t,i){
+    var b=el("button","btn",t.n);b.type="button";b.setAttribute("aria-pressed",i===0?"true":"false");
+    b.addEventListener("click",function(){
+      cur=t;$$("button",box).forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});
+      reset();log.textContent="（已選「"+t.n+"」，按「送出這個來源」）";
+    });
+    box.appendChild(b);
+  });
+  $("#srcRun").addEventListener("click",function(){
+    reset();log.textContent="";
+    line("> 送出來源：「"+cur.n+"」（模擬）");
+    if(cur.r==="400"){
+      later(500,function(){st.x.className="st on bad";line("< HTTP 400　當場退回，沒有進入處理");why.textContent=cur.why;why.className="fb no";});
+      return;
+    }
+    if(cur.r==="reject"){
+      later(500,function(){line("< 會失敗，訊息以現場為準");why.textContent=cur.why;why.className="fb no";});
+      return;
+    }
+    later(500,function(){st.p.className="st on";line("< 收下了，狀態 PROCESSING");});
+    later(1200,function(){line("> 過 2 秒，查狀態　…　PROCESSING");});
+    later(1900,function(){line("> 再過 2 秒，查狀態　…　PROCESSING");});
+    later(2600,function(){
+      st.p.className="st";
+      if(cur.r==="active"){st.a.className="st on good";line("> 再過 2 秒，查狀態　…　ACTIVE　可以用了");why.textContent=cur.why;why.className="fb ok";}
+      else{
+        st.f.className="st on bad";line("> 再過 2 秒，查狀態　…　FAILED");
+        if(cur.code)line("  error.code: "+cur.code+"\n  message: "+cur.msg);
+        else line("  （原因寫在 error.code 與 message，訊息以現場為準）");
+        why.textContent=cur.why;why.className="fb no";
+      }
+    });
+  });
+})();
+
+/* ---------- §6 錯誤配對 ---------- */
+(function(){
+  var errs=[
+    {k:"e401",c:"401",t:"UNAUTHENTICATED（CREDENTIALS_MISSING）",fix:"沒帶權杖，或權杖過期了。重新拿一張，放進 Authorization 標頭再送。",ok:"對。401＝窗口不認得你：沒帶權杖或權杖過期，重新拿一張就好。"},
+    {k:"e403",c:"403",t:"PERMISSION_DENIED（WORKSPACE_ACCOUNT_NOT_SUPPORTED）",fix:"你用的是學校這類 Workspace 帳號。登出，改用個人 Gmail 重新登入。",ok:"對。403 這一種＝帳號種類不對：API 只支援個人 Google 帳號。"},
+    {k:"e404",c:"404",t:"NOT_FOUND（Account not found for user.）",fix:"這個帳號還沒用過 Gemini Notebook。先用同一個帳號到筆記本網頁登入一次。",ok:"對。404 這一種＝帳號還沒在 Gemini Notebook 網頁登入過，先去登入一次再回來。"},
+    {k:"e429",c:"429",t:"次數超過上限",fix:"送太快了。停一下、放慢速度再送，不要一直重試。",ok:"對。429＝超過每分鐘的次數上限（例如每人加來源每分鐘 20 次），慢一點就好。"}
+  ];
+  var order=[2,0,3,1],eCol=$("#errCol"),fCol=$("#fixCol"),fb=$("#errFb"),score=$("#errScore"),sel=null,n=0,eB={},fB={};
+  function build(){
+    $$(".mbtn",eCol).concat($$(".mbtn",fCol)).forEach(function(b){b.parentNode.removeChild(b);});
+    sel=null;n=0;eB={};fB={};score.textContent="配對 0／4";score.className="big";fb.textContent="";fb.className="fb";
+    errs.forEach(function(e){
+      var b=el("button","mbtn");b.type="button";b.setAttribute("aria-pressed","false");
+      var s=el("b",null,e.c+"　");b.appendChild(s);b.appendChild(el("code",null,e.t));
+      b.addEventListener("click",function(){
+        sel=e.k;Object.keys(eB).forEach(function(k){eB[k].setAttribute("aria-pressed",k===sel?"true":"false");});
+        fb.textContent="已選 "+e.c+"，再點右邊的處理方式。";fb.className="fb";
+      });
+      eCol.appendChild(b);eB[e.k]=b;
+    });
+    order.forEach(function(i){
+      var e=errs[i],b=el("button","mbtn",e.fix);b.type="button";
+      b.addEventListener("click",function(){
+        if(!sel){fb.textContent="先點左邊一個錯誤。";fb.className="fb";return;}
+        if(sel===e.k){
+          n++;b.disabled=true;b.classList.add("done");eB[sel].disabled=true;eB[sel].classList.add("done");eB[sel].setAttribute("aria-pressed","false");
+          fb.textContent=e.ok;fb.className="fb ok";sel=null;
+          score.textContent="配對 "+n+"／4"+(n===4?"，全部完成！":"");if(n===4)score.className="big ok";
+        }else{
+          fb.textContent="這個處理方式對不上你選的錯誤。提示：先看錯誤括號裡的英文在說什麼，再選一次。";fb.className="fb no";
+        }
+      });
+      fCol.appendChild(b);fB[e.k]=b;
+    });
+  }
+  $("#errReset").addEventListener("click",build);
+  build();
+})();
+
+/* ---------- §7 監督 ---------- */
+(function(){
+  var opts=["放行","退回","先去驗"];
+  var msgs=[
+    ["我先列出計畫：檢查 gcloud → 選專案 → 啟用 API → 登入 → 建筆記本 → 加來源。可以開始嗎？",0,"這就是「先看計畫」。它還沒動手、先問你，步驟也看得懂。讀過、沒有多出奇怪的事，就可以放行。"],
+    ["我已經幫你登入了。",1,"登入同意只有你能按。你沒有親手在瀏覽器按過，它卻說登入好了，這不對。退回，問清楚它到底做了什麼。"],
+    ["我把權杖存進 token.txt，方便下次用。",1,"權杖是通行證，不印出來、不存成檔案。而且它一小時就過期，存了下次也用不到，只多了外流的風險。退回，請它刪掉那個檔。"],
+    ["現在會開啟瀏覽器，請你在 Google 的畫面按「允許」。我在這裡等你。",0,"這樣才對：它開啟畫面、停下來，由你本人按。放行，但按之前自己讀一下畫面上寫它要求什麼。"],
+    ["筆記本建好了，共 3 個來源，都是 ACTIVE。",2,"它可能沒說錯，但你還沒親眼看到。打開筆記本網頁，確認真的有那一本、來源真的是 3 個，再自己問一題。"],
+    ["我看到你帳號裡還有幾本舊筆記本，順手幫你改了名字、整理了一下。",1,"你沒有請它做這件事。規矩是「不動既有筆記本」，計畫裡沒有的事不該順手做。退回，請它說明改了哪幾本，並改回來。"]
+  ];
+  var list=$("#supList"),score=$("#supScore"),done=0,right=0;
+  function build(){
+    list.textContent="";done=0;right=0;score.textContent="已答 0／"+msgs.length;score.className="big";
+    msgs.forEach(function(m,idx){
+      var box=el("div","msg"),who=el("div","who","agent 說（第 "+(idx+1)+" 句）"),say=el("div","say","「"+m[0]+"」"),c=el("div","ctrl"),w=el("div","fb");
+      w.setAttribute("aria-live","polite");
+      var bs=opts.map(function(o,k){
+        var b=el("button","btn",o);b.type="button";
+        b.addEventListener("click",function(){
+          var ok=(k===m[1]);done++;if(ok)right++;
+          bs.forEach(function(x){x.disabled=true;});
+          b.classList.add(ok?"right":"wrong");if(!ok)bs[m[1]].classList.add("right");
+          box.className="msg "+(ok?"ok":"no");
+          w.textContent=(ok?"答對了。":"比較好的做法是「"+opts[m[1]]+"」。")+m[2];
+          w.className="fb";
+          score.textContent=done<msgs.length?("已答 "+done+"／"+msgs.length+"，答對 "+right):("全部答完：答對 "+right+"／"+msgs.length);
+          if(done===msgs.length&&right===msgs.length)score.className="big ok";
+        });
+        c.appendChild(b);return b;
+      });
+      box.appendChild(who);box.appendChild(say);box.appendChild(c);box.appendChild(w);list.appendChild(box);
+    });
+  }
+  $("#supReset").addEventListener("click",build);
+  build();
+})();
+
+/* ---------- §8 REST ↔ MCP ---------- */
+(function(){
+  var pairs=[
+    ["筆記本 create","create_notebook","建一本新筆記本。"],
+    ["筆記本 get","get_notebook","拿某一本筆記本的資料。"],
+    ["筆記本 list","list_notebooks","列出你有哪些筆記本。"],
+    ["筆記本 patch","update_notebook","改筆記本的名字（只能改名）。注意這一對名字不一樣：一邊叫 patch，一邊叫 update。"],
+    ["來源 create","create_source","在某一本筆記本裡加一個來源。"],
+    ["來源 get","get_source","查某一個來源的狀態：PROCESSING、ACTIVE 或 FAILED。"],
+    ["來源 list","list_sources","列出某一本筆記本裡有哪些來源。"]
+  ];
+  var rC=$("#restCol"),mC=$("#mcpCol"),fb=$("#mapFb"),R=[],M=[],locked=-1;
+  function hl(i){
+    R.forEach(function(b,k){b.classList.toggle("hl",k===i);});
+    M.forEach(function(b,k){b.classList.toggle("hl",k===i);});
+  }
+  function pick(i){
+    locked=i;hl(i);
+    R.concat(M).forEach(function(b){b.setAttribute("aria-pressed","false");});
+    R[i].setAttribute("aria-pressed","true");M[i].setAttribute("aria-pressed","true");
+    fb.textContent=pairs[i][0]+" ↔ "+pairs[i][1]+"："+pairs[i][2];
+  }
+  pairs.forEach(function(p,i){
+    [[rC,R,p[0]],[mC,M,p[1]]].forEach(function(a){
+      var b=el("button","mbtn");b.type="button";b.setAttribute("aria-pressed","false");
+      b.appendChild(el("code",null,a[2]));
+      b.addEventListener("click",function(){pick(i);});
+      b.addEventListener("mouseenter",function(){hl(i);});
+      b.addEventListener("mouseleave",function(){hl(locked);});
+      b.addEventListener("focus",function(){hl(i);});
+      b.addEventListener("blur",function(){hl(locked);});
+      a[0].appendChild(b);a[1].push(b);
+    });
+  });
+})();
+
+})();
+</script>
+</body>
+</html>
