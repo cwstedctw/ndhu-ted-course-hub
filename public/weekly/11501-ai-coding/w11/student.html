@@ -128,7 +128,7 @@
     <section id="step-0" class="panel" aria-labelledby="step-0-title">
       <h2 id="step-0-title"><span class="step-num">0</span>四個帳號先登入</h2>
       <ol>
-        <li><strong>GitHub</strong>：用 W3 建 my-panel 那個 repo 的帳號登入 <a href="https://github.com/" target="_blank" rel="noopener">github.com</a>。另外兩個服務都可以直接用它登入。教室電腦對 GitHub 來說每次都是新電腦，登入時可能多問一關：開了兩步驟驗證的，用手機上的驗證 App 或簡訊；沒開的，GitHub 會寄一組驗證碼到你註冊 GitHub 用的信箱。手機要帶著，先確定收得到那個信箱的信。</li>
+        <li><strong>GitHub</strong>：用 W3 建 my-panel 那個 repo 的帳號登入 <a href="https://github.com/" target="_blank" rel="noopener">github.com</a>。另外兩個服務都可以直接用它登入。教室電腦對 GitHub 來說每次都是新電腦，登入時可能要多一道驗證：開了兩步驟驗證的，用手機上的驗證 App 或簡訊；沒開的，GitHub 會寄一組驗證碼到你 GitHub 帳號的信箱（手機有裝 GitHub App 的，改成在 App 裡確認）。手機要帶著，先確定收得到那個信箱的信。</li>
         <li><strong>Supabase</strong>：開 <a href="https://supabase.com/dashboard/sign-up" target="_blank" rel="noopener">Supabase 的註冊頁</a>，按 <strong>Continue with GitHub</strong>，用同一個 GitHub 帳號授權。不用填信用卡。</li>
         <li><strong>Cloudflare</strong>：開 <a href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noopener">Cloudflare 的註冊頁</a>。按 <strong>GitHub</strong> 可以直接用同一個帳號（第一次會幫你建好帳號）；用 Email＋密碼也行，記得去信箱按驗證信。先看到「正在執行安全驗證」是 Cloudflare 在擋機器人，等幾秒它會自己跳過去。</li>
         <li><strong>AI</strong>：<span class="tag tag-a">路線 A</span>用自己筆電上的 agent：<strong>Codex</strong>（在 ChatGPT 桌面版裡，免費帳號也有，額度有限）、<strong>Claude</strong>（Claude Code 要付費方案，而且要滿 18 歲），或 W10 用過的 agent（例如 Antigravity）。<span class="tag tag-b">路線 B</span>瀏覽器裡任何一個聊天 AI 都可以。這門課不需要你付錢。</li>
@@ -383,7 +383,7 @@ revoke all on table public.learning_logs from anon;</pre></details>
         <table>
           <thead><tr><th>你看到</th><th>多半是</th><th>怎麼辦</th></tr></thead>
           <tbody>
-            <tr><td>教室電腦登入 GitHub，要我輸入驗證碼</td><td>GitHub 把教室電腦當成新電腦，多問一關</td><td>開了兩步驟驗證：看手機的驗證 App 或簡訊；沒開：到你註冊 GitHub 用的信箱收那封驗證碼信（手機收信最快）</td></tr>
+            <tr><td>教室電腦登入 GitHub，要我輸入驗證碼</td><td>GitHub 把教室電腦當成新電腦，多一道驗證</td><td>開了兩步驟驗證：看手機的驗證 App 或簡訊；沒開：到你 GitHub 帳號的信箱收那封驗證碼信（一小時內有效，手機收信最快；有裝 GitHub App 的看 App）。真的登不進舊帳號，用學校信箱當場註冊一個新的 GitHub 帳號，今天的 repo 是新建的，一樣做得完</td></tr>
             <tr><td>網頁寫「設定還沒完成」</td><td><code>config.js</code> 還是「貼上…」，或改了沒推上 GitHub</td><td>確認兩個值貼進去、存檔、推上去；等 Cloudflare 建置成功再重新整理</td></tr>
             <tr><td>紅色「secret（萬能）鑰匙」警告</td><td>貼成 secret key 了</td><td>換成 publishable key；到 Supabase 的 API Keys 頁把那把 secret key 作廢。推上 GitHub 過就一定要作廢</td></tr>
             <tr><td>「找不到資料表 learning_logs」</td><td><code>schema.sql</code> 沒跑，或跑到別的專案</td><td>到這個專案的 SQL Editor 再跑一次（可以重跑）</td></tr>
