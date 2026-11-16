@@ -346,7 +346,25 @@
       ],
       "poster": "/images/talks/t08-poster.webp",
       "worksheetUrl": null,
-      "materials": []
+      "materials": [
+        {
+          "label": "講者簡報（PDF，131 頁，先拿掉第 116、118、120、122 頁闖關講評，講後換完整版）",
+          "url": "https://drive.google.com/file/d/1kVItCWYdlj_7keMSxcWo96iTzvvZwznO/view"
+        },
+        {
+          "label": "講前導讀一頁卡（原圖，3 分鐘看完）",
+          "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/images/talks/t08-preread.webp"
+        },
+        {
+          "label": "30 秒預告短片（橫式）",
+          "url": "https://drive.google.com/file/d/1IgvtoM_2g8gw4qNEkRi0_Y8xeDT1L0iS/view"
+        }
+      ],
+      "preread": "/images/talks/t08-preread.webp",
+      "teaser": {
+        "src": "/videos/t08-teaser-720p.mp4",
+        "poster": "/images/talks/t08-teaser-poster.jpg"
+      }
     },
     {
       "id": "t09",
