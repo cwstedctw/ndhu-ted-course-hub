@@ -1,0 +1,1370 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; frame-src 'self' data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>W03｜從想法到第一個網頁小工具</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #16343b;
+      --muted: #526b70;
+      --paper: #fffdf8;
+      --wash: #edf7f3;
+      --sea: #087e8b;
+      --sea-dark: #075b65;
+      --coral: #e76f51;
+      --sun: #f4b942;
+      --leaf: #3a8d5d;
+      --line: #cbded9;
+      --danger: #a63d40;
+      --shadow: 0 16px 45px rgba(14, 66, 72, .12);
+      --radius: 22px;
+      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(244, 185, 66, .18), transparent 24rem),
+        radial-gradient(circle at 90% 18%, rgba(8, 126, 139, .14), transparent 25rem),
+        var(--paper);
+      line-height: 1.65;
+    }
+    body[data-lang="zh"] .lang.en,
+    body[data-lang="en"] .lang.zh { display: none !important; }
+    button, input, textarea, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible, input:focus-visible,
+    textarea:focus-visible, select:focus-visible, summary:focus-visible {
+      outline: 3px solid var(--sun);
+      outline-offset: 3px;
+    }
+    a { color: var(--sea-dark); }
+    code { font-family: Consolas, "SFMono-Regular", monospace; }
+    .skip {
+      position: absolute;
+      left: 12px;
+      top: -80px;
+      background: #fff;
+      padding: 10px 14px;
+      z-index: 100;
+    }
+    .skip:focus { top: 12px; }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 10px max(16px, calc((100vw - 1120px) / 2));
+      background: rgba(255, 253, 248, .94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+    .brand { font-weight: 900; color: var(--sea-dark); white-space: nowrap; }
+    .progress-wrap { min-width: 100px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+    .progress { height: 9px; border-radius: 99px; background: #dceae6; overflow: hidden; }
+    .progress > span { display: block; width: 0; height: 100%; background: linear-gradient(90deg, var(--sea), var(--leaf)); transition: width .2s; }
+    .toolbar-actions { display: flex; gap: 8px; align-items: center; }
+    .mini, .lang-toggle button {
+      min-width: 44px;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 13px;
+      cursor: pointer;
+      font-weight: 750;
+    }
+    .lang-toggle { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+    .lang-toggle button { border: 0; border-radius: 0; }
+    .lang-toggle button[aria-pressed="true"] { background: var(--sea); color: #fff; }
+    .wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding-bottom: 80px; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap: 28px;
+      align-items: center;
+      padding: 64px 0 30px;
+    }
+    .eyebrow { color: var(--coral); font-size: 14px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+    h1 { font-size: clamp(34px, 6vw, 68px); line-height: 1.03; margin: 10px 0 18px; letter-spacing: -.035em; }
+    .lead { font-size: clamp(18px, 2.3vw, 23px); color: var(--muted); max-width: 760px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 9px; margin: 22px 0; }
+    .chip { border: 1px solid var(--line); background: rgba(255, 255, 255, .75); border-radius: 999px; padding: 7px 11px; font-size: 14px; font-weight: 750; }
+    .hero-art {
+      min-height: 320px;
+      border-radius: 34px;
+      background: linear-gradient(145deg, #dff4ed, #fff2cf);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      display: grid;
+      place-items: center;
+      transform: rotate(1.5deg);
+    }
+    .phone {
+      width: min(100%, 280px);
+      background: #fff;
+      border: 8px solid var(--ink);
+      border-radius: 28px;
+      padding: 18px;
+      box-shadow: 8px 12px 0 rgba(8, 126, 139, .18);
+      transform: rotate(-2deg);
+    }
+    .phone .dot { width: 48px; height: 7px; background: var(--ink); border-radius: 99px; margin: -5px auto 17px; }
+    .phone h2 { margin: 0 0 8px; font-size: 22px; }
+    .phone p { margin: 0 0 14px; color: var(--muted); }
+    .fake-btn { display: block; width: 100%; border: 0; border-radius: 14px; background: var(--coral); color: #fff; padding: 12px; font-weight: 900; text-align: center; opacity: .82; }
+    .field-hint { display: block; font-size: 13px; color: var(--muted); margin: 4px 0 6px; font-weight: 600; }
+    .handin { margin-top: 12px; padding: 10px 12px; border-left: 4px solid var(--sea); background: var(--wash); border-radius: 0 12px 12px 0; font-weight: 700; }
+    .notice {
+      border-left: 5px solid var(--sun);
+      background: #fff8df;
+      border-radius: 0 16px 16px 0;
+      padding: 13px 16px;
+      margin: 10px 0 30px;
+    }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .86);
+      padding: 22px;
+      box-shadow: 0 8px 25px rgba(14, 66, 72, .06);
+    }
+    .card h2, .card h3 { margin-top: 0; }
+    .icon { font-size: 30px; }
+    .quick {
+      margin: 28px 0;
+      background: var(--ink);
+      color: #fff;
+      border-radius: 28px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+    }
+    .quick h2 { margin-top: 0; }
+    .quick ol { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; list-style: none; padding: 0; counter-reset: quick; }
+    .quick li { counter-increment: quick; background: rgba(255,255,255,.1); border-radius: 15px; padding: 13px; }
+    .quick li::before { content: counter(quick); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--sun); color: var(--ink); font-weight: 900; margin-bottom: 7px; }
+    .checkpoint {
+      scroll-margin-top: 90px;
+      margin: 30px 0;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: #fff;
+      overflow: clip;
+      box-shadow: var(--shadow);
+    }
+    .checkpoint-head {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 20px 24px;
+      background: var(--wash);
+      border-bottom: 1px solid var(--line);
+    }
+    .step-no { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 15px; background: var(--sea); color: #fff; font-size: 22px; font-weight: 900; }
+    .checkpoint-head h2 { margin: 0; font-size: clamp(21px, 3vw, 30px); }
+    .time { font-size: 13px; font-weight: 900; color: var(--sea-dark); background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; }
+    .checkpoint-body { padding: 24px; }
+    .do-see { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .do, .see, .rescue {
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid var(--line);
+    }
+    .do { background: #f4fbf8; }
+    .see { background: #fff9e9; }
+    .rescue { margin-top: 16px; background: #fff4f1; }
+    .rescue summary, details summary { cursor: pointer; font-weight: 850; min-height: 44px; padding: 7px 0; }
+    .primary, .secondary, .danger {
+      min-height: 46px;
+      border-radius: 13px;
+      border: 0;
+      padding: 11px 16px;
+      cursor: pointer;
+      font-weight: 850;
+    }
+    .primary { background: var(--sea); color: #fff; }
+    .primary:hover { background: var(--sea-dark); }
+    .secondary { background: #fff; border: 1px solid var(--line); color: var(--ink); }
+    .danger { background: #fff0ed; border: 1px solid #e8b5aa; color: var(--danger); }
+    .action-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0; }
+    label { display: block; font-weight: 800; margin: 13px 0 5px; }
+    input[type="text"], textarea, select {
+      width: 100%;
+      border: 1px solid #a9c3bd;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--ink);
+      padding: 11px 12px;
+    }
+    textarea { min-height: 92px; resize: vertical; }
+    .status {
+      min-height: 48px;
+      padding: 12px 14px;
+      border-radius: 13px;
+      background: #eef4f2;
+      border: 1px solid var(--line);
+      margin-top: 12px;
+    }
+    .status.ok { background: #eaf7ee; border-color: #9ac7a8; }
+    .status.warn { background: #fff3dc; border-color: #e2bd75; }
+    .status.bad { background: #fff0ed; border-color: #dea49a; }
+    .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .theme {
+      position: relative;
+      border: 2px solid var(--line);
+      border-radius: 17px;
+      padding: 14px;
+      cursor: pointer;
+      min-height: 128px;
+      background: #fff;
+    }
+    .theme input { position: absolute; opacity: 0; }
+    .theme:has(input:checked) { border-color: var(--sea); background: var(--wash); }
+    .theme:focus-within { outline: 3px solid var(--sun); outline-offset: 3px; }
+    .theme strong { display: block; margin-top: 6px; }
+    .builder { display: grid; grid-template-columns: minmax(300px, .9fr) minmax(320px, 1.1fr); gap: 20px; }
+    .builder-fields { border: 1px solid var(--line); border-radius: 19px; padding: 18px; background: #fbfefd; }
+    .preview-panel { position: sticky; top: 82px; align-self: start; }
+    iframe {
+      width: 100%;
+      min-height: 470px;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      background: #fff;
+    }
+    .agent-box { border: 1px dashed var(--sea); background: #eef9f7; border-radius: 18px; padding: 17px; margin: 18px 0; }
+    .prompt-box { position: relative; }
+    .prompt-box textarea { min-height: 150px; font-family: Consolas, monospace; font-size: 14px; padding-right: 100px; }
+    .prompt-box .copy { position: absolute; right: 9px; top: 9px; }
+    .agent-result { border-left: 4px solid var(--sea); background: #fff; border-radius: 0 13px 13px 0; padding: 14px; margin-top: 12px; min-height: 78px; }
+    .test-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .test-card { border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+    .test-card h3 { margin-top: 0; }
+    .evidence { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .evidence .wide { grid-column: 1 / -1; }
+    .complete-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--line);
+    }
+    .complete-row > a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 8px;
+      border-radius: 10px;
+    }
+    .check-label { display: flex; align-items: center; gap: 10px; font-size: 16px; margin: 0; }
+    .check-label input { width: 23px; height: 23px; accent-color: var(--leaf); }
+    .faq { margin: 38px 0; }
+    .faq details { border-bottom: 1px solid var(--line); padding: 9px 0; }
+    .fallback-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+    .fallback-when { margin: 0 0 14px; }
+    .fallback-when li { margin: 4px 0; }
+    .fallback-links a { display: block; border: 1px solid var(--line); border-radius: 17px; padding: 17px; background: #fff; text-decoration: none; font-weight: 850; }
+    .footer { text-align: center; color: var(--muted); border-top: 1px solid var(--line); padding: 28px 0 60px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    #printEvidence { display: none; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-art { min-height: 250px; }
+      .grid3, .quick ol { grid-template-columns: 1fr 1fr; }
+      .theme-grid { grid-template-columns: 1fr 1fr; }
+      .builder { grid-template-columns: 1fr; }
+      .preview-panel { position: static; }
+    }
+    @media (max-width: 620px) {
+      .toolbar { grid-template-columns: 1fr auto; }
+      .brand { display: none; }
+      .progress-wrap { grid-column: 1 / -1; grid-row: 2; }
+      .toolbar-actions .mini.optional { display: none; }
+      .wrap { width: min(100% - 20px, 1120px); }
+      .hero { padding-top: 36px; }
+      .grid3, .quick ol, .do-see, .theme-grid, .test-grid, .evidence, .fallback-links { grid-template-columns: 1fr; }
+      .evidence .wide { grid-column: auto; }
+      .checkpoint-head { grid-template-columns: auto 1fr; padding: 16px; }
+      .checkpoint-head .time { grid-column: 2; justify-self: start; }
+      .checkpoint-body { padding: 16px; }
+      .complete-row { align-items: flex-start; flex-direction: column; }
+      iframe { min-height: 420px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+      .hero-art, .phone { transform: none; }
+    }
+    @media print {
+      .toolbar, .hero-art, .quick, .rescue, .action-row, .prompt-box, iframe,
+      .agent-box, .complete-row, .fallback-links, .faq { display: none !important; }
+      body { background: #fff; color: #000; }
+      .wrap { width: 100%; padding: 0; }
+      .hero { display: block; padding: 0 0 12px; }
+      h1 { font-size: 28pt; }
+      .checkpoint { box-shadow: none; break-inside: avoid; }
+      #printEvidence { display: block; border: 2px solid #000; padding: 16px; white-space: pre-wrap; }
+      body.evidence-only main > * { display: none !important; }
+      body.evidence-only #cp5,
+      body.evidence-only #cp5 .checkpoint-body,
+      body.evidence-only #printEvidence { display: block !important; }
+      body.evidence-only #cp5 .checkpoint-head,
+      body.evidence-only #cp5 .checkpoint-body > :not(#printEvidence) { display: none !important; }
+      body.evidence-only #cp5 { border: 0; margin: 0; }
+      body.evidence-only #cp5 .checkpoint-body { padding: 0; }
+    }
+  </style>
+</head>
+<body data-lang="zh">
+  <a class="skip" href="#main">
+    <span class="lang zh" lang="zh-Hant-TW">跳到主要內容</span>
+    <span class="lang en" lang="en">Skip to main content</span>
+  </a>
+
+  <div class="toolbar" aria-label="Course controls">
+    <div class="brand">AI 115-1 · W03</div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span><span class="lang zh" lang="zh-Hant-TW">必做進度</span><span class="lang en" lang="en">Core progress</span></span>
+        <strong id="progressText">0 / 5</strong>
+      </div>
+      <div class="progress" role="progressbar" aria-label="Core progress" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"><span id="progressBar"></span></div>
+    </div>
+    <div class="toolbar-actions">
+      <div class="lang-toggle" aria-label="Language">
+        <button type="button" data-set-lang="zh" aria-pressed="false">中</button>
+        <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <button type="button" class="mini optional" id="printBtn">
+        <span class="lang zh" lang="zh-Hant-TW">列印</span><span class="lang en" lang="en">Print</span>
+      </button>
+      <button type="button" class="mini optional" id="resetBtn">
+        <span class="lang zh" lang="zh-Hant-TW">清除進度</span><span class="lang en" lang="en">Reset</span>
+      </button>
+    </div>
+  </div>
+
+  <main id="main" class="wrap">
+    <section class="hero" aria-labelledby="pageTitle">
+      <div>
+        <div class="eyebrow">W03 · AI1151-W03-APP-V1 · 2026-09-16</div>
+        <h1 id="pageTitle">
+          <span class="lang zh" lang="zh-Hant-TW">從想法到第一個<br>網頁小工具</span>
+          <span class="lang en" lang="en">From an idea to your<br>first web app</span>
+        </h1>
+        <p class="lead">
+          <span class="lang zh" lang="zh-Hant-TW">今天不從程式碼開始。先玩一個成品，再改成自己的版本。下課前，你會有一個能雙擊開啟的 <code>v1.html</code>，也知道怎麼測它、改壞它、救回來。</span>
+          <span class="lang en" lang="en">You will not start with code. First, try a working app. Then turn it into your version. By the end, you will have a <code>v1.html</code> you can reopen, test, break, and recover.</span>
+        </p>
+        <div class="chips" aria-label="Lesson conditions">
+          <span class="chip"><span class="lang zh" lang="zh-Hant-TW">核心 120 分鐘</span><span class="lang en" lang="en">120-minute core</span></span>
+          <span class="chip"><span class="lang zh" lang="zh-Hant-TW">30 分鐘彈性救援</span><span class="lang en" lang="en">30-minute flex</span></span>
+          <span class="chip"><span class="lang zh" lang="zh-Hant-TW">不用帳號</span><span class="lang en" lang="en">No account required</span></span>
+          <span class="chip"><span class="lang zh" lang="zh-Hant-TW">可離線完成</span><span class="lang en" lang="en">Works offline</span></span>
+        </div>
+        <a class="primary" href="#cp1" style="display:inline-block;text-decoration:none">
+          <span class="lang zh" lang="zh-Hant-TW">先玩成品</span><span class="lang en" lang="en">Try the app first</span>
+        </a>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="phone">
+          <div class="dot"></div>
+          <h2><span class="lang zh" lang="zh-Hant-TW">今天做什麼？</span><span class="lang en" lang="en">What should I do?</span></h2>
+          <p><span class="lang zh" lang="zh-Hant-TW">三個選項太難選，交給小工具幫你挑。</span><span class="lang en" lang="en">Three choices feel hard. Let the helper pick.</span></p>
+          <div class="fake-btn"><span class="lang zh" lang="zh-Hant-TW">幫我選一個（示意圖）</span><span class="lang en" lang="en">Pick one (illustration)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="notice">
+      <strong><span class="lang zh" lang="zh-Hant-TW">裝置提醒：</span><span class="lang en" lang="en">Device note:</span></strong>
+      <span class="lang zh" lang="zh-Hant-TW">本頁手機可讀，但製作與下載建議使用電腦。沒有筆電時，改走頁尾的等值紙本路徑，不會被扣分。</span>
+      <span class="lang en" lang="en">You may read this page on a phone, but building and downloading work best on a computer. If you do not have a laptop, use the equivalent paper route at the end. It carries no penalty.</span>
+    </div>
+
+    <section class="grid3" aria-label="Takeaways">
+      <article class="card">
+        <div class="icon" aria-hidden="true">🧩</div>
+        <h2><span class="lang zh" lang="zh-Hant-TW">成品</span><span class="lang en" lang="en">Product</span></h2>
+        <p><span class="lang zh" lang="zh-Hant-TW">一個離線可用、能從清單挑出一項的校園生活小幫手。</span><span class="lang en" lang="en">An offline campus-life helper that picks one item from a list.</span></p>
+      </article>
+      <article class="card">
+        <div class="icon" aria-hidden="true">🔎</div>
+        <h2><span class="lang zh" lang="zh-Hant-TW">證據</span><span class="lang en" lang="en">Evidence</span></h2>
+        <p><span class="lang zh" lang="zh-Hant-TW">一次前後差異、兩筆測試、一個人的決定，以及一條限制。</span><span class="lang en" lang="en">One before/after change, two tests, one human decision, and one limitation.</span></p>
+      </article>
+      <article class="card">
+        <div class="icon" aria-hidden="true">🛟</div>
+        <h2><span class="lang zh" lang="zh-Hant-TW">界線</span><span class="lang en" lang="en">Boundary</span></h2>
+        <p><span class="lang zh" lang="zh-Hant-TW">不用真實姓名、課表或私人資料；AI 只提建議，採不採用由你決定。</span><span class="lang en" lang="en">Use no real names, schedules, or private data. AI suggests; you decide what to accept.</span></p>
+      </article>
+    </section>
+
+    <section class="quick" aria-labelledby="quickTitle">
+      <h2 id="quickTitle"><span class="lang zh" lang="zh-Hant-TW">60 秒速查：今天只做五件事</span><span class="lang en" lang="en">60-second map: only five things today</span></h2>
+      <ol>
+        <li><span class="lang zh" lang="zh-Hant-TW">先玩 v0</span><span class="lang en" lang="en">Try v0</span></li>
+        <li><span class="lang zh" lang="zh-Hant-TW">選一個題目</span><span class="lang en" lang="en">Choose a mission</span></li>
+        <li><span class="lang zh" lang="zh-Hant-TW">做成 v1</span><span class="lang en" lang="en">Make v1</span></li>
+        <li><span class="lang zh" lang="zh-Hant-TW">改壞再救回</span><span class="lang en" lang="en">Break and recover</span></li>
+        <li><span class="lang zh" lang="zh-Hant-TW">下載與留證據</span><span class="lang en" lang="en">Download and document</span></li>
+      </ol>
+    </section>
+
+    <section class="checkpoint" id="cp1" data-checkpoint="cp1">
+      <header class="checkpoint-head">
+        <div class="step-no">1</div>
+        <h2><span class="lang zh" lang="zh-Hant-TW">先玩，再改一個地方</span><span class="lang en" lang="en">Try it, then change one thing</span></h2>
+        <div class="time">0–10 min</div>
+      </header>
+      <div class="checkpoint-body">
+        <div class="do-see">
+          <div class="do">
+            <strong><span class="lang zh" lang="zh-Hant-TW">你要做</span><span class="lang en" lang="en">Do</span></strong>
+            <p><span class="lang zh" lang="zh-Hant-TW">按三次「幫我選一個」，再把標題換成一句你看得懂的話。</span><span class="lang en" lang="en">Press "Pick one" three times. Then replace the title with a sentence that makes sense to you.</span></p>
+          </div>
+          <div class="see">
+            <strong><span class="lang zh" lang="zh-Hant-TW">你會看到</span><span class="lang en" lang="en">See</span></strong>
+            <p><span class="lang zh" lang="zh-Hant-TW">按鈕每次只會選清單裡的內容；換標題後，畫面立刻改變。</span><span class="lang en" lang="en">The button only picks listed items. Your new title appears immediately.</span></p>
+          </div>
+        </div>
+        <div class="card" style="margin-top:18px">
+          <h3 id="quickDemoTitle"><span class="lang zh" lang="zh-Hant-TW">下課前的小休息</span><span class="lang en" lang="en">A short study break</span></h3>
+          <p id="quickDemoOptions"><span class="lang zh" lang="zh-Hant-TW">散步 10 分鐘 · 整理桌面 · 喝水休息</span><span class="lang en" lang="en">Take a 10-minute walk · Tidy the desk · Take a water break</span></p>
+          <div class="action-row">
+            <button class="primary" type="button" id="quickPick"><span class="lang zh" lang="zh-Hant-TW">幫我選一個</span><span class="lang en" lang="en">Pick one</span></button>
+          </div>
+          <div class="status" id="quickResult" role="status" aria-live="polite"><span class="lang zh" lang="zh-Hant-TW">結果會出現在這裡。</span><span class="lang en" lang="en">Your result will appear here.</span></div>
+          <label for="quickTitleInput"><span class="lang zh" lang="zh-Hant-TW">換一個標題</span><span class="lang en" lang="en">Change the title</span></label>
+          <input id="quickTitleInput" type="text" maxlength="40" value="">
+          <button class="secondary" type="button" id="applyQuickTitle" style="margin-top:10px"><span class="lang zh" lang="zh-Hant-TW">套用標題</span><span class="lang en" lang="en">Apply title</span></button>
+        </div>
+        <details class="rescue">
+          <summary><span class="lang zh" lang="zh-Hant-TW">卡住了：提示 → 範例 → 還原</span><span class="lang en" lang="en">Stuck: hint → example → reset</span></summary>
+          <p><span class="lang zh" lang="zh-Hant-TW">提示：先輸入 4–12 個字。範例：「現在要做哪一件？」仍沒反應時，按還原。</span><span class="lang en" lang="en">Hint: enter 3–8 words. Example: "What should I do now?" If nothing changes, reset the demo.</span></p>
+          <button class="secondary" type="button" id="resetQuick"><span class="lang zh" lang="zh-Hant-TW">還原 v0</span><span class="lang en" lang="en">Reset v0</span></button>
+        </details>
+        <div class="complete-row">
+          <label class="check-label"><input type="checkbox" data-cp="cp1"><span><span class="lang zh" lang="zh-Hant-TW">我已看見第一次改變</span><span class="lang en" lang="en">I saw my first change</span></span></label>
+          <a href="#cp2"><span class="lang zh" lang="zh-Hant-TW">下一步：選題</span><span class="lang en" lang="en">Next: choose a mission</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="checkpoint" id="cp2" data-checkpoint="cp2">
+      <header class="checkpoint-head">
+        <div class="step-no">2</div>
+        <h2><span class="lang zh" lang="zh-Hant-TW">選一個安全、做得完的題目</span><span class="lang en" lang="en">Choose a safe, finishable mission</span></h2>
+        <div class="time">10–25 min</div>
+      </header>
+      <div class="checkpoint-body">
+        <p><span class="lang zh" lang="zh-Hant-TW">先從三個合成題目選一個。自訂題目也可以，但不要放姓名、真實課表、位置或私人訊息。</span><span class="lang en" lang="en">Start with one of three synthetic topics. You may create your own, but do not include names, real schedules, locations, or private messages.</span></p>
+        <div class="theme-grid" role="radiogroup" aria-label="Mission">
+          <label class="theme"><input type="radio" name="theme" value="break" checked><span aria-hidden="true">🌿</span><strong><span class="lang zh" lang="zh-Hant-TW">讀書休息選擇器</span><span class="lang en" lang="en">Study-break picker</span></strong></label>
+          <label class="theme"><input type="radio" name="theme" value="event"><span aria-hidden="true">🎪</span><strong><span class="lang zh" lang="zh-Hant-TW">校園活動靈感</span><span class="lang en" lang="en">Campus activity ideas</span></strong></label>
+          <label class="theme"><input type="radio" name="theme" value="lunch"><span aria-hidden="true">🥗</span><strong><span class="lang zh" lang="zh-Hant-TW">低廢棄午餐選擇</span><span class="lang en" lang="en">Low-waste lunch picker</span></strong></label>
+          <label class="theme"><input type="radio" name="theme" value="custom"><span aria-hidden="true">✏️</span><strong><span class="lang zh" lang="zh-Hant-TW">自己的非個人題目</span><span class="lang en" lang="en">My non-personal topic</span></strong></label>
+        </div>
+        <div class="status ok" id="themeStatus" role="status" aria-live="polite"><span class="lang zh" lang="zh-Hant-TW">已載入「讀書休息選擇器」。你可以在下一步改字。</span><span class="lang en" lang="en">Study-break picker loaded. You can edit the words next.</span></div>
+        <details class="rescue">
+          <summary><span class="lang zh" lang="zh-Hant-TW">卡住了：不知道選什麼</span><span class="lang en" lang="en">Stuck: I cannot choose</span></summary>
+          <p><span class="lang zh" lang="zh-Hant-TW">直接保留第一題即可。這週評的是修改、測試與判斷，不是題目多厲害。</span><span class="lang en" lang="en">Keep the first topic. This week assesses editing, testing, and judgment—not how ambitious the topic is.</span></p>
+        </details>
+        <div class="complete-row">
+          <label class="check-label"><input type="checkbox" data-cp="cp2"><span><span class="lang zh" lang="zh-Hant-TW">我已選好題目，而且沒有私人資料</span><span class="lang en" lang="en">I chose a topic with no private data</span></span></label>
+          <a href="#cp3"><span class="lang zh" lang="zh-Hant-TW">下一步：做 v1</span><span class="lang en" lang="en">Next: make v1</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="checkpoint" id="cp3" data-checkpoint="cp3">
+      <header class="checkpoint-head">
+        <div class="step-no">3</div>
+        <h2><span class="lang zh" lang="zh-Hant-TW">Make：把內容改成你的版本</span><span class="lang en" lang="en">Make: turn it into your version</span></h2>
+        <div class="time">25–80 min</div>
+      </header>
+      <div class="checkpoint-body">
+        <div class="agent-box">
+          <h3><span class="lang zh" lang="zh-Hant-TW">AI 是選配；離線 Agent 已放在頁面裡</span><span class="lang en" lang="en">Live AI is optional; an offline agent is built in</span></h3>
+          <p><span class="lang zh" lang="zh-Hant-TW">先用下面的離線建議。live AI 只是選配，已收在摺疊區，不影響共同完成線。</span><span class="lang en" lang="en">Start with the offline suggestions below. Live AI is optional and collapsed, so it does not change the shared finish line.</span></p>
+          <div class="action-row" aria-label="Offline agent requests">
+            <button class="secondary agent-choice" type="button" data-agent="short"><span class="lang zh" lang="zh-Hant-TW">建議更短的文字</span><span class="lang en" lang="en">Suggest shorter text</span></button>
+            <button class="secondary agent-choice" type="button" data-agent="safe"><span class="lang zh" lang="zh-Hant-TW">檢查隱私</span><span class="lang en" lang="en">Check privacy</span></button>
+            <button class="secondary agent-choice" type="button" data-agent="test"><span class="lang zh" lang="zh-Hant-TW">建議測試</span><span class="lang en" lang="en">Suggest tests</span></button>
+          </div>
+          <div class="agent-result" id="agentResult" role="status" aria-live="polite"><span class="lang zh" lang="zh-Hant-TW">選一個要求，看看 Agent 建議。你可以採用、修改或拒絕。</span><span class="lang en" lang="en">Choose a request to see an agent suggestion. You may accept, edit, or reject it.</span></div>
+          <details class="rescue">
+            <summary><span class="lang zh" lang="zh-Hant-TW">選配：使用老師核可的 live AI</span><span class="lang en" lang="en">Optional: use a teacher-approved live AI</span></summary>
+            <p><span class="lang zh" lang="zh-Hant-TW">只複製這段安全要求；不要貼姓名、學號、真實課表、位置或私人訊息。AI 只提文字建議，不提供程式碼。</span><span class="lang en" lang="en">Copy only this safe request. Do not paste names, IDs, real schedules, locations, or private messages. AI suggests words, not code.</span></p>
+            <div class="prompt-box">
+              <textarea id="aiPrompt" readonly aria-label="Optional AI prompt"></textarea>
+              <button class="secondary copy" type="button" id="copyPrompt"><span class="lang zh" lang="zh-Hant-TW">複製</span><span class="lang en" lang="en">Copy</span></button>
+            </div>
+          </details>
+        </div>
+
+        <div class="builder">
+          <div class="builder-fields">
+            <h3><span class="lang zh" lang="zh-Hant-TW">先改五個內容欄位，再加入一項功能</span><span class="lang en" lang="en">Edit five content fields, then add one feature</span></h3>
+            <label for="appTitle"><span class="lang zh" lang="zh-Hant-TW">標題</span><span class="lang en" lang="en">Title</span></label>
+            <input id="appTitle" type="text" maxlength="48">
+            <label for="appIntro"><span class="lang zh" lang="zh-Hant-TW">一句說明</span><span class="lang en" lang="en">One-line description</span></label>
+            <input id="appIntro" type="text" maxlength="90">
+            <label for="option1"><span class="lang zh" lang="zh-Hant-TW">選項 1</span><span class="lang en" lang="en">Option 1</span></label>
+            <input id="option1" type="text" maxlength="60">
+            <label for="option2"><span class="lang zh" lang="zh-Hant-TW">選項 2</span><span class="lang en" lang="en">Option 2</span></label>
+            <input id="option2" type="text" maxlength="60">
+            <label for="option3"><span class="lang zh" lang="zh-Hant-TW">選項 3</span><span class="lang en" lang="en">Option 3</span></label>
+            <input id="option3" type="text" maxlength="60">
+            <label for="appColor"><span class="lang zh" lang="zh-Hant-TW">顏色（選配，不影響完成）</span><span class="lang en" lang="en">Color (optional; not part of completion)</span></label>
+            <select id="appColor">
+              <option value="teal" data-zh="海洋藍綠" data-en="Sea teal">Sea teal</option>
+              <option value="coral" data-zh="珊瑚橘" data-en="Coral">Coral</option>
+              <option value="leaf" data-zh="葉綠" data-en="Leaf green">Leaf green</option>
+              <option value="violet" data-zh="紫羅蘭" data-en="Violet">Violet</option>
+            </select>
+            <fieldset class="card" style="margin-top:18px">
+              <legend><strong><span class="lang zh" lang="zh-Hant-TW">v0 → v1 白名單功能</span><span class="lang en" lang="en">v0 → v1 approved feature</span></strong></legend>
+              <p><span class="lang zh" lang="zh-Hant-TW">v0 只有「幫我選一個」。勾選後，v1 才會加入「清除選項」與安全的空白提示。</span><span class="lang en" lang="en">v0 has only "Pick one." Select this upgrade so v1 adds "Clear choices" and safe empty-list feedback.</span></p>
+              <label class="check-label"><input id="featureSafety" type="checkbox"><span><span class="lang zh" lang="zh-Hant-TW">加入：清除選項＋空白提示</span><span class="lang en" lang="en">Add: clear choices + empty-list feedback</span></span></label>
+            </fieldset>
+            <div class="action-row">
+              <button class="primary" type="button" id="updatePreview"><span class="lang zh" lang="zh-Hant-TW">更新預覽</span><span class="lang en" lang="en">Update preview</span></button>
+              <button class="secondary" type="button" id="restoreTheme"><span class="lang zh" lang="zh-Hant-TW">還原題目範例</span><span class="lang en" lang="en">Restore topic example</span></button>
+            </div>
+            <div class="status" id="builderStatus" role="status" aria-live="polite"><span class="lang zh" lang="zh-Hant-TW">修改後按「更新預覽」。內容只留在這個分頁，不會上傳。</span><span class="lang en" lang="en">After editing, update the preview. Your content stays in this tab and is not uploaded.</span></div>
+          </div>
+          <div class="preview-panel">
+            <h3><span class="lang zh" lang="zh-Hant-TW">安全預覽</span><span class="lang en" lang="en">Safe preview</span></h3>
+            <iframe id="appPreview" sandbox="allow-scripts" title="Student app preview"></iframe>
+            <p style="font-size:13px;color:var(--muted)"><span class="lang zh" lang="zh-Hant-TW">預覽只執行教師模板；連網、表單、彈窗與頂層導覽已封鎖。</span><span class="lang en" lang="en">The preview runs only the teacher template. Network calls, forms, pop-ups, and top navigation are blocked.</span></p>
+          </div>
+        </div>
+        <details class="rescue">
+          <summary><span class="lang zh" lang="zh-Hant-TW">卡住了：提示 → 範例 → 還原可用版</span><span class="lang en" lang="en">Stuck: hint → example → working reset</span></summary>
+          <p><span class="lang zh" lang="zh-Hant-TW">一次只改一格，再更新預覽。若畫面不如預期，先按「還原題目範例」。你不用讀懂整份 HTML。</span><span class="lang en" lang="en">Change one field at a time, then update the preview. If the result looks wrong, restore the topic example. You do not need to understand the whole HTML file.</span></p>
+        </details>
+        <div class="complete-row">
+          <label class="check-label"><input type="checkbox" data-cp="cp3"><span><span class="lang zh" lang="zh-Hant-TW">我已改內容、加入功能並看見 v1 預覽</span><span class="lang en" lang="en">I edited the content, added the feature, and saw v1</span></span></label>
+          <a href="#cp4"><span class="lang zh" lang="zh-Hant-TW">下一步：測試與復原</span><span class="lang en" lang="en">Next: test and recover</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="checkpoint" id="cp4" data-checkpoint="cp4">
+      <header class="checkpoint-head">
+        <div class="step-no">4</div>
+        <h2><span class="lang zh" lang="zh-Hant-TW">Test／Break：刻意失敗一次</span><span class="lang en" lang="en">Test / Break: fail on purpose</span></h2>
+        <div class="time">80–100 min</div>
+      </header>
+      <div class="checkpoint-body">
+        <p><span class="lang zh" lang="zh-Hant-TW">好作品不是「看起來能動」就算完成。這裡會真的操作右側預覽：先按一次抽選，再按 v1 的「清除選項」，確認空白時不會亂編答案。</span><span class="lang en" lang="en">A product is not done just because it seems to work. These checks really operate the preview: pick once, then use v1's "Clear choices" and confirm that an empty list invents nothing.</span></p>
+        <div class="test-grid">
+          <article class="test-card">
+            <h3><span class="lang zh" lang="zh-Hant-TW">測試 1：正常清單</span><span class="lang en" lang="en">Test 1: normal list</span></h3>
+            <p><span class="lang zh" lang="zh-Hant-TW">期待：至少一個非空選項，而且結果一定來自清單。</span><span class="lang en" lang="en">Expected: at least one non-empty option, and every result comes from the list.</span></p>
+            <button class="primary" type="button" id="runNormalTest"><span class="lang zh" lang="zh-Hant-TW">請預覽實際抽選一次</span><span class="lang en" lang="en">Make the preview pick once</span></button>
+            <div class="status" id="normalTestResult" role="status" aria-live="polite"><span class="lang zh" lang="zh-Hant-TW">尚未執行。</span><span class="lang en" lang="en">Not run yet.</span></div>
+          </article>
+          <article class="test-card">
+            <h3><span class="lang zh" lang="zh-Hant-TW">測試 2：空白清單</span><span class="lang en" lang="en">Test 2: empty list</span></h3>
+            <p><span class="lang zh" lang="zh-Hant-TW">期待：顯示修正提示，不產生假結果；完成後還原上一個可用版本。</span><span class="lang en" lang="en">Expected: show a repair message and no fake result; then restore the last working version.</span></p>
+            <div class="action-row">
+              <button class="danger" type="button" id="breakApp"><span class="lang zh" lang="zh-Hant-TW">請預覽清除選項</span><span class="lang en" lang="en">Make the preview clear choices</span></button>
+              <button class="primary" type="button" id="runEmptyTest"><span class="lang zh" lang="zh-Hant-TW">請預覽再抽選一次</span><span class="lang en" lang="en">Make the preview pick again</span></button>
+              <button class="secondary" type="button" id="recoverApp"><span class="lang zh" lang="zh-Hant-TW">還原可用版</span><span class="lang en" lang="en">Restore working version</span></button>
+            </div>
+            <div class="status" id="emptyTestResult" role="status" aria-live="polite"><span class="lang zh" lang="zh-Hant-TW">先刻意改壞，再執行測試。</span><span class="lang en" lang="en">Break it first, then run the test.</span></div>
+          </article>
+        </div>
+        <details class="rescue">
+          <summary><span class="lang zh" lang="zh-Hant-TW">卡住了：怎樣才算通過</span><span class="lang en" lang="en">Stuck: what counts as passing</span></summary>
+          <p><span class="lang zh" lang="zh-Hant-TW">測試 1 必須觀察到清單內結果才會 PASS；測試 2 必須先讓預覽真的清除選項，再觀察到修正提示。最後按還原。修改任何內容或功能後，舊 PASS 會失效，必須重測。</span><span class="lang en" lang="en">Test 1 passes only after the preview returns a listed item. For Test 2, the preview must really clear its choices and then show repair feedback. Restore it at the end. Any content or feature change invalidates old PASS results.</span></p>
+        </details>
+        <div class="complete-row">
+          <label class="check-label"><input type="checkbox" data-cp="cp4"><span><span class="lang zh" lang="zh-Hant-TW">我已留下兩筆測試，並復原可用版</span><span class="lang en" lang="en">I recorded two tests and restored a working version</span></span></label>
+          <a href="#cp5"><span class="lang zh" lang="zh-Hant-TW">下一步：下載與證據</span><span class="lang en" lang="en">Next: download and evidence</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="checkpoint" id="cp5" data-checkpoint="cp5">
+      <header class="checkpoint-head">
+        <div class="step-no">5</div>
+        <h2><span class="lang zh" lang="zh-Hant-TW">Make it yours：下載、重開、說明你的判斷</span><span class="lang en" lang="en">Make it yours: download, reopen, explain your judgment</span></h2>
+        <div class="time">100–120 min</div>
+      </header>
+      <div class="checkpoint-body">
+        <div class="do-see">
+          <div class="do">
+            <strong><span class="lang zh" lang="zh-Hant-TW">作品檔</span><span class="lang en" lang="en">App file</span></strong>
+            <p><span class="lang zh" lang="zh-Hant-TW">下載 <code>v1.html</code>，到下載資料夾雙擊重開。按一次按鈕，確認仍能使用。</span><span class="lang en" lang="en">Download <code>v1.html</code>, reopen it from Downloads, and press its button once.</span></p>
+            <button class="primary" type="button" id="downloadApp"><span class="lang zh" lang="zh-Hant-TW">下載 v1.html</span><span class="lang en" lang="en">Download v1.html</span></button>
+            <div class="status" id="downloadStatus" role="status" aria-live="polite"><span class="lang zh" lang="zh-Hant-TW">下載後，請真的雙擊重開。</span><span class="lang en" lang="en">After downloading, really reopen the file.</span></div>
+            <p class="handin"><span class="lang zh" lang="zh-Hant-TW">離開教室前，把 <code>v1.html</code> 與 evidence 上傳到 e學苑 Week 3 的作業（教室機下課會清空）。</span><span class="lang en" lang="en">Before you leave the room, upload <code>v1.html</code> and your evidence to the e-learning Week 3 assignment (classroom PCs are wiped after class).</span></p>
+          </div>
+          <div class="see">
+            <strong><span class="lang zh" lang="zh-Hant-TW">課內 evidence</span><span class="lang en" lang="en">In-class evidence</span></strong>
+            <p><span class="lang zh" lang="zh-Hant-TW">全員完成下面五問與 exit ticket。第 2、3 問各有兩格，讓 before／after 與人的決定分開看清楚。今天只交課內 evidence；本週作品留著，到 W13 可以併進「互動與版本」那 5% 作業。無筆電路徑交紙本，不補做數位檔。</span><span class="lang en" lang="en">Everyone completes the five questions and exit ticket. Questions 2 and 3 use two boxes so before/after and the human decision stay explicit. Today you only hand in the in-class evidence. Keep this week's work: in W13 it can be folded into the "Interaction and versions" 5% assignment. The no-device route hands in the paper prototype and does not make up a digital file.</span></p>
+          </div>
+        </div>
+        <div class="evidence" style="margin-top:18px">
+          <div class="wide">
+            <label for="eWorkId"><span class="lang zh" lang="zh-Hant-TW">作品識別（系統自動填，不要加姓名）</span><span class="lang en" lang="en">Work ID (automatic; do not add your name)</span></label>
+            <input id="eWorkId" type="text" readonly>
+          </div>
+          <div>
+            <label for="eProblem"><span class="lang zh" lang="zh-Hant-TW">1. 這個小工具解決什麼小問題？</span><span class="lang en" lang="en">1. What small problem does the app address?</span></label>
+            <textarea id="eProblem"></textarea>
+          </div>
+          <div>
+            <label for="eBefore"><span class="lang zh" lang="zh-Hant-TW">2a. Before：v0 原本能做什麼？</span><span class="lang en" lang="en">2a. Before: what could v0 do?</span></label>
+            <textarea id="eBefore"></textarea>
+          </div>
+          <div>
+            <label for="eAfter"><span class="lang zh" lang="zh-Hant-TW">2b. After：v1 多了什麼？</span><span class="lang en" lang="en">2b. After: what did v1 add?</span></label>
+            <textarea id="eAfter"></textarea>
+          </div>
+          <div>
+            <label for="eAi"><span class="lang zh" lang="zh-Hant-TW">3a. AI 或離線 Agent 建議了什麼？</span><span class="lang en" lang="en">3a. What did AI or the offline agent suggest?</span></label>
+            <textarea id="eAi"></textarea>
+          </div>
+          <div>
+            <label for="eHuman"><span class="lang zh" lang="zh-Hant-TW">3b. 你採用、修改或拒絕了什麼？為什麼？</span><span class="lang en" lang="en">3b. What did you accept, change, or reject—and why?</span></label>
+            <span class="field-hint"><span class="lang zh" lang="zh-Hant-TW">判準：課程頁「一般」區塊的〈用會自己動手的 AI，你要做的四件事〉（P2b）。</span><span class="lang en" lang="en">Yardstick: "Four things to do with an AI that acts" (P2b) in the course page's General section.</span></span>
+            <textarea id="eHuman"></textarea>
+          </div>
+          <div>
+            <label for="eRisk"><span class="lang zh" lang="zh-Hant-TW">4. 一個限制或風險</span><span class="lang en" lang="en">4. One limitation or risk</span></label>
+            <textarea id="eRisk"></textarea>
+          </div>
+          <div class="wide">
+            <label for="eTests"><span class="lang zh" lang="zh-Hant-TW">5. 兩筆測試結果</span><span class="lang en" lang="en">5. Two test results</span></label>
+            <textarea id="eTests" readonly></textarea>
+          </div>
+        </div>
+        <details class="rescue">
+          <summary><span class="lang zh" lang="zh-Hant-TW">寫不出來：雙語句型、合格例與反例</span><span class="lang en" lang="en">Writing help: sentence frames, a strong example, and a weak example</span></summary>
+          <div class="lang zh" lang="zh-Hant-TW">
+            <p><strong>可直接套用：</strong>這個 app 幫助＿＿；Before，v0 只能＿＿；After，v1 還能＿＿；Agent 建議＿＿，我（採用／修改／拒絕），因為＿＿；限制是＿＿。</p>
+            <p><strong>合格例：</strong>Before，v0 只能從三項抽一項。After，v1 能清除選項；空白時會叫我修正，不會亂給答案。</p>
+            <p><strong>反例：</strong>「我用了 AI，很好用。」看不出前後差異、人的決定或測試，所以證據不足。</p>
+          </div>
+          <div class="lang en" lang="en">
+            <p><strong>Frames:</strong> This app helps ___. Before, v0 could only ___. After, v1 can also ___. The agent suggested ___. I accepted/changed/rejected it because ___. One limit is ___.</p>
+            <p><strong>Strong example:</strong> Before, v0 could only pick one of three items. After, v1 can clear the choices and asks for a repair when the list is empty instead of inventing an answer.</p>
+            <p><strong>Weak example:</strong> "I used AI. It works." This does not show the change, the human decision, or observed tests.</p>
+          </div>
+        </details>
+        <div class="action-row">
+          <button class="primary" type="button" id="downloadEvidence"><span class="lang zh" lang="zh-Hant-TW">下載 w03-evidence.txt</span><span class="lang en" lang="en">Download w03-evidence.txt</span></button>
+          <button class="secondary" type="button" id="printEvidenceBtn"><span class="lang zh" lang="zh-Hant-TW">列印／存成 PDF</span><span class="lang en" lang="en">Print / save as PDF</span></button>
+        </div>
+        <div class="status warn" role="note">
+          <span class="lang zh" lang="zh-Hant-TW">這些證據欄位不會存進 localStorage。離開前請下載或列印，並把 <code>w03-evidence.txt</code>（或貼五問文字）與 <code>v1.html</code> 上傳到 e學苑 Week 3；不要填姓名、學號或私人資料。</span>
+          <span class="lang en" lang="en">These evidence fields are not saved to localStorage. Download or print before leaving, and upload <code>w03-evidence.txt</code> (or paste the five answers) with <code>v1.html</code> to e-learning Week 3. Do not enter your name, student ID, or private data.</span>
+        </div>
+        <details class="rescue">
+          <summary><span class="lang zh" lang="zh-Hant-TW">卡住了：下載後變成 .txt 或找不到檔案</span><span class="lang en" lang="en">Stuck: the file became .txt or I cannot find it</span></summary>
+          <p><span class="lang zh" lang="zh-Hant-TW">先查看瀏覽器的「下載」清單。檔名應為 <code>v1.html</code>。若電腦把副檔名藏起來，不要自行改檔；請老師或同學協助確認。你也可以先列印 evidence，作品用還原版繼續。</span><span class="lang en" lang="en">Open the browser's Downloads list. The file should be named <code>v1.html</code>. If extensions are hidden, do not guess; ask the teacher or a classmate to check. You may print the evidence first and continue with the reset version.</span></p>
+        </details>
+        <div id="printEvidence" aria-label="Printable evidence"></div>
+        <div class="complete-row">
+          <label class="check-label"><input type="checkbox" data-cp="cp5"><span><span class="lang zh" lang="zh-Hant-TW">我已下載、重開，並上傳到 e學苑 Week 3</span><span class="lang en" lang="en">I downloaded, reopened, and uploaded to e-learning Week 3</span></span></label>
+          <strong id="finishMessage"><span class="lang zh" lang="zh-Hant-TW">完成後，找同學試玩一次。</span><span class="lang en" lang="en">When done, ask a classmate to try it.</span></strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="fallbackTitle">
+      <h2 id="fallbackTitle"><span class="lang zh" lang="zh-Hant-TW">網路、帳號或裝置不合作？</span><span class="lang en" lang="en">Network, account, or device trouble?</span></h2>
+      <p><span class="lang zh" lang="zh-Hant-TW">卡住了先做四步：課程頁「一般」區塊的〈電腦出錯了，先做這四步〉（P9）——複製整段錯誤訊息、加一句情況貼給 AI、看它的計畫別照單全收、自己驗一次。</span><span class="lang en" lang="en">Stuck? Do the four steps first: "When the computer errors, do these four steps" (P9) in the course page's General section: copy the whole error, paste it to AI with one line of context, read its plan without accepting it wholesale, verify the result yourself.</span></p>
+      <ul class="fallback-when">
+        <li><span class="lang zh" lang="zh-Hant-TW">① live AI 進不去 → 用頁內離線 Agent 建議，同分。</span><span class="lang en" lang="en">① Live AI blocked → use the offline agent suggestions on this page. Same credit.</span></li>
+        <li><span class="lang zh" lang="zh-Hant-TW">② 沒有可用裝置 → 換紙本 prototype，同分。</span><span class="lang en" lang="en">② No working device → switch to the paper prototype. Same credit.</span></li>
+        <li><span class="lang zh" lang="zh-Hant-TW">③ 作品改壞救不回 → 換一份乾淨的起步檔 <code>starter.html</code> 繼續。</span><span class="lang en" lang="en">③ App broken beyond repair → continue from a clean <code>starter.html</code>.</span></li>
+      </ul>
+      <div class="fallback-links">
+        <a id="fallbackAgent" href="fallback/agent-plan-and-diff.html?lang=zh"><span class="lang zh" lang="zh-Hant-TW">離線 Agent：計畫、差異、批准與驗證 →</span><span class="lang en" lang="en">Offline agent: plan, diff, approve, verify →</span></a>
+        <a id="fallbackPaper" href="fallback/no-device-prototype.html?lang=zh"><span class="lang zh" lang="zh-Hant-TW">無筆電等值紙本 prototype →</span><span class="lang en" lang="en">Equivalent no-laptop paper prototype →</span></a>
+        <a id="fallbackStarter" href="starter.html?lang=zh"><span class="lang zh" lang="zh-Hant-TW">乾淨的起步檔 starter.html →</span><span class="lang en" lang="en">Clean starter file starter.html →</span></a>
+      </div>
+    </section>
+
+    <section class="faq" aria-labelledby="faqTitle">
+      <h2 id="faqTitle"><span class="lang zh" lang="zh-Hant-TW">常見問題</span><span class="lang en" lang="en">FAQ</span></h2>
+      <details>
+        <summary><span class="lang zh" lang="zh-Hant-TW">一定要登入 AI 工具嗎？</span><span class="lang en" lang="en">Must I sign in to an AI tool?</span></summary>
+        <p><span class="lang zh" lang="zh-Hant-TW">不用。頁內離線 Agent 與 app builder 就能完成共同核心。live AI 只是選配。</span><span class="lang en" lang="en">No. The offline agent and app builder complete the shared core. Live AI is optional.</span></p>
+      </details>
+      <details>
+        <summary><span class="lang zh" lang="zh-Hant-TW">我需要看懂 HTML 或安裝編輯器嗎？</span><span class="lang en" lang="en">Must I understand HTML or install an editor?</span></summary>
+        <p><span class="lang zh" lang="zh-Hant-TW">不用。首版只在白名單欄位改內容，再由頁面產生安全的單檔 app。</span><span class="lang en" lang="en">No. In this prototype, you edit only approved fields and the page generates a safe single-file app.</span></p>
+      </details>
+      <details>
+        <summary><span class="lang zh" lang="zh-Hant-TW">為什麼不讓 AI 直接重寫整份程式？</span><span class="lang en" lang="en">Why not let AI rewrite the whole program?</span></summary>
+        <p><span class="lang zh" lang="zh-Hant-TW">這週先練「看差異、測試、批准與復原」。任意程式碼會讓安全與除錯變成主要負擔，反而看不到這四件事。</span><span class="lang en" lang="en">This week focuses on reading changes, testing, approval, and recovery. Arbitrary code would turn security and debugging into the main task.</span></p>
+      </details>
+      <details>
+        <summary><span class="lang zh" lang="zh-Hant-TW">進度會被老師拿去評分嗎？</span><span class="lang en" lang="en">Is the progress bar graded?</span></summary>
+        <p><span class="lang zh" lang="zh-Hant-TW">不會。它只在這台電腦保存匿名勾選狀態。真正證據是你下載或列印的內容。</span><span class="lang en" lang="en">No. It stores only anonymous checkmarks on this computer. Your downloaded or printed evidence is what counts.</span></p>
+      </details>
+      <details>
+        <summary><span class="lang zh" lang="zh-Hant-TW">英文寫得不漂亮會扣分嗎？</span><span class="lang en" lang="en">Will imperfect English lower my score?</span></summary>
+        <p><span class="lang zh" lang="zh-Hant-TW">不會。本週評修改、測試、人的決定與風險判斷，不評英文華麗程度。AA 可用頁面句型與繁中支援。</span><span class="lang en" lang="en">No. This week assesses editing, testing, human decisions, and risk judgment—not polished English. AA students may use the sentence frames and Chinese support.</span></p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p><span class="lang zh" lang="zh-Hant-TW">115-1 人工智慧概論</span><span class="lang en" lang="en">115-1 AI Introduction</span> · W03 · AI1151-W03-APP-V1 · 2026-09-16</p>
+    <p><span class="lang zh" lang="zh-Hant-TW">核心教材不連網、不收個資；工具品牌與介面另由教師課前查核。</span><span class="lang en" lang="en">The core lesson makes no network calls and collects no personal data. The teacher checks optional tools before class.</span></p>
+  </footer>
+
+  <script>
+  (function () {
+    "use strict";
+    const TASK = "AI1151-W03-APP-V1";
+    const memoryProgress = {};
+    const cpInputs = Array.from(document.querySelectorAll("[data-cp]"));
+    const $ = id => document.getElementById(id);
+    const text = (zh, en) => document.body.dataset.lang === "zh" ? zh : en;
+    const themeData = {
+      break: {
+        titleZh: "下課前的小休息", titleEn: "A short study break",
+        introZh: "三個選項太難選，讓小工具幫你。", introEn: "Three choices feel hard. Let the helper pick.",
+        optionsZh: ["散步 10 分鐘", "整理桌面", "喝水休息"],
+        optionsEn: ["Take a 10-minute walk", "Tidy the desk", "Take a water break"],
+        color: "teal"
+      },
+      event: {
+        titleZh: "今天參加哪種活動？", titleEn: "What activity fits today?",
+        introZh: "從三個合成活動靈感選一個。", introEn: "Pick one of three synthetic activity ideas.",
+        optionsZh: ["看一場小型展覽", "參加桌遊交流", "聽一場公開講座"],
+        optionsEn: ["Visit a small exhibition", "Join a board-game meetup", "Attend a public talk"],
+        color: "coral"
+      },
+      lunch: {
+        titleZh: "低廢棄午餐靈感", titleEn: "Low-waste lunch ideas",
+        introZh: "從可重複使用、少包裝的選項挑一個。", introEn: "Choose a reusable or low-packaging option.",
+        optionsZh: ["自備餐盒買便當", "內用不拿免洗餐具", "帶水壺與水果"],
+        optionsEn: ["Bring a lunch box", "Dine in without disposables", "Carry a bottle and fruit"],
+        color: "leaf"
+      },
+      custom: {
+        titleZh: "我的三選一小幫手", titleEn: "My three-choice helper",
+        introZh: "請填不含私人資料的選項。", introEn: "Enter options with no private data.",
+        optionsZh: ["選項 A", "選項 B", "選項 C"],
+        optionsEn: ["Option A", "Option B", "Option C"],
+        color: "violet"
+      }
+    };
+    const colors = {
+      teal: ["#087e8b", "#e6f5f3"],
+      coral: ["#c9583e", "#fff0eb"],
+      leaf: ["#347a51", "#eaf6ee"],
+      violet: ["#6855a5", "#f0ecfb"]
+    };
+    let currentTheme = "break";
+    let normalTest = { kind: "not-run", value: "" };
+    let emptyTest = { kind: "not-run", value: "" };
+    let breakRecorded = false;
+    let appliedState = null;
+    let previewRevision = 0;
+    let pendingPreviewAction = null;
+    let quickDemoState = { kind: "default", value: "" };
+    let builderScaffold = null;
+    const evidenceAuto = { before: "", after: "" };
+    const aiPrompts = {
+      zh: "我正在通識課製作一個離線校園生活小幫手。請建議一個短標題與三個不含個人資料的選項。不要使用姓名、真實課表、位置、私人資料、連結或程式碼；只回傳純文字。",
+      en: "I am making a small offline campus-life helper for a general-education class. Suggest one short title and three non-personal options. Do not use names, real schedules, locations, private data, links, or code. Return plain text only."
+    };
+    const agentMessages = {
+      short: {
+        zh: "計畫：把標題控制在 12 字內，說明只留一個動作。差異建議：「下課前的小休息」→「現在休息一下？」。先不要自動套用，請你決定。",
+        en: "Plan: keep the title under eight words and the description to one action. Suggested diff: \"A short study break\" → \"Take a break now?\" Nothing is applied until you decide."
+      },
+      safe: {
+        zh: "隱私檢查：目前範例沒有姓名、學號、真實課表、位置或私人訊息。若自訂題目出現這些內容，請改成合成選項。",
+        en: "Privacy check: the example has no names, IDs, real schedules, locations, or private messages. Replace any such content with synthetic options."
+      },
+      test: {
+        zh: "測試建議：①有三個選項時，結果只能來自這三項；②全部清空時，只能提示修正，不能亂編一個答案。",
+        en: "Test suggestion: (1) with three options, every result must come from them; (2) with no options, show a repair message and invent nothing."
+      }
+    };
+    function localizedObservedChoice(record, lang) {
+      if (record && Number.isInteger(record.scaffoldIndex)) {
+        const scaffold = themeScaffold(currentTheme, lang);
+        return scaffold["option" + (record.scaffoldIndex + 1)] || record.value || "";
+      }
+      return record && typeof record === "object" ? record.value || "" : record || "";
+    }
+    const missionNames = {
+      break: { zh: "讀書休息選擇器", en: "Study-break picker" },
+      event: { zh: "校園活動靈感", en: "Campus activity ideas" },
+      lunch: { zh: "低廢棄午餐選擇", en: "Low-waste lunch picker" },
+      custom: { zh: "自己的非個人題目", en: "My non-personal topic" }
+    };
+    function missionName(key, lang) {
+      const item = missionNames[key] || missionNames.break;
+      return item[lang] || item.en;
+    }
+    const dynamicCopy = {
+      quickReady: { zh: "結果會出現在這裡。", en: "Your result will appear here." },
+      quickPicked: {
+        zh: index => "這次選： " + (themeData.break.optionsZh[index] || ""),
+        en: index => "This time: " + (themeData.break.optionsEn[index] || "")
+      },
+      quickEmptyTitle: { zh: "先輸入一個非空白標題。", en: "Enter a non-empty title first." },
+      quickTitleApplied: { zh: "成功：標題已改變。", en: "Success: the title changed." },
+      quickRestored: { zh: "已還原 v0。", en: "v0 restored." },
+      themeInitial: { zh: "已載入「讀書休息選擇器」。你可以在下一步改字。", en: "Study-break picker loaded. You can edit the words next." },
+      themeLoaded: {
+        zh: key => "已載入「" + missionName(key, "zh") + "」。你可以在下一步改字。",
+        en: key => missionName(key, "en") + " loaded. You can edit the words next."
+      },
+      agentReady: { zh: "選一個要求，看看 Agent 建議。你可以採用、修改或拒絕。", en: "Choose a request to see an agent suggestion. You may accept, edit, or reject it." },
+      agentSuggestion: {
+        zh: key => agentMessages[key] ? agentMessages[key].zh : "",
+        en: key => agentMessages[key] ? agentMessages[key].en : ""
+      },
+      agentCopied: { zh: "已複製。貼到老師核可的 AI 工具即可。", en: "Copied. Paste it into a teacher-approved AI tool." },
+      agentCopyBlocked: { zh: "瀏覽器不允許自動複製。文字已選取，請按 Ctrl/Cmd + C。", en: "Automatic copy was blocked. The text is selected; press Ctrl/Cmd + C." },
+      builderIdle: { zh: "修改後按「更新預覽」。內容只留在這個分頁，不會上傳。", en: "After editing, update the preview. Your content stays in this tab and is not uploaded." },
+      builderV1: { zh: "v1 預覽已更新：已加入清除選項與空白提示。", en: "v1 preview updated with clear choices and empty-list feedback." },
+      builderV0: { zh: "目前仍是 v0。請勾選白名單功能，再更新成 v1。", en: "This is still v0. Select the approved feature, then update to v1." },
+      builderUnapplied: { zh: "有尚未套用的修改。按「更新預覽」。", en: "You have unapplied changes. Select \"Update preview.\"" },
+      builderRecovered: { zh: "已從相同的 v1 內容還原可用預覽；測試紀錄保留。", en: "The same v1 content was restored to a working preview; test records remain." },
+      normalNotRun: { zh: "尚未執行；作品變更後要重測。", en: "Not run; retest after any app change." },
+      emptyNotRun: { zh: "先讓預覽清除選項，再執行測試。", en: "Make the preview clear its choices, then run the test." },
+      testUpdateFirst: { zh: "先按「更新預覽」，測試才會綁定目前作品。", en: "Update the preview first so the test is tied to the current app." },
+      testStillV0: { zh: "這還是 v0。先加入白名單功能並更新成 v1。", en: "This is still v0. Add the approved feature and update to v1 first." },
+      testNoOptions: { zh: "目前沒有可測的非空白選項。", en: "There are no non-empty choices to test." },
+      testTimeout: { zh: "預覽尚未回應。按「更新預覽」後再試一次。", en: "The preview did not respond. Update it and try again." },
+      normalPending: { zh: "正在請預覽實際抽選……", en: "Asking the preview to make a real pick…" },
+      normalPass: {
+        zh: record => "測試 1 PASS：預覽實際產生清單內結果「" + localizedObservedChoice(record, "zh") + "」。",
+        en: record => "Test 1 PASS: the preview actually returned the listed item \"" + localizedObservedChoice(record, "en") + ".\""
+      },
+      normalFail: { zh: "測試 1 FAIL：預覽沒有產生清單內結果。", en: "Test 1 FAIL: the preview did not return a listed item." },
+      emptyClearPending: { zh: "正在請預覽執行「清除選項」……", en: "Asking the preview to run \"Clear choices\"…" },
+      emptyCleared: { zh: "已觀察：預覽真的清除了選項。現在請它再抽選一次。", en: "Observed: the preview really cleared its choices. Now make it pick again." },
+      emptyFirstClear: { zh: "先按「請預覽清除選項」，並觀察選項消失。", en: "First choose \"Make the preview clear choices\" and observe the choices disappear." },
+      emptyPending: { zh: "正在請空白預覽再抽選一次……", en: "Asking the empty preview to pick again…" },
+      emptyPass: { zh: "測試 2 PASS：清單空白時，預覽顯示修正提示且沒有假結果。", en: "Test 2 PASS: with an empty list, the preview showed repair feedback and no invented result." },
+      emptyFail: { zh: "測試 2 FAIL：沒有觀察到安全的空白狀態。", en: "Test 2 FAIL: safe empty-list feedback was not observed." },
+      downloadIdle: { zh: "下載後，請真的雙擊重開。", en: "After downloading, really reopen the file." },
+      downloadEmpty: { zh: "目前是空白清單。請先還原至少一個選項，再下載。", en: "The list is empty. Restore at least one option before downloading." },
+      downloadNotReady: { zh: "先加入白名單功能並更新 v1 預覽。", en: "Add the approved feature and update the v1 preview first." },
+      downloadTestsMissing: { zh: "目前版本還沒有兩筆實際 PASS；請先完成測試。", en: "The current version does not yet have two observed PASS results. Complete the tests first." },
+      downloadStarted: { zh: "已送出下載。到瀏覽器下載清單找到 v1.html，雙擊重開並按一次按鈕。", en: "Download started. Find v1.html in Downloads, reopen it, and press its button once." }
+    };
+    const dynamicStatusIds = {
+      quick: "quickResult",
+      theme: "themeStatus",
+      agent: "agentResult",
+      builder: "builderStatus",
+      normal: "normalTestResult",
+      empty: "emptyTestResult",
+      download: "downloadStatus"
+    };
+    const dynamicStatusState = {
+      quick: { key: "quickReady", className: "status", value: "" },
+      theme: { key: "themeInitial", className: "status ok", value: "" },
+      agent: { key: "agentReady", className: "agent-result", value: "" },
+      builder: { key: "builderIdle", className: "status", value: "" },
+      normal: { key: "normalNotRun", className: "status", value: "" },
+      empty: { key: "emptyNotRun", className: "status", value: "" },
+      download: { key: "downloadIdle", className: "status", value: "" }
+    };
+
+    function localizedCopy(key, value) {
+      const entry = dynamicCopy[key];
+      if (!entry) return "";
+      const selected = entry[document.body.dataset.lang] || entry.en;
+      return typeof selected === "function" ? selected(value) : selected;
+    }
+    function renderDynamicStatus(area) {
+      const state = dynamicStatusState[area];
+      const node = $(dynamicStatusIds[area]);
+      if (!state || !node) return;
+      node.textContent = localizedCopy(state.key, state.value);
+      node.className = state.className;
+    }
+    function setDynamicStatus(area, key, className, value) {
+      dynamicStatusState[area] = { key, className, value: value === undefined ? "" : value };
+      renderDynamicStatus(area);
+    }
+    function renderQuickDemoTitle() {
+      $("quickDemoTitle").textContent = quickDemoState.kind === "custom"
+        ? quickDemoState.value
+        : text("下課前的小休息", "A short study break");
+    }
+    function renderAllDynamicUi() {
+      Object.keys(dynamicStatusIds).forEach(renderDynamicStatus);
+      renderQuickDemoTitle();
+      syncAutoEvidence();
+      updateEvidenceTests();
+      updateProgress();
+    }
+    function themeScaffold(key, lang) {
+      const item = themeData[key] || themeData.break;
+      const zh = lang === "zh";
+      return {
+        appTitle: zh ? item.titleZh : item.titleEn,
+        appIntro: zh ? item.introZh : item.introEn,
+        option1: (zh ? item.optionsZh : item.optionsEn)[0],
+        option2: (zh ? item.optionsZh : item.optionsEn)[1],
+        option3: (zh ? item.optionsZh : item.optionsEn)[2]
+      };
+    }
+    function syncBuilderLanguage(lang) {
+      if (!builderScaffold) return;
+      const previous = builderScaffold;
+      const next = themeScaffold(currentTheme, lang);
+      Object.keys(next).forEach(id => {
+        if ($(id).value === previous[id]) $(id).value = next[id];
+      });
+      if (appliedState) {
+        const translated = { ...appliedState, options: appliedState.options.slice(), lang };
+        if (translated.title === previous.appTitle) translated.title = next.appTitle;
+        if (translated.intro === previous.appIntro) translated.intro = next.appIntro;
+        [0, 1, 2].forEach(index => {
+          const oldValue = previous["option" + (index + 1)];
+          const newValue = next["option" + (index + 1)];
+          if (translated.options[index] === oldValue) translated.options[index] = newValue;
+        });
+        appliedState = translated;
+        const interrupted = Boolean(pendingPreviewAction) || breakRecorded;
+        pendingPreviewAction = null;
+        breakRecorded = false;
+        renderAppliedPreview(true);
+        seedEvidence(appliedState);
+        if (interrupted) {
+          if (normalTest.kind === "not-run") setDynamicStatus("normal", "normalNotRun", "status");
+          if (emptyTest.kind === "not-run") setDynamicStatus("empty", "emptyNotRun", "status");
+        }
+      }
+      builderScaffold = next;
+    }
+    function syncRuntimeLanguage() {
+      document.title = text("W03｜從想法到第一個網頁小工具", "W03 | From Idea to a First Web App");
+      const labels = [
+        [document.querySelector(".toolbar"), text("課程控制", "Course controls")],
+        [document.querySelector(".progress"), text("核心進度", "Core progress")],
+        [document.querySelector(".lang-toggle"), text("語言", "Language")],
+        [document.querySelector(".chips"), text("課程條件", "Lesson conditions")],
+        [document.querySelector("section.grid3"), text("學習重點", "Takeaways")],
+        [document.querySelector(".theme-grid"), text("任務", "Mission")],
+        [document.querySelector(".agent-choice") ? document.querySelector(".agent-choice").parentElement : null, text("離線 Agent 要求", "Offline agent requests")],
+        [$("aiPrompt"), text("選用的 AI 提示詞", "Optional AI prompt")],
+        [$("appPreview"), text("學生作品預覽", "Student app preview")],
+        [$("printEvidence"), text("可列印證據", "Printable evidence")]
+      ];
+      labels.forEach(([node, label]) => { if (node) node.setAttribute("aria-label", label); });
+      $("appPreview").title = text("學生作品預覽", "Student app preview");
+    }
+
+    function setLanguage(lang) {
+      if (lang !== "zh" && lang !== "en") return;
+      document.body.dataset.lang = lang;
+      document.documentElement.lang = lang === "zh" ? "zh-Hant-TW" : "en";
+      document.querySelectorAll("[data-set-lang]").forEach(btn => {
+        btn.setAttribute("aria-pressed", String(btn.dataset.setLang === lang));
+      });
+      document.querySelectorAll("#appColor option").forEach(option => {
+        option.textContent = option.dataset[lang] || option.textContent;
+      });
+      $("aiPrompt").value = aiPrompts[lang];
+      $("fallbackAgent").href = "fallback/agent-plan-and-diff.html?lang=" + lang;
+      $("fallbackPaper").href = "fallback/no-device-prototype.html?lang=" + lang;
+      $("fallbackStarter").href = "starter.html?lang=" + lang;
+      syncBuilderLanguage(lang);
+      syncRuntimeLanguage();
+      renderAllDynamicUi();
+    }
+
+    function storageGet(key) {
+      try { return localStorage.getItem(key); } catch (error) { return memoryProgress[key] || null; }
+    }
+    function storageSet(key, value) {
+      memoryProgress[key] = value;
+      try { localStorage.setItem(key, value); } catch (error) { /* memory fallback */ }
+    }
+    function storageRemove(key) {
+      delete memoryProgress[key];
+      try { localStorage.removeItem(key); } catch (error) { /* memory fallback */ }
+    }
+    function progressKey(cp) { return TASK + "-r2-progress-" + cp; }
+    function updateProgress() {
+      const done = cpInputs.filter(input => input.checked).length;
+      $("progressText").textContent = done + " / 5";
+      $("progressBar").style.width = (done * 20) + "%";
+      document.querySelector(".progress").setAttribute("aria-valuenow", String(done));
+      $("finishMessage").textContent = done === 5
+        ? text("五個 checkpoint 完成。找同學試玩一次，再做 exit ticket。", "All five checkpoints are done. Ask a classmate to try it, then complete the exit ticket.")
+        : text("完成後，找同學試玩一次。", "When done, ask a classmate to try it.");
+    }
+
+    function getFields() {
+      return {
+        title: $("appTitle").value.trim(),
+        intro: $("appIntro").value.trim(),
+        options: [$("option1").value, $("option2").value, $("option3").value].map(value => value.trim()).filter(Boolean),
+        color: Object.prototype.hasOwnProperty.call(colors, $("appColor").value) ? $("appColor").value : "teal",
+        upgrade: $("featureSafety").checked,
+        lang: document.body.dataset.lang
+      };
+    }
+    function scriptJson(value) {
+      return JSON.stringify(value).replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026");
+    }
+    function makeAppHtml(data) {
+      const palette = colors[data.color] || colors.teal;
+      const payload = {
+        title: data.title || text("三選一小幫手", "Three-choice helper"),
+        intro: data.intro || text("按一下，從清單選一項。", "Press once to pick from the list."),
+        options: data.options,
+        upgrade: Boolean(data.upgrade),
+        revision: Number(data.revision) || 0,
+        button: data.lang === "zh" ? "幫我選一個" : "Pick one",
+        clear: data.lang === "zh" ? "清除選項" : "Clear choices",
+        cleared: data.lang === "zh" ? "選項已清除。再按一次抽選，檢查空白提示。" : "Choices cleared. Pick again to check the empty-list feedback.",
+        empty: data.lang === "zh" ? "請先加入至少一個非空白選項。" : "Add at least one non-empty option first.",
+        v0Empty: data.lang === "zh" ? "v0 沒有空白提示；請加入 v1 功能。" : "v0 has no empty-list feedback. Add the v1 feature.",
+        ready: data.lang === "zh" ? "結果會出現在這裡。" : "Your result will appear here.",
+        prefix: data.lang === "zh" ? "這次選：" : "This time:"
+      };
+      const lines = [
+        "<!doctype html>",
+        "<html lang=\"" + (data.lang === "zh" ? "zh-Hant-TW" : "en") + "\">",
+        "<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">",
+        "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'\">",
+        "<title>" + (data.lang === "zh" ? "v1 · 校園小幫手" : "v1 · Campus Helper") + "</title>",
+        "<style>:root{font-family:system-ui,sans-serif;color:#17343a}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:" + palette[1] + ";padding:20px}.app{width:min(520px,100%);background:#fff;border:1px solid #bdd2cd;border-radius:24px;padding:26px;box-shadow:0 18px 45px rgba(20,60,65,.14)}h1{line-height:1.15}p{line-height:1.6;color:#526b70}.options{padding-left:20px}.row{display:flex;flex-wrap:wrap;gap:10px}button{min-height:46px;border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer}button:focus-visible{outline:3px solid #f4b942;outline-offset:3px}.pick{background:" + palette[0] + ";color:#fff}.clear{background:#edf3f1;color:#17343a}.result{margin-top:16px;border-radius:14px;background:" + palette[1] + ";padding:14px;min-height:52px}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}</style></head>",
+        "<body><main class=\"app\"><h1 id=\"title\"></h1><p id=\"intro\"></p><ul class=\"options\" id=\"options\"></ul><div class=\"row\"><button class=\"pick\" id=\"pick\"></button><button class=\"clear\" id=\"clear\" hidden></button></div><div class=\"result\" id=\"result\" role=\"status\" aria-live=\"polite\"></div></main>",
+        "<script>\"use strict\";const DATA=" + scriptJson(payload) + ";const title=document.getElementById(\"title\"),intro=document.getElementById(\"intro\"),list=document.getElementById(\"options\"),pick=document.getElementById(\"pick\"),clear=document.getElementById(\"clear\"),result=document.getElementById(\"result\");const appOptions=DATA.options.slice();function renderList(){while(list.firstChild)list.removeChild(list.firstChild);appOptions.forEach(function(item){const li=document.createElement(\"li\");li.textContent=item;list.appendChild(li)})}function send(type,detail){try{parent.postMessage({source:\"w03-app\",revision:DATA.revision,type:type,kind:detail.kind||\"\",value:detail.value||\"\",count:appOptions.length},\"*\")}catch(error){}}function pickAction(){if(!appOptions.length){const kind=DATA.upgrade?\"empty\":\"v0-empty\";result.textContent=DATA.upgrade?DATA.empty:DATA.v0Empty;send(\"pick-result\",{kind:kind});return}const choice=appOptions[Math.floor(Math.random()*appOptions.length)];result.textContent=DATA.prefix+\" \"+choice;send(\"pick-result\",{kind:\"picked\",value:choice})}function clearAction(){if(!DATA.upgrade)return;appOptions.length=0;renderList();result.textContent=DATA.cleared;send(\"clear-result\",{kind:\"cleared\"})}title.textContent=DATA.title;intro.textContent=DATA.intro;pick.textContent=DATA.button;clear.textContent=DATA.clear;clear.hidden=!DATA.upgrade;result.textContent=DATA.ready;renderList();pick.addEventListener(\"click\",pickAction);clear.addEventListener(\"click\",clearAction);window.addEventListener(\"message\",function(event){const message=event.data;if(event.source!==parent||!message||message.source!==\"w03-parent\"||message.revision!==DATA.revision)return;if(message.action===\"pick\")pickAction();if(message.action===\"clear\")clearAction()});send(\"ready\",{kind:DATA.upgrade?\"v1\":\"v0\"});<\/script></body></html>"
+      ];
+      return lines.join("");
+    }
+    function stateSignature(data) {
+      return JSON.stringify([data.title, data.intro, data.options, data.color, Boolean(data.upgrade)]);
+    }
+    function invalidateTests() {
+      normalTest = { kind: "not-run", value: "" };
+      emptyTest = { kind: "not-run", value: "" };
+      breakRecorded = false;
+      pendingPreviewAction = null;
+      setDynamicStatus("normal", "normalNotRun", "status");
+      setDynamicStatus("empty", "emptyNotRun", "status");
+      setDynamicStatus("download", "downloadIdle", "status");
+      ["cp3", "cp4", "cp5"].forEach(cp => {
+        const input = cpInputs.find(item => item.dataset.cp === cp);
+        if (input) input.checked = false;
+        storageRemove(progressKey(cp));
+      });
+      updateEvidenceTests();
+      updateProgress();
+    }
+    function evidenceDefault(kind) {
+      if (kind === "before") return text("v0 只有「幫我選一個」，會從現有選項中顯示一項。", "v0 only had \"Pick one,\" which returned one existing option.");
+      return text("v1 新增「清除選項」；清單空白時會提示修正，不會捏造結果。", "v1 adds \"Clear choices\" and gives repair feedback instead of inventing a result when the list is empty.");
+    }
+    function syncAutoEvidence() {
+      ["before", "after"].forEach(kind => {
+        const id = kind === "before" ? "eBefore" : "eAfter";
+        const current = $(id).value;
+        if (!evidenceAuto[kind]) return;
+        if (current !== evidenceAuto[kind]) {
+          evidenceAuto[kind] = "";
+          return;
+        }
+        const next = evidenceDefault(kind);
+        $(id).value = next;
+        evidenceAuto[kind] = next;
+      });
+    }
+    function seedEvidence(data) {
+      $("eWorkId").value = TASK + " · " + (data.title || text("未命名小工具", "Untitled helper"));
+      if (!$("eBefore").value.trim()) {
+        evidenceAuto.before = evidenceDefault("before");
+        $("eBefore").value = evidenceAuto.before;
+      }
+      if (data.upgrade && !$("eAfter").value.trim()) {
+        evidenceAuto.after = evidenceDefault("after");
+        $("eAfter").value = evidenceAuto.after;
+      }
+    }
+    function renderAppliedPreview(preserveTests) {
+      previewRevision += 1;
+      const data = { ...appliedState, options: appliedState.options.slice(), revision: previewRevision };
+      $("appPreview").srcdoc = makeAppHtml(data);
+      if (!preserveTests) invalidateTests();
+    }
+    function updatePreview(statusKey) {
+      const data = getFields();
+      appliedState = { ...data, options: data.options.slice() };
+      renderAppliedPreview(false);
+      seedEvidence(data);
+      if (statusKey) setDynamicStatus("builder", statusKey, data.upgrade ? "status ok" : "status warn");
+    }
+    function fillTheme(key, announce) {
+      currentTheme = themeData[key] ? key : "break";
+      const item = themeData[currentTheme];
+      const scaffold = themeScaffold(currentTheme, document.body.dataset.lang);
+      $("appTitle").value = scaffold.appTitle;
+      $("appIntro").value = scaffold.appIntro;
+      $("option1").value = scaffold.option1;
+      $("option2").value = scaffold.option2;
+      $("option3").value = scaffold.option3;
+      $("appColor").value = item.color;
+      $("featureSafety").checked = false;
+      builderScaffold = scaffold;
+      updatePreview();
+      if (announce) setDynamicStatus("theme", "themeLoaded", "status ok", currentTheme);
+    }
+    function download(name, content, type) {
+      const blob = new Blob([content], { type: type || "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = name;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    function updateEvidenceTests() {
+      const line1 = normalTest.kind === "pass"
+        ? localizedCopy("normalPass", normalTest)
+        : normalTest.kind === "fail"
+          ? localizedCopy("normalFail")
+          : text("測試 1：尚未執行", "Test 1: not run");
+      const line2 = emptyTest.kind === "pass"
+        ? localizedCopy("emptyPass")
+        : emptyTest.kind === "fail"
+          ? localizedCopy("emptyFail")
+          : text("測試 2：尚未執行", "Test 2: not run");
+      $("eTests").value = line1 + "\n" + line2;
+    }
+    function evidenceText() {
+      const fields = [
+        [text("作品識別", "Work ID"), $("eWorkId").value.trim()],
+        [text("1. 小問題", "1. Small problem"), $("eProblem").value.trim()],
+        [text("2a. Before（v0）", "2a. Before (v0)"), $("eBefore").value.trim()],
+        [text("2b. After（v1）", "2b. After (v1)"), $("eAfter").value.trim()],
+        [text("3a. AI／離線 Agent 建議", "3a. AI / offline agent suggestion"), $("eAi").value.trim()],
+        [text("3b. 人的採用／修改／拒絕與理由", "3b. Human acceptance / change / rejection and reason"), $("eHuman").value.trim()],
+        [text("4. 風險／限制", "4. Risk / limitation"), $("eRisk").value.trim()],
+        [text("5. 實際觀察的測試", "5. Observed tests"), $("eTests").value.trim()]
+      ];
+      return [
+        text("115-1 人工智慧概論 · W03 證據卡", "115-1 AI Introduction · W03 Evidence"),
+        text("任務：", "Task: ") + TASK,
+        text("不要加入姓名或學號。", "Do not add a name or student ID."),
+        "",
+        ...fields.flatMap(item => [item[0] + text("：", ":"), item[1] || text("（未完成）", "(not completed)"), ""])
+      ].join("\n");
+    }
+
+    document.querySelectorAll("[data-set-lang]").forEach(button => button.addEventListener("click", () => setLanguage(button.dataset.setLang)));
+    setLanguage(document.body.dataset.lang);
+
+    cpInputs.forEach(input => {
+      input.checked = storageGet(progressKey(input.dataset.cp)) === "1";
+      input.addEventListener("change", () => {
+        storageSet(progressKey(input.dataset.cp), input.checked ? "1" : "0");
+        updateProgress();
+      });
+    });
+    updateProgress();
+
+    $("quickPick").addEventListener("click", () => {
+      const options = document.body.dataset.lang === "zh" ? themeData.break.optionsZh : themeData.break.optionsEn;
+      const index = Math.floor(Math.random() * options.length);
+      setDynamicStatus("quick", "quickPicked", "status ok", index);
+    });
+    $("applyQuickTitle").addEventListener("click", () => {
+      const value = $("quickTitleInput").value.trim();
+      if (!value) {
+        setDynamicStatus("quick", "quickEmptyTitle", "status warn");
+        return;
+      }
+      quickDemoState = { kind: "custom", value };
+      renderQuickDemoTitle();
+      setDynamicStatus("quick", "quickTitleApplied", "status ok");
+    });
+    $("resetQuick").addEventListener("click", () => {
+      $("quickTitleInput").value = "";
+      quickDemoState = { kind: "default", value: "" };
+      renderQuickDemoTitle();
+      setDynamicStatus("quick", "quickRestored", "status");
+    });
+
+    document.querySelectorAll('input[name="theme"]').forEach(input => input.addEventListener("change", () => fillTheme(input.value, true)));
+    fillTheme("break", false);
+    $("updatePreview").addEventListener("click", () => {
+      const upgraded = $("featureSafety").checked;
+      updatePreview(upgraded ? "builderV1" : "builderV0");
+    });
+    $("restoreTheme").addEventListener("click", () => fillTheme(currentTheme, true));
+    ["appTitle", "appIntro", "option1", "option2", "option3", "appColor", "featureSafety"].forEach(id => $(id).addEventListener("input", () => {
+      invalidateTests();
+      setDynamicStatus("builder", "builderUnapplied", "status warn");
+    }));
+
+    $("copyPrompt").addEventListener("click", async () => {
+      let copied = false;
+      try {
+        await navigator.clipboard.writeText($("aiPrompt").value);
+        copied = true;
+      } catch (error) {
+        $("aiPrompt").focus();
+        $("aiPrompt").select();
+        try { copied = document.execCommand("copy"); } catch (fallbackError) { copied = false; }
+      }
+      setDynamicStatus("agent", copied ? "agentCopied" : "agentCopyBlocked", "agent-result");
+    });
+    document.querySelectorAll(".agent-choice").forEach(button => button.addEventListener("click", () => {
+      setDynamicStatus("agent", "agentSuggestion", "agent-result", button.dataset.agent);
+    }));
+
+    function testable(statusId) {
+      const area = statusId === "normalTestResult" ? "normal" : "empty";
+      const current = getFields();
+      if (!appliedState || stateSignature(current) !== stateSignature(appliedState)) {
+        setDynamicStatus(area, "testUpdateFirst", "status warn");
+        return false;
+      }
+      if (!appliedState.upgrade) {
+        setDynamicStatus(area, "testStillV0", "status warn");
+        return false;
+      }
+      if (!appliedState.options.length) {
+        setDynamicStatus(area, "testNoOptions", "status warn");
+        return false;
+      }
+      return true;
+    }
+    function requestPreviewAction(action, kind, statusId) {
+      const request = { kind, revision: previewRevision };
+      pendingPreviewAction = request;
+      $("appPreview").contentWindow.postMessage({ source: "w03-parent", action, revision: previewRevision }, "*");
+      setTimeout(() => {
+        if (pendingPreviewAction !== request) return;
+        pendingPreviewAction = null;
+        setDynamicStatus(statusId === "normalTestResult" ? "normal" : "empty", "testTimeout", "status bad");
+      }, 1800);
+    }
+    window.addEventListener("message", event => {
+      const frame = $("appPreview");
+      const message = event.data;
+      if (event.source !== frame.contentWindow || !message || message.source !== "w03-app" || message.revision !== previewRevision) return;
+      const request = pendingPreviewAction;
+      if (!request || request.revision !== previewRevision) return;
+
+      if (request.kind === "normal" && message.type === "pick-result") {
+        const observed = message.kind === "picked" && appliedState.options.includes(message.value);
+        const scaffoldValues = builderScaffold ? [builderScaffold.option1, builderScaffold.option2, builderScaffold.option3] : [];
+        normalTest = {
+          kind: observed ? "pass" : "fail",
+          value: observed ? message.value : "",
+          scaffoldIndex: observed ? scaffoldValues.indexOf(message.value) : -1
+        };
+        setDynamicStatus("normal", observed ? "normalPass" : "normalFail", observed ? "status ok" : "status bad", normalTest);
+        pendingPreviewAction = null;
+        updateEvidenceTests();
+      }
+      if (request.kind === "break" && message.type === "clear-result" && message.kind === "cleared" && message.count === 0) {
+        breakRecorded = true;
+        setDynamicStatus("empty", "emptyCleared", "status warn");
+        pendingPreviewAction = null;
+      }
+      if (request.kind === "empty" && message.type === "pick-result") {
+        const observed = breakRecorded && message.kind === "empty" && message.count === 0;
+        emptyTest = { kind: observed ? "pass" : "fail", value: "" };
+        setDynamicStatus("empty", observed ? "emptyPass" : "emptyFail", observed ? "status ok" : "status bad");
+        pendingPreviewAction = null;
+        updateEvidenceTests();
+      }
+    });
+
+    $("runNormalTest").addEventListener("click", () => {
+      if (!testable("normalTestResult")) return;
+      setDynamicStatus("normal", "normalPending", "status");
+      requestPreviewAction("pick", "normal", "normalTestResult");
+    });
+    $("breakApp").addEventListener("click", () => {
+      if (!testable("emptyTestResult")) return;
+      breakRecorded = false;
+      setDynamicStatus("empty", "emptyClearPending", "status");
+      requestPreviewAction("clear", "break", "emptyTestResult");
+    });
+    $("runEmptyTest").addEventListener("click", () => {
+      if (!testable("emptyTestResult")) return;
+      if (!breakRecorded) {
+        setDynamicStatus("empty", "emptyFirstClear", "status warn");
+        return;
+      }
+      setDynamicStatus("empty", "emptyPending", "status");
+      requestPreviewAction("pick", "empty", "emptyTestResult");
+    });
+    $("recoverApp").addEventListener("click", () => {
+      if (!appliedState) return;
+      pendingPreviewAction = null;
+      breakRecorded = false;
+      renderAppliedPreview(true);
+      setDynamicStatus("builder", "builderRecovered", "status ok");
+    });
+    updateEvidenceTests();
+
+    $("downloadApp").addEventListener("click", () => {
+      const data = getFields();
+      if (!data.options.length) {
+        setDynamicStatus("download", "downloadEmpty", "status bad");
+        return;
+      }
+      if (!data.upgrade || !appliedState || stateSignature(data) !== stateSignature(appliedState)) {
+        setDynamicStatus("download", "downloadNotReady", "status bad");
+        return;
+      }
+      if (normalTest.kind !== "pass" || emptyTest.kind !== "pass") {
+        setDynamicStatus("download", "downloadTestsMissing", "status bad");
+        return;
+      }
+      download("v1.html", makeAppHtml({ ...data, revision: 0 }), "text/html;charset=utf-8");
+      setDynamicStatus("download", "downloadStarted", "status ok");
+    });
+    $("downloadEvidence").addEventListener("click", () => download("w03-evidence.txt", evidenceText(), "text/plain;charset=utf-8"));
+    function preparePrint() { $("printEvidence").textContent = evidenceText(); }
+    $("printEvidenceBtn").addEventListener("click", () => { preparePrint(); document.body.classList.add("evidence-only"); window.print(); });
+    $("printBtn").addEventListener("click", () => { preparePrint(); window.print(); });
+    window.addEventListener("afterprint", () => document.body.classList.remove("evidence-only"));
+    $("resetBtn").addEventListener("click", () => {
+      const confirmed = window.confirm(text("只清除這台電腦上的 5 個匿名勾選進度？未下載的文字不會被保存。", "Clear only the five anonymous progress checks on this computer? Undownloaded text is not saved."));
+      if (!confirmed) return;
+      cpInputs.forEach(input => {
+        input.checked = false;
+        storageRemove(progressKey(input.dataset.cp));
+      });
+      updateProgress();
+    });
+  }());
+  </script>
+</body>
+</html>

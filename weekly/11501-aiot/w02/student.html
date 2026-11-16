@@ -1,0 +1,161 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W2 學生步驟｜今天不刷機，今天讓它動起來</title><style>
+:root{font-family:system-ui,'Microsoft JhengHei',sans-serif;color:#153d36;background:#f4f6ed;line-height:1.8}body{margin:0}main{max-width:880px;margin:auto;padding:30px 24px 90px}nav{display:flex;gap:18px;flex-wrap:wrap}a{color:#09695b;text-underline-offset:4px}header{padding:44px 0 28px;border-bottom:2px solid #1f6153}h1{font-size:clamp(28px,5vw,54px);line-height:1.25;max-width:650px}h2{font-size:26px;line-height:1.4;margin:44px 0 14px}h3{font-size:20px;margin:24px 0 8px}.eyebrow{letter-spacing:.09em;font-weight:700;color:#577565}.lead{font-size:21px}section{scroll-margin-top:20px}.note{padding:14px 20px;border-left:4px solid #c9963b;background:#fff9e8}.src{padding:12px 20px;border-left:4px solid #79958a;background:#eef2e7;font-size:15px;color:#3d574d}table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid #bbc9bf;padding:10px;text-align:left;vertical-align:top}th{background:#e0ece2}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#133e34;color:#f4f6ed;padding:18px;border-radius:8px;font:15px/1.7 ui-monospace,monospace}code{background:#e6ece5;border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;font:15px ui-monospace,monospace}ol,ul{padding-left:1.4em}li{margin:6px 0}.small{font-size:14px;color:#51695f}.steps{counter-reset:s;list-style:none;padding:0}.steps li{background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:12px 16px;margin:10px 0}.steps li b{color:#09695b}.tick{list-style:none;padding:0}.tick li{background:#fff;border:1px solid #bbc9bf;border-radius:8px;padding:10px 14px;margin:8px 0}@media print{nav,.no-print{display:none}main{max-width:none;padding:0}h1{font-size:30px}h2{break-after:avoid}pre,table,.note,.steps li{break-inside:avoid}}
+</style></head><body><main>
+<nav><a href="deck.html">投影片</a><a href="deck.pdf">下載投影片 PDF</a><a href="starter.zip">起步包（zip）</a></nav>
+
+<header><p class="eyebrow">AIoT 智慧裝置實作　WEEK 2</p><h1>今天不刷機，<br>今天讓它動起來</h1><p class="lead">今天三件事：看懂眼前這台 Ubuntu、把板子接起來、讓它跑一個例子。</p><p>今天的標準只有一個：<b>都能動就夠了</b>。動不了不是你的錯，是今天要一起解決的事。</p></header>
+
+<section><h2>1　今天做到哪算完成</h2>
+<p>五個勾，缺一個就舉手。<b>今天不發紙本</b>——這五件做到就算完成，下課前把結果貼到 e學苑 本週那份作業的線上文字格。</p>
+<table><tr><th></th><th>做到什麼算勾</th></tr>
+<tr><td><b>①</b></td><td>App Lab 在這台 Ubuntu 開得起來</td></tr>
+<tr><td><b>②</b></td><td><code>lsusb</code> 看得到 <code>2341:0078</code></td></tr>
+<tr><td><b>③</b></td><td><code>adb devices -l</code> <b>剛好一台</b>，狀態是 <code>device</code></td></tr>
+<tr><td><b>④</b></td><td>Blink 跑起來，<b>我親眼看到板上紅色 LED 真的閃</b></td></tr>
+<tr><td><b>⑤</b></td><td>Antigravity 裝好並登入（未滿 18 歲或沒裝完：寫一句原因，<b>一樣算完成</b>）</td></tr></table>
+<h3>還有一欄：版本</h3>
+<p>還要抄三行版本一起貼。哪三行看第 6 節。起步包裡的 <a href="starter/版本抄寫單.txt">版本抄寫單.txt</a> 是同三行的填空版，先填在那裡再貼也行。</p>
+<p class="note"><b>今天不刷機。</b>原本課表排的是「全班刷機」，老師改了：今天先把每個人手上的東西弄到會動，刷機那件事往後排，不是取消。</p>
+<p class="small">起步包 <a href="starter.zip">starter.zip</a> 裡有兩個檔：<code>probe-my-setup.sh</code>（唯讀探針）和 <code>版本抄寫單.txt</code>。個別連結點不開時就抓這一包。</p></section>
+
+<section><h2>2　桌上其實有兩台電腦</h2>
+<p>這是今天<b>唯一要先懂的事</b>。UNO Q 裡面有兩顆處理器，所以桌上其實是兩台電腦：</p>
+<table><tr><th>哪一邊</th><th>跑什麼</th><th>平常怎麼碰它</th></tr>
+<tr><td>眼前這台</td><td>教室的 Ubuntu</td><td>鍵盤滑鼠，就是你現在用的</td></tr>
+<tr><td>UNO Q 的 Qualcomm QRB2210</td><td><b>Debian Linux</b></td><td>App Lab、ADB、SSH</td></tr>
+<tr><td>UNO Q 的 STM32U585</td><td>Arduino sketch（Zephyr RTOS）</td><td>App Lab 幫你編譯、燒錄</td></tr></table>
+<h3>打之前先看提示字元</h3>
+<p>你等一下打的每一行，<b>要先知道是打給哪一台</b>。看游標前面那一串就知道：</p>
+<pre>你的帳號@教室電腦:~$    ← 眼前這台 Ubuntu
+arduino@板子名稱:~$      ← UNO Q 裡的 Linux</pre>
+<p class="note">App Lab 也分兩部分：電腦上有桌面程式，板子上有另一組套件。<b>兩邊的版本號不必一樣</b>，不要拿「主版本號相同」當相容性的判準。本課的判準是：老師指定的那一組組合、全班一致。</p></section>
+
+<section><h2>3　Ubuntu 三句話：我在哪、有什麼、換去哪</h2>
+<p>Linux 不會告訴你你在哪，<b>你要自己問</b>。三個指令就夠：</p>
+<pre>pwd      # 我在哪
+ls       # 這裡有什麼
+cd 名字   # 換去哪</pre>
+<p><code>pwd</code> 印出來通常是 <code>/home/你的帳號</code>——那是你的<b>家目錄</b>。</p>
+<p class="note"><b>教室機的家目錄不是你的私人硬碟。</b>下課後可能會被清掉。今天寫的東西、抄的版本，<b>存到 USB 或雲端</b>，或者直接寫在紙本清單上。</p></section>
+
+<section><h2>4　軟體從哪來、sudo 是什麼</h2>
+<h3>軟體從哪來</h3>
+<p>Windows 是你去網站抓一個 exe 回來裝；<b>Ubuntu 是跟套件倉庫要</b>。一行就好：</p>
+<pre>sudo apt install &lt;名字&gt;</pre>
+<p>它去學校設定好的倉庫拿，然後裝到<b>整台機器</b>，所有人共用。</p>
+<h3>sudo 是借權限，不是變厲害</h3>
+<p><code>sudo</code> 會問密碼，因為你正在動整台機器共用的東西。判準很簡單：</p>
+<table><tr><th>動到哪裡</th><th>要不要 sudo</th></tr>
+<tr><td>我自己的家目錄</td><td>不必</td></tr>
+<tr><td>整台機器共用的東西（<code>/etc</code>、udev、systemd、裝軟體）</td><td>要</td></tr></table>
+<h3 id="probe">教室機的規矩：學生先跑唯讀探針</h3>
+<p>教室機的相依套件與 USB 權限規則<b>應該由老師或資訊組先裝好</b>。學生不要一上來就用 <code>sudo</code> 改整台教室機。</p>
+<p>起步包裡的 <a href="starter/probe-my-setup.sh">probe-my-setup.sh</a> 是<b>唯讀</b>的：它只看，不改，一行都不會動到系統。</p>
+<pre>chmod +x probe-my-setup.sh
+./probe-my-setup.sh | tee probe-normal.txt</pre>
+<p>它印三段：這台電腦是什麼、USB 上看不看得到板子、App Lab 附的 adb 在哪。<b>有紅字或「找不到」就把 <code>probe-normal.txt</code> 給老師</b>。</p>
+<p class="note"><b>三條今天不准做的事：</b>不要自己寫 USB 權限規則（尤其不要寫 <code>0666</code>）、不要自己重刷板子、不要自己按系統更新。這三件今天都由老師統一處理。</p></section>
+
+<section><h2>5　接上板子：三個看得到的證據</h2>
+<ol class="steps">
+<li><b>接線。</b>用 USB-C <b>資料線</b>把 UNO Q 直接接到電腦，<b>不要先經過 hub</b>。只能充電的線不算。</li>
+<li><b>等心跳。</b>LED 點陣會從旋轉的 Arduino 圖案變成<b>心跳動畫</b>，通常要 <b>30～60 秒</b>。還在轉就先等，不要拔。</li>
+<li><b>證據一：USB 看得到。</b><br><code>lsusb | grep -E '2341:0078|05c6:9008'</code><br>正常開機應該看到 <code>2341:0078</code>。</li>
+<li><b>證據二：找到 App Lab 附的 adb。</b>ADB 不用另外裝，它在 App Lab 附的工具夾裡。整段照抄貼進終端機：</li>
+</ol>
+<pre>ADB=$(find "$HOME/.arduino15/packages/arduino/tools/adb" \
+    -type f -name adb -perm -u+x -print 2>/dev/null | sort -V | tail -n 1)
+
+if [ -z "$ADB" ]; then
+    echo "找不到 App Lab 附的 adb，請把 probe-normal.txt 給老師"
+else
+    echo "本次使用：$ADB"
+    "$ADB" devices -l
+fi</pre>
+<p><b>證據三：剛好一台。</b>上面最後一行應該列出<b>剛好一塊板</b>，狀態是 <code>device</code>。列出兩台以上就拔掉手機或別人的板子——不要讓工具去猜第一台是哪一塊。</p>
+<p class="note"><b><code>05c6:9008</code> 跑出來了？</b>那是<b>恢復模式</b>（EDL，燒韌體時才會用到），平常不該出現。<b>舉手叫老師，不要自己重刷。</b><br>這兩組 ID 來自 Arduino 官方 UNO Q User Manual，不是我們自己編的。</p>
+<p class="small">後面每一次用到 adb，都是打 <code>"$ADB"</code> 這四個字加引號，不是打 <code>adb</code>。上面那段跑過之後，這個視窗裡的 <code>$ADB</code> 才有值；換一個終端機視窗要重跑一次。</p></section>
+
+<section><h2>6　更新與抄版本</h2>
+<p class="note"><b>今天的更新，老師指定一條，全班跑同一條，跑完把版本抄下來。</b><br>
+不是每個人自己按自己的更新鈕——那樣 30 台會長成 30 種，下週誰壞了都查不出來。這就是「環境統一日」的統一。</p>
+<p>要跑的那一條<b>老師會寫在白板上</b>，這一頁不印。原因是它會因為教室機的狀態而不同，<b>照抄舊的比不抄還糟</b>。</p>
+<h3>跑完抄這三行</h3>
+<table><tr><th></th><th>怎麼拿到</th><th>抄什麼</th></tr>
+<tr><td><b>①</b> 板端作業系統</td><td><code>"$ADB" shell 'cat /etc/os-release'</code></td><td><code>VERSION=</code> 那一行</td></tr>
+<tr><td><b>②</b> 板端核心</td><td><code>"$ADB" shell 'uname -r'</code></td><td>整行</td></tr>
+<tr><td><b>③</b> 電腦端 App Lab</td><td>不是指令，<b>用看的</b>：App Lab 視窗最上面那條標題列</td><td>版本號</td></tr></table>
+<p>抄到起步包裡的 <a href="starter/版本抄寫單.txt">版本抄寫單.txt</a>，或直接打進 e學苑 那一格。行有餘力再多抄一行 <code>"$ADB" shell 'arduino-cli core list'</code>，<b>不抄不扣分</b>。</p>
+<p class="small">為什麼要抄？因為下週（或下下週）有人的板子壞了，第一件事就是比對版本。沒抄就只能猜。</p></section>
+
+<section><h2>7　跑 Blink：要看板上的燈真的閃</h2>
+<ol class="steps">
+<li><b>開 App Lab 的 Examples 頁</b>，找到 <b>Blink</b>。</li>
+<li><b>按右上角 Run。</b>第一次可能要編譯，等一下。</li>
+<li><b>看板子。</b>板上紅色 LED 要真的閃。<b>App Lab 畫面說成功不算數。</b></li>
+</ol>
+<p class="note"><b>這是這門課的第一條規矩：它說成功不算，你自己看到才算。</b>今天之後每一週都會再用到這句。</p>
+<h3>跑不動的時候</h3>
+<p><b>先看 adb 還在不在，不要重刷。</b>多數問題是連線狀態或線材，重刷只會把板子改掉。<code>offline</code> 的處理在第 9 節。</p>
+<h3>行有餘力：網頁型 App</h3>
+<p>有些 App 是網頁介面，要把板子的埠轉到自己電腦上才開得起來：</p>
+<pre>"$ADB" forward --remove tcp:7000 2>/dev/null || true
+"$ADB" forward tcp:7000 tcp:7000
+xdg-open http://127.0.0.1:7000</pre>
+<p class="small"><b>不是每個 App 都用 7000 埠</b>，以那支 App 的說明或啟動時印出來的訊息為準。<br>另外：你在板子上做的 App 存在板子的 <code>/home/arduino/ArduinoApps/</code>。<b>重刷或學期末收板前要先備份</b>，今天先知道有這件事就好。</p></section>
+
+<section><h2>8　裝 Antigravity（Ubuntu）</h2>
+<p>這是今天<b>最後一件</b>，也是唯一一件<b>沒做完可以回家做</b>的事。</p>
+<ol class="steps">
+<li><b>拿檔案。</b>Linux 版官方只給 <code>.tar.gz</code>（x64／ARM64），<b>沒有 deb、沒有 snap</b>。老師可能已經先下載好放共用目錄或 USB——先問，不要 26 台一起下載。</li>
+<li><b>解壓。</b><code>tar -xzf 檔名.tar.gz</code>，解開就能跑，不必安裝。</li>
+<li><b>登入。</b>用<b>個人 Gmail</b>。</li>
+</ol>
+<p class="note"><b>東華信箱登不進去，那是 Google 的規定，不是你的問題。</b>官方寫得很明白：Antigravity 目前開放給個人 Google 帳號，Workspace 帳號有問題時請改用 <code>@gmail.com</code>。<br>
+另外<b>官方明文不開放未滿 18 歲使用</b>。未滿 18 的同學這一格跳過，在 e學苑 那一格寫一句原因，<b>一樣算完成</b>；下週用另一個工具練同一件事。</p>
+<p class="small">系統需求：glibc 2.28 以上（Ubuntu 20 以上都符合）。<br>
+<b>教室機如果有還原卡，重開機可能會被清掉</b>——那不是你裝壞了，回家再裝一次也算完成。<br>
+今天只要「裝好、登入成功」就停手，不必開始用它做事。</p></section>
+
+<section><h2>9　卡住怎麼辦＋今天交什麼</h2>
+<h3>ADB 顯示 <code>offline</code>：三步</h3>
+<ol class="steps">
+<li><b>關掉 App Lab。</b></li>
+<li><b>拔掉 UNO Q 的 USB 線，等幾秒再插回。</b>等 LED 點陣恢復心跳，再開 App Lab。</li>
+<li><b>重跑</b> <code>"$ADB" devices -l</code>。</li>
+</ol>
+<p class="small">不要一看到 <code>offline</code> 就想重刷。重刷會改動板子，而且多數 <code>offline</code> 是連線狀態或線材問題。</p>
+<h3>完全找不到板子：六查</h3>
+<ul><li>確認是<b>資料線</b>，不是只能充電的線。</li>
+<li>直接接電腦，<b>先不要經過 hub</b>。</li>
+<li>換一個 USB 埠，或換一條已知可傳資料的線。</li>
+<li>拔掉可能干擾的杜邦線。</li>
+<li>看 LED 點陣有沒有心跳。</li>
+<li>回讀 <code>probe-normal.txt</code> 的 udev 與 USB 段落（第 4 節跑出來那份）。</li></ul>
+<h3>卡住時怎麼問 AI：把事實填滿</h3>
+<p class="src">以下模板照抄自 UNO Q 設定指南（<code>arduino-q</code> <code>labs/w01-same-board/ubuntu/學生設定指南.md</code>）的「卡住時怎麼問 AI」，本週不另寫版本。</p>
+<pre>我在 Ubuntu &lt;版本&gt; 上使用 Arduino UNO Q。
+我現在做的是 &lt;App Lab 啟動／USB 偵測／ADB／Blink&gt;。
+我執行的完整指令是：&lt;指令&gt;
+我預期看到：&lt;結果&gt;
+實際看到：&lt;完整錯誤原文&gt;
+probe-normal.txt 對應段落是：&lt;貼相關段落，不貼密碼&gt;
+
+請先判斷問題在 Ubuntu 主機、USB／udev、ADB、板子 Linux、App Lab
+或 STM32 哪一層。先只給我下一個唯讀檢查，不要直接更新、重刷或
+修改系統檔案。</pre>
+<h3>三條底線</h3>
+<ol class="steps">
+<li><b>密碼、帳號權杖與私人資料不貼給 AI。</b>板子上 <code>arduino</code> 的密碼跟 Ubuntu 電腦的密碼是<b>兩件事</b>；不知道就問老師，<b>不要寫進作業、不要貼進聊天視窗</b>。</li>
+<li><b>AI 叫你改 <code>/etc</code>、udev、systemd 或重刷映像時，先給老師看。</b>那些收不回來。</li>
+<li><b>它說成功不算。</b>回到 LED、<code>lsusb</code>、<code>adb devices</code> 或實際檔案再驗一次。</li>
+</ol>
+<h3>今天交什麼</h3>
+<table><tr><th>東西</th><th>怎麼處理</th><th>什麼時候</th></tr>
+<tr><td><b>e學苑 本週作業</b></td><td>線上文字：五件的結果一行一個，＋三行版本</td><td><b>下課前貼完</b></td></tr>
+<tr><td>板子與線</td><td>按老師指示收回，<b>線不要帶走</b></td><td>下課前</td></tr>
+<tr><td>e學苑「裝好四樣」</td><td>那是<b>另一件事</b>（七班共用模組），還沒做完的 9/24 前補交</td><td>9/24 前</td></tr></table>
+<p class="note"><b>下週 W3（9/24）：什麼都是檔案，我們用檔案點燈。</b>今天弄好的環境下週要直接用。</p></section>
+
+<footer class="small"><p>國立東華大學　AIoT 智慧裝置實作（115-1）<br>W2 學生步驟，2026-09-16。這一頁沒有接 AI，也不收集你填的任何東西；離線打得開。<br>兩組 USB ID 與 USB 權限規則出自 Arduino 官方 UNO Q User Manual；操作流程與問 AI 的模板引自 <code>arduino-q</code> 的 UNO Q 設定指南（Ubuntu 教室機）。<br>板子的帳號、密碼、位址、主機名稱與版本號因板子與映像而異，一律以課堂上查到的為準，本頁一個字都不印。</p></footer>
+</main></body></html>

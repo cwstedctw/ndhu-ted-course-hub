@@ -1,0 +1,1417 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>LINE bot 簡單版｜一支 Python 接上本地模型</title>
+<style>
+:root{
+  --bg:#f4f6ed;--fg:#153d36;--muted:#51695f;--line:#bbc9bf;--card:#fff;
+  --accent:#1f6153;--accent2:#09695b;--tagbg:#e0ece2;--tagfg:#0b4a3e;
+  --note-bg:#fff9e8;--note-line:#c9963b;
+  --pre-bg:#133e34;--pre-fg:#f4f6ed;--code-bg:#e6ece5;
+  --see-bg:#eef3fb;--see-line:#4b6cb7;
+  --test-bg:#eef7ee;--test-line:#3b8b4a;
+  --stuck-bg:#fbf1f1;--stuck-line:#b85c5c;
+  --todo-bg:#fff3e0;--todo-line:#e08a00;
+  --btn-bg:#1f6153;--btn-fg:#fff;
+  font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  color:var(--fg);background:var(--bg);line-height:1.8
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#121917;--fg:#e4ebe6;--muted:#a8b8ae;--line:#3a4a42;--card:#1b2420;
+    --accent:#6fc3b0;--accent2:#8fd3c3;--tagbg:#243a33;--tagfg:#cfe9df;
+    --note-bg:#2a2414;--note-line:#d7a548;
+    --pre-bg:#0b1b17;--pre-fg:#e8f0ea;--code-bg:#243a33;
+    --see-bg:#17213a;--see-line:#7f9ce6;
+    --test-bg:#162a1b;--test-line:#6cc27a;
+    --stuck-bg:#2e1b1b;--stuck-line:#e08a8a;
+    --todo-bg:#2e2410;--todo-line:#f0b24a;
+    --btn-bg:#6fc3b0;--btn-fg:#0b1b17
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg)}
+main{max-width:900px;margin:auto;padding:28px 20px 90px}
+a{color:var(--accent2);text-underline-offset:4px}
+header{padding:28px 0 22px;border-bottom:2px solid var(--accent)}
+h1{font-size:clamp(26px,5vw,44px);line-height:1.3;margin:.3em 0;max-width:760px}
+h2{font-size:25px;line-height:1.4;margin:52px 0 6px;padding-top:10px;border-top:2px solid var(--accent)}
+h3{font-size:20px;margin:26px 0 8px}
+h4{font-size:17px;margin:14px 0 4px;color:var(--accent2)}
+.eyebrow{letter-spacing:.09em;font-weight:700;color:var(--muted)}
+.lead{font-size:19px}
+.gain{background:var(--tagbg);border-left:4px solid var(--accent);padding:8px 16px;margin:10px 0 18px;font-weight:700}
+section{scroll-margin-top:16px}
+.note{padding:12px 18px;border-left:4px solid var(--note-line);background:var(--note-bg);margin:12px 0}
+.small{font-size:14px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;background:var(--card);table-layout:fixed;margin:10px 0}
+th,td{border:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top;overflow-wrap:anywhere;word-break:break-word}
+th{background:var(--tagbg)}
+pre{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;background:var(--pre-bg);color:var(--pre-fg);padding:14px 16px;border-radius:0 0 8px 8px;margin:0;font:15px/1.75 ui-monospace,Consolas,"Microsoft JhengHei",monospace;max-width:100%}
+pre.plain{border-radius:8px}
+code{background:var(--code-bg);border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;word-break:break-word;font:15px ui-monospace,Consolas,"Microsoft JhengHei",monospace}
+ol,ul{padding-left:1.3em}
+li{margin:6px 0}
+.cp{margin:10px 0 14px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:var(--tagbg);color:var(--tagfg);border-radius:8px 8px 0 0;padding:4px 8px 4px 12px;font-size:14px;font-weight:700}
+.bar .btns{display:flex;gap:6px;flex-wrap:wrap}
+button{font:inherit;font-size:14px;cursor:pointer;border:0;border-radius:6px;padding:4px 12px;background:var(--btn-bg);color:var(--btn-fg)}
+button.ghost{background:transparent;color:var(--accent2);border:1px solid var(--accent2)}
+button:active{transform:translateY(1px)}
+.steps{list-style:none;padding:0;counter-reset:st}
+.steps>li{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:10px;padding:10px 18px 14px;margin:14px 0}
+.chk{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:18px;font-weight:700;margin:4px 0 6px}
+.chk input{width:20px;height:20px;margin-top:8px;flex:0 0 auto;accent-color:var(--accent)}
+.chk .t{flex:1 1 auto;min-width:0}
+.chk .n{display:inline-block;background:var(--accent);color:var(--bg);border-radius:6px;padding:0 9px;font-size:15px;margin-right:6px;flex:0 0 auto;margin-top:5px}
+.blk{border-left:4px solid var(--line);padding:6px 14px;margin:10px 0;border-radius:0 8px 8px 0}
+.blk>b.k{display:inline-block;border-radius:5px;padding:0 8px;margin:0 6px 4px 0;font-size:14px}
+.see{background:var(--see-bg);border-color:var(--see-line)}.see>b.k{background:var(--see-line);color:#fff}
+.test{background:var(--test-bg);border-color:var(--test-line)}.test>b.k{background:var(--test-line);color:#fff}
+.goal{background:var(--note-bg);border-color:var(--note-line)}.goal>b.k{background:var(--note-line);color:#fff}.goal ol{margin:4px 0 6px;padding-left:1.5em}.goal li{margin:2px 0}
+details.stuck{background:var(--stuck-bg);border-left:4px solid var(--stuck-line);border-radius:0 8px 8px 0;padding:6px 14px;margin:10px 0}
+details.stuck summary{cursor:pointer;font-weight:700;color:var(--stuck-line)}
+details.stuck ul{margin:6px 0 4px}
+details.ans{background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:6px 14px;margin:14px 0}
+details.ans summary{cursor:pointer;font-weight:700}
+.todo-shot{border:2px dashed var(--todo-line);background:var(--todo-bg);border-radius:8px;padding:14px;margin:10px 0;color:var(--fg);font-weight:700;text-align:center}
+figure{margin:12px 0}
+img.shot{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;display:block}
+figcaption{font-size:14px;color:var(--muted);margin-top:4px}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 18px;margin:18px 0}
+.toc ol{margin:6px 0}
+.prog{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0 0;font-size:15px}
+.prog .barw{flex:1 1 200px;height:10px;background:var(--tagbg);border-radius:6px;overflow:hidden;min-width:120px}
+.prog .barw>div{height:100%;background:var(--accent);width:0%}
+.two{display:flex;flex-wrap:wrap;gap:14px}
+.two>div{flex:1 1 280px;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:2px 16px 12px}
+.filter{width:100%;padding:8px 12px;font:inherit;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);margin:8px 0}
+.tag{display:inline-block;background:var(--tagbg);color:var(--tagfg);border-radius:6px;padding:0 8px;font-size:14px;margin-right:6px}
+.quote{border-left:4px solid var(--line);padding:4px 14px;margin:8px 0;color:var(--muted);font-size:15px;white-space:pre-wrap}
+.top{position:fixed;right:10px;bottom:10px;background:var(--btn-bg);color:var(--btn-fg);border-radius:50%;width:36px;height:36px;opacity:.85;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+@media (max-width:560px){
+  main{padding:20px 16px 80px}
+  th,td{padding:7px 5px;font-size:14px}
+  pre{font-size:13.5px;padding:12px}
+  code{font-size:13.5px}
+  .steps>li{padding:8px 12px 12px}
+  .chk{font-size:16.5px}
+  h2{font-size:22px}
+}
+@media print{.top,.bar .btns,.prog button{display:none}main{max-width:none;padding:0}}
+</style>
+</head>
+<body><main id="top">
+
+<header>
+<p class="eyebrow">和 AI 一起寫程式：創意生活應用　WEEK 6 延伸　LINE bot 簡單版</p>
+<h1>LINE bot 簡單版：一支 Python 程式，接上你電腦裡的本地模型</h1>
+<p class="lead">W5 你的 bot 住在 Google 的 Apps Script，問的是 Gemini。這一版換個做法：<b>一支 Python 程式 <code>line_bot_local.py</code> 就是整個 bot</b>，跑在你自己的電腦上，問的是你電腦裡的 Ollama 本地模型。它會：回答問題（需要就自己上網查、附來源）、看照片、把行程排進 Google 日曆、照片存進雲端硬碟；問題、行程、照片都先記進 Google 試算表才回覆（打招呼和看不懂的格式不記）。</p>
+<p class="note"><b>這一頁怎麼用：</b>從上往下做，每一步有「指令或畫面 → 你應該看到 → 測一下 → 卡住了」，做完打勾（勾選只存在這台瀏覽器）。<b>第一次做全部約 40–60 分鐘</b>；第 1 段的安裝做過 W6 課堂的人大多可以跳過。之後再開 bot，只要做第 3 段。</p>
+<div class="prog"><span id="progText">已勾 0／0 步</span><div class="barw"><div id="progBar"></div></div><button type="button" class="ghost" id="resetBtn">清除勾選</button></div>
+<div class="toc"><b>順序</b>
+<ol>
+<li><a href="#s0">先看懂</a>——它是什麼、跟 W5 差在哪、一則訊息怎麼走</li>
+<li><a href="#s1">第 1 段　安裝（只有第一次）</a>——Python、Ollama、gws、cloudflared、下載程式</li>
+<li><a href="#s2">第 2 段　準備三個值</a>——試算表 ID、LINE 的 Channel secret 和長效通行碼</li>
+<li><a href="#s3">第 3 段　開 bot</a>——一個指令，它會自己接上 LINE</li>
+<li><a href="#s4">第 4 段　用手機試四種訊息</a>——打招呼、問問題、講行程、傳照片</li>
+<li><a href="#s5">第 5 段　結束、把 LINE 還給 Apps Script</a></li>
+<li><a href="#s6">程式怎麼讀、它叫了哪些 Ollama API</a></li>
+<li><a href="#stuckall">卡關總表</a>——出錯了先用關鍵字查這裡</li>
+</ol></div>
+</header>
+
+<!-- ======================= 先看懂 ======================= -->
+<section id="s0" data-sec="0"><h2>先看懂：它是什麼、跟 W5 差在哪</h2>
+<p class="gain">看完你會知道：為什麼這支程式能直接叫本地模型、為什麼還是要一條「通道」。</p>
+<h3>一則訊息怎麼走</h3>
+<pre class="plain">📱 手機傳文字或照片
+ → LINE 的伺服器
+ → Cloudflare 通道（給你電腦一個臨時的 https 網址；LINE 才找得到你的電腦）
+ → 你電腦上的 line_bot_local.py（先對簽章，確定真的是 LINE 送來的）
+ → 本機的 Ollama（http://127.0.0.1:11434）：回答問題、看照片、整理行程
+ → gws：照片存雲端硬碟、行程排日曆、寫一列進試算表
+ → 全部做完才回覆手機（只講已經做完的事）</pre>
+<p><b>為什麼不用轉接站</b>：bot 就跑在有 Ollama 的那台電腦上，程式裡寫 <code>localhost</code>（本機）就叫得到 Ollama。W5 的 Apps Script 跑在 Google 機房，它說 localhost 是指 Google 自己，才需要另外搭轉接站（那是下週的進階版）。</p>
+<p><b>為什麼還要通道</b>：LINE 的伺服器要把訊息「送進來」，得找得到你的電腦；教室和家裡的電腦都躲在網路後面，外面找不到。Cloudflare 的免費臨時通道（tunnel）給你電腦一個 https 網址，程式開起來會自己開、自己把 LINE 的 Webhook（LINE 把訊息送過去的網址）換成它，結束時再換回去。</p>
+<table>
+<thead><tr><th style="width:22%"></th><th>W5 Apps Script 版</th><th>這一版（簡單版）</th><th>下週進階版</th></tr></thead>
+<tbody>
+<tr><td>程式在哪跑</td><td>Google 機房</td><td>你的電腦</td><td>Google 機房＋你電腦的轉接站</td></tr>
+<tr><td>問誰</td><td>Gemini（免費版沒有搜尋）</td><td>你電腦的 Ollama，會自己上網查</td><td>你電腦的 Ollama</td></tr>
+<tr><td>要的鑰匙</td><td>Gemini 金鑰、LINE 通行碼</td><td>LINE 通行碼、Channel secret（開程式時貼，不存檔）</td><td>Gemini 金鑰、LINE 通行碼、轉接站密碼</td></tr>
+<tr><td>電腦關了</td><td>照樣運作</td><td>bot 停（LINE 換回 Apps Script 後，W5 那支照常）</td><td>「查」功能停，其他照常</td></tr>
+</tbody></table>
+<h3>它會做的四件事</h3>
+<table>
+<thead><tr><th style="width:24%">你傳</th><th>它做</th></tr></thead>
+<tbody>
+<tr><td>hi、你好</td><td>回使用說明，不叫模型、不記表</td></tr>
+<tr><td>問題（「2026 年諾貝爾物理獎得主是誰？」）</td><td>本地模型回答；覺得需要就自己上網查，回覆附來源網址；記一列進試算表</td></tr>
+<tr><td>行程（「明天下午三點要跟專題組開會」）</td><td>算出實際日期時間、排進 Google 日曆；記一列進試算表</td></tr>
+<tr><td>照片（活動海報、便條紙）</td><td>照片存進雲端硬碟「LINE待辦照片」；模型看照片說上面有什麼；看得到日期時間就排進日曆；記一列進試算表（含照片連結）</td></tr>
+</tbody></table>
+</section>
+
+<!-- ======================= 第 1 段 安裝 ======================= -->
+<section id="s1" data-sec="1"><h2>第 1 段　安裝（只有第一次）</h2>
+<p class="gain">這段做完你會有：Python、Ollama＋本地模型、gws（登入好、有日曆權限）、cloudflared，和一個放好 <code>line_bot_local.py</code> 的資料夾。</p>
+<p>開 PowerShell（開始功能表搜「PowerShell」，出現的 Windows PowerShell 就可以，<b>不用</b>系統管理員）。每一步裝完，<b>新開一個 PowerShell 視窗</b>再測：舊視窗看不到剛裝好的程式。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="1-1"><span class="n">1-1</span><span class="t">Python（跑這支 bot 的程式語言）</span></label>
+<p>先看看電腦有沒有：</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>python --version</pre></div>
+<p>印出 <code>Python 3.</code> 開頭就跳到 1-2。說「不是指令」或跳出微軟商店，就用 winget（Windows 內建的安裝指令）裝：</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>winget install --id Python.Python.3.13 -e --accept-package-agreements --accept-source-agreements</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>winget 最後說「已成功安裝」。關掉這個視窗、<b>新開一個</b>，再打一次 <code>python --version</code>，印出 <code>Python 3.13.…</code>（老師電腦 10/10 是 3.13；3.10 以上都可以）。</div>
+<div class="blk test"><b class="k">測一下</b>新視窗的 <code>python --version</code> 印得出版本就過。這支 bot 只用 Python 內建的功能，<b>不用</b> <code>pip install</code> 任何東西。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>打 python 跳出微軟商店</b>→ 那是 Windows 的空殼捷徑，不是真的 Python。關掉商店，用上面 winget 那行裝，裝完新開視窗。</li>
+<li><b>裝完還是說 python 不是指令</b>→ 沒有新開視窗。真的開新的還不行，改打 <code>py --version</code>，之後的指令把 <code>python</code> 都換成 <code>py</code>。</li>
+<li><b>「使用者帳戶控制」要管理員密碼</b>→ 在教室就舉手；在家按「是」。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="1-2"><span class="n">1-2</span><span class="t">Ollama＋本地模型 gemma4:e4b（W6 課堂第 0 段做過的跳過）</span></label>
+<p>Ollama 是在自己電腦跑 AI 模型的程式；<code>gemma4:e4b</code> 是 Google 的開放模型（6.6 GB），看得懂文字也看得懂照片。</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>winget install --id Ollama.Ollama -e --accept-package-agreements --accept-source-agreements --silent
+$env:PATH += ";$env:LOCALAPPDATA\Programs\Ollama"
+ollama pull gemma4:e4b</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>先是安裝，接著 <code>pulling manifest</code> 和一條往 6.6 GB 走的進度條（老師電腦約三分半，看網速），最後 <code>success</code>。工作列右下角多一個羊駝圖示＝Ollama 在背景跑。</div>
+<div class="blk test"><b class="k">測一下</b>新視窗打 <code>ollama list</code>，清單裡有 <code>gemma4:e4b</code> 就過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>winget 被擋</b>→ 到 ollama.com 下載 Windows 安裝檔雙擊裝，再跑第二、三行。</li>
+<li><b>ollama list 說 could not connect</b>→ Ollama 沒在跑：開始功能表打開「Ollama」，再試一次。</li>
+<li><b>顯示卡太小、之後回答很慢或出錯</b>→ 改用小一號的 <code>ollama pull gemma4:e2b</code>，開 bot 前先打 <code>$env:MODEL="gemma4:e2b"</code>（同一個視窗）。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="1-3"><span class="n">1-3</span><span class="t">Node.js 與 gws（W6 課堂第 0 段做過的跳過）</span></label>
+<p>gws 是 Google 做的命令列工具，bot 用它存照片、排日曆、寫試算表；它要 Node.js 才跑得動。</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>winget install --id OpenJS.NodeJS.LTS -e --accept-package-agreements --accept-source-agreements --silent
+$env:PATH += ";$env:ProgramFiles\nodejs;$env:APPDATA\npm"
+npm install -g --allow-scripts=@googleworkspace/cli @googleworkspace/cli</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>npm 那行最後印 <code>added … packages</code>。</div>
+<div class="blk test"><b class="k">測一下</b>新視窗打 <code>gws --version</code>，印出 <code>gws 0.22.5</code> 之類的版本就過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>gws 不是指令</b>→ 沒有新開視窗；或 npm 那行沒跑完，重跑第二、三行。</li>
+<li><b>npm 印 EACCES 或權限錯誤</b>→ 重開 PowerShell 再跑一次。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="1-4"><span class="n">1-4</span><span class="t">你的 Google Cloud 專案多開一個 Calendar API</span></label>
+<p>W6 第 2 段你建了自己的 Google Cloud 專案，啟用了 Drive 和 Sheets 兩個 API。這次 bot 還要排日曆，所以<b>多啟用一個 Google Calendar API</b>。還沒做過第 2 段的，先照 <a href="student.html#s2">W6 互動頁第 2 段的 2-1～2-6</a> 做完（建專案、同意畫面、測試使用者、桌面用戶端、放好 <code>client_secret.json</code>；2-2 那步三個 API 一起啟用），<b>做完回到這裡的 1-5</b>。</p>
+<p>瀏覽器開 <code>console.cloud.google.com</code>（用跟 bot 同一個個人 Gmail）→ 上方確認是你 W6 建的那個專案 → 左上 ≡ →「API 和服務」→「程式庫」→ 搜尋 <code>Google Calendar API</code> → 點進去 → 按「啟用」。</p>
+<div class="blk see"><b class="k">你應該看到</b>按鈕從「啟用」變成「管理」，跟 W6 啟用 Drive、Sheets 時一樣。</div>
+<div class="blk test"><b class="k">測一下</b>「API 和服務」→「已啟用的 API 和服務」清單裡有 Google Drive API、Google Sheets API、Google Calendar API 三個。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>搜到好幾個名字像的</b>→ 要的是「Google Calendar API」，不是 CalDAV API。</li>
+<li><b>找不到 W6 建的專案</b>→ 右上頭像換成你建專案的那個 Gmail；上方專案選單切換。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="1-5"><span class="n">1-5</span><span class="t">gws 重新登入，這次多要日曆權限</span></label>
+<p>W6 課堂登入時只要了雲端硬碟和試算表，這次加上日曆。引號要照打（少了引號，PowerShell 會把逗號拆開）：</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>gws auth login -s "drive,sheets,calendar"</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>它印一條很長的網址：整條複製、貼到瀏覽器 → 選你的 Gmail →（個人 Gmail 可能出現「Google 尚未驗證這個應用程式」→ 按「進階」→「前往…」）→ 權限勾選頁<b>全部勾選</b> → 按繼續 → 瀏覽器說可以關掉；終端機印出 <code>"status": "success"</code>。</div>
+<div class="blk test"><b class="k">測一下</b>打 <code>gws auth status</code>，<code>scopes</code> 清單裡要有 <code>…/auth/drive</code>、<code>…/auth/spreadsheets</code>、<code>…/auth/calendar</code> 三個。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>瀏覽器說 Access blocked</b>→ 你的 Gmail 不在專案的測試使用者名單：回 Cloud Console「目標對象」把自己加進去（W6 互動頁 2-4）。</li>
+<li><b>scopes 只有 openid、email、profile</b>→ 引號沒打，重跑上面那行。</li>
+<li><b>重登了 scopes 還是沒有 calendar、瀏覽器也沒出現授權頁</b>→ 舊的登入被沿用了：先 <code>gws auth logout</code>，再跑上面那行。</li>
+<li><b>說找不到 client_secret.json</b>→ W6 互動頁 2-6 沒做，或那台電腦是還原卡、重開機被清掉了：重下載 JSON 放進 <code>%USERPROFILE%\.config\gws</code>。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="1-6"><span class="n">1-6</span><span class="t">cloudflared（Cloudflare 的通道程式，免帳號）</span></label>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>winget install --id Cloudflare.cloudflared -e --accept-package-agreements --accept-source-agreements</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>winget 說已成功安裝。關掉視窗、新開一個。</div>
+<div class="blk test"><b class="k">測一下</b>新視窗打 <code>cloudflared --version</code>，印出 <code>cloudflared version 2026.…</code> 就過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>cloudflared 不是指令</b>→ 沒有新開視窗。</li>
+<li><b>winget 被擋</b>→ 到 Cloudflare 官方文件「Downloads」頁下載 Windows 版，或在教室舉手。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="1-7"><span class="n">1-7</span><span class="t">下載 line_bot_local.py，放進自己的資料夾</span></label>
+<p>按下面「下載」，瀏覽器會存到「下載」資料夾。再貼這段，在「下載」裡開一個 <code>line-bot</code> 資料夾、把程式搬進去、進到那裡：</p>
+<div class="cp"><div class="bar"><span>line_bot_local.py</span><span class="btns"><button type="button" class="dl" data-name="line_bot_local.py">下載</button><button type="button" class="copy">複製</button></span></div><pre data-src="starter/line_bot_local.py" style="max-height:11em;overflow:auto"># LINE bot 簡單版：一支 Python 程式就是整個 bot，跑在你自己的電腦上
+#
+# 傳什麼進來，它做什麼：
+#   問問題（「2026 年諾貝爾物理獎得主是誰？」）→ 交給你電腦上的 Ollama 本地模型，需要就自己上網搜，回覆附來源
+#   講行程（「明天下午三點開會」）            → 整理出日期時間，排進 Google 日曆
+#   傳照片（活動海報、便條紙）               → 照片存進雲端硬碟；模型看照片說上面有什麼；有日期時間就排進日曆
+#   問題、行程、照片都先寫一列進 Google 試算表，才回覆（只講已經做完的事；打招呼和看不懂的格式不記）
+# 雲端硬碟、試算表、日曆都用第 2 段登入好的 gws；模型一律打本機 Ollama 的 API（http://127.0.0.1:11434）。
+#
+# 為什麼還要「通道」：LINE 的伺服器要把訊息送進來，得找得到你的電腦；
+# 教室和家裡的電腦都躲在網路後面，所以用 Cloudflare 的免費臨時通道給它一個 https 網址。
+# 程式開起來會自己把 LINE 的 Webhook 換成這個網址，按 Ctrl+C 結束時再換回原本的（例如你 W5 的 Apps Script）。
+#
+# 需要：Python 3（只用內建功能，不用 pip install）、Ollama 開著且有 gemma4:e4b、
+#       gws 已登入（要有 drive、sheets、calendar 權限）、cloudflared、LINE 的長效通行碼（W5 申請過）
+# 用法（PowerShell，在這個檔所在的資料夾）：
+#   python line_bot_local.py
+# 開起來會問你 LINE 長效通行碼、Channel secret（畫面不顯示）和試算表 ID，貼上按 Enter 就好。
+
+import base64, getpass, hashlib, hmac, json, os, queue, re, shutil, subprocess, sys, tempfile, threading, time, urllib.error, urllib.request
+from datetime import datetime, timedelta
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+MODEL = os.environ.get(&quot;MODEL&quot;, &quot;gemma4:e4b&quot;)
+PORT = int(os.environ.get(&quot;PORT&quot;, &quot;8000&quot;))
+CALENDAR_ID = os.environ.get(&quot;CALENDAR_ID&quot;, &quot;primary&quot;)          # 排進哪個日曆；primary＝你的主日曆
+PHOTO_FOLDER = os.environ.get(&quot;PHOTO_FOLDER&quot;, &quot;LINE待辦照片&quot;)   # 照片存進雲端硬碟的哪個資料夾（沒有就建）
+OLLAMA = &quot;http://127.0.0.1:11434&quot;
+GREETING = re.compile(r&quot;^(hi|hello|你好|嗨|哈囉|測試|test)$&quot;, re.I)
+HELP = (&quot;你好！我是跑在同學電腦上的本地模型 🤖\n&quot;
+        &quot;• 問我問題：需要的話我會上網查，附來源\n• 講行程（「明天下午三點開會」）：我排進 Google 日曆\n&quot;
+        &quot;• 傳照片：我存進雲端硬碟、告訴你上面有什麼，有日期時間也幫你排日曆\n問題、行程、照片都會記進試算表。&quot;)
+TOOLS = [
+    {&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {&quot;name&quot;: &quot;web_search&quot;, &quot;description&quot;: &quot;搜尋網路，回傳前幾筆標題、網址與內文。&quot;,
+     &quot;parameters&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {&quot;query&quot;: {&quot;type&quot;: &quot;string&quot;}}, &quot;required&quot;: [&quot;query&quot;]}}},
+    {&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {&quot;name&quot;: &quot;web_fetch&quot;, &quot;description&quot;: &quot;讀一個網頁的主要文字。&quot;,
+     &quot;parameters&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {&quot;url&quot;: {&quot;type&quot;: &quot;string&quot;}}, &quot;required&quot;: [&quot;url&quot;]}}},
+]
+EVENT_SHAPE = {&quot;type&quot;: &quot;object&quot;, &quot;required&quot;: [&quot;isEvent&quot;, &quot;title&quot;, &quot;date&quot;, &quot;time&quot;], &quot;properties&quot;: {
+    &quot;isEvent&quot;: {&quot;type&quot;: &quot;boolean&quot;}, &quot;title&quot;: {&quot;type&quot;: &quot;string&quot;},
+    &quot;date&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;YYYY-MM-DD，沒提到就填空字串&quot;},
+    &quot;time&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;HH:MM（24 小時制）；有結束時間就寫 HH:MM-HH:MM；沒提到就填空字串&quot;}}}
+
+LINE_TOKEN = LINE_SECRET = SHEET_ID = &quot;&quot;  # main() 開起來時問你，再填進這裡
+GWS = None
+_folder_id = None
+_turn = threading.Lock()  # 一次只處理一則：顯示卡一次只答一題，照片資料夾也不會被同時建兩個
+_procs = []               # 開出去的 cloudflared，結束時一定要關
+TUNNEL_WAIT = 60         # 等 cloudflared 給網址最多幾秒
+
+
+def log(s):
+    print(f&quot;[{datetime.now():%H:%M:%S}] {s}&quot;, flush=True)
+
+
+def today():
+    return datetime.now().strftime(&quot;%Y-%m-%d（%A）&quot;)  # 附上星期幾，模型才算得準「下週五」
+
+
+# ===== 1. 設定：開起來時問一次，不寫進檔案 =====
+def ask_settings():
+    token = os.environ.get(&quot;LINE_CHANNEL_ACCESS_TOKEN&quot;) or getpass.getpass(&quot;貼上 LINE 長效通行碼（Channel access token，畫面不顯示）：&quot;).strip()
+    secret = os.environ.get(&quot;LINE_CHANNEL_SECRET&quot;) or getpass.getpass(&quot;貼上 Channel secret（LINE Developers → Basic settings；必填；畫面不顯示）：&quot;).strip()
+    sheet = os.environ.get(&quot;SHEET_ID&quot;) or input(&quot;試算表 ID（網址 /d/ 和 /edit 中間那段；不寫試算表就直接 Enter）：&quot;).strip()
+    return token, secret, sheet
+
+
+# ===== 2. 叫 LINE、叫 Ollama、叫 gws 的小工具 =====
+def http_json(method, url, body=None, headers=None, timeout=60):
+    data = json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(url, data=data, method=method, headers={&quot;Content-Type&quot;: &quot;application/json&quot;, **(headers or {})})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            raw = r.read()
+            return r.status, (json.loads(raw) if raw.strip() else {})
+    except urllib.error.HTTPError as e:
+        return e.code, {&quot;error&quot;: e.read().decode(&quot;utf-8&quot;, &quot;replace&quot;)[:200]}
+
+
+def line(method, path, body=None):
+    return http_json(method, &quot;https://api.line.me&quot; + path, body, {&quot;Authorization&quot;: &quot;Bearer &quot; + LINE_TOKEN})
+
+
+def reply(token, text):
+    code, res = line(&quot;POST&quot;, &quot;/v2/bot/message/reply&quot;, {&quot;replyToken&quot;: token, &quot;messages&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: text[:5000]}]})
+    if code != 200:
+        log(f&quot;⚠️ LINE 回覆失敗 {code}：{res}&quot;)
+
+
+def download_image(message_id):
+    req = urllib.request.Request(f&quot;https://api-data.line.me/v2/bot/message/{message_id}/content&quot;,
+                                 headers={&quot;Authorization&quot;: &quot;Bearer &quot; + LINE_TOKEN})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.read()
+
+
+def ollama(path, body, timeout=60):
+    code, res = http_json(&quot;POST&quot;, OLLAMA + path, body, timeout=timeout)
+    if code != 200:
+        raise RuntimeError(f&quot;Ollama {path} 回應 {code}：{res}&quot;)
+    return res
+
+
+def chat(messages, timeout=60, **extra):
+    body = {&quot;model&quot;: MODEL, &quot;messages&quot;: messages, &quot;stream&quot;: False, &quot;think&quot;: False, &quot;keep_alive&quot;: &quot;1h&quot;, &quot;options&quot;: {&quot;num_ctx&quot;: 16384}}
+    return ollama(&quot;/api/chat&quot;, {**body, **extra}, timeout).get(&quot;message&quot;, {})
+
+
+def gws(*args, upload=None, cwd=None):
+    &quot;&quot;&quot;跑一條 gws 指令，回傳它印出的 JSON。（gws 只肯上傳「目前資料夾」裡的檔，所以上傳時用 cwd 指到檔案所在的資料夾）&quot;&quot;&quot;
+    cmd = [GWS, *args] + ([&quot;--upload&quot;, upload] if upload else [])
+    r = subprocess.run(cmd, capture_output=True, text=True, encoding=&quot;utf-8&quot;, timeout=60, cwd=cwd)
+    if r.returncode != 0:
+        raise RuntimeError((r.stderr or r.stdout).strip()[-300:])
+    return json.loads(r.stdout or &quot;{}&quot;)
+
+
+def find_gws():
+    # npm 裝的 gws 背後有一個真正的 gws.exe；直接叫它，JSON 的引號才不會被 Windows 的 .cmd 轉接弄壞
+    roots = [os.path.join(os.environ.get(&quot;APPDATA&quot;, &quot;&quot;), &quot;npm&quot;, &quot;node_modules&quot;)]
+    try:  # npm 裝到別的地方時，問 npm 它的全域資料夾在哪
+        roots.append(subprocess.run(&quot;npm root -g&quot;, shell=True, capture_output=True, text=True, timeout=30).stdout.strip())
+    except Exception:
+        pass
+    for root in roots:
+        exe = os.path.join(root, &quot;@googleworkspace&quot;, &quot;cli&quot;, &quot;bin&quot;, &quot;gws.exe&quot;)
+        if root and os.path.exists(exe):
+            return exe
+    return None
+
+
+# ===== 3. 模型：回答問題（自己決定要不要搜）、看照片、找出行程 =====
+def ask_text(question):
+    &quot;&quot;&quot;模型自己決定要不要搜；回傳（答案, 來源網址清單）。&quot;&quot;&quot;
+    msgs = [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: f&quot;你是 LINE 上的助理，今天是 {today()}，可能比你的訓練資料新。&quot;
+             &quot;遇到最近的事、版本號、價格或任何你不確定的事實，先呼叫 web_search；不夠明確再用 web_fetch 讀官方頁面。&quot;
+             &quot;回答用台灣的繁體中文、純文字（不要用星號或井字號），150 字以內，先講結論；不用自己寫網址，程式會附上來源。&quot;},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: question}]
+    sources = []
+    for _ in range(4):  # 最多來回四次工具呼叫
+        m = chat(msgs, tools=TOOLS)
+        msgs.append(m)
+        if not m.get(&quot;tool_calls&quot;):
+            return m.get(&quot;content&quot;, &quot;&quot;).replace(&quot;**&quot;, &quot;&quot;).strip(), sources
+        for c in m[&quot;tool_calls&quot;]:
+            name, args = c[&quot;function&quot;][&quot;name&quot;], c[&quot;function&quot;].get(&quot;arguments&quot;) or {}
+            try:
+                if name == &quot;web_search&quot;:
+                    log(f&quot;  🔍 模型決定搜：{args.get(&#x27;query&#x27;)}&quot;)
+                    rows = ollama(&quot;/api/experimental/web_search&quot;, {&quot;query&quot;: args.get(&quot;query&quot;, &quot;&quot;), &quot;max_results&quot;: 3}).get(&quot;results&quot;, [])
+                    sources += [r[&quot;url&quot;] for r in rows]
+                    out = json.dumps([{&quot;title&quot;: r[&quot;title&quot;], &quot;url&quot;: r[&quot;url&quot;], &quot;content&quot;: r[&quot;content&quot;][:1500]} for r in rows], ensure_ascii=False)
+                else:
+                    log(f&quot;  📄 模型決定讀網頁：{args.get(&#x27;url&#x27;)}&quot;)
+                    page = ollama(&quot;/api/experimental/web_fetch&quot;, {&quot;url&quot;: args.get(&quot;url&quot;, &quot;&quot;)})
+                    sources.insert(0, args.get(&quot;url&quot;, &quot;&quot;))
+                    out = page.get(&quot;content&quot;, &quot;&quot;)[:3000]
+            except Exception as e:
+                out = f&quot;ERROR: {e}&quot;
+            msgs.append({&quot;role&quot;: &quot;tool&quot;, &quot;tool_name&quot;: name, &quot;content&quot;: out})
+    return &quot;查了幾次還整理不出答案，換個問法再試一次。&quot;, sources
+
+
+def ask_image(jpg):
+    m = chat([{&quot;role&quot;: &quot;user&quot;, &quot;images&quot;: [base64.b64encode(jpg).decode()],
+               &quot;content&quot;: &quot;這是使用者用 LINE 傳來的照片。用台灣的繁體中文、三句以內說明照片裡有什麼；&quot;
+                          &quot;看得到日期、時間、地點、活動或繳費資訊就列出來，看不清楚的不要猜。&quot;}])
+    return re.sub(r&quot;^\s*[*-]\s+&quot;, &quot;• &quot;, m.get(&quot;content&quot;, &quot;&quot;).replace(&quot;**&quot;, &quot;&quot;), flags=re.M).strip()  # 星號清單在 LINE 上很亂，換成 •
+
+
+def find_event(text):
+    &quot;&quot;&quot;請模型照固定格式回答「這是不是有日期和時間的行程」；欄位驗算過才算數，不照單全收。&quot;&quot;&quot;
+    m = chat([{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;今天是 {today()}，台北時間。下面這段文字如果是一個有日期和時間的行程、活動或提醒&quot;
+               &quot;（不是在問問題），把「明天」「下週五」換算成實際日期，整理成 JSON；不是就 isEvent 填 false。\n\n&quot; + text}],
+             format=EVENT_SHAPE)
+    try:
+        ev = json.loads(m.get(&quot;content&quot;, &quot;{}&quot;))
+        times = re.findall(r&quot;\d{1,2}:\d{2}&quot;, ev[&quot;time&quot;])  # 「15:10-17:00」這種區間：第一個是開始、第二個是結束
+        ev[&quot;start&quot;] = datetime.strptime(f&quot;{ev[&#x27;date&#x27;]} {times[0]}&quot;, &quot;%Y-%m-%d %H:%M&quot;)  # 2/30、25:99 這種不存在的會在這裡被擋掉
+        ev[&quot;end&quot;] = datetime.strptime(f&quot;{ev[&#x27;date&#x27;]} {times[1]}&quot;, &quot;%Y-%m-%d %H:%M&quot;) if len(times) &gt; 1 else ev[&quot;start&quot;] + timedelta(minutes=30)
+        ev[&quot;time&quot;] = f&quot;{ev[&#x27;start&#x27;]:%H:%M}&quot; + (f&quot;–{ev[&#x27;end&#x27;]:%H:%M}&quot; if len(times) &gt; 1 else &quot;&quot;)
+    except (ValueError, KeyError, TypeError, IndexError):
+        return None
+    # 原文寫了「幾月幾日」或「10/20」，模型整理出來的日期要對得上：模型會偷偷把「2 月 30 日」改成 2 月 28 日
+    said = re.search(r&quot;(\d{4})\s*[-/年]\s*(\d{1,2})\s*[-/月]\s*(\d{1,2})|(\d{1,2})\s*月\s*(\d{1,2})\s*[日號]|(?&lt;!\d)(\d{1,2})/(\d{1,2})(?!\d)&quot;, text)
+    nums = [int(x) for x in said.groups() if x] if said else []
+    if nums and nums != [ev[&quot;start&quot;].year, ev[&quot;start&quot;].month, ev[&quot;start&quot;].day][-len(nums):]:
+        log(f&quot;  ⚠️ 模型整理的日期 {ev[&#x27;date&#x27;]} 跟原文「{said.group(0)}」對不上，不排日曆&quot;)
+        return None
+    return ev if ev.get(&quot;isEvent&quot;) is True and str(ev.get(&quot;title&quot;, &quot;&quot;)).strip() and ev[&quot;end&quot;] &gt; ev[&quot;start&quot;] else None
+
+
+# ===== 4. Google：照片存雲端硬碟、排日曆、寫試算表（都用 gws） =====
+def save_photo(jpg):
+    &quot;&quot;&quot;照片存進 PHOTO_FOLDER 資料夾（沒有就建），回傳檔案連結。&quot;&quot;&quot;
+    global _folder_id
+    if not _folder_id:
+        q = f&quot;name=&#x27;{PHOTO_FOLDER}&#x27; and mimeType=&#x27;application/vnd.google-apps.folder&#x27; and trashed=false&quot;
+        found = gws(&quot;drive&quot;, &quot;files&quot;, &quot;list&quot;, &quot;--params&quot;, json.dumps({&quot;q&quot;: q, &quot;fields&quot;: &quot;files(id)&quot;}, ensure_ascii=False)).get(&quot;files&quot;, [])
+        _folder_id = found[0][&quot;id&quot;] if found else gws(&quot;drive&quot;, &quot;files&quot;, &quot;create&quot;, &quot;--json&quot;, json.dumps(
+            {&quot;name&quot;: PHOTO_FOLDER, &quot;mimeType&quot;: &quot;application/vnd.google-apps.folder&quot;}, ensure_ascii=False))[&quot;id&quot;]
+    with tempfile.TemporaryDirectory() as tmp:  # 照片先存成暫存檔，上傳完整個暫存資料夾自動刪掉
+        with open(os.path.join(tmp, &quot;photo.jpg&quot;), &quot;wb&quot;) as fh:
+            fh.write(jpg)
+        f = gws(&quot;drive&quot;, &quot;files&quot;, &quot;create&quot;, &quot;--params&quot;, json.dumps({&quot;fields&quot;: &quot;id,webViewLink&quot;}),
+                &quot;--json&quot;, json.dumps({&quot;name&quot;: f&quot;line-{datetime.now():%Y%m%d-%H%M%S}.jpg&quot;, &quot;parents&quot;: [_folder_id]}),
+                upload=&quot;photo.jpg&quot;, cwd=tmp)
+    log(&quot;  📷 照片存進雲端硬碟了&quot;)
+    return f.get(&quot;webViewLink&quot;, &quot;&quot;)
+
+
+def add_calendar(ev):
+    gws(&quot;calendar&quot;, &quot;events&quot;, &quot;insert&quot;, &quot;--params&quot;, json.dumps({&quot;calendarId&quot;: CALENDAR_ID}),
+        &quot;--json&quot;, json.dumps({&quot;summary&quot;: ev[&quot;title&quot;], &quot;description&quot;: &quot;由 LINE bot 簡單版建立&quot;,
+                              &quot;start&quot;: {&quot;dateTime&quot;: f&quot;{ev[&#x27;start&#x27;]:%Y-%m-%dT%H:%M:00}&quot;, &quot;timeZone&quot;: &quot;Asia/Taipei&quot;},
+                              &quot;end&quot;: {&quot;dateTime&quot;: f&quot;{ev[&#x27;end&#x27;]:%Y-%m-%dT%H:%M:00}&quot;, &quot;timeZone&quot;: &quot;Asia/Taipei&quot;}}, ensure_ascii=False))
+    log(f&quot;  🗓️ 排進日曆了：{ev[&#x27;date&#x27;]} {ev[&#x27;time&#x27;]}&quot;)
+
+
+def write_sheet(row):
+    &quot;&quot;&quot;寫一列進試算表：時間、類型、傳了什麼、bot 回了什麼、照片連結、日曆。&quot;&quot;&quot;
+    gws(&quot;sheets&quot;, &quot;spreadsheets&quot;, &quot;values&quot;, &quot;append&quot;,
+        &quot;--params&quot;, json.dumps({&quot;spreadsheetId&quot;: SHEET_ID, &quot;range&quot;: &quot;A1&quot;, &quot;valueInputOption&quot;: &quot;USER_ENTERED&quot;}),
+        &quot;--json&quot;, json.dumps({&quot;values&quot;: [row]}, ensure_ascii=False))
+    log(&quot;  📝 寫進試算表了&quot;)
+
+
+def try_do(what, fn, *args):
+    &quot;&quot;&quot;Google 那邊哪一件失敗，都不讓整則訊息掛掉；回傳（結果, 錯誤訊息；成功時是空字串）。&quot;&quot;&quot;
+    try:
+        return fn(*args), &quot;&quot;
+    except Exception as e:
+        log(f&quot;⚠️ {what}失敗：{e}&quot;)
+        return None, str(e)[:120] or &quot;不明原因&quot;
+
+
+# ===== 5. 處理一則訊息：先把事情做完（存照片、排日曆、寫試算表）→ 才回覆，只講已經做完的事 =====
+def handle(event):
+    with _turn:
+        _handle(event)
+
+
+def _handle(event):
+    if event.get(&quot;type&quot;) != &quot;message&quot; or not event.get(&quot;replyToken&quot;):
+        return
+    msg, token = event[&quot;message&quot;], event[&quot;replyToken&quot;]
+    user = event.get(&quot;source&quot;, {})
+    if user.get(&quot;type&quot;) == &quot;user&quot;:  # 「對方正在輸入…」動畫，最多 60 秒
+        line(&quot;POST&quot;, &quot;/v2/bot/chat/loading/start&quot;, {&quot;chatId&quot;: user[&quot;userId&quot;], &quot;loadingSeconds&quot;: 60})
+    t0, notes, link, cal = time.time(), [], &quot;&quot;, &quot;&quot;
+    try:
+        if msg[&quot;type&quot;] == &quot;text&quot;:
+            text = msg[&quot;text&quot;].strip()
+            if GREETING.match(text):
+                return reply(token, HELP)
+            log(f&quot;📩 收到文字（{len(text)} 字）&quot;)  # 不印內容：螢幕可能正在投影
+            kind, said, ev = &quot;文字&quot;, text, find_event(text)
+            if ev:  # 講行程：排日曆就好，不必上網查
+                answer = f&quot;📌 {ev[&#x27;title&#x27;]}\n📅 {ev[&#x27;date&#x27;]}　⏰ {ev[&#x27;time&#x27;]}&quot;
+            else:   # 問問題：交給模型，需要就自己搜
+                answer, sources = ask_text(text)
+                answer += (&quot;\n\n來源：\n&quot; + &quot;\n&quot;.join(&quot;• &quot; + u for u in list(dict.fromkeys(sources))[:3]) if sources
+                           else &quot;\n\nℹ️ 這題沒有上網查，只憑模型記憶，請自己核對。&quot;)
+        elif msg[&quot;type&quot;] == &quot;image&quot;:
+            log(&quot;📩 收到照片&quot;)
+            jpg = download_image(msg[&quot;id&quot;])
+            kind, said = &quot;照片&quot;, &quot;（照片）&quot;
+            link, err = try_do(&quot;存照片&quot;, save_photo, jpg)
+            notes.append(f&quot;📷 照片已存進雲端硬碟「{PHOTO_FOLDER}」&quot; if not err else &quot;⚠️ 照片沒存進雲端硬碟：&quot; + err)
+            answer = ask_image(jpg)
+            ev = find_event(answer)
+        else:
+            return reply(token, &quot;目前我看得懂文字和照片，其他類型還不行喔。&quot;)
+        if ev:
+            _, err = try_do(&quot;排日曆&quot;, add_calendar, ev)
+            cal = &quot;已建立&quot; if not err else &quot;失敗：&quot; + err
+            notes.append(f&quot;🗓️ 已排進 Google 日曆（{ev[&#x27;date&#x27;]} {ev[&#x27;time&#x27;]}）&quot; if not err else &quot;⚠️ 日曆沒排成：&quot; + err)
+        if SHEET_ID:
+            _, err = try_do(&quot;寫試算表&quot;, write_sheet, [f&quot;{datetime.now():%Y-%m-%d %H:%M:%S}&quot;, kind, said, answer[:500], link or &quot;&quot;, cal])
+            notes.append(&quot;📝 已記進試算表&quot; if not err else &quot;⚠️ 這則沒寫進試算表：&quot; + err)
+        reply(token, f&quot;{answer}\n\n&quot; + &quot;\n&quot;.join(notes + [f&quot;（本地模型 {time.time() - t0:.0f} 秒）&quot;]))
+        log(f&quot;✅ 回覆了（{time.time() - t0:.0f} 秒）&quot;)
+    except Exception as e:
+        log(f&quot;❌ {e}&quot;)
+        reply(token, &quot;⚠️ 出錯了：&quot; + str(e)[:300])
+
+
+class Webhook(BaseHTTPRequestHandler):
+    def do_POST(self):
+        body = self.rfile.read(int(self.headers.get(&quot;Content-Length&quot;, 0)))
+        if LINE_SECRET:  # 對簽章：確定真的是 LINE 送來的，不是知道網址的路人
+            sig = base64.b64encode(hmac.new(LINE_SECRET.encode(), body, hashlib.sha256).digest()).decode()
+            if not hmac.compare_digest(sig, self.headers.get(&quot;x-line-signature&quot;, &quot;&quot;)):
+                log(&quot;⛔ 簽章不對，不是 LINE 送來的，丟掉&quot;)
+                self.send_response(401)
+                self.end_headers()
+                return
+        self.send_response(200)  # 先跟 LINE 說收到了（LINE 要 2 秒內回應），再慢慢處理
+        self.end_headers()
+        for ev in json.loads(body or b&quot;{}&quot;).get(&quot;events&quot;, []):
+            threading.Thread(target=handle, args=(ev,), daemon=True).start()
+
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(&quot;LINE bot 簡單版運作中&quot;.encode())
+
+    def log_message(self, *args):  # 不要印每一個連線
+        pass
+
+
+# ===== 6. 開通道、把 LINE 的 Webhook 換過來；結束時換回去 =====
+def open_tunnel():
+    &quot;&quot;&quot;開 Cloudflare 臨時通道，最多等 60 秒拿網址；拿不到就把它關掉，回傳 None。&quot;&quot;&quot;
+    if not shutil.which(&quot;cloudflared&quot;):
+        log(&quot;⚠️ 找不到 cloudflared，外面連不到這裡。另開 PowerShell 貼：winget install --id Cloudflare.cloudflared -e&quot;)
+        log(&quot;   裝完關掉這個視窗、新開一個再跑一次。&quot;)
+        return None
+    cf = subprocess.Popen([&quot;cloudflared&quot;, &quot;tunnel&quot;, &quot;--no-autoupdate&quot;, &quot;--url&quot;, f&quot;http://127.0.0.1:{PORT}&quot;],
+                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding=&quot;utf-8&quot;, errors=&quot;replace&quot;)
+    _procs.append(cf)
+    found = queue.Queue()
+
+    def watch():  # 另一條執行緒一行一行讀它的輸出（之後的也照讀照丟，免得塞住）；主程式只等 60 秒
+        for row in cf.stdout:
+            m = re.search(r&quot;https://[a-z0-9-]+\.trycloudflare\.com&quot;, row)
+            if m:
+                found.put(m.group(0))
+        found.put(None)
+
+    threading.Thread(target=watch, daemon=True).start()
+    try:
+        url = found.get(timeout=TUNNEL_WAIT)
+    except queue.Empty:
+        url = None
+    if not url:
+        log(f&quot;⚠️ {TUNNEL_WAIT} 秒內通道沒拿到網址：看網路（學校網路可能擋），或再跑一次&quot;)
+    return url
+
+
+def restore(old):
+    &quot;&quot;&quot;把 LINE 的 Webhook 換回原本的，再讀一次確認真的換回去了（換的那條路說成功不算數）。&quot;&quot;&quot;
+    if not old:
+        log(&quot;ℹ️ 原本沒有 Webhook 網址，現在指著一個已經關掉的通道；要用 Apps Script 版就回 LINE Developers 貼回 /exec 網址&quot;)
+        return
+    line(&quot;PUT&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;, {&quot;endpoint&quot;: old})
+    code, now = line(&quot;GET&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;)
+    if code == 200 and now.get(&quot;endpoint&quot;) == old:
+        log(&quot;↩️ LINE 的 Webhook 換回原本的了（重新讀過一次，確認是原本那個）&quot;)
+    else:
+        log(f&quot;⚠️ 沒能確認換回去：到 LINE Developers →「Messaging API」→ Webhook URL 手動貼回：{old}&quot;)
+
+
+def main():
+    global LINE_TOKEN, LINE_SECRET, SHEET_ID, GWS
+    LINE_TOKEN, LINE_SECRET, SHEET_ID = ask_settings()
+    GWS = find_gws()
+    code, info = line(&quot;GET&quot;, &quot;/v2/bot/info&quot;)
+    if code != 200:
+        sys.exit(f&quot;LINE 通行碼不對（{code}）：回 LINE Developers 重新複製長效通行碼&quot;)
+    log(f&quot;✅ LINE bot「{info.get(&#x27;displayName&#x27;)}」&quot;)
+    if not LINE_SECRET:
+        sys.exit(&quot;沒有 Channel secret 就不開通道：沒有它，知道通道網址的人都能假冒 LINE 送訊息進來。&quot;
+                 &quot;回 LINE Developers →「Basic settings」複製，再跑一次。&quot;)
+    if not GWS:
+        log(&quot;⚠️ 找不到 gws.exe：照片、日曆、試算表都會失敗（先裝 gws：指南 1-3）&quot;)
+    code, cur = line(&quot;GET&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;)
+    if code == 200:
+        old = cur.get(&quot;endpoint&quot;)
+    elif code == 404:  # LINE 說這個 channel 原本就沒設 Webhook
+        old = None
+    else:  # 讀不到原本的網址就不換，免得換了回不去
+        sys.exit(f&quot;讀不到 LINE 現在的 Webhook 網址（{code}）：先不換。等一下再跑一次。{cur}&quot;)
+    log(f&quot;   原本的 Webhook：{old or &#x27;（沒有設定）&#x27;}——先抄下來，萬一沒換回去要手動貼回&quot;)
+    log(f&quot;載入模型 {MODEL}（第一次要等一下）…&quot;)
+    chat([], timeout=300)
+    log(&quot;✅ 模型已在顯示卡上&quot;)
+
+    server = ThreadingHTTPServer((&quot;127.0.0.1&quot;, PORT), Webhook)  # 只聽本機：外面只能從通道進來
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    switched = False
+    try:  # 從開通道起就在 try 裡：只要 Webhook 換過，不管怎麼結束都會換回去
+        url = open_tunnel()
+        if url:
+            code, res = line(&quot;PUT&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;, {&quot;endpoint&quot;: url + &quot;/callback&quot;})
+            if code != 200:
+                log(f&quot;⚠️ 換 Webhook 失敗 {code}：{res}。可以手動貼到 LINE Developers：{url}/callback&quot;)
+            else:
+                switched = True
+                log(f&quot;✅ LINE 的 Webhook 換到這台電腦了：{url}/callback（按 Ctrl+C 會換回去）&quot;)
+                log(&quot;   LINE 說換網址最多要 1 分鐘才生效；等一下再用手機傳訊息&quot;)
+                time.sleep(5)
+                code, test = line(&quot;POST&quot;, &quot;/v2/bot/channel/webhook/test&quot;, {})
+                log(f&quot;   LINE 測試連線：{&#x27;✅ 通了&#x27; if test.get(&#x27;success&#x27;) else &#x27;還沒通（&#x27; + str(test.get(&#x27;reason&#x27;)) + &#x27;），等一分鐘再傳&#x27;}&quot;)
+        log(&quot;開好了。手機傳訊息給 bot 試試看；這個視窗不要關，按 Ctrl+C 結束。&quot; if switched
+            else &quot;⚠️ 這次沒接上 LINE（看上面的訊息）。按 Ctrl+C 結束。&quot;)
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        if switched:
+            restore(old)
+        for cf in _procs:
+            cf.terminate()
+        server.shutdown()
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</pre></div>
+<p class="small">上面只露出開頭幾行（可以捲動）；整份會被下載或複製。</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>New-Item -ItemType Directory -Force "$env:USERPROFILE\Downloads\line-bot" | Out-Null
+Move-Item "$env:USERPROFILE\Downloads\line_bot_local.py" "$env:USERPROFILE\Downloads\line-bot\" -Force
+cd "$env:USERPROFILE\Downloads\line-bot"
+dir</pre></div>
+<div class="blk see"><b class="k">你應該看到</b><code>dir</code> 列出一個檔：<code>line_bot_local.py</code>（約 15 KB）。</div>
+<div class="blk test"><b class="k">測一下</b>檔名剛好是 <code>line_bot_local.py</code>，不是 <code>line_bot_local (1).py</code> 或 <code>.txt</code> 結尾。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>Move-Item 說找不到檔</b>→ 瀏覽器存到別的地方、或檔名多了 (1)：用檔案總管把它拖進 <code>下載\line-bot</code>，改名成 <code>line_bot_local.py</code>。</li>
+<li><b>下載鈕沒反應</b>→ 按「複製」，開記事本貼上，另存新檔：存檔類型選「所有檔案」、檔名 <code>line_bot_local.py</code>、編碼 UTF-8。</li>
+</ul></details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 第 2 段 三個值 ======================= -->
+<section id="s2" data-sec="2"><h2>第 2 段　準備三個值</h2>
+<p class="gain">這段做完你手上會有：試算表 ID、LINE 的 Channel secret、長效通行碼（三個都必填）。<b>後兩個等於鑰匙：不截圖、不貼進對話、不傳給別人。</b></p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="2-1"><span class="n">2-1</span><span class="t">開一張新的 Google 試算表，抄下 ID</span></label>
+<p>用跟 gws 登入<b>同一個 Gmail</b> 開雲端硬碟 → 新增 → Google 試算表，取名（例如「LINE bot 簡單版紀錄」）。第一列打上標題（可做可不做，bot 會從下一列開始記）：</p>
+<pre class="plain">時間｜類型｜傳了什麼｜bot 回了什麼｜照片連結｜日曆</pre>
+<p>看網址：<code>docs.google.com/spreadsheets/d/<b>一長串英數字</b>/edit</code>，中間那一長串就是試算表 ID，複製起來（等一下貼）。</p>
+<div class="blk see"><b class="k">你應該看到</b>一長串大約 44 個英文字母、數字、底線或減號，沒有斜線。</div>
+<div class="blk test"><b class="k">測一下</b>複製的內容裡沒有 <code>/</code>、也沒有 <code>edit</code>。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>之後 bot 說「這則沒寫進試算表」</b>→ ID 多複製了斜線，或試算表是另一個 Google 帳號開的（gws 登入的帳號看不到它）。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="2-2"><span class="n">2-2</span><span class="t">LINE 的 Channel secret（對簽章用）</span></label>
+<p>瀏覽器開 LINE Developers（<code>developers.line.biz</code>）→ 登入 → 你 W5 建的 Provider → 你的 bot 那個 channel →「Basic settings」分頁 → 往下找 <b>Channel secret</b>，按旁邊的複製。</p>
+<div class="blk see"><b class="k">你應該看到</b>一串 32 個英文字母和數字。</div>
+<div class="blk test"><b class="k">測一下</b>複製到的是 Channel <b>secret</b>，不是 Channel ID（那個只有數字）。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>為什麼一定要它</b>→ bot 用它「對簽章」：LINE 送來的每則訊息都附一個用這把鑰匙算出來的簽章，對得上才處理，路人假冒 LINE 送的會被擋掉。<b>沒有它程式不開通道</b>（開了等於誰都能假冒 LINE）。</li>
+<li><b>找不到 Basic settings</b>→ 要點進 channel（不是 Provider 那層）；分頁在頁面上方。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="2-3"><span class="n">2-3</span><span class="t">LINE 的長效通行碼（Channel access token）</span></label>
+<p>同一個 channel →「Messaging API」分頁 → 拉到最下面 <b>Channel access token (long-lived)</b> → 按複製。這就是 W5 你貼進 Apps Script 指令碼屬性的那一把。</p>
+<div class="blk see"><b class="k">你應該看到</b>一長串（一百多個字元）英數字和符號。</div>
+<div class="blk test"><b class="k">測一下</b>等一下開 bot 時，它會先拿這把去問 LINE「這支 bot 叫什麼名字」，答得出來就對了。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>不要按 Reissue（重發）</b>→ 重發會換一把新的，W5 Apps Script 指令碼屬性裡的舊那把可能跟著失效。直接複製現在這把。</li>
+<li><b>那裡是空的</b>→ W5 沒發過：按 Issue 發一把，記得也貼回 Apps Script 的指令碼屬性。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="2-4"><span class="n">2-4</span><span class="t">確認 LINE 的回應設定（W5 做過就只看一眼）</span></label>
+<p>LINE Official Account Manager（<code>manager.line.biz</code>）→ 你的官方帳號 → 右上「設定」→「回應設定」。</p>
+<div class="blk see"><b class="k">你應該看到</b>「Webhook」是開的、「自動回應訊息」是關的（W5 設好的樣子）。</div>
+<div class="blk test"><b class="k">測一下</b>手機傳 hi 給 bot，W5 的 Apps Script 版會回你——這是換過去之前的樣子。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>手機每則都收到兩個回覆</b>→「自動回應訊息」沒關。</li>
+</ul></details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 第 3 段 開 bot ======================= -->
+<section id="s3" data-sec="3"><h2>第 3 段　開 bot</h2>
+<p class="gain">這段做完：bot 在你電腦上跑起來，LINE 的訊息會送到你的電腦。<b>之後每次要用，只要做這一段。</b></p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="3-1"><span class="n">3-1</span><span class="t">確認 Ollama 開著</span></label>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>ollama list</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>清單裡有 <code>gemma4:e4b</code>。</div>
+<div class="blk test"><b class="k">測一下</b>沒有出現 could not connect。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>could not connect</b>→ 開始功能表打開「Ollama」，等右下角出現羊駝圖示再試。</li>
+<li><b>Ollama app 卡在 Loading</b>→ 工作管理員把 <code>ollama app.exe</code> 和 <code>ollama.exe</code> 都結束，再打開。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="3-2"><span class="n">3-2</span><span class="t">開 bot，貼三個值</span></label>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>cd "$env:USERPROFILE\Downloads\line-bot"
+python line_bot_local.py</pre></div>
+<p>它會依序問三件事，貼上按 Enter：① 長效通行碼 ② Channel secret ③ 試算表 ID。<b>前兩個貼上去畫面不會出現任何字、也沒有星號，是正常的</b>：每個值只貼一次（在 PowerShell 視窗按一下滑鼠右鍵就是貼上），貼完直接按 Enter。⚠️ 這個「看不到字的貼上」老師彩排時才第一次在 E403 那種視窗試，以當天畫面為準。</p>
+<div class="blk see"><b class="k">你應該看到</b>（⚠️ 下面是照程式寫的預期畫面：模型載入那兩行老師電腦 10/10 實測過；LINE bot 名字、通道、換 Webhook、測試連線要彩排接上真的 LINE 才第一次跑，以你的畫面為準）
+<pre class="plain">[15:20:01] ✅ LINE bot「你的 bot 名字」
+[15:20:01]    原本的 Webhook：（你 W5 的 /exec 網址）——先抄下來，萬一沒換回去要手動貼回
+[15:20:01] 載入模型 gemma4:e4b（第一次要等一下）…
+[15:20:17] ✅ 模型已在顯示卡上
+[15:20:21] ✅ LINE 的 Webhook 換到這台電腦了：https://（一串英文字）.trycloudflare.com/callback（按 Ctrl+C 會換回去）
+[15:20:21]    LINE 說換網址最多要 1 分鐘才生效；等一下再用手機傳訊息
+[15:20:26]    LINE 測試連線：✅ 通了
+[15:20:26] 開好了。手機傳訊息給 bot 試試看；這個視窗不要關，按 Ctrl+C 結束。</pre></div>
+<div class="blk test"><b class="k">測一下</b>看到「開好了」就過。把「原本的是：…」那行的網址<b>抄下來</b>（萬一程式沒換回去，要手動貼回 LINE 後台）。<b>這個視窗不要關</b>，縮小就好。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>LINE 通行碼不對（401）</b>→ 貼成 Channel secret、或少複製了字：回 2-3 重新複製，再跑一次。</li>
+<li><b>沒有 Channel secret 就不開通道</b>→ 第二個問題直接按了 Enter：回 2-2 複製，再跑一次。</li>
+<li><b>讀不到 LINE 現在的 Webhook 網址</b>→ LINE 那邊一時沒回應；程式為了不讓你換了回不去，先不換。等一下再跑一次。</li>
+<li><b>60 秒內通道沒拿到網址</b>→ 網路擋住 Cloudflare（學校網路有時會）：換手機熱點，或下課回家再試。</li>
+<li><b>⚠️ 找不到 cloudflared</b>→ 1-6 裝完沒新開視窗。關掉、新開、從 <code>cd</code> 那行再來。</li>
+<li><b>⚠️ 找不到 gws</b>→ 1-3 沒做或沒新開視窗；這次照片、日曆、試算表都會失敗。</li>
+<li><b>Ollama … 回應 404：model not found</b>→ 沒有 <code>gemma4:e4b</code>：<code>ollama pull gemma4:e4b</code>。</li>
+<li><b>換 Webhook 失敗</b>→ 照畫面印的網址，自己到 LINE Developers →「Messaging API」→ Webhook URL 按 Edit 貼上、按 Update。</li>
+<li><b>LINE 測試連線：還沒通</b>→ 正常，LINE 換網址要等最多 1 分鐘；等一下直接用手機傳。</li>
+<li><b>想換成小一號的模型</b>→ 開 bot 前先打 <code>$env:MODEL="gemma4:e2b"</code>（同一個視窗）。</li>
+</ul></details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 第 4 段 用 ======================= -->
+<section id="s4" data-sec="4"><h2>第 4 段　用手機試四種訊息</h2>
+<p class="gain">這段做完：問題會查、行程進日曆、照片進雲端硬碟，四種都記在試算表裡。電腦視窗會一步一步印出它在做什麼。</p>
+<p class="small">下面「你應該看到」的回覆，是老師 10/10 在自己電腦用同一支程式實測的結果（模型、搜尋、雲端硬碟、日曆、試算表都是真的；LINE 那端換成記錄用的假函式），你的字句會不一樣。第一則要等十幾秒是正常的。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="4-1"><span class="n">4-1</span><span class="t">打招呼：傳 hi</span></label>
+<div class="blk see"><b class="k">你應該看到</b>
+<pre class="plain">你好！我是跑在同學電腦上的本地模型 🤖
+• 問我問題：需要的話我會上網查，附來源
+• 講行程（「明天下午三點開會」）：我排進 Google 日曆
+• 傳照片：我存進雲端硬碟、告訴你上面有什麼，有日期時間也幫你排日曆
+問題、行程、照片都會記進試算表。</pre></div>
+<div class="blk test"><b class="k">測一下</b>收到這段就表示：LINE 真的把訊息送到你電腦了（通道、Webhook、程式三樣都通）。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>收到的是 W5 Apps Script 的回覆</b>→ Webhook 還沒換過來，等一分鐘再傳。</li>
+<li><b>完全沒反應</b>→ 看電腦視窗：有「⛔ 簽章不對」＝Channel secret 貼錯，Ctrl+C 後重開重貼；什麼都沒印＝LINE 還沒換過來，再等一下。</li>
+<li><b>手機出現兩個回覆</b>→ LINE 官方帳號的「自動回應訊息」沒關（2-4）。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="4-2"><span class="n">4-2</span><span class="t">問一個要上網查的問題</span></label>
+<div class="cp"><div class="bar"><span>傳給 bot</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>2026 年諾貝爾物理獎得主是誰？</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>電腦視窗：<code>📩 收到文字</code> → <code>🔍 模型決定搜：2026年諾貝爾物理獎得主</code> → <code>📝 寫進試算表了</code> → <code>✅ 回覆了</code>。手機：
+<pre class="plain">結論：2026 年的諾貝爾物理獎得主是弗朗西斯·哈爾岑（Francis Halzen），他因對冰立方中微子天文台的決定性貢獻以及發現具有天體物理起源的高能中微子而獲獎。……
+
+來源：
+• https://www.nobelprize.org/prizes/physics/2026/press-release/
+• https://www.cas.cn/kj/202610/t20261007_5121442.shtml
+• https://www.chinanews.com.cn/gj/2026/10-06/10708477.shtml
+
+📝 已記進試算表
+（本地模型 6 秒）</pre></div>
+<div class="blk test"><b class="k">測一下</b>點第一個來源，是諾貝爾獎官網的新聞稿。注意：模型照搜到的對岸網站寫「中微子」，台灣說「微中子」——引用 AI 的答案前，用語和來源都要自己看過。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>回答最後寫「ℹ️ 這題沒有上網查」</b>→ 模型判斷不用查就直接答了；小模型不是每次都穩，題目講具體一點再問一次。</li>
+<li><b>⚠️ 出錯了：Ollama … timed out</b>→ 顯示卡太忙或太小：關掉其他跑模型的程式（例如 LM Studio），或換 <code>gemma4:e2b</code>。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="4-3"><span class="n">4-3</span><span class="t">講一個行程，看它排進日曆</span></label>
+<div class="cp"><div class="bar"><span>傳給 bot</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>明天下午三點要跟專題組開會</pre></div>
+<div class="blk see"><b class="k">你應該看到</b>電腦視窗：<code>🗓️ 排進日曆了</code> → <code>📝 寫進試算表了</code>。手機（下面是老師 10/10 傳的，所以是 10/11；你看到的是你傳的隔天）：
+<pre class="plain">📌 跟專題組開會
+📅 2026-10-11　⏰ 15:00
+
+🗓️ 已排進 Google 日曆（2026-10-11 15:00）
+📝 已記進試算表
+（本地模型 2 秒）</pre></div>
+<div class="blk test"><b class="k">測一下</b>打開 Google 日曆，明天 15:00 有「跟專題組開會」（30 分鐘）。<b>再試一個陷阱</b>：傳「2027 年 2 月 30 日下午三點交報告」——模型會偷偷把它改成 2 月 28 日，程式比對原文發現對不上，<b>不會</b>排進日曆。這就是「AI 給的不照單全收」。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>⚠️ 日曆沒排成：…403…Calendar API has not been used</b>→ 1-4 沒啟用 Calendar API，或啟用在別的專案。</li>
+<li><b>⚠️ 日曆沒排成：…insufficient authentication scopes</b>→ 1-5 登入時沒要 calendar，重跑那行。</li>
+<li><b>它把行程當成問題回答了</b>→ 沒講清楚日期或時間（「下午三點」比「三點」清楚）；換個說法再傳。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="4-4"><span class="n">4-4</span><span class="t">傳一張有日期的活動海報</span></label>
+<p>拍一張有日期、時間、地點的海報或公告傳過去（下面是老師用的測試海報：生成式 AI 實作講座、10/20 下午 3:10–5:00、理工二館 A101）。</p>
+<div class="blk see"><b class="k">你應該看到</b>電腦視窗：<code>📩 收到照片</code> → <code>📷 照片存進雲端硬碟了</code> → <code>🗓️ 排進日曆了</code> → <code>📝 寫進試算表了</code>。手機：
+<pre class="plain">這是一則關於「生成式 AI 實作講座」的活動通知。
+資訊摘要：
+• 活動名稱： 生成式 AI 實作講座
+• 日期： 2026 年 10 月 20 日 (二)
+• 時間： 下午 3:10–5:00
+• 地點： 理工二館 A101
+• 費用資訊： 免費入場，請帶筆電
+
+📷 照片已存進雲端硬碟「LINE待辦照片」
+🗓️ 已排進 Google 日曆（2026-10-20 15:10–17:00）
+📝 已記進試算表
+（本地模型 8 秒）</pre></div>
+<div class="blk test"><b class="k">測一下</b>三個地方都去看：雲端硬碟多一個「LINE待辦照片」資料夾，裡面有 <code>line-日期-時分秒.jpg</code>；日曆 10/20 有那場講座；試算表那一列的「照片連結」點得開。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>⚠️ 照片沒存進雲端硬碟</b>→ gws 登入時沒要 drive（1-5），或 Drive API 沒啟用。</li>
+<li><b>照片上的字它讀錯</b>→ 小模型看圖不是百分之百；拍正、拍近一點。讀錯的日期一樣會被排進日曆（程式只能拿模型自己的描述來比對，比對不到照片本身），所以回覆裡的日期一定要自己看一眼，錯了就去日曆刪掉。</li>
+<li><b>不是活動的照片也存進雲端硬碟了</b>→ 正常：照片一律先存，有日期時間的才排日曆。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="4-5"><span class="n">4-5</span><span class="t">打開試算表對一次帳</span></label>
+<p>打開 2-1 那張試算表。</p>
+<div class="blk see"><b class="k">你應該看到</b>每傳一則（打招呼除外）就多一列：時間、類型（文字／照片）、你傳了什麼、bot 回了什麼、照片連結（照片才有）、日曆（排了就是「已建立」）。</div>
+<div class="blk test"><b class="k">測一下</b>手機上每則回覆都說「📝 已記進試算表」，試算表的列數就要對得上——bot 是先寫表、確定寫進去了才回覆的。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>手機說記了、表裡卻沒有</b>→ 看的是不是同一張表（ID）；重新整理頁面。</li>
+</ul></details>
+</li>
+</ol>
+</section>
+
+<!-- ======================= 第 5 段 結束 ======================= -->
+<section id="s5" data-sec="5"><h2>第 5 段　結束、把 LINE 還給 Apps Script</h2>
+<p class="gain">這段做完：bot 關掉，LINE 的訊息回到你 W5 的 Apps Script bot。</p>
+<ol class="steps">
+
+<li><label class="chk"><input type="checkbox" data-k="5-1"><span class="n">5-1</span><span class="t">在 bot 的視窗按 Ctrl+C</span></label>
+<div class="blk see"><b class="k">你應該看到</b><code>↩️ LINE 的 Webhook 換回原本的了（重新讀過一次，確認是原本那個）</code>，然後回到 PowerShell 的提示字元。</div>
+<div class="blk test"><b class="k">測一下</b>等一分鐘，手機傳 hi，回你的是 W5 的 Apps Script 版（說明文字不一樣）。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>直接按視窗右上角 ✕ 關掉了</b>→ 程式來不及換回去，LINE 還指著已經關掉的通道（手機傳了沒反應）。到 LINE Developers →「Messaging API」→ Webhook URL → Edit，貼回 3-2 抄下的 <code>/exec</code> 網址 → Update。</li>
+<li><b>⚠️ 沒能確認換回去</b>→ 同上，照畫面印的網址手動貼回去。</li>
+</ul></details>
+</li>
+
+<li><label class="chk"><input type="checkbox" data-k="5-2"><span class="n">5-2</span><span class="t">在教室共用電腦：登出、清掉 gws 的登入</span></label>
+<p>還原卡電腦重開機會清掉，但下一個人可能在你之前就坐下來。在家用自己電腦的可以跳過。</p>
+<div class="cp"><div class="bar"><span>PowerShell</span><span class="btns"><button type="button" class="copy">複製</button></span></div><pre>gws auth logout
+gws auth status
+Remove-Item -Recurse -Force "$env:USERPROFILE\.config\gws"</pre></div>
+<div class="blk see"><b class="k">你應該看到</b><code>gws auth status</code> 說沒有登入（none）。</div>
+<div class="blk test"><b class="k">測一下</b>瀏覽器也登出 Google、LINE Developers；「要儲存密碼嗎」一律按不要。</div>
+<details class="stuck"><summary>卡住了</summary><ul>
+<li><b>Remove-Item 說找不到路徑</b>→ 本來就沒有，沒事。</li>
+</ul></details>
+</li>
+</ol>
+<div class="note"><b>下次再開</b>：只要做第 3 段（3-1、3-2），三個值再貼一次（程式不會幫你存，這是故意的）。通道網址每次都會換，程式會自己換好。在 E403 這種還原卡電腦，第 1 段每次都要重裝。</div>
+</section>
+
+<!-- ======================= 程式怎麼讀 ======================= -->
+<section id="s6" data-sec="6"><h2>程式怎麼讀、它叫了哪些 Ollama API</h2>
+<p class="gain">看完你會知道：一則訊息在程式裡經過哪幾個函式；本地模型是怎麼被「叫」的。</p>
+<h3>它叫的 Ollama API（全部打本機 <code>http://127.0.0.1:11434</code>）</h3>
+<table>
+<thead><tr><th style="width:30%">要做的事</th><th style="width:38%">Ollama API</th><th>程式裡的函式</th></tr></thead>
+<tbody>
+<tr><td>回答問題；模型自己決定要不要搜</td><td><code>POST /api/chat</code>（帶 <code>tools</code>：web_search、web_fetch）</td><td><code>ask_text</code></td></tr>
+<tr><td>真的去搜、去讀網頁（Ollama 內建，免登入）</td><td><code>POST /api/experimental/web_search</code>、<code>/api/experimental/web_fetch</code></td><td>也在 <code>ask_text</code> 裡</td></tr>
+<tr><td>看照片</td><td><code>POST /api/chat</code>（訊息裡放 <code>images</code>：照片轉成 base64 文字）</td><td><code>ask_image</code></td></tr>
+<tr><td>判斷是不是行程、整理成日期時間</td><td><code>POST /api/chat</code>（帶 <code>format</code>：規定只能照固定格式回 JSON）</td><td><code>find_event</code></td></tr>
+</tbody></table>
+<h3>一則訊息的旅程（照函式順序）</h3>
+<ol>
+<li><code>Webhook.do_POST</code>：收到 LINE 送來的請求 → 對簽章 → <b>先回 LINE「收到了」</b>（LINE 要 2 秒內回應）→ 另開一條執行緒去做 <code>handle</code>。</li>
+<li><code>handle</code>：看是文字還是照片。文字先問 <code>find_event</code>「這是不是行程」：是 → 準備排日曆；不是 → <code>ask_text</code> 回答問題。照片 → <code>save_photo</code> 存雲端硬碟 → <code>ask_image</code> 看照片 → <code>find_event</code> 從描述裡找行程。</li>
+<li><code>add_calendar</code>、<code>write_sheet</code>：用 gws 排日曆、寫試算表；任何一件失敗都不讓整則掛掉，回覆裡會老實寫哪一件沒做成。</li>
+<li><code>reply</code>：全部做完才回手機。</li>
+<li><code>main</code>：開起來時問三個值（沒有 Channel secret 就不開）、先讀下原本的 Webhook（讀不到就不換）、把模型載進顯示卡、開通道（最多等 60 秒）、換 Webhook；不管怎麼結束都換回去，換完再讀一次確認。訊息一次處理一則，同時傳來的會排隊。</li>
+</ol>
+<details class="ans"><summary>程式全文 line_bot_local.py（約 280 行）</summary>
+<div class="cp"><div class="bar"><span>line_bot_local.py</span><span class="btns"><button type="button" class="dl" data-name="line_bot_local.py">下載</button><button type="button" class="copy">複製</button></span></div><pre data-src="starter/line_bot_local.py"># LINE bot 簡單版：一支 Python 程式就是整個 bot，跑在你自己的電腦上
+#
+# 傳什麼進來，它做什麼：
+#   問問題（「2026 年諾貝爾物理獎得主是誰？」）→ 交給你電腦上的 Ollama 本地模型，需要就自己上網搜，回覆附來源
+#   講行程（「明天下午三點開會」）            → 整理出日期時間，排進 Google 日曆
+#   傳照片（活動海報、便條紙）               → 照片存進雲端硬碟；模型看照片說上面有什麼；有日期時間就排進日曆
+#   問題、行程、照片都先寫一列進 Google 試算表，才回覆（只講已經做完的事；打招呼和看不懂的格式不記）
+# 雲端硬碟、試算表、日曆都用第 2 段登入好的 gws；模型一律打本機 Ollama 的 API（http://127.0.0.1:11434）。
+#
+# 為什麼還要「通道」：LINE 的伺服器要把訊息送進來，得找得到你的電腦；
+# 教室和家裡的電腦都躲在網路後面，所以用 Cloudflare 的免費臨時通道給它一個 https 網址。
+# 程式開起來會自己把 LINE 的 Webhook 換成這個網址，按 Ctrl+C 結束時再換回原本的（例如你 W5 的 Apps Script）。
+#
+# 需要：Python 3（只用內建功能，不用 pip install）、Ollama 開著且有 gemma4:e4b、
+#       gws 已登入（要有 drive、sheets、calendar 權限）、cloudflared、LINE 的長效通行碼（W5 申請過）
+# 用法（PowerShell，在這個檔所在的資料夾）：
+#   python line_bot_local.py
+# 開起來會問你 LINE 長效通行碼、Channel secret（畫面不顯示）和試算表 ID，貼上按 Enter 就好。
+
+import base64, getpass, hashlib, hmac, json, os, queue, re, shutil, subprocess, sys, tempfile, threading, time, urllib.error, urllib.request
+from datetime import datetime, timedelta
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+MODEL = os.environ.get(&quot;MODEL&quot;, &quot;gemma4:e4b&quot;)
+PORT = int(os.environ.get(&quot;PORT&quot;, &quot;8000&quot;))
+CALENDAR_ID = os.environ.get(&quot;CALENDAR_ID&quot;, &quot;primary&quot;)          # 排進哪個日曆；primary＝你的主日曆
+PHOTO_FOLDER = os.environ.get(&quot;PHOTO_FOLDER&quot;, &quot;LINE待辦照片&quot;)   # 照片存進雲端硬碟的哪個資料夾（沒有就建）
+OLLAMA = &quot;http://127.0.0.1:11434&quot;
+GREETING = re.compile(r&quot;^(hi|hello|你好|嗨|哈囉|測試|test)$&quot;, re.I)
+HELP = (&quot;你好！我是跑在同學電腦上的本地模型 🤖\n&quot;
+        &quot;• 問我問題：需要的話我會上網查，附來源\n• 講行程（「明天下午三點開會」）：我排進 Google 日曆\n&quot;
+        &quot;• 傳照片：我存進雲端硬碟、告訴你上面有什麼，有日期時間也幫你排日曆\n問題、行程、照片都會記進試算表。&quot;)
+TOOLS = [
+    {&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {&quot;name&quot;: &quot;web_search&quot;, &quot;description&quot;: &quot;搜尋網路，回傳前幾筆標題、網址與內文。&quot;,
+     &quot;parameters&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {&quot;query&quot;: {&quot;type&quot;: &quot;string&quot;}}, &quot;required&quot;: [&quot;query&quot;]}}},
+    {&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {&quot;name&quot;: &quot;web_fetch&quot;, &quot;description&quot;: &quot;讀一個網頁的主要文字。&quot;,
+     &quot;parameters&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;properties&quot;: {&quot;url&quot;: {&quot;type&quot;: &quot;string&quot;}}, &quot;required&quot;: [&quot;url&quot;]}}},
+]
+EVENT_SHAPE = {&quot;type&quot;: &quot;object&quot;, &quot;required&quot;: [&quot;isEvent&quot;, &quot;title&quot;, &quot;date&quot;, &quot;time&quot;], &quot;properties&quot;: {
+    &quot;isEvent&quot;: {&quot;type&quot;: &quot;boolean&quot;}, &quot;title&quot;: {&quot;type&quot;: &quot;string&quot;},
+    &quot;date&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;YYYY-MM-DD，沒提到就填空字串&quot;},
+    &quot;time&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;HH:MM（24 小時制）；有結束時間就寫 HH:MM-HH:MM；沒提到就填空字串&quot;}}}
+
+LINE_TOKEN = LINE_SECRET = SHEET_ID = &quot;&quot;  # main() 開起來時問你，再填進這裡
+GWS = None
+_folder_id = None
+_turn = threading.Lock()  # 一次只處理一則：顯示卡一次只答一題，照片資料夾也不會被同時建兩個
+_procs = []               # 開出去的 cloudflared，結束時一定要關
+TUNNEL_WAIT = 60         # 等 cloudflared 給網址最多幾秒
+
+
+def log(s):
+    print(f&quot;[{datetime.now():%H:%M:%S}] {s}&quot;, flush=True)
+
+
+def today():
+    return datetime.now().strftime(&quot;%Y-%m-%d（%A）&quot;)  # 附上星期幾，模型才算得準「下週五」
+
+
+# ===== 1. 設定：開起來時問一次，不寫進檔案 =====
+def ask_settings():
+    token = os.environ.get(&quot;LINE_CHANNEL_ACCESS_TOKEN&quot;) or getpass.getpass(&quot;貼上 LINE 長效通行碼（Channel access token，畫面不顯示）：&quot;).strip()
+    secret = os.environ.get(&quot;LINE_CHANNEL_SECRET&quot;) or getpass.getpass(&quot;貼上 Channel secret（LINE Developers → Basic settings；必填；畫面不顯示）：&quot;).strip()
+    sheet = os.environ.get(&quot;SHEET_ID&quot;) or input(&quot;試算表 ID（網址 /d/ 和 /edit 中間那段；不寫試算表就直接 Enter）：&quot;).strip()
+    return token, secret, sheet
+
+
+# ===== 2. 叫 LINE、叫 Ollama、叫 gws 的小工具 =====
+def http_json(method, url, body=None, headers=None, timeout=60):
+    data = json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(url, data=data, method=method, headers={&quot;Content-Type&quot;: &quot;application/json&quot;, **(headers or {})})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            raw = r.read()
+            return r.status, (json.loads(raw) if raw.strip() else {})
+    except urllib.error.HTTPError as e:
+        return e.code, {&quot;error&quot;: e.read().decode(&quot;utf-8&quot;, &quot;replace&quot;)[:200]}
+
+
+def line(method, path, body=None):
+    return http_json(method, &quot;https://api.line.me&quot; + path, body, {&quot;Authorization&quot;: &quot;Bearer &quot; + LINE_TOKEN})
+
+
+def reply(token, text):
+    code, res = line(&quot;POST&quot;, &quot;/v2/bot/message/reply&quot;, {&quot;replyToken&quot;: token, &quot;messages&quot;: [{&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: text[:5000]}]})
+    if code != 200:
+        log(f&quot;⚠️ LINE 回覆失敗 {code}：{res}&quot;)
+
+
+def download_image(message_id):
+    req = urllib.request.Request(f&quot;https://api-data.line.me/v2/bot/message/{message_id}/content&quot;,
+                                 headers={&quot;Authorization&quot;: &quot;Bearer &quot; + LINE_TOKEN})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.read()
+
+
+def ollama(path, body, timeout=60):
+    code, res = http_json(&quot;POST&quot;, OLLAMA + path, body, timeout=timeout)
+    if code != 200:
+        raise RuntimeError(f&quot;Ollama {path} 回應 {code}：{res}&quot;)
+    return res
+
+
+def chat(messages, timeout=60, **extra):
+    body = {&quot;model&quot;: MODEL, &quot;messages&quot;: messages, &quot;stream&quot;: False, &quot;think&quot;: False, &quot;keep_alive&quot;: &quot;1h&quot;, &quot;options&quot;: {&quot;num_ctx&quot;: 16384}}
+    return ollama(&quot;/api/chat&quot;, {**body, **extra}, timeout).get(&quot;message&quot;, {})
+
+
+def gws(*args, upload=None, cwd=None):
+    &quot;&quot;&quot;跑一條 gws 指令，回傳它印出的 JSON。（gws 只肯上傳「目前資料夾」裡的檔，所以上傳時用 cwd 指到檔案所在的資料夾）&quot;&quot;&quot;
+    cmd = [GWS, *args] + ([&quot;--upload&quot;, upload] if upload else [])
+    r = subprocess.run(cmd, capture_output=True, text=True, encoding=&quot;utf-8&quot;, timeout=60, cwd=cwd)
+    if r.returncode != 0:
+        raise RuntimeError((r.stderr or r.stdout).strip()[-300:])
+    return json.loads(r.stdout or &quot;{}&quot;)
+
+
+def find_gws():
+    # npm 裝的 gws 背後有一個真正的 gws.exe；直接叫它，JSON 的引號才不會被 Windows 的 .cmd 轉接弄壞
+    roots = [os.path.join(os.environ.get(&quot;APPDATA&quot;, &quot;&quot;), &quot;npm&quot;, &quot;node_modules&quot;)]
+    try:  # npm 裝到別的地方時，問 npm 它的全域資料夾在哪
+        roots.append(subprocess.run(&quot;npm root -g&quot;, shell=True, capture_output=True, text=True, timeout=30).stdout.strip())
+    except Exception:
+        pass
+    for root in roots:
+        exe = os.path.join(root, &quot;@googleworkspace&quot;, &quot;cli&quot;, &quot;bin&quot;, &quot;gws.exe&quot;)
+        if root and os.path.exists(exe):
+            return exe
+    return None
+
+
+# ===== 3. 模型：回答問題（自己決定要不要搜）、看照片、找出行程 =====
+def ask_text(question):
+    &quot;&quot;&quot;模型自己決定要不要搜；回傳（答案, 來源網址清單）。&quot;&quot;&quot;
+    msgs = [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: f&quot;你是 LINE 上的助理，今天是 {today()}，可能比你的訓練資料新。&quot;
+             &quot;遇到最近的事、版本號、價格或任何你不確定的事實，先呼叫 web_search；不夠明確再用 web_fetch 讀官方頁面。&quot;
+             &quot;回答用台灣的繁體中文、純文字（不要用星號或井字號），150 字以內，先講結論；不用自己寫網址，程式會附上來源。&quot;},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: question}]
+    sources = []
+    for _ in range(4):  # 最多來回四次工具呼叫
+        m = chat(msgs, tools=TOOLS)
+        msgs.append(m)
+        if not m.get(&quot;tool_calls&quot;):
+            return m.get(&quot;content&quot;, &quot;&quot;).replace(&quot;**&quot;, &quot;&quot;).strip(), sources
+        for c in m[&quot;tool_calls&quot;]:
+            name, args = c[&quot;function&quot;][&quot;name&quot;], c[&quot;function&quot;].get(&quot;arguments&quot;) or {}
+            try:
+                if name == &quot;web_search&quot;:
+                    log(f&quot;  🔍 模型決定搜：{args.get(&#x27;query&#x27;)}&quot;)
+                    rows = ollama(&quot;/api/experimental/web_search&quot;, {&quot;query&quot;: args.get(&quot;query&quot;, &quot;&quot;), &quot;max_results&quot;: 3}).get(&quot;results&quot;, [])
+                    sources += [r[&quot;url&quot;] for r in rows]
+                    out = json.dumps([{&quot;title&quot;: r[&quot;title&quot;], &quot;url&quot;: r[&quot;url&quot;], &quot;content&quot;: r[&quot;content&quot;][:1500]} for r in rows], ensure_ascii=False)
+                else:
+                    log(f&quot;  📄 模型決定讀網頁：{args.get(&#x27;url&#x27;)}&quot;)
+                    page = ollama(&quot;/api/experimental/web_fetch&quot;, {&quot;url&quot;: args.get(&quot;url&quot;, &quot;&quot;)})
+                    sources.insert(0, args.get(&quot;url&quot;, &quot;&quot;))
+                    out = page.get(&quot;content&quot;, &quot;&quot;)[:3000]
+            except Exception as e:
+                out = f&quot;ERROR: {e}&quot;
+            msgs.append({&quot;role&quot;: &quot;tool&quot;, &quot;tool_name&quot;: name, &quot;content&quot;: out})
+    return &quot;查了幾次還整理不出答案，換個問法再試一次。&quot;, sources
+
+
+def ask_image(jpg):
+    m = chat([{&quot;role&quot;: &quot;user&quot;, &quot;images&quot;: [base64.b64encode(jpg).decode()],
+               &quot;content&quot;: &quot;這是使用者用 LINE 傳來的照片。用台灣的繁體中文、三句以內說明照片裡有什麼；&quot;
+                          &quot;看得到日期、時間、地點、活動或繳費資訊就列出來，看不清楚的不要猜。&quot;}])
+    return re.sub(r&quot;^\s*[*-]\s+&quot;, &quot;• &quot;, m.get(&quot;content&quot;, &quot;&quot;).replace(&quot;**&quot;, &quot;&quot;), flags=re.M).strip()  # 星號清單在 LINE 上很亂，換成 •
+
+
+def find_event(text):
+    &quot;&quot;&quot;請模型照固定格式回答「這是不是有日期和時間的行程」；欄位驗算過才算數，不照單全收。&quot;&quot;&quot;
+    m = chat([{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;今天是 {today()}，台北時間。下面這段文字如果是一個有日期和時間的行程、活動或提醒&quot;
+               &quot;（不是在問問題），把「明天」「下週五」換算成實際日期，整理成 JSON；不是就 isEvent 填 false。\n\n&quot; + text}],
+             format=EVENT_SHAPE)
+    try:
+        ev = json.loads(m.get(&quot;content&quot;, &quot;{}&quot;))
+        times = re.findall(r&quot;\d{1,2}:\d{2}&quot;, ev[&quot;time&quot;])  # 「15:10-17:00」這種區間：第一個是開始、第二個是結束
+        ev[&quot;start&quot;] = datetime.strptime(f&quot;{ev[&#x27;date&#x27;]} {times[0]}&quot;, &quot;%Y-%m-%d %H:%M&quot;)  # 2/30、25:99 這種不存在的會在這裡被擋掉
+        ev[&quot;end&quot;] = datetime.strptime(f&quot;{ev[&#x27;date&#x27;]} {times[1]}&quot;, &quot;%Y-%m-%d %H:%M&quot;) if len(times) &gt; 1 else ev[&quot;start&quot;] + timedelta(minutes=30)
+        ev[&quot;time&quot;] = f&quot;{ev[&#x27;start&#x27;]:%H:%M}&quot; + (f&quot;–{ev[&#x27;end&#x27;]:%H:%M}&quot; if len(times) &gt; 1 else &quot;&quot;)
+    except (ValueError, KeyError, TypeError, IndexError):
+        return None
+    # 原文寫了「幾月幾日」或「10/20」，模型整理出來的日期要對得上：模型會偷偷把「2 月 30 日」改成 2 月 28 日
+    said = re.search(r&quot;(\d{4})\s*[-/年]\s*(\d{1,2})\s*[-/月]\s*(\d{1,2})|(\d{1,2})\s*月\s*(\d{1,2})\s*[日號]|(?&lt;!\d)(\d{1,2})/(\d{1,2})(?!\d)&quot;, text)
+    nums = [int(x) for x in said.groups() if x] if said else []
+    if nums and nums != [ev[&quot;start&quot;].year, ev[&quot;start&quot;].month, ev[&quot;start&quot;].day][-len(nums):]:
+        log(f&quot;  ⚠️ 模型整理的日期 {ev[&#x27;date&#x27;]} 跟原文「{said.group(0)}」對不上，不排日曆&quot;)
+        return None
+    return ev if ev.get(&quot;isEvent&quot;) is True and str(ev.get(&quot;title&quot;, &quot;&quot;)).strip() and ev[&quot;end&quot;] &gt; ev[&quot;start&quot;] else None
+
+
+# ===== 4. Google：照片存雲端硬碟、排日曆、寫試算表（都用 gws） =====
+def save_photo(jpg):
+    &quot;&quot;&quot;照片存進 PHOTO_FOLDER 資料夾（沒有就建），回傳檔案連結。&quot;&quot;&quot;
+    global _folder_id
+    if not _folder_id:
+        q = f&quot;name=&#x27;{PHOTO_FOLDER}&#x27; and mimeType=&#x27;application/vnd.google-apps.folder&#x27; and trashed=false&quot;
+        found = gws(&quot;drive&quot;, &quot;files&quot;, &quot;list&quot;, &quot;--params&quot;, json.dumps({&quot;q&quot;: q, &quot;fields&quot;: &quot;files(id)&quot;}, ensure_ascii=False)).get(&quot;files&quot;, [])
+        _folder_id = found[0][&quot;id&quot;] if found else gws(&quot;drive&quot;, &quot;files&quot;, &quot;create&quot;, &quot;--json&quot;, json.dumps(
+            {&quot;name&quot;: PHOTO_FOLDER, &quot;mimeType&quot;: &quot;application/vnd.google-apps.folder&quot;}, ensure_ascii=False))[&quot;id&quot;]
+    with tempfile.TemporaryDirectory() as tmp:  # 照片先存成暫存檔，上傳完整個暫存資料夾自動刪掉
+        with open(os.path.join(tmp, &quot;photo.jpg&quot;), &quot;wb&quot;) as fh:
+            fh.write(jpg)
+        f = gws(&quot;drive&quot;, &quot;files&quot;, &quot;create&quot;, &quot;--params&quot;, json.dumps({&quot;fields&quot;: &quot;id,webViewLink&quot;}),
+                &quot;--json&quot;, json.dumps({&quot;name&quot;: f&quot;line-{datetime.now():%Y%m%d-%H%M%S}.jpg&quot;, &quot;parents&quot;: [_folder_id]}),
+                upload=&quot;photo.jpg&quot;, cwd=tmp)
+    log(&quot;  📷 照片存進雲端硬碟了&quot;)
+    return f.get(&quot;webViewLink&quot;, &quot;&quot;)
+
+
+def add_calendar(ev):
+    gws(&quot;calendar&quot;, &quot;events&quot;, &quot;insert&quot;, &quot;--params&quot;, json.dumps({&quot;calendarId&quot;: CALENDAR_ID}),
+        &quot;--json&quot;, json.dumps({&quot;summary&quot;: ev[&quot;title&quot;], &quot;description&quot;: &quot;由 LINE bot 簡單版建立&quot;,
+                              &quot;start&quot;: {&quot;dateTime&quot;: f&quot;{ev[&#x27;start&#x27;]:%Y-%m-%dT%H:%M:00}&quot;, &quot;timeZone&quot;: &quot;Asia/Taipei&quot;},
+                              &quot;end&quot;: {&quot;dateTime&quot;: f&quot;{ev[&#x27;end&#x27;]:%Y-%m-%dT%H:%M:00}&quot;, &quot;timeZone&quot;: &quot;Asia/Taipei&quot;}}, ensure_ascii=False))
+    log(f&quot;  🗓️ 排進日曆了：{ev[&#x27;date&#x27;]} {ev[&#x27;time&#x27;]}&quot;)
+
+
+def write_sheet(row):
+    &quot;&quot;&quot;寫一列進試算表：時間、類型、傳了什麼、bot 回了什麼、照片連結、日曆。&quot;&quot;&quot;
+    gws(&quot;sheets&quot;, &quot;spreadsheets&quot;, &quot;values&quot;, &quot;append&quot;,
+        &quot;--params&quot;, json.dumps({&quot;spreadsheetId&quot;: SHEET_ID, &quot;range&quot;: &quot;A1&quot;, &quot;valueInputOption&quot;: &quot;USER_ENTERED&quot;}),
+        &quot;--json&quot;, json.dumps({&quot;values&quot;: [row]}, ensure_ascii=False))
+    log(&quot;  📝 寫進試算表了&quot;)
+
+
+def try_do(what, fn, *args):
+    &quot;&quot;&quot;Google 那邊哪一件失敗，都不讓整則訊息掛掉；回傳（結果, 錯誤訊息；成功時是空字串）。&quot;&quot;&quot;
+    try:
+        return fn(*args), &quot;&quot;
+    except Exception as e:
+        log(f&quot;⚠️ {what}失敗：{e}&quot;)
+        return None, str(e)[:120] or &quot;不明原因&quot;
+
+
+# ===== 5. 處理一則訊息：先把事情做完（存照片、排日曆、寫試算表）→ 才回覆，只講已經做完的事 =====
+def handle(event):
+    with _turn:
+        _handle(event)
+
+
+def _handle(event):
+    if event.get(&quot;type&quot;) != &quot;message&quot; or not event.get(&quot;replyToken&quot;):
+        return
+    msg, token = event[&quot;message&quot;], event[&quot;replyToken&quot;]
+    user = event.get(&quot;source&quot;, {})
+    if user.get(&quot;type&quot;) == &quot;user&quot;:  # 「對方正在輸入…」動畫，最多 60 秒
+        line(&quot;POST&quot;, &quot;/v2/bot/chat/loading/start&quot;, {&quot;chatId&quot;: user[&quot;userId&quot;], &quot;loadingSeconds&quot;: 60})
+    t0, notes, link, cal = time.time(), [], &quot;&quot;, &quot;&quot;
+    try:
+        if msg[&quot;type&quot;] == &quot;text&quot;:
+            text = msg[&quot;text&quot;].strip()
+            if GREETING.match(text):
+                return reply(token, HELP)
+            log(f&quot;📩 收到文字（{len(text)} 字）&quot;)  # 不印內容：螢幕可能正在投影
+            kind, said, ev = &quot;文字&quot;, text, find_event(text)
+            if ev:  # 講行程：排日曆就好，不必上網查
+                answer = f&quot;📌 {ev[&#x27;title&#x27;]}\n📅 {ev[&#x27;date&#x27;]}　⏰ {ev[&#x27;time&#x27;]}&quot;
+            else:   # 問問題：交給模型，需要就自己搜
+                answer, sources = ask_text(text)
+                answer += (&quot;\n\n來源：\n&quot; + &quot;\n&quot;.join(&quot;• &quot; + u for u in list(dict.fromkeys(sources))[:3]) if sources
+                           else &quot;\n\nℹ️ 這題沒有上網查，只憑模型記憶，請自己核對。&quot;)
+        elif msg[&quot;type&quot;] == &quot;image&quot;:
+            log(&quot;📩 收到照片&quot;)
+            jpg = download_image(msg[&quot;id&quot;])
+            kind, said = &quot;照片&quot;, &quot;（照片）&quot;
+            link, err = try_do(&quot;存照片&quot;, save_photo, jpg)
+            notes.append(f&quot;📷 照片已存進雲端硬碟「{PHOTO_FOLDER}」&quot; if not err else &quot;⚠️ 照片沒存進雲端硬碟：&quot; + err)
+            answer = ask_image(jpg)
+            ev = find_event(answer)
+        else:
+            return reply(token, &quot;目前我看得懂文字和照片，其他類型還不行喔。&quot;)
+        if ev:
+            _, err = try_do(&quot;排日曆&quot;, add_calendar, ev)
+            cal = &quot;已建立&quot; if not err else &quot;失敗：&quot; + err
+            notes.append(f&quot;🗓️ 已排進 Google 日曆（{ev[&#x27;date&#x27;]} {ev[&#x27;time&#x27;]}）&quot; if not err else &quot;⚠️ 日曆沒排成：&quot; + err)
+        if SHEET_ID:
+            _, err = try_do(&quot;寫試算表&quot;, write_sheet, [f&quot;{datetime.now():%Y-%m-%d %H:%M:%S}&quot;, kind, said, answer[:500], link or &quot;&quot;, cal])
+            notes.append(&quot;📝 已記進試算表&quot; if not err else &quot;⚠️ 這則沒寫進試算表：&quot; + err)
+        reply(token, f&quot;{answer}\n\n&quot; + &quot;\n&quot;.join(notes + [f&quot;（本地模型 {time.time() - t0:.0f} 秒）&quot;]))
+        log(f&quot;✅ 回覆了（{time.time() - t0:.0f} 秒）&quot;)
+    except Exception as e:
+        log(f&quot;❌ {e}&quot;)
+        reply(token, &quot;⚠️ 出錯了：&quot; + str(e)[:300])
+
+
+class Webhook(BaseHTTPRequestHandler):
+    def do_POST(self):
+        body = self.rfile.read(int(self.headers.get(&quot;Content-Length&quot;, 0)))
+        if LINE_SECRET:  # 對簽章：確定真的是 LINE 送來的，不是知道網址的路人
+            sig = base64.b64encode(hmac.new(LINE_SECRET.encode(), body, hashlib.sha256).digest()).decode()
+            if not hmac.compare_digest(sig, self.headers.get(&quot;x-line-signature&quot;, &quot;&quot;)):
+                log(&quot;⛔ 簽章不對，不是 LINE 送來的，丟掉&quot;)
+                self.send_response(401)
+                self.end_headers()
+                return
+        self.send_response(200)  # 先跟 LINE 說收到了（LINE 要 2 秒內回應），再慢慢處理
+        self.end_headers()
+        for ev in json.loads(body or b&quot;{}&quot;).get(&quot;events&quot;, []):
+            threading.Thread(target=handle, args=(ev,), daemon=True).start()
+
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(&quot;LINE bot 簡單版運作中&quot;.encode())
+
+    def log_message(self, *args):  # 不要印每一個連線
+        pass
+
+
+# ===== 6. 開通道、把 LINE 的 Webhook 換過來；結束時換回去 =====
+def open_tunnel():
+    &quot;&quot;&quot;開 Cloudflare 臨時通道，最多等 60 秒拿網址；拿不到就把它關掉，回傳 None。&quot;&quot;&quot;
+    if not shutil.which(&quot;cloudflared&quot;):
+        log(&quot;⚠️ 找不到 cloudflared，外面連不到這裡。另開 PowerShell 貼：winget install --id Cloudflare.cloudflared -e&quot;)
+        log(&quot;   裝完關掉這個視窗、新開一個再跑一次。&quot;)
+        return None
+    cf = subprocess.Popen([&quot;cloudflared&quot;, &quot;tunnel&quot;, &quot;--no-autoupdate&quot;, &quot;--url&quot;, f&quot;http://127.0.0.1:{PORT}&quot;],
+                          stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding=&quot;utf-8&quot;, errors=&quot;replace&quot;)
+    _procs.append(cf)
+    found = queue.Queue()
+
+    def watch():  # 另一條執行緒一行一行讀它的輸出（之後的也照讀照丟，免得塞住）；主程式只等 60 秒
+        for row in cf.stdout:
+            m = re.search(r&quot;https://[a-z0-9-]+\.trycloudflare\.com&quot;, row)
+            if m:
+                found.put(m.group(0))
+        found.put(None)
+
+    threading.Thread(target=watch, daemon=True).start()
+    try:
+        url = found.get(timeout=TUNNEL_WAIT)
+    except queue.Empty:
+        url = None
+    if not url:
+        log(f&quot;⚠️ {TUNNEL_WAIT} 秒內通道沒拿到網址：看網路（學校網路可能擋），或再跑一次&quot;)
+    return url
+
+
+def restore(old):
+    &quot;&quot;&quot;把 LINE 的 Webhook 換回原本的，再讀一次確認真的換回去了（換的那條路說成功不算數）。&quot;&quot;&quot;
+    if not old:
+        log(&quot;ℹ️ 原本沒有 Webhook 網址，現在指著一個已經關掉的通道；要用 Apps Script 版就回 LINE Developers 貼回 /exec 網址&quot;)
+        return
+    line(&quot;PUT&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;, {&quot;endpoint&quot;: old})
+    code, now = line(&quot;GET&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;)
+    if code == 200 and now.get(&quot;endpoint&quot;) == old:
+        log(&quot;↩️ LINE 的 Webhook 換回原本的了（重新讀過一次，確認是原本那個）&quot;)
+    else:
+        log(f&quot;⚠️ 沒能確認換回去：到 LINE Developers →「Messaging API」→ Webhook URL 手動貼回：{old}&quot;)
+
+
+def main():
+    global LINE_TOKEN, LINE_SECRET, SHEET_ID, GWS
+    LINE_TOKEN, LINE_SECRET, SHEET_ID = ask_settings()
+    GWS = find_gws()
+    code, info = line(&quot;GET&quot;, &quot;/v2/bot/info&quot;)
+    if code != 200:
+        sys.exit(f&quot;LINE 通行碼不對（{code}）：回 LINE Developers 重新複製長效通行碼&quot;)
+    log(f&quot;✅ LINE bot「{info.get(&#x27;displayName&#x27;)}」&quot;)
+    if not LINE_SECRET:
+        sys.exit(&quot;沒有 Channel secret 就不開通道：沒有它，知道通道網址的人都能假冒 LINE 送訊息進來。&quot;
+                 &quot;回 LINE Developers →「Basic settings」複製，再跑一次。&quot;)
+    if not GWS:
+        log(&quot;⚠️ 找不到 gws.exe：照片、日曆、試算表都會失敗（先裝 gws：指南 1-3）&quot;)
+    code, cur = line(&quot;GET&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;)
+    if code == 200:
+        old = cur.get(&quot;endpoint&quot;)
+    elif code == 404:  # LINE 說這個 channel 原本就沒設 Webhook
+        old = None
+    else:  # 讀不到原本的網址就不換，免得換了回不去
+        sys.exit(f&quot;讀不到 LINE 現在的 Webhook 網址（{code}）：先不換。等一下再跑一次。{cur}&quot;)
+    log(f&quot;   原本的 Webhook：{old or &#x27;（沒有設定）&#x27;}——先抄下來，萬一沒換回去要手動貼回&quot;)
+    log(f&quot;載入模型 {MODEL}（第一次要等一下）…&quot;)
+    chat([], timeout=300)
+    log(&quot;✅ 模型已在顯示卡上&quot;)
+
+    server = ThreadingHTTPServer((&quot;127.0.0.1&quot;, PORT), Webhook)  # 只聽本機：外面只能從通道進來
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    switched = False
+    try:  # 從開通道起就在 try 裡：只要 Webhook 換過，不管怎麼結束都會換回去
+        url = open_tunnel()
+        if url:
+            code, res = line(&quot;PUT&quot;, &quot;/v2/bot/channel/webhook/endpoint&quot;, {&quot;endpoint&quot;: url + &quot;/callback&quot;})
+            if code != 200:
+                log(f&quot;⚠️ 換 Webhook 失敗 {code}：{res}。可以手動貼到 LINE Developers：{url}/callback&quot;)
+            else:
+                switched = True
+                log(f&quot;✅ LINE 的 Webhook 換到這台電腦了：{url}/callback（按 Ctrl+C 會換回去）&quot;)
+                log(&quot;   LINE 說換網址最多要 1 分鐘才生效；等一下再用手機傳訊息&quot;)
+                time.sleep(5)
+                code, test = line(&quot;POST&quot;, &quot;/v2/bot/channel/webhook/test&quot;, {})
+                log(f&quot;   LINE 測試連線：{&#x27;✅ 通了&#x27; if test.get(&#x27;success&#x27;) else &#x27;還沒通（&#x27; + str(test.get(&#x27;reason&#x27;)) + &#x27;），等一分鐘再傳&#x27;}&quot;)
+        log(&quot;開好了。手機傳訊息給 bot 試試看；這個視窗不要關，按 Ctrl+C 結束。&quot; if switched
+            else &quot;⚠️ 這次沒接上 LINE（看上面的訊息）。按 Ctrl+C 結束。&quot;)
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        if switched:
+            restore(old)
+        for cf in _procs:
+            cf.terminate()
+        server.shutdown()
+
+
+if __name__ == &quot;__main__&quot;:
+    main()</pre></div>
+</details>
+<h3>安全與隱私</h3>
+<ul>
+<li><b>通行碼和 Channel secret 不寫進檔案</b>：程式每次開起來問一次，關掉就忘；畫面上不顯示。</li>
+<li><b>對簽章</b>：有給 Channel secret，假冒 LINE 送進來的請求會被擋掉（W5 的 Apps Script 版做不到這件事）。</li>
+<li><b>這不是私密管道</b>：模型在你電腦上，但訊息會經過 LINE、Cloudflare，搜尋那一下會送到 Ollama 的線上搜尋服務，照片和紀錄存在你的 Google 雲端硬碟。不要拿它處理別人的個資。</li>
+<li><b>用完按 Ctrl+C</b>：通道就消失，外面連不到你的電腦。</li>
+</ul>
+<p class="note"><b>下週的進階版</b>：bot 留在 W5 的 Apps Script（電腦關了 bot 照樣記待辦），只有「查 …」開頭的問題轉到你電腦的本地模型——中間要多搭一個有密碼的轉接站。做法在參考頁 <a href="local-llm-search.html#line-bot">〈延伸・Apps Script 版〉</a>。</p>
+</section>
+
+<section id="stuckall" data-sec="X"><h2>卡關總表</h2>
+<p class="gain">上面每一步的「卡住了」全部集中在這裡，打關鍵字就過濾（例如 401、cloudflared、日曆、簽章）。</p>
+<input class="filter" id="stuckFilter" type="search" placeholder="打關鍵字過濾：401、cloudflared、日曆、簽章、Webhook…" aria-label="過濾卡關總表">
+<p class="small" id="stuckCount"></p>
+<table id="stuckTable"><thead><tr><th style="width:4.5em">步驟</th><th>症狀 → 處理</th></tr></thead><tbody></tbody></table>
+<p class="small">本頁內容來源：<code>starter/line_bot_local.py</code> 與老師 2026-10-10 在自己電腦的實測（真的 Ollama、搜尋、雲端硬碟、日曆、試算表，LINE 端用記錄用的假函式；紀錄 <code>qa/simple-bot/</code>）；LINE 換 Webhook 與回覆碼時效依 LINE Messaging API 官方文件。⚠️ 通道與真的 LINE 手機端，老師彩排時才第一次實走。</p>
+</section>
+
+<a class="top" href="#top" aria-label="回到頂端" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑</a>
+</main>
+<script>
+(function(){
+  var KEY='w6-line-bot-simple';
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return {};}}
+  function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+  var boxes=Array.prototype.slice.call(document.querySelectorAll('input[type=checkbox][data-k]'));
+  var state=load();
+  function refresh(){
+    var done=boxes.filter(function(b){return b.checked;}).length;
+    var t=document.getElementById('progText'),bar=document.getElementById('progBar');
+    if(t)t.textContent='已勾 '+done+'／'+boxes.length+' 步';
+    if(bar)bar.style.width=(boxes.length?Math.round(done*100/boxes.length):0)+'%';
+  }
+  boxes.forEach(function(b){
+    b.checked=!!state[b.getAttribute('data-k')];
+    b.addEventListener('change',function(){
+      state[b.getAttribute('data-k')]=b.checked;save(state);refresh();
+    });
+  });
+  refresh();
+  var rb=document.getElementById('resetBtn');
+  if(rb)rb.addEventListener('click',function(){
+    state={};save(state);boxes.forEach(function(b){b.checked=false;});refresh();
+  });
+
+  // 複製鈕：成功顯示「已複製」，失敗就把文字選起來讓人自己 Ctrl+C
+  function preOf(btn){var w=btn.closest('.cp');return w?w.querySelector('pre'):null;}
+  function selectAll(el){
+    try{var r=document.createRange();r.selectNodeContents(el);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('button.copy'),function(btn){
+    btn.addEventListener('click',function(){
+      var pre=preOf(btn);if(!pre)return;
+      var text=pre.textContent;
+      var ok=function(){btn.textContent='已複製';setTimeout(function(){btn.textContent='複製';},1500);};
+      var fail=function(){selectAll(pre);btn.textContent='請按 Ctrl+C';setTimeout(function(){btn.textContent='複製';},2500);};
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(ok,fail);
+      }else{
+        selectAll(pre);
+        var done=false;try{done=document.execCommand('copy');}catch(e){}
+        done?ok():fail();
+      }
+    });
+  });
+
+  // 下載鈕：把 <pre> 的文字包成檔案（UTF-8）讓瀏覽器存下來，零外部資源
+  Array.prototype.forEach.call(document.querySelectorAll('button.dl'),function(btn){
+    btn.addEventListener('click',function(){
+      var pre=preOf(btn);if(!pre)return;
+      var name=btn.getAttribute('data-name')||'download.txt';
+      var blob=new Blob([pre.textContent],{type:'text/plain;charset=utf-8'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();
+      setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},800);
+    });
+  });
+
+  // 卡關總表：從每一步的「卡住了」自動收集，避免兩邊內容不同步
+  var tbody=document.querySelector('#stuckTable tbody');
+  var rows=[];
+  if(tbody){
+    Array.prototype.forEach.call(document.querySelectorAll('.steps > li'),function(li){
+      var lab=li.querySelector('.chk .n');var step=lab?lab.textContent:'';
+      var sec=li.closest('section');var secId=sec?sec.id:'';
+      Array.prototype.forEach.call(li.querySelectorAll('details.stuck li'),function(item){
+        var tr=document.createElement('tr');
+        var td1=document.createElement('td');var a=document.createElement('a');a.href='#'+secId;a.textContent=step;td1.appendChild(a);
+        var td2=document.createElement('td');td2.innerHTML=item.innerHTML;
+        tr.appendChild(td1);tr.appendChild(td2);tbody.appendChild(tr);
+        rows.push({tr:tr,text:(step+' '+item.textContent).toLowerCase()});
+      });
+    });
+  }
+  var cnt=document.getElementById('stuckCount');
+  function applyFilter(q){
+    q=(q||'').trim().toLowerCase();var n=0;
+    rows.forEach(function(r){var show=!q||r.text.indexOf(q)>=0;r.tr.style.display=show?'':'none';if(show)n++;});
+    if(cnt)cnt.textContent='共 '+rows.length+' 條'+(q?'，符合 '+n+' 條':'');
+  }
+  var f=document.getElementById('stuckFilter');
+  if(f)f.addEventListener('input',function(){applyFilter(f.value);});
+  applyFilter('');
+})();
+</script>
+</body></html>

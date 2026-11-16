@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>我的學習紀錄｜AI 一起寫程式 W11</title>
+  <style>
+    :root { color-scheme: light; font: 100%/1.65 system-ui, sans-serif; color: #182b2a; background: #f4f7f4; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a { color: #075f60; text-underline-offset: .17em; }
+    a:hover { text-decoration-thickness: .16em; }
+    :focus-visible { outline: 3px solid #a35c16; outline-offset: 3px; }
+    [hidden] { display: none !important; }
+    .wrap { width: min(100% - 2rem, 62rem); margin-inline: auto; }
+    .hero { color: #fff; background: #144d4d; padding-block: clamp(2rem, 6vw, 4rem); }
+    .eyebrow { color: #fce1a1; font-weight: 650; letter-spacing: .07em; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 .7rem; }
+    h1 { font-size: clamp(2.1rem, 6vw, 3.4rem); }
+    h2 { font-size: clamp(1.4rem, 3.5vw, 1.8rem); }
+    h3 { font-size: 1.12rem; margin-top: 1.2rem; }
+    p, ol, ul { margin: .45rem 0 1rem; }
+    .hero p:last-of-type { max-width: 44rem; }
+    .choices, .jump { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0; list-style: none; margin-bottom: 0; }
+    .choices li { border: 1px solid #91beb9; padding: .25rem .7rem; border-radius: 1rem; }
+    .jump a { display: inline-block; padding: .35rem .65rem; }
+    .jump { margin-block: .85rem; }
+    main { padding-bottom: 2.5rem; }
+    section { scroll-margin-top: .8rem; margin-block: 1.1rem; }
+    .panel { background: #fff; border: 1px solid #d7e1dd; border-radius: 1rem; padding: clamp(1rem, 3.4vw, 1.75rem); }
+    .step-num { display: inline-grid; place-items: center; width: 1.7em; height: 1.7em; margin-right: .28em; border-radius: 50%; background: #0e6260; color: #fff; font-size: .83em; }
+    .layers, .routes { display: grid; gap: .65rem; }
+    .layers { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+    .routes { grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); }
+    .tile { background: #eff5f2; padding: .9rem 1rem; border-radius: .7rem; min-width: 0; }
+    .tile p:last-child, .panel > :last-child { margin-bottom: 0; }
+    .tag { display: inline-block; font-size: .82em; font-weight: 700; padding: .05rem .55rem; border-radius: 1rem; margin-right: .35rem; vertical-align: .08em; white-space: nowrap; }
+    .tag-a { background: #0e6260; color: #fff; }
+    .tag-b { background: #f1d9a8; color: #5a3a06; }
+    li + li { margin-top: .32rem; }
+    .choices li + li, .jump li + li { margin-top: 0; }
+    .verify { background: #fff4db; border-left: 4px solid #a56721; padding: .65rem .85rem; border-radius: .25rem; }
+    .danger { background: #ffe9e6; border-left: 4px solid #b6403a; padding: .65rem .85rem; border-radius: .25rem; }
+    .flow { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; padding: 0; list-style: none; }
+    .flow li { background: #eff5f2; border-radius: .5rem; padding: .3rem .6rem; margin: 0; }
+    .flow li.arrow { background: none; padding: 0 .1rem; color: #4b6b67; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; margin: .5rem 0 1rem; font-size: .96em; }
+    th, td { border: 1px solid #d7e1dd; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+    th { background: #eff5f2; }
+    button { background: #0e6260; color: #fff; border: 0; border-radius: .5rem; padding: .45rem .8rem; font: inherit; cursor: pointer; }
+    button:hover { background: #10494a; }
+    code { font-size: .93em; overflow-wrap: anywhere; }
+    pre { margin: .55rem 0; padding: .65rem .85rem; background: #182b2a; color: #f4f7f4; border-radius: .5rem; overflow-x: auto; font-size: .9em; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .prompt-box { margin: .6rem 0 1rem; }
+    .prompt-box .actions { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+    .copy-status { color: #1d6b45; font-size: .93em; }
+    .checklist { padding-left: 1.4rem; }
+    .checklist li { list-style: "☐ "; }
+    footer { border-top: 1px solid #d7e1dd; padding-top: .75rem; color: #4b6b67; }
+    @media print { .hero { color: #182b2a; background: #fff; padding-block: .5rem; } .eyebrow { color: inherit; } .jump, button { display: none; } .panel { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">和 AI 一起寫程式　W11　11/16（一）</p>
+      <h1>我的學習紀錄：完整走一輪</h1>
+      <p>上週的投票板不用登入、票存在試算表。今天做一個要登入的網站：你說需求，AI 寫程式；GitHub 存每一版；Cloudflare 給它一個網址；Supabase 管登入和資料，而且每個人只看得到自己的紀錄。</p>
+      <ul class="choices" aria-label="今天的四個帳號">
+        <li>AI 寫程式：Codex 或 Claude</li>
+        <li>GitHub：存每一版</li>
+        <li>Cloudflare：放上網路</li>
+        <li>Supabase：登入＋資料庫</li>
+      </ul>
+    </div>
+  </header>
+  <main class="wrap">
+    <nav aria-label="操作步驟">
+      <ol class="jump">
+        <li><a href="#step-0">0 四個帳號</a></li>
+        <li><a href="#step-1">1 開資料庫</a></li>
+        <li><a href="#step-2">2 AI 做網站</a></li>
+        <li><a href="#step-3">3 門禁與鑰匙</a></li>
+        <li><a href="#step-4">4 推上 GitHub</a></li>
+        <li><a href="#step-5">5 Cloudflare 上線</a></li>
+        <li><a href="#step-6">6 兩個帳號驗收</a></li>
+        <li><a href="#step-7">7 改版一圈</a></li>
+        <li><a href="#help">卡關時</a></li>
+        <li><a href="concepts.html">觀念頁</a></li>
+      </ol>
+    </nav>
+
+    <section class="panel" aria-labelledby="roles-title">
+      <h2 id="roles-title">四個帳號，各管一件事</h2>
+      <div class="layers">
+        <div class="tile"><h3>AI 寫程式</h3><p>Codex 或 Claude（W10 用過的 agent 也可以）。你用一句話講需求，它寫檔、改檔、下指令；你負責看它的計畫、驗它的成果。</p></div>
+        <div class="tile"><h3>GitHub：存每一版</h3><p>程式的倉庫。每次存進去都留一版，改壞了找得回來。</p></div>
+        <div class="tile"><h3>Cloudflare：放上網路</h3><p>把 GitHub 上的檔變成大家打得開的網址。你一推新版，它自己更新。</p></div>
+        <div class="tile"><h3>Supabase：登入＋資料庫</h3><p>認得誰是誰（登入）、幫你存紀錄（資料庫），還有門禁（RLS）：每個人只拿得到自己的那幾列。</p></div>
+      </div>
+      <ol class="flow" aria-label="從一句話到上線的路線">
+        <li>你的一句話</li><li class="arrow" aria-hidden="true">→</li>
+        <li>AI 寫成檔案</li><li class="arrow" aria-hidden="true">→</li>
+        <li>GitHub 存起來</li><li class="arrow" aria-hidden="true">→</li>
+        <li>Cloudflare 變成網址</li><li class="arrow" aria-hidden="true">→</li>
+        <li>同學用手機打開，登入、存紀錄都找 Supabase</li>
+      </ol>
+      <div class="table-wrap">
+        <table aria-label="W10 和 W11 的對照">
+          <thead><tr><th></th><th>W10 投票板</th><th>W11 學習紀錄</th></tr></thead>
+          <tbody>
+            <tr><th>畫面放哪</th><td>Apps Script 給的 <code>/exec</code> 網址</td><td>Cloudflare 給的網址</td></tr>
+            <tr><th>資料存哪</th><td>Google 試算表</td><td>Supabase 資料庫</td></tr>
+            <tr><th>誰能用</th><td>不用登入，大家都能投</td><td>要登入，只看得到自己的</td></tr>
+            <tr><th>程式存哪</th><td>Apps Script 專案</td><td>GitHub（每一版都留著）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>兩條路，同分</h3>
+      <div class="routes">
+        <div class="tile"><p><span class="tag tag-a">路線 A</span><strong>AI 從零做</strong>：有自己的筆電、裝得了 agent 的人。agent 照你的需求卡寫出整個網站，再幫你推上 GitHub。</p></div>
+        <div class="tile"><p><span class="tag tag-b">路線 B</span><strong>用起步檔，全在瀏覽器</strong>：教室電腦、或 agent 卡住超過 15 分鐘的人。下載老師的起步檔，傳上 GitHub，其餘步驟一樣。</p></div>
+      </div>
+      <p>每一步都有「看到這裡就對了」。看到了再往下走；看不到先查頁尾〈卡關時〉。想知道為什麼要這樣做，開<a href="concepts.html">觀念頁</a>。</p>
+    </section>
+
+    <section id="step-0" class="panel" aria-labelledby="step-0-title">
+      <h2 id="step-0-title"><span class="step-num">0</span>四個帳號先登入</h2>
+      <ol>
+        <li><strong>GitHub</strong>：用 W3 建 my-panel 那個 repo 的帳號登入 <a href="https://github.com/" target="_blank" rel="noopener">github.com</a>。另外兩個服務都可以直接用它登入。教室電腦對 GitHub 來說每次都是新電腦，登入時可能要多一道驗證：開了兩步驟驗證的，用手機上的驗證 App 或簡訊；沒開的，GitHub 會寄一組驗證碼到你 GitHub 帳號的信箱（手機有裝 GitHub App 的，改成在 App 裡確認）。手機要帶著，先確定收得到那個信箱的信。</li>
+        <li><strong>Supabase</strong>：開 <a href="https://supabase.com/dashboard/sign-up" target="_blank" rel="noopener">Supabase 的註冊頁</a>，按 <strong>Continue with GitHub</strong>，用同一個 GitHub 帳號授權。不用填信用卡。</li>
+        <li><strong>Cloudflare</strong>：開 <a href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noopener">Cloudflare 的註冊頁</a>。按 <strong>GitHub</strong> 可以直接用同一個帳號（第一次會幫你建好帳號）；用 Email＋密碼也行，記得去信箱按驗證信。先看到「正在執行安全驗證」是 Cloudflare 在擋機器人，等幾秒它會自己跳過去。</li>
+        <li><strong>AI</strong>：<span class="tag tag-a">路線 A</span>用自己筆電上的 agent：<strong>Codex</strong>（在 ChatGPT 桌面版裡，免費帳號也有，額度有限）、<strong>Claude</strong>（Claude Code 要付費方案，而且要滿 18 歲），或 W10 用過的 agent（例如 Antigravity）。<span class="tag tag-b">路線 B</span>瀏覽器裡任何一個聊天 AI 都可以。這門課不需要你付錢。</li>
+      </ol>
+      <p class="verify"><strong>看到這裡就對了。</strong> 瀏覽器有三個分頁：GitHub、Supabase、Cloudflare，三個都登入了（Supabase 停在「建立組織」的畫面也算，第 1 步接著做）。路線 A 的 agent 已經開好；路線 B 開好一個聊天 AI 的分頁。</p>
+    </section>
+
+    <section id="step-1" class="panel" aria-labelledby="step-1-title">
+      <h2 id="step-1-title"><span class="step-num">1</span>先開 Supabase 專案（它要等一下才好）</h2>
+      <p>資料庫有時要等一下才開好，所以第一件事先開它；還在準備就先做第 2 步。</p>
+      <ol>
+        <li>第一次進來，Supabase 會先請你建一個組織（organization）：名字隨意，例如你的名字；方案選 <strong>Free</strong>，不用填信用卡。</li>
+        <li>按 <strong>New project</strong>，填這幾格：
+          <ul>
+            <li><strong>GitHub (optional)</strong> 那一列的 Connect GitHub：不用按。</li>
+            <li><strong>Project name</strong>：<code>learning-log</code></li>
+            <li><strong>Database password</strong>：按 <strong>Generate a password</strong>，存進你自己的手機備忘錄或密碼管理器，不要留在教室電腦上。今天用不到；忘了可以在 Supabase 重設。</li>
+            <li><strong>Region</strong>：下拉選 <strong>Asia-Pacific</strong>（亞太，不用選城市）。</li>
+            <li><strong>Security</strong>：前兩格照預設打勾；第三格 <strong>Enable automatic RLS</strong> 也勾起來。多一層保險：就算 AI 忘了開門禁，新建的表也會自動開。</li>
+          </ul>
+        </li>
+        <li>按 <strong>Create new project</strong>。</li>
+      </ol>
+      <p class="verify"><strong>看到這裡就對了。</strong> 專案首頁出現：最上面是 <code>learning-log</code> 和一行 <code>https://一串字.supabase.co</code>，STATUS 寫 Healthy（老師實測不到十秒）；左邊一排選單有 Table Editor、SQL Editor、Authentication。還在準備就先做第 2 步，回來它就好了。</p>
+      <p>免費方案一個人最多兩個「開著」的專案。建不出來、說已經有兩個的，先把用不到的舊專案暫停（pause）。</p>
+    </section>
+
+    <section id="step-2" class="panel" aria-labelledby="step-2-title">
+      <h2 id="step-2-title"><span class="step-num">2</span>讓 AI 做出網站</h2>
+      <h3><span class="tag tag-a">路線 A</span>給 agent 一張需求卡</h3>
+      <ol>
+        <li>在自己的電腦建一個空資料夾，取名 <code>learning-log</code>，用你的 agent 開它。ChatGPT 桌面版的 Codex：新專案 → 選這個資料夾 → 建立專案；問要不要信任這個資料夾就按信任。權限維持「要求核准」，它要跑的每一條指令你都會先看到。Antigravity：File → Create Project → Add Folder → 選這個資料夾 → Next（有的版本最後一顆叫 Create）。</li>
+        <li>把下面這張需求卡整段貼給它。你可以改成自己的話，但「規則」那幾條要留著，後面的步驟靠它們接得上。</li>
+      </ol>
+      <div class="prompt-box">
+        <pre id="prompt-build">我要做一個「我的學習紀錄」網站，請在這個資料夾裡做。
+
+要做到：
+1. 用 Email＋密碼註冊、登入、登出，用 Supabase 的登入功能。
+2. 登入後可以新增一筆紀錄：日期、今天學了什麼、花了幾分鐘、卡在哪裡（可不填）。
+3. 看得到自己全部的紀錄，新的在上面；可以刪掉自己的紀錄。
+4. 每個人只看得到自己的紀錄。這件事要靠資料庫的門禁（RLS）做到，不能只靠網頁藏起來。
+
+規則：
+- 只用 HTML、CSS、JavaScript，不要用需要安裝或建置的工具（不要 npm、React、Vite）。supabase-js 第 2 版從 CDN 載入。
+- 檔案放在這個資料夾最外層：index.html、style.css、app.js、config.js、schema.sql、README.md。
+- config.js 只放兩個值：Supabase 的 Project URL 和 publishable key，先用「貼上…」當佔位字。絕對不要用 secret key 或 service_role key。
+- schema.sql 要能在 Supabase 的 SQL Editor 直接執行：建一張 learning_logs 表、打開 RLS、把這張表的讀寫權限給登入的人（authenticated）、寫好「只有本人能讀寫自己的資料」的規則。
+- 介面用繁體中文，手機也好用；使用者打的字一律當純文字顯示。
+
+先列計畫給我看，我同意再動手。做完告訴我每個檔案在做什麼，還有我接下來要在 Supabase 按哪些地方。</pre>
+        <div class="actions"><button type="button" data-copy="prompt-build">複製需求卡</button><span class="copy-status" aria-live="polite"></span></div>
+      </div>
+      <ol start="3">
+        <li><strong>先看計畫再同意</strong>（W3 的規矩）：計畫裡要有那六個檔、要提到 RLS。少了就叫它補，補好再說「同意」。</li>
+        <li>做完之後，自己對這四件事。用<strong>記事本</strong>開檔（對檔案按右鍵 → 開啟檔案 → 記事本；<strong>不要點兩下 .js</strong>，Windows 會把它當程式執行），按 Ctrl+F 找字；找不到在哪一行，可以請 agent 指給你看。<strong>一件不對就退回它一次</strong>，說清楚哪裡不對：</li>
+      </ol>
+      <ul class="checklist">
+        <li>打開 <code>schema.sql</code>，找得到 <code>enable row level security</code>，也找得到 <code>grant</code>…<code>to authenticated</code>。</li>
+        <li>同一份檔裡的每條規則（policy）都拿 <code>auth.uid()</code> 去比對 <code>user_id</code>。</li>
+        <li><code>config.js</code> 只有兩個值，裡面沒有 <code>secret</code>、<code>service_role</code> 這些字。</li>
+        <li>在 <code>app.js</code> 搜尋 <code>innerHTML</code>：如果拿來放使用者打的字，請它改成 <code>textContent</code>（不然有人在紀錄裡打程式碼，會被當成程式執行）。</li>
+      </ul>
+      <p class="verify"><strong>看到這裡就對了。</strong> 資料夾最外層有 <code>index.html</code>、<code>style.css</code>、<code>app.js</code>、<code>config.js</code>、<code>schema.sql</code>、<code>README.md</code> 六個檔，四件事都對。</p>
+      <h3><span class="tag tag-b">路線 B</span>下載起步檔</h3>
+      <ol>
+        <li>下載<a href="starter.zip" download>起步檔 starter.zip</a>，對它按右鍵 →「<strong>解壓縮全部</strong>」（只點兩下是進去偷看，檔案拖不出來）。裡面就是這六個檔，老師已經測過能跑。</li>
+        <li>先放著，第 4 步傳上 GitHub。想先看內容可以點開：<a href="starter/schema.sql" target="_blank" rel="noopener">schema.sql</a>、<a href="starter/app.js" target="_blank" rel="noopener">app.js</a>、<a href="starter/config.js" target="_blank" rel="noopener">config.js</a>。</li>
+      </ol>
+      <p class="verify"><strong>看到這裡就對了（路線 B）。</strong> 解壓出來的資料夾裡有 <code>index.html</code>、<code>style.css</code>、<code>app.js</code>、<code>config.js</code>、<code>schema.sql</code>、<code>README.md</code> 六個檔。</p>
+      <p><span class="tag tag-a">路線 A</span>卡住超過 15 分鐘，也改用起步檔：解壓到 <code>learning-log</code> 資料夾，跟 agent 說「改用這份起步檔，接著做下面的步驟」。</p>
+    </section>
+
+    <section id="step-3" class="panel" aria-labelledby="step-3-title">
+      <h2 id="step-3-title"><span class="step-num">3</span>在 Supabase 建資料表、拿鑰匙、關確認信</h2>
+      <h3>3-1 建資料表和門禁</h3>
+      <ol>
+        <li>回到 Supabase 分頁，左側選 <strong>SQL Editor</strong>。第一次進來會跳「Snippets no longer save automatically」的提示，按 <strong>Understood</strong>。點一下編輯區的第一行。</li>
+        <li>把 <code>schema.sql</code> 整份複製、貼進去，按右上的 <strong>Run</strong>。<span class="tag tag-b">路線 B</span>直接按下面的「複製 schema.sql」；<span class="tag tag-a">路線 A</span>用記事本打開 agent 做的那份，Ctrl+A 全選、Ctrl+C 複製。</li>
+        <li>跳出「<strong>Potential issue detected</strong>」說有破壞性的動作，是正常的：<code>schema.sql</code> 會先清掉這張表的舊規則。新專案裡沒有任何東西會被弄壞，按 <strong>Run query</strong>。</li>
+        <li>左側選 <strong>Table Editor</strong>，點 <code>learning_logs</code>。（離開 SQL Editor 時瀏覽器問要不要離開，選離開；查詢已經跑過了。）</li>
+      </ol>
+      <div class="prompt-box">
+        <div class="actions"><button type="button" data-copy="src-schema">複製 schema.sql（起步檔）</button><span class="copy-status" aria-live="polite"></span></div>
+        <details><summary>看起步檔 schema.sql 全文</summary><pre id="src-schema">-- 我的學習紀錄：資料表＋門禁（RLS）
+-- 用法：Supabase 左側 SQL Editor → 貼上整份 → Run。重跑也不會壞（已經有就略過、規則會重建）。
+
+-- 1. 資料表：一列＝一筆學習紀錄，user_id 記這筆是誰的（自動填登入者，不用自己給）
+create table if not exists public.learning_logs (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  log_date   date not null default current_date,
+  topic      text not null check (char_length(topic) between 1 and 200),
+  minutes    integer check (minutes between 0 and 1440),
+  note       text check (char_length(note) &lt;= 1000),
+  created_at timestamptz not null default now()
+);
+
+-- 2. 打開門禁：開了之後，沒有規則允許的事一律不准
+alter table public.learning_logs enable row level security;
+
+-- 3. 先清掉這張表所有舊規則（包括別的版本留下、名字不一樣的）。
+--    同一個動作只要有一條規則放行就會放行，舊的太寬規則不清掉，新規則再對也擋不住。
+do $$
+declare p record;
+begin
+  for p in select policyname from pg_policies
+           where schemaname = 'public' and tablename = 'learning_logs' loop
+    execute format('drop policy %I on public.learning_logs', p.policyname);
+  end loop;
+end $$;
+
+-- 4. 四條規則：登入的人只能看、寫、改、刪「user_id 是自己」的那幾列
+create policy "本人可以看自己的紀錄" on public.learning_logs
+  for select to authenticated
+  using ((select auth.uid()) = user_id);
+
+create policy "本人只能新增自己的紀錄" on public.learning_logs
+  for insert to authenticated
+  with check ((select auth.uid()) = user_id);
+
+create policy "本人只能修改自己的紀錄" on public.learning_logs
+  for update to authenticated
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+create policy "本人只能刪自己的紀錄" on public.learning_logs
+  for delete to authenticated
+  using ((select auth.uid()) = user_id);
+
+-- 5. 誰能碰這張表：只有登入的人（authenticated）；沒登入的（anon）什麼都不給
+grant select, insert, update, delete on table public.learning_logs to authenticated;
+revoke all on table public.learning_logs from anon;</pre></details>
+      </div>
+      <p class="verify"><strong>先看資料表再往下走。</strong> SQL Editor 下方顯示 <strong>Success. No rows returned</strong>；Table Editor 看得到 <code>learning_logs</code> 和它的欄位（<code>topic</code>、<code>minutes</code>…），表格上方有一顆「<strong>RLS policies</strong>」按鈕，前面的數字不是 0（起步檔是 4 條；AI 做的版本可能 1 到 4 條）。</p>
+      <h3>3-2 拿兩個可以公開的值</h3>
+      <p>回專案首頁（左上角點 <code>learning-log</code>）。最上面那行網址旁有一顆 <strong>Copy</strong>，按下去會列出：</p>
+      <ul>
+        <li><strong>Project URL</strong>：點它就複製好了，長得像 <code>https://一串字.supabase.co</code>。</li>
+        <li><strong>Publishable key</strong>：再按一次 Copy、點它，<code>sb_publishable_</code> 開頭的那一把。</li>
+      </ul>
+      <p>這個選單裡沒有 secret key，最不容易拿錯。找不到這顆 Copy，也可以到左下角齒輪 Project Settings：Project URL 在 Data API 頁、鑰匙在 API Keys 頁。</p>
+      <ul>
+        <li><span class="tag tag-a">路線 A</span>跟 agent 說：「把 config.js 的兩個值換成：Project URL 是 ___，publishable key 是 ___」。或自己打開 <code>config.js</code> 貼，引號留著。</li>
+        <li><span class="tag tag-b">路線 B</span>先貼在記事本，第 4 步在 GitHub 網頁上貼進去。</li>
+      </ul>
+      <p class="danger"><strong>🚨 只拿 publishable key。</strong> 同一頁還有一把 secret key（<code>sb_secret_</code> 開頭），那是資料庫的萬能鑰匙：誰拿到都能讀改所有人的資料。它不能進 <code>config.js</code>、不能進 GitHub、不能貼給 AI。起步檔偵測到它會停止連線並提醒你。</p>
+      <h3>3-3 練習時關掉確認信</h3>
+      <ol>
+        <li>左側選 <strong>Authentication</strong> → <strong>Sign In / Providers</strong>。</li>
+        <li>頁面上方「User Signups」那一區的最後一個開關 <strong>Confirm email</strong>，按一下關掉（不用點下面的 Email）。右下角如果有小視窗擋住，先按它的叉叉關掉。</li>
+        <li>按 <strong>Save changes</strong>。</li>
+      </ol>
+      <p class="verify"><strong>看到這裡就對了。</strong> 右上角跳出 <strong>Successfully updated settings</strong>，Confirm email 的開關是灰的（關著）。</p>
+      <p>為什麼要關：Supabase 內建的寄信只寄給專案成員（也就是你自己），而且一小時只寄 2 封；全班一起測註冊，一定卡住。關掉之後，註冊完直接登入。真的要給大家用的網站，要換成自己的寄信服務，再把它打開。</p>
+      <h3><span class="tag tag-a">路線 A</span>3-4 先在自己電腦試一次（路線 B 跳過，直接做第 4 步）</h3>
+      <p>跟 agent 說：「開一個本機預覽，給我網址」。它會給你一個像 <code>http://localhost:8000</code> 的網址，點開它。用你的 Email 和<strong>一組練習用的密碼</strong>註冊（不要沿用學校信箱、GitHub 或其他帳號的密碼；瀏覽器問要不要儲存，選不要），存一筆紀錄，再回 Supabase 的 Table Editor 看 <code>learning_logs</code>。</p>
+      <p class="verify"><strong>看到這裡就對了。</strong> 網頁清單出現那一筆；Table Editor 也多了一列，<code>user_id</code> 欄有一串編號。</p>
+    </section>
+
+    <section id="step-4" class="panel" aria-labelledby="step-4-title">
+      <h2 id="step-4-title"><span class="step-num">4</span>推上 GitHub</h2>
+      <h3><span class="tag tag-a">路線 A</span>叫 agent 推</h3>
+      <div class="prompt-box">
+        <pre id="prompt-push">幫我把這個資料夾放上 GitHub：
+1. 建一個新的 public repo，名字叫 learning-log。
+2. 推之前先列出所有要推的檔案，確認裡面沒有 secret key、service_role key、資料庫密碼。
+3. 我說可以再推。推完給我 repo 的網址。</pre>
+        <div class="actions"><button type="button" data-copy="prompt-push">複製這段</button><span class="copy-status" aria-live="polite"></span></div>
+      </div>
+      <p>它會用 W3 用過的 <code>gh</code> 或 <code>git</code>。跳出 GitHub 登入就登入；它要跑的每一條指令先看過再同意（W3 的規矩）。它說電腦上沒有 <code>gh</code>：你先在 GitHub 網頁建一個空的 <code>learning-log</code>（不要勾 Add a README），把網址給它。</p>
+      <h3><span class="tag tag-b">路線 B</span>在 GitHub 網頁上傳</h3>
+      <ol>
+        <li>GitHub 右上角「＋」→ <strong>New repository</strong>。名字填 <code>learning-log</code>，選 <strong>Public</strong>，按 <strong>Create repository</strong>。</li>
+        <li>新 repo 的頁面上找 <strong>uploading an existing file</strong> 那個連結。把解壓出來的<strong>六個檔</strong>（不是整個資料夾）拖進去，等六個檔名都出現，再按 <strong>Commit changes</strong>。</li>
+        <li>點 <code>config.js</code> → 右上鉛筆圖示編輯 → 把兩個「貼上…」換成第 3 步記下的兩個值（前後的雙引號留著）→ 按綠色的 <strong>Commit changes...</strong> → 跳出小視窗後<strong>再按一次</strong>裡面的 <strong>Commit changes</strong>，才算存好。</li>
+      </ol>
+      <p class="verify"><strong>看到這裡就對了。</strong> repo 首頁最外層直接看得到 <code>index.html</code>；<code>config.js</code> 打開是你的 Project URL 和 <code>sb_publishable_</code> 開頭的那把。</p>
+    </section>
+
+    <section id="step-5" class="panel" aria-labelledby="step-5-title">
+      <h2 id="step-5-title"><span class="step-num">5</span>Cloudflare：接上 GitHub、拿到網址</h2>
+      <ol>
+        <li>直接開 Cloudflare 的<a href="https://dash.cloudflare.com/?to=/:account/workers-and-pages/create" target="_blank" rel="noopener">建立頁</a>（或左側 Compute → <strong>Workers &amp; Pages</strong> → 建立）。畫面標題是「Create an app」。</li>
+        <li>按 <strong>Connect GitHub</strong>。第一次會跳到 GitHub：授權 <strong>Cloudflare Workers and Pages</strong>，安裝時選 <strong>Only select repositories</strong>，只勾 <code>learning-log</code>。</li>
+        <li>回到 Cloudflare 的「Select a repository」：搜尋 <code>learning-log</code>、點它，按 <strong>Next</strong>。</li>
+        <li>「Set up your application」照預設：Project name 自動是 <code>learning-log</code>、Build command 留空、Deploy command 是 <code>npx wrangler deploy</code>。按 <strong>Deploy</strong>。新帳號如果跳出要你幫 <code>workers.dev</code> 取一個子網域名字，用預設的或打你的英文名。</li>
+        <li>等建置跑完，大約一分鐘（Initializing → Cloning → Installing → Deploying），<strong>出現綠勾就好了</strong>。</li>
+        <li>按上方的 <strong>Overview</strong>：最上面那行就是你的網址；或按右上角藍色的 <strong>Visit</strong>。</li>
+      </ol>
+      <p class="verify"><strong>看到這裡就對了。</strong> 網址長得像 <code>learning-log.你的帳號代號.workers.dev</code>，打開是「我的學習紀錄」的登入畫面。剛建好的第一分鐘可能出現錯誤頁，等一下再重新整理。</p>
+      <p>有時候 Cloudflare 還會在你的 GitHub 開一個 pull request（PR），想幫你加 <code>wrangler.jsonc</code>、<code>.gitignore</code>、<code>.assetsignore</code> 三個設定檔。有的話先看 <strong>Files changed</strong>（W5 看紅綠修改對照的規矩），再按 <strong>Merge pull request</strong> → <strong>Confirm merge</strong>；沒有也沒關係，老師 11/13 實測就沒出現，第一次建置直接上線。<span class="tag tag-a">路線 A</span>合併過 PR 的人，GitHub 上會比你電腦多幾個檔：下次推之前叫 agent 先拉下來（pull）。</p>
+      <details>
+        <summary>建置失敗（紅色），紀錄裡寫 Missing entry-point？</summary>
+        <p>先別一直按 Deploy。在 GitHub 的 <code>learning-log</code> 按 <strong>Add file</strong> → <strong>Create new file</strong>，檔名打 <code>wrangler.jsonc</code>，貼上下面這段（<code>name</code> 要跟 Cloudflare 上這個專案的名字一字不差），按兩次 Commit changes。再用同樣方法建一個 <code>.assetsignore</code>，內容兩行：<code>.git</code> 和 <code>node_modules</code>（不讓這兩個資料夾被放上網）。Cloudflare 會自己再建置一次。還是不行就請老師來看。</p>
+        <pre id="cf-fallback">{
+  "name": "learning-log",
+  "compatibility_date": "2026-11-10",
+  "assets": { "directory": "." }
+}</pre>
+        <div class="actions"><button type="button" data-copy="cf-fallback">複製 wrangler.jsonc</button><span class="copy-status" aria-live="polite"></span></div>
+      </details>
+    </section>
+
+    <section id="step-6" class="panel" aria-labelledby="step-6-title">
+      <h2 id="step-6-title"><span class="step-num">6</span>兩個帳號驗收：彼此看不到，才算門禁有開</h2>
+      <p>這一步是今天的重點。網頁「看起來」只顯示自己的，不代表資料庫真的有擋；要用兩個帳號互相試才知道。</p>
+      <ol>
+        <li><strong>電腦</strong>：打開你的 Cloudflare 網址。<span class="tag tag-b">路線 B</span>用你的 Email 和一組練習用密碼<strong>註冊</strong>（不要沿用其他帳號的密碼），存一筆紀錄；<span class="tag tag-a">路線 A</span>第 3-4 步已經註冊過，直接<strong>登入</strong>（會看到剛才試存的那一筆）。</li>
+        <li><strong>手機</strong>（或電腦按 Ctrl+Shift+N 開無痕視窗，網址直接貼過去，比在手機上打字快）：打開同一個網址，用<strong>你的另一個 Email</strong> 註冊（例如學校信箱），也存一筆。測試用的假信箱（像 <code>test@example.com</code>）會被 Supabase 拒絕。</li>
+        <li>兩邊都重新整理一次。</li>
+      </ol>
+      <p class="verify"><strong>這樣才算過。</strong> 電腦只看得到電腦存的那一筆，手機只看得到手機存的那一筆。Supabase 的 Table Editor 兩筆都看得到是正常的：後台是管理者的畫面。</p>
+      <p>兩個帳號互測驗的是「看」。「新增、修改、刪除」也只准本人，靠的是第 2 步四件事的第二件：每條規則都拿 <code>auth.uid()</code> 比對 <code>user_id</code>。</p>
+      <p><strong>如果看得到對方的紀錄</strong>：門禁沒開好，先別再存東西。最快的修法：到 SQL Editor 把<strong>起步檔的 schema.sql</strong> 整份跑一次（第 3-1 步那顆複製鈕）。它會先清掉這張表所有舊規則（包括 AI 留下、名字不一樣的），再建四條只認本人的規則；表裡的欄位和紀錄不會動（前提是你的表有 <code>user_id</code> 這一欄）。只叫 agent 再加一條對的規則不夠：同一個動作只要有一條規則放行，就會放行。修完一定再用兩個帳號驗一次。這就是 W3 說的「抓出 AI 講得很有把握的那個錯」。</p>
+    </section>
+
+    <section id="step-7" class="panel" aria-labelledby="step-7-title">
+      <h2 id="step-7-title"><span class="step-num">7</span>改版一圈：說一句話，網站自己換新</h2>
+      <p>目標一樣：在紀錄清單上方加一行「最近 7 天：共幾分鐘、幾筆」。推上 GitHub 之後，不用再按任何部署鈕，Cloudflare 會自己換新版。</p>
+      <h3><span class="tag tag-a">路線 A</span>交給 agent</h3>
+      <div class="prompt-box">
+        <pre id="prompt-change">先把 GitHub 上的最新版拉下來（pull），免得跟網頁上的改動打架。
+然後在紀錄清單上方加一行小統計：最近 7 天（今天和前 6 天，照日期欄算；沒填分鐘的算 0）總共學了幾分鐘、記了幾筆。
+只改 index.html 和 app.js，不要動 config.js 和 schema.sql。
+先列計畫；改完先給我看改了哪幾行，我說可以，再 commit 並 push 到 GitHub。</pre>
+        <div class="actions"><button type="button" data-copy="prompt-change">複製這段</button><span class="copy-status" aria-live="polite"></span></div>
+      </div>
+      <h3><span class="tag tag-b">路線 B</span>瀏覽器問 AI，自己貼回 GitHub</h3>
+      <ol>
+        <li>把 GitHub 上的 <code>app.js</code> 和 <code>index.html</code> 整份貼給聊天 AI，跟它說：「在紀錄清單上方加一行小統計：最近 7 天（今天和前 6 天，照日期欄算；沒填分鐘的算 0）總共學了幾分鐘、記了幾筆。請直接給我改好之後完整的 index.html 和完整的 app.js。」</li>
+        <li>在 GitHub 網頁上點開這兩個檔 → 鉛筆編輯 → Ctrl+A 全選、貼上 AI 給的完整新版 → <strong>Commit changes...</strong> → 小視窗裡再按一次 <strong>Commit changes</strong>。兩個檔各做一次。只貼片段、自己找位置插進去，很容易少一個括號整頁壞掉。</li>
+      </ol>
+      <p>推上去之後，到 Cloudflare 這個專案的 <strong>Deployments</strong>，看最新那一次從建置中變成成功（GitHub 的 commit 旁邊也會從黃點變綠勾），再用手機重新整理。</p>
+      <p class="verify"><strong>做到這裡就完成。</strong> 一個網址；兩個帳號互相看不到對方的紀錄；改版推上去之後，手機重新整理看得到「最近 7 天」那一行。</p>
+    </section>
+
+    <section class="panel" aria-labelledby="wrap-title">
+      <h2 id="wrap-title">下課前</h2>
+      <ul>
+        <li><strong>教室電腦</strong>：先在你自己的「我的學習紀錄」網站按<strong>登出</strong>（登入狀態存在這台電腦的瀏覽器裡，不登出，下一位同學打開就是你的紀錄）。再登出 GitHub、Supabase、Cloudflare 和 AI 工具，最後<strong>重新開機</strong>：教室電腦重開會還原，留下的登入一次清乾淨。網站和資料都在雲端，不會不見。</li>
+        <li><strong>自己的筆電</strong>：資料庫密碼、Supabase 的 secret key 不要留在記事本或桌面的檔案裡。</li>
+        <li>老師請你交東西時，交 <strong>Cloudflare 網址</strong>和 <strong>GitHub repo 網址</strong>。</li>
+        <li>免費的 Supabase 專案一個星期沒人用會自動暫停，網站會顯示「連不到 Supabase」。回 Supabase 打開專案、按恢復（Restore）就好，資料還在。</li>
+      </ul>
+    </section>
+
+    <section id="help" class="panel" aria-labelledby="help-title">
+      <h2 id="help-title">卡關時先看這裡</h2>
+      <p>起步檔會把常見的錯誤翻成白話，顯示在網頁最下面。先讀那一行，再對下表。</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>你看到</th><th>多半是</th><th>怎麼辦</th></tr></thead>
+          <tbody>
+            <tr><td>教室電腦登入 GitHub，要我輸入驗證碼</td><td>GitHub 把教室電腦當成新電腦，多一道驗證</td><td>開了兩步驟驗證：看手機的驗證 App 或簡訊；沒開：到你 GitHub 帳號的信箱收那封驗證碼信（一小時內有效，手機收信最快；有裝 GitHub App 的看 App）。真的登不進舊帳號，用學校信箱當場註冊一個新的 GitHub 帳號，今天的 repo 是新建的，一樣做得完</td></tr>
+            <tr><td>網頁寫「設定還沒完成」</td><td><code>config.js</code> 還是「貼上…」，或改了沒推上 GitHub</td><td>確認兩個值貼進去、存檔、推上去；等 Cloudflare 建置成功再重新整理</td></tr>
+            <tr><td>紅色「secret（萬能）鑰匙」警告</td><td>貼成 secret key 了</td><td>換成 publishable key；到 Supabase 的 API Keys 頁把那把 secret key 作廢。推上 GitHub 過就一定要作廢</td></tr>
+            <tr><td>「找不到資料表 learning_logs」</td><td><code>schema.sql</code> 沒跑，或跑到別的專案</td><td>到這個專案的 SQL Editor 再跑一次（可以重跑）</td></tr>
+            <tr><td>「資料表還沒開放給登入的人用」</td><td><code>schema.sql</code> 最後的 <code>grant</code> 沒跑到</td><td>起步檔的 <code>schema.sql</code> 可以整份重跑；AI 寫的版本少了 <code>grant</code> 就請它補，重跑報錯就把錯誤訊息貼給它，請它改成可以重跑</td></tr>
+            <tr><td>「資料表的欄位跟這份程式對不上」</td><td>這個專案以前用別的版本建過 <code>learning_logs</code>（例如路線 A 換成起步檔）</td><td>SQL Editor 先跑 <code>drop table if exists public.learning_logs;</code>（表裡的紀錄會一起刪掉），再跑起步檔的 <code>schema.sql</code></td></tr>
+            <tr><td>點兩下 <code>app.js</code> 跳出 Windows Script Host 的錯誤視窗</td><td>Windows 把它當成程式執行了，檔案沒壞</td><td>關掉視窗；改成按右鍵 → 開啟檔案 → 記事本</td></tr>
+            <tr><td>找不到 Project URL</td><td>它不在 API Keys 那頁</td><td>專案首頁網址旁的 Copy → Project URL；或 Project Settings → <strong>Data API</strong>，最上面那一格</td></tr>
+            <tr><td>API Keys 頁只有 <code>eyJ</code> 開頭的長鑰匙</td><td>那是舊式鑰匙；anon 是公開的那把，service_role 是萬能的那把</td><td>按建立新鑰匙的按鈕，拿 <code>sb_publishable_</code> 開頭的；或先用 anon 那把（起步檔接受）。service_role 那把絕對不行</td></tr>
+            <tr><td>註冊後說要先按確認信</td><td>Confirm email 還開著</td><td>照 3-3 關掉，再回網站按「登入」</td></tr>
+            <tr><td>註冊時說 Email 被拒</td><td>用了假信箱或測試網域</td><td>換一個真的 Email</td></tr>
+            <tr><td>「Email 或密碼不對」</td><td>還沒註冊，或打錯</td><td>第一次用先按「第一次來：註冊」</td></tr>
+            <tr><td>「連不到 Supabase」</td><td>Project URL 貼錯（常見：貼成後台網址），或專案暫停了</td><td>Project URL 長得像 <code>https://一串字.supabase.co</code>；專案暫停就到 Supabase 按恢復</td></tr>
+            <tr><td>「金鑰不對」</td><td>key 沒貼完整、多了空白</td><td>重新複製整把 publishable key</td></tr>
+            <tr><td>兩個帳號看得到彼此的紀錄</td><td>門禁（RLS）沒開，或規則沒比對 <code>user_id</code></td><td>照第 6 步最後一段修，修完再驗一次</td></tr>
+            <tr><td>Cloudflare 找不到我的 repo</td><td>安裝 GitHub App 時沒勾 <code>learning-log</code></td><td>GitHub 右上頭像 → Settings → Applications → Cloudflare Workers and Pages → Configure，把 <code>learning-log</code> 加進去</td></tr>
+            <tr><td>Cloudflare 網址打開是錯誤頁</td><td>建置還沒跑完，或剛上線還在生效</td><td>Deployments 看最新那次有沒有綠勾；等一分鐘再重新整理</td></tr>
+            <tr><td>建置失敗，紀錄寫 Missing entry-point</td><td>自動設定沒跑成</td><td>別一直按 Deploy；照第 5 步最後那個摺疊說明自己加 <code>wrangler.jsonc</code>，或請老師來看</td></tr>
+            <tr><td>GitHub 上改了 <code>config.js</code>，網站還是說設定沒完成</td><td>只按了一次 Commit changes，小視窗裡那一次沒按</td><td>回去看 <code>config.js</code> 內容有沒有變；沒變就重改，記得按兩次</td></tr>
+            <tr><td>Cloudflare 建置失敗（紅色）</td><td>看建置紀錄最後幾行</td><td>點進那一次建置，把最後幾行截圖給老師或貼給 AI 問</td></tr>
+            <tr><td>推上去了，網站還是舊的</td><td>建置還沒跑完，或手機拿舊檔</td><td>Deployments 最新那次成功了再重新整理（手機可以關掉分頁重開）</td></tr>
+            <tr><td>agent 推不上去，說遠端有新的東西（rejected）</td><td>GitHub 上有你電腦還沒有的改動（例如合併過 Cloudflare 的 PR、或在網頁上改過檔）</td><td>跟 agent 說「先 pull 再推」</td></tr>
+            <tr><td>推上 GitHub 被擋，說偵測到金鑰</td><td>檔案裡有 secret key</td><td>先到 Supabase 作廢那把，再把它從檔案拿掉重推</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <p>和 AI 一起寫程式：創意生活應用｜W11｜起步檔 2026-11-13 實測（本機 Supabase 25 項檢查全過；Codex 與 Claude 照需求卡做出的版本，兩個帳號互測也都通過）。服務的按鈕名稱常改版，跟畫面不一樣時以畫面為準，再問老師。</p>
+    </footer>
+  </main>
+  <script>
+    document.querySelectorAll("[data-copy]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var source = document.getElementById(button.dataset.copy);
+        var status = button.parentElement.querySelector(".copy-status");
+        var text = source.textContent;
+        function done(ok) {
+          status.textContent = ok ? "已複製，貼給 AI 就好。" : "沒辦法自動複製：已經幫你選好文字，按 Ctrl+C。";
+        }
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(function () { done(true); }, function () { selectText(source); done(false); });
+        } else {
+          selectText(source);
+          var ok = false;
+          try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+          done(ok);
+        }
+      });
+    });
+    function selectText(node) {
+      var range = document.createRange();
+      range.selectNodeContents(node);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  </script>
+</body>
+</html>

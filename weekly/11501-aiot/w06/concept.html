@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W6 背景知識：把電腦的眼睛借給板子</title>
+<meta name="description" content="AIoT 智慧裝置實作 W6 互動背景知識頁：全路徑地圖、kernel 與模組、USB gadget、adb、USB 網卡（NCM）、瀏覽器安全內容、App Lab 的 brick、AI 推論、怎麼變快。">
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --surface-2:#F1F5F4; --ink:#132525; --ink-soft:#3E5656; --mist:#5A7272;
+  --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF; --gold:#D9A441; --gold-deep:#7A5510; --gold-tint:#FBF0D9;
+  --dark:#062524; --red:#B0503A; --red-tint:#F7E4DE; --violet:#5B4B9A; --violet-tint:#ECE8F7;
+  --pc:#2F5B9E; --pc-tint:#E5EDF8; --bd:#0E7C7B; --bd-tint:#E2F0EF;
+  --code-bg:#F3F6F5; --code-ink:#1B3433; --code-com:#5F7978;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC","Heiti TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono","Liberation Mono","Noto Sans Mono CJK TC",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#93ADAC;
+    --line:#2A4544; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+    --dark:#041716; --red:#EC9580; --red-tint:#3D2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+    --pc:#8DB4F0; --pc-tint:#16273F; --bd:#5CC8C6; --bd-tint:#123A39;
+    --code-bg:#0D1F1F; --code-ink:#D5E6E5; --code-com:#8FA9A8;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#93ADAC;
+  --line:#2A4544; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+  --dark:#041716; --red:#EC9580; --red-tint:#3D2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+  --pc:#8DB4F0; --pc-tint:#16273F; --bd:#5CC8C6; --bd-tint:#123A39;
+  --code-bg:#0D1F1F; --code-ink:#D5E6E5; --code-com:#8FA9A8;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:16px;line-height:1.75;overflow-wrap:break-word}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+[hidden]{display:none!important}
+a{color:var(--teal)}
+code,pre,kbd,.mono,.term,.cfg,.cmd{font-family:var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+code{font-size:.9em;background:var(--code-bg);color:var(--code-ink);border-radius:5px;padding:0 4px;overflow-wrap:anywhere}
+pre{margin:8px 0;max-width:100%;overflow-x:auto;background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px;line-height:1.6;white-space:pre}
+pre code{background:none;padding:0;overflow-wrap:normal;font-size:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px 48px}
+header.hero{background:var(--dark);color:#E6F2F2;padding:28px 0 22px}
+header.hero .wrap{padding-bottom:0}
+.kicker{font-weight:800;font-size:13px;letter-spacing:.14em;color:var(--gold)}
+h1{font-size:clamp(26px,4.4vw,40px);line-height:1.2;margin:6px 0 8px;font-weight:900}
+.hero p{margin:6px 0;color:#BFD6D5;max-width:860px}
+.hero code{background:#0E3533;color:#E6F2F2}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:12px;font-size:14px;color:#D4E5E4}
+.legend .tag{font-size:13px}
+.hero .t-meas{background:#123A39;color:#7FE0DD}
+.hero .t-board{background:#16273F;color:#A9C8F5}
+.hero .t-code{background:#2A2445;color:#CDBFFF}
+.hero .t-est{background:#3A2F18;color:#F3D08A}
+.hero .wn{color:#FFB4A2}
+nav.toc{margin:18px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+nav.toc h2{font-size:15px;margin:0 0 8px;color:var(--mist);letter-spacing:.06em}
+nav.toc ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px 14px}
+nav.toc a{display:block;text-decoration:none;color:var(--ink);padding:4px 8px;border-radius:8px}
+nav.toc a:hover{background:var(--teal-tint)}
+nav.toc .n{display:inline-block;min-width:1.8em;font-weight:800;color:var(--teal)}
+.toc-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:6px 12px;font-size:15px;line-height:1.4}
+.btn:hover{border-color:var(--teal)}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}
+.btn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}
+:root[data-theme="dark"] .btn.primary,:root[data-theme="dark"] .btn[aria-pressed="true"]{color:#062524}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary,:root:not([data-theme="light"]) .btn[aria-pressed="true"]{color:#062524}}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.seg{display:inline-flex;flex-wrap:wrap;gap:6px}
+section.sec,footer.sec{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:22px 0;scroll-margin-top:12px}
+.sec-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sec-h .num{flex:0 0 auto;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--teal);color:#fff;font-weight:900;font-size:18px}
+:root[data-theme="dark"] .sec-h .num{color:#062524}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sec-h .num{color:#062524}}
+.sec-h h2{margin:0;font-size:clamp(21px,3vw,27px);line-height:1.3}
+.sec-h .en{color:var(--mist);font-size:14px;font-weight:600;letter-spacing:.04em}
+.lead{margin:8px 0 14px;color:var(--ink-soft);font-size:16.5px}
+.lead b:first-child{color:var(--teal)}
+.back{font-size:13px;margin-left:auto;color:var(--mist)}
+h3.sub{font-size:18px;margin:22px 0 6px;padding-top:12px;border-top:1px dashed var(--line)}
+.tag{display:inline-block;white-space:nowrap;font-size:.74em;font-weight:700;line-height:1.5;padding:0 5px;border-radius:6px;vertical-align:1px;margin:0 2px;cursor:help}
+.t-meas{background:var(--teal-tint);color:var(--teal)}
+.t-board{background:var(--pc-tint);color:var(--pc)}
+.t-code{background:var(--violet-tint);color:var(--violet)}
+.t-est{background:var(--gold-tint);color:var(--gold-deep)}
+.wn{color:var(--red);font-weight:700}
+details.deep{margin-top:16px;border:1px dashed var(--gold);border-radius:14px;background:var(--surface-2)}
+details.deep>summary{cursor:pointer;padding:10px 14px;font-weight:800;color:var(--gold-deep);list-style:none}
+details.deep>summary::-webkit-details-marker{display:none}
+details.deep>summary::before{content:"＋ ";font-weight:900}
+details.deep[open]>summary::before{content:"－ "}
+details.deep>.in{padding:2px 16px 16px}
+details.deep h4{margin:14px 0 6px;font-size:16px}
+.small{font-size:14px;color:var(--mist)}
+.note{font-size:14.5px;color:var(--ink-soft);background:var(--surface-2);border-left:4px solid var(--gold);padding:8px 12px;border-radius:0 10px 10px 0;margin:10px 0}
+.note.warn{border-left-color:var(--red)}
+.note.ok{border-left-color:var(--teal)}
+.callout{border:2px solid var(--teal);background:var(--teal-tint);border-radius:14px;padding:12px 16px;margin:12px 0}
+.callout h3{margin:0 0 4px;font-size:18px}
+.tblw{overflow-x:auto;max-width:100%;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--surface-2);font-weight:800}
+.two{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width: 880px){.two{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.panel h3{margin:0 0 6px;font-size:18px}
+.panel h4{margin:12px 0 4px;font-size:15px;color:var(--ink-soft)}
+.panel ul,.panel ol{margin:6px 0;padding-left:1.3em}
+.panel li{margin:3px 0}
+.ph{color:var(--mist);font-size:15px}
+@media (min-width: 881px){.sticky{position:sticky;top:12px}}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:10px 0}
+.card{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.card>b{display:block;font-size:15.5px;margin-bottom:2px}
+.card p{margin:0;font-size:14.5px;color:var(--ink-soft)}
+.where{display:inline-block;white-space:nowrap;font-size:.8em;font-weight:800;padding:1px 9px;border-radius:999px}
+.where.pc{background:var(--pc-tint);color:var(--pc)}
+.where.bd{background:var(--bd-tint);color:var(--bd)}
+.where.cable{background:var(--violet-tint);color:var(--violet)}
+.where.both{background:var(--gold-tint);color:var(--gold-deep)}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:6px 0 10px}
+.ctrls label{font-size:14px;color:var(--mist);font-weight:700}
+
+/* §0 地圖 */
+.map3{display:grid;grid-template-columns:minmax(0,1fr) 96px minmax(0,1fr);gap:10px;align-items:stretch}
+.col{border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.col.pc{background:var(--pc-tint);border:2px solid var(--pc)}
+.col.bd{background:var(--bd-tint);border:2px solid var(--bd)}
+.col-h{font-weight:900;font-size:14px;letter-spacing:.03em}
+.col.pc .col-h{color:var(--pc)}
+.col.bd .col-h{color:var(--bd)}
+.lyr{display:grid;grid-template-columns:26px minmax(0,1fr);column-gap:8px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;line-height:1.35;min-width:0}
+.lyr .k{grid-row:1/3;display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);font-weight:900;font-size:13px}
+.lyr b{font-size:15px;overflow-wrap:anywhere}
+.lyr small{color:var(--mist);font-size:12.5px;overflow-wrap:anywhere}
+.lyr.result{grid-column:1/-1;background:var(--surface);border:2px dashed var(--gold)}
+.lyr:hover{border-color:var(--gold)}
+.lyr[aria-pressed="true"]{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-tint);background:var(--gold-tint)}
+.lyr.on{border-color:var(--gold);background:var(--gold-tint);box-shadow:0 0 0 4px var(--gold)}
+.lyr.done .k{background:var(--teal);color:#fff;border-color:var(--teal)}
+.cablecol{display:flex;flex-direction:column;justify-content:center;gap:8px;min-width:0}
+.cablecol .lyr{grid-template-columns:minmax(0,1fr);text-align:center;background:var(--violet-tint);border-color:var(--violet)}
+.cablecol .lyr .k{grid-row:auto;margin:0 auto}
+.wire{flex:1 1 auto;min-height:18px;border-left:4px solid var(--violet);margin:0 auto;width:0}
+.walkline{min-height:2.6em;margin:4px 0 10px;padding:8px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);font-size:15px}
+@media (max-width: 640px){
+  .map3{grid-template-columns:minmax(0,1fr)}
+  .cablecol{flex-direction:row;align-items:center}
+  .cablecol .lyr{flex:0 0 auto;width:auto;padding:6px 16px}
+  .wire{border-left:0;border-top:4px solid var(--violet);width:auto;min-height:0;height:0;flex:1 1 16px}
+}
+@media (max-width: 880px){#map #mapPanel{margin:0;border:2px solid var(--gold);box-shadow:0 4px 14px rgba(6,37,36,.18)}}
+#walkPlay{font-weight:800}
+
+/* §1 分類、終端機 */
+.sortrows{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.srow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.srow .q{font-size:15px}
+.srow .bb{display:flex;gap:6px;flex-wrap:wrap}
+.srow .fb{grid-column:1/-1;font-size:14px;color:var(--ink-soft)}
+.srow.right{border-color:var(--teal);background:var(--teal-tint)}
+.srow.wrong{border-color:var(--red);background:var(--red-tint)}
+.srow .btn:disabled[aria-pressed="true"],.srow .btn.should:disabled{opacity:1}
+.srow.wrong .btn[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.srow .btn.should{border:2px solid var(--teal);color:var(--teal);font-weight:800;background:var(--surface)}
+:root[data-theme="dark"] .srow.wrong .btn[aria-pressed="true"]{color:#2A0E08}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .srow.wrong .btn[aria-pressed="true"]{color:#2A0E08}}
+@media (max-width: 560px){.srow{grid-template-columns:minmax(0,1fr)}}
+.score{font-weight:800;color:var(--teal)}
+.termbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.termbar .btn{font-family:var(--mono);font-size:13.5px}
+.term{background:#081414;color:#CFE8E6;border-radius:12px;padding:10px 12px;font-size:13.5px;line-height:1.6;min-height:150px;max-height:320px;overflow:auto;white-space:pre;border:1px solid #1E3A39}
+.term .pr{color:#F3D08A}
+.term .cm{color:#8FB5B3}
+@media (max-width: 560px){.term{white-space:pre-wrap;overflow-wrap:anywhere}}
+
+/* §2 gadget */
+.gb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,1fr);gap:12px;align-items:start}
+@media (max-width: 980px){.gb{grid-template-columns:minmax(0,1fr)}}
+.ck{display:flex;gap:8px;align-items:flex-start;margin:4px 0;font-size:15px}
+.ck input{margin-top:6px;flex:0 0 auto}
+.cfg{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.6;overflow-x:auto;white-space:pre;margin:0}
+.cfg .pend{color:var(--gold-deep);font-weight:700}
+.cfg .gone{color:var(--red);text-decoration:line-through}
+.cfg .udc0{color:var(--red);font-weight:700}
+.adbst{display:flex;align-items:center;gap:8px;margin:8px 0;font-weight:800}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--mist)}
+.dot.ok{background:#1E9E6A;box-shadow:0 0 6px rgba(30,158,106,.6)}
+.dot.bad{background:#D9534F;box-shadow:0 0 6px rgba(217,83,79,.6)}
+.dot.wait{background:var(--gold)}
+ol.tl{margin:6px 0;padding-left:0;list-style:none;font-size:14px}
+ol.tl li{margin:3px 0}
+.hostbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14.5px}
+.hostbox ul{margin:4px 0;padding-left:1.2em}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:700;color:var(--ink-soft);min-width:0;margin:6px 0}
+.form input[type=text],.form input[type=number],.form select,select.sel{width:100%;min-width:0;border:1px solid var(--line);border-radius:10px;padding:7px 10px;background:var(--surface);font-weight:400}
+
+/* §3 角色、步驟軌道 */
+.roles{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;margin:10px 0}
+.role{flex:1 1 170px;border-radius:12px;padding:8px 10px;min-width:0}
+.role.pc{background:var(--pc-tint);border:2px solid var(--pc)}
+.role.bd{background:var(--bd-tint);border:2px solid var(--bd)}
+.role b{display:block}
+.role small{display:block;color:var(--ink-soft);font-size:13px}
+.arr{flex:0 0 auto;display:grid;place-items:center;font-weight:900;color:var(--violet);padding:0 2px}
+.arr .av{display:none}
+@media (max-width: 640px){.roles{flex-direction:column}.role{flex:0 0 auto}.arr .ah{display:none}.arr .av{display:inline}}
+.track{display:flex;align-items:stretch;gap:0;margin:8px 0 12px}
+.node{flex:1 1 0;min-width:0;text-align:center;background:var(--surface-2);border:2px solid var(--line);border-radius:12px;padding:8px 4px;font-size:13px;line-height:1.3;transition:background .2s,border-color .2s}
+.node b{display:block;font-size:14px;overflow-wrap:anywhere}
+.node small{color:var(--mist);overflow-wrap:anywhere}
+.node.pc{border-top:5px solid var(--pc)}
+.node.bd{border-top:5px solid var(--bd)}
+.node.cb{border-top:5px solid var(--violet)}
+.node.on{border-color:var(--gold);background:var(--gold-tint);box-shadow:0 0 0 3px var(--gold-tint)}
+.conn{flex:0 0 22px;display:grid;place-items:center;color:var(--line);font-weight:900;font-size:16px}
+.conn.lit{color:var(--gold)}
+@media (max-width: 700px){
+  .track{flex-direction:column}
+  .node{display:flex;gap:8px;align-items:baseline;text-align:left;padding:6px 10px}
+  .node b{display:inline}
+  .conn{flex:0 0 18px;transform:rotate(90deg)}
+}
+.stepcard{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface);min-height:110px}
+.stepcard h4{margin:0 0 6px;font-size:16.5px}
+.stepbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepbar .cnt{color:var(--mist);font-size:14px;margin-left:auto}
+.dirbox{display:grid;grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr);gap:8px;align-items:center;margin:10px 0}
+.dirbox .end{border-radius:12px;padding:10px;text-align:center;min-width:0;overflow-wrap:anywhere}
+.dirbox .end.pc{background:var(--pc-tint);border:2px solid var(--pc)}
+.dirbox .end.bd{background:var(--bd-tint);border:2px solid var(--bd)}
+.dirbox .mid{text-align:center;font-size:30px;font-weight:900;color:var(--gold)}
+@media (max-width: 560px){.dirbox{grid-template-columns:minmax(0,1fr) 36px minmax(0,1fr)}.dirbox code{white-space:nowrap;font-size:12px}.dirbox .mid{font-size:24px}}
+.dirbox .listen{display:inline-block;font-size:12px;font-weight:800;padding:0 6px;border-radius:6px;background:var(--gold);color:#2A1C00}
+.state{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:8px 0}
+@media (max-width: 560px){.state{grid-template-columns:minmax(0,1fr)}}
+.st{border:2px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--surface);font-size:14px;min-width:0}
+.st b{display:block}
+.st.bad{border-color:var(--red);background:var(--red-tint)}
+.st.ok{border-color:var(--teal);background:var(--teal-tint)}
+
+/* §4 */
+.steps5{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.steps5 .btn{flex:1 1 150px;text-align:left}
+.seq{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.seq li{display:grid;grid-template-columns:minmax(0,1fr) 6.6em minmax(0,1fr);gap:6px;align-items:center;opacity:.18;transition:opacity .3s}
+.seq li.show{opacity:1}
+.seq .m{grid-column:1/-1;font-size:14px;color:var(--ink-soft);padding:0 4px}
+.seq .who{border-radius:10px;padding:6px 8px;font-size:13.5px;text-align:center;min-width:0;overflow-wrap:anywhere}
+.seq .who.pc{background:var(--pc-tint);border:1px solid var(--pc)}
+.seq .who.bd{background:var(--bd-tint);border:1px solid var(--bd)}
+.seq .ar{display:flex;flex-direction:column;align-items:center;line-height:1.15;text-align:center}
+.seq .ar b{font-size:13.5px}
+.seq .ar i{font-style:normal;font-weight:900;color:var(--gold);font-size:22px}
+.seq .msg{display:block;font-weight:800}
+.hbars{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.hb{display:grid;grid-template-columns:minmax(0,11em) minmax(0,1fr);gap:8px;align-items:center}
+.hb .lab{font-size:14px;font-weight:700;min-width:0;overflow-wrap:anywhere}
+.hb .trk{position:relative;display:block;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.hb .fill{position:absolute;left:0;bottom:0;height:7px;min-width:3px;background:var(--teal);border-radius:0 4px 4px 0}
+.hb .fill.alt{background:var(--pc)}
+.hb .fill.hot{background:var(--red)}
+.hb .val{position:relative;display:block;padding:3px 8px 10px;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+@media (max-width: 560px){.hb{grid-template-columns:minmax(0,1fr)}}
+.tline{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.tline button{display:grid;grid-template-columns:7.2em minmax(0,1fr);gap:8px;text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:6px 10px}
+.tline button b{color:var(--teal)}
+.tline button[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-tint)}
+.tline button.bad b{color:var(--red)}
+@media (max-width: 480px){.tline button{grid-template-columns:minmax(0,1fr)}}
+.rt td.hot{background:var(--red-tint);font-weight:700}
+@media (max-width: 560px){
+  table.stack,table.stack tbody,table.stack tr,table.stack td{display:block;width:100%}
+  table.stack tr:first-child{display:none}
+  table.stack tr{border:1px solid var(--line);border-radius:10px;margin:8px 0;padding:6px 0;background:var(--surface)}
+  table.stack td{border:0;padding:2px 10px}
+  table.stack td:first-child{font-weight:800}
+  table.stack td[data-l]:not(:first-child)::before{content:attr(data-l);display:block;font-size:12px;font-weight:700;color:var(--mist)}
+}
+
+/* §5 */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chips .btn{font-family:var(--mono);font-size:13.5px}
+.chips.zh .btn{font-family:var(--zh);font-size:14.5px}
+.verdict{border:2px solid var(--line);border-radius:14px;padding:10px 14px;margin:8px 0;background:var(--surface)}
+.verdict.ok{border-color:var(--teal);background:var(--teal-tint)}
+.verdict.bad{border-color:var(--red);background:var(--red-tint)}
+.verdict.maybe{border-color:var(--gold);background:var(--gold-tint)}
+.verdict .big{font-size:20px;font-weight:900}
+.verdict.ok .big{color:var(--teal)}
+.verdict.bad .big{color:var(--red)}
+.verdict.maybe .big{color:var(--gold-deep)}
+
+/* §6 */
+.tree{font-family:var(--mono);font-size:14px;background:var(--code-bg);border-radius:12px;padding:10px 12px;line-height:1.8;overflow-x:auto;white-space:pre;border:1px solid var(--line)}
+.tree button{background:none;border:0;padding:0 4px;border-radius:5px;font-family:var(--mono);color:var(--teal);text-decoration:underline dotted;text-underline-offset:3px}
+.tree button[aria-pressed="true"]{background:var(--gold-tint);color:var(--gold-deep);text-decoration:none;font-weight:700}
+.tree .d{color:var(--mist)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 8px}
+.code{background:var(--code-bg);border:1px solid var(--line);border-radius:12px;max-height:480px;overflow:auto;font-family:var(--mono);font-size:13px;line-height:1.55}
+.code .inner{display:inline-block;min-width:100%;padding:6px 0}
+.ln{display:flex;width:100%;text-align:left;background:none;border:0;padding:0 10px 0 0;color:var(--code-ink);white-space:pre;font-family:var(--mono);font-size:inherit;line-height:inherit}
+.ln .no{flex:0 0 auto;width:3em;text-align:right;padding-right:10px;color:var(--mist);user-select:none;position:sticky;left:0;z-index:1;background:var(--code-bg)}
+.ln:hover .no{background:linear-gradient(rgba(217,164,65,.14),rgba(217,164,65,.14)),var(--code-bg)}
+.ln.inrange .no{background:linear-gradient(rgba(14,124,123,.12),rgba(14,124,123,.12)),var(--code-bg)}
+.ln[aria-pressed="true"] .no{background:linear-gradient(rgba(217,164,65,.32),rgba(217,164,65,.32)),var(--code-bg)}
+.ln .tx{flex:1 0 auto}
+.ln:hover{background:rgba(217,164,65,.14)}
+.ln.inrange{background:rgba(14,124,123,.12)}
+.ln[aria-pressed="true"]{background:rgba(217,164,65,.32)}
+.ln.hasnote .no{color:var(--teal);font-weight:800}
+@media (max-width: 880px){#codePanel{position:sticky;bottom:6px;max-height:40vh;overflow:auto;z-index:3;box-shadow:0 -6px 22px rgba(6,37,36,.22)}}
+
+/* §7 */
+.pipe{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.pipe .btn{font-size:14px}
+.pipe .btn small{display:block;font-size:11.5px;color:inherit;opacity:.8}
+.svgbox{background:#1B2B2B;border-radius:12px;padding:6px;max-width:440px}
+.svgbox svg{display:block;width:100%;height:auto}
+.rangeRow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0}
+.rangeRow input[type=range]{flex:1 1 200px;min-width:0}
+.hexrow{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0;font-family:var(--mono);font-size:13px}
+.hexrow span{padding:1px 5px;border-radius:5px;border:1px solid var(--line)}
+.hexrow .h-ver{background:var(--violet-tint);border-color:var(--violet)}
+.hexrow .h-mode{background:var(--pc-tint);border-color:var(--pc)}
+.hexrow .h-ts{background:var(--gold-tint);border-color:var(--gold)}
+.hexrow .h-rnd{background:var(--teal-tint);border-color:var(--teal)}
+
+/* §8 */
+.fps4{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin:10px 0}
+.ladder{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.lrow{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.3fr);gap:8px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:12px;padding:8px 10px}
+.lrow[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-tint)}
+.lrow .cfgt{font-weight:800;font-size:14.5px}
+.lrow .mini{position:relative;height:20px;background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.lrow .mini .cam{position:absolute;left:0;top:0;bottom:0;background:var(--pc-tint)}
+.lrow .mini .ai{position:absolute;left:0;top:5px;bottom:5px;background:var(--teal);border-radius:3px}
+.lrow .lim{font-size:13.5px;color:var(--ink-soft)}
+.lrow .nums{font-size:13px;color:var(--mist);display:block}
+@media (max-width: 700px){.lrow{grid-template-columns:minmax(0,1fr)}}
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:14px;align-items:start}
+@media (max-width: 820px){.calc{grid-template-columns:minmax(0,1fr)}}
+.calc .form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px 12px}
+@media (max-width: 420px){.calc .form{grid-template-columns:minmax(0,1fr)}}
+.big{font-size:26px;font-weight:900;color:var(--teal)}
+details.kq{border:1px solid var(--line);border-radius:12px;background:var(--surface-2);margin:6px 0}
+details.kq>summary{cursor:pointer;padding:8px 12px;font-weight:800;list-style:none}
+details.kq>summary::-webkit-details-marker{display:none}
+details.kq>summary::before{content:"▸ ";color:var(--teal)}
+details.kq[open]>summary::before{content:"▾ "}
+details.kq>.in{padding:0 14px 10px}
+.verdictTag{display:inline-block;font-size:12.5px;font-weight:800;padding:0 7px;border-radius:999px;margin-left:6px;white-space:nowrap}
+.v-no{background:var(--red-tint);color:var(--red)}
+.v-yes{background:var(--teal-tint);color:var(--teal)}
+.howto{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;margin:10px 0}
+@media (max-width: 400px){.howto{grid-template-columns:minmax(0,1fr)}}
+.howto .card{display:flex;flex-direction:column;gap:6px}
+.howto .card h4{margin:0;font-size:16px}
+
+/* §9 想一想 */
+.qs{display:flex;flex-direction:column;gap:14px;counter-reset:q}
+.qq{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface-2)}
+.qq h3{margin:0 0 8px;font-size:16.5px}
+.qq h3::before{counter-increment:q;content:"Q" counter(q) "　";color:var(--teal);font-weight:900}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 12px;text-align:left;max-width:100%}
+.opt[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-tint);font-weight:700}
+.opt.right{border-color:var(--teal);background:var(--teal-tint);font-weight:800}
+.opt.wrong{border-color:var(--red);background:var(--red-tint)}
+.ans{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--teal)}
+.qbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.qbar .yours{font-size:14px;color:var(--mist)}
+
+/* §10 */
+.gloss td:first-child{font-weight:800;white-space:nowrap}
+.gloss td:nth-child(2){font-family:var(--mono);font-size:13.5px;overflow-wrap:anywhere}
+@media (max-width: 560px){.gloss td:first-child{white-space:normal}}
+
+footer{color:var(--mist);font-size:13.5px}
+footer h2{font-size:17px;color:var(--ink)}
+footer li{margin:4px 0;overflow-wrap:anywhere}
+@media (max-width: 560px){
+  section.sec,footer.sec{padding:16px 13px}
+  body{font-size:15.5px}
+  details.deep>.in{padding:2px 11px 14px}
+  .panel{padding:12px 12px}
+}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.seq li,.node{transition:none}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">AIoT 智慧裝置實作 · W6（2026-10-15）· 互動背景知識頁</div>
+    <h1>把電腦的眼睛借給板子</h1>
+    <p>今天的路：E307 電腦的攝影機 → Chrome → 一條 USB 線 → UNO Q 板上的 AI → 人臉框回到同一個網頁。這一頁把路上的每一層拆開講：作業系統核心（kernel）、USB、adb、USB 網卡、瀏覽器的安全規則、App Lab 的積木（brick）、AI 推論，最後是「怎麼變快」。每節第一層白話講完；想往下挖，點「深入一層」。</p>
+    <div class="legend" aria-label="數字的出處等級">
+      <span>每個數字旁邊都有出處（滑鼠停在標籤上看檔名）：</span>
+      <span><span class="tag t-meas">〔實測 2026-07-xx〕</span>arduino-q 專案在板子上量過</span>
+      <span><span class="tag t-board">〔實板 10/14〕</span>2026-10-14 在老師的板子上實查</span>
+      <span><span class="tag t-code">〔原始碼〕</span>讀原始碼、設定檔或工具說明</span>
+      <span><span class="tag t-est">〔估算〕</span>用數字推算，不是量的</span>
+      <span><span class="wn">⚠️</span>來源互相不一致、沒驗證，或只在別的機器驗過</span>
+    </div>
+    <p class="small" style="color:#9FBDBC">實測多半在 Mac、Windows 電腦和老師的板子上做的；E307 Ubuntu 教室機上的實際情形，以當天課堂為準 <span class="wn">⚠️</span>。</p>
+  </div>
+</header>
+
+<main class="wrap">
+<nav class="toc" id="toc" aria-label="目錄">
+  <h2>目錄</h2>
+  <ol>
+    <li><a href="#s0"><span class="n">0</span>全路徑地圖</a></li>
+    <li><a href="#s1"><span class="n">1</span>Kernel：板子作業系統的核心</a></li>
+    <li><a href="#s2"><span class="n">2</span>USB：一條線、好幾個身分</a></li>
+    <li><a href="#s3"><span class="n">3</span>adb：上半節的隧道</a></li>
+    <li><a href="#s4"><span class="n">4</span>USB 網卡（NCM）：下半節自己做</a></li>
+    <li><a href="#s5"><span class="n">5</span>瀏覽器攝影機與安全內容</a></li>
+    <li><a href="#s6"><span class="n">6</span>App Lab 的 App 與 Brick</a></li>
+    <li><a href="#s7"><span class="n">7</span>AI 推論：從 JPEG 到人臉框</a></li>
+    <li><a href="#s8"><span class="n">8</span>怎麼變快</a></li>
+    <li><a href="#s9"><span class="n">9</span>想一想（先猜再揭曉）</a></li>
+    <li><a href="#s10"><span class="n">10</span>名詞小抄</a></li>
+    <li><a href="#refs"><span class="n">※</span>出處</a></li>
+  </ol>
+  <div class="toc-tools">
+    <button type="button" class="btn" id="openAll">「深入一層」全部展開</button>
+    <button type="button" class="btn" id="closeAll">全部收合</button>
+    <button type="button" class="btn" id="themeBtn">切換深色／淺色</button>
+  </div>
+</nav>
+
+<!-- ============================== §0 ============================== -->
+<section class="sec" id="s0">
+  <div class="sec-h"><span class="num">0</span><h2>全路徑地圖</h2><span class="en">THE WHOLE ROUTE</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><b>這節回答：</b>一張臉從鏡頭走到網頁上的框，中間經過哪些人？先選上半節或下半節，再點任何一層：它是誰、在哪台機器、用什麼指令看得到它。</p>
+  <div class="ctrls">
+    <div class="seg" role="group" aria-label="選擇路徑">
+      <button type="button" class="btn" data-mode="adb" aria-pressed="true">上半節：adb forward</button>
+      <button type="button" class="btn" data-mode="ncm" aria-pressed="false">下半節：USB 網卡＋轉接程式</button>
+    </div>
+    <div class="seg">
+      <button type="button" class="btn" id="walkPlay">▶ 走一遍</button>
+      <button type="button" class="btn" id="walkNext">下一步</button>
+      <button type="button" class="btn" id="walkReset">重來</button>
+    </div>
+  </div>
+  <p class="walkline" id="walkLine" aria-live="polite">按「▶ 走一遍」看一張畫面怎麼走；或直接點任何一層。</p>
+  <div class="two">
+    <div class="map3" id="map">
+      <div class="col pc">
+        <div class="col-h">電腦（E307 Ubuntu）</div>
+        <button type="button" class="lyr" data-l="cam" aria-pressed="false"><span class="k">1</span><b>攝影機</b><small>UVC 裝置；電腦是它的 host</small></button>
+        <button type="button" class="lyr" data-l="chrome" aria-pressed="false"><span class="k">2</span><b>Chrome</b><small>getUserMedia 取畫面</small></button>
+        <button type="button" class="lyr" data-l="ports" aria-pressed="false"><span class="k">3</span><b>127.0.0.1 的三個門</b><small>17000／18080／14912</small></button>
+        <button type="button" class="lyr" data-l="xport" aria-pressed="false"><span class="k">4</span><b data-adb="adb server" data-ncm="轉接程式＋USB 網卡">adb server</b><small data-adb="把資料包進 adb 的隧道" data-ncm="usbnet-bridge.py → 192.168.7.2">把資料包進 adb 的隧道</small></button>
+      </div>
+      <div class="cablecol">
+        <span class="wire" aria-hidden="true"></span>
+        <button type="button" class="lyr" data-l="cable" aria-pressed="false"><span class="k">5</span><b>USB 線</b><small>host ⇄ device</small></button>
+        <span class="wire" aria-hidden="true"></span>
+      </div>
+      <div class="col bd">
+        <div class="col-h">板子（UNO Q）</div>
+        <button type="button" class="lyr" data-l="gadget" aria-pressed="false"><span class="k">6</span><b>kernel：USB gadget</b><small data-adb="ffs.adb 這個功能" data-ncm="ncm.usb0 這個功能">ffs.adb 這個功能</small></button>
+        <button type="button" class="lyr" data-l="rx" aria-pressed="false"><span class="k">7</span><b data-adb="adbd" data-ncm="usb0 網卡＋DHCP 服務">adbd</b><small data-adb="板子上的 adb 常駐程式" data-ncm="板子在 192.168.7.2">板子上的 adb 常駐程式</small></button>
+        <button type="button" class="lyr" data-l="ctr" aria-pressed="false"><span class="k">8</span><b>Docker 容器（brick）</b><small>main 容器＋runner 容器</small></button>
+        <button type="button" class="lyr" data-l="model" aria-pressed="false"><span class="k">9</span><b>AI 模型</b><small>lw-face-det.eim</small></button>
+      </div>
+      <button type="button" class="lyr result" data-l="result" aria-pressed="false"><span class="k">10</span><b>結果回到同一個網頁</b><small>人臉框（14912）＋統計（17000）</small></button>
+    </div>
+    <div class="panel sticky" id="mapPanel" aria-live="polite">
+      <h3>點左邊任何一層</h3>
+      <p class="ph">說明會出現在這裡（手機上會出現在你點的那一層正下方）：這層是誰、在哪台機器、用什麼指令看得到它。切換上下半節時，第 3、4、6、7 層的內容會跟著換。</p>
+    </div>
+  </div>
+
+  <details class="deep">
+    <summary>深入一層：這條路上其實有「兩段」USB</summary>
+    <div class="in">
+      <p>USB 的角色要看「正在講哪一段線」。今天的路有兩段 <span class="tag t-code" title="背景知識講義 §6、§10">〔原始碼〕</span>：</p>
+      <div class="tblw"><table class="stack">
+        <tr><th>哪一段</th><th>host（主機）</th><th>device（裝置）</th></tr>
+        <tr><td>攝影機 ⇄ 電腦</td><td>電腦</td><td>攝影機（UVC）</td></tr>
+        <tr><td>電腦 ⇄ UNO Q</td><td>電腦</td><td>UNO Q（gadget）</td></tr>
+      </table></div>
+      <p>講義把攝影機的接法分成兩條路 <span class="tag t-code" title="背景知識講義 §9、§10">〔原始碼〕</span>：</p>
+      <ul>
+        <li><b>路線 A</b>：攝影機直插板子（經有外接電源的 USB hub），板子自己當攝影機的 host，自己取像、解碼、跑 AI。</li>
+        <li><b>路線 B（本週）</b>：攝影機接電腦，電腦取像、壓成 JPEG，經 USB 送進板子；板子專心跑 AI。好處是不用 40 塊板子同時連 Wi-Fi，也不用把攝影機插到板子上。</li>
+      </ul>
+      <p class="note">第 8 節那張「3.8 → 26.5 FPS」的階梯，是在<b>路線 A</b> 量的 <span class="tag t-meas" title="camera-tests/fast-ai-bench/README.md（IPEVO V4K 直插 UNO Q）">〔實測 2026-07-20〕</span>；本週教室走路線 B。兩條路的 AI 模型一樣，但前面的取像與傳輸不一樣，數字不能直接搬。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §1 ============================== -->
+<section class="sec" id="s1">
+  <div class="sec-h"><span class="num">1</span><h2>Kernel：板子作業系統的核心</h2><span class="en">KERNEL &amp; MODULES</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><b>這節回答：</b>kernel 是什麼？下半節為什麼是「載入模組」，而不是「安裝軟體」？</p>
+  <p>電腦裡的程式分兩層。最底下那層叫<b>核心（kernel）</b>：它是唯一能直接碰硬體（CPU、記憶體、USB 控制器、網路卡）的程式，它的地盤叫<b>核心空間（kernel space）</b>。其他程式——Chrome、Python、adb、轉接程式——都住在上面那層<b>使用者空間（user space）</b>，想用硬體就得開口請 kernel 幫忙。</p>
+  <p>想像銀行：金庫（硬體）只有櫃台人員（kernel）進得去；客人（一般程式）填單子請櫃台辦。那張單子就叫<b>系統呼叫（system call）</b>，例如 <code>open</code>（打開）、<code>read</code>（讀）、<code>write</code>（寫）。</p>
+  <div class="cards">
+    <div class="card"><b>驅動程式（driver）</b><p>kernel 裡專門管某一種硬體的那段程式碼。USB 攝影機、USB 網卡、LED，各有各的驅動。</p></div>
+    <div class="card"><b>模組（module，<code>.ko</code> 檔）</b><p>開機之後才「插」進 kernel 的驅動或功能，像外掛。插進去之後，它就是 kernel 的一部分。</p></div>
+    <div class="card"><b><code>/sys</code>（sysfs）</b><p>kernel 把裝置的狀態和開關做成「檔案」給你讀寫。W3、W4 點燈用的 <code>echo 1 &gt; /sys/class/leds/…/brightness</code> 就是它。</p></div>
+    <div class="card"><b>configfs（<code>/sys/kernel/config</code>）</b><p>跟 sysfs 很像，但專門讓你「建立」東西：<code>mkdir</code> 建一個功能、<code>ln -s</code> 把功能放進設定、<code>echo</code> 寫開關。今天的 USB gadget 就住在這裡。</p></div>
+  </div>
+
+  <h3 class="sub">互動：這件事在 kernel 做，還是在 user space 做？</h3>
+  <p class="small">每一列按一個答案，會馬上告訴你對不對、為什麼。<span class="score" id="sortScore"></span></p>
+  <div class="toc-tools"><button type="button" class="btn" id="sortReset">全部重來</button></div>
+  <div class="sortrows" id="sortRows"></div>
+
+  <h3 class="sub">管模組的四個指令</h3>
+  <div class="tblw"><table class="stack">
+    <tr><th>指令</th><th>做什麼</th><th>今天哪裡會碰到</th></tr>
+    <tr><td><code>uname -r</code></td><td>印出 kernel 的版本字串</td><td>模組放在 <code>/lib/modules/&lt;版本&gt;/</code>；老師的板是 <code>7.0.0-g122c2c22d838</code> <span class="tag t-board" title="2026-10-14 洄瀾在老師板上實查">〔實板 10/14〕</span></td></tr>
+    <tr><td><code>lsmod</code></td><td>列出現在載入了哪些模組</td><td>裝好 hook 之後，<code>lsmod | grep -E "ncm|u_ether"</code> 印兩行；還沒載時什麼都不印 <span class="tag t-board" title="本週內容規格 §〇 A">〔實板 10/14〕</span></td></tr>
+    <tr><td><code>insmod 路徑.ko</code></td><td>載入「這一顆」模組；它依賴的模組要自己先載</td><td>7 月的手動版用它（先 <code>u_ether.ko</code>、再 <code>usb_f_ncm.ko</code>）；本週不用 <span class="tag t-code" title="face-usb-mac/usbnet/README.md 板子端設定第 1 步">〔原始碼〕</span></td></tr>
+    <tr><td><code>modprobe 名字</code></td><td>照名字找模組，連它依賴的一起載</td><td>本週的 hook 就是用 <code>modprobe usb_f_ncm</code>，<code>u_ether</code> 會被一起載 <span class="tag t-code" title="starter w06-usbnet/ncm-hook.sh">〔原始碼〕</span><span class="tag t-board" title="lsmod：u_ether 被 usb_f_ncm 使用；本週內容規格 §〇 A">〔實板 10/14〕</span></td></tr>
+  </table></div>
+  <p><b>模組要跟 kernel 對得上。</b>每顆 <code>.ko</code> 裡都寫著「我是給哪個 kernel 編的」，這段字串叫 <b>vermagic</b>。對不上，kernel 就拒絕載入——像鑰匙的齒模不合。跟 kernel 同一次編出來的模組（in-tree，例如 <code>usb_f_ncm.ko</code>）天生對得上；自己另外編的（out-of-tree，例如 UAC2 音效卡）就得自己對齊 <span class="tag t-code" title="site/docs/xuezhenji/usb-tunnel.mdx〈W15 呼應〉">〔原始碼〕</span>。這塊板的 kernel 沒開模組簽章（<code>CONFIG_MODULE_SIG</code>）也沒開 <code>MODVERSIONS</code>，所以只要 vermagic 對上就載得進去 <span class="tag t-meas" title="docs/報告-全板能力盤點-還有什麼沒用到-zh-TW.md 第五節（2026-07-24 唯讀實查）">〔實測 2026-07-24〕</span>。</p>
+
+  <h3 class="sub">互動：老師的板子上看得到什麼</h3>
+  <p class="small">按一個指令，看 2026-10-14 在老師板上查到的結果 <span class="tag t-board" title="2026-10-14 洄瀾在老師板上實查">〔實板 10/14〕</span>。有整理過的地方會寫「整理過」。</p>
+  <div class="termbar" id="termBar"></div>
+  <pre class="term" id="term" aria-live="polite"><span class="cm"># 按上面的按鈕</span></pre>
+  <p class="note warn">老師這塊板 7 月就裝了本週要裝的 hook，所以本來就有 <code>ncm.usb0</code>、<code>usb_f_ncm</code> 也已經載入（<code>uac2.usb0</code> 是另外自己編的音效卡）。出廠板只有 <code>acm.GS0</code> 和 <code>ffs.adb</code> <span class="tag t-board" title="本週內容規格 §〇 A">〔實板 10/14〕</span>。<span class="wn">⚠️</span> 你的板以實際輸出為準。</p>
+
+  <details class="deep">
+    <summary>深入一層：一行 echo 背後發生什麼</summary>
+    <div class="in">
+      <p>以下午會用到的 <code>echo "" &gt; /sys/kernel/config/usb_gadget/g1/UDC</code> 為例：</p>
+      <ol>
+        <li><b>user space</b>：shell 用 <code>open</code> 打開 <code>UDC</code> 這個「檔案」，再用 <code>write</code> 寫進一個空字串。到這裡都只是「填單子」。</li>
+        <li><b>kernel</b>：這個檔案不在硬碟上，是 configfs 做出來的。kernel 收到寫入，交給 USB gadget 的程式碼處理：「把 gadget 從 USB 控制器上拿下來」。</li>
+        <li><b>硬體</b>：板子的 USB 控制器斷開，電腦那頭看到「裝置被拔掉了」。</li>
+      </ol>
+      <p>同一個道理，W3、W4 寫 <code>brightness</code> 點燈，真正去扳 GPIO 的是 kernel 的 LED 驅動，不是 <code>echo</code>。<b>「一切皆檔案」的意思是：檔案只是 kernel 開給你的窗口。</b></p>
+    </div>
+  </details>
+  <details class="deep">
+    <summary>深入一層：什麼時候才真的要動 kernel？</summary>
+    <div class="in">
+      <p>能力不是「有或沒有」，是「編 kernel 的那一刻有沒有編進去」。同一塊板 <span class="tag t-meas" title="usb-tunnel.mdx：看 /boot/config-* 的結果">〔實測 2026-07-27〕</span>：</p>
+      <pre><code># NCM 網卡這一側：模組已經編好、configfs 開關有開
+CONFIG_USB_F_NCM=m
+CONFIG_USB_CONFIGFS_NCM=y
+# UAC2 音效卡這一側：整個沒開
+# CONFIG_USB_CONFIGFS_F_UAC2 is not set</code></pre>
+      <p>所以 NCM「一行 modprobe」就有；UAC2 得照 vermagic 自己交叉編譯一顆模組（W15 的 kernel 模組 lab 走的就是這條）。<b>今天下半節完全不用編譯、不用換 kernel</b>。</p>
+      <p>同一份盤點也提醒：發行版的 kernel 常照抄預設值、沒為這塊板裁剪，例如板上沒有紅外線硬體，kernel 卻編好了 138 種遙控器按鍵表 <span class="tag t-meas" title="報告-全板能力盤點 第二節">〔實測 2026-07-24〕</span>。「kernel 裡有」不代表「板子上有那個硬體」。</p>
+    </div>
+  </details>
+  <details class="deep">
+    <summary>深入一層：容器跟 kernel 是什麼關係？</summary>
+    <div class="in">
+      <p>Docker 容器不是虛擬機：它<b>共用板子的 Linux kernel</b>，只是把行程、檔案、網路隔開 <span class="tag t-code" title="背景知識講義 §19">〔原始碼〕</span>。所以在 <code>--privileged</code>（特權）容器裡執行 <code>insmod</code>，模組會進到唯一的那顆 kernel——也就是板子的 kernel。7 月的手動版就是這樣做的（用自帶 <code>insmod</code> 的 <code>busybox</code> 容器） <span class="tag t-code" title="usbnet/README.md 板子端設定第 1 步的註解">〔原始碼〕</span>；本週的 hook 不用容器，由 adbd 的 systemd 服務（以 root 身分）直接 <code>modprobe</code>。</p>
+      <p>W5 講過：在 docker 群組裡，幾乎等於 root。板子的 arduino 帳號同時在 <code>sudo</code> 和 <code>docker</code> 群組 <span class="tag t-board" title="id；本週內容規格 §〇 A">〔實板 10/14〕</span>——能載模組、改 gadget，方便，也代表要小心。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §2 ============================== -->
+<section class="sec" id="s2">
+  <div class="sec-h"><span class="num">2</span><h2>USB：一條線、好幾個身分</h2><span class="en">USB GADGET</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><b>這節回答：</b>一條 USB 線怎麼同時是 adb、序列埠、網卡？為什麼不能在執行中硬改它？</p>
+  <p>USB 永遠是「一主一從」。<b>主機（host）</b>負責發問、供電、安排誰什麼時候說話；<b>裝置（device）</b>只回答。攝影機插在電腦上：電腦是 host。UNO Q 插在電腦上：電腦還是 host，UNO Q 是 device。Linux 把「自己扮演 device 的那一方」叫做 <b>USB gadget</b>。</p>
+  <p><b>插上去的那一秒發生什麼？</b>host 先問：「你是誰？你有哪些功能？」device 交出一份自我介紹，叫<b>描述元（descriptor）</b>，裡面有：</p>
+  <ul>
+    <li><b>VID:PID</b>（廠商編號:產品編號）：UNO Q 正常是 <code>2341:0078</code>，恢復模式（EDL）是 <code>05c6:9008</code> <span class="tag t-code" title="W2／W4 內容規格；源自 Arduino 官方 UNO Q User Manual">〔原始碼〕</span>。</li>
+    <li>有幾個<b>介面（interface）</b>，每個介面屬於哪一<b>類（class）</b>——host 照類別去找驅動。</li>
+  </ul>
+  <p>這整段問答叫<b>列舉（enumeration）</b>。重點：<b>host 只在插上時問一次</b>。之後想改功能組合，就得讓它「重新插一次」。</p>
+  <div class="tblw"><table class="stack">
+    <tr><th>類別</th><th>是什麼</th><th>今天在哪</th></tr>
+    <tr><td>UVC（USB Video Class）</td><td>標準 USB 攝影機</td><td>教室電腦上的攝影機；電腦是 host</td></tr>
+    <tr><td>CDC ACM</td><td>序列埠</td><td>板子的 <code>acm.GS0</code>（序列監看走這條）</td></tr>
+    <tr><td>CDC NCM（Network Control Model）</td><td>網路卡</td><td>板子的 <code>ncm.usb0</code>，下半節加上去</td></tr>
+    <tr><td>UAC2（USB Audio Class 2）</td><td>音效卡</td><td>老師的板有 <code>uac2.usb0</code>（自己編的模組）；出廠板沒有</td></tr>
+    <tr><td>功能檔案系統（FunctionFS）</td><td>把一個 USB 功能交給 user space 的程式自己實作</td><td>板子的 <code>ffs.adb</code>，背後是 adbd</td></tr>
+  </table></div>
+  <p><b>一個裝置、好幾個介面</b>，叫<b>複合裝置（composite device）</b>。所以同一條線在電腦眼裡同時是 adb、序列埠、音效卡，等一下還會多一張網卡 <span class="tag t-meas" title="site/docs/xuezhenji/usb-tunnel.mdx 第二幕">〔實測 2026-07-27〕</span>。老師的板接 Windows 11：裝置管理員看到一個 <code>USB Composite Device</code>（<code>2341</code>／<code>0078</code>），底下四個介面——ADB、序列埠、UsbNcm 網卡、音效卡 <span class="tag t-board" title="Get-PnpDevice；本週內容規格 §〇 A（音效卡是老師板另裝的）">〔實板 10/14〕</span>。這些功能在板子上的 configfs 長這樣：</p>
+  <pre><code>/sys/kernel/config/usb_gadget/g1/
+├── functions/      ← 每個功能一個資料夾：acm.GS0、ffs.adb、ncm.usb0…
+├── configs/c.1/    ← 這個設定「用了哪些功能」（指向 functions/ 的捷徑）
+└── UDC             ← 寫進控制器名字＝接上 USB；寫空＝拔掉</code></pre>
+  <p class="small">老師板上的 UDC（USB 裝置控制器，USB Device Controller）是 <code>4e00000.usb</code> <span class="tag t-board" title="2026-10-14 洄瀾在老師板上實查">〔實板 10/14〕</span>，<code>ls /sys/class/udc</code> 也看得到它 <span class="tag t-board" title="本週內容規格 §〇 A">〔實板 10/14〕</span>。</p>
+
+  <h3 class="sub">互動：自己組一個 gadget——硬改，還是掛進去？</h3>
+  <p class="small">選一種做法 → 按「套用」。看 configfs 怎麼變、電腦那頭看到什麼、adb 回不回得來。動畫壓縮過；這裡一開始模擬的是<b>出廠板</b>。</p>
+  <div class="gb">
+    <div class="panel">
+      <h3>① 要給 gadget 哪些功能？</h3>
+      <div id="gbChecks">
+        <label class="ck"><input type="checkbox" data-f="acm" checked> <span><code>acm.GS0</code> 序列埠</span></label>
+        <label class="ck"><input type="checkbox" data-f="adb" checked> <span><code>ffs.adb</code> adb</span></label>
+        <label class="ck"><input type="checkbox" data-f="ncm"> <span><code>ncm.usb0</code> 網路卡（下半節要加的）</span></label>
+        <label class="ck"><input type="checkbox" data-f="uac2"> <span><code>uac2.usb0</code> 音效卡（出廠板沒有這個模組）</span></label>
+      </div>
+      <div class="form"><label>怎麼改？
+        <select id="gbHow">
+          <option value="hard">執行中硬改：寫空 UDC → 加連結 → 寫回</option>
+          <option value="hook">掛進 adbd 的生命週期：裝 hook → restart adbd（本週）</option>
+        </select></label></div>
+      <p class="small">選「掛進去」時功能由 hook 決定（加 <code>ncm.usb0</code>），上面的勾選不用動。</p>
+      <div class="seg" style="margin-top:6px">
+        <button type="button" class="btn primary" id="gbApply">套用</button>
+        <button type="button" class="btn" id="gbPower">拔插 USB 線（斷電重開）</button>
+        <button type="button" class="btn" id="gbUnhook">拿掉 hook＋重開機</button>
+      </div>
+      <p class="small" id="gbBoard"></p>
+    </div>
+    <div class="panel">
+      <h3>② configfs 現在長這樣</h3>
+      <pre class="cfg" id="gbTree"></pre>
+    </div>
+    <div class="panel" aria-live="polite">
+      <h3>③ 電腦那頭看到</h3>
+      <div class="hostbox" id="gbHost"></div>
+      <div class="adbst"><span class="dot ok" id="gbDot"></span><span id="gbAdb">adb：連線中</span></div>
+      <ol class="tl" id="gbLog"></ol>
+    </div>
+  </div>
+
+  <details class="deep">
+    <summary>深入一層：為什麼不在執行中硬改？</summary>
+    <div class="in">
+      <p>要讓電腦看到新的功能組合，就得讓它重新列舉。最直覺的做法是「unbind → 加功能 → rebind」：把 UDC 寫空（拔線）、加連結、再寫回（插上）。</p>
+      <p>問題在 gadget 的主人是 adbd：拔線的瞬間 adbd 當場死（journal：<code>UsbFfs: connection terminated: read failed</code>），systemd 1 秒後重啟它；重啟前的原廠 <code>reset</code> 看到 <code>c.1</code> 裡有不認識的連結，<code>rmdir c.1</code> 就失敗 <span class="tag t-board" title="2026-10-14 實板 journal；本週內容規格 §〇 A">〔實板 10/14〕</span>。出廠板沒有人收拾，adb 就起不來——7/28 事故是同一個機制（第 4 節）。</p>
+      <p>7 月用背景容器手動跑過三次都成功，約 12 秒後 adb 自己回來 <span class="tag t-meas" title="usbnet/README.md（sleep 12）、usb-tunnel.mdx">〔實測 2026-07-27～28〕</span>；10/14 的 journal 才看清楚這條路危險在哪。事故筆記說得好：「一次成功」不是證據 <span class="tag t-code" title="usbnet/INCIDENT-2026-07-28.md">〔原始碼〕</span>。所以本週不在執行中改，而是把身分<b>掛進 adbd 自己的生命週期</b>（hook）：adbd 每次照原廠流程建 gadget 時，我們的網卡就在對的位置一起被建出來——零 rebind、零斷線。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §3 ============================== -->
+<section class="sec" id="s3">
+  <div class="sec-h"><span class="num">3</span><h2>adb：上半節的隧道</h2><span class="en">ANDROID DEBUG BRIDGE</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><b>這節回答：</b>adb 是誰跟誰在講話？forward 和 reverse 差在哪？為什麼 forward 會自己掉？</p>
+  <p>adb（Android Debug Bridge）原本是 Android 手機的除錯工具，UNO Q 沿用它。它有三個角色：</p>
+  <div class="roles">
+    <div class="role pc"><b>adb client</b><small>你在終端機打的 <code>adb …</code> 指令</small></div>
+    <div class="arr" aria-hidden="true"><span class="ah">→</span><span class="av">↓</span></div>
+    <div class="role pc"><b>adb server</b><small>電腦背景常駐；預設在 5037 埠聽 client 的指令 <span class="tag t-code" title="App Lab 附的 adb：adb --help「-P port of adb server [default=5037]」（2026-10-14 讀）">〔原始碼〕</span>；負責跟 USB 上的裝置講話</small></div>
+    <div class="arr"><span class="ah">⇄ USB ⇄</span><span class="av">⇅ USB 線</span></div>
+    <div class="role bd"><b>adbd</b><small>板子上的常駐程式（d＝daemon）；靠 <code>ffs.adb</code> 這個 gadget 功能收發</small></div>
+  </div>
+  <div class="tblw"><table class="stack">
+    <tr><th>指令</th><th>做什麼</th></tr>
+    <tr><td><code>adb devices</code></td><td>列出接著的裝置；狀態要是 <code>device</code>。今天要剛好一塊板：列出兩台以上，先拔掉手機或別人的板子（學生頁第 1 節）</td></tr>
+    <tr><td><code>adb shell</code></td><td>開一個板子上的命令列（打 <code>exit</code> 回來）</td></tr>
+    <tr><td><code>adb push 資料夾 目的地/</code></td><td>把整個資料夾放進目的地底下 <span class="tag t-board" title="本週內容規格 §〇 B">〔實板 10/14〕</span>；本週送 App 資料夾和 <code>w06-usbnet</code>（三個檔）</td></tr>
+    <tr><td><code>adb forward tcp:17000 tcp:7000</code></td><td><b>電腦</b>的 17000 → <b>板子</b>的 7000</td></tr>
+    <tr><td><code>adb forward --list</code></td><td>看現在有哪些轉送</td></tr>
+    <tr><td><code>adb forward --remove tcp:17000</code></td><td>拆掉一條（<code>--remove-all</code> 全拆）</td></tr>
+    <tr><td><code>adb reverse REMOTE LOCAL</code></td><td>反方向：<b>板子</b>的埠 → <b>電腦</b>的埠（本課沒用）</td></tr>
+  </table></div>
+  <p class="small">指令格式出自 adb 自己的說明 <span class="tag t-code" title="App Lab 附的 adb：adb --help，forward [--no-rebind] LOCAL REMOTE；reverse [--no-rebind] REMOTE LOCAL">〔原始碼〕</span>。上半節你會在電腦打三行 forward：17000→7000、18080→8080、14912→4912；加上 W4 就有的 2222→22，<code>forward --list</code> 一共四行 <span class="tag t-board" title="本週內容規格 §〇 B；學生頁第 3 節">〔實板 10/14〕</span>。教室機上 adb 可能要用 W4 找過的 <code>"$ADB"</code> 變數代替 <code>adb</code>。</p>
+
+  <h3 class="sub">互動：forward 和 reverse，方向差在哪？</h3>
+  <div class="seg" role="group" aria-label="方向">
+    <button type="button" class="btn" data-dir="forward" aria-pressed="true">adb forward</button>
+    <button type="button" class="btn" data-dir="reverse" aria-pressed="false">adb reverse</button>
+  </div>
+  <div id="dirOut"></div>
+
+  <h3 class="sub">互動：一個請求從 17000 走到 7000</h3>
+  <div class="track" id="fwTrack"></div>
+  <div class="stepcard" id="fwCard" aria-live="polite"></div>
+  <div class="stepbar">
+    <button type="button" class="btn" id="fwPrev">上一步</button>
+    <button type="button" class="btn primary" id="fwNext">下一步</button>
+    <button type="button" class="btn" id="fwPlay">自動播放</button>
+    <span class="cnt" id="fwCnt"></span>
+  </div>
+
+  <h3 class="sub">互動：forward 自己掉了，長什麼樣？</h3>
+  <p>2026-07-22 一個下午遇到 4 次：網頁突然連不上，但板子上的容器都還活著，<code>adb forward --list</code> 卻是空的 <span class="tag t-meas" title="face-usb-mac/README.md〈USB 轉送會自己掉〉">〔實測 2026-07-22〕</span>。</p>
+  <div class="seg">
+    <button type="button" class="btn" id="dropBtn">模擬：forward 掉了</button>
+    <button type="button" class="btn" id="keepBtn">看門狗：檢查並補回</button>
+    <button type="button" class="btn" id="dropReset">回到正常</button>
+  </div>
+  <div class="state" id="dropState"></div>
+  <p class="small" id="dropNote"></p>
+
+  <details class="deep">
+    <summary>深入一層：為什麼會掉？目前知道多少</summary>
+    <div class="in">
+      <p><b>根因還沒查出來，來源標「待確認」</b> <span class="wn">⚠️</span>。已經排除的兩個嫌疑 <span class="tag t-meas" title="face-usb-mac/README.md">〔實測 2026-07-22〕</span>：</p>
+      <ul>
+        <li>不是 <code>adb push</code> 造成的（對照實驗：push 前後四條都還在）。</li>
+        <li>不是兩個 adb server 互搶（全程只有一個 server）。</li>
+      </ul>
+      <p><b>一條還沒證實的線索</b>：看門狗補救的時間，跟板子 log 裡瀏覽器 WebSocket 斷線（<code>camera:disconnected</code>）只差 4 秒 <span class="tag t-meas" title="face-usb-mac/README.md（15:36:21 vs 15:36:17）">〔實測 2026-07-22〕</span>。「瀏覽器停止送畫面／重新整理」和「轉送掉線」可能是同一件事的前後腳。</p>
+      <p><b>處理方式＝讓它自己會好</b>：Mac 版啟動時在背景起一支看門狗，每 3 秒檢查三條轉送還在不在，掉了就補 <span class="tag t-code" title="face-usb-mac/lib/forward-keeper.sh（README 說明）">〔原始碼〕</span>；實測砍掉轉送後 3 秒內補回、HTTP 200 <span class="tag t-meas" title="face-usb-mac/README.md、TEST-REPORT.md">〔實測 2026-07-23〕</span>。Windows 版另有 <code>keeper.ps1</code>。網頁死掉時，先重新整理、再按一次「開始辨識」。</p>
+      <p>下半節的 USB 網卡＋轉接程式，從架構上繞開這個問題：<code>adb forward --list</code> 是空的，影像照樣跑 <span class="tag t-meas" title="usb-tunnel.mdx 第四幕">〔實測 2026-07-28〕</span>；10/14 還把 adb server 整個關掉（<code>"$ADB" kill-server</code>），再跑 10 秒照樣 7.9 FPS <span class="tag t-board" title="本週內容規格 §〇 E">〔實板 10/14〕</span>。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §4 ============================== -->
+<section class="sec" id="s4">
+  <div class="sec-h"><span class="num">4</span><h2>USB 網卡（NCM）：下半節自己做</h2><span class="en">USB NETWORK</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><b>這節回答：</b>怎麼把板子變成一張 USB 網卡？要不要改 kernel？為什麼要把設定「掛進 adbd」，而不是在執行中硬改？</p>
+  <div class="callout">
+    <h3>要不要改 kernel？不用。</h3>
+    <p style="margin:0"><code>usb_f_ncm.ko</code> 是 kernel 本來就編好的模組，就放在 <code>/lib/modules/$(uname -r)/kernel/drivers/usb/gadget/function/</code>，<code>modprobe usb_f_ncm</code> 就載得進去 <span class="tag t-board" title="2026-10-14 實板；本週內容規格 §〇 A、§〇 D">〔實板 10/14〕</span>。下半節裝的 hook 只做兩件事：把它<b>載進</b> kernel，再把它<b>加進</b> gadget 的設定。真的要動 kernel，是你要的功能根本沒編進去（像 UAC2 音效卡），或需要一個全新的驅動——那是 W15 自己編 kernel 模組那週的事。</p>
+  </div>
+  <p>先認識網路上的幾個角色：</p>
+  <div class="cards">
+    <div class="card"><b>網路卡（網路介面）</b><p>收發網路封包的「門」。板子會多一張叫 <code>usb0</code> 的；電腦也會多一張。</p></div>
+    <div class="card"><b>MAC 位址</b><p>網路卡的硬體編號。hook 把兩端的 MAC 寫死，每次都一樣，電腦才不會一直長出「新網卡」 <span class="tag t-code" title="starter w06-usbnet/ncm-hook.sh；usbnet/README.md 坑 6">〔原始碼〕</span>。</p></div>
+    <div class="card"><b>IP 位址</b><p>網路上的門牌。板子固定用 <code>192.168.7.2</code>；電腦由 DHCP 發一個 <code>192.168.7.x</code>。</p></div>
+    <div class="card"><b>子網路（/24）</b><p>前三段一樣（<code>192.168.7</code>）就是「同一條街」，可以直接送到。遮罩寫成 <code>255.255.255.0</code>。</p></div>
+    <div class="card"><b>DHCP</b><p>自動發門牌的服務。板子用作業系統本來就裝好的 <code>dnsmasq</code> 來發 <span class="tag t-board" title="2026-10-14 實板 dpkg -l；本週內容規格 §〇 A">〔實板 10/14〕</span>。</p></div>
+    <div class="card"><b>預設路由（default route）</b><p>「不知道往哪送的封包，都走這條」。電腦原本的預設路由通往學校網路，<b>不能被搶走</b>。</p></div>
+  </div>
+
+  <h3 class="sub">動手前先認識：gadget 的主人是 adbd</h3>
+  <p>板子一開機，<code>adbd.service</code> 這個 systemd 服務就照固定順序管整個 gadget（節錄，路徑省略） <span class="tag t-board" title="2026-10-14 實板 systemctl cat adbd；本週內容規格 §〇 A">〔實板 10/14〕</span>：</p>
+  <pre><code>ExecStartPre=adbd-usb-gadget setup       ← 建 g1、adb（ffs.adb）、序列埠（acm.GS0）
+ExecStart=adbd                           ← adbd 本人
+ExecStartPost=adbd-usb-gadget activate   ← 寫 UDC＝插上
+ExecStopPost=adbd-usb-gadget reset       ← 拆光
+Restart=always                           ← 死了就重來
+RestartSec=1                             ← 等 1 秒</code></pre>
+  <p class="small"><code>adbd-usb-gadget</code> 的完整路徑是 <code>/usr/lib/android-sdk/platform-tools/adbd-usb-gadget</code> <span class="tag t-board" title="本週內容規格 §〇 A">〔實板 10/14〕</span>。</p>
+  <p><b>在執行中把 UDC 寫空（拔線）會怎樣？</b>adbd 當場死：journal 先印 <code>UsbFfs: connection terminated: read failed</code>、再印 <code>Main process exited, status=1</code>；1 秒後 systemd 重啟它，重啟前先跑原廠的 <code>reset</code>——如果 <code>c.1</code> 裡有它不認識的連結，<code>rmdir c.1</code> 就失敗 <span class="tag t-board" title="2026-10-14 實板 journal 12:32–12:41；本週內容規格 §〇 A">〔實板 10/14〕</span>。出廠板沒有人收拾，就卡在這裡、adb 起不來——這正是 7/28 事故的機制 <span class="tag t-code" title="usbnet/INCIDENT-2026-07-28.md；本週內容規格 §〇 A">〔原始碼〕</span>。所以本週<b>不在執行中硬改</b>，而是把我們的身分<b>掛進 adbd 自己的生命週期</b>——這叫 hook（掛鉤）：用一個 drop-in（附加設定檔），在原廠流程的固定位置多跑三個動作。</p>
+
+  <h3 class="sub">互動：sudo systemctl restart adbd 的那 3 秒</h3>
+  <p class="small">綠色是原廠的步驟，紫色是 hook 加的三個動作 <span class="tag t-code" title="starter w06-usbnet/10-extra-functions.conf、ncm-hook.sh 檔頭">〔原始碼〕</span>。一步一步看：</p>
+  <div class="track" id="hkTrack"></div>
+  <div class="stepcard" id="hkCard" aria-live="polite"></div>
+  <div class="stepbar">
+    <button type="button" class="btn" id="hkPrev">上一步</button>
+    <button type="button" class="btn primary" id="hkNext">下一步</button>
+    <button type="button" class="btn" id="hkPlay">自動播放</button>
+    <span class="cnt" id="hkCnt"></span>
+  </div>
+  <p class="note ok">全程容忍失敗：hook 的每個動作出錯都照樣 <code>exit 0</code>，最壞的結果是「網卡沒掛上」，adb 照常 <span class="tag t-code" title="ncm-hook.sh 檔頭；本週內容規格 §〇 D">〔原始碼〕</span>。</p>
+
+  <h3 class="sub">互動：學生裝法，每一步在哪、做什麼、你應該看到什麼</h3>
+  <div class="steps5" id="ncmSteps"></div>
+  <div class="panel" id="ncmPanel" aria-live="polite"><p class="ph">點上面任何一步。</p></div>
+
+  <h3 class="sub">互動：DHCP 四句對話</h3>
+  <p class="small">電腦剛長出新網卡時還沒有 IP，它跟板子（<code>192.168.7.2</code>）上的 dnsmasq 會這樣對話。設定照 <code>usbnet-dhcp.service</code> <span class="tag t-code" title="starter w06-usbnet/usbnet-dhcp.service：--dhcp-range=192.168.7.10,192.168.7.50,255.255.255.0,12h、--dhcp-option=3、--dhcp-option=6">〔原始碼〕</span>。</p>
+  <ol class="seq" id="dhcpSeq"></ol>
+  <div class="stepbar">
+    <button type="button" class="btn" id="dhcpPrev">上一句</button>
+    <button type="button" class="btn primary" id="dhcpNext">下一句</button>
+    <button type="button" class="btn" id="dhcpReset">重來</button>
+    <span class="cnt" id="dhcpCnt"></span>
+  </div>
+
+  <h3 class="sub">互動：為什麼 dnsmasq 只發 IP 和遮罩？</h3>
+  <div class="seg" role="group" aria-label="DHCP 發什麼">
+    <button type="button" class="btn" data-rt="now" aria-pressed="true">現在：只發 IP＋遮罩</button>
+    <button type="button" class="btn" data-rt="router" aria-pressed="false">假如也發 router</button>
+  </div>
+  <div id="rtOut"></div>
+
+  <h3 class="sub">量過的數字：USB 網卡多快？</h3>
+  <p class="small">來回一趟（ping，越短越好）：</p>
+  <div class="hbars">
+    <div class="hb"><span class="lab">USB 網卡（Windows 11，10 發）</span><span class="trk"><span class="fill" style="width:1%"></span><span class="val">0–1 ms <span class="tag t-board" title="2026-10-14 實板 ping；本週內容規格 §〇 A">〔實板 10/14〕</span></span></span></div>
+    <div class="hb"><span class="lab">USB 網卡（Mac）</span><span class="trk"><span class="fill" style="width:1%"></span><span class="val">平均 1.27 ms <span class="tag t-meas" title="usbnet/README.md 附錄；本週內容規格 §〇 A">〔實測 2026-07-27～28〕</span></span></span></div>
+    <div class="hb"><span class="lab">同一塊板走家用 Wi-Fi</span><span class="trk"><span class="fill hot" style="width:100%"></span><span class="val">40–222 ms、平均 156 ms <span class="tag t-board" title="2026-10-14 實板 ping；本週內容規格 §〇 A">〔實板 10/14〕</span></span></span></div>
+  </div>
+  <p class="small">下載一個 100 MB 的檔案（越短越好）：</p>
+  <div class="hbars">
+    <div class="hb"><span class="lab">走 USB 網卡</span><span class="trk"><span class="fill" style="width:2%"></span><span class="val">0.80–0.89 秒（131,590,961／117,421,856 B/s） <span class="tag t-board" title="2026-10-14 實板 curl -w %{speed_download}；本週內容規格 §〇 A">〔實板 10/14〕</span></span></span></div>
+    <div class="hb"><span class="lab">走家用 Wi-Fi</span><span class="trk"><span class="fill hot" style="width:100%"></span><span class="val">52.0 秒（2,016,392 B/s） <span class="tag t-board" title="2026-10-14 實板；本週內容規格 §〇 A">〔實板 10/14〕</span></span></span></div>
+  </div>
+  <p class="small">長條只是示意比例（ping 以 222 ms 為滿、下載以 52 秒為滿）。7 月在 Mac 上量到的 USB 網卡吞吐是 107–123 MB/s <span class="tag t-meas" title="usbnet/README.md 附錄">〔實測 2026-07-27～28〕</span>。教室版的影像實際只用 35–52 KB/s（送 8 FPS）、89–137 KB/s（送 20 FPS） <span class="tag t-board" title="網頁「USB 資料量」那格；本週內容規格 §〇 B">〔實板 10/14〕</span>，不到網卡能力的百分之一 <span class="tag t-est" title="137 KB/s ÷ 約 117 MB/s">〔估算〕</span>。<b>結論</b>：換成 USB 網卡不是為了讓臉框變快，而是為了穩（不會像 adb forward 那樣自己掉），而且之後傳模型、傳資料，一秒就能送一百多 MB。</p>
+  <p class="note warn"><b>一台電腦一次只接一塊板。</b>每塊板都是 <code>192.168.7.2</code>＋同一組 MAC＋同樣三個 localhost 埠，同一台電腦接兩塊會路由打架 <span class="tag t-code" title="usbnet/README.md 使用限制；本週內容規格 §〇 D">〔原始碼〕</span>。教室一人一機一板不受影響。</p>
+
+  <h3 class="sub">互動：2026-07-28 的事故——為什麼要「掛進去」</h3>
+  <p>7 月曾經有人把「執行中硬改」包成一個開機服務，讓它在開機時去搶著改 gadget。結果第二次重開機，板子壞到<b>只剩音效卡</b>，所有通道全斷，最後要 EDL 重刷才救回 <span class="tag t-meas" title="usbnet/INCIDENT-2026-07-28.md">〔實測 2026-07-28〕</span>。點每一列看細節：</p>
+  <div class="tline" id="incLine"></div>
+  <div class="panel" id="incPanel" aria-live="polite"><p class="ph">點上面任何一列。</p></div>
+  <div class="tblw"><table class="stack">
+    <tr><th></th><th>執行中硬改（7 月的手動版）</th><th>v1 開機服務</th><th>v2 hook（本週）</th></tr>
+    <tr><td style="white-space:nowrap">做法</td><td>當下把 UDC 寫空 → 加 NCM → 寫回</td><td>開機時另一個服務去搶 gadget，做同樣的事</td><td>drop-in 掛進 adbd 自己的生命週期：add／remove／sweep</td></tr>
+    <tr><td style="white-space:nowrap">結果</td><td>拔 UDC 時 adbd 當場死，重啟時原廠 reset 卡住；出廠板 adb 起不來 <span class="tag t-board" title="本週內容規格 §〇 A">〔實板 10/14〕</span></td><td>第二次重開機只剩音效卡，EDL 重刷</td><td>零 rebind、零斷線；之後每次開機插電就有網卡（持久）</td></tr>
+    <tr><td style="white-space:nowrap">狀態</td><td><span class="wn">教材不走這條</span></td><td><span class="wn">已棄用、禁止啟用</span></td><td>已板驗：10/14 裝、拿掉＋重開機、從乾淨開機再裝都跑過 <span class="tag t-board" title="本週內容規格 §〇 D">〔實板 10/14〕</span></td></tr>
+  </table></div>
+  <p class="note ok"><b>所以</b>：把身分掛進 adbd 的生命週期，不另開服務去搶、也不在執行中硬改。事故筆記的四句話值得記：系統邊界劃錯，審查補不回來；讀原始碼十分鐘，勝過猜三小時；「一次成功」不是證據；驗收要驗「該出現的都出現」 <span class="tag t-code" title="usbnet/INCIDENT-2026-07-28.md〈可以帶走的四句話〉">〔原始碼〕</span>。</p>
+
+  <details class="deep">
+    <summary>深入一層：指令全文（裝、看、拿掉）</summary>
+    <div class="in">
+      <p class="note">照抄本週內容規格 §〇 D <span class="tag t-board" title="本週內容規格 §〇 D：10/14 以 root 逐行跑過">〔實板 10/14〕</span>。<b>教室當天的步驟以學生頁為準。</b><span class="wn">⚠️</span> 10/14 是以 root 身分逐行跑過（裝、拿掉、從乾淨開機再裝都跑過），還沒有照字面用 <code>sudo</code> 跑過；出廠板的原廠 reset 路徑也還沒查。</p>
+      <h4>裝前核對（在板子；印 <code>OK</code> 才裝）</h4>
+      <pre><code>grep -q 'ExecStopPost=/usr/lib/android-sdk/platform-tools/adbd-usb-gadget reset' /usr/lib/systemd/system/adbd.service &amp;&amp; echo OK</code></pre>
+      <h4>裝（在板子，七行 sudo＋一行 restart）</h4>
+      <pre><code>cd ~/w06-usbnet
+sudo install -d -m 755 /home/arduino/usbnet
+sudo install -m 755 ncm-hook.sh /home/arduino/usbnet/ncm-hook.sh
+sudo install -d /etc/systemd/system/adbd.service.d
+sudo install -m 644 10-extra-functions.conf /etc/systemd/system/adbd.service.d/
+sudo install -m 644 usbnet-dhcp.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable usbnet-dhcp
+sudo systemctl restart adbd</code></pre>
+      <p class="small"><code>enable</code> 會印一行「… is added as a dependency to a non-existent unit sys-subsystem-net-devices-usb0.device.」：usb0 還沒出現，正常。<code>restart adbd</code> 之後走 2222 的 SSH 會斷，數 15 秒 <span class="tag t-board" title="本週內容規格 §〇 D">〔實板 10/14〕</span>。</p>
+      <h4>看（板子）</h4>
+      <pre><code>systemctl is-active adbd usbnet-dhcp
+ls /sys/kernel/config/usb_gadget/g1/configs/c.1/
+lsmod | grep -E "ncm|u_ether"
+ip -4 -br addr show usb0
+cat /tmp/ncm-hook.log
+journalctl -u adbd -u usbnet-dhcp --since "5 min ago" --no-pager</code></pre>
+      <h4>看（電腦）</h4>
+      <pre><code>ip -4 -br addr
+ping -c 5 192.168.7.2
+ssh arduino@192.168.7.2</code></pre>
+      <h4>拿掉（在板子；最後一定要重開機）</h4>
+      <pre><code>sudo rm /etc/systemd/system/adbd.service.d/10-extra-functions.conf
+sudo systemctl disable --now usbnet-dhcp
+sudo rm /etc/systemd/system/usbnet-dhcp.service
+sudo systemctl daemon-reload
+sudo reboot</code></pre>
+      <p class="small">為什麼是 <code>reboot</code>、不是 <code>restart adbd</code>：拿掉 drop-in 之後，adbd 自己的 <code>reset</code> 不認得 <code>ncm.usb0</code>，restart 會卡住；重開機時 g1 從零建，才乾淨 <span class="tag t-board" title="本週內容規格 §〇 D（10/14 20:56–20:57）">〔實板 10/14〕</span>。</p>
+    </div>
+  </details>
+  <details class="deep">
+    <summary>深入一層：兩個設定檔全文（starter 原檔）</summary>
+    <div class="in">
+      <h4><code>10-extra-functions.conf</code>（放 <code>/etc/systemd/system/adbd.service.d/</code>）</h4>
+      <pre><code id="preDropin"></code></pre>
+      <p class="small">最後三行是關鍵：先用一行空的 <code>ExecStopPost=</code> 清掉原廠那條，再把原廠 reset 加回來、前面多一個 <code>-</code>（失敗也不擋後面），最後才是 sweep——這樣 sweep 保證會跑。</p>
+      <h4><code>usbnet-dhcp.service</code>（放 <code>/etc/systemd/system/</code>）</h4>
+      <pre><code id="preDhcpSvc"></code></pre>
+      <p class="small"><code>BindsTo</code> 綁在 usb0 這個裝置上：usb0 出現才起、消失自動停。<code>--port=0</code>：不當 DNS 伺服器；<code>--dhcp-option=3</code>（router）和 <code>--dhcp-option=6</code>（DNS）不給值＝不發。</p>
+    </div>
+  </details>
+  <details class="deep">
+    <summary>深入一層：事故的根因——三層</summary>
+    <div class="in">
+      <ul>
+        <li><b>直接原因</b>：重開機時，那個開機服務跟另外兩個東西搶同一個 gadget。</li>
+        <li><b>結構原因</b>：gadget 真正的主人是 <code>adbd.service</code>；原廠腳本的 <code>setup</code> 用不容忍重跑的 <code>ln -s</code>（有殘留就失敗），<code>reset</code> 遇到不認識的連結也會失敗。所以任何「第二個服務往 gadget 塞東西」的做法，都會跟 adbd 每秒重啟的節奏互相打架，最後停在壞掉的組合。</li>
+        <li><b>方法原因</b>：審查了三輪「自己的腳本」，卻沒問「整個開機過程裡還有誰會碰這個 gadget」。</li>
+      </ul>
+      <p class="small">出處：<code>usbnet/INCIDENT-2026-07-28.md</code> <span class="tag t-code" title="usbnet/INCIDENT-2026-07-28.md〈根因（三層）〉">〔原始碼〕</span>。救援流程：斷電、短接 EDL 兩根 pin、插 USB → <code>arduino-flasher-cli flash latest --preserve-user</code> → 系統區重刷、<code>/home/arduino</code> 保留，實測 15 分鐘 <span class="tag t-meas" title="INCIDENT-2026-07-28.md〈救援〉">〔實測 2026-07-28〕</span>。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §5 ============================== -->
+<section class="sec" id="s5">
+  <div class="sec-h"><span class="num">5</span><h2>瀏覽器攝影機與安全內容</h2><span class="en">SECURE CONTEXT</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><b>這節回答：</b>板子的網頁明明打得開，為什麼一按「開始辨識」就說不支援攝影機？下半節的轉接程式在解決什麼？</p>
+  <p>網頁要攝影機，得呼叫瀏覽器的 <code>navigator.mediaDevices.getUserMedia()</code>。但瀏覽器有一條硬規則：<b>這個 API 只在「安全內容（secure context）」裡存在——也就是 HTTPS，或本機（localhost）</b>。不符合時，瀏覽器不是「拒絕」，而是讓 <code>navigator.mediaDevices</code> <b>整個消失</b> <span class="tag t-code" title="usb-tunnel.mdx 第四幕；usbnet-bridge.py 檔頭說明">〔原始碼〕</span>。</p>
+  <p>下半節板子變成網卡後，板子的網頁在 <code>http://192.168.7.2:7000</code>。直接開它：頁面載得出來，按下「開始辨識」卻跳出「這個瀏覽器不支援攝影機功能」——Chrome、Safari 都一樣 <span class="tag t-meas" title="usbnet/README.md 踩過的坑 1；usb-tunnel.mdx">〔實測 2026-07-28〕</span>。那句話就寫在網頁程式裡：找不到 <code>getUserMedia</code> 時丟出的錯誤 <span class="tag t-code" title="face-usb-classroom/assets/app.js">〔原始碼〕</span>。</p>
+
+  <h3 class="sub">互動：這個網址，攝影機 API 在不在？</h3>
+  <div class="form"><label>輸入一個網址（或點下面的例子）
+    <input type="text" id="urlIn" value="http://192.168.7.2:7000" spellcheck="false" autocomplete="off"></label></div>
+  <div class="chips" id="urlChips">
+    <button type="button" class="btn" data-u="http://127.0.0.1:17000">http://127.0.0.1:17000</button>
+    <button type="button" class="btn" data-u="http://localhost:17000">http://localhost:17000</button>
+    <button type="button" class="btn" data-u="http://192.168.7.2:7000">http://192.168.7.2:7000</button>
+    <button type="button" class="btn" data-u="https://192.168.7.2:7000">https://192.168.7.2:7000</button>
+  </div>
+  <div class="verdict" id="urlOut" aria-live="polite"></div>
+  <p class="small">判斷規則照本頁的來源（HTTPS 或 localhost）。<span class="wn">⚠️</span> 只有 Chrome 實測過；Safari 在 localhost 轉接下沒驗過 <span class="tag t-meas" title="usb-tunnel.mdx〈邊界誠實〉">〔實測 2026-07-28〕</span>。</p>
+
+  <h3 class="sub">互動：你現在這個瀏覽器怎麼說？</h3>
+  <p class="small">這一頁也是一個網頁。按下去，讓你的瀏覽器自己回答（只讀兩個值，不會開攝影機）。</p>
+  <button type="button" class="btn" id="liveBtn">問我的瀏覽器</button>
+  <div class="verdict" id="liveOut" aria-live="polite" hidden></div>
+
+  <h3 class="sub">轉接程式：讓瀏覽器以為自己連的是 localhost</h3>
+  <p>解法是「借力」：既然瀏覽器只相信 localhost，就在電腦上放一支小小的 Python 轉接程式 <code>usbnet-bridge.py</code>（只用標準函式庫），把 <code>127.0.0.1</code> 上的三個門，原封不動轉到 USB 網卡上的板子 <span class="tag t-code" title="camera-tests/face-usb-mac/usbnet/usbnet-bridge.py">〔原始碼〕</span>。瀏覽器看到 localhost（安全內容成立、攝影機 API 存在），封包實際走 USB 網路、不經 adb。</p>
+  <div class="tblw"><table class="stack">
+    <tr><th>電腦（你的瀏覽器連這裡）</th><th>→ 板子（USB 網卡）</th><th>用途</th></tr>
+    <tr><td><code>127.0.0.1:17000</code></td><td><code>192.168.7.2:7000</code></td><td>操作頁面（也是 <code>ai_stats</code> 統計的通道）</td></tr>
+    <tr><td><code>127.0.0.1:18080</code></td><td><code>192.168.7.2:8080</code></td><td>影像上傳（WebSocket）</td></tr>
+    <tr><td><code>127.0.0.1:14912</code></td><td><code>192.168.7.2:4912</code></td><td>AI 框選畫面</td></tr>
+  </table></div>
+  <p><b>為什麼埠號要跟上半節一模一樣？</b>因為網頁程式把另外兩個門寫死了：影像送到「同一台主機的 18080」、右邊那格嵌「同一台主機的 14912」 <span class="tag t-code" title="face-usb-classroom/assets/app.js：serviceHost() 取 window.location.hostname，再接 :18080、:14912">〔原始碼〕</span>。轉接程式沿用 adb forward 的埠號，網頁就一個字都不用改 <span class="tag t-code" title="usbnet/README.md 檔案表">〔原始碼〕</span>。</p>
+  <p class="note warn"><b>小心兩個人搶同一個門。</b>轉接程式要在 <code>127.0.0.1:17000</code> 等連線；如果上半節的 adb forward 還在，那個埠已經被 adb server 佔走。開轉接程式前，先把 forward 拆掉（<code>"$ADB" forward --remove-all</code>） <span class="tag t-board" title="本週內容規格 §〇 E">〔實板 10/14〕</span>。</p>
+  <div class="tblw"><table class="stack">
+    <tr><th>路</th><th>傳輸</th><th>會不會自己掉</th><th>瀏覽器攝影機</th></tr>
+    <tr><td>adb forward（上半節）</td><td>USB（adb 隧道）</td><td>會，一下午 4 次 <span class="tag t-meas" title="face-usb-mac/README.md">〔實測 2026-07-22〕</span></td><td>可以（localhost）</td></tr>
+    <tr><td>USB 網卡＋localhost 轉接（下半節）</td><td>USB（網路）</td><td>實測沒掉過 <span class="tag t-meas" title="usb-tunnel.mdx 三條路的對照">〔實測 2026-07-28〕</span></td><td>可以（localhost；Chrome 已驗）</td></tr>
+    <tr><td>USB 網卡直連 <code>192.168.7.2</code></td><td>USB（網路）</td><td>實測沒掉過</td><td>不行（非安全內容）；命令列工具可以</td></tr>
+  </table></div>
+
+  <details class="deep">
+    <summary>深入一層：為什麼不乾脆讓板子用 HTTPS？</summary>
+    <div class="in">
+      <p>理論上可以，但要自己簽憑證，還要處理信任鏈，以及 HTTPS 頁面裡混用一般 WebSocket 的問題——教室裡 40 台機器一台一台處理並不實際；localhost 轉接一支小程式就解決 <span class="tag t-code" title="usb-tunnel.mdx 觀念快篩第 3 題">〔原始碼〕</span>。</p>
+      <p>Mac 上另有一個坑：macOS 的「區域網路」隱私權限會擋 App 連 <code>192.168.7.x</code>，但 <code>curl</code> 跟 localhost 不受管，所以「curl 通、瀏覽器不通」不代表網卡壞了 <span class="tag t-meas" title="usbnet/README.md 坑 2">〔實測 2026-08-17〕</span>。走轉接程式後，瀏覽器只碰 localhost，這題也一起繞開。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §6 ============================== -->
+<section class="sec" id="s6">
+  <div class="sec-h"><span class="num">6</span><h2>App Lab 的 App 與 Brick</h2><span class="en">APP &amp; BRICKS</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><b>這節回答：</b>一支 App Lab 的 App 由哪些檔案組成？brick 是什麼？板子上那兩個 Docker 容器各做什麼？</p>
+  <p><b>積木（brick）</b>是 Arduino 官方做好的高階功能：攝影機、AI、網頁介面這些細節都包好了，你在 <code>app.yaml</code> 裡點名要哪幾塊、在 <code>main.py</code> 裡接起來就能動。好處是很快做出成品；代價是中間層多，效能問題不容易直接看見 <span class="tag t-code" title="背景知識講義 §19">〔原始碼〕</span>（第 8 節會看到這個代價）。每塊 brick 背後都是 <b>Docker 容器（container）</b>：一個隔離的執行環境，帶著自己的檔案與函式庫，但<b>共用板子的 kernel</b>。</p>
+
+  <h3 class="sub">互動：App 解剖圖</h3>
+  <div class="two">
+    <div>
+      <div class="tree" id="appTree"><span class="d">face-usb-classroom/</span>
+├── <button type="button" data-file="yaml" aria-pressed="false">app.yaml</button>
+├── <span class="d">python/</span>
+│   └── <button type="button" data-file="main" aria-pressed="false">main.py</button>
+├── <span class="d">assets/</span>
+│   ├── <button type="button" data-file="index" aria-pressed="false">index.html</button>
+│   ├── <button type="button" data-file="appjs" aria-pressed="false">app.js</button>
+│   ├── <button type="button" data-file="css" aria-pressed="false">style.css</button>
+│   └── <button type="button" data-file="libs" aria-pressed="false">libs/</button>
+└── <button type="button" data-file="cache" aria-pressed="false">.cache/</button></div>
+      <p class="small">本週 starter 的 <code>face-usb-classroom/</code>（從 arduino-q 的 <code>face-usb-mac/board-app/</code> 一字不改複製） <span class="tag t-code" title="本週內容規格 §〇 B；starter/w06-starter/face-usb-classroom/">〔原始碼〕</span>，放到板子的 <code>~/ArduinoApps/face-usb-classroom/</code> <span class="tag t-board" title="本週內容規格 §〇 B">〔實板 10/14〕</span>。</p>
+      <div class="tabs" role="group" aria-label="程式碼">
+        <button type="button" class="btn" data-code="main" aria-pressed="true">main.py</button>
+        <button type="button" class="btn" data-code="yaml" aria-pressed="false">app.yaml</button>
+      </div>
+      <div class="code" id="codeBox"><div class="inner" id="codeInner"></div></div>
+      <p class="small">逐字嵌入原檔（MPL-2.0）；行號是藍色的那幾行有說明，點任何一行都可以。</p>
+    </div>
+    <div class="panel sticky" id="codePanel" aria-live="polite">
+      <h3>點左邊的檔名或任何一行</h3>
+      <p class="ph">這裡會說明它負責什麼、跟今天的哪一層有關。</p>
+    </div>
+  </div>
+
+  <h3 class="sub">brick → 容器 → 映像</h3>
+  <div class="tblw"><table class="stack">
+    <tr><th>app.yaml 裡的 brick</th><th>容器（<code>docker ps</code> 看到的名字）</th><th>映像</th><th>大小</th><th>埠</th></tr>
+    <tr><td><code>arduino:web_ui</code>＋你的 <code>main.py</code></td><td><code>face-usb-classroom-main-1</code></td><td><code>python-apps-base</code></td><td>893 MB <span class="tag t-board" title="2026-10-14 洄瀾在老師板上實查 docker 映像">〔實板 10/14〕</span></td><td>7000 網頁、8080 收畫面</td></tr>
+    <tr><td><code>arduino:video_object_detection</code></td><td><code>face-usb-classroom-ei-video-obj-detection-runner-1</code></td><td><code>ei-models-runner</code></td><td>969 MB <span class="tag t-board" title="2026-10-14 洄瀾在老師板上實查 docker 映像">〔實板 10/14〕</span></td><td>4912 結果與畫面；5050 容器之間傳畫面</td></tr>
+    <tr><td>（<span class="wn">⚠️</span> 從名字看是下載模型用）</td><td>—</td><td><code>models-downloader</code></td><td>沒記錄</td><td>—</td></tr>
+  </table></div>
+  <p class="note warn"><b>映像有沒有預載？</b>老師的板上三個映像都在 <span class="tag t-board" title="docker images；本週內容規格 §〇 B">〔實板 10/14〕</span>。<span class="wn">⚠️</span> 出廠學生板還沒查：沒有的話，第一次 <code>app start</code> 要從網路拉 969 MB，全班同時拉會塞住教室網路——老師課前會確認。</p>
+  <p class="small">容器名字出自 Mac 版 README 的救援指令 <span class="tag t-code" title="face-usb-mac/README.md〈另外兩個坑〉">〔原始碼〕</span>；5050、4912 出自速度調查的資料流 <span class="tag t-code" title="fast-ai-bench/README.md〈瓶頸解剖〉">〔原始碼〕</span>。</p>
+  <p><b>映像為什麼這麼大？</b>映像（image）是容器的「模板」：一整套縮小版的 Linux 使用者環境，加上程式和函式庫（容器沒有自己的 kernel，借板子的）。runner 映像裡至少有 GStreamer、node 程式和官方模型檔 <span class="tag t-code" title="fast-ai-bench/README.md 資料流；模型在 /models/ootb/ei/">〔原始碼〕</span>。<span class="wn">⚠️</span> 各部分各占多少，沒有量過。好處是每塊板跑起來都一樣；代價是第一次下載很久、吃儲存空間。</p>
+
+  <details class="deep">
+    <summary>深入一層：三個「看起來壞了、其實沒壞」的狀態</summary>
+    <div class="in">
+      <ul>
+        <li><b>runner 容器的健康狀態不可靠</b>：它的健康檢查是「5050 埠在 LISTEN 狀態」（<code>0x13BA</code>＝5050、<code>0A</code>＝LISTEN），main 容器一連上去，狀態就變 ESTABLISHED。7/22 在 Mac 上因此一直顯示 unhealthy <span class="tag t-meas" title="face-usb-mac/README.md〈unhealthy 是假警報〉">〔實測 2026-07-22〕</span>，10/14 老師板卻顯示 healthy <span class="tag t-board" title="本週內容規格 §〇 B">〔實板 10/14〕</span>。<span class="wn">⚠️</span> 兩次不一樣，來源沒說明原因。判斷有沒有在跑，看 log。</li>
+        <li><b><code>app stop</code> 說 stopped successfully，不代表真的停了</b>：要確認看 <code>docker ps</code> <span class="tag t-meas" title="face-usb-mac/README.md">〔實測 2026-07-22〕</span>。</li>
+        <li><b>千萬別清空整個 App 資料夾</b>：<code>.cache/</code> 裡放著 <code>arduino-app-cli</code> 自己產的 compose 設定；刪掉之後它再也停不掉自己的 App <span class="tag t-meas" title="face-usb-mac/README.md">〔實測 2026-07-22〕</span>。</li>
+      </ul>
+      <p class="small"><span class="wn">⚠️</span> 另有一條：<code>arduino-app-cli app restart</code> 在 7 月的舊版實測會卡在狀態不一致，所以本週一律寫成先 <code>app stop</code>、再 <code>app start</code> <span class="tag t-meas" title="face-usb-mac/README.md">〔實測 2026-07-22〕</span>。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §7 ============================== -->
+<section class="sec" id="s7">
+  <div class="sec-h"><span class="num">7</span><h2>AI 推論：從 JPEG 到人臉框</h2><span class="en">INFERENCE</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><b>這節回答：</b>板子拿到一張 JPEG 之後做了哪些事？「信心值 0.5」是什麼意思？為什麼會「左邊有畫面、右邊永遠空白」？</p>
+  <p>模型拿一筆輸入算出答案，叫<b>推論（inference）</b>。模型不會直接吃攝影機的原圖，它要固定大小、固定格式的輸入：官方人臉模型 <code>lw-face-det.eim</code> 吃 <b>320×256 的灰階圖</b> <span class="tag t-meas" title="fast-ai-bench/README.md（Facedet Lite (Jan)，TFLite）">〔實測 2026-07-20〕</span>，裡面是一個 TFLite（TensorFlow Lite）模型 <span class="tag t-code" title="fast-ai-bench/README.md：模型 Facedet Lite (Jan)，320×256 灰階，TFLite">〔原始碼〕</span>。<code>.eim</code> 是 Edge Impulse 打包好的「可執行」模型檔：一支程式，餵它整理好的輸入，它回你結果 <span class="tag t-code" title="背景知識講義 §19">〔原始碼〕</span>。</p>
+
+  <h3 class="sub">互動：一張畫面在板子上的九站</h3>
+  <div class="pipe" id="pipe"></div>
+  <div class="panel" id="pipePanel" aria-live="polite"><p class="ph">點上面任何一站。</p></div>
+
+  <h3 class="sub">互動：信心值門檻</h3>
+  <p>模型對每個「可能是臉」的地方給一個<b>信心值（confidence）</b>，0 到 1。<code>main.py</code> 設 <code>confidence=0.5</code> <span class="tag t-code" title="face-usb-classroom/python/main.py">〔原始碼〕</span>：低於門檻的框就不算。拖拉門檻看看。<span class="small">（框和數字是<b>示範值</b>，不是量測。）</span></p>
+  <div class="two">
+    <div class="svgbox" id="confBox"></div>
+    <div>
+      <div class="rangeRow"><label for="confR"><b>門檻</b></label><input type="range" id="confR" min="0.05" max="0.95" step="0.05" value="0.5"><b id="confV" class="mono">0.50</b></div>
+      <div class="verdict" id="confOut" aria-live="polite"></div>
+      <p class="small">真實案例：調查當天早上暗房裡鏡頭前沒有臉，官方管線的 log 卻一直報 <code>faces=1</code>——信心 ≥0.5 的穩定誤判，鏡頭其實對著層架與窗簾 <span class="tag t-meas" title="fast-ai-bench/README.md〈重要注意〉">〔實測 2026-07-20〕</span>。開燈、真臉入鏡後補驗：80 幀全部偵測到臉 <span class="tag t-meas" title="fast-ai-bench/README.md（亮度 149/255，直連 1 worker 8 秒 80/80）">〔實測 2026-07-20〕</span>。</p>
+      <p class="small"><code>debounce_sec=0.25</code> 也在同一行 <span class="tag t-code" title="main.py">〔原始碼〕</span>。<span class="wn">⚠️</span> 本頁的來源只有這個參數值，沒有說明它的確切行為；從字面看是「0.25 秒內不重複觸發」，沒有驗證。</p>
+    </div>
+  </div>
+
+  <h3 class="sub">互動：板子時鐘差多少，畫面會被丟掉？</h3>
+  <p>網頁送的每張畫面前面有一個時間戳。板子只收 <b>±10 秒</b>以內的，太舊或時間怪的直接丟（防重放）<span class="tag t-code" title="face-usb-classroom/README.md：bpp_codec.py 的 WINDOW_US">〔原始碼〕</span>。偏偏 UNO Q <b>沒有電池供電的硬體時鐘（RTC，Real-Time Clock）</b>，教室版又不連網，開機後時間可能差好幾小時 <span class="tag t-meas" title="face-usb-classroom/README.md〈板子時鐘〉">〔實測 2026-07-21〕</span>。</p>
+  <div class="calc">
+    <div>
+      <div class="rangeRow"><label for="clkR"><b>板子時鐘比電腦</b></label><input type="range" id="clkR" min="-60" max="60" step="1" value="0"><b id="clkV">0 秒</b></div>
+      <div class="chips zh" id="clkChips">
+        <button type="button" class="btn" data-s="0">剛好</button>
+        <button type="button" class="btn" data-s="8">快 8 秒</button>
+        <button type="button" class="btn" data-s="-12">慢 12 秒</button>
+        <button type="button" class="btn" data-s="10800">快 3 小時</button>
+        <button type="button" class="btn" data-s="-18000">慢 5 小時</button>
+      </div>
+      <label class="ck"><input type="checkbox" id="clkFix" checked> <span>按「開始辨識」時，先用板子回應的 HTTP <code>Date</code> 標頭對時（教室版網頁的做法）</span></label>
+    </div>
+    <div class="verdict" id="clkOut" aria-live="polite"></div>
+  </div>
+
+  <details class="deep">
+    <summary>深入一層：每張畫面前面那 14 個位元組（BPP 標頭）</summary>
+    <div class="in">
+      <p>教室版網頁每送一張 JPEG，前面先接 14 個位元組的標頭 <span class="tag t-code" title="face-usb-classroom/assets/app.js：createBppHeader()">〔原始碼〕</span>：</p>
+      <ul>
+        <li>第 0 個位元組：版本（0）</li>
+        <li>第 1 個位元組：模式（0＝不加密，對應 <code>main.py</code> 的 <code>encrypt=False</code>）</li>
+        <li>第 2–9 個位元組：時間戳，單位微秒（µs），大端序；值＝電腦現在時間＋算出來的時差</li>
+        <li>第 10–13 個位元組：隨機數</li>
+      </ul>
+      <button type="button" class="btn" id="bppBtn">用現在的時間產生一個標頭</button>
+      <div class="hexrow" id="bppHex"></div>
+      <p class="small" id="bppNote"></p>
+      <p>對時怎麼算：網頁對自己的網址送一個 HEAD 請求，讀回應裡的 <code>Date</code>。<code>Date</code> 只到秒（無條件捨去），所以補半秒；再扣掉來回時間的一半 <span class="tag t-code" title="app.js：syncBoardClock()">〔原始碼〕</span>。用 Python 走 <code>?raw=true</code> 通道送畫面不打時間戳，就不受這個限制 <span class="tag t-meas" title="face-usb-mac/README.md〈板子時鐘〉">〔實測 2026-07-22〕</span>。</p>
+    </div>
+  </details>
+  <details class="deep">
+    <summary>深入一層：log 裡的 faces 統計，不等於推論速度</summary>
+    <div class="in">
+      <p><code>main.py</code> 用 <code>detection.on_detect_all(report_detections)</code> 接結果，但這個回呼只在「有偵測到東西」時觸發；沒偵測到的幀不會出現在統計裡 <span class="tag t-meas" title="fast-ai-bench/README.md〈重要注意〉">〔實測 2026-07-20〕</span>。所以 log 的數字 ≠ 推論速度 ≠ 攝影機速度 ≠ 硬體極限——要一層一層分開量。</p>
+      <p>另外，官方管線裡畫面在容器之間用 JSON 傳，一來一回要多約 90 ms；速度調查的直連版改用共享記憶體（shm）餵資料，避開這段 <span class="tag t-meas" title="fast-ai-bench/README.md">〔實測 2026-07-20〕</span>。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §8 ============================== -->
+<section class="sec" id="s8">
+  <div class="sec-h"><span class="num">8</span><h2>怎麼變快</h2><span class="en">SPEED UP</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><b>這節回答：</b>教室版為什麼是 8 FPS？把 8 改大會不會變快？同一顆模型怎麼跑到 20 以上？換 kernel、調 kernel 會不會變快？實際要怎麼做？</p>
+  <p><b>先分清楚是哪一個 FPS。</b>一條管線上同時有好幾個「每秒幾張」，回答的問題不一樣 <span class="tag t-code" title="背景知識講義 §2">〔原始碼〕</span>：</p>
+  <div class="fps4">
+    <div class="card"><b>攝影機供幀（Camera FPS）</b><p>攝影機實際產生幾張。暗房會被曝光時間壓低。</p></div>
+    <div class="card"><b>傳輸（Transport FPS）</b><p>網頁「送出速度」那格，和它下面那行小字「板子實際收到幾張」。</p></div>
+    <div class="card"><b>AI 結果（AI FPS）</b><p>模型每秒完成幾次推論。教室版在瀏覽器的 F12 主控台數：每一行 <code>classification</code> 就是一次結果 <span class="tag t-board" title="本週內容規格 §〇 B">〔實板 10/14〕</span>。</p></div>
+    <div class="card"><b>顯示（Display FPS）</b><p>你每秒看到幾次更新。</p></div>
+  </div>
+  <p><b>教室版現況：</b>網頁每秒送 8 張（<code>TARGET_FPS = 8</code>） <span class="tag t-code" title="face-usb-classroom/assets/app.js 第 7 行">〔原始碼〕</span>，板子這頭 <code>WebSocketCamera(fps=8)</code> 也只每秒取 8 張 <span class="tag t-code" title="face-usb-classroom/python/main.py">〔原始碼〕</span>。可是 AI 每秒只回 5.5 次結果 <span class="tag t-board" title="本週內容規格 §〇 B">〔實板 10/14〕</span>——那改大會不會變快？按下面兩個鈕對照 10/14 在老師板上的實測：</p>
+  <div class="seg" role="group" aria-label="送幾張">
+    <button type="button" class="btn" data-cmp="8" aria-pressed="true">送 8（現況）</button>
+    <button type="button" class="btn" data-cmp="20" aria-pressed="false">兩處都改成 20</button>
+  </div>
+  <div class="tblw"><table id="cmpTbl"></table></div>
+  <p class="note warn"><span class="wn">⚠️</span> 另一個數字：7/22 在 Mac 上用另一種數法（數 Edge Impulse 頁面每秒更新幾次）量到 AI 7.99 次/秒、每張 89 ms，當時推估「官方管線單 worker 上限約 11.2」 <span class="tag t-meas" title="camera-tests/face-usb-mac/README.md〈整條路三段都量過了〉">〔實測 2026-07-22〕</span>；10/14 在老師板上直接把兩處改成 20，AI 只到 6.3 次/秒 <span class="tag t-board" title="本週內容規格 §〇 B">〔實板 10/14〕</span>。兩次的數法、機器都不同，來源沒有拆開比較；本週內容規格依 10/14 的實測下的結論是「送更多不會更快」。</p>
+
+  <h3 class="sub">互動：瓶頸會移動——兩條路的階梯</h3>
+  <div class="seg" role="group" aria-label="哪一條路">
+    <button type="button" class="btn" data-route="B" aria-pressed="true">本週：電腦送、走 USB（路線 B）</button>
+    <button type="button" class="btn" data-route="A" aria-pressed="false">攝影機直插板子（路線 A）</button>
+  </div>
+  <p class="small" id="ladNote"></p>
+  <div class="ladder" id="ladder"></div>
+  <div class="panel" id="ladPanel" aria-live="polite"><p class="ph">點上面任何一列。</p></div>
+  <p class="small"><span class="wn">⚠️</span> 推論毫秒數各次量到的不一樣：7/20 純推論 92 ms（同一份表格另寫「單核推論 ~98ms」）、7/22 Mac 89 ms、10/14 教室版中位 90 ms（送 8）／93 ms（送 20）、10/14 快速版每張 96–97 ms <span class="tag t-board" title="本週內容規格 §〇 B、§〇 C">〔實板 10/14〕</span>。來源沒有說明差在哪，本頁照原樣列出。</p>
+
+  <h3 class="sub">互動：FPS 計算器——誰是瓶頸？</h3>
+  <div class="calc">
+    <div>
+      <div class="seg" role="group" aria-label="管線">
+        <button type="button" class="btn" data-pm="brick" aria-pressed="true">官方 brick（教室版）</button>
+        <button type="button" class="btn" data-pm="direct" aria-pressed="false">直連 .eim（快速版）</button>
+      </div>
+      <div class="form">
+        <label>攝影機供幀上限（FPS）<input type="number" id="cC" min="1" max="120" step="0.5" value="30"></label>
+        <label><span id="cSlab">網頁送出 TARGET_FPS</span><input type="number" id="cS" min="1" max="60" step="1" value="8"></label>
+        <label data-only="brick">main.py 的 fps 參數<input type="number" id="cP" min="1" max="60" step="1" value="8"></label>
+        <label data-only="brick">官方管線每秒最多回幾次<input type="number" id="cA" min="0.5" max="60" step="0.1" value="6.3"></label>
+        <label data-only="direct" hidden>worker 數（四核，最多 4）<input type="number" id="cN" min="1" max="4" step="1" value="3"></label>
+        <label data-only="direct" hidden>單張推論（ms）<input type="number" id="cT" min="10" max="1000" step="1" value="96"></label>
+      </div>
+      <p class="small">快選：</p>
+      <div class="chips zh" id="calcPre">
+        <button type="button" class="btn" data-pre="now">教室版現況</button>
+        <button type="button" class="btn" data-pre="twenty">教室版兩處改 20</button>
+        <button type="button" class="btn" data-pre="fast20">快速版、網頁送 20</button>
+        <button type="button" class="btn" data-pre="fast1">快速版只開 1 個 worker</button>
+      </div>
+    </div>
+    <div>
+      <div class="hbars" id="calcBars"></div>
+      <div class="verdict" id="calcOut" aria-live="polite"></div>
+    </div>
+  </div>
+  <p class="small">計算方式：每一站各有自己的上限，整條路的上限＝最小的那一個 <span class="tag t-est" title="本頁的簡化模型">〔估算〕</span>。教室版的「官方管線每秒最多回幾次」預設填 10/14 送 20 時量到的 6.3 <span class="tag t-board" title="本週內容規格 §〇 B">〔實板 10/14〕</span>；快速版的 AI 算力＝worker 數 × 1000 ÷ 單張推論毫秒。實際上增加 worker 不會永遠等比例變快，還會受 CPU、記憶體、解碼、供幀與電力限制 <span class="tag t-code" title="背景知識講義 §17">〔原始碼〕</span>。</p>
+
+  <h3 class="sub">換 kernel、調 kernel，會不會變快？</h3>
+  <p>先講結論：<b>這條管線的瓶頸不在 kernel。</b>7/20 的速度調查實測 CPU 已經跑在滿速 2.016 GHz、SoC 溫度 50–57°C，沒有熱節流（thermal throttling，太熱時自動降頻） <span class="tag t-meas" title="fast-ai-bench/README.md：以下實測「無影響」">〔實測 2026-07-20〕</span>。10/14 教室版的 runner 容器只用了 76–113% 的 CPU（四核的板子只用一核多一點），快速版跑同一顆模型用到 213% <span class="tag t-board" title="本週內容規格 §〇 B、§〇 C">〔實板 10/14〕</span>——卡住的是 user space 的架構：推論只用一顆核心、官方管線一次只處理一幀。點開每一個問題：</p>
+  <details class="kq"><summary>把 CPU 調速器（governor）改成全速，會變快嗎？<span class="verdictTag v-no">幾乎不會</span></summary><div class="in">
+    <p><b>調速器（cpufreq governor）</b>是 kernel 決定「CPU 現在跑多快」的策略。老師的板：4 核，調速器是 <code>schedutil</code>（可以選 <code>ondemand</code>、<code>userspace</code>、<code>performance</code>、<code>schedutil</code>），9 個頻率檔從 300000 到 2016000 kHz；量的時候四核都在 1804800 kHz、<code>thermal_zone0</code> 是 43.7 °C <span class="tag t-board" title="/sys/devices/system/cpu/cpu0/cpufreq/；本週內容規格 §〇 A">〔實板 10/14〕</span>。<code>schedutil</code> 會看負載調頻率：7/20 跑 AI 時實測已經到 2.016 GHz <span class="tag t-meas" title="fast-ai-bench/README.md">〔實測 2026-07-20〕</span>，在最高檔了，改成全速也沒有空間再往上 <span class="tag t-est" title="由上面兩個實測推得">〔估算〕</span>。</p>
+    <p>想自己看（唯讀）：</p>
+    <pre><code># 溫度（單位是千分之一 °C）
+cat /sys/class/thermal/thermal_zone*/temp
+# CPU 0 的 cpufreq 有哪些檔案
+ls /sys/devices/system/cpu/cpu0/cpufreq/
+# 目前用哪個調速器（老師的板：schedutil）
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</code></pre>
+    <p class="small">路徑出自 10/14 實板查到的 <code>/sys/devices/system/cpu/cpu0/cpufreq/</code> <span class="tag t-board" title="本週內容規格 §〇 A">〔實板 10/14〕</span>。<span class="wn">⚠️</span> 改調速器要 root，本頁的來源沒有「改了之後重量 FPS」的實驗。</p>
+  </div></details>
+  <details class="kq"><summary>是不是過熱降頻了？<span class="verdictTag v-no">不是</span></summary><div class="in">
+    <p>SoC 50–57°C、CPU 維持滿速 2.016 GHz，速度調查把「熱節流」列在實測無影響的那一欄 <span class="tag t-meas" title="fast-ai-bench/README.md">〔實測 2026-07-20〕</span>。同一欄還有：輸入節流（10→30 完全沒差）、長時間執行劣化（重啟後仍 3.8）。</p>
+  </div></details>
+  <details class="kq"><summary>改走 USB 網卡（另一個 kernel 驅動），FPS 會變高嗎？<span class="verdictTag v-no">不會</span></summary><div class="in">
+    <p>頻寬本來就不是瓶頸：教室版影像只用 35–52 KB/s <span class="tag t-board" title="本週內容規格 §〇 B">〔實板 10/14〕</span>，USB 網卡下載 100 MB 不到 1 秒 <span class="tag t-board" title="本週內容規格 §〇 A">〔實板 10/14〕</span>。10/14 改走 USB 網卡＋轉接程式時，網頁照樣送 8.0、板子收到 8.0、AI 4.8 次/秒（走 adb 時 5.5） <span class="tag t-board" title="本週內容規格 §〇 E">〔實板 10/14〕</span>——同一個量級。換 USB 網卡換到的是<b>穩定</b>（不會自己掉）和<b>不依賴 adb</b>。</p>
+  </div></details>
+  <details class="kq"><summary>自己編 kernel、換一個 kernel 呢？<span class="verdictTag v-no">對這題沒幫助</span></summary><div class="in">
+    <p>編 kernel（或編模組）是為了<b>多一個功能</b>，例如 UAC2 音效卡。這條管線慢的原因——官方管線一次只處理一幀、攝影機曝光、單核推論——都在 kernel 之上 <span class="tag t-meas" title="fast-ai-bench/README.md〈瓶頸解剖〉">〔實測 2026-07-20〕</span>。<span class="wn">⚠️</span> 本頁的來源沒有任何「換 kernel 後重量 FPS」的實驗；這個結論是從瓶頸解剖推出來的。</p>
+  </div></details>
+  <details class="kq"><summary>用 GPU 跑 AI 呢？<span class="verdictTag v-no">官方還沒接通</span></summary><div class="in">
+    <p>板上的 GPU 做<b>通用運算</b>（OpenCL）是可用的，但「GPU 跑 AI 推論」官方仍沒接通，兩件事別混在一起 <span class="tag t-meas" title="報告-全板能力盤點 A3">〔實測 2026-07-24〕</span>。</p>
+  </div></details>
+  <details class="kq"><summary>那真正有效的是什麼？<span class="verdictTag v-yes">改 user space 的架構</span></summary><div class="in">
+    <p>上面的階梯就是答案：繞過官方管線直連 <code>.eim</code>、用共享記憶體餵資料、開多個 worker 用上更多核心、開燈或縮短曝光讓攝影機供得上。10/14 快速版在老師板上，網頁送 20、AI 回 20.0 FPS（3 個 worker、每張 96–97 ms） <span class="tag t-board" title="本週內容規格 §〇 C">〔實板 10/14〕</span>——這時卡住的反而是「網頁只送 20」。</p>
+  </div></details>
+
+  <h3 class="sub">怎麼做</h3>
+  <div class="howto">
+    <div class="card" style="grid-column:1/-1">
+      <h4>A. 教室版：改兩處（三個值）</h4>
+      <p>只改一處沒用：只改 <code>main.py</code>，頁面還是送 8 <span class="tag t-board" title="本週內容規格 §〇 B">〔實板 10/14〕</span>。</p>
+      <pre><code># python/main.py（板上 ~/ArduinoApps/face-usb-classroom/）
+camera = WebSocketCamera(
+    ...
+    fps=8,          # 改成 20
+)
+
+// assets/app.js
+const TARGET_FPS = 8;                        // 改成 20
+frameRate: { ideal: TARGET_FPS, max: 12 },   // max 改成 30</code></pre>
+      <p>改完重啟 App（在板子）：</p>
+      <pre><code>arduino-app-cli app stop ~/ArduinoApps/face-usb-classroom
+arduino-app-cli app start ~/ArduinoApps/face-usb-classroom</code></pre>
+      <p class="small"><span class="tag t-board" title="本週內容規格 §〇 C 的切換指令">〔實板 10/14〕</span> 10/14 的結果：送 20.0、板子收到 20.0、89–137 KB/s、跳過 0——但 AI 只從 5.5 到 6.3 次/秒 <span class="tag t-board" title="本週內容規格 §〇 B">〔實板 10/14〕</span>。<b>送更多不會更快</b>：這一步是用來「證明瓶頸不在 8」，不是用來變快的。</p>
+    </div>
+    <div class="card">
+      <h4>B. 快速版：直連 .eim＋多 worker（老師示範）</h4>
+      <p>繞過官方的 Edge Impulse runner 和人臉偵測 brick：Python 把 <code>.eim</code> 當一支程式來跑，用 UNIX socket＋<code>/dev/shm</code>（共享記憶體）餵資料，開 3 個 worker 平行算；只剩 <code>arduino:web_ui</code> 一個 brick，少一個容器；網頁網址加 <code>?fps=N</code> 設送幾張（預設 20） <span class="tag t-code" title="face-usb-mac/fast/README.md、fast/board-app/python/main.py；本週內容規格 §〇 C">〔原始碼〕</span>。學生不用裝。</p>
+      <p class="small">10/14 老師板：<code>app start</code> 1.7 秒；送 19.9 FPS；AI 20.0 FPS、3 個 worker、每張 96–97 ms；容器 CPU 213% <span class="tag t-board" title="本週內容規格 §〇 C（20:41）">〔實板 10/14〕</span>。7/22 用 Python 送、走 USB：1／2／3 個 worker＝7.6／15.2／22.8 FPS <span class="tag t-meas" title="本週內容規格 §〇 C">〔實測 2026-07-22〕</span>。</p>
+      <p class="small">兩支 App 搶同樣的埠，一次只能跑一支；切換指令在下面「深入一層」。</p>
+    </div>
+    <div class="card">
+      <h4>C. 光線：先讓攝影機供得上</h4>
+      <p>暗房自動曝光約 133 ms → 只供 7.5 FPS；開燈自動曝光 15 FPS；手動曝光 30 FPS <span class="tag t-meas" title="fast-ai-bench/速查-快速版.md、README">〔實測 2026-07-20〕</span>。1000 ÷ 133 ≈ 7.5 <span class="tag t-est" title="背景知識講義 §3">〔估算〕</span>。手動曝光時 gain 不會自動補，暗房 25 ms 曝光的畫面平均亮度只有 14/255，幾乎全黑 <span class="tag t-meas" title="fast-ai-bench/README.md">〔實測 2026-07-20〕</span>——<b>要快又要偵測得到，就開燈</b>。</p>
+    </div>
+    <div class="card" style="border-color:var(--red);background:var(--red-tint)">
+      <h4>D. ⚠️ 供電警告</h4>
+      <p>跑多 worker 很吃電。<b>別只靠電腦的 USB-C 供電</b>：實測約 1.2 A 會在負載尖峰掉電、硬重開 <span class="tag t-meas" title="fast-ai-bench/速查-快速版.md〈供電警告〉；本週內容規格 §〇 A">〔實測 2026-07-21〕</span>。用 3 A 的 USB-C PD 電源，或有外接供電的 hub <span class="tag t-code" title="速查-快速版.md">〔原始碼〕</span>。</p>
+    </div>
+  </div>
+
+  <details class="deep">
+    <summary>深入一層：老師示範快速版的切換指令</summary>
+    <div class="in">
+      <p class="small">在老師板上、SSH 視窗打 <span class="tag t-board" title="本週內容規格 §〇 C">〔實板 10/14〕</span>。兩支搶同樣的埠，一次只能跑一支；通道和轉接程式不用重開。</p>
+      <pre><code># 切到快速版
+arduino-app-cli app stop ~/ArduinoApps/face-usb-classroom
+arduino-app-cli app start ~/ArduinoApps/face-usb-fast
+# 示範完切回教室版
+arduino-app-cli app stop ~/ArduinoApps/face-usb-fast
+arduino-app-cli app start ~/ArduinoApps/face-usb-classroom</code></pre>
+      <p class="small">攝影機直插板子（路線 A）的重現步驟在 arduino-q 專案的 <code>camera-tests/fast-ai-bench/速查-快速版.md</code>，走 ssh、要先停官方容器放開攝影機，本頁不展開。</p>
+    </div>
+  </details>
+  <details class="deep">
+    <summary>深入一層：吞吐量、延遲與「丟掉舊畫面」</summary>
+    <div class="in">
+      <p><b>吞吐量（throughput）</b>是每秒完成幾張；<b>延遲（latency）</b>是一張從拍下到你看到結果等多久。可以每秒處理很多張、卻都是一秒前的畫面——只要讓畫面排隊就會這樣 <span class="tag t-code" title="背景知識講義 §15">〔原始碼〕</span>。</p>
+      <p>攝影機（生產者）比 AI（消費者）快時，系統只能三選一：讓佇列越排越長、擋住上游、或丟掉舊畫面。下游太慢時讓上游減速的機制叫<b>背壓（backpressure）</b>；即時 AI 通常選「只留最新一張」 <span class="tag t-code" title="背景知識講義 §16">〔原始碼〕</span>。教室版兩頭都這樣做：網頁發現還沒送出去的資料超過 512 KB 就跳過這一張 <span class="tag t-code" title="app.js：MAX_SOCKET_BUFFER = 512 * 1024">〔原始碼〕</span>；板子這頭佇列只有 1 張，滿了就丟舊的 <span class="tag t-meas" title="face-usb-mac/README.md">〔實測 2026-07-22〕</span>。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §9 ============================== -->
+<section class="sec" id="s9">
+  <div class="sec-h"><span class="num">9</span><h2>想一想（先猜再揭曉）</h2><span class="en">THINK FIRST</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><b>這節回答：</b>上面每一節你真的懂了嗎？先選答案，再按「揭曉」。</p>
+  <div class="toc-tools"><button type="button" class="btn" id="qsReset">全部重來</button></div>
+  <div class="qs" id="qs"></div>
+</section>
+
+<!-- ============================== §10 ============================== -->
+<section class="sec" id="s10">
+  <div class="sec-h"><span class="num">10</span><h2>名詞小抄</h2><span class="en">GLOSSARY</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><b>這節回答：</b>上面出現的名詞，各用一句白話怎麼說？輸入關鍵字可以篩選。</p>
+  <div class="form"><label>篩選<input type="text" id="glossQ" placeholder="例如：DHCP、模組、gadget" autocomplete="off"></label></div>
+  <p class="small" id="glossCnt"></p>
+  <div class="tblw"><table class="gloss" id="gloss"></table></div>
+</section>
+
+<footer id="refs" class="sec">
+  <h2>出處</h2>
+  <p>路徑除特別註明外，都在 arduino-q 專案裡。標籤的滑鼠提示會寫是哪一份。</p>
+  <ul>
+    <li><b>主要講義</b>：<code>docs/課程講義/USB攝影機與UNOQ影像管線-背景知識.md</code>（講義引用 2026-07-20～23 的實測）。</li>
+    <li><b>USB 通道教材頁</b>：<code>site/docs/xuezhenji/usb-tunnel.mdx</code>（2026-07-27～28 板驗）。</li>
+    <li><b>USB 網卡（7 月的實測與事故）</b>：<code>camera-tests/face-usb-mac/usbnet/README.md</code>、<code>INCIDENT-2026-07-28.md</code>、<code>setup-gadget-ncm.sh</code>、<code>udhcpd.conf</code>、<code>usbnet-bridge.py</code>、<code>adbd-hook/ncm-hook.sh</code>（檔頭註解）。</li>
+    <li><b>速度調查</b>：<code>camera-tests/fast-ai-bench/README.md</code>、<code>速查-快速版.md</code>（2026-07-20～21）。</li>
+    <li><b>本週內容規格</b>：<code>weeks/w06/內容規格.md</code> §〇 A–E（2026-10-14；〔實板 10/14〕多半出自這裡）。</li>
+    <li><b>本週 starter</b>：<code>face-usb-classroom/</code>（<code>app.yaml</code>、<code>python/main.py</code>、<code>assets/app.js</code>、<code>assets/libs/arduino.js</code>）、<code>w06-usbnet/</code>（<code>ncm-hook.sh</code>、<code>10-extra-functions.conf</code>、<code>usbnet-dhcp.service</code>）、<code>pc/usbnet-bridge.py</code>。</li>
+    <li><b>教室版 App 的來歷</b>：<code>camera-tests/face-usb-win/README.md</code>、<code>Start-FaceUsb.ps1</code>、<code>face-usb-classroom/README.md</code>；<code>camera-tests/face-usb-mac/board-app/</code>。</li>
+    <li><b>macOS 版與測試報告</b>：<code>camera-tests/face-usb-mac/README.md</code>、<code>TEST-REPORT.md</code>（2026-07-22～23）。</li>
+    <li><b>全板盤點</b>：<code>docs/報告-全板能力盤點-還有什麼沒用到-zh-TW.md</code>（2026-07-24 唯讀實查）。</li>
+    <li><b>〔實板 10/14〕</b>：2026-10-14 在老師的板上實查（kernel 版本、gadget 設定、模組、Docker 映像、Windows 11 的 USB 網卡）。</li>
+    <li><b>adb 指令格式</b>：App Lab 附的 adb 的 <code>adb --help</code>（2026-10-14 讀）。</li>
+    <li><b>USB VID:PID</b>：本課 W2／W4 內容規格（源自 Arduino 官方 UNO Q User Manual）。</li>
+    <li><code>main.py</code> 與 <code>app.yaml</code> 依 MPL-2.0 逐字嵌入於第 6 節；<code>10-extra-functions.conf</code>、<code>usbnet-dhcp.service</code> 逐字嵌入於第 4 節。</li>
+  </ul>
+  <p>本頁零外部資源、可離線開啟；不含任何金鑰、板子序號、板子名稱或 Wi-Fi 資訊。IP 只出現本機 <code>127.0.0.1</code> 與 USB 網段 <code>192.168.7.x</code>（另有子網遮罩 <code>255.255.255.0</code>，它不是任何機器的位址）。2026-10-14 版。</p>
+</footer>
+
+</main>
+
+<!-- 第 6 節逐字嵌入的教室版 App 原始碼（type="text/plain"：瀏覽器不執行、不轉義；check_concept.py 換行正規化後逐字比對） -->
+<script type="text/plain" id="src-main-py"># SPDX-FileCopyrightText: 2026
+# SPDX-License-Identifier: MPL-2.0
+
+import threading
+import time
+from datetime import UTC, datetime
+
+from arduino.app_bricks.video_objectdetection import VideoObjectDetection
+from arduino.app_bricks.web_ui import WebUI
+from arduino.app_peripherals.camera import WebSocketCamera
+from arduino.app_utils import App
+
+
+ui = WebUI()
+
+# The browser sends JPEG frames through ADB USB forwarding to this camera.
+# No Wi-Fi connection and no USB hub are needed.
+camera = WebSocketCamera(
+    port=8080,
+    resolution=(320, 240),
+    fps=8,
+    secret=None,
+    encrypt=False,
+)
+
+detection = VideoObjectDetection(
+    camera,
+    confidence=0.5,
+    debounce_sec=0.25,
+)
+
+
+def report_camera_status(event_type: str, data: dict) -> None:
+    """Write simple camera connection messages to the App log."""
+    print(f"camera:{event_type} {data}", flush=True)
+
+
+def report_detections(detections: dict) -> None:
+    """Send reliable AI statistics to the page and keep a lightweight log."""
+    faces = detections.get("face", [])
+    face_count = len(faces)
+    confidences = [float(face.get("confidence", 0.0)) for face in faces]
+    timestamp = datetime.now(UTC).isoformat(timespec="milliseconds")
+
+    ui.send_message(
+        "ai_stats",
+        {
+            "face_count": face_count,
+            "max_confidence": max(confidences, default=None),
+            "timestamp": timestamp,
+        },
+    )
+
+    if face_count:
+        print(f"{timestamp} faces={face_count}", flush=True)
+
+
+# ── 板子實際收到幾張畫面（不管是瀏覽器還是 Python 送的）────────────────────
+#
+# 為什麼要在板子這層數：頁面只量得到「自己送了幾張」，
+# 用 mac-sender 的 Python 送畫面時，頁面根本不知道送了多少（只能顯示「—」）。
+# 板子是唯一看得到所有來源的地方。
+#
+# 做法＝包一層 `camera.capture()`。VideoObjectDetection 的 camera_loop 每幀都呼叫它，
+# 回傳 None 表示這輪沒有新畫面，所以只數非 None 的。
+# 這是包在我們自己的 App 裡，沒有改到 arduino 的函式庫。
+#
+# ⚠️ 注意 `capture()` 內建 FPS 節流（`1/fps`，見 base_camera.py）：
+# 上面 WebSocketCamera 設 fps=8，所以這個數字**最高就是 8**，
+# 送再快也一樣。要更快就把上面的 fps 調大。
+
+received_frames = 0
+_frame_lock = threading.Lock()
+_original_capture = camera.capture
+
+
+def _counting_capture():
+    global received_frames
+    frame = _original_capture()
+    if frame is not None:
+        with _frame_lock:
+            received_frames += 1
+    return frame
+
+
+camera.capture = _counting_capture
+
+
+def _report_throughput() -> None:
+    """每秒把板子實際收到的張數推給頁面。"""
+    global received_frames
+    last_at = time.monotonic()
+
+    while True:
+        time.sleep(1.0)
+        now = time.monotonic()
+        elapsed = max(now - last_at, 0.001)
+        last_at = now
+
+        with _frame_lock:
+            count = received_frames
+            received_frames = 0
+
+        ui.send_message("board_throughput", {"fps": count / elapsed})
+
+
+threading.Thread(target=_report_throughput, daemon=True).start()
+
+camera.on_status_changed(report_camera_status)
+detection.on_detect_all(report_detections)
+
+App.run()
+</script>
+<script type="text/plain" id="src-app-yaml">name: UNO Q USB Face Detection
+icon: 🙂
+description: Use a notebook camera over USB and run face detection locally on UNO Q.
+
+ports:
+  - 8080
+
+bricks:
+  - arduino:video_object_detection:
+      model: face-detection
+      devices:
+        - remote_camera_0
+  - arduino:web_ui
+</script>
+<script type="text/plain" id="src-dropin"># adbd.service 的 drop-in：把 NCM 網卡＋UAC2 音效卡繫進 adbd 的 gadget 生命週期。
+# 放到 /etc/systemd/system/adbd.service.d/10-extra-functions.conf
+#
+# 順序保證（systemd 語義）：
+# - ExecStartPre：主檔的 setup 先跑、這裡的 add 後跑 → add 看得到現成的 c.1
+# - ExecStart=adbd → ExecStartPost=activate 綁 UDC 時，我們的 function 已在場（零 rebind）
+# - ExecStop：主行程停止流程，先於 ExecStopPost → remove 先拆我們的 link
+# - ExecStopPost 的關鍵（2026-07-28 立霧終審抓到的洞）：systemd 對同類多條命令，
+#   前一條「失敗且沒帶 -」就不再執行後續——原廠 reset 不帶 -，它一炸 sweep 就被跳過，
+#   自癒鏈斷裂。所以這裡「清空重排」：reset 以 - 容錯重加，sweep 才保證必跑。
+#   （前置：install 會先核對原廠 reset 路徑與此處一致）
+[Service]
+ExecStartPre=-/home/arduino/usbnet/ncm-hook.sh add
+ExecStop=-/home/arduino/usbnet/ncm-hook.sh remove
+ExecStopPost=
+ExecStopPost=-/usr/lib/android-sdk/platform-tools/adbd-usb-gadget reset
+ExecStopPost=-/home/arduino/usbnet/ncm-hook.sh sweep
+</script>
+<script type="text/plain" id="src-dhcpsvc">[Unit]
+Description=UNO Q usbnet DHCP (usb0 IP + dnsmasq, device-bound)
+# 繫在 usb0 裝置上：usb0 出現才起、消失自動停——零輪詢、零競態
+BindsTo=sys-subsystem-net-devices-usb0.device
+After=sys-subsystem-net-devices-usb0.device
+
+[Service]
+Type=simple
+ExecStartPre=/usr/sbin/ip addr replace 192.168.7.2/24 dev usb0
+ExecStartPre=/usr/sbin/ip link set usb0 up
+# 原生 dnsmasq、前景執行；只發 IP/遮罩——option 3(router)/6(DNS) 明確留空＝不發，
+# 絕不搶主機的預設路由與 DNS
+ExecStart=/usr/sbin/dnsmasq --keep-in-foreground --port=0 \
+  --interface=usb0 --bind-interfaces \
+  --dhcp-range=192.168.7.10,192.168.7.50,255.255.255.0,12h \
+  --dhcp-option=3 --dhcp-option=6 \
+  --dhcp-leasefile=/tmp/usbnet-dnsmasq.leases --pid-file=/tmp/usbnet-dnsmasq.pid
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=sys-subsystem-net-devices-usb0.device
+</script>
+
+<script>
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function tg(kind, note, title) {
+  const label = kind === "meas" ? "實測 " + note : kind === "board" ? "實板 10/14" : kind === "code" ? "原始碼" : "估算";
+  return `<span class="tag t-${kind}"${title ? ` title="${esc(title)}"` : ""}>〔${label}〕</span>`;
+}
+const WN = '<span class="wn">⚠️</span>';
+const B1014 = "2026-10-14 洄瀾在老師板上實查";
+const FAB = "camera-tests/fast-ai-bench/README.md";
+const MACR = "camera-tests/face-usb-mac/README.md";
+
+/* ================= §0 全路徑地圖 ================= */
+const MAPD = {
+  cam: { t: "1 攝影機", w: "pc",
+    who: `教室電腦接的 USB 攝影機，屬於 UVC（USB Video Class）裝置。在「攝影機 ⇄ 電腦」這一段 USB，電腦是 host、攝影機是 device。Linux 認得它之後，會建立 <code>/dev/video*</code> 這種裝置檔 ${tg("code", "", "背景知識講義 §6、§7")}。`,
+    see: "ls /dev/video*\nv4l2-ctl --list-devices",
+    note: `第二行列出每支攝影機對應哪幾個節點。${WN} 教室機有沒有裝 <code>v4l2-ctl</code> 沒確認。<code>/dev/video0</code> 不一定是你插的那支：板子上實測 video0、video1 是晶片的編解碼器，外接攝影機在 video2、video3 ${tg("meas", "2026-07-20～23", "背景知識講義 §7")}——別猜編號。`,
+    walk: "鏡頭量到光，攝影機一張一張交出畫面（frame）給電腦。" },
+  chrome: { t: "2 Chrome＋getUserMedia", w: "pc",
+    who: `網頁呼叫 <code>getUserMedia()</code> 向瀏覽器要攝影機，你按「允許」才拿得到 ${tg("code", "", "背景知識講義 §8")}。拿到之後，網頁每秒取 8 張（<code>TARGET_FPS = 8</code>）、縮成 320×240、壓成 JPEG（品質 0.55），每張前面加 14 位元組的標頭（含時間戳） ${tg("code", "", "face-usb-classroom/assets/app.js")}。`,
+    see: "Chrome 網址列右邊的攝影機圖示\n網頁上「筆電攝影機：」那一欄",
+    note: "這個 API 只在安全內容（HTTPS 或 localhost）存在——見第 5 節。",
+    walk: "Chrome 用 getUserMedia 拿到畫面，每秒取 8 張、縮成 320×240、壓成 JPEG。" },
+  ports: { t: "3 127.0.0.1 的三個門", w: "pc",
+    who: `<code>127.0.0.1</code> 是「這台電腦自己」。網頁用三個埠：17000 操作網頁、18080 影像上傳（WebSocket）、14912 AI 框選畫面 ${tg("code", "", "face-usb-classroom/README.md 連接埠表")}。`,
+    adb: { see: "adb forward --list", note: `上半節，這三個門由 <b>adb server</b> 在顧：你在電腦打三行 forward（17000→7000、18080→8080、14912→4912）；加上 W4 就有的 2222，<code>forward --list</code> 一共四行 ${tg("board", "", "本週內容規格 §〇 B；學生頁第 3 節")}。` },
+    ncm: { see: "python3 usbnet-bridge.py\n# 啟動時會印出三行對照，例如：\n#   127.0.0.1:17000 → 192.168.7.2:7000  (操作頁面)", note: `下半節，這三個門由<b>轉接程式</b>在顧，埠號跟上半節一模一樣，網頁不用改 ${tg("code", "", "usbnet/usbnet-bridge.py")}。開轉接程式前先 <code>"$ADB" forward --remove-all</code>：同一組埠不能兩個人同時佔 ${tg("board", "", "本週內容規格 §〇 E")}。` },
+    walk: "網頁把 JPEG 從 WebSocket 送到 127.0.0.1:18080——這台電腦自己的門。" },
+  xport: { w: "pc",
+    adb: { t: "4 adb server",
+      who: `電腦背景常駐的 adb server（預設在 5037 埠聽你打的 adb 指令 ${tg("code", "", "App Lab 附的 adb：adb --help")}）。forward 建好之後，它在 17000、18080、14912 等連線；收到資料就包成 adb 的訊息，經 USB 交給板子上的 adbd。這一段沒有 IP、沒有網路卡。`,
+      see: "adb devices\nadb forward --list",
+      note: `forward 會自己掉：2026-07-22 一個下午 4 次，根因待確認 ${tg("meas", "2026-07-22", MACR)}——見第 3 節。`,
+      walk: "顧著 18080 的是 adb server：它把資料包成 adb 的訊息，交給 USB。" },
+    ncm: { t: "4 轉接程式＋USB 網卡",
+      who: `電腦多了一張 USB 網卡、拿到 <code>192.168.7.x</code>。轉接程式把 <code>127.0.0.1</code> 收到的位元組原封不動轉給 <code>192.168.7.2</code> 上的同一個服務，走一般的 TCP/IP ${tg("code", "", "usbnet/usbnet-bridge.py")}。`,
+      see: "ip -4 -br addr\nping -c 5 192.168.7.2",
+      note: `Windows 11 內建 <code>UsbNcm Host Device</code> 驅動，插上拿到 <code>192.168.7.16/24</code>（沒有預設閘道、沒有 DNS）、ping 板子 0–1 ms ${tg("board", "", "本週內容規格 §〇 A")}。${WN} E307 的 Ubuntu 端還沒驗（老師課前會試）。`,
+      walk: "顧著 18080 的是轉接程式：它把位元組原封轉給 192.168.7.2:8080，走 USB 網卡。" } },
+  cable: { t: "5 USB 線", w: "cable",
+    who: `電腦是 host、板子是 device（gadget）。同一條線上同時跑好幾個功能：序列埠、adb，下半節再加一張網卡 ${tg("meas", "2026-07-27", "usb-tunnel.mdx 第二幕")}。插上時電腦會「列舉」：問板子是誰、有哪些功能。`,
+    see: "lsusb    # 看得到 2341:0078",
+    note: `UNO Q 正常模式是 <code>2341:0078</code>；看到 <code>05c6:9008</code> 是掉進恢復模式（EDL） ${tg("code", "", "W2／W4 內容規格")}。要用可以傳資料的線，純充電線不行 ${tg("code", "", MACR)}。`,
+    adb: { walk: "資料以 adb 協定的形式走 USB 線；電腦是 host、板子是 device。" },
+    ncm: { walk: "資料以網路封包的形式（NCM 協定）走 USB 線；電腦是 host、板子是 device。" } },
+  gadget: { t: "6 板子的 kernel：USB gadget", w: "bd",
+    who: `板子的 kernel 依 configfs 的設定，對電腦宣告「我有哪些功能」，並把每個功能的資料交給對的人。UDC（板子上的 USB 控制器）是 <code>4e00000.usb</code> ${tg("board", "", B1014)}。`,
+    see: "ls /sys/kernel/config/usb_gadget/g1/configs/c.1/\ncat /sys/kernel/config/usb_gadget/g1/UDC",
+    adb: { note: "上半節的資料屬於 <code>ffs.adb</code>：FunctionFS 把這個 USB 功能交給 user space 的 adbd 自己處理。", walk: "板子的 kernel 收下：這是 ffs.adb 的資料，交給 adbd。" },
+    ncm: { note: "下半節的資料屬於 <code>ncm.usb0</code>：<code>usb_f_ncm</code> 模組把它變成一張叫 <code>usb0</code> 的網卡，接著交給 kernel 的網路功能（TCP/IP）。", walk: "板子的 kernel 收下：這是 ncm.usb0 的網路封包，從 usb0 網卡進來。" } },
+  rx: { w: "bd",
+    adb: { t: "7 adbd",
+      who: `板子上的 adb 常駐程式（user space）。收到 forward 來的連線，就在板子上開一條 TCP 連線到 <code>127.0.0.1</code> 的 7000／8080／4912，把資料接過去。adbd 也是整個 gadget 的主人：開機時由 <code>adbd.service</code> 建 gadget、綁 UDC ${tg("board", "", "systemctl cat adbd；本週內容規格 §〇 A")}。`,
+      see: "systemctl cat adbd",
+      note: "服務的內容見第 4 節「gadget 的主人是 adbd」。",
+      walk: "adbd 在板子上連到 127.0.0.1:8080，把畫面交給 App。" },
+    ncm: { t: "7 usb0 網卡＋DHCP 服務",
+      who: `hook 把 <code>ncm.usb0</code> 掛進 gadget 之後，板子多一張 <code>usb0</code>。<code>usbnet-dhcp</code> 服務（usb0 出現才起）把它設成 <code>192.168.7.2/24</code>，再用作業系統本來就有的 dnsmasq 發 <code>192.168.7.10</code>～<code>.50</code> 給電腦，只發 IP 和遮罩 ${tg("code", "", "starter w06-usbnet/usbnet-dhcp.service")}。`,
+      see: "systemctl is-active adbd usbnet-dhcp\nip -4 -br addr show usb0",
+      note: `兩個 <code>active</code>、usb0 有 IP＝板子這頭好了；電腦沒長出網卡，就去查電腦那頭 ${tg("board", "", "本週內容規格 §〇 D")}。`,
+      walk: "封包從 usb0 進來，目的地是 192.168.7.2:8080——App 收畫面的埠。" } },
+  ctr: { t: "8 Docker 容器（brick）", w: "bd",
+    who: `App Lab 依 <code>app.yaml</code> 起兩個容器：<b>main</b>（<code>python-apps-base</code> 映像）跑你的 <code>main.py</code>、7000 網頁、8080 收畫面；<b>runner</b>（<code>ei-models-runner</code> 映像）跑模型、在 4912 送出結果 ${tg("board", "", B1014 + "（映像名稱）")}。兩個容器之間用 5050 傳畫面 ${tg("code", "", FAB)}。`,
+    see: "docker ps\ndocker logs --tail 20 face-usb-classroom-main-1",
+    note: `判斷容器有沒有在跑，看 log，不要只看 <code>docker ps</code> 的健康狀態（7/22 Mac 上 runner 一連上就顯示 unhealthy ${tg("meas", "2026-07-22", MACR)}，10/14 老師板顯示 healthy ${tg("board", "", "本週內容規格 §〇 B")}）。時鐘不對時，log 會一直印 <code>Message outside validity window</code>（見第 7 節）。`,
+    walk: "main 容器裡的 WebSocketCamera（8080）收下畫面，交給 runner 容器。" },
+  model: { t: "9 AI 模型 lw-face-det.eim", w: "bd",
+    who: `Edge Impulse 打包的可執行模型，輸入 320×256 灰階；單張純推論約 92 ms、只用一顆核心 ${tg("meas", "2026-07-20", FAB)}。輸出是框的座標和信心值，不是一張畫好框的圖 ${tg("code", "", "背景知識講義 §14")}。`,
+    see: "# 模型檔在 runner 容器裡：\n/models/ootb/ei/lw-face-det.eim",
+    note: `路徑出自速度調查的重現指令 ${tg("code", "", FAB)}。`,
+    walk: "runner 把畫面縮成 320×256 灰階，跑 lw-face-det.eim，得到框與信心值。" },
+  result: { t: "10 結果回到同一個網頁", w: "both",
+    who: `分兩條路回來 ${tg("code", "", "app.js、main.py、libs/arduino.js")}：① 右邊那格是嵌入 <code>127.0.0.1:14912/embed</code>（板子的 4912，Edge Impulse 自己的頁面），框和信心值直接畫在圖上；② 「AI 看到」的統計，是 <code>main.py</code> 用 <code>ui.send_message("ai_stats", …)</code> 經 17000→7000 的 socket.io 推給網頁。`,
+    see: "網頁右邊那格的人臉框\n網頁上「AI 看到」的統計卡",
+    note: `右邊那格是不同埠（＝不同來源）的 iframe，外面的網頁改不了它的樣式 ${tg("meas", "2026-07-22", MACR)}。`,
+    walk: "框畫在 Edge Impulse 的頁面上（4912 → 14912），統計經 7000 → 17000 推回同一個網頁。走完一圈！" }
+};
+const ORDER = ["cam", "chrome", "ports", "xport", "cable", "gadget", "rx", "ctr", "model", "result"];
+const WHERE = { pc: "在電腦", bd: "在板子", cable: "在線上", both: "電腦＋板子" };
+let mapMode = "adb", mapSel = null, walkI = -1, walkTimer = null;
+function lyrData(k) { const d = MAPD[k]; return Object.assign({}, d, d[mapMode] || {}); }
+const MQ = window.matchMedia("(max-width: 880px)");
+const MAP_HOME = $("#mapPanel").parentElement;
+function placeMapPanel(k) {
+  const p = $("#mapPanel");
+  if (MQ.matches && k) {
+    const btn = $(`#map .lyr[data-l="${k}"]`);
+    const anchor = btn.closest(".cablecol") || btn;
+    if (anchor.nextElementSibling !== p) anchor.insertAdjacentElement("afterend", p);
+  } else if (p.parentElement !== MAP_HOME) MAP_HOME.appendChild(p);
+}
+if (MQ.addEventListener) MQ.addEventListener("change", () => placeMapPanel(mapSel));
+function showLayer(k) {
+  mapSel = k;
+  $$("#map .lyr").forEach(b => b.setAttribute("aria-pressed", b.dataset.l === k ? "true" : "false"));
+  const d = lyrData(k);
+  $("#mapPanel").innerHTML = `<h3>${esc(d.t)}</h3><p><span class="where ${d.w}">${WHERE[d.w]}</span>　<span class="small">${mapMode === "adb" ? "上半節：adb forward" : "下半節：USB 網卡＋轉接程式"}</span></p><p>${d.who}</p><h4>用什麼看得到它</h4><pre class="cmd"><code>${esc(d.see)}</code></pre>${d.note ? `<p class="small">${d.note}</p>` : ""}`;
+  placeMapPanel(k);
+}
+function walkShow(i) {
+  walkI = i;
+  $$("#map .lyr").forEach(b => { const j = ORDER.indexOf(b.dataset.l); b.classList.toggle("on", j === i); b.classList.toggle("done", j >= 0 && j < i); });
+  const d = lyrData(ORDER[i]);
+  $("#walkLine").innerHTML = `<b>第 ${i + 1}／${ORDER.length} 站：</b>${esc(d.walk)}`;
+  showLayer(ORDER[i]);
+}
+function walkStop() { if (walkTimer) { clearInterval(walkTimer); walkTimer = null; } $("#walkPlay").textContent = "▶ 走一遍"; }
+function setMapMode(m) {
+  mapMode = m;
+  $$("[data-mode]").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === m ? "true" : "false"));
+  $$("#map [data-adb]").forEach(el => { el.textContent = el.dataset[m]; });
+  if (walkI >= 0) walkShow(walkI); else if (mapSel) showLayer(mapSel);
+}
+$$("[data-mode]").forEach(b => b.addEventListener("click", () => setMapMode(b.dataset.mode)));
+$("#map").addEventListener("click", e => { const b = e.target.closest(".lyr"); if (!b) return; walkStop(); showLayer(b.dataset.l); });
+$("#walkPlay").addEventListener("click", () => {
+  if (walkTimer) { walkStop(); return; }
+  if (walkI < 0 || walkI >= ORDER.length - 1) walkShow(0);
+  $("#walkPlay").textContent = "⏸ 暫停";
+  walkTimer = setInterval(() => { if (walkI >= ORDER.length - 1) { walkStop(); return; } walkShow(walkI + 1); }, 2400);
+});
+$("#walkNext").addEventListener("click", () => { walkStop(); walkShow(walkI >= ORDER.length - 1 ? 0 : walkI + 1); });
+$("#walkReset").addEventListener("click", () => {
+  walkStop(); walkI = -1;
+  $$("#map .lyr").forEach(b => b.classList.remove("on", "done"));
+  $("#walkLine").textContent = "按「▶ 走一遍」看一張畫面怎麼走；或直接點任何一層。";
+  mapSel = null; placeMapPanel(null);
+  $$("#map .lyr").forEach(b => b.setAttribute("aria-pressed", "false"));
+});
+
+/* ================= §1 kernel／user space 分類 ================= */
+const SORT = [
+  { t: "網頁裡呼叫 getUserMedia、把畫面壓成 JPEG 的那段 JavaScript", a: "user", e: "網頁程式跑在 Chrome 這個行程裡，是一般程式。它要攝影機，得透過瀏覽器、作業系統，一路請 kernel 幫忙。" },
+  { t: "認得 USB 攝影機、讓它變成 /dev/video* 的 UVC 驅動", a: "kernel", e: "驅動程式住在 kernel，直接跟硬體講話；/dev/video* 是它開給 user space 的入口。" },
+  { t: "板子上的 adbd", a: "user", e: "adbd 是一個常駐程式。它透過 FunctionFS（ffs.adb）借用 kernel 的 USB 功能，但它自己在 user space。" },
+  { t: "usb_f_ncm.ko（USB 網卡功能）", a: "kernel", e: "模組一載入就是 kernel 的一部分。下半節 hook 裡那行 modprobe，就是把它插進 kernel。" },
+  { t: "dnsmasq（發 IP 給電腦的小伺服器）", a: "user", e: "它只是一個程式：照設定收發 DHCP 封包。收發封包本身則靠 kernel 的網路功能。" },
+  { t: "寫空 UDC 之後，USB 真的斷線的那一下", a: "kernel", e: "echo 只是「填單子」；真正把 gadget 從 USB 控制器拿下來的，是 kernel 的 gadget 程式碼。" },
+  { t: "把資料切成封包、配上 IP 與埠號（TCP/IP）", a: "kernel", e: "TCP/IP 在 kernel 裡。轉接程式只呼叫 socket 的 send／recv，切封包是 kernel 做的。" },
+  { t: "usbnet-bridge.py 轉接程式", a: "user", e: "一支 Python 程式，只用標準函式庫的 socket 收進來、送出去。" },
+  { t: "main.py 和 lw-face-det.eim 的推論", a: "user", e: "它們跑在 Docker 容器裡——容器裡的程式仍然是板子上的一般行程，只是被隔離起來。" },
+  { t: "讓兩個 Docker 容器互相看不到對方的行程與檔案", a: "kernel", e: "容器的隔離是 kernel 提供的（namespace、cgroup）。容器沒有自己的 kernel，大家共用板子那一顆。" }
+];
+function initSort() {
+  const box = $("#sortRows");
+  let right = 0, done = 0;
+  box.innerHTML = SORT.map((s, i) => `<div class="srow" data-i="${i}"><span class="q">${esc(s.t)}</span><span class="bb"><button type="button" class="btn" data-a="kernel" aria-pressed="false">kernel</button><button type="button" class="btn" data-a="user" aria-pressed="false">user space</button></span><span class="fb" hidden></span></div>`).join("");
+  box.onclick = e => {
+    const b = e.target.closest("button[data-a]"); if (!b) return;
+    const row = b.closest(".srow"); if (row.dataset.done) return;
+    const s = SORT[+row.dataset.i], ok = b.dataset.a === s.a;
+    row.dataset.done = "1"; done++; if (ok) right++;
+    row.classList.add(ok ? "right" : "wrong");
+    $$("button", row).forEach(x => { x.disabled = true; x.setAttribute("aria-pressed", x === b ? "true" : "false"); if (!ok && x.dataset.a === s.a) x.classList.add("should"); });
+    const fb = $(".fb", row); fb.hidden = false;
+    fb.innerHTML = `<b>${ok ? "對。" : "答案是 " + (s.a === "kernel" ? "kernel" : "user space") + "。"}</b>${esc(s.e)}`;
+    $("#sortScore").textContent = `目前答對 ${right}／${done} 題（共 ${SORT.length} 題）`;
+  };
+  $("#sortScore").textContent = "";
+}
+initSort();
+$("#sortReset").addEventListener("click", initSort);
+
+/* ================= §1 老師板子的終端機（10/14 實查） ================= */
+const TERM = [
+  { src: B1014, b: "uname -r", c: "uname -r", o: "7.0.0-g122c2c22d838" },
+  { src: B1014, b: "lsmod | grep …", c: 'lsmod | grep -E "ncm|u_ether"', o: "usb_f_ncm              24576  2\nu_ether                20480  1 usb_f_ncm\n# 後面的數字每塊板會不一樣；還沒載入時什麼都不印" },
+  { src: B1014, b: "ls 模組資料夾", c: "ls /lib/modules/$(uname -r)/kernel/drivers/usb/gadget/function/", o: "u_ether.ko  usb_f_acm.ko  usb_f_ecm.ko  usb_f_eem.ko  usb_f_fs.ko\nusb_f_mass_storage.ko  usb_f_ncm.ko  usb_f_rndis.ko  usb_f_serial.ko\n# …還有其他檔，這裡略" },
+  { src: B1014, b: "ls configs/c.1", c: "ls /sys/kernel/config/usb_gadget/g1/configs/c.1/", o: "# 整理過：只列出功能的連結\nacm.GS0  ffs.adb  ncm.usb0  uac2.usb0" },
+  { src: B1014, b: "cat UDC", c: "cat /sys/kernel/config/usb_gadget/g1/UDC", o: "4e00000.usb" },
+  { b: "同一天的其他事實", c: "# 同一天查到的其他事實（整理過，不是某一個指令的輸出）", o: "作業系統：Debian 13（trixie）\nUDC：4e00000.usb（ls /sys/class/udc 也看得到）\nCPU 調速器：schedutil；thermal_zone0 43.7 °C\nDocker 映像：python-apps-base（893 MB）\n            ei-models-runner（969 MB）\n            models-downloader", src: B1014 }
+];
+(function initTerm() {
+  const hist = [];
+  $("#termBar").innerHTML = TERM.map((t, i) => `<button type="button" class="btn" data-t="${i}">${esc(t.b)}</button>`).join("");
+  $("#termBar").addEventListener("click", e => {
+    const b = e.target.closest("button[data-t]"); if (!b) return;
+    const t = TERM[+b.dataset.t];
+    hist.push(t); if (hist.length > 3) hist.shift();
+    $("#term").innerHTML = hist.map(h => `<span class="pr">arduino@板子:~$</span> ${esc(h.c)}\n` + h.o.split("\n").map(l => l.startsWith("#") ? `<span class="cm">${esc(l)}</span>` : esc(l)).join("\n")).join("\n\n");
+    $("#term").scrollTop = $("#term").scrollHeight;
+  });
+})();
+
+/* ================= §2 gadget：執行中硬改 vs 掛進 adbd ================= */
+const GF = {
+  acm: { dir: "acm.GS0", host: "一個序列埠（序列監看走這條）" },
+  adb: { dir: "ffs.adb", host: "一個 adb 裝置（adb devices 看得到一行）" },
+  ncm: { dir: "ncm.usb0", host: "一張新的網路卡（拿到 192.168.7.x）" },
+  uac2: { dir: "uac2.usb0", host: "一組音效裝置（錄音＋播放）" }
+};
+const GORD = ["acm", "adb", "ncm", "uac2"];
+const GBASE = ["acm", "adb"];
+const GHOOK = ["acm", "adb", "ncm"];   /* 出廠板沒有 UAC2 模組，hook 會靜默跳過音效卡 */
+const GB = { applied: new Set(GBASE), dirs: new Set(GBASE), bound: true, busy: false, stuck: false, hook: false, timer: null };
+const gbHowHook = () => $("#gbHow").value === "hook";
+function gbPending() {
+  if (gbHowHook()) return new Set(GHOOK);
+  return new Set($$("#gbChecks input").filter(i => i.checked).map(i => i.dataset.f));
+}
+function gbRender() {
+  const p = gbPending(), L = ["g1/", "├── functions/"];
+  const fns = GORD.filter(f => GB.dirs.has(f) || p.has(f));
+  fns.forEach((f, i) => L.push(`│   ${i === fns.length - 1 ? "└──" : "├──"} ${GF[f].dir}/${GB.dirs.has(f) ? "" : '  <span class="pend">← 待建立</span>'}`));
+  L.push("├── configs/c.1/");
+  const links = GORD.filter(f => GB.applied.has(f) || p.has(f));
+  links.forEach((f, i) => {
+    let s = `${GF[f].dir} → functions/${GF[f].dir}`, mark = "";
+    if (!GB.applied.has(f)) mark = '  <span class="pend">← 待加入</span>';
+    else if (!p.has(f)) { s = `<span class="gone">${s}</span>`; mark = '  <span class="pend">← 待拿掉</span>'; }
+    L.push(`│   ${i === links.length - 1 ? "└──" : "├──"} ${s}${mark}`);
+  });
+  if (!links.length) L.push("│   （空的）");
+  /* src: 實板 10/14——UDC 名稱，第 2 節正文有出處標籤 */
+  L.push(GB.bound ? "└── UDC = 4e00000.usb" : '└── UDC = <span class="udc0">（空的：沒接上 USB）</span>');
+  $("#gbTree").innerHTML = L.join("\n");
+  const on = GORD.filter(f => GB.applied.has(f));
+  $("#gbHost").innerHTML = !GB.bound ? "<b>電腦看不到 UNO Q</b>（USB 斷線中）"
+    : `<b>lsusb：</b>一行 <code>2341:0078</code>（一個裝置）<br><b>這個裝置裡有 ${on.length} 個功能：</b><ul>${on.map(f => `<li>${GF[f].host}</li>`).join("")}</ul>`;
+  $("#gbBoard").innerHTML = GB.stuck ? '<span class="wn">板子：卡住了（adb 起不來）</span>'
+    : GB.hook ? "板子：已裝 hook（像老師那塊）" : "板子：出廠狀態（沒有 hook）";
+}
+function gbSetAdb(s) {
+  $("#gbDot").className = "dot " + s;
+  $("#gbAdb").textContent = s === "ok" ? "adb：連線中" : s === "bad" ? "adb：斷線" : "adb：等它回來…";
+}
+function gbLog(html, reset) { const ol = $("#gbLog"); if (reset) ol.innerHTML = ""; const li = document.createElement("li"); li.innerHTML = html; ol.appendChild(li); }
+function gbLock(on) {
+  $("#gbApply").disabled = on || GB.stuck; $("#gbPower").disabled = on; $("#gbUnhook").disabled = on || !GB.hook || GB.stuck;
+  $("#gbHow").disabled = on || GB.stuck;
+  $$("#gbChecks input").forEach(x => { x.disabled = on || GB.stuck || gbHowHook(); });
+}
+function gbRun(steps) {
+  GB.busy = true; gbLock(true);
+  let i = 0;
+  const tick = () => { steps[i](); gbRender(); i++; if (i < steps.length) GB.timer = setTimeout(tick, 1000); else { GB.busy = false; gbLock(false); gbRender(); } };
+  tick();
+}
+const SPEC_A = "2026-10-14 實板 journal；本週內容規格 §〇 A";
+$("#gbChecks").addEventListener("change", gbRender);
+$("#gbHow").addEventListener("change", () => { gbLock(false); gbRender(); });
+$("#gbApply").addEventListener("click", () => {
+  if (GB.busy || GB.stuck) return;
+  const p = gbPending();
+  if (gbHowHook()) {
+    if (GB.hook) { gbLog("這塊板已經裝了 hook：之後每次開機都會自己跑，不用再裝。", true); return; }
+    gbRun([
+      () => { gbLog("① 三個檔放好、七行 sudo：drop-in 放進 adbd.service.d、usbnet-dhcp 服務 enable。這時候 gadget 還沒變。", true); },
+      () => { GB.bound = false; gbSetAdb("bad"); gbLog(`② <code>sudo systemctl restart adbd</code>：先停——remove 拆我們的連結、原廠 reset 拆光、sweep 清到 g1 不存在。走 2222 的 SSH 在這裡斷，正常 ${tg("board", "", SPEC_A)}。`); },
+      () => { GHOOK.forEach(f => GB.dirs.add(f)); GB.applied = new Set(GHOOK); gbLog("③ 再啟——原廠 setup 建 g1＋ffs.adb＋acm.GS0；hook 的 add 載 usb_f_ncm、加 ncm.usb0（不碰 UDC）。"); },
+      () => { GB.bound = true; gbSetAdb("wait"); gbLog("④ activate 寫 UDC：電腦第一次列舉就看到全部身分——零 rebind。"); },
+      () => {
+        GB.hook = true; gbSetAdb("ok");
+        gbLog(`⑤ 從 restart 到這裡約 3 秒 ${tg("board", "", SPEC_A)}。usb0 一出現，usbnet-dhcp 自己起來，電腦拿到 192.168.7.x。`);
+        if ($("#gbChecks input[data-f='uac2']").checked) gbLog(`${WN} 音效卡：出廠板沒有 UAC2 模組，hook 會靜默跳過，所以這裡沒有它。`);
+      }
+    ]);
+    return;
+  }
+  if (!p.size) { gbLog("至少留一個功能再套用（這個示範不讓你把 gadget 清空）。", true); return; }
+  if (p.size === GB.applied.size && [...p].every(f => GB.applied.has(f))) { gbLog("勾選的跟現在一樣，不用改。", true); return; }
+  const steps = [
+    () => { GB.bound = false; gbSetAdb("bad"); gbLog("① 寫空 UDC：USB 斷線——電腦那頭所有身分一起消失。", true); },
+    () => { gbLog(`② adbd 當場死：journal 印 <code>UsbFfs: connection terminated: read failed</code> → <code>Main process exited, status=1</code> ${tg("board", "", SPEC_A)}。如果你是在 adb shell 裡直接打的，你的指令也跟著斷線被殺了。`); },
+    () => { p.forEach(f => GB.dirs.add(f)); GB.applied = new Set(p); gbLog("③ 你的腳本（假設它在背景容器裡跑、沒被殺）把新的連結放進 c.1。"); },
+    () => { gbLog(`④ 1 秒後 systemd 重啟 adbd，重啟前先跑原廠 reset：c.1 裡有它不認識的連結 → <code>rmdir c.1</code> 失敗 ${tg("board", "", SPEC_A)}。`); }
+  ];
+  if (GB.hook) {
+    steps.push(() => { GB.applied = new Set(GHOOK); GB.dirs = new Set(GHOOK); gbLog("⑤ 這塊板裝了 hook：sweep 把 g1 清到不存在 → setup → add → activate。"); });
+    steps.push(() => { GB.bound = true; gbSetAdb("ok"); gbLog(`⑥ 約 3 秒後 adb 回來 ${tg("board", "", SPEC_A)}——但你硬加的東西被清掉了，回來的是 hook 決定的組合。`); });
+  } else {
+    steps.push(() => { GB.stuck = true; gbLog(`⑤ <span class="wn">出廠板沒有人收拾：卡住了，adb 起不來，電腦看不到 UNO Q</span>。這就是 7/28 事故的機制。→ 試試「拔插 USB 線」。`); });
+  }
+  gbRun(steps);
+});
+$("#gbPower").addEventListener("click", () => {
+  if (GB.busy) return;
+  GB.stuck = false;
+  gbRun([
+    () => { GB.bound = false; gbSetAdb("bad"); gbLog("拔掉 USB 線：板子斷電。", true); },
+    () => {
+      const s = GB.hook ? GHOOK : GBASE;
+      GB.applied = new Set(s); GB.dirs = new Set(s);
+      gbLog(GB.hook ? "插回去、開機：adbd 照原廠流程建 gadget，hook 的 add 跟著跑——網卡自己回來（hook 是持久的）。"
+                    : "插回去、開機：adbd 照原廠流程重建基本的 gadget（序列埠＋adb）。手動硬加的全部歸零。");
+    },
+    () => { GB.bound = true; gbSetAdb("ok"); gbLog("adb 回來了。"); }
+  ]);
+});
+$("#gbUnhook").addEventListener("click", () => {
+  if (GB.busy || !GB.hook) return;
+  gbRun([
+    () => { gbLog("① 刪 drop-in → <code>disable --now usbnet-dhcp</code> → 刪 service → <code>daemon-reload</code>。", true); },
+    () => { GB.bound = false; gbSetAdb("bad"); gbLog(`② <code>sudo reboot</code>——不能只 restart adbd：拿掉 drop-in 之後，原廠 reset 不認得 ncm.usb0，會卡住 ${tg("board", "", "本週內容規格 §〇 D（10/14 20:56–20:57）")}。`); },
+    () => { GB.hook = false; GB.applied = new Set(GBASE); GB.dirs = new Set(GBASE); gbLog("③ 重開機：g1 從零建，只剩 acm.GS0、ffs.adb；usb0 不存在；電腦那張網卡消失。"); },
+    () => { GB.bound = true; gbSetAdb("ok"); gbLog("adb 回來了，板子回到出廠狀態。"); }
+  ]);
+});
+gbRender(); gbLock(false); gbLog("目前：出廠的基本組合（序列埠＋adb）。選做法，再按「套用」。", true);
+
+/* ================= §3 forward／reverse 方向 ================= */
+const DIRS = {
+  forward: { cmd: "adb forward tcp:17000 tcp:7000", left: "電腦<br><code>127.0.0.1:17000</code>", right: "板子<br><code>127.0.0.1:7000</code>", listen: "left", arrow: "→",
+    rows: [["誰在等連線", "電腦上的 adb server，在 17000 等"], ["誰去連", "電腦上的程式（今天是 Chrome）"], ["資料到哪", "adbd 在板子上替你連到 7000"], ["什麼時候用", "電腦要用板子上的服務——今天就是這種"]] },
+  reverse: { cmd: "adb reverse tcp:8000 tcp:9000", left: "電腦<br><code>127.0.0.1:9000</code>", right: "板子<br><code>127.0.0.1:8000</code>", listen: "right", arrow: "←",
+    rows: [["誰在等連線", "板子上的 adbd，在板子的 8000 等"], ["誰去連", "板子上的程式"], ["資料到哪", "adb server 在電腦上替你連到電腦的 9000"], ["什麼時候用", "板子要用電腦上的服務（例如電腦上跑的伺服器）。本課沒用到，也沒在板上試過 ⚠️"]] }
+};
+function showDir(k) {
+  const d = DIRS[k];
+  $$("[data-dir]").forEach(b => b.setAttribute("aria-pressed", b.dataset.dir === k ? "true" : "false"));
+  const badge = '<br><span class="listen">在這裡等</span>';
+  $("#dirOut").innerHTML = `<pre><code>${esc(d.cmd)}</code></pre>
+    <div class="dirbox"><div class="end pc">${d.left}${d.listen === "left" ? badge : ""}</div><div class="mid" aria-hidden="true">${d.arrow}</div><div class="end bd">${d.right}${d.listen === "right" ? badge : ""}</div></div>
+    <div class="tblw"><table>${d.rows.map(r => `<tr><th style="width:8em">${esc(r[0])}</th><td>${esc(r[1])}</td></tr>`).join("")}</table></div>
+    ${k === "reverse" ? '<p class="small">（例子裡的 8000、9000 是隨便取的埠號。）</p>' : ""}`;
+}
+$$("[data-dir]").forEach(b => b.addEventListener("click", () => showDir(b.dataset.dir)));
+showDir("forward");
+
+/* ================= 通用的「一步一步」元件 ================= */
+function makeStepper(o) {
+  let i = 0, timer = null;
+  o.track.innerHTML = o.nodes.map((n, j) => (j ? `<span class="conn" data-c="${j}" aria-hidden="true">→</span>` : "") + `<div class="node ${n.k}" data-n="${j}"><b>${esc(n.b)}</b><small>${esc(n.s)}</small></div>`).join("");
+  function show(k) {
+    i = Math.max(0, Math.min(o.steps.length - 1, k));
+    const st = o.steps[i], prev = i > 0 ? o.steps[i - 1].on : [];
+    $$(".node", o.track).forEach(el => el.classList.toggle("on", st.on.includes(+el.dataset.n)));
+    $$(".conn", o.track).forEach(el => { const c = +el.dataset.c; el.classList.toggle("lit", st.on.includes(c) && (st.on.includes(c - 1) || prev.includes(c - 1))); });
+    o.card.innerHTML = `<h4>${st.t}</h4><div>${st.b}</div>`;
+    o.cnt.textContent = `${i + 1}／${o.steps.length}`;
+    o.prev.disabled = i === 0; o.next.disabled = i === o.steps.length - 1;
+  }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } o.play.textContent = "自動播放"; }
+  o.prev.addEventListener("click", () => { stop(); show(i - 1); });
+  o.next.addEventListener("click", () => { stop(); show(i + 1); });
+  o.play.addEventListener("click", () => {
+    if (timer) { stop(); return; }
+    if (i >= o.steps.length - 1) show(0);
+    o.play.textContent = "⏸ 暫停";
+    timer = setInterval(() => { if (i >= o.steps.length - 1) { stop(); return; } show(i + 1); }, 2000);
+  });
+  show(0);
+}
+makeStepper({
+  track: $("#fwTrack"), card: $("#fwCard"), prev: $("#fwPrev"), next: $("#fwNext"), play: $("#fwPlay"), cnt: $("#fwCnt"),
+  nodes: [
+    { k: "pc", b: "Chrome", s: "瀏覽器" }, { k: "pc", b: "adb server", s: "顧 17000" }, { k: "cb", b: "USB 線", s: "adb 協定" },
+    { k: "bd", b: "kernel", s: "ffs.adb" }, { k: "bd", b: "adbd", s: "user space" }, { k: "bd", b: "127.0.0.1:7000", s: "板子自己" }, { k: "bd", b: "web_ui", s: "main 容器" }
+  ],
+  steps: [
+    { on: [0], t: "① Chrome 開 http://127.0.0.1:17000", b: "對 Chrome 來說，這只是「連到自己這台電腦的 17000 埠」。它完全不知道後面有一塊板子。" },
+    { on: [1], t: "② adb server 接起這通電話", b: "在 17000 等著的是 adb server——因為 <code>adb forward tcp:17000 tcp:7000</code> 先跟它說好了。它收下這條 TCP 連線。" },
+    { on: [2], t: "③ 包成 adb 訊息，走 USB", b: "adb server 把資料包成 adb 的訊息，經 USB 送給板子。這一段沒有 IP、沒有網路卡，是 adb 自己的協定。" },
+    { on: [3], t: "④ 板子的 kernel 收下", b: "板子的 kernel 看到這是 <code>ffs.adb</code> 這個 USB 功能的資料，透過 FunctionFS 交給 user space 的 adbd。" },
+    { on: [4], t: "⑤ adbd 看信封", b: "adbd 看到：這條連線要去板子的 7000。" },
+    { on: [5], t: "⑥ adbd 在板子上連 7000", b: "adbd 在板子上開一條新的 TCP 連線到 <code>127.0.0.1:7000</code>——板子自己。" },
+    { on: [6], t: "⑦ App 回應網頁", b: "7000 是 App 的網頁（web_ui brick，在 main 容器裡）。它回傳 HTML。" },
+    { on: [0, 1, 2, 3, 4, 5, 6], t: "⑧ 沿原路倒回去", b: "回應沿著 adbd → USB → adb server → Chrome 倒回來。一條 forward 就是「兩頭各接一條 TCP、中間走 USB」的隧道；18080、14912 也一樣。" }
+  ]
+});
+
+/* ================= §3 forward 掉線演練 ================= */
+let dropState = "ok";
+function dropRender() {
+  const fw = "…  tcp:2222 tcp:22\n…  tcp:17000 tcp:7000\n…  tcp:18080 tcp:8080\n…  tcp:14912 tcp:4912";
+  const rows = dropState === "drop"
+    ? [["bad", "網頁", "突然連不上、畫面停住"], ["bad", "adb forward --list", "（空的）"], ["ok", "板子上 docker ps", "容器都還活著"], ["ok", "adb devices", "板子還在"]]
+    : [["ok", "網頁", dropState === "fixed" ? "重新整理、再按一次「開始辨識」就回來了" : "正常"], ["ok", "adb forward --list", fw], ["ok", "板子上 docker ps", "容器都還活著"], ["ok", "adb devices", "板子還在"]];
+  $("#dropState").innerHTML = rows.map(r => `<div class="st ${r[0]}"><b>${esc(r[1])}</b><span class="mono" style="white-space:pre-wrap;font-size:13px">${esc(r[2])}</span></div>`).join("");
+  $("#dropNote").innerHTML = dropState === "drop"
+    ? "重點：<b>壞的是電腦上的轉送，不是板子</b>——容器活著、adb 也還認得板子，只是 forward 不見了。"
+    : dropState === "fixed"
+      ? `看門狗每 3 秒檢查一次三條轉送，掉了就補；實測 3 秒內補回、HTTP 200 ${tg("meas", "2026-07-23", "face-usb-mac/TEST-REPORT.md")}。`
+      : "按「模擬：forward 掉了」看各處長什麼樣。（<code>adb forward --list</code> 每行開頭還有板子的序號，這裡用 … 代替。）";
+}
+$("#dropBtn").addEventListener("click", () => { dropState = "drop"; dropRender(); });
+$("#keepBtn").addEventListener("click", () => {
+  if (dropState !== "drop") { $("#dropNote").textContent = "現在 forward 都在，看門狗檢查完什麼都不用做。"; return; }
+  dropState = "fixed"; dropRender();
+});
+$("#dropReset").addEventListener("click", () => { dropState = "ok"; dropRender(); });
+dropRender();
+
+/* ================= §4 restart adbd 的 3 秒（hook 掛在哪） ================= */
+const SPEC_D = "本週內容規格 §〇 D（2026-10-14 實板）";
+makeStepper({
+  track: $("#hkTrack"), card: $("#hkCard"), prev: $("#hkPrev"), next: $("#hkNext"), play: $("#hkPlay"), cnt: $("#hkCnt"),
+  nodes: [
+    { k: "cb", b: "remove", s: "停：拆我們的" }, { k: "bd", b: "reset", s: "停：原廠拆光" }, { k: "cb", b: "sweep", s: "停：清到不存在" },
+    { k: "bd", b: "setup", s: "啟：原廠建" }, { k: "cb", b: "add", s: "啟：加網卡" }, { k: "bd", b: "activate", s: "啟：插上" }, { k: "pc", b: "電腦", s: "新網卡" }
+  ],
+  steps: [
+    { on: [], t: "① 你打 sudo systemctl restart adbd", b: `systemd 先停、再啟。adb 跟著 adbd 一起重來，所以走 2222 的 SSH 視窗會在這裡斷——正常，數 15 秒 ${tg("board", "", SPEC_D)}。` },
+    { on: [0], t: "② 停 · remove（drop-in 加的 ExecStop）", b: "先把我們加的連結拆掉，原廠的 reset 才拆得動它自己的。" },
+    { on: [1], t: "③ 停 · reset（原廠的 ExecStopPost）", b: `拆光整個 gadget。drop-in 讓它「失敗也不擋後面」：systemd 規定同一類指令，前一條失敗又沒標 <code>-</code>，後面的就不跑——sweep 會被跳過 ${tg("code", "", "starter w06-usbnet/10-extra-functions.conf 的註解")}。` },
+    { on: [2], t: "④ 停 · sweep（排在 reset 之後）", b: `不管 reset 成不成功，都把 g1 清到「不存在」。log 印 <code>[sweep] g1 已清空</code> ${tg("board", "", SPEC_D)}。下一輪 setup 永遠從零開始，所以一定成功。` },
+    { on: [3], t: "⑤ 啟 · setup（原廠的 ExecStartPre）", b: "建 g1、ffs.adb（adb）、acm.GS0（序列埠）。" },
+    { on: [4], t: "⑥ 啟 · add（drop-in 的 ExecStartPre，排在 setup 之後）", b: `<code>modprobe usb_f_ncm</code> → 建 <code>functions/ncm.usb0</code>、寫兩個固定 MAC → 連進 <code>c.1</code>。不碰 UDC。log 印 <code>[add] ncm 已掛</code> ${tg("board", "", SPEC_D)}。` },
+    { on: [5], t: "⑦ 啟 · adbd＋activate（原廠的 ExecStartPost）", b: `寫 UDC＝插上。電腦第一次列舉就看到全部身分：零 rebind、零斷線。從 restart 到這裡約 3 秒 ${tg("board", "", SPEC_D)}。` },
+    { on: [6], t: "⑧ 電腦這頭", b: `usb0 一出現，<code>usbnet-dhcp</code> 服務自己起來（它綁在 usb0 上）：設 <code>192.168.7.2/24</code>、起 dnsmasq → 電腦的新網卡拿到 <code>192.168.7.x</code>。板上正在跑的 App（兩個容器）不受影響 ${tg("board", "", SPEC_D)}。` }
+  ]
+});
+
+/* ================= §4 學生裝法 ================= */
+const NCM7 = [
+  { b: "① 三個檔上板", c: "pc", w: "在電腦（上半節就做了）",
+    cmd: '"$ADB" push w06-starter/w06-usbnet /home/arduino/',
+    why: `<code>adb push 資料夾 目的地/</code>＝把整個資料夾放進目的地底下 ${tg("board", "", "本週內容規格 §〇 B（10/14 用 pushtest/ 驗過）")}。三個檔：<code>ncm-hook.sh</code>（hook 本人）、<code>10-extra-functions.conf</code>（adbd 的 drop-in）、<code>usbnet-dhcp.service</code>（設 IP＋發 IP 的服務）。`,
+    see: "板子上多了 <code>~/w06-usbnet/</code>，裡面三個檔。" },
+  { b: "② 先看三樣", c: "bd", w: "在板子（SSH 視窗）",
+    cmd: 'ls /sys/kernel/config/usb_gadget/g1/configs/c.1/\nls /lib/modules/$(uname -r)/kernel/drivers/usb/gadget/function/ | grep ncm\nlsmod | grep -E "ncm|u_ether"\ncat ~/w06-usbnet/10-extra-functions.conf',
+    why: "沒看過原本的樣子，就不知道改了什麼。",
+    see: `出廠板的 <code>c.1/</code> 只有 <code>acm.GS0</code>、<code>ffs.adb</code>；<code>function/</code> 裡看得到 <code>usb_f_ncm.ko</code>；<code>lsmod</code> 什麼都不印（還沒載） ${tg("board", "", "本週內容規格 §〇 A、§〇 D")}。` },
+  { b: "③ 裝前核對", c: "bd", w: "在板子",
+    cmd: "grep -q 'ExecStopPost=/usr/lib/android-sdk/platform-tools/adbd-usb-gadget reset' /usr/lib/systemd/system/adbd.service && echo OK",
+    why: "drop-in 把原廠那條 reset 重新排過、路徑寫死在裡面；路徑對不上就不要裝。",
+    see: `印 <code>OK</code>（10/14 老師板 OK ${tg("board", "", SPEC_D)}；${WN} 出廠板還沒查）。沒印 OK：不要裝，留在 adb 路線。` },
+  { b: "④ 七行 sudo", c: "bd", w: "在板子",
+    cmd: "cd ~/w06-usbnet\nsudo install -d -m 755 /home/arduino/usbnet\nsudo install -m 755 ncm-hook.sh /home/arduino/usbnet/ncm-hook.sh\nsudo install -d /etc/systemd/system/adbd.service.d\nsudo install -m 644 10-extra-functions.conf /etc/systemd/system/adbd.service.d/\nsudo install -m 644 usbnet-dhcp.service /etc/systemd/system/\nsudo systemctl daemon-reload\nsudo systemctl enable usbnet-dhcp",
+    why: `五行 <code>install</code> 把檔案放到對的位置、設好權限；<code>daemon-reload</code> 讓 systemd 重讀設定；<code>enable</code> 讓 usbnet-dhcp 跟著 usb0 自動起來。<code>sudo</code> 打的是板子的密碼——arduino 帳號本來就在 sudo 群組 ${tg("board", "", "本週內容規格 §〇 A（id）")}。`,
+    see: `<code>enable</code> 會印一行「… is added as a dependency to a non-existent unit sys-subsystem-net-devices-usb0.device.」——usb0 還沒出現，正常 ${tg("board", "", SPEC_D)}。${WN} 10/14 是以 root 逐行跑的，字面上的 <code>sudo</code> 還沒跑過。` },
+  { b: "⑤ restart adbd", c: "bd", w: "在板子",
+    cmd: "sudo systemctl restart adbd",
+    why: "讓 adbd 照它自己的流程重來一次：這一次 hook 會在對的位置插進去（上面「那 3 秒」的互動）。",
+    see: `SSH 視窗在這裡斷——走 2222 的那條通道是 adb 開的，adbd 一重啟它就沒了。不要拔線，數 15 秒 ${tg("board", "", SPEC_D)}。` },
+  { b: "⑥ 驗收", c: "pc", w: "在電腦，再回板子看",
+    cmd: "# 電腦\nip -4 -br addr\nping -c 5 192.168.7.2\nssh arduino@192.168.7.2\n# 板子（用上面那行 ssh 進去，不用 forward）\nsystemctl is-active adbd usbnet-dhcp\nls /sys/kernel/config/usb_gadget/g1/configs/c.1/\nip -4 -br addr show usb0\ncat /tmp/ncm-hook.log",
+    why: "電腦多一張網卡、拿到 IP，板子這頭也要對得上。",
+    see: `電腦多一張 <code>192.168.7.x</code>（Windows 11 拿到 <code>192.168.7.16/24</code>，沒有預設閘道、沒有 DNS）、ping 0–1 ms；板子：兩個 <code>active</code>、<code>c.1/</code> 變成 <code>acm.GS0 ffs.adb ncm.usb0</code>、<code>usb0</code> 是 <code>192.168.7.2/24</code>、log 有 <code>[sweep] g1 已清空</code> 和 <code>[add] ncm 已掛</code> ${tg("board", "", "本週內容規格 §〇 A、§〇 D")}。${WN} E307 的 Ubuntu 還沒驗（老師課前會試）。SSH 說 <code>REMOTE HOST IDENTIFICATION HAS CHANGED</code>：每塊板都是 192.168.7.2，電腦可能記著別塊板的鑰匙 → <code>ssh-keygen -R 192.168.7.2</code> 再連（OpenSSH 的標準行為；10/14 沒遇到）。` },
+  { b: "⑦ 之後／拿掉", c: "bd", w: "在板子",
+    cmd: "sudo rm /etc/systemd/system/adbd.service.d/10-extra-functions.conf\nsudo systemctl disable --now usbnet-dhcp\nsudo rm /etc/systemd/system/usbnet-dhcp.service\nsudo systemctl daemon-reload\nsudo reboot",
+    why: `hook 是<b>持久的</b>：它跟著 adbd 一起跑，之後每次開機插電就有網卡——這是刻意的，以後傳模型、傳資料都走這條。要拿掉就跑上面五行；最後一定是 <code>reboot</code>：拿掉 drop-in 之後原廠 reset 不認得 <code>ncm.usb0</code>，只 restart adbd 會卡住 ${tg("board", "", SPEC_D)}。`,
+    see: `重開機後 <code>c.1/</code> 只剩 <code>acm.GS0 ffs.adb</code>、<code>usb0</code> 不存在、<code>lsmod</code> 沒有 <code>usb_f_ncm</code>、usbnet-dhcp 是 inactive、電腦那張網卡消失 ${tg("board", "", SPEC_D)}。` }
+];
+(function initNcm() {
+  $("#ncmSteps").innerHTML = NCM7.map((s, i) => `<button type="button" class="btn" data-s="${i}" aria-pressed="false">${esc(s.b)}</button>`).join("");
+  $("#ncmSteps").addEventListener("click", e => {
+    const b = e.target.closest("button[data-s]"); if (!b) return;
+    const s = NCM7[+b.dataset.s];
+    $$("#ncmSteps button").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    $("#ncmPanel").innerHTML = `<h3>${esc(s.b)}</h3><p><span class="where ${s.c}">${esc(s.w)}</span></p><pre><code>${esc(s.cmd)}</code></pre><h4>為什麼</h4><p>${s.why}</p><h4>你應該看到</h4><p>${s.see}</p>`;
+  });
+})();
+
+/* ================= §4 DHCP 四句對話（dnsmasq） ================= */
+const DHCP = [
+  { d: "→", m: "Discover", t: "電腦（還沒有 IP）對整條線廣播：「有沒有 DHCP 伺服器？」" },
+  { d: "←", m: "Offer", t: "dnsmasq 回：「給你 192.168.7.10（例子），遮罩 255.255.255.0，租 12 小時。」——router 和 DNS 兩個選項留空，不發。" },
+  { d: "→", m: "Request", t: "電腦說：「好，我要 192.168.7.10。」" },
+  { d: "←", m: "Ack", t: "dnsmasq 確認，記進租約檔。電腦把這個 IP 設到新網卡上，完成。" }
+];
+let dhcpI = 0;
+function dhcpRender() {
+  $("#dhcpSeq").innerHTML = DHCP.map((x, i) => `<li class="${i < dhcpI ? "show" : ""}"><span class="who pc">電腦</span><span class="ar"><b>${i + 1}. ${x.m}</b><i aria-hidden="true">${x.d}</i></span><span class="who bd">板子 dnsmasq</span><span class="m">${esc(x.t)}</span></li>`).join("")
+    + `<li class="${dhcpI >= DHCP.length ? "show" : ""}"><span class="m">例子用 <code>.10</code>；實際拿到哪一號由 dnsmasq 決定，落在 <code>.10</code>～<code>.50</code> 之間（10/14 Windows 11 拿到 .16 ${tg("board", "", "本週內容規格 §〇 A")}）。租 12 小時＝<code>--dhcp-range</code> 最後的 <code>12h</code> ${tg("code", "", "starter w06-usbnet/usbnet-dhcp.service")}。</span></li>`;
+  $("#dhcpCnt").textContent = `${Math.min(dhcpI, DHCP.length)}／${DHCP.length}`;
+  $("#dhcpPrev").disabled = dhcpI === 0; $("#dhcpNext").disabled = dhcpI >= DHCP.length;
+}
+$("#dhcpNext").addEventListener("click", () => { dhcpI = Math.min(DHCP.length, dhcpI + 1); dhcpRender(); });
+$("#dhcpPrev").addEventListener("click", () => { dhcpI = Math.max(0, dhcpI - 1); dhcpRender(); });
+$("#dhcpReset").addEventListener("click", () => { dhcpI = 0; dhcpRender(); });
+dhcpRender();
+
+/* ================= §4 router 選項 ================= */
+const RT = {
+  now: { rows: [["192.168.7.0/24（板子那一段）", "USB 網卡：直接送到板子", ""], ["其他所有目的地（預設路由）", "原本的網路（學校網路）", ""]],
+    out: `電腦只把 192.168.7.x 的封包送進 USB 線，其他照舊上網。10/14 Windows 11 實際拿到 <code>192.168.7.16/24</code>、沒有預設閘道、沒有 DNS，預設路由仍走原本的 Wi-Fi／有線 ${tg("board", "", "Get-NetIPConfiguration、Get-NetRoute；本週內容規格 §〇 A")}。` },
+  router: { rows: [["192.168.7.0/24", "USB 網卡", ""], ["其他所有目的地（預設路由）", "可能被換成 192.168.7.2（板子）", "hot"]],
+    out: `如果 DHCP 也發 router，電腦可能把板子當成預設閘道：所有上網的封包都被導進一條不通外網的 USB 線，整台電腦「看起來斷網」 ${tg("code", "", "usb-tunnel.mdx 觀念快篩第 4 題")}。所以 <code>usbnet-dhcp.service</code> 裡的 dnsmasq 寫了 <code>--dhcp-option=3</code>（router）和 <code>--dhcp-option=6</code>（DNS），兩個都不給值＝不發 ${tg("code", "", "starter w06-usbnet/usbnet-dhcp.service")}。` }
+};
+function showRt(k) {
+  $$("[data-rt]").forEach(b => b.setAttribute("aria-pressed", b.dataset.rt === k ? "true" : "false"));
+  const r = RT[k];
+  $("#rtOut").innerHTML = `<div class="tblw"><table class="rt"><tr><th>電腦的路由表：要去哪</th><th>走哪條</th></tr>${r.rows.map(x => `<tr><td>${esc(x[0])}</td><td class="${x[2]}">${esc(x[1])}</td></tr>`).join("")}</table></div><p class="note ${k === "router" ? "warn" : "ok"}">${r.out}</p>`;
+}
+$$("[data-rt]").forEach(b => b.addEventListener("click", () => showRt(b.dataset.rt)));
+showRt("now");
+
+/* ================= §4 事故時間線 ================= */
+const INC = [
+  { k: "白天", t: "v1 開機服務寫好", d: "開機服務（unbind → 加 NCM → rebind）寫成，審了三輪、修了三版，rollback 加到有重試、有驗證。" },
+  { k: "上板", t: "第一次重開機：看起來成功", d: "四個功能全上，只有一個檢查誤判（後來證明是 adb 重連的正常空窗）。成敗其實取決於 rebind 那一瞬間 adbd 剛好在什麼狀態——是機率，不是設計。" },
+  { k: "第二次重開機", t: "只剩音效卡", d: "gadget 只剩音效卡的三個介面：adb ✗、序列埠 ✗、網卡 ✗。", bad: true },
+  { k: "冷開機 ×2", t: "所有進板子的路都斷了", d: "一樣。App Lab 找不到板子（它靠 adb），Wi-Fi 也不在。", bad: true },
+  { k: "救援", t: "EDL 重刷，使用者資料保留", d: `斷電、短接板上 EDL 的兩根 pin、插 USB → <code>arduino-flasher-cli flash latest --preserve-user</code> → 系統區重刷、<code>/home/arduino</code> 完整保留。這套教室保底流程實測 15 分鐘 ${tg("meas", "2026-07-28", "INCIDENT-2026-07-28.md〈救援〉")}。` },
+  { k: "當晚", t: "讀懂原廠腳本，v2 一版就過", d: "讀懂原廠那 40 行腳本 → v2 改成掛進 adbd 的生命週期（就是本週裝的 hook）→ 一輪就過 → 終審再抓掉三個洞 → 全綠。" }
+];
+(function initInc() {
+  $("#incLine").innerHTML = INC.map((x, i) => `<button type="button" data-i="${i}" class="${x.bad ? "bad" : ""}" aria-pressed="false"><b>${esc(x.k)}</b><span>${esc(x.t)}</span></button>`).join("");
+  $("#incLine").addEventListener("click", e => {
+    const b = e.target.closest("button[data-i]"); if (!b) return;
+    const x = INC[+b.dataset.i];
+    $$("#incLine button").forEach(y => y.setAttribute("aria-pressed", y === b ? "true" : "false"));
+    $("#incPanel").innerHTML = `<h3>${esc(x.k)}：${esc(x.t)}</h3><p>${x.d}</p><p class="small">出處 ${tg("meas", "2026-07-28", "camera-tests/face-usb-mac/usbnet/INCIDENT-2026-07-28.md")}</p>`;
+  });
+})();
+
+/* ================= §4 兩個設定檔全文（從逐字嵌入的原檔填進去） ================= */
+$("#preDropin").textContent = $("#src-dropin").textContent.replace(/\r\n/g, "\n").replace(/\n$/, "");
+$("#preDhcpSvc").textContent = $("#src-dhcpsvc").textContent.replace(/\r\n/g, "\n").replace(/\n$/, "");
+
+/* ================= §5 安全內容判斷 ================= */
+function judgeUrl(s) {
+  let u;
+  try { u = new URL(String(s).trim()); } catch (e) { return { c: "maybe", h: "看不懂這個網址", b: "請輸入完整網址，例如 <code>http://127.0.0.1:17000</code>。" }; }
+  const host = u.hostname.toLowerCase();
+  const T = tg("code", "", "usb-tunnel.mdx 第四幕；usbnet-bridge.py 檔頭");
+  if (u.protocol === "https:") return { c: "ok", h: "✓ 安全內容：攝影機 API 存在", b: `HTTPS 本來就算安全內容 ${T}。${WN} 前提是憑證被瀏覽器信任；板子自己簽的憑證會跳警告，還要處理信任鏈與 WebSocket 混用——所以教室不走這條。` };
+  if (u.protocol === "http:") {
+    if (host === "localhost" || host.endsWith(".localhost")) return { c: "ok", h: "✓ 安全內容：攝影機 API 存在", b: `localhost 是「HTTP 也算安全」的例外 ${T}。` };
+    if (host === "127.0.0.1") return { c: "ok", h: "✓ 安全內容：攝影機 API 存在", b: `127.0.0.1 就是 localhost（這台電腦自己）${T}。上半節的 adb forward、下半節的轉接程式，都讓 Chrome 連這裡。` };
+    if (/^127\./.test(host)) return { c: "maybe", h: "大概可以 ⚠️", b: "這也是本機位址（loopback），瀏覽器多半也算安全內容；但本頁的來源只驗過 127.0.0.1。" };
+    if (/^192\.168\.7\./.test(host)) return { c: "bad", h: "✗ 非安全內容：攝影機 API 消失", b: `頁面載得出來，但 <code>navigator.mediaDevices</code> 整個不存在 → 按「開始辨識」會跳「這個瀏覽器不支援攝影機功能」 ${tg("meas", "2026-07-28", "usbnet/README.md 坑 1")}。這是 USB 網卡上的板子：curl、Python 這類命令列工具照樣連得上，只有瀏覽器的攝影機 API 消失。改開 <code>http://127.0.0.1:17000</code>，讓轉接程式代轉。` };
+    return { c: "bad", h: "✗ 非安全內容：攝影機 API 消失", b: `不是 HTTPS、也不是 localhost ${T}。` };
+  }
+  return { c: "maybe", h: "本頁不判斷 ⚠️", b: `本頁的來源只討論 http 與 https；<code>${esc(u.protocol)}</code> 沒有驗證。` };
+}
+function urlRender() {
+  const r = judgeUrl($("#urlIn").value);
+  const o = $("#urlOut"); o.className = "verdict " + r.c;
+  o.innerHTML = `<div class="big">${r.h}</div><p style="margin:4px 0 0">${r.b}</p>`;
+}
+$("#urlIn").addEventListener("input", urlRender);
+$("#urlChips").addEventListener("click", e => { const b = e.target.closest("button[data-u]"); if (!b) return; $("#urlIn").value = b.dataset.u; urlRender(); });
+urlRender();
+$("#liveBtn").addEventListener("click", () => {
+  const sc = window.isSecureContext === true;
+  const md = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  const o = $("#liveOut"); o.hidden = false; o.className = "verdict " + (md ? "ok" : "bad");
+  o.innerHTML = `<p style="margin:0">你的瀏覽器回報：<code>window.isSecureContext</code> ＝ <b>${sc}</b>；<code>navigator.mediaDevices.getUserMedia</code> <b>${md ? "存在" : "不存在"}</b>。這一頁的網址開頭是 <code>${esc(location.protocol)}</code>。</p><p class="small" style="margin:6px 0 0">這是你的瀏覽器此刻的真實回答，不是本頁寫死的。${md ? "所以這一頁「有資格」要攝影機（但它不會去要）。" : "所以這一頁要不到攝影機。"}</p>`;
+});
+
+/* ================= §6 App 解剖與程式碼 ================= */
+const FILES = {
+  yaml: { t: "app.yaml", h: `App 的「身分證」加「積木清單」：名字、圖示、說明、對外開的埠（8080），以及要用的兩塊 brick：人臉偵測（<code>arduino:video_object_detection</code>，模型 <code>face-detection</code>、裝置 <code>remote_camera_0</code>）和網頁介面（<code>arduino:web_ui</code>） ${tg("code", "", "face-usb-classroom/app.yaml")}。左邊切到「app.yaml」分頁看逐行說明。`, code: "yaml" },
+  main: { t: "python/main.py", h: `你的 Python，跑在 main 容器裡。它把 brick 接起來：一台虛擬攝影機（WebSocketCamera，8080）→ 人臉偵測 → 把統計推給網頁；另外每秒回報「板子實際收到幾張」 ${tg("code", "", "starter face-usb-classroom/python/main.py")}。逐行說明在左邊的程式碼框。`, code: "main" },
+  index: { t: "assets/index.html", h: `網頁的骨架：選攝影機、「開始辨識」、左右兩格畫面、統計卡。這些檔案放在板子上，由 7000 送到你的瀏覽器；畫面實際在你的電腦裡執行 ${tg("code", "", "face-usb-win/README.md〈一張圖先看懂〉")}。` },
+  appjs: { t: "assets/app.js", h: `在<b>你的瀏覽器</b>裡跑的 JavaScript：開攝影機（640×480）、每秒取 8 張、縮成 320×240、壓 JPEG（品質 0.55）、加 14 位元組的 BPP 標頭、從 18080 送出；開始前先跟板子對時；右格嵌 14912 的 <code>/embed</code> ${tg("code", "", "face-usb-classroom/assets/app.js")}。下半節換成轉接程式，它一個字都不用改。` },
+  css: { t: "assets/style.css", h: "網頁的外觀（顏色、版面），跟功能無關。" },
+  libs: { t: "assets/libs/", h: `兩個現成的函式庫：<code>socket.io.min.js</code>，以及 Arduino 的 <code>arduino.js</code>（一個小小的 WebUI 類別，讓網頁收到 <code>main.py</code> 用 <code>ui.send_message</code> 推來的訊息） ${tg("code", "", "face-usb-classroom/assets/libs/arduino.js（MPL-2.0）")}。` },
+  cache: { t: ".cache/（隱藏資料夾）", h: `<code>arduino-app-cli</code> 自己產的 compose 設定。<b>別刪</b>：刪掉之後 <code>app stop</code> 會回報成功、容器卻動也不動 ${tg("meas", "2026-07-22", MACR + "〈另外兩個坑〉")}。` }
+};
+const NOTES = {
+  main: [
+    [1, 2, "授權標頭（SPDX 寫法）：MPL-2.0。"],
+    [4, 6, "<code>threading</code>、<code>time</code> 給第 72–107 行「數板子收到幾張」用；<code>datetime</code> 用來替偵測結果蓋 UTC 時間戳（第 43 行）。"],
+    [8, 11, "四個 import 都來自 Arduino 的 App Bricks 函式庫：兩塊 brick（VideoObjectDetection、WebUI）、一個周邊（WebSocketCamera）、一個主迴圈（App）。"],
+    [14, 14, "<code>WebUI()</code>：web_ui brick。負責 7000 埠的網頁（把 assets/ 送給瀏覽器），也開一條 socket.io 訊息通道（第 45、104 行會用到）。"],
+    [16, 17, "原始註解：瀏覽器的 JPEG 經 ADB 的 USB 轉送，送到這台「攝影機」；不用 Wi-Fi、不用 USB hub。下半節改走 USB 網卡，這支程式一行都不用改——它只看得到 8080 有畫面進來。"],
+    [18, 24, `<code>WebSocketCamera</code>：一台「虛擬攝影機」，在 8080 收瀏覽器送來的畫面；<code>resolution=(320, 240)</code>、<code>fps=8</code> ${tg("code", "", "main.py")}。`],
+    [19, 19, "<code>port=8080</code>：收畫面的埠，也是 app.yaml 對外開的那一個；電腦那頭對應 18080。"],
+    [21, 21, `<code>fps=8</code>：<code>capture()</code> 內建節流，每 1/8 秒才交出一張，送再快也一樣 ${tg("meas", "2026-07-22", MACR + "（base_camera.py 的 _desired_interval）")}。改成 20 之後板子真的收 20，但 AI 只從 5.5 到 6.3 次/秒 ${tg("board", "", "本週內容規格 §〇 B")}——第 8 節有對照。網頁 app.js 的 <code>TARGET_FPS</code> 要一起改。`],
+    [22, 23, `<code>secret=None</code>、<code>encrypt=False</code>：不驗證、不加密；網頁送的 BPP 標頭模式欄也是 0（不加密） ${tg("code", "", "app.js：BPP_MODE_NONE = 0")}。`],
+    [26, 30, `<code>VideoObjectDetection</code>：把 camera 交給人臉偵測 brick（模型由 app.yaml 指定）。<code>confidence=0.5</code>：信心值低於 0.5 的框不算；<code>debounce_sec=0.25</code> ${WN} 確切行為來源沒寫。第 7 節可以玩門檻。`],
+    [33, 35, `攝影機連線狀態一變就印一行 log，例如 <code>camera:connected</code>、<code>camera:streaming</code>、<code>camera:disconnected</code> ${tg("board", "", "本週內容規格 §〇 B")}。第 3 節「forward 掉線」的線索，就是拿這種 log 去對時間。`],
+    [38, 55, "每次有偵測結果就被呼叫：數幾張臉、取最大信心值、蓋時間戳，推給網頁；有臉才印一行 <code>faces=N</code>。"],
+    [45, 52, `<code>ui.send_message("ai_stats", …)</code>：經 7000 的 socket.io 推給網頁，網頁用 <code>on_message("ai_stats")</code> 接 ${tg("code", "", "app.js、libs/arduino.js")}。這就是全路徑地圖第 10 層的第二條路。`],
+    [54, 55, "原始註解說要「保持輕量的 log」：只有偵測到臉才印。"],
+    [58, 70, "這段中文註解說明為什麼要在板子這層數「實際收到幾張」：網頁只量得到自己送了幾張，板子才看得到所有來源。"],
+    [72, 86, "包一層 <code>camera.capture()</code>：每次真的拿到一張畫面（不是 None）就加一。包在我們自己的 App 裡，沒有改到 Arduino 的函式庫。"],
+    [89, 104, `每秒把剛剛數到的張數用 <code>ui.send_message("board_throughput", …)</code> 推給網頁——網頁上「板子實際收到 8.0 FPS」那行小字就是它 ${tg("board", "", "本週內容規格 §〇 B")}。`],
+    [107, 107, "開一條背景執行緒（daemon）跑上面那個每秒回報的迴圈。"],
+    [109, 110, `掛上兩個回呼。注意：<code>on_detect_all</code> 只在「有偵測到東西」時觸發，沒偵測到的幀不會出現在統計裡 ${tg("meas", "2026-07-20", FAB)}。`],
+    [112, 112, "<code>App.run()</code>：把所有 brick 跑起來，一直跑到 App 被停止。"]
+  ],
+  yaml: [
+    [1, 3, "App 的名字、圖示、說明（App Lab 清單上看到的就是這些）。"],
+    [5, 6, "對外開 8080：WebSocketCamera 收畫面的埠。"],
+    [8, 8, "<code>bricks</code>：這支 App 要用哪些積木。"],
+    [9, 12, `人臉偵測 brick。<code>model: face-detection</code> 是官方的人臉模型（速度調查用的是官方的 <code>lw-face-det.eim</code> ${tg("meas", "2026-07-20", FAB)}；${WN} 這個名稱跟檔名的對應是推的）。<code>devices: remote_camera_0</code> 從字面看是「從網路送進來的攝影機」，對應 main.py 的 WebSocketCamera ${WN}（來源沒逐字解釋這個欄位）。`],
+    [13, 13, "網頁介面 brick：7000 的網頁和訊息通道。"]
+  ]
+};
+const SRC = { main: "src-main-py", yaml: "src-app-yaml" };
+let curCode = "main";
+function codeLines(k) { const t = document.getElementById(SRC[k]).textContent.replace(/\r\n/g, "\n"); const a = t.split("\n"); if (a.length && a[a.length - 1] === "") a.pop(); return a; }
+function noteFor(k, n) { let best = null; NOTES[k].forEach(x => { if (n >= x[0] && n <= x[1] && (!best || x[1] - x[0] < best[1] - best[0])) best = x; }); return best; }
+function renderCode(k) {
+  curCode = k;
+  $$("[data-code]").forEach(b => b.setAttribute("aria-pressed", b.dataset.code === k ? "true" : "false"));
+  const lines = codeLines(k);
+  $("#codeInner").innerHTML = lines.map((l, i) => { const n = i + 1, has = NOTES[k].some(x => n >= x[0] && n <= x[1]); return `<button type="button" class="ln${has ? " hasnote" : ""}" data-n="${n}" aria-pressed="false"><span class="no">${n}</span><span class="tx">${esc(l) || " "}</span></button>`; }).join("");
+}
+function pickLine(n) {
+  const k = curCode, x = noteFor(k, n), lines = codeLines(k);
+  $$("#codeInner .ln").forEach(b => { const m = +b.dataset.n; b.setAttribute("aria-pressed", m === n ? "true" : "false"); b.classList.toggle("inrange", !!x && m >= x[0] && m <= x[1]); });
+  const name = k === "main" ? "main.py" : "app.yaml";
+  $("#codePanel").innerHTML = `<h3>${name} 第 ${n} 行${x && x[1] > x[0] ? `（第 ${x[0]}–${x[1]} 行一組）` : ""}</h3><pre><code>${esc(lines[n - 1] || "（空行）")}</code></pre><p>${x ? x[2] : "這一行沒有特別說明；試試行號是藍色的那幾行。"}</p>`;
+}
+$("#codeInner").addEventListener("click", e => { const b = e.target.closest(".ln"); if (b) pickLine(+b.dataset.n); });
+$$("[data-code]").forEach(b => b.addEventListener("click", () => renderCode(b.dataset.code)));
+$("#appTree").addEventListener("click", e => {
+  const b = e.target.closest("button[data-file]"); if (!b) return;
+  const f = FILES[b.dataset.file];
+  $$("#appTree button").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+  if (f.code && f.code !== curCode) renderCode(f.code);
+  $("#codePanel").innerHTML = `<h3>${esc(f.t)}</h3><p>${f.h}</p>`;
+});
+renderCode("main");
+
+/* ================= §7 九站 ================= */
+const PIPE = [
+  { b: "收畫面", s: "8080", h: `WebSocketCamera 在 8080 收到一個 BPP 封包：14 位元組標頭＋JPEG ${tg("code", "", "app.js")}。先看時間戳：不在 ±10 秒內就丟掉 ${tg("code", "", "face-usb-classroom/README.md（bpp_codec.py 的 WINDOW_US）")}。` },
+  { b: "節流", s: "fps=8", h: `<code>capture()</code> 每 1/8 秒才交出一張。板子這頭佇列只有 1 張，滿了就丟舊的 ${tg("meas", "2026-07-22", MACR)}。` },
+  { b: "解碼", s: "JPEG → 像素", h: `把壓縮過的 JPEG 還原成一格一格的像素；圖越大越久。電腦送 640×480 時板子 AI 約 6.5～7.6 FPS，送 1280×720 掉到約 4.5～6.2 FPS ${tg("meas", "2026-07", "背景知識講義 §11（實測期間 07-20～23，JPEG 品質 70）")}——大圖變慢的主因是板子的解碼與 AI，不是 USB。官方管線裡，解碼與縮放在 runner 容器的 GStreamer 裡做 ${tg("code", "", FAB + "（路線 A 的資料流）")}。` },
+  { b: "縮放", s: "→ 320×256", h: `模型只吃 320×256。官方管線用 Lanczos 縮放 ${tg("code", "", FAB)}。${WN} 教室送的是 320×240，長寬比不同，怎麼補成 256 高（拉伸或補邊），來源沒寫。` },
+  { b: "轉灰階", s: "彩色 → 亮度", h: `只留亮度、丟掉顏色。彩色三個通道變一個，資料量剩三分之一 ${tg("est", "", "RGB 三通道 → 一通道")}。` },
+  { b: "前處理", s: "約 2 ms", h: `整理成模型要的輸入格式（DSP 前處理）約 2 ms ${tg("meas", "2026-07-20", FAB)}。官方管線在這之前還要寫檔、讀 3 個檔、算 sha256、轉 base64，用 JSON 交給模型——一來一回多約 90 ms ${tg("meas", "2026-07-20", FAB)}。` },
+  { b: "推論", s: "約 92 ms", h: `<code>lw-face-det.eim</code> 跑一次，約 92 ms、只用一顆核心 ${tg("meas", "2026-07-20", FAB)}。四核 A53 其他三顆閒著——第 8 節的「多 worker」就是要用上它們。` },
+  { b: "輸出", s: "框＋信心值", h: `模型吐出每個框的 x、y、寬、高和信心值，不是一張畫好的圖 ${tg("code", "", "背景知識講義 §14")}。只回座標，資料量很小。` },
+  { b: "過濾與通報", s: "≥ 0.5", h: "信心值 ≥ 0.5 才算數（main.py 的 <code>confidence</code>）。Edge Impulse 的頁面（4912）把框畫在圖上；main.py 收到結果，推 <code>ai_stats</code> 給網頁、印 <code>faces=N</code>。" }
+];
+(function initPipe() {
+  $("#pipe").innerHTML = PIPE.map((p, i) => `<button type="button" class="btn" data-p="${i}" aria-pressed="false">${i + 1}. ${esc(p.b)}<small>${esc(p.s)}</small></button>`).join("");
+  $("#pipe").addEventListener("click", e => {
+    const b = e.target.closest("button[data-p]"); if (!b) return;
+    const p = PIPE[+b.dataset.p];
+    $$("#pipe button").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    $("#pipePanel").innerHTML = `<h3>第 ${+b.dataset.p + 1} 站：${esc(p.b)}（${esc(p.s)}）</h3><p>${p.h}</p>`;
+  });
+})();
+
+/* ================= §7 信心值門檻（示範值） ================= */
+const CONF = [
+  { x: 48, y: 34, w: 70, h: 80, c: 0.89, real: true, lab: "臉" },
+  { x: 148, y: 72, w: 48, h: 56, c: 0.47, real: true, lab: "側臉" },
+  { x: 238, y: 24, w: 50, h: 56, c: 0.58, real: false, lab: "窗簾花紋" },
+  { x: 222, y: 150, w: 60, h: 50, c: 0.31, real: false, lab: "陰影" }
+];
+function confRender() {
+  const th = parseFloat($("#confR").value);
+  $("#confV").textContent = th.toFixed(2);
+  let s = '<svg viewBox="0 0 320 240" role="img" aria-label="示範畫面：四個候選框與信心值"><rect width="320" height="240" fill="#26302F"/>';
+  for (let x = 226; x < 316; x += 12) s += `<rect x="${x}" y="0" width="6" height="140" fill="#37423F"/>`;
+  s += '<rect x="0" y="196" width="320" height="44" fill="#1E2726"/><ellipse cx="252" cy="178" rx="34" ry="18" fill="#1A2120"/>';
+  s += '<ellipse cx="83" cy="196" rx="52" ry="44" fill="#3E5A6B"/><circle cx="83" cy="76" r="30" fill="#C9A58A"/><circle cx="72" cy="70" r="3" fill="#2A2A2A"/><circle cx="94" cy="70" r="3" fill="#2A2A2A"/><rect x="74" y="88" width="18" height="3" rx="1.5" fill="#7A4A3A"/>';
+  s += '<ellipse cx="172" cy="196" rx="38" ry="36" fill="#5A4B6B"/><ellipse cx="172" cy="102" rx="20" ry="25" fill="#B98F74"/><circle cx="182" cy="96" r="2.5" fill="#2A2A2A"/>';
+  let kept = 0, keptReal = 0, keptFake = 0, missed = 0;
+  CONF.forEach(b => {
+    const k = b.c >= th;
+    if (k) { kept++; if (b.real) keptReal++; else keptFake++; } else if (b.real) missed++;
+    const col = !k ? "#7A8A89" : b.real ? "#4ADE80" : "#F5A524";
+    s += `<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="none" stroke="${col}" stroke-width="${k ? 3 : 1.5}"${k ? "" : ' stroke-dasharray="5 4"'}/>`;
+    const ty = b.y > 18 ? b.y - 5 : b.y + b.h + 14;
+    s += `<text x="${b.x}" y="${ty}" font-size="12" font-weight="700" fill="${col}">${b.lab} ${b.c.toFixed(2)}</text>`;
+  });
+  s += "</svg>";
+  $("#confBox").innerHTML = s;
+  const o = $("#confOut"); o.className = "verdict " + (keptFake || missed ? "maybe" : "ok");
+  o.innerHTML = `<div class="big">留下 ${kept} 個框</div><p style="margin:4px 0 0">真的臉：抓到 ${keptReal}／2，漏掉 ${missed}；誤判：${keptFake} 個。</p><p class="small" style="margin:6px 0 0">門檻調低：抓到更多真臉，也放進更多誤判；調高：反過來。沒有一個門檻能兩全，要看用途挑。（綠框＝真臉、橘框＝誤判、灰色虛線＝被門檻擋掉；全部是示範值。）</p>`;
+}
+$("#confR").addEventListener("input", confRender);
+confRender();
+
+/* ================= §7 時鐘模擬 ================= */
+let clkOff = 0;
+function fmtOff(s) {
+  if (!s) return "0 秒（剛好）";
+  const a = Math.abs(s), w = s > 0 ? "快" : "慢";
+  if (a >= 3600) return `${w} ${+(a / 3600).toFixed(1)} 小時`;
+  if (a >= 60) return `${w} ${Math.round(a / 60)} 分`;
+  return `${w} ${a} 秒`;
+}
+function clkRender() {
+  const fix = $("#clkFix").checked, o = $("#clkOut");
+  $("#clkV").textContent = fmtOff(clkOff);
+  if (fix) {
+    o.className = "verdict ok";
+    o.innerHTML = `<div class="big">✓ 收下</div><p style="margin:4px 0 0">網頁先讀板子回應的 HTTP <code>Date</code> 標頭，算出時差（${fmtOff(clkOff)}），之後每張都照<b>板子的時間</b>蓋戳。殘留誤差大約在半秒上下 ${tg("est", "", "Date 只到秒、補半秒、扣一半來回時間（app.js 的 syncBoardClock）")}，遠小於 ±10 秒。${Math.abs(clkOff) >= 2 ? `時差超過 2 秒，「USB 影像傳送」那一欄會註明「已校正板子時鐘 …」 ${tg("code", "", "app.js 的 clockNote()")}。` : ""}</p>`;
+  } else if (Math.abs(clkOff) <= 10) {
+    o.className = "verdict ok";
+    o.innerHTML = `<div class="big">✓ 收下</div><p style="margin:4px 0 0">差 ${Math.abs(clkOff)} 秒，還在 ±10 秒以內。</p>`;
+  } else {
+    o.className = "verdict bad";
+    o.innerHTML = `<div class="big">✗ 每一張都在板子門口被丟掉</div><p style="margin:4px 0 0">症狀：左邊看得到自己、右邊 AI 框選永遠空白；板子 log 一直印 <code>Message outside validity window</code> ${tg("meas", "2026-07-21", "face-usb-classroom/README.md〈板子時鐘〉")}。USB 有通、資料也對——是應用層拒收。</p>`;
+  }
+}
+$("#clkR").addEventListener("input", () => { clkOff = parseInt($("#clkR").value, 10); clkRender(); });
+$("#clkChips").addEventListener("click", e => { const b = e.target.closest("button[data-s]"); if (!b) return; clkOff = parseInt(b.dataset.s, 10); $("#clkR").value = String(Math.max(-60, Math.min(60, clkOff))); clkRender(); });
+$("#clkFix").addEventListener("change", clkRender);
+clkRender();
+
+/* ================= §7 BPP 標頭 ================= */
+$("#bppBtn").addEventListener("click", () => {
+  const off = $("#clkFix").checked ? clkOff * 1000 : 0, now = Date.now();
+  const buf = new ArrayBuffer(14), v = new DataView(buf);
+  v.setUint8(0, 0); v.setUint8(1, 0);
+  v.setBigUint64(2, BigInt(now + off) * 1000n, false);
+  v.setUint32(10, crypto.getRandomValues(new Uint32Array(1))[0], false);
+  const by = Array.from(new Uint8Array(buf)).map(x => x.toString(16).padStart(2, "0").toUpperCase());
+  const cls = i => (i === 0 ? "h-ver" : i === 1 ? "h-mode" : i < 10 ? "h-ts" : "h-rnd");
+  $("#bppHex").innerHTML = by.map((x, i) => `<span class="${cls(i)}" title="第 ${i} 個位元組">${x}</span>`).join("");
+  $("#bppNote").innerHTML = `紫＝版本、藍＝模式、金＝時間戳（${esc(new Date(now + off).toISOString())}${off ? "，已加上上面設定的時差" : ""}）、綠＝隨機數。這是你的瀏覽器現在算出來的，每按一次都不同。`;
+});
+
+/* ================= §8 送 8 vs 改 20（10/14 實板） ================= */
+const SPEC_B = "本週內容規格 §〇 B（2026-10-14 實板，Chromium 1280 寬、30 秒、去掉前 5 秒）";
+const CMP = {
+  8: [["網頁送出", "8.0 FPS"], ["板子實際收到", "8.0 FPS"], ["USB 資料量", "35–52 KB/s"], ["AI 每秒回幾次結果", "5.5 次"], ["每張推論", "86–102 ms（中位 90）"], ["runner 容器 CPU", "76%"]],   /* src: 實板 10/14（SPEC_B） */
+  20: [["網頁送出", "20.0 FPS"], ["板子實際收到", "20.0 FPS"], ["USB 資料量", "89–137 KB/s"], ["AI 每秒回幾次結果", "6.3 次"], ["每張推論", "87–100 ms（中位 93）"], ["runner 容器 CPU", "113%（四核只用一核多一點）"]]   /* src: 實板 10/14（SPEC_B） */
+};
+function showCmp(k) {
+  $$("[data-cmp]").forEach(b => b.setAttribute("aria-pressed", b.dataset.cmp === k ? "true" : "false"));
+  $("#cmpTbl").innerHTML = `<tr><th>${k === "8" ? "送 8（現況）" : "兩處都改成 20"}</th><th>10/14 實測 ${tg("board", "", SPEC_B)}</th></tr>`
+    + CMP[k].map(r => `<tr><td>${esc(r[0])}</td><td${r[0].startsWith("AI") ? ' style="font-weight:800"' : ""}>${esc(r[1])}</td></tr>`).join("")
+    + `<tr><td>結論</td><td>${k === "8" ? "送 8、收 8，但 AI 只回 5.5 次——AI 根本跟不上 8。" : "送 20、收 20，AI 只從 5.5 到 6.3：<b>送更多不會更快</b>，卡住的是板子上的官方管線。"}</td></tr>`;
+}
+$$("[data-cmp]").forEach(b => b.addEventListener("click", () => showCmp(b.dataset.cmp)));
+showCmp("8");
+
+/* ================= §8 兩條路的階梯 ================= */
+const LADS = {
+  B: { note: `本週的路：電腦送畫面、走 USB。前兩列是教室版（10/14 老師板 ${tg("board", "", SPEC_B)}），後三列是快速版（7/22 Mac 用 Python 送 ${tg("meas", "2026-07-22", "本週內容規格 §〇 C")}）。淺藍底＝送進板子的張數（有量的才畫）、深綠條＝AI 結果，以 30 為滿。`,
+    rows: [
+      { src: "board", c: "教室版（官方 brick），送 8", inp: 8, ai: 5.5, unit: "次/秒", lim: "官方管線（runner CPU 76%）",
+        d: "網頁送 8.0、板子收到 8.0，AI 每秒只回 5.5 次，推論中位 90 ms。AI 連 8 張都跟不上。" },
+      { src: "board", c: "教室版兩處都改成 20", inp: 20, ai: 6.3, unit: "次/秒", lim: "還是官方管線（CPU 113%）",
+        d: "送 20.0、收 20.0，AI 只到 6.3 次/秒。四核的板子，runner 只用了一核多一點——送更多不會更快。" },
+      { src: "m22", c: "快速版：直連 .eim、1 個 worker", inp: null, ai: 7.6, unit: "FPS", lim: "一個 worker 一次只算一張",
+        d: "繞過官方 runner，Python 把 .eim 當程式跑、用共享記憶體餵資料。只開一個 worker，就跟一顆核心的推論速度差不多。" },
+      { src: "m22", c: "快速版：2 個 worker", inp: null, ai: 15.2, unit: "FPS", lim: "推論的核心數",
+        d: "兩個 worker 輪流吃不同的幀，四核用上兩顆，幾乎剛好兩倍。" },
+      { src: "m22", c: "快速版：3 個 worker", inp: 23.3, ai: 22.8, unit: "FPS", lim: "追上送進來的速度（23.3）",
+        d: "送進來 23.3、丟掉 8／421 張，AI 22.8——幾乎每張都算到了，瓶頸又回到「送多快」。10/14 在老師板上用網頁 ?fps=20：AI 20.0 FPS、3 個 worker、每張 96–97 ms、容器 CPU 213%，這時就卡在送 20。" }
+    ] },
+  A: { note: `攝影機直插板子、同一塊板、同一顆官方模型 ${tg("meas", "2026-07-20", FAB + " 結果總表")}。淺藍底＝攝影機供幀、深綠條＝AI 結果，以 30 為滿。`,
+    rows: [
+      { src: "m20", c: "官方 brick（stock），暗房自動曝光", inp: 7.5, ai: 3.8, unit: "FPS", lim: "node 循序迴圈約 265 ms／幀",
+        d: "官方資料流：main 容器取像 → JPEG → TCP 5050 → runner 容器的 GStreamer（解碼 → 為預覽再壓一次 JPEG → Lanczos 縮放 → 再壓 JPEG＋寫 .rgb 檔到 /dev/shm）→ node 用 fs.watch 看檔 → 讀 3 個檔＋sha256＋base64 → eim 推論 → WebSocket 4912。node 一次只處理一幀，整圈約 265 ms，忙的時候到的幀直接丟；三個行程加起來只用一顆核心。" },
+      { src: "m20", c: "直連 .eim、1 worker、自動曝光", inp: 7.5, ai: 7.4, unit: "FPS", lim: "攝影機曝光（暗房約 133 ms）",
+        d: "繞過官方 runner：Python 自己抓攝影機、縮成 320×256 灰階、用共享記憶體餵給 .eim。推論已經比攝影機快，AI 幾乎等於供幀——現在卡在攝影機：暗房自動曝光選了約 133 ms，1000 ÷ 133 ≈ 7.5。" },
+      { src: "m20", c: "直連、1 worker、手動 10 ms 曝光", inp: 30, ai: 9.9, unit: "FPS", lim: "單核推論約 98 ms",
+        d: "把曝光縮短到 10 ms，攝影機回到 30 FPS；瓶頸移到推論：一個 worker 一次算一張，1000 ÷ 98 ≈ 10。" },
+      { src: "m20", c: "直連、2 workers", inp: 30, ai: 19.3, unit: "FPS", lim: "推論的核心數",
+        d: "開兩個 eim 行程輪流吃不同的幀（第 1 張給 A、第 2 張給 B、第 3 張再給 A…），四核 A53 用上兩顆。" },
+      { src: "m20", c: "直連、3 workers", inp: 30, ai: 26.5, unit: "FPS", lim: "接近攝影機的 30 FPS",
+        d: "算力約是一個 worker 的 3 倍，快追上攝影機的 30 FPS，瓶頸又回到供幀。<b>瓶頸會移動：修好一段，下一段才露出來。</b>" }
+    ] }
+};
+const LAD_TAG = { board: () => tg("board", "", SPEC_B), m22: () => tg("meas", "2026-07-22", "本週內容規格 §〇 C"), m20: () => tg("meas", "2026-07-20", FAB + " 結果總表") };
+let ladRoute = "B";
+function renderLadder() {
+  const L = LADS[ladRoute];
+  $$("[data-route]").forEach(b => b.setAttribute("aria-pressed", b.dataset.route === ladRoute ? "true" : "false"));
+  $("#ladNote").innerHTML = L.note;
+  $("#ladder").innerHTML = L.rows.map((r, i) => `<button type="button" class="lrow" data-i="${i}" aria-pressed="false"><span><span class="cfgt">${i + 1}. ${esc(r.c)}</span><span class="nums">${r.inp ? `送進 ${r.inp} → ` : ""}AI ${r.ai} ${r.unit}</span></span><span class="mini" aria-hidden="true">${r.inp ? `<span class="cam" style="width:${(r.inp / 30 * 100).toFixed(1)}%"></span>` : ""}<span class="ai" style="width:${(r.ai / 30 * 100).toFixed(1)}%"></span></span><span class="lim">瓶頸：${esc(r.lim)}</span></button>`).join("");
+  $("#ladPanel").innerHTML = '<p class="ph">點上面任何一列。</p>';
+}
+$("#ladder").addEventListener("click", e => {
+  const b = e.target.closest(".lrow"); if (!b) return;
+  const r = LADS[ladRoute].rows[+b.dataset.i];
+  $$("#ladder .lrow").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+  $("#ladPanel").innerHTML = `<h3>${+b.dataset.i + 1}. ${esc(r.c)}</h3><p><b>${r.inp ? `送進 ${r.inp}、` : ""}AI ${r.ai} ${r.unit}</b> ${LAD_TAG[r.src]()}；瓶頸：${esc(r.lim)}。</p><p>${r.d}</p>`;
+});
+$$("[data-route]").forEach(b => b.addEventListener("click", () => { ladRoute = b.dataset.route; renderLadder(); }));
+renderLadder();
+
+/* ================= §8 FPS 計算器 ================= */
+let pm = "brick";
+const PRE = {
+  now: { pm: "brick", C: 30, S: 8, P: 8, A: 6.3 },
+  twenty: { pm: "brick", C: 30, S: 20, P: 20, A: 6.3 },
+  fast20: { pm: "direct", C: 30, S: 20, N: 3, T: 96 },
+  fast1: { pm: "direct", C: 30, S: 30, N: 1, T: 96 }
+};
+function num(id, d) { const v = parseFloat($(id).value); return isFinite(v) && v > 0 ? v : d; }
+function setPm(m) {
+  pm = m;
+  $$("[data-pm]").forEach(b => b.setAttribute("aria-pressed", b.dataset.pm === m ? "true" : "false"));
+  $$("[data-only]").forEach(el => { el.hidden = el.dataset.only !== m; });
+  $("#cSlab").textContent = m === "brick" ? "網頁送出 TARGET_FPS" : "網頁送幀（網址的 ?fps）";
+  calc();
+}
+function calc() {
+  const C = num("#cC", 30), S = num("#cS", 8), P = num("#cP", 8), A = num("#cA", 6.3), T = num("#cT", 96);
+  const N = Math.min(4, Math.max(1, Math.round(num("#cN", 3))));
+  const st = pm === "brick"
+    ? [{ k: "攝影機供幀", v: C }, { k: "網頁送出（TARGET_FPS）", v: S }, { k: "板子取畫面（fps 參數）", v: P }, { k: "官方管線每秒最多回幾次", v: A }]
+    : [{ k: "攝影機供幀", v: C }, { k: "網頁送幀（?fps）", v: S }, { k: `AI 算力（${N} 個 worker）`, v: N * 1000 / T }];
+  const min = Math.min(...st.map(s => s.v)), scale = Math.max(30, ...st.map(s => s.v));
+  $("#calcBars").innerHTML = st.map(s => { const hot = Math.abs(s.v - min) < 1e-9; return `<div class="hb"><span class="lab">${esc(s.k)}</span><span class="trk"><span class="fill${hot ? " hot" : ""}" style="width:${Math.max(1, s.v / scale * 100).toFixed(1)}%"></span><span class="val">${s.v.toFixed(1)}${hot ? "　← 瓶頸" : ""}</span></span></div>`; }).join("");
+  const who = st.filter(s => Math.abs(s.v - min) < 1e-9).map(s => s.k).join("、");
+  const notes = [];
+  if (pm === "brick") {
+    if (S === 8 && P === 8) notes.push(`對照實測：送 8、收 8，AI 5.5 次/秒 ${tg("board", "", SPEC_B)}——比這個簡化模型算的還低，模型只是近似。`);
+    if (S === 20 && P === 20) notes.push(`對照實測：送 20.0、收 20.0，AI 6.3 次/秒 ${tg("board", "", SPEC_B)}。`);
+    if (S !== P) notes.push(`網頁送 ${S}、板子取 ${P}：小的那個說了算——兩處要一起改。`);
+    if (S > 12) notes.push(`app.js 向攝影機要畫面寫的是 <code>max: 12</code>：送 12 以上要一起改大（10/14 改成 30） ${tg("board", "", SPEC_B)}。`);
+  } else {
+    if (S === 20 && N === 3) notes.push(`對照實測：網頁 ?fps=20 → AI 20.0 FPS（3 個 worker、每張 96–97 ms、容器 CPU 213%） ${tg("board", "", "本週內容規格 §〇 C")}。`);
+    const M = { 1: 7.6, 2: 15.2, 3: 22.8 }[N];
+    if (M && S >= 23) notes.push(`對照實測（7/22 用 Python 送、走 USB）：${N} 個 worker＝${M} FPS ${tg("meas", "2026-07-22", "本週內容規格 §〇 C")}${M < min - 0.5 ? "，比這個模型算出來的低：增加 worker 不會等比例變快" : ""}。`);
+    if (N === 4) notes.push(`${WN} 4 個 worker 沒有量過；四顆核心全拿去推論，取像和解碼也要搶 CPU。`);
+    if (N >= 2) notes.push(`<span class="wn">供電：</span>多 worker 別只靠電腦的 USB-C 供電，約 1.2 A 實測會在尖峰掉電重開 ${tg("meas", "2026-07-21", "fast-ai-bench/速查-快速版.md")}。`);
+  }
+  $("#calcOut").className = "verdict ok";
+  $("#calcOut").innerHTML = `<div>理論上限 <span class="big">${min.toFixed(1)}</span> 次/秒 ${tg("est", "", "每一站的最小值")}</div><p style="margin:4px 0">瓶頸：<b>${esc(who)}</b></p>${notes.map(n => `<p class="small" style="margin:4px 0">${n}</p>`).join("")}`;
+}
+$$("[data-pm]").forEach(b => b.addEventListener("click", () => setPm(b.dataset.pm)));
+["#cC", "#cS", "#cP", "#cA", "#cN", "#cT"].forEach(id => $(id).addEventListener("input", calc));
+$("#calcPre").addEventListener("click", e => {
+  const b = e.target.closest("button[data-pre]"); if (!b) return;
+  const p = PRE[b.dataset.pre];
+  const IDS = { C: "#cC", S: "#cS", P: "#cP", A: "#cA", N: "#cN", T: "#cT" };
+  Object.keys(IDS).forEach(k => { if (p[k] !== undefined) $(IDS[k]).value = p[k]; });
+  setPm(p.pm);
+});
+setPm("brick");
+
+/* ================= §9 想一想 ================= */
+const QS = [
+  { q: "上半節的 adb forward 裡，在電腦的 127.0.0.1:17000 等著接連線的是誰？", o: ["Chrome 自己（它開了 17000 這個埠）", "電腦上的 adb server", "板子上的 adbd（經 USB 直接聽電腦的埠）", "板子上的 web_ui 容器"], a: 1,
+    e: `<code>adb forward tcp:17000 tcp:7000</code> 叫電腦上的 adb server 在 17000 等；有人連進來，它就把資料包成 adb 訊息經 USB 交給 adbd，由 adbd 在板子上連 7000 ${tg("code", "", "App Lab 附的 adb：adb --help")}。` },
+  { q: "板子的 uname -r 是 7.0.0-g122c2c22d838。你拿到一顆給別的 kernel 版本編的 usb_f_ncm.ko，insmod 會怎樣？", o: ["可以載，模組都通用", "被拒絕：vermagic 對不上", "會自動重新編譯", "要先重開機才能載"], a: 1,
+    e: `模組裡記著它是給哪個 kernel 編的（vermagic），對不上就拒載。這塊板沒開模組簽章與 MODVERSIONS，所以「只要 vermagic 對上」就能載 ${tg("meas", "2026-07-24", "報告-全板能力盤點 第五節")}——反過來說，對不上就不行。板子自己 <code>/lib/modules</code> 裡那顆是同一次編的，直接用它。` },
+  { q: "裝好 hook 之後想把網卡拿掉：刪 drop-in、停掉並刪掉 usbnet-dhcp、daemon-reload，最後一步為什麼要 sudo reboot，而不是 restart adbd？", o: ["reboot 比較快，restart 要等很久", "拿掉 drop-in 之後，原廠 reset 不認得 ncm.usb0，restart 會卡住；重開機時 g1 從零建才乾淨", "restart adbd 會把板子上的檔案清掉", "其實兩個都可以，只是習慣"], a: 1,
+    e: `原廠的 reset 只認得它自己建的東西；hook 拿掉之後沒有人幫它清 <code>ncm.usb0</code>，restart 就會卡住。重開機時 g1 從零建：<code>c.1/</code> 只剩 <code>acm.GS0 ffs.adb</code>、usb0 消失 ${tg("board", "", SPEC_D)}。` },
+  { q: "板子加上 ncm.usb0、rebind 之後，電腦的 lsusb 會列出幾個 UNO Q？", o: ["1 個，還是 2341:0078", "2 個：一個 adb、一個網卡", "4 個，每個功能一個"], a: 0,
+    e: `複合裝置＝一個裝置、好幾個介面。lsusb 列的是裝置，所以還是一行 <code>2341:0078</code>；多出來的網卡，是同一個裝置裡的新介面 ${tg("meas", "2026-07-27", "usb-tunnel.mdx 第二幕（composite gadget）")}。` },
+  { q: "為什麼本週不在執行中把 UDC 寫空、加網卡、再寫回？", o: ["UDC 是唯讀檔，寫不進去", "寫空 UDC 的瞬間 adbd 會死；systemd 重啟它時，原廠 reset 看到不認識的 ncm.usb0 連結會卡住，出廠板 adb 起不來", "要先重新編譯 kernel 才能寫 UDC", "寫一次 UDC 要好幾分鐘，上課來不及"], a: 1,
+    e: `10/14 的 journal：<code>UsbFfs: connection terminated: read failed</code> → <code>Main process exited, status=1</code> → 1 秒後重啟 → reset 卡在 <code>rmdir c.1</code> ${tg("board", "", "本週內容規格 §〇 A")}。這就是 7/28 事故的機制；所以改成把身分掛進 adbd 的生命週期（hook）。第 2 節的互動選「執行中硬改」可以看到卡住的樣子。` },
+  { q: "adb forward tcp:17000 tcp:7000 跟 adb reverse tcp:17000 tcp:7000，差在哪？", o: ["沒差：reverse 是 forward 的舊寫法，新版 adb 兩個效果一樣", "forward：電腦的埠 → 板子的埠；reverse：板子的埠 → 電腦的埠", "forward 走 USB，reverse 改走 Wi-Fi，所以 reverse 要先連網路", "reverse 會跳過 adb server、直接連板子，所以比較快"], a: 1,
+    e: `看誰在等連線：forward 是電腦這頭在等、資料送去板子；reverse 是板子這頭在等、資料送回電腦 ${tg("code", "", "adb --help：forward LOCAL REMOTE；reverse REMOTE LOCAL")}。今天只用 forward。` },
+  { q: "板子的 dnsmasq 刻意不發 router 與 DNS（--dhcp-option=3、6 不給值）。是在防什麼？", o: ["省流量：DHCP 封包越少，USB 線越不擠", "不讓學生透過板子上網，避免繞過學校的網路管理", "防止電腦把預設路由指進 USB 線，整台電腦看起來斷網", "dnsmasq 本來就不支援 router 與 DNS 選項"], a: 2,
+    e: `如果發了 router，電腦可能把板子當預設閘道，所有上網的封包都被導進一條不通外網的線。只發 IP 和遮罩，電腦就只把 192.168.7.x 送進來：10/14 Windows 11 拿到 <code>192.168.7.16/24</code>、沒有預設閘道、沒有 DNS ${tg("board", "", "本週內容規格 §〇 A")}。` },
+  { q: "下半節要把板子變成 USB 網卡，需要重新編譯 kernel 嗎？", o: ["需要：NCM 預設沒編進 kernel，要打開選項重編", "不用：usb_f_ncm.ko 本來就編好了，載入再加進 gadget 就好", "需要：要換成 Arduino 另外提供的網路版 kernel", "不用改 kernel，但要先從網路下載 NCM 驅動裝到板子上"], a: 1,
+    e: `<code>CONFIG_USB_F_NCM=m</code> ${tg("meas", "2026-07-27", "usb-tunnel.mdx：/boot/config-*")}：模組已經編好，就在 <code>/lib/modules/$(uname -r)/…/function/</code> ${tg("board", "", B1014)}。真的要動 kernel，是像 UAC2 那樣「根本沒編進去」的功能。` },
+  { q: "直接開 http://192.168.7.2:7000，頁面出來了，一按「開始辨識」卻說不支援攝影機。為什麼？", o: ["Chrome 版本太舊，要更新才有 getUserMedia", "USB 網卡頻寬不夠，瀏覽器自動關掉攝影機", "不是 HTTPS 也不是 localhost，瀏覽器把攝影機 API 藏起來了", "板子的 AI 容器沒開，網頁拿不到攝影機"], a: 2,
+    e: `<code>getUserMedia</code> 只在安全內容（HTTPS 或 localhost）存在，換瀏覽器也沒用；改開 <code>http://127.0.0.1:17000</code>，讓轉接程式把流量送進 USB 網卡 ${tg("meas", "2026-07-28", "usb-tunnel.mdx 第四幕")}。` },
+  { q: "左邊看得到自己，右邊 AI 框選永遠空白，板子 log 一直印 Message outside validity window。最可能是？", o: ["攝影機壞了，送出去的都是黑畫面", "模型沒載入，runner 容器一直起不來", "板子時鐘跟電腦差太多（板子沒有電池供電的硬體時鐘），畫面被當成過期丟掉", "USB 頻寬不夠，畫面在半路被擠掉"], a: 2,
+    e: `板子只收 ±10 秒內的時間戳 ${tg("code", "", "face-usb-classroom/README.md")}。教室版網頁按「開始辨識」時會先用 HTTP <code>Date</code> 對時；第 7 節的時鐘模擬可以試試關掉對時會怎樣。` },
+  { q: "教室版把傳輸從 adb forward 換成 USB 網卡＋轉接程式，AI 每秒回的結果數會怎樣？", o: ["差不多：瓶頸在板子上的官方管線，不在線上", "快 10 倍：USB 網卡頻寬大很多", "變成 0：USB 網卡不能傳影像", "快一倍：少了 adb 那一層轉換"], a: 0,
+    e: `10/14 實測：走 adb 時 AI 5.5 次/秒；走 USB 網卡＋轉接程式時，送 8.0、收 8.0、AI 4.8 次/秒 ${tg("board", "", "本週內容規格 §〇 B、§〇 E")}——同一個量級（${WN} 兩次差一點，來源沒有拆開說明）。影像只用 35–52 KB/s，線的能力大好幾個數量級；換通道換到的是穩定、不靠 adb。` },
+  { q: "有人建議「把 CPU 調速器改成全速」，讓官方管線的 3.8 FPS 變快。你怎麼看？", o: ["好主意：預設調速器很保守，CPU 一定沒跑全速", "幾乎沒用：實測 CPU 已在 2.016 GHz、沒有熱節流，瓶頸是循序迴圈和單核推論", "要先換一個支援調速的 kernel 才能改", "會讓板子過熱降頻，反而更慢"], a: 1,
+    e: `速度調查把熱節流列在「實測無影響」：SoC 50–57°C、CPU 滿速 2.016 GHz ${tg("meas", "2026-07-20", FAB)}。老師板的調速器是 <code>schedutil</code>，會看負載自己調頻率 ${tg("board", "", "本週內容規格 §〇 A")}。真正有效的是改架構：直連 .eim、多 worker、開燈。` },
+];
+function initQs() {
+  const box = $("#qs");
+  const shuffled = n => { const a = Array.from({ length: n }, (_, i) => i); for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  box.innerHTML = QS.map((q, i) => `<div class="qq" data-q="${i}"><h3>${esc(q.q)}</h3><div class="opts">${shuffled(q.o.length).map(k => `<button type="button" class="opt" data-k="${k}" aria-pressed="false">${esc(q.o[k])}</button>`).join("")}</div><div class="qbar"><button type="button" class="btn primary rv">揭曉</button><span class="yours"></span></div><div class="ans" hidden></div></div>`).join("");
+}
+$("#qs").addEventListener("click", e => {
+  const qd = e.target.closest(".qq"); if (!qd) return;
+  const q = QS[+qd.dataset.q], o = e.target.closest(".opt");
+  if (o && !qd.classList.contains("done")) {
+    $$(".opt", qd).forEach(x => x.setAttribute("aria-pressed", x === o ? "true" : "false"));
+    $(".yours", qd).textContent = "你選了：" + q.o[+o.dataset.k];
+    return;
+  }
+  if (e.target.closest(".rv")) {
+    qd.classList.add("done");
+    const pick = $(".opt[aria-pressed=true]", qd);
+    $$(".opt", qd).forEach(x => { const k = +x.dataset.k; if (k === q.a) x.classList.add("right"); else if (x === pick) x.classList.add("wrong"); });
+    const a = $(".ans", qd); a.hidden = false;
+    a.innerHTML = `<b>${pick && +pick.dataset.k === q.a ? "猜對了。" : "答案是「" + esc(q.o[q.a]) + "」。"}</b> ${q.e}`;
+    e.target.closest(".rv").disabled = true;
+  }
+});
+$("#qsReset").addEventListener("click", initQs);
+initQs();
+
+/* ================= §10 名詞小抄 ================= */
+const GL = [
+  ["核心", "kernel", "作業系統最底層、唯一能直接碰硬體的程式"],
+  ["使用者空間", "user space", "一般程式住的地方；要用硬體得請 kernel 幫忙"],
+  ["系統呼叫", "system call", "程式請 kernel 辦事的那張單子（open、read、write…）"],
+  ["驅動程式", "driver", "kernel 裡專門管某一種硬體的程式碼"],
+  ["核心模組", "kernel module（.ko）", "開機後才插進 kernel 的驅動或功能"],
+  ["vermagic", "vermagic", "模組裡記著「我是給哪個 kernel 編的」；對不上就載不進去"],
+  ["sysfs", "sysfs（/sys）", "kernel 把裝置狀態做成檔案；W3、W4 點燈用它"],
+  ["configfs", "configfs", "用 mkdir、ln、echo「建立」kernel 物件的地方；USB gadget 在這裡"],
+  ["USB 主機", "USB host", "發問、供電、排班的那一方（今天是電腦）"],
+  ["USB 裝置", "USB device", "回答的那一方（今天是板子）"],
+  ["gadget", "USB gadget", "Linux 扮演 USB device 的機制"],
+  ["列舉", "enumeration", "插上時 host 問「你是誰、有哪些功能」的那段問答"],
+  ["描述元", "descriptor", "device 的自我介紹（VID:PID、介面、類別）"],
+  ["VID:PID", "Vendor ID : Product ID", "廠商編號:產品編號；UNO Q 是 2341:0078"],
+  ["USB 類別", "USB class", "介面屬於哪一種標準（UVC、CDC ACM、NCM、UAC2…）"],
+  ["複合裝置", "composite device", "一個裝置、好幾個介面"],
+  ["UDC", "USB Device Controller", "板子上的 USB 控制器；寫進 UDC＝接上"],
+  ["rebind", "unbind／bind", "把 gadget 從 UDC 拿下再接回，讓電腦重新列舉"],
+  ["FunctionFS", "FunctionFS（ffs）", "讓 user space 程式自己實作一個 USB 功能；adbd 用它"],
+  ["adb", "Android Debug Bridge", "經 USB 對板子下指令、傳檔、轉送埠的工具"],
+  ["adbd", "adb daemon", "板子上那頭的 adb 常駐程式"],
+  ["連接埠轉送", "port forwarding", "把一個埠收到的連線，轉到另一台的某個埠"],
+  ["UVC", "USB Video Class", "標準 USB 攝影機"],
+  ["NCM", "Network Control Model", "標準的 USB 網路卡協定"],
+  ["MAC 位址", "MAC address", "網路卡的硬體編號"],
+  ["IP 位址", "IP address", "網路上的門牌"],
+  ["子網路", "subnet（/24）", "前三段相同的一群位址，可以直接送到"],
+  ["DHCP", "Dynamic Host Configuration Protocol", "自動發 IP 的服務"],
+  ["預設路由", "default route", "不知道往哪送的封包走的那條路"],
+  ["安全內容", "secure context", "HTTPS 或 localhost；攝影機 API 只在這裡存在"],
+  ["getUserMedia", "getUserMedia()", "網頁向瀏覽器要攝影機或麥克風的函式"],
+  ["本機", "localhost／127.0.0.1", "這台電腦自己"],
+  ["容器", "container", "隔離的執行環境，共用板子的 kernel"],
+  ["映像", "image", "容器的模板：檔案系統＋程式＋函式庫"],
+  ["積木", "App Brick", "Arduino 官方做好的功能積木，背後是容器"],
+  [".eim", "Edge Impulse model", "Edge Impulse 打包的可執行模型檔"],
+  ["推論", "inference", "模型對一筆輸入算出答案"],
+  ["信心值", "confidence", "模型對這個框有多確定（0～1）"],
+  ["邊界框", "bounding box", "標出臉的位置的矩形"],
+  ["時間戳", "timestamp", "每張畫面蓋的時間；板子只收 ±10 秒內"],
+  ["硬體時鐘", "RTC（Real-Time Clock）", "這塊板沒有電池，斷電時間就不準"],
+  ["每秒張數", "FPS", "每秒幾張；先說清楚是哪一層的"],
+  ["吞吐量", "throughput", "每秒總共完成多少"],
+  ["延遲", "latency", "一張從頭到尾等多久"],
+  ["背壓", "backpressure", "下游太慢時，讓上游減速或丟資料"],
+  ["worker", "worker", "能獨立做事的執行單元（這裡是一個 eim 行程）"],
+  ["共享記憶體", "shared memory（shm）", "多個程式共用同一塊記憶體，少複製"],
+  ["瓶頸", "bottleneck", "整條路上最慢、決定總速度的那一段"],
+  ["調速器", "cpufreq governor", "kernel 決定 CPU 跑多快的策略"],
+  ["熱節流", "thermal throttling", "太熱時自動降頻"],
+  ["恢復模式", "EDL（Emergency Download）", "晶片層的恢復模式，系統壞了也能重刷"],
+  ["systemd 服務", "systemd service", "開機時由 systemd 管的常駐程式，例如 adbd、usbnet-dhcp"],
+  ["附加設定檔", "drop-in", "放在「服務名.service.d/」的小設定檔，不改原廠檔就能多加幾行"],
+  ["掛鉤", "hook", "把自己的動作掛在別人流程的固定位置（setup 之後、reset 之後）"],
+  ["dnsmasq", "dnsmasq", "板子作業系統裡現成的小型 DHCP／DNS 伺服器；這裡只用它發 IP"]
+];
+function glossRender() {
+  const q = $("#glossQ").value.trim().toLowerCase();
+  const rows = GL.filter(r => !q || r.some(c => c.toLowerCase().includes(q)));
+  $("#gloss").innerHTML = `<tr><th>名詞</th><th>英文原文</th><th>一句白話</th></tr>` + rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("");
+  $("#glossCnt").textContent = q ? `找到 ${rows.length} 個（共 ${GL.length} 個）` : `共 ${GL.length} 個名詞`;
+}
+$("#glossQ").addEventListener("input", glossRender);
+glossRender();
+
+/* ================= 手機上疊成卡片的表格：每一格記下自己的欄名 ================= */
+$$("table.stack").forEach(t => {
+  const rows = $$("tr", t), hs = rows.length ? $$("th", rows[0]).map(th => th.textContent.trim()) : [];
+  rows.slice(1).forEach(tr => $$("td", tr).forEach((td, i) => { if (hs[i]) td.dataset.l = hs[i]; }));
+});
+
+/* ================= 目錄工具 ================= */
+$("#openAll").addEventListener("click", () => $$("details.deep, details.kq").forEach(d => { d.open = true; }));
+$("#closeAll").addEventListener("click", () => $$("details.deep, details.kq").forEach(d => { d.open = false; }));
+$("#themeBtn").addEventListener("click", () => {
+  const r = document.documentElement;
+  const cur = r.dataset.theme || (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  r.dataset.theme = cur === "dark" ? "light" : "dark";
+});
+</script>
+</body>
+</html>

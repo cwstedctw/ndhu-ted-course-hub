@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W5 設計文件｜花蓮 AQI 跑馬燈的架構與程式</title>
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --surface-2:#F1F5F4; --ink:#132525; --ink-soft:#3E5656; --mist:#5E7676;
+  --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF; --gold:#D9A441; --gold-deep:#7A5510; --gold-tint:#FBF0D9;
+  --dark:#062524; --red:#B4553F; --red-tint:#F7E4DE; --violet:#5B4B9A; --violet-tint:#ECE8F7;
+  --code-bg:#F3F6F5; --code-ink:#1B3433;
+  --linux:#0E7C7B; --linux-tint:#E2F0EF; --mcu:#9A5B12; --mcu-tint:#FBF0D9; --cloud:#5B4B9A; --cloud-tint:#ECE8F7;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC","Heiti TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono","Liberation Mono","Noto Sans Mono CJK TC",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#8FA9A8;
+    --line:#26403F; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+    --dark:#041716; --red:#E58B74; --red-tint:#3A2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+    --code-bg:#0D1F1F; --code-ink:#D5E6E5;
+    --linux:#5CC8C6; --linux-tint:#123A39; --mcu:#F0B870; --mcu-tint:#3A2F18; --cloud:#B7A8EE; --cloud-tint:#2A2445;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#8FA9A8;
+  --line:#26403F; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+  --dark:#041716; --red:#E58B74; --red-tint:#3A2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+  --code-bg:#0D1F1F; --code-ink:#D5E6E5;
+  --linux:#5CC8C6; --linux-tint:#123A39; --mcu:#F0B870; --mcu-tint:#3A2F18; --cloud:#B7A8EE; --cloud-tint:#2A2445;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:16px;line-height:1.75}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+a{color:var(--teal);text-underline-offset:3px}
+code,.mono,pre{font-family:var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+code{font-size:.9em;background:var(--code-bg);color:var(--code-ink);border-radius:5px;padding:0 4px;overflow-wrap:anywhere}
+pre{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;font-size:14.5px;line-height:1.6;margin:10px 0}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px 48px}
+header.hero{background:var(--dark);color:#E6F2F2;padding:28px 0 22px}
+header.hero .wrap{padding-bottom:0}
+.kicker{font-weight:800;font-size:13px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+h1{font-size:clamp(25px,4.2vw,38px);line-height:1.25;margin:6px 0 10px;font-weight:900}
+.hero p{margin:6px 0;color:#BFD6D5;max-width:840px}
+.hero a{color:#F3D08A}
+.hero-links{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:14px;color:#D4E5E4}
+nav.toc{margin:18px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+nav.toc h2{font-size:15px;margin:0 0 8px;color:var(--mist);letter-spacing:.06em}
+nav.toc ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px 14px}
+nav.toc a{display:block;text-decoration:none;color:var(--ink);padding:3px 8px;border-radius:8px}
+nav.toc a:hover{background:var(--teal-tint)}
+nav.toc .cls{display:inline-block;font-size:11.5px;font-weight:800;color:var(--gold-deep);background:var(--gold-tint);border-radius:6px;padding:0 5px;margin-right:6px;vertical-align:1px}
+nav.toc .n{display:inline-block;min-width:1.8em;font-weight:800;color:var(--teal)}
+.howto{margin:16px 0 0;padding:14px 18px;border:1px solid var(--gold);background:var(--gold-tint);border-radius:14px}
+.howto h2{font-size:17px;margin:0 0 4px}
+.howto ul{margin:4px 0;padding-left:1.3em}
+section.sec{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:22px 0;scroll-margin-top:12px}
+.sec-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sec-h .num{flex:0 0 auto;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--teal);color:#fff;font-weight:900;font-size:17px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sec-h .num{color:#062524}}
+:root[data-theme="dark"] .sec-h .num{color:#062524}
+.sec-h h2{margin:0;font-size:clamp(20px,3vw,26px);line-height:1.35}
+.sec-h .en{color:var(--mist);font-size:13px;font-weight:700;letter-spacing:.06em}
+.back{font-size:13px;margin-left:auto;color:var(--mist)}
+.lead{margin:8px 0 14px;color:var(--ink-soft);font-size:16.5px}
+.oneline{margin:6px 0 14px;padding:8px 12px;border-left:4px solid var(--teal);background:var(--teal-tint);border-radius:0 10px 10px 0;font-weight:700}
+h3{font-size:18px;margin:20px 0 6px}
+.tag{display:inline-block;white-space:nowrap;font-size:.74em;font-weight:700;line-height:1.5;padding:0 5px;border-radius:6px;vertical-align:1px;margin:0 2px}
+.t-board{background:var(--teal-tint);color:var(--teal)}
+.t-code{background:var(--violet-tint);color:var(--violet)}
+.t-est{background:var(--gold-tint);color:var(--gold-deep)}
+.t-warn{background:var(--red-tint);color:var(--red)}
+.brain{display:inline-block;white-space:nowrap;font-size:.8em;font-weight:800;padding:1px 8px;border-radius:999px}
+.brain.linux{background:var(--linux-tint);color:var(--linux)}
+.brain.mcu{background:var(--mcu-tint);color:var(--mcu)}
+.brain.cloud{background:var(--cloud-tint);color:var(--cloud)}
+.brain.router{background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--line)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--surface-2);font-weight:800;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td code{white-space:nowrap}
+td.wrapcode code{white-space:normal}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:6px 12px;font-size:15px;line-height:1.4}
+.btn:hover{border-color:var(--teal)}
+.btn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn[aria-pressed="true"]{color:#062524}}
+:root[data-theme="dark"] .btn[aria-pressed="true"]{color:#062524}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+/* 架構圖 */
+.arch{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:16px;align-items:start}
+.stack{display:flex;flex-direction:column;gap:0}
+.layer{width:100%;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center}
+.layer:hover{border-color:var(--teal)}
+.layer[aria-pressed="true"]{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-tint)}
+.layer .lt{font-weight:800;line-height:1.35}
+.layer .ls{display:block;font-size:13.5px;color:var(--mist);font-weight:400}
+.layer.cloud{border-left:8px solid var(--cloud)}
+.layer.linux{border-left:8px solid var(--linux)}
+.layer.router{border-left:8px solid var(--mist)}
+.layer.mcu{border-left:8px solid var(--mcu)}
+.layer.mx{border-left:8px solid var(--gold)}
+.link{display:flex;align-items:center;gap:8px;padding:4px 0 4px 22px;font-size:13.5px;color:var(--ink-soft)}
+.link::before{content:"⇅";font-size:18px;color:var(--teal);font-weight:900}
+.chipzone{font-size:12.5px;font-weight:800;letter-spacing:.06em;color:var(--mist);margin:8px 0 4px}
+.panel{position:sticky;top:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-height:220px}
+.panel h3{margin:0 0 6px;font-size:18px}
+.panel dl{margin:0}
+.panel dt{font-weight:800;font-size:14px;color:var(--mist);margin-top:8px}
+.panel dd{margin:2px 0 0}
+/* 時序 */
+.lanes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:10px 0}
+.lane{border:2px solid var(--line);border-radius:10px;padding:6px 8px;text-align:center;font-weight:800;font-size:14px;line-height:1.3;background:var(--surface)}
+.lane small{display:block;font-weight:400;color:var(--mist);font-size:12px}
+.lane.on{border-color:var(--teal);background:var(--teal-tint)}
+ol.seq{list-style:none;margin:8px 0;padding:0;counter-reset:s}
+ol.seq li{counter-increment:s;display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:8px;padding:8px 0;border-bottom:1px dashed var(--line)}
+ol.seq li:last-child{border-bottom:0}
+ol.seq li::before{content:counter(s);display:inline-grid;place-items:center;width:1.9em;height:1.9em;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);font-weight:800;font-size:14px}
+ol.seq .who{margin-right:6px}
+/* 卡片 */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:10px 0}
+.card{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface)}
+.card h4{margin:0 0 4px;font-size:16.5px}
+.card p{margin:4px 0}
+.card ul{margin:4px 0;padding-left:1.2em}
+.card .meta{font-size:13.5px;color:var(--mist)}
+.nw{white-space:nowrap}
+.state{border-top:6px solid var(--teal)}
+.state.fail{border-top-color:var(--red)}
+.state.boot{border-top-color:var(--mist)}
+.state.net{border-top-color:var(--cloud)}
+.flow{list-style:none;padding:0;margin:10px 0;counter-reset:f}
+.flow li{counter-increment:f;position:relative;margin:0 0 8px;padding:8px 12px 8px 46px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.flow li::before{content:counter(f);position:absolute;left:10px;top:9px;width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:var(--mcu-tint);color:var(--mcu);font-weight:900;font-size:14px}
+.flow li.py::before{background:var(--linux-tint);color:var(--linux)}
+.map{display:grid;grid-template-columns:7.2em minmax(0,1fr);gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:10px 0}
+.map > div{padding:8px 10px;border-bottom:1px solid var(--line)}
+.map > div:nth-last-child(-n+2){border-bottom:0}
+.map .ln{background:var(--surface-2);font-family:var(--mono);font-weight:700;font-size:14px}
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start;margin:10px 0;padding:12px 14px;border:1px dashed var(--teal);border-radius:14px}
+.calc label{display:block;font-weight:700;font-size:14px;margin:6px 0 2px}
+.calc input[type=text]{width:100%;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font-family:var(--mono)}
+.calc input[type=range]{width:100%}
+.big{font-size:28px;font-weight:900;color:var(--teal);line-height:1.2}
+.note{padding:10px 14px;border-left:4px solid var(--gold);background:var(--gold-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.warn{padding:10px 14px;border-left:4px solid var(--red);background:var(--red-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.stars{color:var(--gold-deep);font-weight:900;letter-spacing:.05em}
+.meta{font-size:13.5px;color:var(--mist)}
+.repo-group{margin:14px 0 4px;font-size:16px;font-weight:800;color:var(--ink-soft)}
+footer{margin-top:28px;color:var(--mist);font-size:14px}
+@media (max-width:820px){
+  .arch{grid-template-columns:1fr}
+  .panel{position:static;min-height:0}
+  .calc{grid-template-columns:1fr}
+  .lanes{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:520px){
+  section.sec{padding:16px 14px}
+  .map{grid-template-columns:5.6em minmax(0,1fr)}
+  pre{font-size:13px}
+}
+@media print{
+  header.hero{background:none;color:#000}
+  .hero p,.legend{color:#333}
+  nav.toc,.seg,.back{display:none}
+  section.sec{break-inside:auto;border:0;padding:0}
+  .panel{position:static}
+}
+</style>
+</head>
+<body>
+<header class="hero" id="top"><div class="wrap">
+  <div class="kicker">AIoT 智慧裝置實作 · W5 · 設計文件</div>
+  <h1>花蓮 AQI 跑馬燈：系統架構與程式設計</h1>
+  <p>這是「工程師版」的說明書：系統分幾層、每一層誰負責、兩支程式怎麼組成、兩顆腦之間約定了什麼、壞掉時長什麼樣、為什麼要這樣設計，以及去哪裡看官方原始碼。</p>
+  <p>操作步驟看<a href="student.html">學生頁</a>；想動手玩模擬（Bridge 一步一步、位元組計算、點陣捲字）看<a href="concept.html">互動概念頁</a>。</p>
+  <div class="legend">每個數字旁的標籤：
+    <span class="tag t-board">〔實板〕</span>老師的板子上實跑、量過
+    <span class="tag t-code">〔原始碼〕</span>讀官方原始碼或規格
+    <span class="tag t-est">〔估算〕</span>依規格推算，沒量過
+  </div>
+  <div class="hero-links"><a href="student.html">學生頁</a><a href="concept.html">互動概念頁</a><a href="deck.html">投影片</a><a href="cheatsheet.html">一頁指令小抄</a></div>
+</div></header>
+
+<div class="wrap">
+<div class="howto">
+  <h2>怎麼用這份文件</h2>
+  <ul>
+    <li><b>上課時</b>：<code>app start</code> 每次要等約 100 秒。跑天氣範例時讀 §1、§2；跑 AQI 版時讀 §5、§6、§7。</li>
+    <li><b>課後</b>：期末設計文件 v1 要寫雙腦分工、延遲預算、驗收方法、風險。這份文件每一項都有示範（§3、§10、§11、§12），可以照這個格式寫你們組自己的。</li>
+    <li>先看每一節開頭那一行粗體的「一句話」，懂了再往下讀細節。</li>
+    <li>目錄裡標 <b>課堂</b> 的是上課時會帶到的（§1、§2、§5、§6、§7）；其他是課後參考、寫期末設計文件時的範例，<b>不用在課堂上讀完</b>。</li>
+  </ul>
+</div>
+
+<nav class="toc" aria-label="目錄"><h2>目錄</h2><ol>
+  <li><a href="#d1"><span class="n">1</span><span class="cls">課堂</span>一張圖看懂：五層架構</a></li>
+  <li><a href="#d2"><span class="n">2</span><span class="cls">課堂</span>一次呼叫走過哪些地方</a></li>
+  <li><a href="#d3"><span class="n">3</span>元件與責任</a></li>
+  <li><a href="#d4"><span class="n">4</span>App 的檔案與生命週期</a></li>
+  <li><a href="#d5"><span class="n">5</span><span class="cls">課堂</span>兩顆腦的約定（介面）</a></li>
+  <li><a href="#d6"><span class="n">6</span><span class="cls">課堂</span>main.py 的結構</a></li>
+  <li><a href="#d7"><span class="n">7</span><span class="cls">課堂</span>sketch.ino 的結構</a></li>
+  <li><a href="#d8"><span class="n">8</span>出錯時會怎樣</a></li>
+  <li><a href="#d9"><span class="n">9</span>可以調的地方</a></li>
+  <li><a href="#d10"><span class="n">10</span>為什麼這樣設計</a></li>
+  <li><a href="#d11"><span class="n">11</span>時間與次數的預算</a></li>
+  <li><a href="#d12"><span class="n">12</span>怎麼驗證每一層</a></li>
+  <li><a href="#d13"><span class="n">13</span>往下做：擴充題</a></li>
+  <li><a href="#d14"><span class="n">14</span>參考 repo 與文件</a></li>
+  <li><a href="#d15"><span class="n">15</span>出處與限制</a></li>
+</ol></nav>
+
+<!-- 1 -->
+<section class="sec" id="d1">
+  <div class="sec-h"><span class="num">1</span><h2>一張圖看懂：五層架構</h2><span class="en">ARCHITECTURE</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：Linux 那顆腦負責「上網、解析、記住」，MCU 那顆腦負責「定時發問、畫字」，兩顆腦不直接講話，都透過 Linux 上的總機 arduino-router 轉接。</p>
+  <p class="lead">點任何一層，右邊（手機在下面）會說明：它是什麼、跑在哪、本週哪幾行程式碰到它、壞掉時你會看到什麼。</p>
+  <div class="arch">
+    <div class="stack" id="stack">
+      <div class="chipzone">網路上</div>
+      <button type="button" class="layer cloud" data-k="cloud" aria-pressed="false"><span class="lt">環境部開放資料 API <code>aqx_p_432</code><span class="ls">回 JSON；全台 84 個測站、每小時更新</span></span></button>
+      <div class="link">HTTPS（TLS 加密）· 板子的 Wi-Fi <code>wlan0</code></div>
+      <div class="chipzone">MPU：Qualcomm QRB2210（Linux）</div>
+      <button type="button" class="layer linux" data-k="py" aria-pressed="false"><span class="lt">Docker 容器：<code>python/main.py</code><span class="ls">上網、解析 JSON、快取、組一行英文字</span></span></button>
+      <div class="link">unix socket <code>/var/run/arduino-router.sock</code> · MessagePack-RPC</div>
+      <button type="button" class="layer router" data-k="router" aria-pressed="false"><span class="lt">系統服務：<code>arduino-router</code>（總機）<span class="ls">記住誰登記了哪個名字、轉送請求與回覆</span></span></button>
+      <div class="link">UART <code>/dev/ttyHS1</code> · 115200 baud · MessagePack-RPC</div>
+      <div class="chipzone">MCU：STMicroelectronics STM32U585（Zephyr RTOS）</div>
+      <button type="button" class="layer mcu" data-k="mcu" aria-pressed="false"><span class="lt"><code>sketch.ino</code>（編成 llext）<span class="ls">定時發問、等回覆、畫字、捲動</span></span></button>
+      <div class="link">函式庫直接驅動（ArduinoGraphics＋Arduino_LED_Matrix）</div>
+      <button type="button" class="layer mx" data-k="matrix" aria-pressed="false"><span class="lt">點陣 8×13＝104 顆 LED<span class="ls">一次顯示 13 欄，字由右往左移</span></span></button>
+    </div>
+    <div class="panel" id="panel" aria-live="polite">
+      <h3>點左邊任何一層</h3>
+      <p>從上往下讀，就是資料流動的方向：雲端的數字 → Linux 拿到並整理 → 總機轉交 → MCU 收到 → 點陣顯示。</p>
+      <p>注意<b>發問的是 MCU</b>：資料往下流，但「請求」是從下往上送的（§2）。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="sec" id="d2">
+  <div class="sec-h"><span class="num">2</span><h2>一次呼叫走過哪些地方</h2><span class="en">SEQUENCE</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：MCU 每捲完一輪就問一次「現在要顯示什麼」；Linux 大部分時間直接回記住的答案，每 10 分鐘才真的上網一次。</p>
+  <p class="lead">切換情境，看同一次呼叫在不同狀況下走過哪些步驟。想一步一步看封包內容，用<a href="concept.html#s3">概念頁 §3〈Bridge 一步一步〉</a>。</p>
+  <div class="seg" role="group" aria-label="情境">
+    <button type="button" class="btn" data-sc="hit" aria-pressed="true">快取命中（10 分鐘內）</button>
+    <button type="button" class="btn" data-sc="miss" aria-pressed="false">快取過期（真的上網）</button>
+    <button type="button" class="btn" data-sc="nokey" aria-pressed="false">金鑰檔不見了</button>
+    <button type="button" class="btn" data-sc="nopy" aria-pressed="false">Python 還沒起來</button>
+  </div>
+  <div class="lanes" id="lanes">
+    <div class="lane" data-l="mcu">MCU<small>sketch.ino</small></div>
+    <div class="lane" data-l="router">總機<small>arduino-router</small></div>
+    <div class="lane" data-l="py">Python<small>main.py</small></div>
+    <div class="lane" data-l="cloud">環境部<small>aqx_p_432</small></div>
+  </div>
+  <ol class="seq" id="seq"></ol>
+  <p class="note" id="seqNote"></p>
+</section>
+
+<!-- 3 -->
+<section class="sec" id="d3">
+  <div class="sec-h"><span class="num">3</span><h2>元件與責任</h2><span class="en">COMPONENTS</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：每個元件只做一件事；「不負責」那一欄跟「負責」一樣重要——它告訴你出問題時不用去哪裡找。</p>
+  <div class="tw"><table>
+    <thead><tr><th>元件</th><th>跑在哪</th><th>用什麼寫</th><th>負責</th><th>不負責</th></tr></thead>
+    <tbody>
+      <tr><td><code>python/main.py</code></td><td><span class="brain linux">Linux</span> Docker 容器</td><td>Python 3.13＋<code>arduino.app_utils</code></td><td>上網、解析 JSON、快取、組一行英文字、印 log</td><td>不碰燈、不碰點陣、不管 MCU 多久問一次</td></tr>
+      <tr><td><code>arduino-router</code></td><td><span class="brain linux">Linux</span> systemd 服務</td><td>Go</td><td>記住「誰登記了哪個名字」、轉送請求與回覆、把 msgid 重新編號</td><td>不看內容、不懂 AQI</td></tr>
+      <tr><td><code>sketch/sketch.ino</code></td><td><span class="brain mcu">MCU</span> Zephyr 上的 llext</td><td>C++（Arduino）</td><td>決定什麼時候發問、等回覆、畫字、捲動</td><td>不上網、不知道金鑰</td></tr>
+      <tr><td>Arduino_RouterBridge</td><td><span class="brain mcu">MCU</span></td><td>C++</td><td>MCU 這頭的 Bridge：打包、送出、等回覆</td><td>—</td></tr>
+      <tr><td>ArduinoGraphics＋Arduino_LED_Matrix</td><td><span class="brain mcu">MCU</span></td><td>C++</td><td>字型、畫布、捲動、把畫布送到 104 顆 LED</td><td>—</td></tr>
+      <tr><td><code>arduino-app-cli</code></td><td><span class="brain linux">Linux</span></td><td>Go</td><td><code>app new／start／stop／logs</code>：建資料夾、編譯、燒錄、起容器、看 log</td><td>App 跑起來之後不參與</td></tr>
+      <tr><td>環境部 API</td><td><span class="brain cloud">網路上</span></td><td>—</td><td>每小時更新的測站資料；檢查金鑰與每日次數</td><td>不管你的板子多久問一次</td></tr>
+    </tbody>
+  </table></div>
+  <p>對照雙腦分工的那句話：<b>複雜但不趕時間的放 Linux，簡單但要準時的放 MCU。</b>上網要處理 TLS、JSON、中文、例外，又不需要毫秒級準時——所以放 Linux；點陣每一格要準時換畫面——所以放 MCU。</p>
+</section>
+
+<!-- 4 -->
+<section class="sec" id="d4">
+  <div class="sec-h"><span class="num">4</span><h2>App 的檔案與生命週期</h2><span class="en">FILES &amp; LIFECYCLE</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：一支 App 就是一個資料夾；<code>app start</code> 會把 sketch 編好燒進 MCU、再把 Python 放進容器跑起來。</p>
+<pre><code>~/ArduinoApps/my-aqi/
+├── app.yaml            App 的名字、用了哪些積木（bricks）；空白 App 是 bricks: []
+├── .cache/             app start 自動產生：這支 App 的 venv（.venv）與套件安裝紀錄，不用動
+├── python/
+│   ├── main.py         Linux 這半（換成課程網的版本）
+│   ├── moenv_key.txt   金鑰（自己用 read -rsp 存；不截圖、不上傳）
+│   └── requirements.txt（選用）要額外的 Python 套件才放，一行一個；今天的 AQI 版不用
+└── sketch/
+    ├── sketch.ino      MCU 這半（換成課程網的版本）
+    └── sketch.yaml     平台＋函式庫清單（多了 ArduinoGraphics (1.1.4)）</code></pre>
+  <h3>從建立到停止</h3>
+  <ol class="flow">
+    <li class="py"><code>arduino-app-cli app new my-aqi</code>：建出上面的資料夾（空白內容）。</li>
+    <li class="py">換三個檔（<code>curl</code> 從課程網抓）＋存金鑰檔。到這裡都只是檔案，板子還沒有任何改變。</li>
+    <li><code>arduino-app-cli app start ~/ArduinoApps/my-aqi</code>：讀 <code>sketch.yaml</code>、第一次會下載函式庫 → 在板上編譯 sketch → 燒進 MCU → 起 Docker 容器跑 <code>main.py</code>。最後一行 <code>✓ App "my-aqi" started successfully</code>。第一次 96–108 秒、同一支第二次約 23 秒 <span class="tag t-board">〔實板 10-02〕</span></li>
+    <li class="py"><code>arduino-app-cli app logs ~/ArduinoApps/my-aqi --tail 60</code>：看 <code>main.py</code> 印出來的每一行（每行開頭 <code>[main]</code>）。</li>
+    <li><code>arduino-app-cli app stop ~/ArduinoApps/my-aqi</code>：停掉這支 App。一次只能跑一支，換下一支之前先停；不要用 <code>app restart</code>。</li>
+  </ol>
+  <p class="note"><b>改了檔案之後</b>：改 <code>main.py</code> → <code>app stop</code>、等 3 秒、<code>app start</code>（約 23 秒）；改 <code>sketch.ino</code>／<code>sketch.yaml</code> → 一樣停再起，但要重新編譯、比較久。只有金鑰檔例外：補好或換掉金鑰檔，<b>不必重開 App</b>，程式 1 分鐘內會自己再試 <span class="tag t-board">〔實板 10-02〕</span>。</p>
+  <h3>Python 在容器裡，套件裝在這支 App 自己的 venv</h3>
+  <ul>
+    <li><b>容器看得到什麼</b>：App 資料夾整個掛進容器，在容器裡叫 <code>/app</code>；所以 <code>main.py</code> 讀得到同一層的 <code>moenv_key.txt</code>，讀不到家目錄裡別的檔。</li>
+    <li><b>映像</b>：<code>python:3.13-slim</code> → <code>python-base</code> → <code>python-apps-base</code>（Arduino 官方，ghcr.io）。裡面已經有 <code>arduino.app_utils</code>、numpy 等積木要用的套件；pandas 沒有。</li>
+    <li><b>第一次 <code>app start</code></b>：容器的啟動腳本在 <code>/app/.cache/.venv</code> 建虛擬環境（帶 <code>--system-site-packages</code>，映像裡的套件照樣看得到）。</li>
+    <li><b>有 <code>python/requirements.txt</code></b>：內容跟 <code>.cache/installed_requirements.txt</code> 不一樣才用 uv 安裝，一樣就印 <code>Requirements already installed.</code> 跳過；裝失敗，準備階段印 <code>App preparation failed</code>，App 起不來。</li>
+    <li><b>每支 App 各一份 venv</b>；在 SSH 視窗 <code>pip install</code> 是裝到板子本身，容器看不到。學生步驟見學生頁「5＋」節。</li>
+  </ul>
+  <p class="meta">出處：Arduino 官方原始碼 <code>arduino/app-bricks-py</code>（<code>containers/bricks/python-apps-base/scripts/run.sh</code>、<code>Dockerfile</code>、<code>pyproject.toml</code>）、<code>arduino/arduino-app-cli</code>（<code>internal/orchestrator/provision.go</code>、<code>docs/app-specification.md</code>），2026-10-08 讀 main 分支。⚠️ 學生出廠板的映像版本可能較舊，還沒在板上逐條核對。</p>
+</section>
+
+<!-- 5 -->
+<section class="sec" id="d5">
+  <div class="sec-h"><span class="num">5</span><h2>兩顆腦的約定：<code>get_aqi_text</code> 介面</h2><span class="en">INTERFACE CONTRACT</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：兩邊只約定「一個名字＋一個字串」。約定寫清楚，兩邊就能各自改程式而不打架——這就是 W15 期末要寫的 contract。</p>
+  <div class="tw"><table>
+    <thead><tr><th>項目</th><th>約定內容</th></tr></thead>
+    <tbody>
+      <tr><td>方法名</td><td><code>get_aqi_text</code></td></tr>
+      <tr><td>誰登記（提供）</td><td><span class="brain linux">Linux</span> <code>main.py</code> 第 64 行 <code>Bridge.provide("get_aqi_text", get_aqi_text)</code>。底層是向總機送 <code>$/register</code> <span class="tag t-code">〔原始碼〕</span></td></tr>
+      <tr><td>誰呼叫</td><td><span class="brain mcu">MCU</span> <code>sketch.ino</code> 第 16 行 <code>Bridge.call("get_aqi_text").result(text)</code></td></tr>
+      <tr><td>參數</td><td>沒有（空陣列 <code>[]</code>）</td></tr>
+      <tr><td>回傳</td><td>一個字串，只用英文字母、數字、空白和少數符號（<code>.</code>、<code>?</code>、<code>-</code>）。點陣的字型只有這些字，中文會變亂碼（§10 D7）</td></tr>
+      <tr><td>正常值</td><td><code>HUALIEN AQI &lt;aqi&gt; PM2.5 &lt;pm2.5&gt;</code>；環境部沒給值時用 <code>--</code>。判斷規則：<b>以 <code>LABEL</code> 開頭＝真資料</b>（<code>main.py</code> 第 59 行就是這樣判斷）</td></tr>
+      <tr><td>狀態值（不是資料）</td><td><code>NO KEY</code>、<code>KEY?</code>、<code>NO SITE</code>、<code>NO DATA</code>（Python 回的）；<code>WAIT</code>（MCU 自己補的：沒拿到回覆時）</td></tr>
+      <tr><td>新鮮度</td><td>真資料最多舊 10 分鐘（快取）；狀態值最多 1 分鐘後會重試</td></tr>
+      <tr><td>呼叫頻率</td><td>MCU 捲完一輪就問一次，實板 log 約 12 秒一行 <span class="tag t-board">〔實板 10-02〕</span></td></tr>
+      <tr><td>等待</td><td>MCU 端（Arduino_RouterBridge）的 <code>result()</code> 在原始碼裡是迴圈等到收到回覆為止，沒有逾時參數 <span class="tag t-code">〔原始碼 10-08 main〕</span>；總機會不會替它逾時，原始碼沒讀到、也沒實測。<b>Python 端</b>的 <code>Bridge.call</code> 預設最多等 10 秒 <span class="tag t-code">〔原始碼 bridge.py〕</span>——以前 nightlight 實驗第一發冷啟動「逾時 10 秒」就是這一側 <span class="tag t-board">〔實板 07-27〕</span>。本週是 MCU 呼叫 Python；Python 上網那一次最多等 15 秒（<code>urlopen(timeout=15)</code>）</td></tr>
+      <tr><td>線上格式</td><td>MessagePack-RPC。請求 <code>[0, msgid, "get_aqi_text", []]</code>；回覆 <code>[1, msgid, nil, "&lt;字串&gt;"]</code>。大小約 17／27 位元組 <span class="tag t-est">〔估算〕</span>（自己算：<a href="concept.html#s4">概念頁 §4 位元組計算器</a>）</td></tr>
+    </tbody>
+  </table></div>
+  <p>同一座 Bridge，方向可以反過來：〈Color your LEDs〉是 <b>MCU 登記</b> <code>set_led3_color</code>、<b>Python 呼叫</b>；天氣範例和 AQI 版是 <b>Python 登記</b>、<b>MCU 呼叫</b>。總機只認名字，不管誰在哪一顆腦。</p>
+</section>
+
+<!-- 6 -->
+<section class="sec" id="d6">
+  <div class="sec-h"><span class="num">6</span><h2><code>main.py</code> 的結構</h2><span class="en">PYTHON SIDE</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：66 行分成七塊；真正的邏輯只有兩個函式——<code>fetch_aqi()</code> 負責「問一次」，<code>get_aqi_text()</code> 負責「要不要問」。</p>
+  <h3>結構地圖（照行號）</h3>
+  <div class="map">
+    <div class="ln">1–9</div><div>匯入：只用 Python 標準函式庫（<code>json</code>、<code>pathlib</code>、<code>ssl</code>、<code>time</code>、<code>urllib</code>）＋官方的 <code>arduino.app_utils</code>（提供 <code>Bridge</code>、<code>App</code>）</div>
+    <div class="ln">11–15</div><div>設定：<code>SITE</code>（查詢用的中文站名）、<code>LABEL</code>（顯示用的英文）、<code>CACHE_SECONDS</code>、<code>RETRY_SECONDS</code>、<code>KEY_FILE</code>（金鑰檔路徑，跟 <code>main.py</code> 同一層）</div>
+    <div class="ln">17–19</div><div>連線安全：建一個 TLS 設定 <code>SSL_CTX</code>，只放寬一項檢查（§10 D5）</div>
+    <div class="ln">21–22</div><div>狀態：<code>last_text</code>（要顯示的字，開機是 <code>WAIT</code>）、<code>last_fetch</code>（上次上網的時間，開機是 0）</div>
+    <div class="ln">25–41</div><div><code>fetch_aqi()</code>：讀金鑰 → 組網址 → HTTPS GET → 解 JSON → 組成一行字</div>
+    <div class="ln">44–61</div><div><code>get_aqi_text()</code>：快取判斷、呼叫 <code>fetch_aqi()</code>、接住所有例外、決定下次多久後再試</div>
+    <div class="ln">64–66</div><div>啟動：向總機登記 <code>get_aqi_text</code>，然後 <code>App.run()</code> 讓程式一直活著等人來問</div>
+  </div>
+  <h3>兩個函式的規格</h3>
+  <div class="cards">
+    <div class="card"><h4><code>fetch_aqi() -&gt; str</code></h4>
+      <p class="meta">被誰呼叫：只有 <code>get_aqi_text()</code></p>
+      <ul>
+        <li><b>讀</b>：<code>KEY_FILE</code>（金鑰）、<code>SITE</code></li>
+        <li><b>做</b>：<code>urlencode</code> 組查詢字串（中文站名會被正確編碼）→ <code>urlopen(..., timeout=15, context=SSL_CTX)</code> → <code>json.loads</code></li>
+        <li><b>回</b>：<code>HUALIEN AQI …</code>；回來的不是 JSON → <code>KEY?</code>；空陣列 → <code>NO SITE</code></li>
+        <li><b>往外丟</b>：<code>FileNotFoundError</code>（沒有金鑰檔）、連線錯誤、<code>KeyError</code>（欄位改名）——交給呼叫它的人處理</li>
+        <li><b>印</b>：<code>moenv:</code>／<code>moenv says:</code>／<code>no such site:</code> 其中一行；<b>絕不印金鑰或完整網址</b></li>
+      </ul></div>
+    <div class="card"><h4><code>get_aqi_text() -&gt; str</code></h4>
+      <p class="meta">被誰呼叫：總機（MCU 每問一次就呼叫一次）</p>
+      <ul>
+        <li><b>狀態</b>：<code>last_text</code>、<code>last_fetch</code>（全域變數，記在容器的記憶體裡；App 重開就歸零）</li>
+        <li><b>規則</b>：距上次上網不到 600 秒 → 印 <code>cache:</code>、回上次的字；否則上網</li>
+        <li><b>保證</b>：永遠回一個字串，<b>不會把例外丟回 Bridge</b>（第 56 行 <code>except Exception</code> 全部接住）</li>
+        <li><b>小技巧</b>（第 59–60 行）：沒拿到真資料時，把 <code>last_fetch</code> 往回撥成「現在 − 600 + 60」——效果是 60 秒後快取就「過期」，不用等滿 10 分鐘</li>
+      </ul></div>
+  </div>
+  <h3>快取的狀態機</h3>
+  <p>把 <code>get_aqi_text()</code> 畫成狀態圖，就是四個狀態。想按按鈕模擬，用<a href="concept.html#s5">概念頁 §5〈額度計算機與快取〉</a>。</p>
+  <div class="cards">
+    <div class="card state boot"><h4>A 開機</h4><p><code>last_text = "WAIT"</code>、<code>last_fetch = 0</code>。第一次被問時，距 0 一定超過 600 秒 → 去 B。</p></div>
+    <div class="card state net"><h4>B 上網</h4><p>呼叫 <code>fetch_aqi()</code>。拿到以 <code>LABEL</code> 開頭的字 → 去 C；拿到狀態值（<code>NO KEY</code> 等）→ 去 D。</p></div>
+    <div class="card state"><h4>C 快取有效（600 秒）</h4><p>這段時間每次被問都印 <code>cache:</code>、回同一行字。滿 600 秒後再被問 → 回 B。</p></div>
+    <div class="card state fail"><h4>D 失敗冷卻（60 秒）</h4><p>每次被問也印 <code>cache:</code>，回的是狀態值（例如 <code>cache: NO KEY</code>）。滿 60 秒後再被問 → 回 B。</p></div>
+  </div>
+  <p class="note">想一想：在 C 狀態時把金鑰檔刪掉，點陣會馬上變 <code>NO KEY</code> 嗎？（不會。要等快取過期、真的再上網時才發現——快取讓錯誤「晚一點才看得到」。§12 的故障演練就是利用這一點。）</p>
+</section>
+
+<!-- 7 -->
+<section class="sec" id="d7">
+  <div class="sec-h"><span class="num">7</span><h2><code>sketch.ino</code> 的結構</h2><span class="en">MCU SIDE</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：<code>setup()</code> 只做一次準備；<code>loop()</code> 每一輪做三件事——問、補、畫。畫字的那一行（捲動）會花掉一輪絕大部分的時間。</p>
+  <h3>setup()：開機做一次（第 8–12 行）</h3>
+  <ol class="flow">
+    <li><code>matrix.begin()</code>、<code>matrix.clear()</code>：啟動點陣、清空畫面。</li>
+    <li><code>Bridge.begin()</code>：接上總機。之後才能 <code>call</code>。</li>
+  </ol>
+  <h3>loop()：一直重複（第 14–28 行）</h3>
+  <ol class="flow">
+    <li><b>問</b>（第 16 行）：<code>Bridge.call("get_aqi_text").result(text)</code>。送出請求，<b>停在這裡等回覆</b>；回覆成功 → <code>ok</code> 是 true、<code>text</code> 拿到字串。</li>
+    <li><b>補</b>（第 17–19 行）：<code>ok</code> 是 false（例如 Python 還沒登記）→ 自己把 <code>text</code> 設成 <code>WAIT</code>。</li>
+    <li><b>畫</b>（第 20–27 行）：<code>beginDraw()</code> → <code>stroke(0xFFFFFFFF)</code> 筆畫顏色 → <code>textScrollSpeed(60)</code> 每移一格停 60 毫秒 → <code>textFont(Font_5x7)</code> 5×7 字型 → <code>beginText(0, 1, 0xFFFFFF)</code> 從第 0 欄、第 1 列開始 → <code>println("   " + text + "   ")</code> 把字放進緩衝區 → <code>endText(SCROLL_LEFT)</code> <b>一格一格往左捲到完</b> → <code>endDraw()</code>。</li>
+    <li>回到第 1 步，再問一次。</li>
+  </ol>
+  <p class="note"><b>兩個容易漏的細節</b>：① 第 2 行 <code>#include &lt;ArduinoGraphics.h&gt;</code> 要放在 <code>Arduino_LED_Matrix.h</code> <b>前面</b>，點陣函式庫才會接上畫字功能 <span class="tag t-code">〔原始碼〕</span>；② 前後各補三個空白，是讓字從右邊外面滑進來、再完整滑出去，不會一開始就擠在左邊 <span class="tag t-est">〔依原始碼推論〕</span>。</p>
+  <h3>捲一輪要多久？（自己算）</h3>
+  <p>ArduinoGraphics 的 <code>endText(SCROLL_LEFT)</code> 會走「緩衝區字數 × 字寬 5 ＋ 起點 0 ＋ 1」步，每步 <code>delay(textScrollSpeed)</code> <span class="tag t-code">〔原始碼 ArduinoGraphics.cpp〕</span>。緩衝區＝前後三個空白＋你的字＋<code>println</code> 加上的換行兩個字元。</p>
+  <div class="calc">
+    <div>
+      <label for="scText">要捲的字（英文、數字）</label>
+      <input type="text" id="scText" value="HUALIEN AQI 32 PM2.5 7" maxlength="80" autocomplete="off" spellcheck="false">
+      <label for="scSpeed">textScrollSpeed：<span id="scSpeedV">60</span> 毫秒</label>
+      <input type="range" id="scSpeed" min="20" max="150" step="5" value="60">
+    </div>
+    <div>
+      <div class="big" id="scOut">—</div>
+      <div id="scDetail" class="meta"></div>
+      <p class="meta" style="margin-top:8px">這是純 <code>delay</code> 的時間 <span class="tag t-est">〔估算〕</span>。實板 log 約 12 秒一行 <span class="tag t-board">〔實板 10-02〕</span>，多出來的是每一步重畫點陣等其他開銷，沒有分開量過。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="sec" id="d8">
+  <div class="sec-h"><span class="num">8</span><h2>出錯時會怎樣</h2><span class="en">ERROR HANDLING</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：每一種錯都有自己的 log 和點陣字；先看點陣猜方向，再看 log 確認。</p>
+  <div class="tw"><table>
+    <thead><tr><th>情況</th><th>發生在</th><th>log（<code>app logs</code>）</th><th>點陣</th><th>多久再試</th><th>怎麼修</th></tr></thead>
+    <tbody>
+      <tr><td>正常，10 分鐘內</td><td>第 47–49 行</td><td><code>cache: HUALIEN AQI …</code></td><td>上次的字</td><td>—</td><td>—</td></tr>
+      <tr><td>正常，真的上網</td><td>第 40 行</td><td><code>moenv: 2026/10/02 14:00:00 花蓮 AQI 32 良好</code>（例）</td><td><code>HUALIEN AQI 32 PM2.5 7</code></td><td>600 秒後</td><td>—</td></tr>
+      <tr><td>沒有金鑰檔、放錯資料夾</td><td>第 26 行丟出 → 第 53–55 行接住</td><td><code>no key file: moenv_key.txt</code></td><td><code>NO KEY</code></td><td>60 秒</td><td>在 <code>~/ArduinoApps/my-aqi</code> 裡重跑存金鑰那行</td></tr>
+      <tr><td>金鑰打錯、到期、今天次數用完</td><td>第 33–35 行（回的不是 JSON）</td><td><code>moenv says: …</code>（後面是環境部的中文說明）</td><td><code>KEY?</code></td><td>60 秒</td><td>重存金鑰；共用金鑰被用完就換自己的</td></tr>
+      <tr><td>測站名打錯</td><td>第 36–38 行</td><td><code>no such site: …</code></td><td><code>NO SITE</code></td><td>60 秒</td><td>照環境部寫法：「臺東」不是「台東」 <span class="tag t-warn">這條沒實跑，看程式碼推的</span></td></tr>
+      <tr><td>板子連不上環境部</td><td>第 29 行丟出 → 第 56–58 行接住</td><td><code>fetch failed: URLError</code></td><td><code>NO DATA</code></td><td>60 秒</td><td>回學生頁第 3 節看 Wi-Fi</td></tr>
+      <tr><td>環境部改了欄位名稱</td><td>第 40 行丟 <code>KeyError</code></td><td><code>fetch failed: KeyError</code></td><td><code>NO DATA</code></td><td>60 秒</td><td>叫老師</td></tr>
+      <tr><td>自己改程式時拿文字跟數字比</td><td>你改的那行</td><td><code>fetch failed: TypeError</code>（或 <code>ValueError</code>）</td><td><code>NO DATA</code></td><td>60 秒</td><td>環境部的 <code>aqi</code> 是文字（<code>"32"</code>），也可能是空的：先轉數字、空的跳過</td></tr>
+      <tr><td>Python 還沒起來或當掉</td><td>總機找不到登記者 → 回錯誤</td><td>（Python 沒有 log）</td><td><code>WAIT</code>（MCU 自己補的）</td><td>下一輪</td><td>看 <code>app logs</code> 有沒有 Python 的錯誤 <span class="tag t-code">〔依原始碼推論〕</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="warn"><b>不准做的修法</b>：把憑證檢查整個關掉（例如 <code>CERT_NONE</code>、<code>verify=False</code>）、把金鑰寫進程式、把金鑰貼給 AI。AI 若這樣建議，先給老師看。</p>
+</section>
+
+<!-- 9 -->
+<section class="sec" id="d9">
+  <div class="sec-h"><span class="num">9</span><h2>可以調的地方</h2><span class="en">CONFIGURATION</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：常改的值都集中在檔案最上面；改 Python 的值只要重開 App，改 sketch 的值要重新編譯。</p>
+  <div class="tw"><table>
+    <thead><tr><th>設定</th><th>在哪</th><th>預設</th><th>改了會怎樣</th><th>改完要</th></tr></thead>
+    <tbody>
+      <tr><td><code>SITE</code></td><td>main.py 第 11 行</td><td><code>"花蓮"</code></td><td>換測站（全台 84 站，名稱照環境部寫法）</td><td>stop → 等 3 秒 → start</td></tr>
+      <tr><td><code>LABEL</code></td><td>main.py 第 12 行</td><td><code>"HUALIEN"</code></td><td>點陣上的英文站名。<b>它同時是「真資料」的判斷依據</b>（第 59 行），一定要跟 <code>SITE</code> 一起改</td><td>同上</td></tr>
+      <tr><td><code>CACHE_SECONDS</code></td><td>main.py 第 13 行</td><td><code>600</code></td><td>越小越常上網：額度用得更快，但資料不會更新得更快（測站每小時才更新）</td><td>同上</td></tr>
+      <tr><td><code>RETRY_SECONDS</code></td><td>main.py 第 14 行</td><td><code>60</code></td><td>失敗之後多快再試</td><td>同上</td></tr>
+      <tr><td><code>timeout</code></td><td>main.py 第 29 行</td><td><code>15</code></td><td>上網最多等幾秒；這段時間 MCU 也停在 <code>result()</code> 等</td><td>同上</td></tr>
+      <tr><td><code>textScrollSpeed</code></td><td>sketch.ino 第 22 行</td><td><code>60</code></td><td>每移一格停幾毫秒，數字越大越慢（§7 可以先算）</td><td>stop → start（重新編譯）</td></tr>
+      <tr><td><code>beginText</code> 起點</td><td>sketch.ino 第 24 行</td><td><code>(0, 1)</code></td><td>字畫在第幾列：點陣 8 列高、字 7 列高</td><td>同上</td></tr>
+      <tr><td>函式庫版本</td><td>sketch.yaml 第 6 行</td><td><code>ArduinoGraphics (1.1.4)</code></td><td>把版本釘死，每個人編出來一樣</td><td>同上</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 10 -->
+<section class="sec" id="d10">
+  <div class="sec-h"><span class="num">10</span><h2>為什麼這樣設計</h2><span class="en">DESIGN DECISIONS</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：每個設計都有「選了什麼、沒選什麼、付出什麼代價」。寫期末設計文件時，這一節的格式最值得照抄。</p>
+  <div class="cards">
+    <div class="card"><h4>D1　MCU 發問（pull），不是 Python 推（push）</h4>
+      <p><b>理由</b>：MCU 捲完一輪才需要下一筆，自己決定節奏最自然；Python 不必知道 MCU 忙不忙。官方天氣範例也是這個模式。</p>
+      <p><b>代價</b>：每一輪都要過一次橋（毫秒級，跟 9–12 秒的捲動比可以忽略）；MCU 在 <code>result()</code> 等待時不能做別的事。</p>
+      <p><b>另一個選擇</b>：Python 有新資料才用 <code>notify</code> 推給 MCU（單向、不等回覆），適合「一變就要通知」的情境（擴充題 ★★★）。</p></div>
+    <div class="card"><h4>D2　快取 600 秒</h4>
+      <p><b>理由</b>：測站每小時才更新，問再快也是同一筆；金鑰每把每天 5,000 次。成功時一個人一小時最多打 6 次。</p>
+      <p><b>代價</b>：畫面上的資料最多晚 10 分鐘——對每小時更新的資料感覺不出來。</p></div>
+    <div class="card"><h4>D3　失敗後 60 秒重試</h4>
+      <p><b>理由</b>：沒網路時，如果每 12 秒打一次，會白白消耗額度；如果等滿 10 分鐘，補好金鑰的人要等太久。60 秒是中間值。</p>
+      <p><b>代價</b>：一直失敗時一小時最多 60 次，仍遠低於每天 5,000 次。</p></div>
+    <div class="card"><h4>D4　金鑰放檔案，不寫進程式</h4>
+      <p><b>理由</b>：程式可以分享、上傳 GitHub、貼給同學，金鑰不跟著走。存金鑰用 <code>read -rsp</code>：畫面不顯示，指令歷史也只記得 <code>$K</code>。</p>
+      <p><b>代價</b>：多一個檔要管理；放錯資料夾就是 <code>NO KEY</code>。</p></div>
+    <div class="card"><h4>D5　只放寬一項憑證檢查，不是關掉驗證</h4>
+      <p><b>理由</b>：板上 Python 3.13 預設開嚴格檢查（<code>VERIFY_X509_STRICT</code>），環境部網站的憑證少一個欄位（Subject Key Identifier）會被擋。第 19 行只拿掉這一項，主機名稱與信任鏈照樣驗：過期憑證、主機名稱不符的網站實測仍被擋 <span class="tag t-board">〔實板 10-02〕</span>。</p>
+      <p><b>代價</b>：要多寫兩行並解釋清楚，否則看起來像在「關安全」。</p></div>
+    <div class="card"><h4>D6　只用標準函式庫</h4>
+      <p><b>理由</b>：空白 App 的容器不必另外安裝套件（<code>app.yaml</code> 是 <code>bricks: []</code>），學生少一個會壞的步驟。</p>
+      <p><b>代價</b>：<code>urllib</code> 寫起來比第三方套件囉嗦一點。</p></div>
+    <div class="card"><h4>D7　查詢用中文、顯示用英文</h4>
+      <p><b>理由</b>：環境部的測站名是中文，所以 <code>SITE</code> 用中文查；點陣的 <code>Font_5x7</code> 只有英文字母、數字與符號，中文的 UTF-8 位元組會被拆開查字形、變成亂碼，所以 <code>LABEL</code> 用英文 <span class="tag t-code">〔原始碼 ArduinoGraphics〕</span>（想看亂碼長怎樣：<a href="concept.html#s6">概念頁 §6</a>）。</p>
+      <p><b>代價</b>：兩個值要一起改（§9）。</p></div>
+    <div class="card"><h4>D8　空白 App＋換三個檔</h4>
+      <p><b>理由</b>：不需要天氣積木，也避開出廠舊版工具 <code>--from-app</code> 還沒驗過的風險；空白 App 換三個檔已實板跑通 <span class="tag t-board">〔實板 10-02〕</span>。</p>
+      <p><b>代價</b>：要從課程網抓檔，課程網沒上站就抓不到（學生頁有備援貼法）。</p></div>
+    <div class="card"><h4>D9　用字串回報狀態</h4>
+      <p><b>理由</b>：點陣直接顯示，人眼一看就知道哪裡壞。</p>
+      <p><b>代價</b>：資料和狀態擠在同一個字串，要靠「是不是 <code>LABEL</code> 開頭」分辨——<code>LABEL</code> 一改錯，真資料也會被當成失敗。擴充題 ★★ 讓你把它拆開。</p></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="sec" id="d11">
+  <div class="sec-h"><span class="num">11</span><h2>時間與次數的預算</h2><span class="en">BUDGET</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：瓶頸不在 Bridge（毫秒），而在捲動和上網（秒）——所以毫秒級的控制留在 MCU、秒級的上網放 Linux，這就是雙腦分工的理由。</p>
+  <div class="tw"><table>
+    <thead><tr><th>項目</th><th>數字</th><th>等級</th></tr></thead>
+    <tbody>
+      <tr><td>Bridge 往返（Python 呼叫 MCU 的 echo，n=200）</td><td>中位數 4.99 ms、p95 5.08 ms；冷啟動第一發 7.7 ms</td><td><span class="tag t-board">〔實板 07-27〕</span></td></tr>
+      <tr><td><code>get_aqi_text</code> 一次往返</td><td>約 7–8 ms（封包比 echo 大，不能直接拿 4.99 ms 套）</td><td><span class="tag t-est">〔估算〕</span></td></tr>
+      <tr><td>Python 上網一次</td><td>沒量過；上限 15 秒（逾時設定）</td><td><span class="tag t-code">〔原始碼〕</span></td></tr>
+      <tr><td>捲一輪（<code>HUALIEN AQI 32 PM2.5 7</code>，速度 60）</td><td>151 步 × 60 ms ≈ 9.1 秒（純 delay）；實板 log 約 12 秒一行</td><td><span class="tag t-est">〔估算〕</span><span class="tag t-board">〔實板 10-02〕</span></td></tr>
+      <tr><td>一個人一小時打環境部</td><td>成功時最多 6 次；一直失敗時最多 60 次</td><td><span class="tag t-est">〔估算〕</span></td></tr>
+      <tr><td>環境部會員金鑰</td><td>每把每天 5,000 次、效期一年</td><td>環境部條款</td></tr>
+      <tr><td>全班 26 塊跑官方天氣範例</td><td>每 12 秒 × 2 個 API ≈ 每分鐘 260 次 → 約 19 分鐘用光 open-meteo 每小時 5,000 次</td><td><span class="tag t-est">〔估算〕</span></td></tr>
+      <tr><td><code>app start</code></td><td>第一次 96–108 秒；同一支第二次約 23 秒</td><td><span class="tag t-board">〔實板 10-02〕</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 12 -->
+<section class="sec" id="d12">
+  <div class="sec-h"><span class="num">12</span><h2>怎麼驗證每一層</h2><span class="en">TESTING</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：從下往上一層一層證明「這一層沒問題」，壞的時候就知道是哪一層。畫面說成功不算，你親眼看到才算。</p>
+  <div class="tw"><table>
+    <thead><tr><th>層</th><th>怎麼驗（在板子裡打）</th><th>通過的樣子</th></tr></thead>
+    <tbody>
+      <tr><td>L0 板子有網路</td><td class="wrapcode"><code>nmcli -t -f DEVICE,STATE,CONNECTION dev status</code></td><td>第一行 <code>wlan0:connected:…</code></td></tr>
+      <tr><td>L1 外面的資料拿得到</td><td>學生頁第 3 節那行 <code>curl -fsS</code>（open-meteo，免金鑰）</td><td>印出 JSON，找得到 <code>us_aqi</code></td></tr>
+      <tr><td>L2 Python 這半</td><td class="wrapcode"><code>arduino-app-cli app logs ~/ArduinoApps/my-aqi --tail 60</code></td><td>有一行 <code>moenv:</code>，其他是 <code>cache:</code></td></tr>
+      <tr><td>L3 Bridge</td><td>看點陣</td><td>出現 <code>WAIT</code> 以外的字＝MCU 拿到了 Python 的回覆</td></tr>
+      <tr><td>L4 整條</td><td>看點陣＋對 log</td><td>點陣上的數字＝log 裡 <code>moenv:</code> 那行的數字</td></tr>
+    </tbody>
+  </table></div>
+  <h3>故障演練（做完主線、有餘力再做）</h3>
+  <p>故意弄壞一處，預測點陣會顯示什麼，再看結果。<span class="tag t-warn">⚠️ 這組指令沒有照這個順序在板上跑過；跑完一定要改回來</span></p>
+  <div class="cards">
+    <div class="card"><h4>演練 1：金鑰檔不見</h4>
+      <p>在 <code>~/ArduinoApps/my-aqi</code> 裡：</p>
+<pre><code>mv python/moenv_key.txt python/moenv_key.bak
+arduino-app-cli app stop ~/ArduinoApps/my-aqi
+arduino-app-cli app start ~/ArduinoApps/my-aqi</code></pre>
+      <p>預測：點陣會顯示什麼？為什麼要重開 App 才看得到？（提示：§6 狀態機 C）</p>
+      <p>改回來（不必重開，1 分鐘內自己恢復）：</p>
+<pre><code>mv python/moenv_key.bak python/moenv_key.txt</code></pre></div>
+    <div class="card"><h4>演練 2：測站名寫成「台」</h4>
+<pre><code>sed -i 's/SITE = "花蓮"/SITE = "台東"/' python/main.py
+arduino-app-cli app stop ~/ArduinoApps/my-aqi
+arduino-app-cli app start ~/ArduinoApps/my-aqi</code></pre>
+      <p>預測：點陣與 log 各是什麼？</p>
+      <p>改回來，再停、再起：</p>
+<pre><code>sed -i 's/SITE = "台東"/SITE = "花蓮"/' python/main.py</code></pre></div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="sec" id="d13">
+  <div class="sec-h"><span class="num">13</span><h2>往下做：擴充題</h2><span class="en">EXTENSIONS</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：先改「設定」，再改「行為」，最後改「介面」。動手前先在紙上改 §5 的約定表，再請 AI 幫你寫。</p>
+  <div class="cards">
+    <div class="card"><h4><span class="stars">★</span>　換速度、換測站</h4><p>學生頁第 6 節。先用 §7 的計算器算好速度再改。</p></div>
+    <div class="card"><h4><span class="stars">★</span>　超標提示</h4><p>AQI 超過 100 時字前面加 <code>!! </code>。注意 <code>aqi</code> 是文字、也可能是空的（§8 倒數第二列）。</p></div>
+    <div class="card"><h4><span class="stars">★★</span>　把等級也顯示出來</h4><p>環境部回的 <code>status</code> 是中文（例如「良好」）。點陣顯示不了中文——你要怎麼設計？先查環境部 AQI 的等級有哪幾個。</p></div>
+    <div class="card"><h4><span class="stars">★★</span>　資料和狀態分開</h4><p>改掉 D9 的代價：讓回傳能分辨「資料」與「狀態」，MCU 依狀態決定要不要閃爍。先寫新的約定（§5 那張表），再改兩邊程式。</p></div>
+    <div class="card"><h4><span class="stars">★★★</span>　多站輪播</h4><p>每次 MCU 來問就換下一站。額度怎麼算？一次要全部測站再自己挑，還是每站各問一次？查環境部 API 說明後，寫出你的選擇和理由。</p></div>
+    <div class="card"><h4><span class="stars">★★★</span>　用 LED 3 的顏色表示好壞</h4><p>〈Color your LEDs〉教過 LED 3 可以調亮度。顏色該由 Python 決定再傳過去，還是 MCU 自己依數字判斷？寫出理由（提示：§3「不負責」那一欄）。</p></div>
+    <div class="card"><h4><span class="stars">★★★</span>　反過來推（push）</h4><p>改成 Python 有新資料才用 <code>Bridge.notify</code> 推給 MCU。MCU 那邊要怎麼接？跟現在的 pull 比較優缺點（§10 D1）。先去 Arduino_RouterBridge 的 repo 找範例。</p></div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="sec" id="d14">
+  <div class="sec-h"><span class="num">14</span><h2>參考 repo 與文件</h2><span class="en">REFERENCES</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <p class="oneline">一句話：這週用到的每一層，官方都有公開原始碼；遇到「它到底怎麼做的」，直接去讀，別只聽 AI 說。</p>
+  <p class="meta">以下連結 2026-10-08 逐一確認過存在。原始碼會更新，行號以你看到的版本為準。</p>
+
+  <div class="repo-group">板子與 App 工具鏈</div>
+  <div class="tw"><table>
+    <thead><tr><th>repo</th><th>授權</th><th>看哪裡</th><th>跟本週的關係</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://github.com/arduino/arduino-app-cli" target="_blank" rel="noopener">arduino/arduino-app-cli</a></td><td class="nw">GPL-3.0</td><td class="wrapcode"><a href="https://github.com/arduino/arduino-app-cli/blob/main/cmd/arduino-app-cli/app/new.go" target="_blank" rel="noopener"><code>cmd/arduino-app-cli/app/new.go</code></a>（<code>--from-app</code>）、同資料夾的 <code>start.go</code>、<code>logs.go</code></td><td>你打的每一個 <code>arduino-app-cli app …</code></td></tr>
+      <tr><td><a href="https://github.com/arduino/app-bricks-py" target="_blank" rel="noopener">arduino/app-bricks-py</a></td><td class="nw">MPL-2.0</td><td class="wrapcode"><a href="https://github.com/arduino/app-bricks-py/blob/main/src/arduino/app_utils/bridge.py" target="_blank" rel="noopener"><code>src/arduino/app_utils/bridge.py</code></a>（Python 的 <code>Bridge</code>）、<a href="https://github.com/arduino/app-bricks-py/blob/main/src/arduino/app_bricks/weather_forecast/__init__.py" target="_blank" rel="noopener"><code>app_bricks/weather_forecast/__init__.py</code></a>（天氣積木）</td><td><code>from arduino.app_utils import *</code> 從這裡來</td></tr>
+      <tr><td><a href="https://github.com/arduino/app-bricks-examples" target="_blank" rel="noopener">arduino/app-bricks-examples</a></td><td class="nw">MPL-2.0</td><td class="wrapcode"><a href="https://github.com/arduino/app-bricks-examples/tree/main/inspirational/platform_unoq/color-your-leds" target="_blank" rel="noopener"><code>inspirational/platform_unoq/color-your-leds</code></a>、<a href="https://github.com/arduino/app-bricks-examples/tree/main/inspirational/common/weather-forecast" target="_blank" rel="noopener"><code>inspirational/common/weather-forecast</code></a>；另有 <code>inspirational/common/air-quality-monitoring</code>（用別家 API、要 token，本週不用）</td><td>今天跑的兩支官方範例</td></tr>
+      <tr><td><a href="https://github.com/arduino/arduino-app-lab" target="_blank" rel="noopener">arduino/arduino-app-lab</a></td><td class="nw">GPL-3.0</td><td>README</td><td>App Lab 桌面版（W2 用過）</td></tr>
+      <tr><td><a href="https://github.com/arduino/arduino-cli" target="_blank" rel="noopener">arduino/arduino-cli</a></td><td class="nw">GPL-3.0</td><td>文件裡的 sketch project file（<code>sketch.yaml</code> 的 profiles 寫法）</td><td><code>sketch.yaml</code> 怎麼列平台與函式庫</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="repo-group">兩顆腦之間的通訊（Bridge）</div>
+  <div class="tw"><table>
+    <thead><tr><th>repo</th><th>授權</th><th>看哪裡</th><th>跟本週的關係</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://github.com/arduino/arduino-router" target="_blank" rel="noopener">arduino/arduino-router</a></td><td class="nw">GPL-3.0</td><td class="wrapcode"><a href="https://github.com/arduino/arduino-router/blob/main/README.md" target="_blank" rel="noopener"><code>README.md</code></a>（<code>$/register</code>、msgid 重新編號、找不到方法時回什麼）、<code>internal/msgpackrouter/router.go</code></td><td>總機本人</td></tr>
+      <tr><td><a href="https://github.com/arduino-libraries/Arduino_RouterBridge" target="_blank" rel="noopener">arduino-libraries/Arduino_RouterBridge</a></td><td class="nw">MPL-2.0</td><td class="wrapcode"><a href="https://github.com/arduino-libraries/Arduino_RouterBridge/blob/main/src/bridge.h" target="_blank" rel="noopener"><code>src/bridge.h</code></a>（<code>provide</code> 怎麼登記、<code>call().result()</code> 怎麼等回覆）</td><td>sketch 的 <code>#include &lt;Arduino_RouterBridge.h&gt;</code></td></tr>
+      <tr><td><a href="https://github.com/arduino-libraries/Arduino_RPClite" target="_blank" rel="noopener">arduino-libraries/Arduino_RPClite</a></td><td class="nw">MPL-2.0</td><td><code>src/client.h</code>、<code>src/decoder.h</code></td><td>RouterBridge 底下的 MessagePack RPC 函式庫</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="repo-group">MCU 與點陣</div>
+  <div class="tw"><table>
+    <thead><tr><th>repo</th><th>授權</th><th>看哪裡</th><th>跟本週的關係</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://github.com/arduino/ArduinoCore-zephyr" target="_blank" rel="noopener">arduino/ArduinoCore-zephyr</a></td><td class="nw">Apache-2.0</td><td class="wrapcode"><a href="https://github.com/arduino/ArduinoCore-zephyr/blob/main/libraries/Arduino_LED_Matrix/src/Arduino_LED_Matrix.h" target="_blank" rel="noopener"><code>libraries/Arduino_LED_Matrix/src/Arduino_LED_Matrix.h</code></a></td><td>UNO Q 的 MCU 核心（Zephyr＋llext）與點陣函式庫</td></tr>
+      <tr><td><a href="https://github.com/arduino-libraries/ArduinoGraphics" target="_blank" rel="noopener">arduino-libraries/ArduinoGraphics</a></td><td class="nw">MPL-2.0</td><td class="wrapcode"><a href="https://github.com/arduino-libraries/ArduinoGraphics/blob/master/src/ArduinoGraphics.cpp" target="_blank" rel="noopener"><code>src/ArduinoGraphics.cpp</code></a>（<code>endText</code> 怎麼捲）、<code>src/Font_5x7.c</code>（字型）</td><td><code>sketch.yaml</code> 釘的 1.1.4 版</td></tr>
+      <tr><td><a href="https://github.com/zephyrproject-rtos/zephyr" target="_blank" rel="noopener">zephyrproject-rtos/zephyr</a></td><td class="nw">Apache-2.0</td><td class="wrapcode"><a href="https://github.com/zephyrproject-rtos/zephyr/tree/main/doc/services/llext" target="_blank" rel="noopener"><code>doc/services/llext/</code></a>（sketch 為什麼是「可載入的 ELF」）</td><td>MCU 上跑的 RTOS</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="repo-group">Linux 那顆、資料與協定</div>
+  <div class="tw"><table>
+    <thead><tr><th>repo／文件</th><th>授權</th><th>看哪裡</th><th>跟本週的關係</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://github.com/arduino/linux-qcom" target="_blank" rel="noopener">arduino/linux-qcom</a></td><td>Linux 核心授權</td><td>預設分支 <code>qcom-v7.0.0-unoq</code></td><td>UNO Q 用的 Linux 核心（Arduino 的分支）</td></tr>
+      <tr><td><a href="https://github.com/msgpack/msgpack/blob/master/spec.md" target="_blank" rel="noopener">msgpack/msgpack</a> <code>spec.md</code></td><td>—</td><td>型別標記（fixarray、fixstr…）</td><td>Bridge 封包的編碼格式</td></tr>
+      <tr><td><a href="https://github.com/msgpack-rpc/msgpack-rpc/blob/master/spec.md" target="_blank" rel="noopener">msgpack-rpc/msgpack-rpc</a> <code>spec.md</code></td><td>—</td><td>request／response／notify 三種陣列</td><td>§5 的線上格式</td></tr>
+      <tr><td><a href="https://github.com/open-meteo/open-meteo" target="_blank" rel="noopener">open-meteo/open-meteo</a></td><td class="nw">AGPL-3.0</td><td class="wrapcode">API 文件 <a href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noopener"><code>open-meteo.com/en/docs/air-quality-api</code></a>、條款 <a href="https://open-meteo.com/en/terms" target="_blank" rel="noopener"><code>/en/terms</code></a></td><td>第 3 節免金鑰那條 curl；天氣範例</td></tr>
+      <tr><td>環境部環境資料開放平臺（沒有 repo）</td><td>政府資料開放授權</td><td class="wrapcode"><a href="https://data.moenv.gov.tw/api-term" target="_blank" rel="noopener"><code>data.moenv.gov.tw/api-term</code></a>（申請金鑰）、<a href="https://data.gov.tw/dataset/40448" target="_blank" rel="noopener"><code>data.gov.tw/dataset/40448</code></a>（資料集頁）</td><td>AQI 主線的資料</td></tr>
+      <tr><td><a href="https://docs.arduino.cc/hardware/uno-q/" target="_blank" rel="noopener">Arduino 官方 UNO Q 文件</a></td><td>—</td><td>規格、腳位、教學</td><td>板子本身</td></tr>
+      <tr><td><a href="https://github.com/edgeimpulse/linux-sdk-python" target="_blank" rel="noopener">edgeimpulse/linux-sdk-python</a></td><td class="nw">BSD-3-Clause-Clear</td><td>README</td><td>W13–W14 部署模型時才用，先放著</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="repo-group">本課程</div>
+  <div class="tw"><table>
+    <thead><tr><th>repo</th><th>看哪裡</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://github.com/cwstedctw/ndhu-ted-course-hub" target="_blank" rel="noopener">cwstedctw/ndhu-ted-course-hub</a></td><td class="wrapcode"><code>public/weekly/11501-aiot/w05/</code></td><td>課程網；本週的學生頁、投影片、三個起始檔都在這裡</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 15 -->
+<section class="sec" id="d15">
+  <div class="sec-h"><span class="num">15</span><h2>出處與限制</h2><span class="en">SOURCES</span><a class="back" href="#top">回目錄 ↑</a></div>
+  <ul>
+    <li><span class="tag t-board">〔實板〕</span>老師的板子在 2026-10-02 實跑（新版映像、家裡的網路）。你的板子如果是出廠的舊版，範例 ID 與工具版本可能不同——以你畫面上看到的為準。Bridge 往返時間是 2026-07-27 的實測。</li>
+    <li><span class="tag t-code">〔原始碼〕</span>2026-10-08 讀上面各 repo 的預設分支。</li>
+    <li><span class="tag t-est">〔估算〕</span>依規格與原始碼推算，沒有量過；寫報告時引用要註明「估算」。</li>
+    <li>資料來源：環境部「空氣品質指標(AQI)」，經政府資料開放平臺取得；open-meteo：Weather data by Open-Meteo.com（CC BY 4.0）。</li>
+  </ul>
+  <footer>國立東華大學　AIoT 智慧裝置實作（115-1）　W5 設計文件。這一頁沒有接 AI、不收集任何資料，離線打得開；板子密碼、Wi-Fi、金鑰本頁都不印。</footer>
+</section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  // ---- §1 架構圖 ----
+  var L = {
+    cloud:{t:"環境部開放資料 API（aqx_p_432）",
+      what:"環境部環境資料開放平臺的「空氣品質指標（AQI）」資料集。全台 84 個測站，每小時更新一次。要帶自己的金鑰（api_key）才拿得到資料。",
+      where:"網路上。板子用 HTTPS 去要，回來的是一個 JSON 陣列，數值都是字串（例如 \"32\"）。",
+      code:"main.py 第 27–30 行：組網址、送出請求、讀回內容。",
+      broken:"板子連不上 → 點陣 NO DATA；金鑰錯、到期或今天用完 → 點陣 KEY?（環境部回的是一行中文，不是 JSON）。",
+      src:"〔實抓 10-02〕環境部 API 實際回應；84 站為 10-02 一次抓的清單。"},
+    py:{t:"Docker 容器：python/main.py",
+      what:"每支 App 的 Python 都跑在自己的 Docker 容器裡。容器是作業系統層的隔離：跟板子共用同一顆 Linux 核心，但檔案與套件分開。",
+      where:"MPU：Qualcomm QRB2210（4 核 Cortex-A53、有 MMU、GB 級記憶體），作業系統是 Debian 13。",
+      code:"main.py 全部；第 64 行 Bridge.provide 向總機登記 get_aqi_text，第 66 行 App.run() 讓程式一直活著。",
+      broken:"Python 沒起來或當掉 → 沒有人回答 MCU → 點陣 WAIT。用 app logs 看有沒有 Python 的錯誤。",
+      src:"〔實板 10-02〕log 看得到容器啟動；〔實板 07〕QRB2210 規格實查。"},
+    router:{t:"系統服務：arduino-router（總機）",
+      what:"一支用 Go 寫的常駐程式。誰先用 $/register 登記一個方法名，之後有人呼叫這個名字，它就轉給登記的那一方，回覆再轉回來。轉送時會把 msgid 重新編號，避免不同呼叫者撞號。",
+      where:"MPU（Linux）上的 systemd 服務。一頭給容器接 unix socket（/var/run/arduino-router.sock），一頭打開 UART /dev/ttyHS1（115200 baud）接 MCU。",
+      code:"你不用寫它：Python 的 Bridge.provide 和 MCU 的 Bridge.call 都經過它。",
+      broken:"呼叫沒人登記的名字 → 它直接回錯誤（method … not available）；登記的那一方斷線，它登記的名字全部作廢。",
+      src:"〔原始碼〕arduino/arduino-router README；〔實板 07〕板上服務參數。"},
+    mcu:{t:"MCU：sketch.ino（llext，跑在 Zephyr 上）",
+      what:"另一顆獨立晶片 STM32U585：Cortex-M33 @160 MHz、786 KB SRAM、2 MB Flash、沒有 MMU，跑 Zephyr RTOS。你的 sketch 被編成「可載入的 ELF」（llext），由常駐的 loader 載入執行；換 sketch 只換這一小塊。",
+      where:"MCU 晶片。跟 Linux 之間只有一條 UART。",
+      code:"sketch.ino 全部：第 16 行 Bridge.call(...).result(text) 問 Linux；第 20–27 行畫字捲動。",
+      broken:"result() 回 false（例如 Python 還沒登記）→ 程式自己補 WAIT。",
+      src:"〔實板 07〕晶片規格；〔原始碼〕Arduino_RouterBridge、ArduinoCore-zephyr。"},
+    matrix:{t:"點陣：8×13＝104 顆 LED",
+      what:"由 MCU 驅動。文字先用 5×7 的點陣字型畫進畫布，再一格一格往左移；一次只看得到 13 欄。",
+      where:"板子正面。",
+      code:"sketch.ino 第 22–26 行：速度、字型、起點、內容、捲動方向。",
+      broken:"中文會變成不相干的符號或空白：字型只有英文字母、數字與符號。所以點陣上的站名用英文 LABEL。",
+      src:"〔原始碼〕ArduinoGraphics、Arduino_LED_Matrix。"}
+  };
+  var panel = document.getElementById("panel");
+  var layers = document.querySelectorAll("#stack .layer");
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+  function showLayer(k){
+    var d = L[k]; if(!d) return;
+    for (var i=0;i<layers.length;i++) layers[i].setAttribute("aria-pressed", layers[i].getAttribute("data-k")===k ? "true":"false");
+    panel.innerHTML = "<h3>"+esc(d.t)+"</h3><dl>"+
+      "<dt>它是什麼</dt><dd>"+esc(d.what)+"</dd>"+
+      "<dt>跑在哪</dt><dd>"+esc(d.where)+"</dd>"+
+      "<dt>本週程式碰到哪裡</dt><dd>"+esc(d.code)+"</dd>"+
+      "<dt>壞掉時你會看到</dt><dd>"+esc(d.broken)+"</dd>"+
+      "<dt>出處</dt><dd class=\"meta\">"+esc(d.src)+"</dd></dl>";
+  }
+  for (var i=0;i<layers.length;i++) layers[i].addEventListener("click", function(){ showLayer(this.getAttribute("data-k")); });
+
+  // ---- §2 時序 ----
+  var LANE = {mcu:"MCU", router:"總機", py:"Python", cloud:"環境部"};
+  var CLS = {mcu:"mcu", router:"router", py:"linux", cloud:"cloud"};
+  var S = {
+    hit:{steps:[
+      ["mcu","loop() 開頭：<code>Bridge.call(\"get_aqi_text\").result(text)</code> 把請求 <code>[0, msgid, \"get_aqi_text\", []]</code> 從 UART 送出，然後<b>停在這裡等回覆</b>。"],
+      ["router","查表：<code>get_aqi_text</code> 是 Python 登記的 → 換一個新的 msgid，轉給容器裡的 Python。"],
+      ["py","<code>get_aqi_text()</code>：距上次上網不到 600 秒 → 印 <code>cache: HUALIEN AQI 32 PM2.5 7</code>（例），回傳記住的那行字。"],
+      ["router","把回覆的 msgid 換回 MCU 原本那個，經 UART 送回 MCU。"],
+      ["mcu","<code>result()</code> 回 true，<code>text</code> 拿到那行字 → 畫字、捲一輪（約 9–12 秒）→ 回到 loop() 開頭再問。"]],
+      note:"大部分時候都是這個情境：環境部完全沒被打擾。一次過橋只要毫秒級，跟捲動的秒級比起來可以忽略。"},
+    miss:{steps:[
+      ["mcu","同上：送出請求，停在 <code>result()</code> 等回覆。"],
+      ["router","查表、換 msgid、轉給 Python。"],
+      ["py","距上次上網已經 600 秒以上 → 先把 <code>last_fetch</code> 設成現在 → 呼叫 <code>fetch_aqi()</code>。"],
+      ["py","讀 <code>moenv_key.txt</code>、組網址，用 HTTPS 去要 <code>aqx_p_432</code> 花蓮那一筆（最多等 15 秒）。<b>這段時間 MCU 一直在等</b>。"],
+      ["cloud","環境部回一個 JSON 陣列（一筆）：站名、AQI、狀態、PM2.5、發布時間，數值都是字串。"],
+      ["py","印 <code>moenv: 2026/10/02 14:00:00 花蓮 AQI 32 良好</code>（例），組成 <code>HUALIEN AQI 32 PM2.5 7</code> 回傳。下一次真的上網在 600 秒後。"],
+      ["router","換回 msgid，送回 MCU。"],
+      ["mcu","拿到字串 → 捲一輪 → 再問（之後 10 分鐘都是「快取命中」）。"]],
+      note:"log 裡 moenv: 那行 10 分鐘才出現一次，就是這個情境。所以看 log 要用 --tail 60 往上捲找。"},
+    nokey:{steps:[
+      ["mcu","送出請求，停在 <code>result()</code> 等回覆。"],
+      ["router","查表、換 msgid、轉給 Python。"],
+      ["py","快取過期（或剛開機）→ 呼叫 <code>fetch_aqi()</code>。"],
+      ["py","第 26 行讀金鑰檔 → 檔案不存在，丟出 <code>FileNotFoundError</code> → <code>get_aqi_text()</code> 第 53–55 行接住：印 <code>no key file: moenv_key.txt</code>，回傳 <code>NO KEY</code>。"],
+      ["py","第 59–60 行：不是以 <code>HUALIEN</code> 開頭 → 把 <code>last_fetch</code> 往回撥，<b>60 秒後</b>就會再試一次。"],
+      ["mcu","拿到 <code>NO KEY</code> → 照樣捲出來。這時補好金鑰檔，不必重開 App。"]],
+      note:"錯誤沒有讓程式當掉，而是變成點陣上看得懂的字——這是故意的設計（§10 D9）。"},
+    nopy:{steps:[
+      ["mcu","送出請求，停在 <code>result()</code> 等回覆。"],
+      ["router","查表：<b>沒有人登記 <code>get_aqi_text</code></b>（Python 還沒起來或當掉）→ 直接回錯誤（method … not available）。"],
+      ["mcu","<code>result()</code> 回 false → 第 17–19 行自己把 <code>text</code> 設成 <code>WAIT</code> → 捲出 WAIT → 下一輪再問。"]],
+      note:"所以 WAIT 的意思是「MCU 沒拿到回覆」：先查 Python 有沒有起來、get_aqi_text 有沒有登記成功，再查 Bridge／總機；跟環境部的網路無關（網路壞是 NO DATA）。依 arduino-router 與 Arduino_RouterBridge 原始碼推論。"}
+  };
+  var seq = document.getElementById("seq"), seqNote = document.getElementById("seqNote");
+  var lanes = document.querySelectorAll("#lanes .lane"), scBtns = document.querySelectorAll("[data-sc]");
+  function showSc(k){
+    var d = S[k]; var used = {}; var html = "";
+    for (var i=0;i<d.steps.length;i++){
+      var st = d.steps[i]; used[st[0]] = 1;
+      html += "<li><div><span class=\"brain who "+CLS[st[0]]+"\">"+LANE[st[0]]+"</span>"+st[1]+"</div></li>";
+    }
+    seq.innerHTML = html; seqNote.textContent = d.note;
+    for (var j=0;j<lanes.length;j++) lanes[j].classList.toggle("on", !!used[lanes[j].getAttribute("data-l")]);
+    for (var m=0;m<scBtns.length;m++) scBtns[m].setAttribute("aria-pressed", scBtns[m].getAttribute("data-sc")===k ? "true":"false");
+  }
+  for (var n=0;n<scBtns.length;n++) scBtns[n].addEventListener("click", function(){ showSc(this.getAttribute("data-sc")); });
+  showSc("hit");
+
+  // ---- §7 捲一輪計算器 ----
+  var tIn = document.getElementById("scText"), sIn = document.getElementById("scSpeed");
+  var sV = document.getElementById("scSpeedV"), out = document.getElementById("scOut"), det = document.getElementById("scDetail");
+  function calc(){
+    var text = tIn.value, sp = parseInt(sIn.value, 10);
+    var bytes = new TextEncoder().encode("   " + text + "   \r\n");
+    var kept = 0, nonAscii = false;
+    for (var i=0;i<bytes.length;i++){ if (bytes[i] !== 0xC2 && bytes[i] !== 0xC3) kept++; if (bytes[i] > 0x7F) nonAscii = true; }
+    var steps = kept * 5 + 0 + 1, ms = steps * sp;
+    sV.textContent = sp;
+    out.textContent = "≈ " + (ms/1000).toFixed(1) + " 秒";
+    det.innerHTML = "緩衝區 " + kept + " 個位元組 × 5 ＋ 1 ＝ " + steps + " 步 × " + sp + " ms" +
+      (nonAscii ? "<br><b>有非英文字</b>：會被拆成位元組逐一查字形，點陣上變成不相干的符號或空白。" : "");
+  }
+  tIn.addEventListener("input", calc); sIn.addEventListener("input", calc); calc();
+})();
+</script>
+</body>
+</html>

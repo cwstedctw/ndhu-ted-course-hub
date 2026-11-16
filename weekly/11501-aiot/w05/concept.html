@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNO Q 雙腦概念頁</title>
+<meta name="description" content="AIoT 智慧裝置實作 W5 互動概念頁：UNO Q 的兩顆腦、App 檔案結構、Bridge 的 MessagePack-RPC 一步一步、位元組與額度計算、點陣捲字模擬、想一想。">
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --surface-2:#F1F5F4; --ink:#132525; --ink-soft:#3E5656; --mist:#5E7676;
+  --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF; --gold:#D9A441; --gold-deep:#7A5510; --gold-tint:#FBF0D9;
+  --dark:#062524; --red:#B4553F; --red-tint:#F7E4DE; --violet:#5B4B9A; --violet-tint:#ECE8F7;
+  --code-bg:#F3F6F5; --code-ink:#1B3433; --code-com:#6B8584; --code-str:#9A5B12; --code-kw:#0E6463;
+  --led-off:#203232; --led-on:#FFB547; --led-glow:rgba(255,181,71,.55); --mx-bg:#0A1717;
+  --linux:#0E7C7B; --linux-tint:#E2F0EF; --mcu:#9A5B12; --mcu-tint:#FBF0D9;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC","Heiti TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono","Liberation Mono","Noto Sans Mono CJK TC",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#8FA9A8;
+    --line:#26403F; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+    --dark:#041716; --red:#E58B74; --red-tint:#3A2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+    --code-bg:#0D1F1F; --code-ink:#D5E6E5; --code-com:#7F9A99; --code-str:#F0B870; --code-kw:#6FD6D3;
+    --led-off:#1A2A2A; --mx-bg:#050F0F;
+    --linux:#5CC8C6; --linux-tint:#123A39; --mcu:#F0B870; --mcu-tint:#3A2F18;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#8FA9A8;
+  --line:#26403F; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+  --dark:#041716; --red:#E58B74; --red-tint:#3A2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+  --code-bg:#0D1F1F; --code-ink:#D5E6E5; --code-com:#7F9A99; --code-str:#F0B870; --code-kw:#6FD6D3;
+  --led-off:#1A2A2A; --mx-bg:#050F0F;
+  --linux:#5CC8C6; --linux-tint:#123A39; --mcu:#F0B870; --mcu-tint:#3A2F18;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:16px;line-height:1.7}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+[hidden]{display:none!important}
+a{color:var(--teal)}
+code,.mono{font-family:var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+code{font-size:.9em;background:var(--code-bg);color:var(--code-ink);border-radius:5px;padding:0 4px;overflow-wrap:anywhere}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px 48px}
+header.hero{background:var(--dark);color:#E6F2F2;padding:28px 0 22px}
+header.hero .wrap{padding-bottom:0}
+.kicker{font-weight:800;font-size:13px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+h1{font-size:clamp(26px,4.4vw,40px);line-height:1.2;margin:6px 0 8px;font-weight:900}
+.hero p{margin:6px 0;color:#BFD6D5;max-width:820px}
+.hero a{color:#F3D08A}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:12px;font-size:14px;color:#D4E5E4}
+.legend span.tag{font-size:13px}
+nav.toc{margin:18px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+nav.toc h2{font-size:15px;margin:0 0 8px;color:var(--mist);letter-spacing:.06em}
+nav.toc ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px 14px}
+nav.toc a{display:block;text-decoration:none;color:var(--ink);padding:4px 8px;border-radius:8px}
+nav.toc a:hover{background:var(--teal-tint)}
+nav.toc .n{display:inline-block;min-width:1.6em;font-weight:800;color:var(--teal)}
+.toc-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:6px 12px;font-size:15px;line-height:1.4}
+.btn:hover{border-color:var(--teal)}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}
+:root[data-theme="dark"] .btn.primary{color:#062524}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#062524}}
+.btn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn[aria-pressed="true"]{color:#062524}}
+:root[data-theme="dark"] .btn[aria-pressed="true"]{color:#062524}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.seg{display:inline-flex;flex-wrap:wrap;gap:6px}
+section.sec{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:22px 0;scroll-margin-top:12px}
+.sec-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sec-h .num{flex:0 0 auto;display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--teal);color:#fff;font-weight:900;font-size:18px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sec-h .num{color:#062524}}
+:root[data-theme="dark"] .sec-h .num{color:#062524}
+.sec-h h2{margin:0;font-size:clamp(21px,3vw,27px);line-height:1.3}
+.sec-h .en{color:var(--mist);font-size:14px;font-weight:600;letter-spacing:.04em}
+.lead{margin:8px 0 14px;color:var(--ink-soft);font-size:16.5px}
+.back{font-size:13px;margin-left:auto;color:var(--mist)}
+.tag{display:inline-block;white-space:nowrap;font-size:.76em;font-weight:700;line-height:1.5;padding:0 5px;border-radius:6px;vertical-align:1px;margin:0 2px;cursor:help}
+.t-board{background:var(--teal-tint);color:var(--teal)}
+.t-code{background:var(--violet-tint);color:var(--violet)}
+.t-est{background:var(--gold-tint);color:var(--gold-deep)}
+.brain{display:inline-block;white-space:nowrap;font-size:.8em;font-weight:800;padding:1px 8px;border-radius:999px}
+.brain.linux{background:var(--linux-tint);color:var(--linux)}
+.brain.mcu{background:var(--mcu-tint);color:var(--mcu)}
+.brain.both{background:var(--violet-tint);color:var(--violet)}
+.brain.net{background:var(--red-tint);color:var(--red)}
+details.deep{margin-top:16px;border:1px dashed var(--gold);border-radius:14px;background:var(--surface-2)}
+details.deep>summary{cursor:pointer;padding:10px 14px;font-weight:800;color:var(--gold-deep);list-style:none}
+details.deep>summary::-webkit-details-marker{display:none}
+details.deep>summary::before{content:"＋ ";font-weight:900}
+details.deep[open]>summary::before{content:"－ "}
+details.deep>.in{padding:2px 16px 16px}
+details.deep h4{margin:14px 0 6px;font-size:16px}
+.small{font-size:14px;color:var(--mist)}
+.note{font-size:14px;color:var(--ink-soft);background:var(--surface-2);border-left:4px solid var(--gold);padding:8px 12px;border-radius:0 10px 10px 0;margin:10px 0}
+.warn{border-left-color:var(--red)}
+.tblw{overflow-x:auto;max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--surface-2);font-weight:800}
+.two{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width: 880px){.two{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.panel h3{margin:0 0 6px;font-size:18px}
+.panel ul{margin:6px 0;padding-left:1.2em}
+.panel li{margin:3px 0}
+.ph{color:var(--mist);font-size:15px}
+@media (min-width: 881px){.sticky{position:sticky;top:12px}}
+@media (max-width: 880px){#codePanel{position:sticky;bottom:6px;max-height:46vh;overflow:auto;z-index:3;box-shadow:0 -6px 22px rgba(6,37,36,.22)}}
+.pwm{display:flex;flex-direction:column;gap:4px;margin:8px 0;max-width:460px}
+.pr{display:grid;grid-template-columns:1.4em minmax(0,1fr) 7.6em;gap:8px;align-items:center}
+.pr svg{width:100%;height:26px;display:block;background:var(--surface-2);border-radius:4px}
+.pr span{font-size:12.5px;color:var(--mist);text-align:right}
+.fbar{display:flex;width:100%;height:22px;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:6px 0}
+.fbar span{display:block;min-width:0;border-right:1px solid var(--line)}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid var(--line);vertical-align:-1px;margin-right:6px}
+
+/* §1 兩顆腦地圖 */
+.board{display:grid;grid-template-columns:minmax(0,1fr) 108px minmax(0,1fr);gap:10px;align-items:stretch}
+@media (max-width: 560px){.board{grid-template-columns:minmax(0,1fr)}}
+.half{border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.half.lx{background:var(--linux-tint);border:2px solid var(--linux)}
+.half.mc{background:var(--mcu-tint);border:2px solid var(--mcu)}
+.half-h{font-weight:900;font-size:14px;letter-spacing:.04em}
+.half.lx .half-h{color:var(--linux)}
+.half.mc .half-h{color:var(--mcu)}
+.blk{display:block;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;line-height:1.35;min-width:0}
+.blk b{display:block;font-size:15px}
+.blk small{display:block;color:var(--mist);font-size:12.5px;overflow-wrap:anywhere}
+.blk:hover{border-color:var(--gold)}
+.blk[aria-pressed="true"]{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-tint);background:var(--gold-tint)}
+.blk.chip{background:var(--dark);color:#E6F2F2;border-color:var(--dark)}
+.blk.chip small{color:#9FBDBC}
+.blk.chip[aria-pressed="true"]{background:#0B3A39;color:#fff}
+.uartcol{display:flex;flex-direction:column;justify-content:center;gap:8px}
+.uartcol .blk{text-align:center;background:var(--violet-tint);border-color:var(--violet)}
+.wire{flex:1 1 auto;min-height:18px;border-left:3px dashed var(--violet);margin:0 auto;width:0}
+@media (max-width: 560px){.uartcol{flex-direction:row;align-items:center}.uartcol .blk{width:auto;flex:0 0 auto;padding:6px 22px}.wire{border-left:0;border-top:3px dashed var(--violet);width:auto;min-height:0;height:0;flex:1 1 20px}}
+.minirow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+
+/* §2 程式碼 */
+.tree{font-family:var(--mono);font-size:14.5px;background:var(--code-bg);border-radius:12px;padding:10px 12px;line-height:1.75;overflow-x:auto;white-space:pre}
+.tree button{background:none;border:0;padding:0 4px;border-radius:5px;font-family:var(--mono);color:var(--code-kw);text-decoration:underline dotted;text-underline-offset:3px}
+.tree button[aria-pressed="true"]{background:var(--gold-tint);color:var(--gold-deep);text-decoration:none;font-weight:700}
+.tree .d{color:var(--mist)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 8px}
+.code{background:var(--code-bg);border:1px solid var(--line);border-radius:12px;max-height:520px;overflow:auto;font-family:var(--mono);font-size:13.5px;line-height:1.55}
+.code .inner{display:inline-block;min-width:100%;padding:6px 0}
+.ln{display:flex;width:100%;text-align:left;background:none;border:0;padding:0 10px 0 0;color:var(--code-ink);white-space:pre;font-family:var(--mono);font-size:inherit;line-height:inherit}
+.ln .no{flex:0 0 auto;width:3.2em;text-align:right;padding-right:10px;color:var(--mist);user-select:none}
+.ln .tx{flex:1 0 auto}
+.ln:hover{background:rgba(217,164,65,.12)}
+.ln.inrange{background:rgba(14,124,123,.10)}
+.ln[aria-pressed="true"]{background:rgba(217,164,65,.30)}
+.c-com{color:var(--code-com);font-style:italic}
+.c-str{color:var(--code-str)}
+.c-kw{color:var(--code-kw);font-weight:700}
+.c-pp{color:var(--violet);font-weight:700}
+
+/* §3 Bridge 步驟 */
+.ctrls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:6px 0 12px}
+.ctrls label{font-size:14px;color:var(--mist);font-weight:700}
+.track{display:flex;align-items:stretch;gap:0;margin:8px 0 12px}
+.node{flex:1 1 0;min-width:0;text-align:center;background:var(--surface-2);border:2px solid var(--line);border-radius:12px;padding:8px 4px;font-size:13.5px;line-height:1.3;transition:background .2s,border-color .2s}
+.node b{display:block;font-size:14.5px}
+.node small{color:var(--mist);overflow-wrap:anywhere}
+.node.on{border-color:var(--gold);background:var(--gold-tint);box-shadow:0 0 0 3px var(--gold-tint)}
+.conn{flex:0 0 26px;display:grid;place-items:center;color:var(--line);font-weight:900;font-size:16px}
+.conn.lit{color:var(--gold)}
+.conn .v{display:none}
+@media (max-width: 640px){
+  .node{padding:6px 2px;font-size:12px}
+  .node b{font-size:12.5px;overflow-wrap:anywhere}
+  .node small{display:none}
+  .conn{flex:0 0 12px;font-size:12px}
+}
+.stepcard{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface);min-height:120px}
+.stepcard h3{margin:0 0 6px;font-size:17px}
+.stepbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.stepbar .cnt{color:var(--mist);font-size:14px;margin-left:auto}
+.hex{display:flex;flex-wrap:wrap;gap:8px 6px;margin:8px 0;font-family:var(--mono);font-size:13.5px}
+.hg{display:flex;flex-direction:column;align-items:flex-start;gap:2px;max-width:100%}
+.hb{display:flex;flex-wrap:wrap;gap:3px}
+.hb span{padding:1px 4px;border-radius:4px;background:var(--surface-2);border:1px solid var(--line)}
+.hg .cap{font-family:var(--zh);font-size:11.5px;color:var(--mist);line-height:1.2;overflow-wrap:anywhere}
+.k-arr .hb span{background:var(--teal-tint);border-color:var(--teal)}
+.k-int .hb span{background:var(--violet-tint);border-color:var(--violet)}
+.k-strh .hb span{background:var(--gold-tint);border-color:var(--gold)}
+.k-str .hb span{background:var(--surface);border-color:var(--gold)}
+.k-nil .hb span,.k-bool .hb span{background:var(--red-tint);border-color:var(--red)}
+.pwm{display:block;width:100%;max-width:420px;height:auto;margin:6px 0}
+.uart-row{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px;max-width:520px;margin:8px 0}
+.ub{text-align:center;border-radius:6px;padding:4px 0;font-family:var(--mono);font-size:13px;border:1px solid var(--line)}
+.ub .l{display:block;font-family:var(--zh);font-size:11px;color:var(--mist)}
+.ub.hi{background:var(--teal-tint)}
+.ub.lo{background:var(--surface)}
+.ub.st{outline:2px solid var(--gold)}
+
+/* §4／§5 計算器 */
+.form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 16px}
+@media (max-width: 640px){.form{grid-template-columns:minmax(0,1fr)}}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:700;color:var(--ink-soft);min-width:0}
+.form input[type=text],.form input[type=number],.form select{width:100%;min-width:0;border:1px solid var(--line);border-radius:10px;padding:7px 10px;background:var(--surface);font-weight:400}
+.form input[type=range]{width:100%}
+.out{font-size:15px}
+.big{font-size:26px;font-weight:900;color:var(--teal)}
+.bars{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.bar{position:relative;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;height:30px;overflow:hidden}
+.bar .fill{position:absolute;left:0;top:0;bottom:0;background:var(--teal-tint);border-right:3px solid var(--teal)}
+.bar.over .fill{background:var(--red-tint);border-right-color:var(--red)}
+.bar .lab{position:relative;z-index:1;display:block;padding:4px 10px;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lim{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.lim div{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;padding:6px 10px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line)}
+.lim div.hit{background:var(--red-tint);border-color:var(--red)}
+.lim div.first{outline:3px solid var(--red)}
+.lim b{min-width:9em}
+.logbox{background:#081414;color:#CFE8E6;font-family:var(--mono);font-size:13px;line-height:1.6;border-radius:12px;padding:10px 12px;height:220px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.logbox .m{color:#F3D08A}
+.logbox .f{color:#FF9A85}
+.states{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.st-box{flex:1 1 150px;border:2px solid var(--line);border-radius:12px;padding:8px 10px;font-size:14px;background:var(--surface)}
+.st-box.on{border-color:var(--gold);background:var(--gold-tint)}
+.st-box b{display:block}
+
+/* §6 點陣 */
+.mx{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:3px;width:100%;max-width:520px;padding:10px;background:var(--mx-bg);border-radius:14px}
+.mx .p{aspect-ratio:1/1;border-radius:50%;background:var(--led-off)}
+.mx .p.on{background:var(--led-on);box-shadow:0 0 7px var(--led-glow)}
+.mx button.p{border:0;padding:0;min-width:0}
+.mxwrap{display:flex;flex-direction:column;gap:8px;align-items:flex-start;min-width:0}
+.bytes{display:flex;flex-wrap:wrap;gap:4px;font-family:var(--mono);font-size:12.5px;margin:6px 0}
+.bytes span{padding:1px 5px;border-radius:5px;border:1px solid var(--line);background:var(--surface-2)}
+.bytes span.drop{text-decoration:line-through;color:var(--mist)}
+.bytes span.nul{background:var(--red-tint);border-color:var(--red)}
+.bytes span.hi{background:var(--gold-tint);border-color:var(--gold)}
+.hexout{font-family:var(--mono);font-size:14px;background:var(--code-bg);border-radius:10px;padding:8px 10px;overflow-wrap:anywhere;margin:6px 0}
+
+/* §7 想一想 */
+.qs{display:flex;flex-direction:column;gap:14px;counter-reset:q}
+.q{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface-2)}
+.q h3{margin:0 0 8px;font-size:16.5px}
+.q h3::before{counter-increment:q;content:"Q" counter(q) "　";color:var(--teal);font-weight:900}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 12px;text-align:left}
+.opt[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-tint);font-weight:700}
+.opt.right{border-color:var(--teal);background:var(--teal-tint);font-weight:800}
+.opt.wrong{border-color:var(--red);background:var(--red-tint)}
+.ans{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--teal)}
+.qbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.qbar .yours{font-size:14px;color:var(--mist)}
+
+footer{color:var(--mist);font-size:13.5px}
+footer h2{font-size:17px;color:var(--ink)}
+footer li{margin:4px 0;overflow-wrap:anywhere}
+@media (max-width: 560px){
+  section.sec{padding:16px 14px}
+  body{font-size:15.5px}
+  details.deep>.in{padding:2px 12px 14px}
+}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">AIoT 智慧裝置實作 · W5 · 互動概念頁</div>
+    <h1>兩顆腦怎麼一起捲出花蓮的 AQI</h1>
+    <p>學生頁（<a href="student.html">student.html</a>）只寫「做什麼」；這一頁講「為什麼會動」：UNO Q 的兩顆腦、App 的檔案結構、Bridge 怎麼傳話、為什麼要快取。每一節第一層一眼看得懂，想往下挖就點「深入一層」。</p>
+    <div class="legend" aria-label="數字的出處等級">
+      <span>每個數字旁邊都有出處等級：</span>
+      <span><span class="tag t-board">〔實板〕</span>板子上實際跑過、量過（附日期）</span>
+      <span><span class="tag t-code">〔原始碼〕</span>讀官方原始碼、規格或條款</span>
+      <span><span class="tag t-est">〔估算〕</span>依規格推算，不是量的</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<nav class="toc" id="toc" aria-label="目錄">
+  <h2>目錄</h2>
+  <ol>
+    <li><a href="#s1"><span class="n">1</span>兩顆腦地圖</a></li>
+    <li><a href="#s2"><span class="n">2</span>App 解剖：檔案與每一行</a></li>
+    <li><a href="#s3"><span class="n">3</span>Bridge 一步一步</a></li>
+    <li><a href="#s4"><span class="n">4</span>位元組計算器</a></li>
+    <li><a href="#s5"><span class="n">5</span>額度計算機與快取</a></li>
+    <li><a href="#s6"><span class="n">6</span>點陣捲字模擬</a></li>
+    <li><a href="#s7"><span class="n">7</span>想一想（先猜再揭曉）</a></li>
+    <li><a href="#refs"><span class="n">※</span>出處與授權</a></li>
+  </ol>
+  <div class="toc-tools">
+    <button type="button" class="btn" id="openAll">「深入一層」全部展開</button>
+    <button type="button" class="btn" id="closeAll">全部收合</button>
+  </div>
+</nav>
+
+<!-- ============================== §1 ============================== -->
+<section class="sec" id="s1">
+  <div class="sec-h"><span class="num">1</span><h2>兩顆腦地圖</h2><span class="en">TWO BRAINS</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead">UNO Q 是兩台電腦放在同一塊板子上：左邊跑 Linux 的 MPU，右邊跑即時作業系統的 MCU，中間只有一條序列線相連。<b>點任何一塊</b>，看它是什麼、數字多少、這週哪段程式碼碰到它。</p>
+  <div class="two">
+    <div class="board" id="board">
+      <div class="half lx">
+        <div class="half-h">Linux 這半（MPU）</div>
+        <button type="button" class="blk chip" data-k="mpu" aria-pressed="false"><b>QRB2210</b><small>4× Cortex-A53 · Debian 13</small></button>
+        <div class="minirow">
+          <button type="button" class="blk" data-k="usb" aria-pressed="false"><b>USB-C</b><small>2222、7000</small></button>
+          <button type="button" class="blk" data-k="wifi" aria-pressed="false"><b>Wi-Fi</b><small>wlan0</small></button>
+        </div>
+        <button type="button" class="blk" data-k="container" aria-pressed="false"><b>容器（container）</b><small>main.py 在這裡跑</small></button>
+        <button type="button" class="blk" data-k="router" aria-pressed="false"><b>arduino-router</b><small>Bridge 的總機</small></button>
+        <button type="button" class="blk" data-k="led12" aria-pressed="false"><b>LED 1、2</b><small>Linux 直接管（sysfs）</small></button>
+      </div>
+      <div class="uartcol">
+        <span class="wire" aria-hidden="true"></span>
+        <button type="button" class="blk" data-k="uart" aria-pressed="false"><b>UART</b><small>/dev/ttyHS1</small></button>
+        <span class="wire" aria-hidden="true"></span>
+      </div>
+      <div class="half mc">
+        <div class="half-h">MCU 這半</div>
+        <button type="button" class="blk chip" data-k="mcu" aria-pressed="false"><b>STM32U585</b><small>Cortex-M33 · Zephyr RTOS</small></button>
+        <button type="button" class="blk" data-k="sketch" aria-pressed="false"><b>sketch（llext）</b><small>疊在 Zephyr loader 上</small></button>
+        <button type="button" class="blk" data-k="matrix" aria-pressed="false"><b>點陣 13×8</b><small>104 顆 LED</small></button>
+        <button type="button" class="blk" data-k="led34" aria-pressed="false"><b>LED 3、4</b><small>MCU 管：PWM／開關</small></button>
+      </div>
+    </div>
+    <div class="panel sticky" id="mapPanel" aria-live="polite">
+      <h3>點左邊任何一塊</h3>
+      <p class="ph">右邊（手機在下面）會出現：它是什麼、有多大多快、這週哪一行程式碼碰到它，還有可以展開的「深入一層」。</p>
+    </div>
+  </div>
+
+  <details class="deep">
+    <summary>深入一層：有沒有 MMU，差在哪裡</summary>
+    <div class="in">
+      <p>MMU（Memory Management Unit，記憶體管理單元）把程式看到的「虛擬位址」翻成實體位址。有它，Linux 才能讓每個行程（process）各有一個獨立的位址空間；沒有它，就只能跑「大家共用一片記憶體」的即時作業系統。</p>
+      <div class="tblw"><table>
+        <tr><th></th><th>MPU：QRB2210（Cortex-A53）</th><th>MCU：STM32U585（Cortex-M33）</th></tr>
+        <tr><td>晶片</td><td>Qualcomm QRB2210</td><td><b>另一顆獨立晶片</b>，不在 QRB2210 裡面</td></tr>
+        <tr><td>指令集</td><td>Armv8-A，64 位元</td><td>Armv8-M，32 位元（只有 Thumb）</td></tr>
+        <tr><td>記憶體管理</td><td>完整 MMU：4 KB 分頁、48 位元虛擬位址、4 級頁表 <span class="tag t-code" title="MPU與Qualcomm-QRB2210-CSIE深度版 §3、§4">〔原始碼〕</span></td><td>沒有 MMU；晶片有 MPU（區段權限保護、不做位址轉譯），但這板沒開：<code># CONFIG_ARM_MPU is not set</code> <span class="tag t-board" title="MCU與Zephyr-RTOS-CSIE深度版 §4.1，loader built config 核對">〔實板 07-25〕</span></td></tr>
+        <tr><td>位址空間</td><td>每個行程一個</td><td>一個實體位址空間，sketch 和 loader 共用</td></tr>
+        <tr><td>記憶體</td><td>約 3.58 GiB LPDDR4X（4 GB 版）<span class="tag t-board" title="MemTotal 3755164 kB；MPU 深度版 §1.4">〔實板 07-25〕</span></td><td>786 KB SRAM＋2 MB Flash <span class="tag t-code" title="ST DS13086；MCU 深度版 §7.1（Zephyr 這板約看到 768 KiB RAM）">〔原始碼〕</span></td></tr>
+        <tr><td>時脈</td><td>300–2016 MHz，9 檔（DVFS，動態調電壓頻率）<span class="tag t-board" title="cpufreq；MPU 深度版 §1.4">〔實板 07-25〕</span></td><td>160 MHz <span class="tag t-code" title="ST DS13086">〔原始碼〕</span></td></tr>
+        <tr><td>作業系統</td><td>Debian 13、kernel 7.0（下游 BSP，有 PREEMPT、沒有 PREEMPT_RT）<span class="tag t-board" title="MPU 深度版 §4">〔實板 07-25〕</span></td><td>Zephyr RTOS（Real-Time Operating System）；常駐 loader 是一整套 Zephyr 4.2.0 <span class="tag t-code" title="MCU 深度版 第 1 章">〔原始碼〕</span></td></tr>
+        <tr><td>即時性</td><td>分時排程，最壞延遲說不準</td><td>固定優先權，中斷延遲算得出來</td></tr>
+        <tr><td>程式寫錯位址</td><td>只有那個行程收到 segmentation fault，別人沒事</td><td>可能靜靜踩壞 loader：<code>CONFIG_USERSPACE</code>、<code>CONFIG_HW_STACK_PROTECTION</code> 都沒開，TrustZone <code>TZEN=0</code> <span class="tag t-board" title="MCU 深度版 §4.3、§7.2">〔實板 07-25〕</span>——「信任模型，不是保護模型」</td></tr>
+        <tr><td>這週誰住這裡</td><td>main.py、arduino-router、Wi-Fi、LED 1–2</td><td>sketch.ino、點陣、LED 3–4</td></tr>
+      </table></div>
+      <p class="small">一句話分工：A53 有 MMU＋GB 級記憶體＋Linux，適合「複雜但不趕時間」；M33 沒有 MMU＋KB 級 SRAM＋RTOS，適合「簡單但要準時」。（MPU 深度版〈收束〉）</p>
+
+      <h4>Zephyr 的優先權數線（這塊板的設定）</h4>
+      <p>數字越小越優先。負的是合作式（cooperative，不被別的執行緒搶）、0 以上是可搶占（preemptible）、15 是 idle。</p>
+      <div class="tblw"><svg viewBox="0 0 640 96" width="100%" style="max-width:640px;display:block" role="img" aria-label="Zephyr 優先權數線：-16 到 -1 合作式，0 到 14 可搶占，15 idle，main 在 14">
+        <rect x="10" y="30" width="300" height="26" rx="6" fill="var(--violet-tint)" stroke="var(--violet)"/>
+        <rect x="314" y="30" width="282" height="26" rx="6" fill="var(--teal-tint)" stroke="var(--teal)"/>
+        <rect x="600" y="30" width="30" height="26" rx="6" fill="var(--surface-2)" stroke="var(--mist)"/>
+        <text x="160" y="48" text-anchor="middle" font-size="13" fill="var(--violet)" font-weight="700">合作式 −16 … −1</text>
+        <text x="455" y="48" text-anchor="middle" font-size="13" fill="var(--teal)" font-weight="700">可搶占 0 … 14</text>
+        <text x="615" y="48" text-anchor="middle" font-size="12" fill="var(--mist)">15</text>
+        <text x="615" y="74" text-anchor="middle" font-size="12" fill="var(--mist)">idle</text>
+        <line x1="583" y1="24" x2="583" y2="62" stroke="var(--gold)" stroke-width="3"/>
+        <text x="583" y="18" text-anchor="end" font-size="13" fill="var(--gold-deep)" font-weight="700">main＝14</text>
+        <text x="10" y="88" font-size="12" fill="var(--mist)">高優先 ←</text>
+        <text x="630" y="88" text-anchor="end" font-size="12" fill="var(--mist)">→ 低優先</text>
+      </svg></div>
+      <ul>
+        <li><code>CONFIG_MAIN_THREAD_PRIORITY=14</code>：只比 idle 高一格，等於把 Arduino 主迴圈當背景工作（Zephyr 一般預設是 0）<span class="tag t-board" title="MCU 深度版 §2.3">〔實板 07-25〕</span>。講義另註：<code>setup()/loop()</code> 是跑在 main thread 還是另一條 thread，還待接板核對。</li>
+        <li>時間切片（time-slicing）是開的：<code>CONFIG_TIMESLICE_SIZE=20</code>（每片 20 ms），優先權 0–14 的執行緒同級會輪流跑 <span class="tag t-board" title="MCU 深度版 §2.3">〔實板 07-25〕</span>。</li>
+        <li>系統時脈每秒 10,000 個 tick（每 tick 100 µs），而且是 tickless（沒事就睡到下一個逾時）<span class="tag t-board" title="MCU 深度版 §5.3">〔實板 07-25〕</span>。</li>
+        <li>Bridge 在 MCU 這邊用了 4 顆 <code>k_mutex</code>（read／write／bridge／call）＋一條名叫 <code>bridge</code> 的背景執行緒（thread）<span class="tag t-board" title="MCU 深度版 §3.5（讀板上 Arduino_RouterBridge/src/bridge.h）">〔實板〕</span>。</li>
+      </ul>
+
+      <h4>容器不是虛擬機</h4>
+      <p>每支 App 的 Python 跑在自己的 Docker 容器裡 <span class="tag t-board" title="10/02 log：Container w5-aqi-main-1 Started">〔實板 10-02〕</span>。容器是作業系統層的虛擬化：跟主機<b>共用同一顆 Linux 核心</b>，用 namespace（看到自己的行程樹與掛載點）、cgroup v2（資源上限）、overlayfs（分層檔案系統）隔開；虛擬機（VM）則是 hypervisor 底下各跑一顆核心。講義特別提醒：在 docker 群組幾乎等於 root（能把主機根目錄掛進容器），「免 root」不等於「安全沙盒」。（MPU 深度版 §3）</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §2 ============================== -->
+<section class="sec" id="s2">
+  <div class="sec-h"><span class="num">2</span><h2>App 解剖：檔案與每一行</h2><span class="en">ANATOMY</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><code>app new my-aqi</code> 建出的資料夾，每個檔案在不同時間、被不同的腦讀走。<b>先點檔名</b>，再<b>點程式碼的任何一行</b>，右邊會說這一行在做什麼、跑在哪顆腦上。下面的程式碼跟這週的 starter 檔逐字相同。</p>
+  <div class="two">
+    <div style="min-width:0">
+      <div class="tree" id="tree" aria-label="my-aqi 檔案樹"><span class="d">~/ArduinoApps/my-aqi/</span>
+<span class="d">├─ </span><button type="button" data-f="app.yaml" aria-pressed="false">app.yaml</button>
+<span class="d">├─ python/</span>
+<span class="d">│  ├─ </span><button type="button" data-f="main.py" aria-pressed="false">main.py</button>
+<span class="d">│  └─ </span><button type="button" data-f="moenv_key.txt" aria-pressed="false">moenv_key.txt</button>
+<span class="d">└─ sketch/</span>
+<span class="d">   ├─ </span><button type="button" data-f="sketch.ino" aria-pressed="false">sketch.ino</button>
+<span class="d">   └─ </span><button type="button" data-f="sketch.yaml" aria-pressed="false">sketch.yaml</button></div>
+      <div class="tabs" role="group" aria-label="切換程式碼檔案">
+        <button type="button" class="btn" data-tab="main.py" aria-pressed="true">python/main.py</button>
+        <button type="button" class="btn" data-tab="sketch.ino" aria-pressed="false">sketch/sketch.ino</button>
+        <button type="button" class="btn" data-tab="sketch.yaml" aria-pressed="false">sketch/sketch.yaml</button>
+      </div>
+      <div class="code" id="codeBox"><div class="inner" id="codeInner"></div></div>
+    </div>
+    <div class="panel sticky" id="codePanel" aria-live="polite">
+      <h3>點檔名或任何一行</h3>
+      <p class="ph">例如 main.py 第 47 行（快取有沒有過期）、第 29 行（真的上網）、sketch.ino 第 16 行（跨兩顆腦的那一行）。</p>
+    </div>
+  </div>
+
+  <details class="deep">
+    <summary>深入一層：<code>app start</code> 那 100 秒在做什麼</summary>
+    <div class="in">
+      <ol>
+        <li><b>讀設定</b>：<code>app.yaml</code>（掛哪些積木）、<code>sketch.yaml</code>（平台＋函式庫）。第一次要上網下載 ArduinoGraphics 1.1.4，教室網路擋住就編不過。</li>
+        <li><b>在板子上編譯 sketch</b>：編成 llext（Linkable Loadable EXTension，可載入的 ELF，型別 <code>ET_REL</code>）——不是一整支韌體 <span class="tag t-code" title="MCU 深度版 第 1 章、§6.4">〔原始碼〕</span>。</li>
+        <li><b>燒進 MCU</b>：Linux 用三支 GPIO 以軟體「敲」出 SWD 燒錄訊號（OpenOCD 的 <code>linuxgpiod</code> 驅動），不用另買燒錄器 <span class="tag t-board" title="報告-STM32第二顆腦深挖：/opt/openocd/openocd_gpiod.cfg">〔實板 07-25〕</span>。燒錄設定 <code>flash_sketch.cfg</code> 先 verify、內容不同才 erase＋write 到 <code>0x08100000</code> <span class="tag t-board" title="實測-MCU-verify-failed-0x08000000-20260817">〔實板 08-17〕</span>，燒完在 TAMP 備份暫存器寫 magic <code>0xCAFFEEEE</code> 當「落地握手」<span class="tag t-code" title="報告-STM32第二顆腦深挖 §七；MCU 深度版 §6.5">〔原始碼〕</span>。
+          <div class="note">所以第一次或換了 sketch，一定會看到紅字 <code>Error: verify failed in bank at 0x08000000 starting at 0x00100000</code>：OpenOCD 把整顆 2 MB 當一個 bank，<code>0x08000000 + 0x00100000 = 0x08100000</code>＝sketch 區。最後有 <code>✓ App "…" started successfully</code> 就是過。</div></li>
+        <li><b>loader 接手</b>：看到 magic → 從 <code>0x08100000</code> 讀 llext → 載入、重定位（relocation）、接符號 → 跑 <code>setup()</code>，再一直跑 <code>loop()</code>。</li>
+        <li><b>起容器跑 Python</b>：log 會有 <code>Container w5-aqi-main-1 Started</code> 這種行 <span class="tag t-board" title="10/02 實板 log">〔實板 10-02〕</span>。</li>
+        <li><b>完成</b>：<code>✓ App "my-aqi" started successfully</code>。第一次 96–108 秒（含下載函式庫），同一支第二次 23 秒 <span class="tag t-board" title="內容規格 §〇">〔實板 10-02〕</span>。</li>
+      </ol>
+
+      <h4>MCU 的 2 MB Flash 地圖</h4>
+      <div id="flashMap"></div>
+      <p class="small">分割表 <span class="tag t-code" title="ArduinoCore-zephyr UNO Q overlay；MCU 深度版 §6.5">〔原始碼〕</span>＋OpenOCD 實燒落點 <span class="tag t-board" title="報告-STM32第二顆腦深挖：flash 落點 0x08100000（boards.txt＋live log 雙證）">〔實板 07-25〕</span>。loader 的 <code>.bin</code> 是 226,548 bytes <span class="tag t-board" title="MCU 深度版〈驗證狀態〉">〔實板 07-25〕</span>，放在 768 KB 的槽裡。</p>
+
+      <h4>開機序：從 MCUboot 到你的 <code>loop()</code></h4>
+      <ol>
+        <li>MCUboot 驗映像，跳到 loader。</li>
+        <li>loader 讀 TAMP 備份暫存器的 magic <code>0xCAFFEEEE</code>（TAMP 在 backup domain，軟體重置不會清掉）。</li>
+        <li>有 magic → 從 <code>0x08100000</code> 讀 sketch：<code>llext_load → relocate → 接符號 → llext_bringup</code>。sketch 被複製進 LLEXT heap（<code>CONFIG_LLEXT_HEAP_SIZE=256</code>，單位 KB）<span class="tag t-board" title="MCU 深度版 §6.4">〔實板 07-25〕</span>——<b>sketch 跑在 RAM，不是直接從 Flash 執行</b>。</li>
+        <li>把 <code>setup()/loop()</code> 包成一條 Zephyr 執行緒去跑。</li>
+      </ol>
+
+      <h4>為什麼需要跳板（trampoline）</h4>
+      <p>Thumb 的 <code>BL</code>／<code>B.W</code> 指令只跳得到 ±16 MB。sketch 被搬到 SRAM（約 <code>0x2000_0000</code>），loader 在 Flash（<code>0x0801_0000</code>），兩邊相距約 400 MB，直接發 Thumb BL，重定位時會出現 <code>truncated to fit</code> 錯誤。ArduinoCore-zephyr 的做法：在原名底下放一段跳板，用 <code>movw/movt</code> 把完整 32 位元位址載進暫存器，再 <code>blx</code> 間接呼叫 <span class="tag t-code" title="MCU 深度版 §6.4（llext_exports.c）">〔原始碼〕</span>。這跟 W15 的 Linux 核心模組（<code>.ko</code> 疊在跑著的核心上）是同一個母題：把外掛動態載入到正在執行的核心。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §3 ============================== -->
+<section class="sec" id="s3">
+  <div class="sec-h"><span class="num">3</span><h2>Bridge 一步一步</h2><span class="en">RPC OVER UART</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead"><code>Bridge.call</code> 一行字，底下是一次 RPC（Remote Procedure Call，遠端程序呼叫）：打包成 MessagePack、過 UART、總機查表轉送、對方執行、再原路回來。按「下一步」走一次；也可以換成〈Color your LEDs〉的反方向，或把 <code>call</code> 換成 <code>notify</code> 看差別。</p>
+  <div class="ctrls">
+    <div><label id="lbScn">情境</label><br>
+      <div class="seg" role="group" aria-labelledby="lbScn">
+        <button type="button" class="btn" data-scn="aqi" aria-pressed="true">AQI 跑馬燈：MCU 問、Linux 答</button>
+        <button type="button" class="btn" data-scn="color" aria-pressed="false">Color your LEDs：Linux 叫 MCU 做</button>
+      </div></div>
+    <div><label id="lbMode">呼叫方式</label><br>
+      <div class="seg" role="group" aria-labelledby="lbMode">
+        <button type="button" class="btn" data-mode="call" aria-pressed="true">call（要等回覆）</button>
+        <button type="button" class="btn" data-mode="notify" aria-pressed="false">notify（單向、不等）</button>
+      </div></div>
+    <div id="optAqi"><label id="lbCache">Python 那邊的快取</label><br>
+      <div class="seg" role="group" aria-labelledby="lbCache">
+        <button type="button" class="btn" data-cache="hit" aria-pressed="true">命中（10 分鐘內問過）</button>
+        <button type="button" class="btn" data-cache="miss" aria-pressed="false">過期（要上網）</button>
+      </div></div>
+    <div id="optColor" hidden>
+      <div class="form" style="grid-template-columns:auto auto">
+        <label>哪一顆燈<select id="ledSel"><option value="1">LED 1</option><option value="2">LED 2</option><option value="3" selected>LED 3</option><option value="4">LED 4</option></select></label>
+        <label>顏色<input type="color" id="ledColor" value="#ff8000"></label>
+      </div></div>
+  </div>
+  <div class="track" id="track" aria-hidden="true"></div>
+  <div class="stepcard" id="stepCard" aria-live="polite"></div>
+  <div class="stepbar">
+    <button type="button" class="btn" id="stPrev">◀ 上一步</button>
+    <button type="button" class="btn primary" id="stNext">下一步 ▶</button>
+    <button type="button" class="btn" id="stReset">從頭</button>
+    <span class="cnt" id="stCnt"></span>
+  </div>
+
+  <details class="deep">
+    <summary>深入一層：MessagePack 的型別標記</summary>
+    <div class="in">
+      <p>序列化（serialization）＝把程式裡的值變成一串位元組。MessagePack 像「二進位版的 JSON」：每個值前面一個標記位元組說「我是什麼、多長」，小的整數和短字串把長度直接塞進標記裡，所以很省 <span class="tag t-code" title="msgpack/msgpack spec.md">〔原始碼〕</span>。</p>
+      <div class="tblw"><table>
+        <tr><th>型別</th><th>標記位元組</th><th>本週用到的例子</th></tr>
+        <tr><td>positive fixint（0–127）</td><td><code>0x00</code>–<code>0x7f</code>（值就是標記本身）</td><td>type <code>0</code>、msgid <code>1</code></td></tr>
+        <tr><td>fixarray（0–15 個元素）</td><td><code>0x90</code>–<code>0x9f</code>（低 4 位元＝元素數）</td><td>外層 <code>[type, msgid, method, params]</code> → <code>0x94</code>；空的 params <code>[]</code> → <code>0x90</code></td></tr>
+        <tr><td>fixstr（0–31 位元組）</td><td><code>0xa0</code>–<code>0xbf</code>（低 5 位元＝長度）</td><td><code>"get_aqi_text"</code> 12 位元組 → <code>0xac</code></td></tr>
+        <tr><td>nil</td><td><code>0xc0</code></td><td>回應的 error 欄（沒出錯）</td></tr>
+        <tr><td>false／true</td><td><code>0xc2</code>／<code>0xc3</code></td><td>LED 4 的 <code>r != 0</code></td></tr>
+        <tr><td>uint 8／16／32</td><td><code>0xcc</code>／<code>0xcd</code>／<code>0xce</code>＋後面 1／2／4 位元組</td><td>LED 3 顏色值 128–255 → <code>0xcc</code>＋1 位元組</td></tr>
+        <tr><td>str 8／16／32</td><td><code>0xd9</code>／<code>0xda</code>／<code>0xdb</code>＋長度</td><td>字串超過 31 位元組時</td></tr>
+        <tr><td>array 16／32</td><td><code>0xdc</code>／<code>0xdd</code>＋長度</td><td>（本週用不到）</td></tr>
+      </table></div>
+      <p>MessagePack-RPC 在這上面約定三種訊息：request <code>[0, msgid, method, params]</code>、response <code>[1, msgid, error, result]</code>、notify <code>[2, method, params]</code> <span class="tag t-code" title="msgpack-rpc spec.md；arduino-q UNOQ-深度學習主題地圖 :54">〔原始碼〕</span>。</p>
+    </div>
+  </details>
+
+  <details class="deep">
+    <summary>深入一層：UART 線上，一個位元組長什麼樣</summary>
+    <div class="in">
+      <p>UART 平常停在高電位；送一個位元組＝1 個起始位元（低）＋8 個資料位元（<b>最低位先送</b>）＋1 個停止位元（高）。這叫 8N1，假設板子這樣設定，每個位元組佔 10 個位元時間 <span class="tag t-est" title="假設 8N1；115200 baud 為實板設定">〔估算〕</span>。</p>
+      <div class="form" style="max-width:520px">
+        <label>從 AQI request 挑一個位元組<select id="uartSel"></select></label>
+        <label>每個位元多久<span class="out mono" id="uartBitT"></span></label>
+      </div>
+      <div class="uart-row" id="uartRow"></div>
+      <p class="small" id="uartNote"></p>
+    </div>
+  </details>
+
+  <details class="deep">
+    <summary>深入一層：msgid 怎麼配對、<code>call</code> 為什麼會卡住 <code>loop()</code></summary>
+    <div class="in">
+      <ul>
+        <li><b>msgid 配對</b>：request 帶一個 32 位元的 msgid，response 帶回同一個 msgid；規格允許伺服器不照順序回覆，所以發問的那邊靠 msgid 把回覆對回原本的呼叫 <span class="tag t-code" title="msgpack-rpc spec.md">〔原始碼〕</span>。router 中間怎麼轉換，留到 W15 的 Bridge 原始碼導讀。本頁的 msgid 是示範值。</li>
+        <li><b><code>call</code> 不會立刻卡住，<code>.result()</code> 才會</b>：MCU 上 <code>Bridge.call(...)</code> 先回一個 <code>RpcCall</code> 物件；<code>.result(text)</code> 才阻塞等待，而且只能取一次。等待的方式是輪詢：<code>k_mutex_lock</code>＋<code>K_MSEC(10)</code>＋<code>k_yield</code>／<code>k_msleep(1)</code> <span class="tag t-code" title="MCU 深度版 §3.5、§7.4">〔原始碼〕</span>。</li>
+        <li><b>所以 AQI 的 <code>loop()</code> 是「問 → 等 → 捲 → 再問」</b>：<code>.result()</code> 等到回答，接著 <code>endText(SCROLL_LEFT)</code> 一步一步捲（每步 <code>delay(60)</code>），捲完才回到 <code>loop()</code> 開頭再問一次。log 大約 12 秒一行就是這樣來的 <span class="tag t-board" title="內容規格 §〇">〔實板 10-02〕</span>。</li>
+        <li><b>冷啟動</b>：nightlight lab 在 notify 處理函式裡用 <code>Bridge.call</code>，第一發逾時 10 秒，還把處理函式卡住；改成 <code>Bridge.notify</code> 後零逾時 <span class="tag t-board" title="arduino-q labs/nightlight/README.md">〔實板 07-27〕</span>。bridge-rtt 也量到第 1 發比較慢：7.7 ms，之後中位數 4.99 ms <span class="tag t-board" title="arduino-q labs/bridge-rtt/README.md">〔實板 07-27〕</span>。<b>過橋前先問：我需要回覆嗎？</b>不需要就用 notify。</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="deep">
+    <summary>深入一層：上網那一步拆開：DNS → TCP → TLS → HTTP</summary>
+    <div class="in">
+      <ol>
+        <li><b>DNS</b>：把 <code>data.moenv.gov.tw</code> 換成 IP 位址。</li>
+        <li><b>TCP</b>：連到伺服器的 443 埠（HTTPS）。</li>
+        <li><b>TLS（Transport Layer Security）握手</b>：伺服器送出憑證鏈，Python 檢查三件事——鏈得到受信任的根憑證、沒過期、名字對得上 <code>data.moenv.gov.tw</code>。通過才開始加密傳資料。</li>
+        <li><b>HTTP GET</b>：<code>/api/v2/aqx_p_432?api_key=…&amp;format=JSON&amp;filters=sitename,EQ,花蓮</code>。金鑰就在網址裡，整段走在 TLS 加密裡面。</li>
+        <li><b>回應</b>：一個 JSON 陣列、一筆資料；<code>aqi</code>、<code>pm2.5</code> 都是<b>字串</b> <span class="tag t-board" title="內容規格 §〇（10/02 14:00 那一筆）">〔實板 10-02〕</span>。金鑰錯或用完時 HTTP 照樣是 200，內容是一行中文、不是 JSON——所以程式先 <code>json.loads</code>，失敗才判斷成 <code>KEY?</code>。</li>
+      </ol>
+      <h4>放寬一項 vs 整個關掉</h4>
+      <p>Python 3.13 起，<code>ssl.create_default_context()</code> 預設多開 <code>VERIFY_X509_STRICT</code>，嚴格檢查憑證的擴充欄位；環境部的憑證鏈裡有一張少了 Subject Key Identifier，於是 <code>CERTIFICATE_VERIFY_FAILED</code>，<code>curl</code> 卻連得上 <span class="tag t-board" title="arduino-q labs/aqi-marquee/README.md 坑 1">〔實板 10-02〕</span>。starter 只關掉這一項：</p>
+      <div class="tblw"><table>
+        <tr><th>設定</th><th>data.moenv.gov.tw</th><th>expired.badssl.com（過期）</th><th>wrong.host.badssl.com（名字不符）</th></tr>
+        <tr><td>Python 3.13 預設</td><td>✗ 連不上 <span class="tag t-board">〔實板 10-02〕</span></td><td>✗ 擋下</td><td>✗ 擋下</td></tr>
+        <tr><td>starter：只放寬 <code>VERIFY_X509_STRICT</code></td><td>✓ 200 <span class="tag t-board">〔實板 10-02〕</span></td><td>✗ 擋下 <span class="tag t-board">〔實板 10-02〕</span></td><td>✗ 擋下 <span class="tag t-board">〔實板 10-02〕</span></td></tr>
+        <tr><td>整個關掉（<code>CERT_NONE</code>＋不查主機名）</td><td>✓</td><td>✓ <b>不該過卻過了</b></td><td>✓ <b>不該過卻過了</b></td></tr>
+      </table></div>
+      <p class="small">starter 的 <code>SSL_CTX</code> 仍是 <code>check_hostname=True</code>、<code>verify_mode=2</code>（CERT_REQUIRED）<span class="tag t-board" title="內容規格 §〇〈憑證〉">〔實板 10-02〕</span>。整個關掉時，任何人都能假扮環境部：收走網址裡的金鑰、回給你假的 AQI。</p>
+    </div>
+  </details>
+
+  <details class="deep">
+    <summary>深入一層：跨晶片的 UART-RPC vs 課本上同晶片的 RPMsg</summary>
+    <div class="in">
+      <p>兩顆異質核心各跑各的作業系統、靠訊息合作，叫 AMP（Asymmetric Multiprocessing，非對稱多處理）。UNO Q 的做法跟課本常見的不一樣：</p>
+      <div class="tblw"><table>
+        <tr><th></th><th>UNO Q</th><th>課本常見（一顆 SoC 裡面 A 核＋M 核）</th></tr>
+        <tr><td>拓樸</td><td>跨晶片：QRB2210 ↔ STM32U585</td><td>同一顆晶片</td></tr>
+        <tr><td>傳輸</td><td>實體 UART <code>/dev/ttyHS1</code> @115200＋MessagePack-RPC＋arduino-router（星狀拓樸的中央總機）</td><td>OpenAMP／RPMsg：共享記憶體＋硬體 mailbox</td></tr>
+        <tr><td>延遲／頻寬</td><td>毫秒級／約 11.5 KB/s</td><td>微秒級／記憶體匯流排等級</td></tr>
+        <tr><td>換到什麼</td><td>物理隔離（Linux 當掉不會踩到 MCU）、各自重置、實作簡單</td><td>快、頻寬大，代價是緊耦合</td></tr>
+      </table></div>
+      <p class="small">出處：MCU 深度版 §7.4 <span class="tag t-code">〔原始碼〕</span>。所以 UNO Q 的兩顆腦適合交換「指令與結果」，不適合高速資料流。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §4 ============================== -->
+<section class="sec" id="s4">
+  <div class="sec-h"><span class="num">4</span><h2>位元組計算器</h2><span class="en">BYTES ON THE WIRE</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead">改 Python 要回傳的字串，看 MessagePack 打包後多少位元組、在 115200 baud 的 UART 上要傳多久，再跟實際量到的過橋時間比一比。</p>
+  <div class="two">
+    <div class="form" style="grid-template-columns:minmax(0,1fr)">
+      <label><span>Python 回給 MCU 的字串（<code>get_aqi_text()</code> 的回傳值）</span><input type="text" id="bcText" value="HUALIEN AQI 32 PM2.5 7" autocomplete="off" spellcheck="false"></label>
+      <div class="form">
+        <label>函式名稱（method）<input type="text" id="bcMethod" value="get_aqi_text" autocomplete="off" spellcheck="false"></label>
+        <label>msgid（示範值）<input type="number" id="bcId" value="1" min="0" max="4294967295"></label>
+      </div>
+      <div class="seg" role="group" aria-label="快速範例">
+        <button type="button" class="btn" data-bc="HUALIEN AQI 32 PM2.5 7">花蓮（預設）</button>
+        <button type="button" class="btn" data-bc="KEY?">KEY?</button>
+        <button type="button" class="btn" data-bc="HUALIEN AQI 32 PM2.5 7 STATUS GOOD">加長到 34 字</button>
+        <button type="button" class="btn" data-bc="花蓮 AQI 32">換成中文</button>
+      </div>
+    </div>
+    <div class="panel" id="bcOut" aria-live="polite"></div>
+  </div>
+  <h3 style="font-size:16px;margin:14px 0 4px">request（MCU → Linux）</h3>
+  <div class="hex" id="bcReqHex"></div>
+  <h3 style="font-size:16px;margin:10px 0 4px">response（Linux → MCU）</h3>
+  <div class="hex" id="bcResHex"></div>
+
+  <details class="deep">
+    <summary>深入一層：字串長度的門檻、4.99 ms 裡面有什麼</summary>
+    <div class="in">
+      <h4>字串標頭什麼時候變長</h4>
+      <ul>
+        <li>0–31 位元組：fixstr，標頭 1 位元組（<code>0xa0 | 長度</code>）。</li>
+        <li>32–255 位元組：str 8，標頭 2 位元組（<code>0xd9</code>＋長度）。上面「加長到 34 字」就跨過這條線。</li>
+        <li>256–65,535 位元組：str 16，標頭 3 位元組。</li>
+        <li>算的是 <b>UTF-8 位元組</b>，不是字數：一個中文字通常 3 位元組。</li>
+      </ul>
+      <h4>4.99 ms 是怎麼量的</h4>
+      <p>bridge-rtt 這個 lab 讓 <b>Python 呼叫 MCU</b> 上一個什麼都不做的 <code>echo(i)</code>，連打 200 發：中位數 4.99 ms、p95 5.08、最小 4.48、最大 5.20、冷啟動第 1 發 7.7 ms <span class="tag t-board" title="arduino-q labs/bridge-rtt/README.md">〔實板 07-27〕</span>。那個封包很小：request <code>[0, id, "echo", [i]]</code> 約 10 位元組、response <code>[1, id, nil, i]</code> 約 5 位元組（以 id、i 都小於 128 估），純傳輸約 1.3 ms <span class="tag t-est">〔估算〕</span>。</p>
+      <p>所以那次量測裡，<b>UART 以外的成本大約 3.7 ms</b>：打包解包、router 查表轉送、unix socket、兩邊執行緒排程。哪一段各占多少沒有分開量。AQI 這發的封包比 echo 大，如果其他成本差不多，往返大概 7–8 ms <span class="tag t-est">〔估算〕</span>——要確定，就用 bridge-rtt 的方法量 <code>get_aqi_text</code>。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §5 ============================== -->
+<section class="sec" id="s5">
+  <div class="sec-h"><span class="num">5</span><h2>額度計算機與快取</h2><span class="en">QUOTA &amp; CACHE</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead">免費 API 都有次數上限，全班一起打、加起來很快。拉桿調參數，看先撞到哪一條上限；兩顆預設按鈕是這週的兩個 App。</p>
+  <div class="seg" role="group" aria-label="預設情境" style="margin-bottom:12px">
+    <button type="button" class="btn" id="qpWeather">官方天氣範例（26 塊、12 秒、2 次）</button>
+    <button type="button" class="btn" id="qpAqi">AQI 版（26 塊、600 秒、1 次）</button>
+  </div>
+  <div class="two">
+    <div class="form">
+      <label><span>幾塊板子一起跑：<span class="mono" id="qBoardsV"></span></span><input type="range" id="qBoards" min="1" max="40" value="26"></label>
+      <label><span>每塊幾秒打一次：<span class="mono" id="qIntV"></span></span><input type="range" id="qInt" min="1" max="900" value="12"></label>
+      <label><span>每次打幾個 API：<span class="mono" id="qApiV"></span></span><input type="range" id="qApi" min="1" max="3" value="2"></label>
+      <label>打哪一家
+        <select id="qSvc"><option value="om">open-meteo（免金鑰，算整個對外出口）</option><option value="moenv">環境部 aqx_p_432（要金鑰）</option></select></label>
+      <label id="qKeyWrap" hidden>金鑰怎麼分
+        <select id="qKey"><option value="own">每人自己一把</option><option value="shared">全班共用一把（例如公開金鑰）</option></select></label>
+    </div>
+    <div class="panel" aria-live="polite">
+      <div class="out" id="qRate"></div>
+      <div class="lim" id="qLims"></div>
+      <p class="small" id="qNote"></p>
+    </div>
+  </div>
+  <p class="small">上限：open-meteo 非商業免費版每分鐘 600、每小時 5,000、每天 10,000 次；環境部會員金鑰每把每天 5,000 次 <span class="tag t-code" title="open-meteo.com/en/terms、環境部 API 介接服務條款（2026-10-02 讀）">〔原始碼〕</span>。計算結果一律是 <span class="tag t-est">〔估算〕</span>。</p>
+
+  <details class="deep">
+    <summary>深入一層：快取狀態機模擬器（照 main.py 的邏輯跑）</summary>
+    <div class="in">
+      <p><code>get_aqi_text()</code> 每次被 MCU 問到，只做一個判斷：離上次上網有沒有超過 <code>CACHE_SECONDS</code>？沒超過就回快取；超過就上網。上網失敗時把 <code>last_fetch</code> 往回撥，<b>60 秒後</b>就會再試（main.py 第 59–60 行）。下面照這個邏輯模擬，每按一次＝MCU 捲完一輪又來問（約 12 秒）。</p>
+      <div class="form">
+        <label>這時候的狀況
+          <select id="smMode">
+            <option value="ok">一切正常</option>
+            <option value="badkey">金鑰打錯</option>
+            <option value="quota">金鑰今天用完了</option>
+            <option value="nokey">沒有 moenv_key.txt</option>
+            <option value="nonet">板子連不上環境部</option>
+            <option value="nosite">SITE 被改成「台東」（應該寫「臺東」）</option>
+          </select></label>
+        <label><code>CACHE_SECONDS</code>
+          <select id="smCache"><option value="600">600（starter）</option><option value="60">60</option><option value="0">0（不快取）</option></select></label>
+      </div>
+      <div class="seg" style="margin:10px 0">
+        <button type="button" class="btn primary" id="smAsk">MCU 來問一次（＋12 秒）</button>
+        <button type="button" class="btn" id="smFast">快轉 5 分鐘</button>
+        <button type="button" class="btn" id="smReset">重來</button>
+      </div>
+      <div class="states" id="smStates">
+        <div class="st-box" data-st="fresh"><b>快取有效</b><span>回 last_text，印 <code>cache:</code></span></div>
+        <div class="st-box" data-st="stale"><b>快取過期</b><span>下次問就上網</span></div>
+        <div class="st-box" data-st="retry"><b>剛失敗</b><span>60 秒後再試</span></div>
+      </div>
+      <p class="out" id="smStat"></p>
+      <div class="logbox" id="smLog" aria-live="polite" tabindex="0"></div>
+      <p class="small">log 的字樣照 main.py 的 <code>print</code>；正常那行用 10/02 14:00 那一筆當示範值 <span class="tag t-board" title="內容規格 §〇">〔實板 10-02〕</span>。換金鑰檔不必重開 App：失敗後 1 分鐘內自己會再試 <span class="tag t-board" title="內容規格 §〇〈log 各種狀態〉">〔實板 10-02〕</span>。</p>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §6 ============================== -->
+<section class="sec" id="s6">
+  <div class="sec-h"><span class="num">6</span><h2>點陣捲字模擬</h2><span class="en">LED MATRIX</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead">MCU 用 ArduinoGraphics 把字畫進 13×8 的畫布，每一步往左移一格、停 <code>textScrollSpeed</code> 毫秒。這裡照函式庫的原始碼一步一步重演；字形是官方 <code>Font_5x7</code>。輸入英數字試試，再輸入中文看看會怎樣。</p>
+  <div class="two">
+    <div class="mxwrap">
+      <div class="mx" id="mx" role="img" aria-label="13 乘 8 點陣模擬"></div>
+      <div class="seg">
+        <button type="button" class="btn primary" id="mxPlay">▶ 播放</button>
+        <button type="button" class="btn" id="mxStep">單步</button>
+        <button type="button" class="btn" id="mxReset">從頭</button>
+      </div>
+      <p class="small" id="mxInfo"></p>
+    </div>
+    <div class="form" style="grid-template-columns:minmax(0,1fr)">
+      <label><span>要捲的字（等於 Python 回傳的 <code>text</code>）</span><input type="text" id="mxText" value="HUALIEN AQI 32 PM2.5 7" autocomplete="off" spellcheck="false"></label>
+      <label><span><code>matrix.textScrollSpeed(<span id="mxSpdV">60</span>)</code>：每一步停幾毫秒</span><input type="range" id="mxSpd" min="20" max="200" step="10" value="60"></label>
+      <div class="panel" id="mxCalc" aria-live="polite"></div>
+      <div>
+        <div class="small">實際送進 ArduinoGraphics 的位元組（<code>"   " + text + "   "</code> 再加 <code>println</code> 的 <code>\r\n</code>）：</div>
+        <div class="bytes" id="mxBytes"></div>
+        <div class="small">刪除線＝<code>0xC2</code>、<code>0xC3</code> 被函式庫直接丟掉；紅底＝字形表查不到、畫成空白。</div>
+      </div>
+    </div>
+  </div>
+
+  <details class="deep">
+    <summary>深入一層：一格畫面＝128 位元，點格子看 hex</summary>
+    <div class="in">
+      <p>點陣 8 列 × 13 行＝104 顆 LED，由 MCU 驅動。一格畫面存成 <code>uint32_t[4]</code>（128 位元只用 104）<span class="tag t-code" title="Arduino_LED_Matrix.h；weather_frames.h">〔原始碼〕</span>。官方天氣範例的 <code>weather_frames.h</code> 每格是 4 個 32 位元數＋1 個毫秒數。第 r 列第 c 行的編號 n＝r×13＋c，落在第 <code>n ÷ 32</code> 個字的第 <code>31 − n mod 32</code> 位元（最高位元先）。</p>
+      <div class="two">
+        <div class="mxwrap">
+          <div class="mx" id="hx" aria-label="可點的 13 乘 8 格子"></div>
+          <div class="seg">
+            <button type="button" class="btn" id="hxClear">清空</button>
+            <button type="button" class="btn" id="hxSun">天氣範例：sunny 第 1 格</button>
+            <button type="button" class="btn" id="hxRain">天氣範例：rainy 第 1 格</button>
+            <button type="button" class="btn" id="hxGrab">抓上面捲字的這一格</button>
+          </div>
+        </div>
+        <div class="panel" aria-live="polite">
+          <div class="small">給 <code>loadFrame()</code>／寫進 <code>weather_frames.h</code> 的樣子：</div>
+          <div class="hexout" id="hxWords"></div>
+          <div class="small"><code>next()</code> 對每個字做 <code>reverse()</code>（Cortex-M 上是 <code>__RBIT</code> 指令）之後送 <code>matrixWrite()</code>：</div>
+          <div class="hexout" id="hxRbit"></div>
+          <p class="small" id="hxLast">點任何一格看它是第幾位元。</p>
+        </div>
+      </div>
+      <h4>從 <code>println</code> 到 LED</h4>
+      <ol>
+        <li><code>#include &lt;ArduinoGraphics.h&gt;</code> 放在前面 → <code>Arduino_LED_Matrix.h</code> 用 <code>__has_include</code> 偵測到 → 點陣類別繼承 ArduinoGraphics，建構時給 13×8 畫布 <span class="tag t-code" title="Arduino_LED_Matrix.h">〔原始碼〕</span>。</li>
+        <li><code>println</code> 把字串一個位元組一個位元組收進文字緩衝（遇到 <code>0xC2</code>、<code>0xC3</code> 直接丟掉）。</li>
+        <li><code>endText(SCROLL_LEFT)</code>：總步數＝位元組數×5＋1；每一步把文字畫在 x＝−i、y＝1，畫完 <code>delay(textScrollSpeed)</code> <span class="tag t-code" title="ArduinoGraphics 1.1.4 src/ArduinoGraphics.cpp">〔原始碼〕</span>。</li>
+        <li>每畫一格就 <code>renderBitmap</code>：把 8×13 的 0/1 陣列打包成 4 個 32 位元字 → <code>loadFrame</code> → <code>reverse()</code> → <code>matrixWrite()</code>。</li>
+        <li>點陣本身由中斷常式掃描，標頭檔註解寫它支援 8 階灰階 <span class="tag t-code" title="Arduino_LED_Matrix.h 的註解">〔原始碼〕</span>。</li>
+      </ol>
+    </div>
+  </details>
+</section>
+
+<!-- ============================== §7 ============================== -->
+<section class="sec" id="s7">
+  <div class="sec-h"><span class="num">7</span><h2>想一想（先猜再揭曉）</h2><span class="en">THINK FIRST</span><a class="back" href="#toc">回目錄</a></div>
+  <p class="lead">先選你的答案，再按「揭曉」。每一題都能在上面幾節找到線索。</p>
+  <div class="qs" id="qs"></div>
+</section>
+
+<footer id="refs" class="sec" style="background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 22px">
+  <h2>出處與授權</h2>
+  <ul>
+    <li><b>板上實測〔實板〕</b>：2026-10-02 在老師的 UNO Q 上實跑（arduino-app-cli 0.13.0、Debian 13）；07-25／07-27／08-17 的數字出自 arduino-q 專案的講義與 lab 紀錄。</li>
+    <li>arduino-q 專案：<code>docs/課程講義/MPU與Qualcomm-QRB2210-CSIE深度版.md</code>、<code>docs/課程講義/MCU與Zephyr-RTOS-CSIE深度版.md</code>、<code>docs/報告-STM32第二顆腦深挖-zh-TW.md</code>、<code>docs/實測-MCU-verify-failed-0x08000000-20260817.md</code>、<code>docs/UNOQ-深度學習主題地圖-zh-TW.md</code>、<code>docs/筆記-UNOQ-zh-TW.md</code>、<code>labs/bridge-rtt/README.md</code>、<code>labs/nightlight/README.md</code>、<code>labs/aqi-marquee/README.md</code>。</li>
+    <li>本週 starter：<code>starter/aqi/python/main.py</code>、<code>starter/aqi/sketch/sketch.ino</code>、<code>starter/aqi/sketch/sketch.yaml</code>（本頁第 2 節逐字嵌入）。</li>
+    <li><b>字形 <code>Font_5x7</code></b>：ArduinoGraphics 1.1.4 的 <code>src/Font_5x7.c</code>（github.com/arduino-libraries/ArduinoGraphics），Copyright (c) 2025 Arduino SA，依 Mozilla Public License 2.0（MPL-2.0）授權；本頁把字形資料機械轉成十六進位字串，內容未改。捲字邏輯照該函式庫 <code>ArduinoGraphics.cpp</code> 的 <code>text()</code>／<code>endText()</code> 改寫成 JavaScript。</li>
+    <li>點陣格式與兩格天氣圖：<code>Arduino_LED_Matrix.h</code>（arduino/ArduinoCore-zephyr，Apache-2.0）、<code>weather_frames.h</code>（arduino/app-bricks-examples，MPL-2.0）。</li>
+    <li>〈Color your LEDs〉的流程：arduino/app-bricks-examples 的 <code>python/main.py</code>、<code>sketch/sketch.ino</code>、<code>assets/app.js</code>（MPL-2.0）；LED 3 的 PWM 設定：ArduinoCore-zephyr 的 UNO Q overlay 與 <code>cores/arduino/wiring_analog.cpp</code>（Apache-2.0）。</li>
+    <li>MessagePack 與 MessagePack-RPC 規格：github.com/msgpack/msgpack 的 <code>spec.md</code>、github.com/msgpack-rpc/msgpack-rpc 的 <code>spec.md</code>。</li>
+    <li>額度：open-meteo.com/en/terms、環境部環境資料開放平臺 API 介接服務條款（2026-10-02 讀）。</li>
+  </ul>
+  <p>本頁零外部資源、可離線開啟；不含任何金鑰、板子名稱、板子位址或 Wi-Fi 資訊。2026-10-02 版。</p>
+</footer>
+
+</main>
+
+<!-- 第 2 節逐字嵌入的 starter 原始碼（type="text/plain"：瀏覽器不執行、不轉義；check_concept.py 逐位元組比對） -->
+<script type="text/plain" id="src-main-py"># W5 花蓮 AQI 跑馬燈：Linux 這半——跟環境部開放資料要花蓮測站的 AQI，整理成一行字，交給 MCU 捲動
+import json
+import pathlib
+import ssl
+import time
+import urllib.parse
+import urllib.request
+
+from arduino.app_utils import *
+
+SITE = "花蓮"  # 環境部測站名稱
+LABEL = "HUALIEN"  # 點陣只認得英文字母和數字
+CACHE_SECONDS = 600  # 10 分鐘內只問一次：測站每小時才更新，金鑰每天也有次數上限
+RETRY_SECONDS = 60  # 沒拿到資料時，1 分鐘後再試
+KEY_FILE = pathlib.Path(__file__).with_name("moenv_key.txt")  # 金鑰放檔案，不寫進程式
+
+# 環境部網站的憑證少了一個新版 Python 預設要查的欄位；只放寬這一項，憑證和網址照樣驗證
+SSL_CTX = ssl.create_default_context()
+SSL_CTX.verify_flags &= ~ssl.VERIFY_X509_STRICT
+
+last_text = "WAIT"
+last_fetch = 0.0
+
+
+def fetch_aqi() -> str:
+    key = KEY_FILE.read_text().strip()
+    query = urllib.parse.urlencode({"api_key": key, "format": "JSON", "filters": f"sitename,EQ,{SITE}"})
+    url = "https://data.moenv.gov.tw/api/v2/aqx_p_432?" + query
+    with urllib.request.urlopen(url, timeout=15, context=SSL_CTX) as r:
+        body = r.read().decode("utf-8")
+    try:
+        records = json.loads(body)
+    except ValueError:
+        print("moenv says:", body[:60])  # 金鑰打錯、或今天的次數用完了
+        return "KEY?"
+    if not records:
+        print("no such site:", SITE)
+        return "NO SITE"
+    rec = records[0]
+    print("moenv:", rec["publishtime"], rec["sitename"], "AQI", rec["aqi"], rec["status"])
+    return f"{LABEL} AQI {rec['aqi'] or '--'} PM2.5 {rec['pm2.5'] or '--'}"
+
+
+def get_aqi_text() -> str:
+    global last_text, last_fetch
+    now = time.time()
+    if now - last_fetch < CACHE_SECONDS:
+        print("cache:", last_text)
+        return last_text
+    last_fetch = now
+    try:
+        last_text = fetch_aqi()
+    except FileNotFoundError:
+        last_text = "NO KEY"
+        print("no key file:", KEY_FILE.name)
+    except Exception as e:
+        last_text = "NO DATA"
+        print("fetch failed:", type(e).__name__)
+    if not last_text.startswith(LABEL):  # 沒拿到資料：不等 10 分鐘，1 分鐘後再試
+        last_fetch = now - CACHE_SECONDS + RETRY_SECONDS
+    return last_text
+
+
+Bridge.provide("get_aqi_text", get_aqi_text)
+
+App.run()
+</script>
+<script type="text/plain" id="src-sketch-ino">// W5 花蓮 AQI 跑馬燈：MCU 這半——跟 Linux 要一行字，在點陣上由右往左捲
+#include <ArduinoGraphics.h>
+#include <Arduino_LED_Matrix.h>
+#include <Arduino_RouterBridge.h>
+
+Arduino_LED_Matrix matrix;
+
+void setup() {
+  matrix.begin();
+  matrix.clear();
+  Bridge.begin();
+}
+
+void loop() {
+  String text;
+  bool ok = Bridge.call("get_aqi_text").result(text);
+  if (!ok) {
+    text = "WAIT";
+  }
+  matrix.beginDraw();
+  matrix.stroke(0xFFFFFFFF);
+  matrix.textScrollSpeed(60);
+  matrix.textFont(Font_5x7);
+  matrix.beginText(0, 1, 0xFFFFFF);
+  matrix.println("   " + text + "   ");
+  matrix.endText(SCROLL_LEFT);
+  matrix.endDraw();
+}
+</script>
+<script type="text/plain" id="src-sketch-yaml">profiles:
+  default:
+    platforms:
+      - platform: arduino:zephyr
+    libraries:
+      - ArduinoGraphics (1.1.4)
+default_profile: default
+</script>
+
+<script>
+"use strict";
+/* Font_5x7：ArduinoGraphics 1.1.4 src/Font_5x7.c（Copyright (c) 2025 Arduino SA，MPL-2.0）。
+   索引＝位元組值；每格 7 列、每列 1 位元組（最高 5 位元是像素），null＝原檔是 NULL。 */
+const FONT5x7 = ["00a8008800a800",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"00000000000000","20202020002000","50505000000000","0050f850f85000","0070a070287000","80902040901000","0040a040a05000","20202000000000","20404040402000","40202020204000","00502070205000","002020f8202000","00000000302040","000000f0000000","00000000606000","00102040800000","20505050502000","20602020207000","6090102040f000","f0106010906000","2060a0f0202000","f080e010906000","6080e090906000","f0102020404000","60906090906000","60909070106000","00606000606000","00606000604080","00102040201000","0000f000f00000","00402010204000","20501020002000","6090b0b0806000","609090f0909000","e090e09090e000","60908080906000","e090909090e000","f080e08080f000","f080e080808000","609080b0907000","9090f090909000","70202020207000","10101010906000","90a0c0c0a09000","8080808080f000","90f0f090909000","90d0d0b0b09000","60909090906000","e09090e0808000","60909090d06010","e09090e0a09000","60904020906000","70202020202000","90909090906000","90909090606000","909090f0f09000","90906060909000","50505020202000","f010204080f000","70404040407000","00804020100000","70101010107000","20500000000000","0000000000f000","40200000000000","00007090b05000","8080e09090e000","00006080806000","10107090907000","000060b0c06000","205040e0404000","00007090608070","8080e090909000","20006020207000","10001010105020","8080a0c0a09000","60202020207000","0000a0f0909000","0000e090909000","00006090906000","0000e09090e080","00007090907010","0000e090808000","000070c030e000","4040e040403000","00009090907000","00005050502000","00009090f0f000","00009060609000","00009090502040","0000f02040f000","10206020201000","20202020202000","40203020204000","50a00000000000",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"00000000000000","20002020202000","002070a0a07020","003040e040b000","00887050708800","50502070202000","00202000202000","30406050301060","50000000000000","7088a8c8a88870","60a06000000000","00004890480000","000000f0100000","00000070000000","7088e8c8c88870","f0000000000000","20502000000000","2020f82020f800","60204060000000","60602060000000","20400000000000","0000909090e080","70d0d050505000","00006060000000","00000000002040","20602070000000","40a04000000000","00009048900000","80808090307010","808080b0102030","c0c040d0307010","20002040502000","609090f0909000","609090f0909000","609090f0909000","609090f0909000","906090f0909000","606090f0909000","70a0b0e0a0b000","60908080906040","f080e08080f000","f080e08080f000","f080e08080f000","f080e08080f000","70202020207000","70202020207000","70202020207000","70202020207000","e050d05050e000","b090d0b0b09000","60909090906000","60909090906000","60909090906000","60909090906000","90609090906000","00009060609000","70b0b0d0d0e000","90909090906000","90909090906000","90909090906000","90009090906000","50505020202000","80e090e0808000","6090a09090a000","40207090b05000","20407090b05000","20507090b05000","50a07090b05000","50007090b05000","60607090b05000","000070b0a07000","00003040403020","402060b0c06000","204060b0c06000","40a060b0c06000","a00060b0c06000","40206020207000","20406020207000","20506020207000","50006020207000","40306090906000","50a0e090909000","40206090906000","20406090906000","60006090906000","50a06090906000","50006090906000","006000f0006000","000070b0d0e000","40209090907000","20409090907000","60009090907000","50009090907000","20409090502040","0080e09090e080"];
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const TAGN = { board: "實板", code: "原始碼", est: "估算" };
+function tg(kind, note, title) {
+  return `<span class="tag t-${kind}"${title ? ` title="${esc(title)}"` : ""}>〔${TAGN[kind]}${note ? " " + note : ""}〕</span>`;
+}
+const fmt = n => n.toLocaleString("en-US");
+const ms2 = x => (x >= 100 ? x.toFixed(0) : x >= 10 ? x.toFixed(1) : x.toFixed(2));
+
+/* ---------------- MessagePack 最小編碼器（正整數、nil、布林、字串、陣列） ---------------- */
+const MP = (() => {
+  const te = new TextEncoder();
+  function u(n, k) { const a = []; for (let i = k - 1; i >= 0; i--) a.push(Math.floor(n / 2 ** (8 * i)) & 0xff); return a; }
+  // parts：[{k:種類, b:[位元組], cap:說明}]
+  function parts(v, label) {
+    if (v === null) return [{ k: "nil", b: [0xc0], cap: (label ? label + "：" : "") + "nil" }];
+    if (v === true || v === false) return [{ k: "bool", b: [v ? 0xc3 : 0xc2], cap: (label ? label + "：" : "") + String(v) }];
+    if (typeof v === "number") {
+      if (!Number.isInteger(v) || v < 0 || v > 0xffffffff) throw new RangeError("只支援 0 到 4294967295 的整數");
+      const L = label ? label + " " : "";
+      if (v <= 0x7f) return [{ k: "int", b: [v], cap: L + "fixint " + v }];
+      if (v <= 0xff) return [{ k: "int", b: [0xcc, v], cap: L + "uint8 " + v }];
+      if (v <= 0xffff) return [{ k: "int", b: [0xcd, ...u(v, 2)], cap: L + "uint16 " + v }];
+      return [{ k: "int", b: [0xce, ...u(v, 4)], cap: L + "uint32 " + v }];
+    }
+    if (typeof v === "string") {
+      const b = Array.from(te.encode(v)), n = b.length;
+      let h, hc;
+      if (n <= 31) { h = [0xa0 | n]; hc = "fixstr " + n; }
+      else if (n <= 0xff) { h = [0xd9, n]; hc = "str8 " + n; }
+      else if (n <= 0xffff) { h = [0xda, ...u(n, 2)]; hc = "str16 " + n; }
+      else { h = [0xdb, ...u(n, 4)]; hc = "str32 " + n; }
+      const out = [{ k: "strh", b: h, cap: (label ? label + " " : "") + hc }];
+      if (n) out.push({ k: "str", b, cap: "“" + v + "”" });
+      return out;
+    }
+    if (Array.isArray(v)) {
+      const n = v.length;
+      let h, hc;
+      if (n <= 15) { h = [0x90 | n]; hc = "fixarray " + n; }
+      else if (n <= 0xffff) { h = [0xdc, ...u(n, 2)]; hc = "array16 " + n; }
+      else { h = [0xdd, ...u(n, 4)]; hc = "array32 " + n; }
+      let out = [{ k: "arr", b: h, cap: (label ? label + " " : "") + hc }];
+      v.forEach((x, i) => { out = out.concat(parts(x, Array.isArray(label) ? label[i] : undefined)); });
+      return out;
+    }
+    throw new TypeError("不支援的型別");
+  }
+  function partsLabeled(v, labels) {   // 外層陣列的每個元素各給一個名字
+    const n = v.length;
+    let out = [{ k: "arr", b: [0x90 | n], cap: "fixarray " + n }];
+    v.forEach((x, i) => { out = out.concat(parts(x, labels[i])); });
+    return out;
+  }
+  const encode = v => parts(v).flatMap(p => p.b);
+  const hex = bytes => bytes.map(x => x.toString(16).padStart(2, "0")).join(" ");
+  return { parts, partsLabeled, encode, hex };
+})();
+window.MP = MP;
+const BYTE_US = 1e6 * 10 / 115200;   // 8N1：每位元組 10 bit
+const uartMs = n => n * BYTE_US / 1000;
+
+function hexHtml(parts) {
+  return parts.map(p => `<div class="hg k-${p.k}"><div class="hb">${p.b.map(x => `<span>${x.toString(16).padStart(2, "0").toUpperCase()}</span>`).join("")}</div><div class="cap">${esc(p.cap)}</div></div>`).join("");
+}
+
+/* ---------------- 程式碼小上色（只為了好讀；原文不變） ---------------- */
+const KW_PY = /\b(import|from|def|return|global|if|not|try|except|as|with|or|and|in|None|True|False)\b/g;
+const KW_C = /\b(void|bool|if|return|String|true|false|const)\b/g;
+function hl(line, lang) {
+  if (lang === "yaml") {
+    const m = line.match(/^(\s*-?\s*)([A-Za-z_]+)(:)(.*)$/);
+    return m ? esc(m[1]) + `<span class="c-kw">${esc(m[2])}</span>` + esc(m[3]) + `<span class="c-str">${esc(m[4])}</span>` : esc(line);
+  }
+  if (lang === "c" && /^\s*#include/.test(line)) return `<span class="c-pp">${esc(line)}</span>`;
+  let out = "", i = 0, buf = "";
+  const flush = () => { if (buf) { out += esc(buf).replace(lang === "py" ? KW_PY : KW_C, '<span class="c-kw">$1</span>'); buf = ""; } };
+  while (i < line.length) {
+    const ch = line[i];
+    if ((lang === "py" && ch === "#") || (lang === "c" && ch === "/" && line[i + 1] === "/")) {
+      flush(); out += `<span class="c-com">${esc(line.slice(i))}</span>`; return out;
+    }
+    if (ch === '"' || ch === "'") {
+      flush(); let j = i + 1;
+      while (j < line.length && line[j] !== ch) { if (line[j] === "\\") j++; j++; }
+      out += `<span class="c-str">${esc(line.slice(i, j + 1))}</span>`; i = j + 1; continue;
+    }
+    buf += ch; i++;
+  }
+  flush();
+  return out;
+}
+
+/* ================= §1 兩顆腦地圖 ================= */
+const BLOCKS = {
+  mpu: {
+    t: "QRB2210：Linux 那顆（MPU）", b: "linux",
+    what: "Qualcomm 的 SoC，跑 Debian 13 Linux。上網、跑 Python、跑容器都在這裡。",
+    nums: [
+      `4 顆 Cortex-A53；<code>/proc/cpuinfo</code> 是 <code>implementer 0x51</code>、<code>part 0x801</code>＝Qualcomm 客製版，不是原生 ARM 的 <code>0x41/0xd03</code> ${tg("board", "07-25", "MPU 深度版 §1.2")}`,
+      `單一 cluster、不是 big.LITTLE ${tg("board", "07-25", "lscpu；MPU 深度版 §1.2")}`,
+      `約 3.58 GiB LPDDR4X（4 GB 版）${tg("board", "07-25", "MemTotal 3755164 kB")}`,
+      `cpufreq 300–2016 MHz、9 檔 ${tg("board", "07-25", "MPU 深度版 §1.4")}`,
+      `kernel 7.0，下游 BSP，有 PREEMPT、沒有 PREEMPT_RT ${tg("board", "07-25", "MPU 深度版 §4")}`
+    ],
+    week: "main.py（在容器裡）、arduino-router、Wi-Fi、LED 1–2 都住這顆。",
+    deep: `<p><b>有 MMU</b>：4 KB 分頁、48 位元虛擬位址、4 級頁表，每個行程一個獨立的位址空間 ${tg("code", "", "MPU 深度版 §3")}。一般行程由 EEVDF 排程（kernel 7.0），分時、非即時，最壞延遲說不準。</p>
+      <p><b>快取</b>：每核私有 L1、四核共用 L2 512 KB ${tg("code", "", "Qualcomm datasheet Table 1-1；MPU 深度版 §1.3")}；L2 共用是板上 sysfs 看得到的 ${tg("board", "07-25")}，但容量 sysfs 讀不到（<code>getconf</code> 回 0）。</p>
+      <p><b>溫度與 DVFS</b>：10 個 thermal zone ${tg("board", "07-25", "MPU 深度版 §1.4")}；<code>thermal_zone0</code> 的 type 是 <code>mapss-thermal</code>，<code>temp</code> 單位是毫度，量到 43700＝43.7 °C ${tg("board", "10-02", "內容規格 §〇")}。每核跑一個 <code>yes &gt; /dev/null &amp;</code>，12 秒內從 42 °C 升到 51 °C ${tg("board", "07-27", "arduino-q labs/discovery-demos/demo1_thermal.sh")}——W6 會用到。</p>`
+  },
+  mcu: {
+    t: "STM32U585：即時那顆（MCU）", b: "mcu",
+    what: "板子上另一顆獨立晶片（不在 QRB2210 裡面），Cortex-M33，跑 Zephyr RTOS（即時作業系統）。點陣、LED 3–4、Arduino 排針都接在它身上。",
+    nums: [
+      `Cortex-M33 @160 MHz、單核 ${tg("code", "", "ST DS13086")}`,
+      `786 KB 片內 SRAM、2 MB Flash ${tg("code", "", "ST DS13086；Zephyr 這板約看到 768 KiB RAM")}`,
+      `<b>沒有 MMU</b>；MPU 硬體有，但 <code># CONFIG_ARM_MPU is not set</code> ${tg("board", "07-25", "MCU 深度版 §4.1")}`,
+      `系統時脈 10,000 tick／秒，tickless ${tg("board", "07-25", "MCU 深度版 §5.3")}`
+    ],
+    week: "sketch.ino 整支：問 Linux 要字、在點陣上捲。",
+    deep: `<p><b>記憶體保護全關</b>：<code>CONFIG_USERSPACE</code> 沒開、<code>CONFIG_HW_STACK_PROTECTION</code> 沒開、TrustZone 熔絲 <code>TZEN=0</code> ${tg("board", "07-25", "MCU 深度版 §4.1、§4.3")} → sketch 和 loader 同特權、同一個位址空間；stack 溢位會靜靜踩壞記憶體，不會觸發 UsageFault。這是「信任模型，不是保護模型」。</p>
+      <p><b>排程</b>：<code>CONFIG_MAIN_THREAD_PRIORITY=14</code>，只比 idle 高一格；time-slicing 開、每片 20 ms ${tg("board", "07-25", "MCU 深度版 §2.3")}。中斷（ISR）不管優先權多低，都能打斷任何執行緒。</p>
+      <p><b>為什麼不乾脆跑 Linux</b>：Linux 需要 MMU，這顆沒有——這是硬牆，不是效能不夠（MCU 深度版 第 8 章）。</p>`
+  },
+  router: {
+    t: "arduino-router：Bridge 的總機", b: "linux",
+    what: "Linux 上一支常駐的 Go 程式（systemd 服務、GPL-3.0）。兩顆腦不直接對接：所有 Bridge 呼叫都送到它這裡，它查路由表再轉給該處理的那一方。",
+    nums: [
+      `MCU 那條線：<code>/dev/ttyHS1</code> @115200 ${tg("board", "07-25", "報告-STM32第二顆腦深挖：--serial-port /dev/ttyHS1 --serial-baudrate 115200")}`,
+      `Linux 程式那頭：unix socket <code>/var/run/arduino-router.sock</code> ${tg("board", "", "筆記-UNOQ :21")}`
+    ],
+    week: "main.py 第 64 行 <code>Bridge.provide(\"get_aqi_text\", …)</code>＝向總機登記「這個名字我會回答」；sketch.ino 第 16 行 <code>Bridge.call(\"get_aqi_text\")</code>＝請總機轉過去、等回覆。",
+    deep: `<p><b>星狀拓樸</b>：每個參與者只連總機，誰 <code>provide</code> 了哪個名字，總機記在路由表；<code>call</code>／<code>notify</code> 進來就照表轉送。所以不管是 MCU 問 Python（AQI），還是 Python 叫 MCU（Color your LEDs），寫法都一樣，只是 provide 的那一方不同。</p>
+      <p>拆開來就是「約定好的打包格式＋一個轉送程式」：不用官方函式庫、直接對 <code>/var/run/arduino-router.sock</code> 講 MessagePack-RPC 也能控制 MCU——這是 W15 的教師示範。</p>`
+  },
+  uart: {
+    t: "UART：兩顆晶片之間唯一的線", b: "both",
+    what: "實體序列埠（UART）。所有 Bridge 的位元組都走這條；Linux 這頭的裝置檔是 /dev/ttyHS1，由 arduino-router 打開。",
+    nums: [
+      `115200 baud ${tg("board", "07-25", "報告-STM32第二顆腦深挖")}`,
+      `假設 8N1：每位元組 10 bit → 約 86.8 µs／位元組、每秒約 11,520 位元組 ${tg("est", "", "115200 ÷ 10")}`,
+      `過橋往返：中位數 4.99 ms、p95 5.08 ms、冷啟動第 1 發 7.7 ms → 每秒最多約 200 次來回 ${tg("board", "07-27", "labs/bridge-rtt/README.md，n=200")}`
+    ],
+    week: "每次 <code>Bridge.call</code> 都在這條線上來回一趟：AQI 的 request 17 位元組、response 27 位元組。",
+    deep: `<p><b>設計含義</b>：過橋一次約 5 ms，所以<b>毫秒級的閉迴路別過橋、留在 MCU</b>；等得起 5 ms 的才交給 Linux ${tg("board", "07-27", "labs/bridge-rtt/README.md")}。</p>
+      <p>較舊的文件寫「約 7 ms／122 Hz」，那個數字跟冷啟動第 1 發（7.7 ms）吻合；bridge-rtt 連打 200 發之後，穩態是 4.99 ms。「你量的是第幾發」會改變答案——這是量測方法課。</p>
+      <p>想看一個位元組在線上的樣子，到第 3 節「深入一層：UART 線上，一個位元組長什麼樣」。</p>`
+  },
+  container: {
+    t: "容器：main.py 住的地方", b: "linux",
+    what: "每支 App 的 Python 跑在自己的 Docker 容器裡。容器是作業系統層的虛擬化，跟主機共用同一顆 Linux 核心，不是虛擬機。",
+    nums: [
+      `10/02 的 log：<code>Container w5-aqi-main-1 Started</code> ${tg("board", "10-02")}`,
+      `容器裡是 Python 3.13 ${tg("board", "10-02", "內容規格 §〇〈憑證〉")}`
+    ],
+    week: `main.py 整支；<code>moenv_key.txt</code> 放在 main.py 同一層，容器裡讀得到 ${tg("board", "10-02")}。`,
+    deep: `<p>隔離靠三樣東西：namespace（每個容器看到自己的行程樹與掛載點）、cgroup v2（資源上限）、overlayfs（分層檔案系統）——App Lab 底層就是這些（MPU 深度版 §3）。</p>
+      <p>安全提醒：能操作 docker 幾乎等於 root，「免 root」不等於「安全沙盒」。</p>`
+  },
+  wifi: {
+    t: "Wi-Fi：Python 從這裡上網", b: "net",
+    what: "板子的 wlan0。main.py 的 fetch_aqi() 從這裡用 HTTPS 跟環境部要資料；第一次 app start 下載 ArduinoGraphics 也走這裡。",
+    nums: [
+      `檢查方式：<code>nmcli -t -f DEVICE,STATE,CONNECTION dev status</code> 第一行是 <code>wlan0:connected:&lt;Wi-Fi 名稱&gt;</code> ${tg("board", "10-02")}`,
+      `位址用 <code>ip -4 -o addr show wlan0</code> 看（<code>hostname -I</code> 會混進 docker0）${tg("board", "10-02")}`
+    ],
+    week: "main.py 第 29 行 <code>urllib.request.urlopen(url, timeout=15, context=SSL_CTX)</code>。",
+    deep: `<p>一次 HTTPS 要經過 DNS → TCP → TLS 握手（驗憑證鏈）→ HTTP GET → JSON。詳見第 3 節「深入一層：上網那一步拆開」。</p>`
+  },
+  usb: {
+    t: "USB-C：電腦和板子之間", b: "linux",
+    what: "上課用 adb 在 USB 上開兩條通道：一條給 SSH 打指令，一條讓電腦的瀏覽器看板子的網頁。",
+    nums: [
+      `<code>adb forward tcp:2222 tcp:22</code> → <code>ssh -p 2222 arduino@127.0.0.1</code> ${tg("board", "W4", "W4 學生頁第 6 節")}`,
+      `<code>adb forward tcp:7000 tcp:7000</code> → 瀏覽器開 <code>http://127.0.0.1:7000</code> ${tg("board", "10-02", "內容規格 §〇")}（打 127.0.0.1，別打 localhost）`
+    ],
+    week: "〈Color your LEDs〉的網頁就是從這條通道進到板子的 7000 埠。",
+    deep: `<p>網頁那條路：瀏覽器 → 電腦的 7000 埠 → adb 轉送 → USB → 板子的 7000 埠 → 容器裡的 WebUI 積木（socket.io）→ Python 的 <code>on_set_color()</code>。第 3 節切到〈Color your LEDs〉可以一步一步看。</p>`
+  },
+  led12: {
+    t: "LED 1、2：Linux 直接管", b: "linux",
+    what: "這兩顆接在 Linux 那邊，走 sysfs（Linux 把裝置當檔案）。W4 用 echo 1 > … 點亮的就是 LED 1。",
+    nums: [
+      `網頁點 LED 1 紅色後，<code>/sys/class/leds/unoq:user-red1/brightness</code>＝1、green1／blue1＝0 ${tg("board", "10-02")}`,
+      `每個顏色只有開／關：程式把顏色值壓成 <code>r != 0</code> 這種真假值 ${tg("code", "", "color-your-leds python/main.py")}`
+    ],
+    week: "〈Color your LEDs〉的 <code>Leds.set_led1_color(r != 0, g != 0, b != 0)</code>——不過橋。",
+    deep: `<p>燈名以板子為準：舊映像可能叫 <code>green:user</code> 這種（內容規格 §〇）。所以教材都寫「先 <code>ls</code> 再代進去」。</p>`
+  },
+  led34: {
+    t: "LED 3、4：MCU 管", b: "mcu",
+    what: "這兩顆接在 MCU 那邊。Python 要用 Bridge.call 請 MCU 幫忙點。LED 3 能調亮度（PWM），LED 4 只有開關。",
+    nums: [
+      `LED 3：<code>analogWrite(LED3_R, r)</code>；LED 4：<code>digitalWrite(LED4_R, r ? LOW : HIGH)</code>，<code>LOW</code> 才亮 ${tg("code", "", "color-your-leds sketch/sketch.ino")}`,
+      `LED 3 的三路 PWM 在 TIM5、500 Hz，devicetree 標成反相（<code>PWM_POLARITY_INVERTED</code>）${tg("code", "", "ArduinoCore-zephyr UNO Q overlay")}`,
+      `<code>analogWrite</code> 預設 8 位元（0–255）：脈寬＝值 ÷ 255 × 週期 ${tg("code", "", "ArduinoCore-zephyr cores/arduino/wiring_analog.cpp")}`
+    ],
+    week: `〈Color your LEDs〉：網頁上只有 LED 3 有整片調色盤 ${tg("board", "10-02")}，因為只有它是 PWM。`,
+    deep: `<p><b>PWM（Pulse Width Modulation）</b>：腳位只能全開或全關，但一秒切換 500 次；每個週期裡脈衝占的比例叫工作週期（duty cycle），眼睛看到的是平均出來的亮度。500 Hz 的一個週期是 2 ms ${tg("est", "", "1 ÷ 500 Hz")}；寫 128，脈衝大約占一半。這三路在 devicetree 標成反相（<code>PWM_POLARITY_INVERTED</code>），脈衝那段在腳位上是低電位 ${tg("code", "", "UNO Q overlay")}。第 3 節切到〈Color your LEDs〉、選 LED 3，可以看到三路波形。</p>`
+  },
+  sketch: {
+    t: "sketch（llext）：疊在 loader 上的外掛", b: "mcu",
+    what: "你的 sketch 不是一整支韌體。MCU 的 Flash 前段常駐一顆 loader（一整套 Zephyr 4.2.0 核心）；sketch 編成 llext（可載入的 ELF，ET_REL），開機時由 loader 載入、重定位、接符號。",
+    nums: [
+      `sketch 區從 <code>0x08100000</code> 起、768 KB ${tg("board", "07-25", "報告-STM32第二顆腦深挖；MCU 深度版 §6.5")}`,
+      `載入到 LLEXT heap（256 KB）執行，不是直接從 Flash 跑 ${tg("board", "07-25", "CONFIG_LLEXT_HEAP_SIZE=256")}`
+    ],
+    week: "sketch.ino 編出來的就是這一塊；換 sketch 只重編、重燒這一小塊，不動 loader。",
+    deep: `<p>完整的 Flash 地圖、開機序與「跳板」的故事在第 2 節「深入一層」。這跟 W15 的 Linux 核心模組是同一個母題：把外掛動態載入到正在跑的核心。</p>
+      <p>反直覺的地方：載入外掛<b>不等於</b>有沙箱。這板 <code>CONFIG_USERSPACE</code> 沒開，sketch 的野指標可以直接打穿 loader ${tg("board", "07-25", "MCU 深度版 §4.3")}。</p>`
+  },
+  matrix: {
+    t: "點陣 13×8", b: "mcu",
+    what: "8 列 × 13 行＝104 顆 LED，由 MCU 驅動。Linux 碰不到它，只能透過 Bridge 請 MCU 顯示。",
+    nums: [
+      `一格畫面＝<code>uint32_t[4]</code>，128 位元只用 104 ${tg("code", "", "Arduino_LED_Matrix.h")}`,
+      `ArduinoGraphics 的畫布 13 × 8 ${tg("code", "", "Arduino_LED_Matrix.h：canvasWidth 13、canvasHeight 8")}`,
+      `<code>Font_5x7</code>：每個字 5 格寬、7 格高；起點 <code>(0, 1)</code> ${tg("code", "", "ArduinoGraphics 1.1.4；starter sketch.ino 第 24 行")}`
+    ],
+    week: "sketch.ino 第 20–27 行。",
+    deep: `<p>第 6 節有捲字模擬，還能點格子看一格畫面的 128 位元怎麼排。點陣由中斷常式掃描，標頭檔註解寫支援 8 階灰階 ${tg("code", "", "Arduino_LED_Matrix.h 註解")}。</p>`
+  }
+};
+(function initMap() {
+  const panel = $("#mapPanel");
+  const BN = { linux: "Linux（MPU）", mcu: "MCU", both: "兩顆腦之間", net: "網路" };
+  $$("#board .blk").forEach(btn => btn.addEventListener("click", () => {
+    const d = BLOCKS[btn.dataset.k];
+    $$("#board .blk").forEach(x => x.setAttribute("aria-pressed", x === btn ? "true" : "false"));
+    panel.innerHTML = `<h3>${d.t}</h3><p><span class="brain ${d.b}">${BN[d.b]}</span> ${d.what}</p>
+      <div class="small" style="font-weight:800;margin-top:8px">數字</div><ul>${d.nums.map(x => `<li>${x}</li>`).join("")}</ul>
+      <div class="small" style="font-weight:800">這週哪段程式碼碰到它</div><p style="margin:4px 0">${d.week}</p>
+      <details class="deep" open><summary>深入一層</summary><div class="in">${d.deep}</div></details>`;
+    if (matchMedia("(max-width: 880px)").matches) panel.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }));
+})();
+
+/* ================= §2 App 解剖 ================= */
+const SRC = {
+  "main.py": { el: "src-main-py", lang: "py" },
+  "sketch.ino": { el: "src-sketch-ino", lang: "c" },
+  "sketch.yaml": { el: "src-sketch-yaml", lang: "yaml" }
+};
+for (const k in SRC) { const t = document.getElementById(SRC[k].el).textContent; SRC[k].lines = t.replace(/\n$/, "").split("\n"); }
+const WHEN = {
+  start: "容器啟動、main.py 開始跑時執行一次",
+  ask: "每次 MCU 來問（約 12 秒一次）",
+  fetch: "快取過期才跑（最多 10 分鐘一次；失敗後 60 秒）",
+  build: "app start 時讀（編譯階段）",
+  setup: "MCU 載入 sketch 後跑一次",
+  loop: "一直重複（每輪約 12 秒）",
+  none: "—"
+};
+// [起行, 迄行, 腦, 時機, 說明]
+const ANN = {
+  "main.py": [
+    [1, 1, "linux", "none", "檔頭註解：這支是 Linux 那半，跑在板子 Linux 的 Docker 容器裡（Python 3.13）。"],
+    [2, 8, "linux", "start", "全部是 Python 標準函式庫：<code>json</code> 解析回應、<code>pathlib</code> 找金鑰檔、<code>ssl</code> 設定 TLS、<code>time</code> 記時間（快取用）、<code>urllib</code> 打 HTTPS。不用另外裝套件。"],
+    [9, 10, "linux", "start", "<code>arduino.app_utils</code> 是 App Lab 的 Python 端函式庫，帶進 <code>Bridge</code> 和 <code>App</code>。"],
+    [11, 11, "linux", "start", "環境部測站名稱，拿來組查詢條件 <code>sitename,EQ,花蓮</code>。名稱照環境部的寫法（「臺東」不是「台東」），寫錯會回空陣列 → <code>NO SITE</code>。"],
+    [12, 12, "linux", "start", "要捲在點陣上的英文標籤。點陣字形一個位元組查一個字，中文會變成亂碼（第 6 節可以試），所以這裡要英文。"],
+    [13, 13, "linux", "start", "快取 600 秒＝10 分鐘內只上網一次。測站資料每小時才發布一次，問再快也拿不到新的；金鑰每天也有 5,000 次上限 " + tg("code", "", "環境部 API 介接服務條款") + "。"],
+    [14, 14, "linux", "start", "沒拿到資料時不等 10 分鐘，60 秒後就再試（見第 59–60 行）。"],
+    [15, 16, "linux", "start", "金鑰放檔案、不寫進程式：<code>moenv_key.txt</code> 跟 main.py 同一層，容器裡讀得到 " + tg("board", "10-02") + "。分享程式時金鑰不會跟著外流。"],
+    [17, 20, "linux", "start", "Python 3.13 預設的嚴格檢查會拒絕環境部的憑證鏈（少一個 Subject Key Identifier）" + tg("board", "10-02") + "。這裡<b>只放寬 <code>VERIFY_X509_STRICT</code> 這一項</b>：主機名稱與信任鏈照樣驗，過期或名字不符的網站照樣擋 " + tg("board", "10-02") + "。這不是關掉驗證。"],
+    [21, 24, "linux", "start", "兩個全域變數就是整個快取：<code>last_text</code> 是上次的結果（一開始是 <code>WAIT</code>），<code>last_fetch</code> 是上次上網的時間（一開始 0，所以第一次一定上網）。"],
+    [25, 25, "linux", "fetch", "真正上網的函式。只有快取過期時才會被呼叫。"],
+    [26, 26, "linux", "fetch", "每次上網前重讀金鑰檔，所以換了金鑰不必重開 App " + tg("board", "10-02") + "。檔案不存在會丟 <code>FileNotFoundError</code> → 第 53 行變成 <code>NO KEY</code>。"],
+    [27, 28, "linux", "fetch", "組網址：<code>api_key</code>、<code>format=JSON</code>、<code>filters=sitename,EQ,花蓮</code>（<code>urlencode</code> 會把中文轉成 %XX）。金鑰在網址裡，所以程式<b>絕不印出網址</b>。"],
+    [29, 29, "linux", "fetch", "真的上網：DNS → TCP → TLS 握手（用第 18–19 行的設定驗憑證）→ HTTP GET。最多等 15 秒 " + tg("code", "", "timeout=15") + "。連不上會丟例外 → 第 56–58 行 <code>NO DATA</code>。"],
+    [30, 30, "linux", "fetch", "把回應讀成 UTF-8 字串。"],
+    [31, 35, "linux", "fetch", "金鑰錯或今天用完時，環境部的 HTTP 狀態碼<b>照樣是 200</b>，內容是一行中文、不是 JSON " + tg("board", "10-02") + "。所以先試 <code>json.loads</code>，失敗就印前 60 個字、回 <code>KEY?</code>。只看狀態碼會被騙。"],
+    [36, 38, "linux", "fetch", "回的是空陣列＝沒有這個測站（名字打錯）→ <code>NO SITE</code>。"],
+    [39, 39, "linux", "fetch", "篩過的結果只有一筆，取第一筆。"],
+    [40, 40, "linux", "fetch", "印出 <code>moenv: 2026/10/02 14:00:00 花蓮 AQI 32 良好</code> 這種行 " + tg("board", "10-02") + "。看 log 時，只有這種行是真的上網。"],
+    [41, 43, "linux", "fetch", "組要捲的字：<code>HUALIEN AQI 32 PM2.5 7</code>。環境部的數值都是<b>字串</b>，測站維修時可能是空字串，所以用 <code>or '--'</code> 補。拿字串去跟 100 比大小會丟 <code>TypeError</code>。"],
+    [44, 44, "linux", "ask", "這個函式就是 MCU 透過 Bridge 呼叫的那一個。每次 MCU 捲完一輪來問，這裡就被呼叫一次。"],
+    [45, 46, "linux", "ask", "<code>global</code> 才能改到第 21–22 行那兩個變數；記下現在時間。"],
+    [47, 49, "linux", "ask", "<b>快取判斷</b>：離上次上網不到 600 秒 → 直接回上次的字，印 <code>cache:</code>。這條路不碰網路，所以 log 裡大多是 <code>cache:</code>。第 5 節有模擬器。"],
+    [50, 50, "linux", "ask", "先記下這次上網的時間，再去上網。"],
+    [51, 52, "linux", "ask", "呼叫第 25 行的 <code>fetch_aqi()</code>。"],
+    [53, 55, "linux", "ask", "沒有金鑰檔 → <code>NO KEY</code>。只印檔名，不印路徑內容。"],
+    [56, 58, "linux", "ask", "其他任何錯誤 → <code>NO DATA</code>，只印例外的類別名稱（例如 <code>URLError</code>）。"],
+    [59, 60, "linux", "ask", "沒拿到正常資料（字不是 <code>HUALIEN</code> 開頭）→ 把 <code>last_fetch</code> 往回撥成「600 秒前再加 60 秒」，於是 <b>60 秒後</b>快取就過期、再試一次。"],
+    [61, 63, "linux", "ask", "回傳的字串會被 MessagePack 打包成 response，經 router、UART 送回 MCU。"],
+    [64, 65, "linux", "start", "<code>Bridge.provide</code>：向 arduino-router 登記「<code>get_aqi_text</code> 這個名字由我回答」。之後 MCU 的 <code>Bridge.call(\"get_aqi_text\")</code> 才找得到人。"],
+    [66, 66, "linux", "start", "讓程式一直跑著、等 MCU 來問。"]
+  ],
+  "sketch.ino": [
+    [1, 1, "mcu", "none", "檔頭註解：這支是 MCU 那半。app start 時在板子上編譯成 llext、燒進 STM32U585。"],
+    [2, 2, "mcu", "build", "<b>順序很重要</b>：ArduinoGraphics 要在點陣函式庫前面 include。<code>Arduino_LED_Matrix.h</code> 用 <code>__has_include</code> 偵測到它，點陣類別才會繼承 ArduinoGraphics、多出畫字的能力 " + tg("code", "", "Arduino_LED_Matrix.h") + "。"],
+    [3, 3, "mcu", "build", "UNO Q 的點陣函式庫（在 ArduinoCore-zephyr 裡）：13×8 畫布、<code>renderBitmap</code>、<code>matrixWrite</code>。"],
+    [4, 5, "mcu", "build", "MCU 這邊的 Bridge：4 顆 <code>k_mutex</code>＋一條名叫 <code>bridge</code> 的背景執行緒 " + tg("board", "", "MCU 深度版 §3.5") + "。"],
+    [6, 7, "mcu", "setup", "全域的點陣物件；建構時給 ArduinoGraphics 一塊 13 × 8 的畫布。"],
+    [8, 8, "mcu", "setup", "<code>setup()</code>：loader 載入 sketch 後跑一次。"],
+    [9, 9, "mcu", "setup", "啟動點陣驅動（<code>matrixBegin()</code>）。"],
+    [10, 10, "mcu", "setup", "全部熄滅，畫布歸零。"],
+    [11, 13, "mcu", "setup", "啟動 Bridge：開始經 UART 跟 arduino-router 講話。"],
+    [14, 14, "mcu", "loop", "<code>loop()</code>：被包成一條 Zephyr 執行緒，一直重複。"],
+    [15, 15, "mcu", "loop", "每一輪都是新的區域變數——上一輪的字不會留下來。"],
+    [16, 16, "both", "loop", "<b>跨兩顆腦的那一行</b>：<code>Bridge.call</code> 把 <code>[0, msgid, \"get_aqi_text\", []]</code> 打包成 17 位元組送過 UART；<code>.result(text)</code> 卡在這裡等，拿到回答才往下 " + tg("code", "", "MCU 深度版 §7.4") + "。第 3 節可以一步一步看。"],
+    [17, 19, "mcu", "loop", "沒拿到回答（Python 還沒起來、容器掛了、逾時）→ 顯示 <code>WAIT</code>。"],
+    [20, 20, "mcu", "loop", "開始畫。"],
+    [21, 21, "mcu", "loop", "畫筆顏色。點陣只有亮或不亮：顏色只要不是 0 就當亮 " + tg("code", "", "Arduino_LED_Matrix.h set()") + "。"],
+    [22, 22, "mcu", "loop", "每往左移一格停 60 毫秒。數字越大越慢（「有餘力」可以改這裡）。"],
+    [23, 23, "mcu", "loop", "字形：每個字 5 格寬、7 格高。"],
+    [24, 24, "mcu", "loop", "從 x＝0、y＝1 開始畫（8 列裡用第 1–7 列）。"],
+    [25, 25, "mcu", "loop", "前後各補 3 個空白（15 格），字才會從右邊進場、完整離場。<code>println</code> 還會多加 <code>\\r\\n</code> 兩個位元組。"],
+    [26, 26, "mcu", "loop", "<b>往左捲完整個字串才回來</b>：總步數＝位元組數 × 5 ＋ 1，每步 <code>delay(60)</code>。<code>HUALIEN AQI 32 PM2.5 7</code> 是 151 步 ≈ 9.1 秒 " + tg("est", "", "30 位元組 × 5 + 1 = 151；151 × 60 ms") + "，加上每格重畫的時間，log 約 12 秒一行 " + tg("board", "10-02") + "。"],
+    [27, 28, "mcu", "loop", "結束這一輪繪圖，回到 <code>loop()</code> 開頭再問一次。"]
+  ],
+  "sketch.yaml": [
+    [1, 4, "mcu", "build", "<code>app start</code> 編譯時讀：平台是 <code>arduino:zephyr</code>（ArduinoCore-zephyr，UNO Q 的 MCU 核心）。"],
+    [5, 6, "mcu", "build", "多一個函式庫 ArduinoGraphics，版本鎖 1.1.4。第一次 <code>app start</code> 會上網下載，所以第一次要 108 秒 " + tg("board", "10-02") + "；教室網路擋住就編不過。"],
+    [7, 7, "mcu", "build", "用上面那個 <code>default</code> 設定。"]
+  ]
+};
+const FILES = {
+  "app.yaml": { b: "both", t: "app.yaml", when: "app start 時由 arduino-app-cli 讀",
+    d: "App 的名字、說明、用了哪些積木（bricks）。<code>app new my-aqi</code> 建出的空白 App 是 <code>bricks: []</code>——這週的 AQI 版不需要任何積木 " + tg("board", "10-02") + "。對照：天氣範例掛 <code>arduino:weather_forecast</code>，〈Color your LEDs〉掛 <code>arduino:web_ui</code> " + tg("code", "", "官方範例 app.yaml") + "。" },
+  "main.py": { b: "linux", t: "python/main.py", when: "app start 起容器後執行；之後一直跑",
+    d: "Linux 那半：跟環境部要資料、快取、回答 MCU。下面已切到這個檔，點任何一行看說明。" },
+  "moenv_key.txt": { b: "linux", t: "python/moenv_key.txt", when: "每次快取過期、要上網時重讀",
+    d: "這週自己加的金鑰檔，跟 main.py 同一層 " + tg("board", "10-02") + "。<b>不截圖、不上傳、不貼給 AI agent</b>；本頁與教材不印任何一把金鑰。存檔用 <code>read -rsp</code> 那行，畫面不顯示、也不進指令歷史。" },
+  "sketch.ino": { b: "mcu", t: "sketch/sketch.ino", when: "app start 時編譯成 llext、燒進 MCU",
+    d: "MCU 那半：問 Linux 要一行字，在點陣上由右往左捲。下面已切到這個檔。" },
+  "sketch.yaml": { b: "mcu", t: "sketch/sketch.yaml", when: "app start 編譯時讀",
+    d: "列出 MCU 平台與要多下載的函式庫。下面已切到這個檔。" }
+};
+const BN2 = { linux: "跑在 Linux（容器）", mcu: "跑在 MCU", both: "兩顆腦之間", net: "網路" };
+let curFile = "main.py";
+function renderCode(file) {
+  curFile = file;
+  const S = SRC[file];
+  $("#codeInner").innerHTML = S.lines.map((l, i) => `<button type="button" class="ln" data-n="${i + 1}" aria-pressed="false"><span class="no">${i + 1}</span><span class="tx">${hl(l, S.lang) || " "}</span></button>`).join("");
+  $$(".tabs .btn").forEach(b => b.setAttribute("aria-pressed", b.dataset.tab === file ? "true" : "false"));
+  $("#codeBox").scrollTop = 0;
+}
+function annFor(file, n) { return ANN[file].find(a => n >= a[0] && n <= a[1]); }
+$("#codeInner").addEventListener("click", e => {
+  const b = e.target.closest(".ln"); if (!b) return;
+  const n = +b.dataset.n, a = annFor(curFile, n);
+  $$("#codeInner .ln").forEach(x => { const k = +x.dataset.n; x.setAttribute("aria-pressed", k === n ? "true" : "false"); x.classList.toggle("inrange", !!a && k >= a[0] && k <= a[1] && k !== n); });
+  const txt = SRC[curFile].lines[n - 1];
+  $("#codePanel").innerHTML = `<h3>${esc(curFile)} 第 ${n} 行${a && a[1] > a[0] ? `（第 ${a[0]}–${a[1]} 行一組）` : ""}</h3>
+    <pre class="hexout" style="white-space:pre-wrap">${esc(txt) || "（空行）"}</pre>
+    <p><span class="brain ${a ? a[2] : "linux"}">${a ? BN2[a[2]] : ""}</span> <span class="small">什麼時候跑：${a ? WHEN[a[3]] : "—"}</span></p>
+    <p>${a ? a[4] : ""}</p>`;
+});
+$$(".tabs .btn").forEach(b => b.addEventListener("click", () => renderCode(b.dataset.tab)));
+$$("#tree button").forEach(b => b.addEventListener("click", () => {
+  const f = FILES[b.dataset.f];
+  $$("#tree button").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+  if (SRC[b.dataset.f]) renderCode(b.dataset.f);
+  $("#codePanel").innerHTML = `<h3>${esc(f.t)}</h3><p><span class="brain ${f.b}">${BN2[f.b]}</span></p>
+    <p class="small">什麼時候被讀：${f.when}</p><p>${f.d}</p>`;
+}));
+renderCode("main.py");
+
+(function flashMap() {
+  const P = [["MCUboot：驗映像、跳到 loader", "0x08000000", 64, "var(--red-tint)"], ["loader：常駐的 Zephyr 4.2.0", "0x08010000", 768, "var(--teal-tint)"], ["開機動畫", "0x080D0000", 192, "var(--violet-tint)"], ["user_sketch：你的 llext", "0x08100000", 768, "var(--gold)"], ["storage", "0x081C0000", 256, "var(--surface-2)"]];
+  $("#flashMap").innerHTML = `<div class="fbar" aria-hidden="true">${P.map(p => `<span style="flex:${p[2]} 1 0;background:${p[3]}" title="${p[0]}"></span>`).join("")}</div>
+    <div class="tblw"><table><tr><th>起始位址</th><th>大小</th><th>放什麼</th></tr>${P.map(p => `<tr><td class="mono">${p[1]}</td><td>${p[2]} KB</td><td><span class="sw" style="background:${p[3]}"></span>${p[0]}</td></tr>`).join("")}</table></div>`;
+})();
+
+/* ================= §3 Bridge 一步一步 ================= */
+const BR = { scn: "aqi", mode: "call", cache: "hit", led: 3, color: "#ff8000", i: 0, msgid: 1 };
+const AQI_TEXT = "HUALIEN AQI 32 PM2.5 7";
+function rgbOf(hex) { return { r: parseInt(hex.slice(1, 3), 16) || 0, g: parseInt(hex.slice(3, 5), 16) || 0, b: parseInt(hex.slice(5, 7), 16) || 0 }; }
+function pwmSvg(c) {
+  const rows = [["R", c.r, "#d64545"], ["G", c.g, "#2f9a5a"], ["B", c.b, "#3b6fd6"]];
+  return `<div class="pwm" role="img" aria-label="LED 3 三路 PWM 波形">${rows.map(r => {
+    const duty = r[1] / 255; let d = "M 0 22";
+    for (let p = 0; p < 2; p++) { const xs = p * 100, xh = xs + 100 * duty; if (duty > 0) d += ` L ${xs} 4 L ${xh} 4 L ${xh} 22`; d += ` L ${xs + 100} 22`; }
+    return `<div class="pr"><b>${r[0]}</b><svg viewBox="0 0 200 26" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" fill="none" stroke="${r[2]}" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg><span class="mono">${r[1]}/255＝${Math.round(duty * 100)}%</span></div>`;
+  }).join("")}<div class="small">畫兩個週期，一個週期 2 ms（500 Hz）${tg("est", "", "1 ÷ 500 Hz")}；凸起那段是脈寬＝值 ÷ 255。devicetree 把這三路標成反相，所以凸起那段在腳位上其實是低電位 ${tg("code", "", "UNO Q overlay：PWM_POLARITY_INVERTED")}。</div></div>`;
+}
+function bridgeSteps() {
+  const S = [], id = BR.msgid;
+  const N_A = ["MCU", "UART", "router", "Python", "環境部 API"], N_C = ["MCU", "UART", "router", "Python", "瀏覽器"];
+  if (BR.scn === "aqi") {
+    const req = BR.mode === "call" ? MP.partsLabeled([0, id, "get_aqi_text", []], ["type", "msgid", "method", "params"]) : MP.partsLabeled([2, "get_aqi_text", []], ["type", "method", "params"]);
+    const reqN = req.flatMap(p => p.b).length;
+    const res = MP.partsLabeled([1, id, null, AQI_TEXT], ["type", "msgid", "error", "result"]);
+    const resN = res.flatMap(p => p.b).length;
+    S.push({ node: 0, lit: [], who: "mcu", title: "MCU：loop() 開始新的一輪", body: `sketch.ino 第 15 行宣告空字串 <code>text</code>，第 16 行要問 Linux：${BR.mode === "call" ? "<code>Bridge.call(\"get_aqi_text\")</code>" : "（假設改寫成）<code>Bridge.notify(\"get_aqi_text\")</code>"}。` });
+    if (BR.mode === "call") {
+      S.push({ node: 0, lit: [], who: "mcu", title: `MCU：打包成 MessagePack，${reqN} 位元組`, body: `request＝<code>[0, msgid, "get_aqi_text", []]</code>（msgid 用示範值 ${id}）。<code>call</code> 先回一個 <code>RpcCall</code>，接著 <code>.result(text)</code> 開始等——<b>loop() 卡在這一行</b> ${tg("code", "", "MCU 深度版 §7.4")}。`, hex: req });
+    } else {
+      S.push({ node: 0, lit: [], who: "mcu", title: `MCU：打包 notify，${reqN} 位元組`, body: `notify＝<code>[2, "get_aqi_text", []]</code>：<b>沒有 msgid</b>，因為不等回覆 ${tg("code", "", "msgpack-rpc spec")}。MCU 送出去就繼續往下跑。`, hex: req });
+    }
+    S.push({ node: 1, lit: [0, 1], dir: "r", who: "both", title: `UART 去程：${reqN} 位元組 ≈ ${ms2(uartMs(reqN))} ms`, body: `${reqN} × 86.8 µs（115200 baud、假設 8N1）${tg("est")}。走 <code>/dev/ttyHS1</code> 這條實體線。` });
+    S.push({ node: 2, lit: [], who: "linux", title: "router：解包、查路由表", body: `arduino-router 看到 method＝<code>get_aqi_text</code>，查表：這個名字是 Python 用 <code>Bridge.provide</code> 登記的（main.py 第 64 行）→ 經 unix socket <code>/var/run/arduino-router.sock</code> 轉給 Python 那條連線。這一段的時間沒有單獨量過。` });
+    S.push({ node: 3, lit: [2], dir: "r", who: "linux", title: "Python：get_aqi_text() 被呼叫", body: `容器裡的 Bridge 收到，呼叫 main.py 第 44 行的函式。第 47 行判斷：離上次上網有沒有超過 600 秒？` });
+    if (BR.cache === "hit") {
+      S.push({ node: 3, lit: [], who: "linux", title: "Python：快取命中，不上網", body: `還在 10 分鐘內 → 印 <code>cache: ${AQI_TEXT}</code>，直接回上次的字。這條路不碰網路，log 裡大多是這種行 ${tg("board", "10-02")}。` });
+    } else {
+      S.push({ node: 4, lit: [3], dir: "r", who: "net", title: "Python → 環境部：HTTPS GET", body: `快取過期 → <code>fetch_aqi()</code>：讀金鑰檔、組網址、<code>urlopen(..., timeout=15)</code>。DNS → TCP → TLS 握手（只放寬 <code>VERIFY_X509_STRICT</code>）→ HTTP GET。網路來回的時間這週沒量；程式最多等 15 秒 ${tg("code", "", "timeout=15")}。` });
+      S.push({ node: 3, lit: [3], dir: "l", who: "linux", title: "環境部回 JSON → 印 moenv: 那一行", body: `回一個 JSON 陣列、一筆；數值都是字串。印出 <code>moenv: 2026/10/02 14:00:00 花蓮 AQI 32 良好</code> ${tg("board", "10-02")}，組成 <code>${AQI_TEXT}</code>，同時存進快取。` });
+    }
+    if (BR.mode === "call") {
+      S.push({ node: 3, lit: [], who: "linux", title: `Python：打包回應，${resN} 位元組`, body: `response＝<code>[1, msgid, nil, "${AQI_TEXT}"]</code>：msgid 跟 request 一樣，error 是 nil 表示沒出錯 ${tg("code", "", "msgpack-rpc spec")}。`, hex: res });
+      S.push({ node: 2, lit: [2], dir: "l", who: "linux", title: "router：把回應送回發問的那一方", body: `回應經 unix socket 回到 router，router 把它送回 MCU 那條 UART。` });
+      S.push({ node: 1, lit: [1, 0], dir: "l", who: "both", title: `UART 回程：${resN} 位元組 ≈ ${ms2(uartMs(resN))} ms`, body: `去回純傳輸合計 ≈ ${ms2(uartMs(reqN + resN))} ms ${tg("est")}。對照 bridge-rtt 量到的往返中位數 4.99 ms ${tg("board", "07-27")}（那是另一個小封包的實驗，第 4 節「深入一層」有比較）。` });
+      S.push({ node: 0, lit: [], who: "mcu", title: "MCU：result() 回 true，開始捲字", body: `<code>text</code>＝<code>${AQI_TEXT}</code>。第 20–27 行把它畫進點陣、往左捲：151 步 × 60 ms ≈ 9.1 秒 ${tg("est")}；捲完才回到 loop() 開頭再問，log 約 12 秒一行 ${tg("board", "10-02")}。<b>這一趟完成。</b>` });
+    } else {
+      S.push({ node: 3, lit: [], who: "linux", title: "Python：照樣執行，但回傳值被丟掉", body: `notify 規定接收方<b>不回應</b> ${tg("code", "", "msgpack-rpc spec")}。get_aqi_text() 跑完了，字串卻沒有人收。` });
+      S.push({ node: 0, lit: [], who: "mcu", title: "MCU：拿不到字 → notify 在這裡不適用", body: `MCU 早就往下跑了，<code>text</code> 還是空的。AQI 需要「回答」，所以只能用 <code>call</code>。notify 適合「只下命令、不需要回答」的事，例如 nightlight 的 <code>set_led</code> ${tg("board", "07-27", "labs/nightlight/README.md")}。<b>這一趟結束。</b>` });
+    }
+    return { steps: S, names: N_A };
+  }
+  // ---- Color your LEDs ----
+  const c = rgbOf(BR.color), led = BR.led;
+  const args = led === 3 ? [c.r, c.g, c.b] : [c.r !== 0, c.g !== 0, c.b !== 0];
+  const meth = led === 3 ? "set_led3_color" : "set_led4_color";
+  S.push({ node: 4, lit: [], who: "net", title: `瀏覽器：LED ${led} 選了 ${BR.color.toUpperCase()}`, body: `網頁的 app.js 用 <code>hexToRgb</code> 把色碼拆成 <code>{r: ${c.r}, g: ${c.g}, b: ${c.b}}</code>（每兩位十六進位＝0–255），再用 socket.io 送出 <code>set_color</code> 事件 <code>{led: ${led}, color: {…}}</code> ${tg("code", "", "color-your-leds assets/app.js")}。` });
+  S.push({ node: 3, lit: [3], dir: "l", who: "linux", title: "電腦 127.0.0.1:7000 → USB → 板子 7000 埠", body: `adb 把電腦的 7000 埠轉到板子的 7000 埠 ${tg("board", "10-02")}；那裡是容器裡的 WebUI 積木，收到事件就呼叫 Python 的 <code>on_set_color()</code> ${tg("code", "", "color-your-leds python/main.py")}。` });
+  if (led <= 2) {
+    S.push({ node: 3, lit: [], who: "linux", title: `Python：LED ${led} 由 Linux 直接點，不過橋`, body: `<code>Leds.set_led${led}_color(${c.r !== 0}, ${c.g !== 0}, ${c.b !== 0})</code>：顏色被壓成開／關，寫進 sysfs（例如 <code>/sys/class/leds/unoq:user-red1/brightness</code>）${tg("board", "10-02")}。<b>這一趟到此結束</b>——沒有 MessagePack、沒有 UART。換成 LED 3 或 4 再走一次看看。` });
+    return { steps: S, names: N_C };
+  }
+  const req = BR.mode === "call" ? MP.partsLabeled([0, BR.msgid, meth, args], ["type", "msgid", "method", "params"]) : MP.partsLabeled([2, meth, args], ["type", "method", "params"]);
+  const reqN = req.flatMap(p => p.b).length;
+  S.push({ node: 3, lit: [], who: "linux", title: `Python：${BR.mode === "call" ? "Bridge.call" : "Bridge.notify"}("${meth}", …) → ${reqN} 位元組`, body: BR.mode === "call" ? `官方範例用 <code>call</code>：Python 這邊會等 MCU 回覆才繼續。${led === 4 ? "LED 4 傳的是真假值（<code>r != 0</code>），MessagePack 用 <code>0xc2</code>／<code>0xc3</code> 一個位元組表示。" : "顏色值 128–255 要用 uint8（<code>0xcc</code>＋1 位元組），0–127 直接是 fixint。"}` : `改用 <code>notify</code>：沒有 msgid、Python 送出就繼續，不等 MCU。`, hex: req });
+  S.push({ node: 2, lit: [2], dir: "l", who: "linux", title: "router：查表 → 這個名字是 MCU 登記的", body: `<code>${meth}</code> 是 MCU 在 <code>setup()</code> 裡用 <code>Bridge.provide</code> 登記的 ${tg("code", "", "color-your-leds sketch/sketch.ino")} → 轉到 UART。` });
+  S.push({ node: 0, lit: [1, 0], dir: "l", who: "both", title: `UART：${reqN} 位元組 ≈ ${ms2(uartMs(reqN))} ms`, body: `${reqN} × 86.8 µs ${tg("est")}。方向跟 AQI 相反：這次是 Linux 叫 MCU 做事。` });
+  if (led === 3) {
+    S.push({ node: 0, lit: [], who: "mcu", title: "MCU：set_led3_color(r, g, b) → analogWrite → PWM", body: `MCU 的 Bridge 背景執行緒解包、呼叫登記的函式（bridge-rtt 的 sketch 註解：被呼叫的函式「由 Bridge 的執行緒服務」）。<code>analogWrite(LED3_R, ${c.r})</code> 等三行：值 ÷ 255 × 週期＝脈寬，TIM5、500 Hz、反相 ${tg("code", "", "wiring_analog.cpp；UNO Q overlay")}。${pwmSvg(c)}` });
+  } else {
+    S.push({ node: 0, lit: [], who: "mcu", title: "MCU：set_led4_color(r, g, b) → digitalWrite", body: `<code>digitalWrite(LED4_R, r ? LOW : HIGH)</code>：LED 4 是 <code>LOW</code> 才亮、只有開關 ${tg("code", "", "color-your-leds sketch/sketch.ino")}。所以網頁上 LED 4 只有幾個固定色塊。` });
+  }
+  if (BR.mode === "call") {
+    const res = MP.partsLabeled([1, BR.msgid, null, null], ["type", "msgid", "error", "result"]);
+    const resN = res.flatMap(p => p.b).length;
+    S.push({ node: 3, lit: [0, 1, 2], dir: "r", who: "both", title: `回覆：MCU → router → Python，約 ${resN} 位元組`, body: `函式是 <code>void</code>，回應大概長 <code>[1, msgid, nil, nil]</code>（依規格推估，沒抓過封包）${tg("est")}。Python 的 <code>Bridge.call</code> 收到才繼續。第一發可能特別慢：nightlight 實測第一發 <code>call</code> 逾時 10 秒 ${tg("board", "07-27", "labs/nightlight/README.md")}。<b>這一趟完成。</b>`, hex: res });
+  } else {
+    S.push({ node: 3, lit: [], who: "linux", title: "沒有回覆，Python 早就往下跑了", body: `燈照樣會變，但 Python 不知道 MCU 有沒有做到。只下命令、不需要回答的事，用 notify 正好：nightlight 把下行的 <code>set_led</code> 改成 notify 後零逾時 ${tg("board", "07-27", "labs/nightlight/README.md")}。<b>這一趟結束。</b>` });
+  }
+  return { steps: S, names: N_C };
+}
+const WHO = { mcu: ["mcu", "MCU"], linux: ["linux", "Linux"], both: ["both", "兩顆腦之間"], net: ["net", "板子外面"] };
+function renderBridge() {
+  const { steps, names } = bridgeSteps();
+  if (BR.i >= steps.length) BR.i = steps.length - 1;
+  const st = steps[BR.i];
+  const subs = BR.scn === "aqi" ? ["STM32U585", "/dev/ttyHS1", "Linux", "容器", "data.moenv.gov.tw"] : ["STM32U585", "/dev/ttyHS1", "Linux", "容器", "電腦，經 USB"];
+  let h = "";
+  names.forEach((n, k) => {
+    h += `<div class="node${st.node === k ? " on" : ""}"><b>${n}</b><small>${subs[k]}</small></div>`;
+    if (k < 4) { const lit = st.lit.includes(k); const g = !lit ? ["⋯", "⋮"] : st.dir === "l" ? ["◀", "▲"] : ["▶", "▼"]; h += `<div class="conn${lit ? " lit" : ""}"><span class="h">${g[0]}</span><span class="v">${g[1]}</span></div>`; }
+  });
+  $("#track").innerHTML = h;
+  const w = WHO[st.who];
+  $("#stepCard").innerHTML = `<h3><span class="brain ${w[0]}">${w[1]}</span> ${st.title}</h3><div>${st.body}</div>${st.hex ? `<div class="hex">${hexHtml(st.hex)}</div><div class="small mono">${MP.hex(st.hex.flatMap(p => p.b)).toUpperCase()}</div>` : ""}`;
+  $("#stCnt").textContent = `第 ${BR.i + 1} / ${steps.length} 步`;
+  $("#stPrev").disabled = BR.i === 0;
+  $("#stNext").disabled = BR.i === steps.length - 1;
+}
+function setSeg(attr, val) { $$(`[data-${attr}]`).forEach(b => b.setAttribute("aria-pressed", b.dataset[attr] === val ? "true" : "false")); }
+$$("[data-scn]").forEach(b => b.addEventListener("click", () => { BR.scn = b.dataset.scn; BR.i = 0; setSeg("scn", BR.scn); $("#optAqi").hidden = BR.scn !== "aqi"; $("#optColor").hidden = BR.scn !== "color"; renderBridge(); }));
+$$("[data-mode]").forEach(b => b.addEventListener("click", () => { BR.mode = b.dataset.mode; BR.i = 0; setSeg("mode", BR.mode); renderBridge(); }));
+$$("[data-cache]").forEach(b => b.addEventListener("click", () => { BR.cache = b.dataset.cache; BR.i = 0; setSeg("cache", BR.cache); renderBridge(); }));
+$("#ledSel").addEventListener("change", e => { BR.led = +e.target.value; BR.i = 0; renderBridge(); });
+$("#ledColor").addEventListener("input", e => { BR.color = e.target.value; renderBridge(); });
+$("#stNext").addEventListener("click", () => { BR.i++; renderBridge(); });
+$("#stPrev").addEventListener("click", () => { BR.i = Math.max(0, BR.i - 1); renderBridge(); });
+$("#stReset").addEventListener("click", () => { BR.i = 0; renderBridge(); });
+renderBridge();
+
+(function uartFrame() {
+  const parts = MP.partsLabeled([0, 1, "get_aqi_text", []], ["type", "msgid", "method", "params"]);
+  const bytes = parts.flatMap(p => p.b);
+  const sel = $("#uartSel");
+  sel.innerHTML = bytes.map((b, i) => `<option value="${i}">第 ${i + 1} 個：0x${b.toString(16).padStart(2, "0").toUpperCase()}${b >= 0x20 && b < 0x7f ? `（'${String.fromCharCode(b)}'）` : ""}</option>`).join("");
+  $("#uartBitT").textContent = (1e6 / 115200).toFixed(2) + " µs";
+  function draw() {
+    const b = bytes[+sel.value];
+    const cells = [["起始", 0, true]];
+    for (let k = 0; k < 8; k++) cells.push(["D" + k, (b >> k) & 1, false]);
+    cells.push(["停止", 1, true]);
+    $("#uartRow").innerHTML = cells.map(c => `<div class="ub ${c[1] ? "hi" : "lo"}${c[2] ? " st" : ""}"><span class="l">${c[0]}</span>${c[1]}</div>`).join("");
+    $("#uartNote").innerHTML = `0x${b.toString(16).padStart(2, "0").toUpperCase()}＝二進位 ${b.toString(2).padStart(8, "0")}；線上從 D0（最低位）先送，所以看起來是倒過來的。整個位元組 ≈ ${BYTE_US.toFixed(1)} µs ${tg("est", "", "假設 8N1")}。`;
+  }
+  sel.addEventListener("change", draw); draw();
+})();
+
+/* ================= §4 位元組計算器 ================= */
+function bcRun() {
+  const text = $("#bcText").value, meth = $("#bcMethod").value || "get_aqi_text";
+  let id = Math.floor(+$("#bcId").value); if (!Number.isFinite(id) || id < 0) id = 0; if (id > 0xffffffff) id = 0xffffffff;
+  const req = MP.partsLabeled([0, id, meth, []], ["type", "msgid", "method", "params"]);
+  const res = MP.partsLabeled([1, id, null, text], ["type", "msgid", "error", "result"]);
+  const nq = req.flatMap(p => p.b).length, nr = res.flatMap(p => p.b).length, tot = nq + nr;
+  const chars = Array.from(text).length, ub = new TextEncoder().encode(text).length;
+  $("#bcReqHex").innerHTML = hexHtml(req);
+  $("#bcResHex").innerHTML = hexHtml(res);
+  const tms = uartMs(tot), pct = Math.min(100, tms / 4.99 * 100);
+  $("#bcOut").innerHTML = `<div>request <b>${nq}</b> 位元組＋response <b>${nr}</b> 位元組</div>
+    <div class="big">${tot} 位元組 → ${ms2(tms)} ms</div>
+    <div class="small">純 UART 傳輸，115200 baud、假設 8N1（每位元組 86.8 µs）${tg("est")}</div>
+    <div class="bars"><div class="bar"><span class="fill" style="width:${pct}%"></span><span class="lab">這次估算 ${ms2(tms)} ms</span></div>
+    <div class="bar"><span class="fill" style="width:100%;background:var(--violet-tint);border-right-color:var(--violet)"></span><span class="lab">bridge-rtt 量到的往返中位數 4.99 ms ${tg("board", "07-27")}</span></div></div>
+    <div class="small">兩條不是同一個實驗：上面只算這一包在 UART 上的傳輸，下面是 bridge-rtt 用小封包量的整趟往返（下方「深入一層」有拆解）。</div>
+    <div class="small">字串：${chars} 個字、${ub} 個 UTF-8 位元組${ub !== chars ? "——<b>不是一個字一個位元組</b>" : ""}；字串標頭 ${ub <= 31 ? "1 位元組（fixstr）" : ub <= 255 ? "2 位元組（str 8）" : "3 位元組以上"}。</div>`;
+}
+["#bcText", "#bcMethod", "#bcId"].forEach(s => $(s).addEventListener("input", bcRun));
+$$("[data-bc]").forEach(b => b.addEventListener("click", () => { $("#bcText").value = b.dataset.bc; bcRun(); }));
+bcRun();
+
+/* ================= §5 額度計算機 ================= */
+function qRun() {
+  const B = +$("#qBoards").value, I = +$("#qInt").value, A = +$("#qApi").value, svc = $("#qSvc").value, key = $("#qKey").value;
+  $("#qBoardsV").textContent = B + " 塊"; $("#qIntV").textContent = I + " 秒"; $("#qApiV").textContent = A + " 個";
+  $("#qKeyWrap").hidden = svc !== "moenv";
+  const perMin = B * 60 / I * A, perHr = perMin * 60, perDay = perHr * 24;
+  const f1 = x => x >= 100 ? fmt(Math.round(x)) : (Math.round(x * 10) / 10).toString();
+  $("#qRate").innerHTML = `<div class="small">全部加起來 ${tg("est")}</div><div><span class="big">${f1(perMin)}</span> 次／分鐘</div><div>每小時 ${f1(perHr)} 次・每天 ${f1(perDay)} 次</div>`;
+  const tFmt = m => m < 1 ? Math.round(m * 60) + " 秒" : m < 120 ? (Math.round(m * 10) / 10) + " 分鐘" : (Math.round(m / 6) / 10) + " 小時";
+  let L;
+  if (svc === "om") {
+    L = [["每分鐘 600 次", perMin, 600, 1], ["每小時 5,000 次", perHr, 5000, 60], ["每天 10,000 次", perDay, 10000, 1440]];
+  } else {
+    const perKeyMin = key === "own" ? 60 / I * A : perMin;
+    L = [[`每把金鑰每天 5,000 次（${key === "own" ? "算一塊板" : "算全班"}）`, perKeyMin * 1440, 5000, 1440, perKeyMin]];
+  }
+  let first = null, firstT = Infinity;
+  const rows = L.map(l => { const rate = l[4] !== undefined ? l[4] : perMin; const hit = l[1] > l[2]; const t = hit ? l[2] / rate : Infinity; if (hit && t < firstT) { firstT = t; first = l[0]; } return { l, hit, t }; });
+  $("#qLims").innerHTML = rows.map(r => `<div class="${r.hit ? "hit" : ""}${r.l[0] === first ? " first" : ""}"><b>${r.l[0]}</b><span>這個窗口會用到 ${f1(r.l[1])} 次（${Math.round(r.l[1] / r.l[2] * 100)}%）</span><span>${r.hit ? "→ 約 <b>" + tFmt(r.t) + "</b> 用光" + (r.l[0] === first ? "（最先撞到）" : "") : "→ 不會用光"}</span></div>`).join("");
+  $("#qNote").innerHTML = svc === "om"
+    ? "open-meteo 免金鑰：全班共用學校的對外出口，次數算在一起。天氣範例每次被問打 2 個 API（地名查詢＋預報）" + tg("code", "", "app-bricks-py weather_forecast") + "，<code>loop()</code> 沒有 delay，約 12 秒問一次 " + tg("board", "10-02") + "。所以課堂上看到動畫就 <code>app stop</code>。"
+    : "環境部的上限算在每一把金鑰上。每人自己一把，一塊板一天 144 次（每 600 秒一次）很寬鬆；資料集頁上的公開金鑰是全國共用，10/02 下午兩點就有兩把被用完 " + tg("board", "10-02", "內容規格 §〇") + "。";
+}
+["#qBoards", "#qInt", "#qApi", "#qSvc", "#qKey"].forEach(s => $(s).addEventListener("input", qRun));
+function qPreset(b, i, a, svc, key) { $("#qBoards").value = b; $("#qInt").value = i; $("#qApi").value = a; $("#qSvc").value = svc; $("#qKey").value = key; qRun(); }
+$("#qpWeather").addEventListener("click", () => qPreset(26, 12, 2, "om", "own"));
+$("#qpAqi").addEventListener("click", () => qPreset(26, 600, 1, "moenv", "own"));
+qRun();
+
+/* 快取狀態機模擬器：照 main.py get_aqi_text() 的邏輯 */
+const SM = {};
+function smReset() { Object.assign(SM, { t: 0, last: -1e9, text: "WAIT", calls: 0, fetch: 0, hitApi: 0, lines: [] }); smShow(); }
+function smLog(s, cls) { SM.lines.push(`<span>[+${String(Math.floor(SM.t / 60)).padStart(2, "0")}:${String(SM.t % 60).padStart(2, "0")}]</span> <span class="${cls || ""}">[main] ${esc(s)}</span>`); }
+function smAsk() {
+  const C = +$("#smCache").value, mode = $("#smMode").value;
+  SM.t += 12; SM.calls++;
+  const now = SM.t;
+  if (now - SM.last < C) { smLog("cache: " + SM.text); return; }
+  SM.last = now; SM.fetch++;
+  let t;
+  if (mode === "ok") { SM.hitApi++; smLog("moenv: 2026/10/02 14:00:00 花蓮 AQI 32 良好", "m"); t = AQI_TEXT; }
+  else if (mode === "badkey") { SM.hitApi++; smLog("moenv says: 該 API KEY 不存在或是已經到期。", "f"); t = "KEY?"; }
+  else if (mode === "quota") { SM.hitApi++; smLog("moenv says: 因受限於資源分配，每日呼叫API的次數不可大於5000次。", "f"); t = "KEY?"; }
+  else if (mode === "nokey") { t = "NO KEY"; smLog("no key file: moenv_key.txt", "f"); }
+  else if (mode === "nonet") { t = "NO DATA"; smLog("fetch failed: URLError", "f"); }
+  else { SM.hitApi++; smLog("no such site: 台東", "f"); t = "NO SITE"; }
+  SM.text = t;
+  if (!t.startsWith("HUALIEN")) SM.last = now - C + 60;
+}
+function smShow() {
+  const C = +$("#smCache").value, now = SM.t;
+  const ok = SM.text.startsWith("HUALIEN");
+  let st, left;
+  if (SM.calls === 0) st = "stale";
+  else if (!ok) { st = "retry"; left = Math.max(0, SM.last + C - now); }
+  else if (now - SM.last < C) { st = "fresh"; left = SM.last + C - now; }
+  else st = "stale";
+  $$("#smStates .st-box").forEach(b => b.classList.toggle("on", b.dataset.st === st));
+  $("#smStat").innerHTML = `模擬時間 +${Math.floor(now / 60)} 分 ${now % 60} 秒｜MCU 問了 <b>${SM.calls}</b> 次｜Python 上網 <b>${SM.fetch}</b> 次（真的打到環境部 ${SM.hitApi} 次）｜點陣顯示 <code>${esc(SM.text)}</code>${left !== undefined ? `｜${st === "fresh" ? "快取還有" : "再過"} ${left} 秒${st === "fresh" ? "" : "會再試"}` : ""}`;
+  const box = $("#smLog");
+  box.innerHTML = SM.lines.length ? SM.lines.slice(-200).join("\n") : '<span style="opacity:.7">（按「MCU 來問一次」開始）</span>';
+  box.scrollTop = box.scrollHeight;
+}
+$("#smAsk").addEventListener("click", () => { smAsk(); smShow(); });
+$("#smFast").addEventListener("click", () => { for (let k = 0; k < 25; k++) smAsk(); smShow(); });
+$("#smReset").addEventListener("click", smReset);
+$("#smMode").addEventListener("change", smShow);
+$("#smCache").addEventListener("change", smReset);
+smReset();
+
+/* ================= §6 點陣捲字模擬（照 ArduinoGraphics 1.1.4 text()／endText(SCROLL_LEFT)） ================= */
+const W = 13, H = 8, FW = 5, FH = 7;
+function mkGrid(el, clickable) {
+  el.innerHTML = "";
+  for (let r = 0; r < H; r++) for (let c = 0; c < W; c++) {
+    const p = document.createElement(clickable ? "button" : "div");
+    p.className = "p"; p.dataset.r = r; p.dataset.c = c;
+    if (clickable) { p.type = "button"; p.setAttribute("aria-label", `第 ${r} 列第 ${c} 行`); p.setAttribute("aria-pressed", "false"); }
+    el.appendChild(p);
+  }
+}
+function paint(el, cv) { const ps = el.children; for (let r = 0; r < H; r++) for (let c = 0; c < W; c++) { const on = !!cv[r][c]; ps[r * W + c].classList.toggle("on", on); if (ps[r * W + c].tagName === "BUTTON") ps[r * W + c].setAttribute("aria-pressed", on ? "true" : "false"); } }
+const blank = () => Array.from({ length: H }, () => new Array(W).fill(0));
+function glyph(b) { let g = b < FONT5x7.length ? FONT5x7[b] : null; if (!g) g = FONT5x7[0x20]; const rows = []; for (let j = 0; j < FH; j++) rows.push(parseInt(g.slice(j * 2, j * 2 + 2), 16)); return rows; }
+const MX = { buf: [], steps: 0, i: 0, cv: blank(), timer: null, raw: [] };
+function mxPrepare() {
+  const text = $("#mxText").value;
+  MX.raw = Array.from(new TextEncoder().encode("   " + text + "   \r\n"));
+  MX.buf = MX.raw.filter(b => b !== 0xc2 && b !== 0xc3);           // write()：丟掉 0xC2、0xC3
+  MX.steps = MX.buf.length * FW + 0 + 1;                              // scrollLength
+  MX.i = 0; MX.cv = blank();
+  paint($("#mx"), MX.cv); mxInfo(); mxBytes(text);
+}
+function drawText(cv, buf, x, y) {   // ArduinoGraphics::text()：每個位元組查一個字形
+  for (const c of buf) {
+    if (c === 0x0a) { y += FH; continue; }
+    if (c === 0x0d) { x = 0; continue; }
+    const g = glyph(c);
+    if (!(x + FW < 0 || y + FH < 0 || x > W || y > H)) {
+      for (let j = 0; j < FH; j++) for (let k = 0; k < FW; k++) { const px = x + k, py = y + j; if (px >= 0 && px < W && py >= 0 && py < H) cv[py][px] = (g[j] >> (7 - k)) & 1; }
+    }
+    x += FW;
+  }
+}
+function mxStep() {
+  if (MX.i >= MX.steps) { MX.i = 0; }
+  const tx = 0 - MX.i;
+  drawText(MX.cv, MX.buf, tx, 1);
+  const clearX = tx + MX.buf.length * FW;                            // 清掉上一格的殘影
+  if (clearX >= 0 && clearX < W) for (let y = 1; y < 1 + FH && y < H; y++) MX.cv[y][clearX] = 0;
+  paint($("#mx"), MX.cv);
+  MX.i++; mxInfo();
+}
+function mxInfo() {
+  const spd = +$("#mxSpd").value;
+  $("#mxSpdV").textContent = spd;
+  $("#mxInfo").textContent = `第 ${MX.i} / ${MX.steps} 步`;
+  const sec = MX.steps * spd / 1000;
+  $("#mxCalc").innerHTML = `<div>${MX.buf.length} 個位元組 × 5 ＋ 1 ＝ <b>${MX.steps} 步</b></div><div>${MX.steps} 步 × ${spd} ms ＝ <span class="big">${sec.toFixed(1)} 秒</span>／一輪 ${tg("est", "", "只算 delay，不含每格重畫的時間")}</div>
+    <div class="small">預設字串、速度 60 時這樣算是 9.1 秒；板上 log 約 12 秒一行 ${tg("board", "10-02")}，差的是每格重畫與 <code>loop()</code> 其他時間（沒單獨量）。</div>`;
+}
+function mxBytes(text) {
+  const out = [];
+  for (const ch of Array.from("   " + text + "   ") .concat(["\r", "\n"])) {
+    const bs = Array.from(new TextEncoder().encode(ch));
+    bs.forEach(b => {
+      const drop = b === 0xc2 || b === 0xc3, nul = !drop && b >= 0x20 && (b >= FONT5x7.length || !FONT5x7[b]);
+      const show = ch === "\r" ? "\\r" : ch === "\n" ? "\\n" : ch === " " ? "␠" : ch;
+      out.push(`<span class="${drop ? "drop" : nul ? "nul" : bs.length > 1 ? "hi" : ""}" title="${esc(show)}">${b.toString(16).padStart(2, "0").toUpperCase()}${bs.length > 1 ? "" : " " + esc(show)}</span>`);
+    });
+    if (bs.length > 1) out.push(`<span class="hi">＝${esc(ch)}</span>`);
+  }
+  $("#mxBytes").innerHTML = out.join("");
+}
+function mxStop() { if (MX.timer) { clearTimeout(MX.timer); MX.timer = null; } $("#mxPlay").textContent = "▶ 播放"; }
+function mxTick() { mxStep(); MX.timer = setTimeout(mxTick, +$("#mxSpd").value); }
+$("#mxPlay").addEventListener("click", () => { if (MX.timer) mxStop(); else { $("#mxPlay").textContent = "⏸ 暫停"; mxTick(); } });
+$("#mxStep").addEventListener("click", () => { mxStop(); mxStep(); });
+$("#mxReset").addEventListener("click", () => { mxStop(); mxPrepare(); });
+$("#mxText").addEventListener("input", () => { mxPrepare(); });
+$("#mxSpd").addEventListener("input", mxInfo);
+mkGrid($("#mx"), false);
+mxPrepare();
+
+/* 一格畫面 ↔ uint32_t[4] */
+const HX = { cv: blank() };
+function packWords(cv) {
+  const w = [0, 0, 0, 0];
+  for (let r = 0; r < H; r++) for (let c = 0; c < W; c++) if (cv[r][c]) { const n = r * W + c; w[n >> 5] = (w[n >> 5] | (1 << (31 - (n & 31)))) >>> 0; }
+  return w;
+}
+const rbit = x => { let y = 0; for (let k = 0; k < 32; k++) if ((x >>> k) & 1) y = (y | (1 << (31 - k))) >>> 0; return y >>> 0; };
+const h8 = x => "0x" + (x >>> 0).toString(16).padStart(8, "0");
+function hxShow() {
+  paint($("#hx"), HX.cv);
+  const w = packWords(HX.cv);
+  $("#hxWords").textContent = "{" + w.map(h8).join(", ") + "}";
+  $("#hxRbit").textContent = "{" + w.map(x => h8(rbit(x))).join(", ") + "}";
+}
+function unpack(w) { const cv = blank(); for (let n = 0; n < 104; n++) if ((w[n >> 5] >>> (31 - (n & 31))) & 1) cv[Math.floor(n / W)][n % W] = 1; return cv; }
+mkGrid($("#hx"), true);
+$("#hx").addEventListener("click", e => {
+  const p = e.target.closest(".p"); if (!p) return;
+  const r = +p.dataset.r, c = +p.dataset.c, n = r * W + c;
+  HX.cv[r][c] ^= 1; hxShow();
+  $("#hxLast").innerHTML = `第 ${r} 列第 ${c} 行 → n＝${r}×13＋${c}＝<b>${n}</b> → 第 ${n >> 5} 個字（w${n >> 5}）的第 ${31 - (n & 31)} 位元${HX.cv[r][c] ? "，現在亮" : "，現在暗"}。`;
+});
+// 兩格取自 app-bricks-examples weather-forecast/sketch/weather_frames.h（MPL-2.0）
+$("#hxSun").addEventListener("click", () => { HX.cv = unpack([0x04812805, 0x80138390, 0x03402902, 0x40000000]); hxShow(); $("#hxLast").textContent = "weather_frames.h 的 sunny[0]＝{0x04812805, 0x80138390, 0x03402902, 0x40000000, 500}：最後那個 500 是這格停幾毫秒。"; });
+$("#hxRain").addEventListener("click", () => { HX.cv = unpack([0x0780c208, 0x084041fc, 0x08a05100, 0xa0000000]); hxShow(); $("#hxLast").textContent = "weather_frames.h 的 rainy[0]＝{0x0780c208, 0x084041fc, 0x08a05100, 0xa0000000, 200}：下雨動畫 3 格、每格 200 ms。"; });
+$("#hxClear").addEventListener("click", () => { HX.cv = blank(); hxShow(); });
+$("#hxGrab").addEventListener("click", () => { HX.cv = MX.cv.map(r => r.slice()); hxShow(); $("#hxLast").textContent = `抓到第 6 節點陣第 ${MX.i} 步的畫面。`; });
+hxShow();
+
+/* ================= §7 想一想 ================= */
+const QS = [
+  { q: "〈Color your LEDs〉的四顆燈，哪一顆能調亮度？", o: ["LED 1", "LED 2", "LED 3", "LED 4"], a: 2,
+    e: `LED 3。網頁上只有它有整片調色盤 ${tg("board", "10-02")}；sketch 用 <code>analogWrite</code>＝PWM（TIM5、500 Hz），0–255 換成一個週期裡脈寬占的比例 ${tg("code")}。LED 1、2 走 Linux 的 sysfs，程式把顏色壓成 <code>r != 0</code> 的開／關；LED 4 是 <code>digitalWrite</code>，也只有開關，<code>LOW</code> 才亮。` },
+  { q: "Python 容器沒在跑（例如 main.py 一啟動就當掉），點陣會顯示什麼？", o: ["什麼都不亮", "WAIT", "NO DATA", "上一次的 AQI"], a: 1,
+    e: `<code>WAIT</code>。sketch 第 16–19 行：<code>Bridge.call</code> 拿不到回答 → <code>ok</code> 是 false → <code>text = "WAIT"</code>。<code>NO DATA</code> 是 Python 有在跑、但上網失敗才回的；MCU 每一輪的 <code>text</code> 都是新的區域變數，不會記得上一次的 AQI。` },
+  { q: "為什麼 log 大約 12 秒才多一行 cache:？", o: ["Python 每 12 秒睡一次", "MCU 捲完一輪才再問", "router 每 12 秒才轉送一次", "環境部規定的"], a: 1,
+    e: `MCU 的 <code>loop()</code> 是「問 → 等 → 捲 → 再問」。預設字串 30 個位元組 → 151 步 × 60 ms ≈ 9.1 秒 ${tg("est")}，加上每格重畫的時間，實測約 12 秒一行 ${tg("board", "10-02")}。字變長或把速度改成 90，間隔就跟著變長。` },
+  { q: "環境部的憑證過不了 Python 3.13 的嚴格檢查，為什麼不乾脆把驗證整個關掉（CERT_NONE）？", o: ["會變慢", "任何人都能冒充環境部，而且金鑰就在網址裡", "Python 不允許關", "其實沒差"], a: 1,
+    e: `關掉之後誰都能假扮伺服器：你送出的網址裡有 <code>api_key</code>，中間人拿走金鑰，還能回你假的 AQI。starter 只放寬 <code>VERIFY_X509_STRICT</code>：過期、主機名不符的網站照樣擋 ${tg("board", "10-02")}。` },
+  { q: "Bridge 往返約 5 ms，下面哪件事「不該」過橋？", o: ["每 10 分鐘問一次 AQI", "網頁按一下換燈色", "馬達每 1 ms 一次的閉迴路控制", "每秒送一次溫度"], a: 2,
+    e: `1 kHz 閉迴路每 1 ms 要算一次，但過橋一次就約 5 ms、每秒最多約 200 次來回 ${tg("board", "07-27")}。<b>毫秒級閉迴路住 MCU</b>，Linux 只下設定值（例如目標轉速）。其他三件都等得起 5 ms。` },
+  { q: "把 CACHE_SECONDS 改成 0，會怎樣？", o: ["什麼都不變", "每次 MCU 來問都上網", "程式當掉", "只上網一次"], a: 1,
+    e: `每約 12 秒上網一次 → 一塊板一天約 7,200 次，超過每把金鑰每天 5,000 次：自己的金鑰大約 16.7 小時用完；全班 26 塊共用一把，大約 38 分鐘用完 ${tg("est")}。而且測站每小時才發布一次，問再快也拿不到新資料。第 5 節的模擬器可以把 <code>CACHE_SECONDS</code> 改成 0 試試。` },
+  { q: "AQI 這一趟純傳輸估 3.8 ms，bridge-rtt 量到 4.99 ms。可以說「過橋的額外成本只有 1.2 ms」嗎？", o: ["可以，4.99 − 3.8", "不行，兩個數字量的不是同一件事"], a: 1,
+    e: `不行。4.99 ms 是另一個實驗：Python 呼叫 MCU 的 <code>echo(i)</code>，封包很小（去回約 15 位元組 ≈ 1.3 ms ${tg("est")}），所以那次 UART 以外的成本約 3.7 ms。AQI 封包比較大，如果其他成本差不多，往返大概 7–8 ms ${tg("est")}。估算要跟「同一件事」的量測比；要確定就自己量。` },
+  { q: "sketch 裡一個指標寫錯，寫到不屬於它的記憶體，會怎樣？", o: ["Zephyr 會攔下來報錯", "可能靜靜踩壞 loader，沒有東西攔", "只有 sketch 自己當掉"], a: 1,
+    e: `MCU 沒有 MMU；這板 <code>CONFIG_ARM_MPU</code>、<code>CONFIG_HW_STACK_PROTECTION</code>、<code>CONFIG_USERSPACE</code> 都沒開，TrustZone <code>TZEN=0</code> ${tg("board", "07-25")} → sketch 和 loader 同特權、同一個位址空間。對照 Linux：每個行程有自己的虛擬位址空間，寫錯只有那個行程收到 segmentation fault。` },
+  { q: "app start 印出紅字 Error: verify failed in bank at 0x08000000 starting at 0x00100000，怎麼辦？", o: ["板子壞了，要重刷", "正常，看最後一行有沒有 started successfully", "拔電重來"], a: 1,
+    e: `燒錄設定 <code>flash_sketch.cfg</code> 先 verify、不一樣才 erase＋write；第一次或換了 sketch 一定不一樣，所以一定印這行。<code>0x08000000 + 0x00100000 = 0x08100000</code>＝sketch 區，不是開機載入器。看到 <code>✓ App "…" started successfully</code> 就是過 ${tg("board", "08-17")}。` },
+  { q: "把 LABEL 改成 \"花蓮\"，點陣會捲出什麼？", o: ["「花蓮」兩個字", "一片空白", "幾個不相干的西歐符號和空白", "編譯失敗"], a: 2,
+    e: `ArduinoGraphics 一個位元組查一個字形 ${tg("code", "", "ArduinoGraphics 1.1.4 text()")}。「花」的 UTF-8 是 <code>E8 8A B1</code> → è、（查不到，空白）、±；「蓮」是 <code>E8 93 AE</code> → è、空白、®。第 6 節輸入中文就看得到。所以 <code>LABEL</code> 要用英文。` }
+];
+(function initQs() {
+  const box = $("#qs");
+  box.innerHTML = QS.map((q, i) => `<div class="q" data-q="${i}"><h3>${esc(q.q)}</h3><div class="opts">${q.o.map((o, k) => `<button type="button" class="opt" data-k="${k}" aria-pressed="false">${esc(o)}</button>`).join("")}</div>
+    <div class="qbar"><button type="button" class="btn primary rv">揭曉</button><span class="yours"></span></div><div class="ans" hidden></div></div>`).join("");
+  box.addEventListener("click", e => {
+    const qd = e.target.closest(".q"); if (!qd) return;
+    const q = QS[+qd.dataset.q];
+    const o = e.target.closest(".opt");
+    if (o && !qd.classList.contains("done")) {
+      $$(".opt", qd).forEach(x => x.setAttribute("aria-pressed", x === o ? "true" : "false"));
+      $(".yours", qd).textContent = "你選了：" + q.o[+o.dataset.k];
+      return;
+    }
+    if (e.target.closest(".rv")) {
+      qd.classList.add("done");
+      const pick = $(".opt[aria-pressed=true]", qd);
+      $$(".opt", qd).forEach(x => { const k = +x.dataset.k; if (k === q.a) x.classList.add("right"); else if (x === pick) x.classList.add("wrong"); });
+      const a = $(".ans", qd); a.hidden = false;
+      a.innerHTML = `<b>${pick ? (+pick.dataset.k === q.a ? "猜對了。" : "答案是「" + esc(q.o[q.a]) + "」。") : "答案是「" + esc(q.o[q.a]) + "」。"}</b> ${q.e}`;
+      e.target.closest(".rv").disabled = true;
+    }
+  });
+})();
+
+/* 目錄：全部展開／收合 */
+$("#openAll").addEventListener("click", () => $$("details.deep").forEach(d => d.open = true));
+$("#closeAll").addEventListener("click", () => $$("details.deep").forEach(d => d.open = false));
+</script>
+</body>
+</html>

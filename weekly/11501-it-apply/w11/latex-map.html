@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LaTeX 原稿對照成品</title>
+<style>
+:root{--ink:#17312f;--muted:#526b66;--bg:#f7f5ee;--panel:#fffefa;--green:#075e56;--line:#d2dfd7;--gold:#e8ae42;--hl:#fff0c7}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);background:var(--bg);font:16px/1.7 system-ui,-apple-system,"Microsoft JhengHei",sans-serif;overflow-x:hidden}
+a{color:#075f74;text-underline-offset:3px}
+button{font:inherit;cursor:pointer;min-height:40px;border:1px solid #aac0b5;border-radius:8px;padding:.35rem .8rem;background:white;color:var(--ink)}
+:focus-visible{outline:3px solid #e09d1b;outline-offset:2px}
+.wrap{width:min(1280px,calc(100% - 2rem));margin:auto}
+.hero{background:#174b42;color:white;padding:2rem 0 1.6rem}
+.hero-grid{display:flex;gap:1.5rem;justify-content:space-between;align-items:flex-start}
+.hero h1{font-size:clamp(1.6rem,4vw,2.6rem);line-height:1.25;margin:.4rem 0}
+.hero p{margin:.3rem 0;color:#e3f0ea;max-width:46em}
+.eyebrow{font-size:.8rem;letter-spacing:.09em;font-weight:800;color:#f1ca79}
+.links{display:flex;flex-direction:column;gap:.5rem;flex:none}
+.links a{display:inline-block;text-decoration:none;font-weight:700;border-radius:8px;padding:.45rem .9rem;background:white;color:var(--ink);text-align:center}
+.links a.dl{background:transparent;color:white;border:1px solid #9fc5b8}
+.bar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:1rem 0 .8rem}
+.bar .count{font-weight:800;color:var(--green);min-width:7em}
+.bar .hint{color:var(--muted);font-size:.9rem}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem}
+.col{background:var(--panel);border:1px solid var(--line);border-radius:12px;height:68vh;min-height:420px;overflow:auto;position:relative}
+.colhead{position:sticky;top:0;z-index:3;background:#e9f2ec;border-bottom:1px solid var(--line);padding:.45rem .8rem;font-weight:800;font-size:.9rem;color:var(--green)}
+/* 原稿 */
+.code{font:13.5px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:.4rem 0}
+.seg{display:block;border-left:4px solid transparent;margin:2px 4px;border-radius:6px;cursor:pointer}
+.seg:hover{background:#eef5f0}
+.seg.on{background:var(--hl);border-left-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.row{display:grid;grid-template-columns:2.6em minmax(0,1fr);gap:.6em}
+.ln{color:#8aa39b;text-align:right;user-select:none}
+.tx{white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.6em}
+.row.add{background:#dff3e4}.row.add .ln{color:#1b7a3a;font-weight:800}
+.com{color:#6b7f79}
+mark.bad{background:#ffd5d0;color:#a3140a;font-weight:800;border-radius:3px;padding:0 2px}
+/* 成品 */
+.toggles{position:sticky;top:2.35rem;z-index:2;background:var(--panel);border-bottom:1px solid var(--line);padding:.5rem .7rem;display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.toggles b{font-size:.85rem;color:var(--muted);margin-right:.2rem}
+.toggles button{min-height:36px;font-size:.88rem;padding:.25rem .6rem}
+.toggles button[aria-pressed="true"]{background:var(--green);color:white;border-color:var(--green)}
+#tnote{font-size:.88rem;color:#5b4300;background:#fff8e7;border-left:4px solid var(--gold);margin:.6rem .8rem 0;padding:.4rem .7rem}
+#tnote:empty{display:none}
+#nopaper{margin:.6rem .8rem 0;font-size:.85rem;color:var(--muted);font-style:italic}
+.stage{padding:1rem .9rem 1.6rem;background:#e7ebe8}
+.paper{position:relative;background:white;width:100%;max-width:640px;margin:auto;aspect-ratio:210/297;padding:6.7% 9.5%;box-shadow:0 2px 10px rgba(0,0,0,.18);container-type:inline-size;font-family:"Latin Modern Roman","CMU Serif","Times New Roman","Noto Serif CJK TC","Songti TC","PMingLiU",serif;color:#111;cursor:pointer}
+.pin{font-size:max(9.5px,1.95cqi);line-height:1.55}
+.paper.on{outline:4px solid var(--gold);outline-offset:3px}
+.paper.on .pin{background:#fffaf0}
+.mbox{position:absolute;left:9.5%;right:9.5%;top:6.7%;bottom:6.7%;border:2px dashed var(--gold);background:rgba(232,174,66,.06);display:none;pointer-events:none}
+.paper.margin .mbox{display:block}
+.paper .on{background:var(--hl);outline:2px solid var(--gold);border-radius:2px}
+.ptitle{text-align:center;font-size:1.45em;margin:2.2em 0 .6em}
+.pauthor{text-align:center;margin:0 0 1.6em}
+.paper h3{font-size:1.2em;margin:1.3em 0 .5em;font-weight:700}
+.paper h3 .num{display:inline-block;width:1.7em}
+.paper p{margin:0 0 .6em;text-align:justify}
+.pfig{text-align:center;margin:1em 0 1.2em}
+.pfig .imgbox{display:inline-block;width:45%}
+.pfig img{width:100%;display:block}
+.ph{width:100%;aspect-ratio:4/3;background:#d9dcdb;color:#555;display:flex;align-items:center;justify-content:center;font-size:.9em}
+.cap{margin-top:.6em}
+.ptab{text-align:center;margin:1em 0 1.4em}
+.ptab table{margin:.3em auto 0;border-collapse:collapse;border-top:1.2px solid #111;border-bottom:1.2px solid #111}
+.ptab th,.ptab td{padding:.05em .55em;font-weight:400;text-align:center}
+.ptab thead th{border-bottom:1px solid #111}
+.bib{display:grid;grid-template-columns:2em minmax(0,1fr);gap:.2em;text-align:justify}
+.pageno{text-align:center;margin-top:2em}
+.flash{animation:fl 1.4s ease-out}
+@keyframes fl{0%,40%{background:var(--gold);box-shadow:0 0 0 3px var(--gold)}100%{background:transparent;box-shadow:none}}
+/* 說明卡 */
+.card{margin:1rem 0;background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--green);border-radius:12px;padding:1rem 1.2rem}
+.card h2{margin:.1rem 0 .3rem;font-size:1.25rem}
+.card .lines{font-size:.85rem;color:var(--muted);font-weight:700}
+.card .chg{background:#fff8e7;border-left:4px solid var(--gold);padding:.5rem .8rem;margin:.6rem 0 0}
+.card code,.card pre{font-family:ui-monospace,Menlo,Consolas,monospace}
+.card code{background:#eef3ef;border-radius:4px;padding:0 .25em;font-size:.92em}
+.card pre{background:#1b3030;color:#f1f7ee;border-radius:8px;padding:.8rem;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.85rem}
+details summary{cursor:pointer;font-weight:750;color:var(--green);margin-top:.6rem}
+footer{padding:1rem 0 2rem;color:var(--muted);font-size:.88rem}
+@media(max-width:900px){
+ .cols{grid-template-columns:1fr}
+ .col{height:auto;min-height:0;max-height:none;overflow:visible}
+ .code-col{max-height:70vh;overflow:auto}
+ .colhead{position:static}
+ .toggles{position:static}
+ .card{position:sticky;bottom:0;z-index:5;max-height:32vh;overflow:auto;margin:0;padding:.6rem 1rem;border-radius:12px 12px 0 0;box-shadow:0 -4px 14px rgba(0,0,0,.12)}
+ .hero-grid{flex-direction:column}
+ .links{flex-direction:row;flex-wrap:wrap}
+}
+
+.build ol{padding-left:1.3em;margin:.6em 0}.build li{margin:.9em 0}.build pre{background:#17312f;color:#f4f1e6;padding:.7em .9em;border-radius:8px;overflow:auto;font:13px/1.55 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;margin:.4em 0}
+.cp{cursor:pointer;border:1px solid #075e56;background:#075e56;color:#fff;border-radius:8px;padding:.35em .8em;font:inherit;font-weight:600}.cp:hover,.cp:focus-visible{background:#0a7d72;outline:2px solid #e8ae42;outline-offset:2px}.cp.done{background:#e8ae42;border-color:#e8ae42;color:#17312f}
+.build .where{font-weight:600}.build .see{color:#075e56}.small{font-size:.9em;opacity:.8}.cpmsg{min-height:1.4em;font-weight:600;color:#075e56}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap hero-grid">
+ <div>
+  <div class="eyebrow">資訊科技與應用 · W11</div>
+  <h1>LaTeX 原稿對照成品：點一段，看它變成什麼</h1>
+  <p>左邊是原稿 report-demo.tex，右邊是它編出來的那一頁。點任何一段，另一邊對應的地方會亮起來。</p>
+ </div>
+ <nav class="links" aria-label="相關連結">
+  <a href="student.html">← 回學生頁</a>
+  <a class="dl" href="starter/report-demo.tex" download>下載原稿 report-demo.tex</a>
+ </nav>
+</div></header>
+
+<main class="wrap">
+ <div class="bar" role="group" aria-label="一段一段看">
+  <button type="button" id="prev">← 上一段</button>
+  <button type="button" id="next">下一段 →</button>
+  <span class="count" id="count">第 0／15 段</span>
+  <span class="hint">鍵盤：Tab 移到左邊任一段，按 Enter 或空白鍵選取。</span>
+ </div>
+
+ <div class="cols">
+  <section class="col code-col" aria-label="原稿 report-demo.tex">
+   <div class="colhead">原稿　report-demo.tex（行號照原檔）</div>
+   <div class="code" id="code"></div>
+  </section>
+
+  <section class="col paper-col" id="paperCol" aria-label="編出來的成品">
+   <div class="colhead">成品　PDF 第 1 頁（照實際畫面重畫）</div>
+   <div class="toggles" role="group" aria-label="改改看">
+    <b>改改看：</b>
+    <button type="button" data-t="A" aria-pressed="false">A 在最前面多放一張圖</button>
+    <button type="button" data-t="B" aria-pressed="false">B 把 \cite 的代號打錯</button>
+    <button type="button" data-t="C" aria-pressed="false">C 只編譯一次</button>
+    <button type="button" id="reset">全部還原</button>
+   </div>
+   <div id="tnote" aria-live="polite"></div>
+   <div id="nopaper" hidden>這幾行不會出現在紙上，它們在設定怎麼排。</div>
+   <div class="stage">
+    <div class="paper" id="p-paper" data-b="8">
+     <div class="mbox" aria-hidden="true"></div>
+     <div class="pin" id="p-body">
+      <div class="ptitle" id="p-title" data-b="7">每週編譯錯誤數的變化</div>
+      <div class="pauthor" id="p-author" data-b="7">你的稱呼（可用化名）</div>
+
+      <h3 id="p-s1h" data-b="9"><span class="num">1</span>我想了解的問題</h3>
+      <p id="p-s1p" data-b="9">剛學 LaTeX 時，每次編譯都會遇到錯誤。練習八週之後，錯誤有沒有變少？下面用的是示範資料，不是真實量測。</p>
+
+      <div class="pfig" id="p-newfig" hidden>
+       <div class="imgbox"><div class="ph">（新加的圖）</div></div>
+       <div class="cap"><span>圖</span> <span id="p-newfignum">1</span>: 新加的圖。</div>
+      </div>
+
+      <h3 id="p-s2h" data-b="10"><span class="num">2</span>一張圖</h3>
+      <p data-b="10"><span id="p-s2ref" data-b="10">圖 <span id="figref">1</span></span> 是用 gnuplot 讀資料檔畫出來的。兩組的錯誤數都逐週下降。</p>
+
+      <div class="pfig" id="p-figwrap" data-b="11">
+       <div class="imgbox" id="p-fig" data-b="11"><img src="starter/figure-demo.png" alt="gnuplot 畫的折線圖：A、B 兩組每週編譯錯誤數，第 1 到 8 週都往下降"></div>
+       <div class="cap" id="p-figcap" data-b="11"><span id="p-fign" data-b="6">圖</span> <span id="fignum">1</span>: 每週編譯錯誤數（示範資料）。</div>
+      </div>
+
+      <h3 id="p-s3h" data-b="12"><span class="num">3</span>一張表</h3>
+      <p data-b="12"><span id="p-s3ref" data-b="12">表 <span id="tabref">1</span></span> 列出第 1、4、8 週的數字。表號和圖號一樣，由 LaTeX 自己編。</p>
+
+      <div class="ptab" id="p-tabwrap" data-b="13">
+       <div id="p-tabcap" data-b="13"><span id="p-tabn" data-b="6">表</span> 1: 三個時間點的編譯錯誤數（示範資料）。</div>
+       <table id="p-table" data-b="13">
+        <thead><tr><th>週次</th><th>A 組</th><th>B 組</th></tr></thead>
+        <tbody><tr><td>1</td><td>9</td><td>11</td></tr><tr><td>4</td><td>5</td><td>8</td></tr><tr><td>8</td><td>2</td><td>3</td></tr></tbody>
+       </table>
+      </div>
+
+      <h3 id="p-s4h" data-b="14"><span class="num">4</span>一篇文獻</h3>
+      <p data-b="14">有人帶著練習，是不是比自己摸索有效？Su 等人做過有對照組的訓練研究 <span id="p-cite" data-b="14">[<span id="citen">1</span>]</span>。引用之前要回原文核對題名、作者與年份。</p>
+
+      <h3 id="p-refh" data-b="15"><span id="p-refn" data-b="6">參考文獻</span></h3>
+      <div class="bib" id="p-bib" data-b="15"><span>[1]</span><span>Hsin-Feng Su, Malcolm Koo, Wen-Li Lee, Huei-Chuan Sung, Ru-Ping Lee, and Wen-I Liu. A dementia care training using mobile e-learning with mentoring support for home care workers: a controlled study. <i>BMC Geriatrics</i>, 21(1), 2021.</span></div>
+      <div class="pageno">1</div>
+     </div>
+    </div>
+   </div>
+  </section>
+ </div>
+
+ <section class="card" id="card" aria-live="polite" aria-label="說明卡">
+  <div class="lines" id="cLines">說明卡</div>
+  <h2 id="cName">點左邊任何一段開始</h2>
+  <div id="cDesc"><p>也可以點右邊紙上的任何一塊，或用上方「下一段」一段一段看。</p></div>
+ </section>
+
+ <section class="card build" id="build" aria-label="一段一段貼到 Overleaf">
+  <div class="lines">自己組一次</div>
+  <h2>一段一段貼到 Overleaf，看它長出來</h2>
+  <p>在 Overleaf 開一個 Blank project，編譯器先換成 XeLaTeX（左下角齒輪 Settings → Compiler），把 <code>figure-demo.png</code> 和 <code>refs.bib</code> 上傳進去。然後照順序做：每按一次「複製」，貼到指定的位置，按 Recompile，看右邊多了什麼。</p>
+  <ol id="buildSteps"></ol>
+  <p><button type="button" class="cp" data-copy="all">複製整份原稿</button> <span class="small">想一次貼完就用這顆。</span></p>
+  <div id="cpMsg" class="cpmsg" aria-live="polite"></div>
+ </section>
+</main>
+
+<footer class="wrap">示範資料是虛構的；這一頁的「成品」是照實際編出來的 PDF 重畫的，字型與間距跟真的 PDF 會有一點不同。</footer>
+
+<script>
+const LINES = ["% report-demo.tex：一頁有「圖」、有「表」、有「引用」的報告範本。", "% 同一個專案（或同一個資料夾）要有三個檔：這個檔、figure-demo.png、refs.bib。", "% Overleaf：三個檔都上傳，Compiler 選 XeLaTeX，按 Recompile。", "% 本機：xelatex report-demo → bibtex report-demo → xelatex report-demo → xelatex report-demo", "\\documentclass[11pt,a4paper]{article}", "\\usepackage{xeCJK}", "\\IfFontExistsTF{Noto Serif CJK TC}{\\setCJKmainfont{Noto Serif CJK TC}}{\\IfFontExistsTF{Microsoft JhengHei}{\\setCJKmainfont{Microsoft JhengHei}}{\\setCJKmainfont{Songti TC}}}", "\\usepackage[margin=2cm]{geometry}", "\\usepackage{graphicx}", "\\renewcommand{\\figurename}{圖}", "\\renewcommand{\\tablename}{表}", "\\renewcommand{\\refname}{參考文獻}", "", "\\title{每週編譯錯誤數的變化}", "\\author{你的稱呼（可用化名）}", "\\date{}", "", "\\begin{document}", "\\maketitle", "", "\\section{我想了解的問題}", "剛學 LaTeX 時，每次編譯都會遇到錯誤。練習八週之後，錯誤有沒有變少？下面用的是示範資料，不是真實量測。", "", "\\section{一張圖}", "圖~\\ref{fig:errors} 是用 gnuplot 讀資料檔畫出來的。兩組的錯誤數都逐週下降。", "", "\\begin{figure}[htbp]", "  \\centering", "  \\includegraphics[width=0.45\\linewidth]{figure-demo.png}", "  \\caption{每週編譯錯誤數（示範資料）。}", "  \\label{fig:errors}", "\\end{figure}", "", "\\section{一張表}", "表~\\ref{tab:errors} 列出第 1、4、8 週的數字。表號和圖號一樣，由 LaTeX 自己編。", "", "\\begin{table}[htbp]", "  \\centering", "  \\caption{三個時間點的編譯錯誤數（示範資料）。}", "  \\label{tab:errors}", "  \\begin{tabular}{ccc}", "    \\hline", "    週次 & A 組 & B 組 \\\\", "    \\hline", "    1 & 9 & 11 \\\\", "    4 & 5 & 8 \\\\", "    8 & 2 & 3 \\\\", "    \\hline", "  \\end{tabular}", "\\end{table}", "", "\\section{一篇文獻}", "有人帶著練習，是不是比自己摸索有效？Su 等人做過有對照組的訓練研究 \\cite{Su2021}。引用之前要回原文核對題名、作者與年份。", "", "\\bibliographystyle{plain}", "\\bibliography{refs}", "\\end{document}"];
+const BIB = "% 這一筆書目是用 DOI 向 doi.org 取回來的（2026-11-16），代號 Su2021 是自己取的。\n@article{Su2021,\n  author = {Su, Hsin-Feng and Koo, Malcolm and Lee, Wen-Li and Sung, Huei-Chuan and Lee, Ru-Ping and Liu, Wen-I},\n  title = {A dementia care training using mobile e-learning with mentoring support for home care workers: a controlled study},\n  journal = {BMC Geriatrics},\n  year = {2021},\n  volume = {21},\n  number = {1},\n  doi = {10.1186/s12877-021-02075-3}\n}";
+</script>
+<script>
+(function(){
+"use strict";
+// 區塊：lines＝屬於這塊的行號；t＝成品上要亮的元素 id；setting＝不會印出來的設定
+const B = [
+ null,
+ {name:"註解",lines:[1,2,3,4],t:[],setting:true,
+  desc:"<p><code>%</code> 後面的字是寫給人看的筆記，不會印出來。這四行在提醒你：要準備哪三個檔、Overleaf 要選哪個編譯器、在自己電腦上要依序跑哪幾個指令。</p>",
+  chg:"怎麼改都不影響 PDF。常見用法是在某一行最前面加 <code>%</code>，暫時讓那一行失效。"},
+ {name:"\\documentclass：文件的種類",lines:[5],t:["p-paper"],setting:true,
+  desc:"<p>第一行正式指令。<code>article</code> 是「短文章」這一類；<code>11pt</code> 是內文字的大小；<code>a4paper</code> 是 A4 紙。右邊整張紙的大小和內文字級都是它決定的。</p>",
+  chg:"把 <code>11pt</code> 改成 <code>12pt</code>，全部的字一起變大，原本一頁的內容可能擠到第二頁。"},
+ {name:"xeCJK：讓它認得中文",lines:[6,7],t:["p-paper"],setting:true,
+  desc:"<p><code>\\usepackage{xeCJK}</code> 讓 LaTeX 認得中文。第 7 行在挑中文字型：有 Noto Serif CJK TC 就用它（Overleaf 上有），沒有就找微軟正黑體（Windows），再沒有就用宋體（Mac）。</p><p>xeCJK 只能配 XeLaTeX，這就是為什麼 Overleaf 的編譯器要選 XeLaTeX。右邊紙上每一個中文字都靠這兩行。</p>",
+  chg:"刪掉這兩行，或編譯器沒選 XeLaTeX，中文字會消失或直接報錯。"},
+ {name:"geometry：四邊留白",lines:[8],t:[],margin:true,setting:true,
+  desc:"<p><code>margin=2cm</code> 讓紙的上下左右各留 2 公分白邊。右邊紙上的金色虛線框就是內容能放的範圍。</p>",
+  chg:"改成 <code>margin=3cm</code>，留白變寬、每行放得下的字變少，內容會往下長。"},
+ {name:"graphicx：放圖片要先載入",lines:[9],t:["p-fig"],setting:true,
+  desc:"<p>LaTeX 本身不會放圖片，要先載入 <code>graphicx</code> 套件，後面才能用 <code>\\includegraphics</code>。右邊那張圖能出現，靠的是這一行。</p>",
+  chg:"刪掉這行，第 29 行會報錯「Undefined control sequence」，圖放不進來。"},
+ {name:"把英文名稱換成中文",lines:[10,11,12,13],t:["p-fign","p-tabn","p-refn"],setting:true,
+  desc:"<p>LaTeX 預設是英文，圖說開頭會寫 Figure、表說寫 Table、文末寫 References。這三行把它們換成「圖」「表」「參考文獻」。右邊亮起來的三處都是這三行換的。</p>",
+  chg:"刪掉這三行，紙上會變回 <code>Figure 1:</code>、<code>Table 1:</code> 和 <code>References</code>。"},
+ {name:"標題與作者",lines:[14,15,16,17,19,20],t:["p-title","p-author"],
+  desc:"<p>第 14–16 行只是「先登記」標題、作者、日期，還不會印出來；要等第 19 行 <code>\\maketitle</code> 才真的印在紙上。中間隔著第 18 行，因為 <code>\\maketitle</code> 屬於正文。</p><p><code>\\date{}</code> 大括號留空，所以紙上沒有日期。</p>",
+  chg:"刪掉 <code>\\date{}</code> 這行，標題下面會自動印出今天的日期；刪掉 <code>\\maketitle</code>，標題和作者整個不見。"},
+ {name:"\\begin{document} … \\end{document}：正文的範圍",lines:[18,57],t:["p-paper"],
+  desc:"<p>正文從第 18 行開始、到第 57 行結束。在它之前的都是「設定」，在它中間的才會排到紙上。所以右邊整張紙的內容，都夾在這兩行之間。</p>",
+  chg:"寫在 <code>\\end{document}</code> 後面的字不會出現；少了其中一行會報錯。"},
+ {name:"第 1 節：\\section 與一段內文",lines:[21,22,23],t:["p-s1h","p-s1p"],
+  desc:"<p><code>\\section{我想了解的問題}</code> 變成粗體的節標題，前面的編號 1 是 LaTeX 自己編的，你沒有寫。下一行就是普通內文，直接打字就好。</p><p>空一行（第 23 行）代表段落結束。</p>",
+  chg:"把兩個 <code>\\section</code> 對調，編號會自動重排，不用自己改 1、2。"},
+ {name:"第 2 節與內文裡的「圖~\\ref」",lines:[24,25,26],t:["p-s2h","p-s2ref"],
+  desc:"<p><code>\\ref{fig:errors}</code> 會被換成代號 fig:errors 那張圖的編號，所以紙上印出「圖 1」。<code>~</code> 是「不換行的空白」，讓「圖」和「1」不會被拆在兩行。</p>",
+  chg:"代號打錯（例如 <code>fig:error</code>），紙上會印出「圖 ??」。"},
+ {name:"figure 環境：放一張圖",lines:[27,28,29,30,31,32,33],t:["p-fig","p-figcap"],
+  desc:"<p><code>\\includegraphics</code> 把 figure-demo.png 放進來，就是 gnuplot 畫的那張。<code>width=0.45\\linewidth</code> 是寬度占版面的 45%。</p><p><code>\\caption</code> 是圖說，前面的「圖 1」是自動編的；<code>\\label</code> 替這張圖取代號 fig:errors，內文的 <code>\\ref</code> 才找得到它。<code>[htbp]</code> 是允許 LaTeX 自己決定放哪裡最好看。</p>",
+  chg:"換一張同名的 figure-demo.png（例如 gnuplot 重畫），原稿一個字都不用改，重新編譯就換好了。"},
+ {name:"第 3 節與內文裡的「表~\\ref」",lines:[34,35,36],t:["p-s3h","p-s3ref"],
+  desc:"<p>跟第 2 節一樣：<code>\\ref{tab:errors}</code> 會變成代號 tab:errors 那張表的編號，所以紙上是「表 1」。</p>",
+  chg:"代號打錯，紙上會印出「表 ??」。"},
+ {name:"table 與 tabular：一張表",lines:[37,38,39,40,41,42,43,44,45,46,47,48,49,50,51],t:["p-tabcap","p-table"],
+  desc:"<p><code>table</code> 是外框，管表說與編號；裡面的 <code>tabular</code> 才是表格本身。<code>{ccc}</code> 表示三欄、都置中（c＝center）。</p><p>每一列用 <code>&amp;</code> 分欄、用 <code>\\\\</code> 換列；<code>\\hline</code> 畫一條橫線，所以紙上有上、表頭下、底三條線。<code>\\caption</code> 寫在表格前面，表說就在表格上方。</p>",
+  chg:"多加一列就多寫一行，例如 <code>12 &amp; 1 &amp; 2 \\\\</code>；<code>{ccc}</code> 改成 <code>{lcr}</code>，三欄變成靠左、置中、靠右。"},
+ {name:"第 4 節與 \\cite：引用一篇文獻",lines:[52,53,54],t:["p-s4h","p-cite"],
+  desc:"<p><code>\\cite{Su2021}</code> 裡的 Su2021 是 refs.bib 裡那一筆書目的代號（自己取的），印出來變成 [1]。數字是 LaTeX 排完書目後自己填的。</p>",
+  chg:"代號跟 refs.bib 對不上，紙上會變成 [?]，文末也不會列出那一筆（試試上面的開關 B）。"},
+ {name:"參考文獻清單",lines:[55,56],t:["p-refh","p-bib"],bib:true,
+  desc:"<p><code>\\bibliography{refs}</code> 指向同一個資料夾裡的 refs.bib（不寫副檔名）；<code>\\bibliographystyle{plain}</code> 決定書目長什麼樣子。文末「參考文獻」和那一筆，是 BibTeX 從 refs.bib 自動排出來的，你沒有手打。</p>",
+  chg:"<code>plain</code> 換成 <code>unsrt</code>，書目改照引用的先後排。refs.bib 裡沒被 <code>\\cite</code> 到的書目不會印出來。"}
+];
+const N = B.length - 1;
+
+// 每一行屬於哪一塊
+const owner = {};
+for (let i = 1; i <= N; i++) B[i].lines.forEach(l => { owner[l] = i; });
+const missing = [];
+for (let l = 1; l <= LINES.length; l++) if (!owner[l]) missing.push(l);
+if (missing.length) console.warn("沒有歸屬的行：", missing);
+
+const NEWFIG = [
+ "\\begin{figure}[htbp]",
+ "  \\centering",
+ "  \\includegraphics[width=0.45\\linewidth]{new-figure.png}",
+ "  \\caption{新加的圖。}",
+ "\\end{figure}",
+ ""
+];
+
+const state = {A:false, B:false, C:false};
+let cur = 0;
+
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+function rowHTML(num, text, cls){
+ let h = esc(text);
+ if (/^\s*%/.test(text)) h = '<span class="com">' + h + '</span>';
+ return '<div class="row' + (cls ? ' ' + cls : '') + '"><span class="ln">' + num + '</span><span class="tx">' + h + '</span></div>';
+}
+
+function renderCode(){
+ const out = [];
+ let seg = null, rows = [];
+ const flush = () => {
+  if (!seg) return;
+  out.push('<div class="seg" role="button" tabindex="0" aria-pressed="false" data-b="' + seg + '" aria-label="第 ' + seg + ' 段：' + esc(B[seg].name) + '">' + rows.join("") + '</div>');
+  rows = [];
+ };
+ for (let l = 1; l <= LINES.length; l++){
+  const b = owner[l];
+  if (b !== seg){ flush(); seg = b; }
+  let t = LINES[l-1];
+  let row;
+  if (l === 53 && state.B){
+   row = '<div class="row"><span class="ln">53</span><span class="tx">' + esc(t).replace("Su2021", '<mark class="bad" id="badkey">Su2012</mark>') + '</span></div>';
+  } else row = rowHTML(l, t);
+  rows.push(row);
+  if (l === 22 && state.A){
+   NEWFIG.forEach(n => rows.push(rowHTML("＋", n, "add")));
+  }
+ }
+ flush();
+ $("code").innerHTML = out.join("");
+}
+
+function paintSelection(){
+ document.querySelectorAll(".seg").forEach(s => {
+  const on = +s.dataset.b === cur;
+  s.classList.toggle("on", on);
+  s.setAttribute("aria-pressed", on ? "true" : "false");
+ });
+ document.querySelectorAll("#p-paper .on, #p-paper.on").forEach(e => e.classList.remove("on"));
+ $("p-paper").classList.remove("margin");
+ $("count").textContent = "第 " + cur + "／" + N + " 段";
+ if (!cur){ $("nopaper").hidden = true; return; }
+ const b = B[cur];
+ b.t.forEach(id => { const e = $(id); if (e) e.classList.add("on"); });
+ if (b.margin) $("p-paper").classList.add("margin");
+ $("nopaper").hidden = !b.setting;
+}
+
+function scrollWithin(col, el){
+ if (!el) return;
+ const scrolls = col.scrollHeight > col.clientHeight + 2 && getComputedStyle(col).overflowY !== "visible";
+ if (scrolls){
+  const r = el.getBoundingClientRect(), c = col.getBoundingClientRect();
+  const visible = r.top >= c.top + 90 && r.bottom <= c.bottom - 10;
+  if (!visible){
+   const target = col.scrollTop + (r.top - c.top) - Math.max(100, col.clientHeight/3 - Math.min(r.height, col.clientHeight/2)/2);
+   col.scrollTo({top: Math.max(0, target), behavior: "smooth"});
+  }
+ }
+}
+
+function linesLabel(b){
+ // 把行號串成「14–17、19–20 行」
+ const ls = b.lines.slice().sort((x,y)=>x-y), parts = [];
+ let s = ls[0], p = ls[0];
+ for (let i = 1; i <= ls.length; i++){
+  if (ls[i] === p + 1){ p = ls[i]; continue; }
+  parts.push(s === p ? "" + s : s + "–" + p);
+  s = p = ls[i];
+ }
+ return "第 " + parts.join("、") + " 行";
+}
+
+function renderCard(){
+ if (!cur){
+  $("cLines").textContent = "說明卡";
+  $("cName").textContent = "點左邊任何一段開始";
+  $("cDesc").innerHTML = "<p>也可以點右邊紙上的任何一塊，或用上方「下一段」一段一段看。</p>";
+  return;
+ }
+ const b = B[cur];
+ $("cLines").textContent = "第 " + cur + "／" + N + " 段 · " + linesLabel(b);
+ $("cName").textContent = b.name;
+ let h = b.desc + '<p class="chg"><b>改這裡會怎樣：</b>' + b.chg + '</p>';
+ h += '<p><button type="button" class="cp" data-copy="block">複製這一段原稿</button></p>';
+ if (b.bib) h += '<details><summary>看 refs.bib 的內容</summary><pre>' + esc(BIB) + '</pre></details>';
+ $("cDesc").innerHTML = h;
+}
+
+function select(n, from){
+ cur = n;
+ paintSelection();
+ renderCard();
+ if (!n) return;
+ const b = B[n];
+ if (from !== "paper"){
+  let el = b.t.length ? $(b.t[0]) : null;
+  if (b.margin) el = $("p-paper");
+  scrollWithin($("paperCol"), el || (b.setting ? $("paperCol").firstElementChild : null));
+ }
+ if (from !== "code"){
+  scrollWithin(document.querySelector(".code-col"), document.querySelector('.seg[data-b="' + n + '"]'));
+ }
+}
+
+// 左邊：點選與鍵盤
+$("code").addEventListener("click", e => {
+ const s = e.target.closest(".seg"); if (s) select(+s.dataset.b, "code");
+});
+$("code").addEventListener("keydown", e => {
+ const s = e.target.closest(".seg"); if (!s) return;
+ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); select(+s.dataset.b, "code"); }
+});
+// 右邊：反向點選
+$("p-paper").addEventListener("click", e => {
+ const el = e.target.closest("[data-b]"); if (el) select(+el.dataset.b, "paper");
+});
+$("prev").addEventListener("click", () => select(cur <= 1 ? N : cur - 1));
+$("next").addEventListener("click", () => select(cur >= N ? 1 : cur + 1));
+
+// 改改看
+const TNOTE = {
+ A:"A 多放一張圖：左邊第 22 行後多了一段 figure（綠底、行號「＋」）。原本那張自動變成圖 2，內文的引用也跟著變。你沒有改任何編號，是 LaTeX 重編的。",
+ B:"B 代號打錯：第 53 行寫成 Su2012，refs.bib 裡找不到這個代號，所以內文變成 [?]、文末那一筆也不見了。代號要跟 refs.bib 一模一樣；看到 [?] 先檢查這裡。",
+ C:"C 只編譯一次：第一次編譯時 LaTeX 才在記哪張圖、哪張表是幾號，內文的 \\ref 還填不進去，只好印 ??。編號要編兩次才填得回去，Overleaf 會自動處理；看到 ?? 就再按一次 Recompile。"
+};
+function flash(ids){
+ ids.forEach(id => { const e = $(id); if (!e) return; e.classList.remove("flash"); void e.offsetWidth; e.classList.add("flash"); });
+}
+function applyToggles(changed){
+ const fig = state.A ? 2 : 1;
+ $("figref").textContent = state.C ? "??" : fig;
+ $("tabref").textContent = state.C ? "??" : "1";
+ $("fignum").textContent = fig;
+ $("p-newfig").hidden = !state.A;
+ $("citen").textContent = state.B ? "?" : "1";
+ $("p-bib").hidden = state.B;
+ document.querySelectorAll(".toggles [data-t]").forEach(b => b.setAttribute("aria-pressed", state[b.dataset.t] ? "true" : "false"));
+ renderCode();
+ paintSelection();
+ $("tnote").textContent = ["A","B","C"].filter(k => state[k]).map(k => TNOTE[k]).join("　");
+ const fl = {A:["p-newfig","p-s2ref","p-figcap","new-rows"], B:["p-cite","p-refh","badkey"], C:["p-s2ref","p-s3ref"]};
+ if (changed){
+  const ids = changed === "all" ? ["p-s2ref","p-s3ref","p-figcap","p-cite","p-refh"] : fl[changed];
+  flash(ids);
+  if (changed === "A" && state.A) document.querySelectorAll(".row.add").forEach(r => { r.classList.add("flash"); });
+  if (changed !== "all"){
+   const first = changed === "A" ? (state.A ? "p-newfig" : "p-figcap") : changed === "B" ? "p-cite" : "p-s2ref";
+   scrollWithin($("paperCol"), $(first));
+   const crow = changed === "A" ? document.querySelector(".row.add") || document.querySelector('.seg[data-b="9"]') : changed === "B" ? document.querySelector('.seg[data-b="14"]') : null;
+   if (crow) scrollWithin(document.querySelector(".code-col"), crow);
+  }
+ }
+}
+document.querySelectorAll(".toggles [data-t]").forEach(btn => btn.addEventListener("click", () => {
+ const k = btn.dataset.t; state[k] = !state[k]; applyToggles(k);
+}));
+$("reset").addEventListener("click", () => { state.A = state.B = state.C = false; applyToggles("all"); });
+
+renderCode();
+applyToggles();
+renderCard();
+/* ---- 複製：整份、目前這一段、一段一段組 ---- */
+const rng = (a,b) => LINES.slice(a-1,b).join("\n");
+const STEPS = [
+ {name:"骨架：設定、標題、正文的頭尾", text: rng(5,19) + "\n\n\\end{document}", where:"把 main.tex 原本的內容全部刪掉，貼上這一段。", see:"只有置中的標題和作者，沒有內文。"},
+ {name:"第 1 節：一個章節加一段話", text: rng(21,22) + "\n", where:"貼在最後一行 \\end{document} 的上面。", see:"多了「1　我想了解的問題」和一段文字，編號 1 是它自己編的。"},
+ {name:"第 2 節：內文加一張圖", text: rng(24,32) + "\n", where:"一樣貼在 \\end{document} 的上面（要先上傳 figure-demo.png）。", see:"多了第 2 節、折線圖和圖說「圖 1」。內文是「圖 ??」就再按一次 Recompile。"},
+ {name:"第 3 節：內文加一張表", text: rng(34,50) + "\n", where:"一樣貼在 \\end{document} 的上面。", see:"多了第 3 節和「表 1」的表格。"},
+ {name:"第 4 節：引用一篇文獻，加上參考文獻清單", text: rng(52,56), where:"一樣貼在 \\end{document} 的上面（要先上傳 refs.bib）。", see:"內文出現 [1]，文末多了「參考文獻」和一筆 BMC Geriatrics 2021。這時它跟左邊的整份原稿一樣了。"}
+];
+(function(){
+ const ol = $("buildSteps");
+ ol.innerHTML = STEPS.map((st,i) => '<li><b>' + esc(st.name) + '</b> <button type="button" class="cp" data-copy="step" data-i="' + i + '">複製</button><pre>' + esc(st.text) + '</pre><div class="where">貼哪裡：' + esc(st.where) + '</div><div class="see">應該看到：' + esc(st.see) + '</div></li>').join("");
+})();
+function copyText(t, btn, label){
+ const ok = () => { if (btn){ const o = btn.textContent; btn.textContent = "已複製"; btn.classList.add("done"); setTimeout(() => { btn.textContent = o; btn.classList.remove("done"); }, 1500); } $("cpMsg").textContent = "已複製：" + label; };
+ const fallback = () => { const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); ok(); } catch(e){ $("cpMsg").textContent = "這個瀏覽器不讓網頁複製，請手動選取文字再複製。"; } document.body.removeChild(ta); };
+ if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, fallback); else fallback();
+}
+document.addEventListener("click", e => {
+ const btn = e.target.closest("button.cp"); if (!btn) return;
+ const k = btn.dataset.copy;
+ if (k === "all") copyText(LINES.join("\n") + "\n", btn, "整份原稿（" + LINES.length + " 行）");
+ else if (k === "step"){ const st = STEPS[+btn.dataset.i]; copyText(st.text, btn, st.name); }
+ else if (k === "block" && cur){ const b = B[cur]; const ls = b.lines.slice().sort((x,y)=>x-y); copyText(ls.map(l => LINES[l-1]).join("\n"), btn, b.name); }
+});
+})();
+</script>
+</body>
+</html>

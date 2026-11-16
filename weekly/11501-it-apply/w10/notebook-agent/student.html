@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>學生步驟｜讓 AI agent 接上 Gemini Notebook</title>
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --surface-2:#F1F5F4; --ink:#132525; --ink-soft:#3E5656; --mist:#5E7676;
+  --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF; --gold:#D9A441; --gold-deep:#7A5510; --gold-tint:#FBF0D9;
+  --dark:#062524; --red:#B4553F; --red-tint:#F7E4DE; --violet:#5B4B9A; --violet-tint:#ECE8F7;
+  --term-bg:#133E34; --term-ink:#F4F6ED; --out-bg:#F3F6F5; --out-ink:#1B3433;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC","Heiti TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono","Liberation Mono","Noto Sans Mono CJK TC",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#8FA9A8;
+    --line:#26403F; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+    --dark:#041716; --red:#E58B74; --red-tint:#3A2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+    --term-bg:#071F1A; --term-ink:#E6F2F2; --out-bg:#0D1F1F; --out-ink:#D5E6E5;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#8FA9A8;
+  --line:#26403F; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+  --dark:#041716; --red:#E58B74; --red-tint:#3A2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+  --term-bg:#071F1A; --term-ink:#E6F2F2; --out-bg:#0D1F1F; --out-ink:#D5E6E5;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:16.5px;line-height:1.8}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+a{color:var(--teal);text-underline-offset:3px}
+main{max-width:900px;margin:0 auto;padding:0 16px 80px}
+header.hero{background:var(--dark);color:#E6F2F2;padding:26px 0 20px}
+header.hero .in{max-width:900px;margin:0 auto;padding:0 16px}
+.kicker{font-weight:800;font-size:13px;letter-spacing:.18em;color:var(--gold)}
+h1{font-size:clamp(27px,5vw,44px);line-height:1.25;margin:6px 0 10px;font-weight:900}
+.hero p{margin:6px 0;color:#BFD6D5}
+.hero nav{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px}
+.hero nav a{color:#F3D08A}
+h2{font-size:clamp(21px,3.4vw,26px);line-height:1.4;margin:0 0 6px}
+h3{font-size:18px;margin:22px 0 4px}
+section.sec{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:20px 0;scroll-margin-top:64px}
+.goal{margin:2px 0 4px;font-weight:700}
+.why{margin:2px 0 10px;color:var(--ink-soft)}
+.small{font-size:14.5px;color:var(--mist)}
+/* 進度列 */
+.progress{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.progress .in{max-width:900px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar{flex:1 1 160px;height:10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.progress .lbl{font-weight:800;font-size:14.5px;white-space:nowrap}
+.progress .toc{display:flex;gap:4px 10px;flex-wrap:wrap;font-size:14px}
+.progress .toc a{text-decoration:none}
+.progress .toc .tg{color:var(--mist);font-weight:800;margin-left:4px}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:4px 10px;font-size:14px;line-height:1.4}
+.btn:hover{border-color:var(--teal)}
+/* 指令框與輸出框 */
+.box{position:relative;margin:8px 0 10px}
+pre{margin:0;white-space:pre;overflow-x:auto;border-radius:10px;padding:12px 14px;font:15px/1.65 var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+code{font-family:var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;font-size:.92em;background:var(--surface-2);color:var(--ink);border-radius:5px;padding:0 4px;overflow-wrap:anywhere}
+pre.cmd{background:var(--term-bg);color:var(--term-ink);padding-top:34px}
+pre.cmd::before{position:absolute;left:14px;right:84px;top:8px;font:700 13px/1.4 var(--zh);letter-spacing:.05em;color:#A8D8C8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+pre.out{background:var(--out-bg);color:var(--out-ink);border:2px dashed var(--line);padding-top:30px}
+pre.out::before{content:"你應該看到（例）——不用打";position:absolute;left:14px;top:6px;font:700 13px/1.4 var(--zh);color:var(--mist)}
+.copy{position:absolute;right:8px;top:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;border-radius:8px;padding:1px 10px;font-size:13px}
+.copy:hover{background:rgba(255,255,255,.25)}
+/* 步驟 */
+ol.steps{padding-left:0;list-style:none;counter-reset:st;margin:8px 0}
+ol.steps > li{counter-increment:st;position:relative;padding:4px 0 6px 40px;margin:6px 0}
+ol.steps > li::before{content:counter(st);position:absolute;left:0;top:4px;width:28px;height:28px;border-radius:50%;background:var(--teal-tint);color:var(--teal);font-weight:900;display:grid;place-items:center;font-size:15px}
+ol.steps > li > p{margin:2px 0}
+.lab{display:inline-block;margin-right:8px;padding:0 8px;border-radius:7px;font-size:13px;font-weight:800;letter-spacing:.04em;line-height:1.6;vertical-align:1px}
+.do-l{background:var(--teal-tint);color:var(--teal)}
+.type-l{background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--line)}
+.see-l{background:var(--gold-tint);color:var(--gold-deep)}
+.dur-l{background:var(--violet-tint);color:var(--violet)}
+.dur{display:inline-block;margin-left:8px;padding:0 8px;border-radius:7px;background:var(--violet-tint);color:var(--violet);font-size:13.5px;font-weight:700}
+.dur::before{content:"⏱ "}
+.check{display:flex;gap:10px;align-items:flex-start;margin:12px 0 2px;padding:10px 14px;border-radius:12px;background:var(--teal-tint);border:1px solid var(--teal);font-weight:700}
+.check input{width:22px;height:22px;margin-top:3px;flex:0 0 auto;accent-color:var(--teal)}
+.check.done{opacity:.75}
+.check > span{flex:1 1 0;min-width:0;overflow-wrap:anywhere}
+.check code{white-space:normal;overflow-wrap:anywhere}
+.note{padding:10px 14px;border-left:4px solid var(--gold);background:var(--gold-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.warn{padding:10px 14px;border-left:4px solid var(--red);background:var(--red-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.deep{font-size:14.5px;margin:10px 0 0;color:var(--ink-soft)}
+details{border:1px solid var(--line);border-radius:12px;padding:6px 14px;margin:10px 0;background:var(--surface)}
+details > summary{cursor:pointer;font-weight:700;padding:4px 0;color:var(--ink)}
+details[open] > summary{margin-bottom:6px}
+details.stuck > summary::before{content:"🆘 ";}
+details.reveal > summary::before{content:"👀 ";}
+details.os > summary::before{content:"🔊 ";}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px;margin:10px 0}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.files td:first-child code{white-space:nowrap}
+.route{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0}
+.stop{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--surface-2);text-decoration:none;color:var(--ink)}
+.stop b{display:block;color:var(--teal);font-size:13px;letter-spacing:.08em}
+.stop span{display:block;font-weight:800;line-height:1.4}
+.stop small{display:block;color:var(--mist);font-size:13.5px;line-height:1.5;margin-top:4px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:8px 0}
+.legend > div{border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:15px}
+figure.real{margin:12px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface-2)}
+figure.real img{display:block;width:100%;height:auto}
+figure.real figcaption{padding:8px 12px;font-size:14px;color:var(--ink-soft)}
+figure.real figcaption b{color:var(--teal)}
+.search{width:100%;padding:8px 12px;border:2px solid var(--teal);border-radius:10px;background:var(--surface);font-size:16px}
+.nomatch{display:none;margin:8px 0;color:var(--red);font-weight:700}
+.ev{display:inline-block;background:var(--gold-tint);color:var(--gold-deep);border:1px solid var(--gold);border-radius:8px;padding:0 8px;font-weight:800;font-size:14px}
+.pending{background:var(--red-tint);color:var(--red);border-radius:6px;padding:0 5px;font-weight:700;overflow-wrap:anywhere}
+.part{margin:34px 0 -4px;padding:12px 18px;border-radius:16px;background:var(--dark);color:#E6F2F2;scroll-margin-top:64px}
+.part b{display:block;color:var(--gold);font-size:13px;letter-spacing:.12em}
+.part span{display:block;font-size:clamp(19px,3vw,23px);font-weight:900;line-height:1.4}
+footer{margin:30px 0 0;color:var(--mist);font-size:14px}
+@media (max-width:640px){
+  section.sec{padding:16px 14px}
+  .route{grid-template-columns:repeat(2,minmax(0,1fr))}
+  pre{font-size:14px;padding:10px 12px}
+  pre.cmd{padding-top:32px}
+  ol.steps > li{padding-left:34px}
+  .progress .toc{display:none}
+}
+@media print{
+  .progress,.copy,.search{display:none}
+  header.hero{background:none;color:#000}
+  .hero p{color:#333}
+  section.sec{border:0;padding:0}
+  details{border:0}
+  details > *{display:block}
+  pre{white-space:pre-wrap;overflow-wrap:anywhere;break-inside:avoid}
+}
+
+pre.cmd[data-where="agent"]::before{content:"貼給你的 AI agent"}
+pre.cmd[data-where="提問框"]::before{content:"貼進 Gemini Notebook 的提問框";color:#F1D58F}
+pre.cmd[data-where="來源框"]::before{content:"貼進「網站與 YouTube 網址」的框";color:#F1D58F}
+pre.cmd[data-where="網址"]::before{content:"貼進瀏覽器網址列";color:#F1D58F}
+pre.cmd[data-where="PowerShell"]::before{content:"在 PowerShell 打（Windows）"}
+pre.cmd{white-space:pre-wrap;overflow-wrap:anywhere}
+pre.out{white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header class="hero"><div class="in">
+  <div class="kicker">資訊科技與應用　學生步驟（完整版）</div>
+  <h1>讓 AI agent<br>接上 Gemini Notebook</h1>
+  <p>AB 11/10（二）16:10–18:00，理工二館 E403 上課用；AA 班當補充教材，自己參考。</p>
+  <p><b>第一部分</b>先用自己的手，把 Gemini Notebook（原名 NotebookLM）用過一輪：放來源、提問、點引用回原文。<b>第二部分</b>弄懂四個詞：API、Google Cloud 專案、OAuth 同意、權杖。<b>第三部分</b>把一段提示詞貼給 AI agent，讓它替你裝工具、接上 Google Cloud 的 API，再替你建一本筆記本、把來源放進去。<b>第四部分</b>回到網頁，親眼看 agent 建的那一本。原則只有一條：<b>agent 說「完成了」不算，你自己打開看到才算。</b></p>
+  <nav><a href="concept.html">互動概念頁</a><a href="cheatsheet.html">指令小抄（A4）</a><a href="deck.html">投影片</a><a href="starter/notebook-agent-starter.zip">起始檔（zip）</a><a href="#faq">卡住了</a></nav>
+</div></header>
+
+<div class="progress" aria-label="進度"><div class="in">
+  <span class="lbl" id="plbl">完成 0／0</span>
+  <span class="bar" aria-hidden="true"><i id="pbar"></i></span>
+  <span class="toc"><a href="#s0">0 就位</a><span class="tg">一 用手</span><a href="#p1-1">1</a><a href="#p1-2">2</a><a href="#p1-3">3</a><a href="#p1-4">4</a><span class="tg">二 觀念</span><a href="#p2-1">1</a><span class="tg">三 agent</span><a href="#p3-1">1</a><a href="#p3-2">2</a><a href="#p3-3">3</a><a href="#p3-4">4</a><a href="#p3-5">5</a><a href="#p3-6">6</a><span class="tg">四 讀回</span><a href="#p4-1">1</a><a href="#p4-2">2</a><a href="#p5">收尾</a><a href="#faq">卡住了</a><a href="#basics">基礎</a></span>
+  <button type="button" class="btn" id="preset">清除勾選</button>
+</div></div>
+
+<main>
+
+<section class="sec" id="how">
+  <h2>怎麼讀這一頁</h2>
+  <div class="legend">
+    <div><b class="lab do-l">做什麼</b>這一步要完成的事。</div>
+    <div><b class="lab type-l">打什麼</b>要貼或要打的字；深色框右上角有「複製」。</div>
+    <div><b class="lab see-l">應該看到</b>做對了畫面上會出現什麼。沒看到，就還沒完成。</div>
+    <div><b class="lab dur-l">多久</b>老師實際做一次花的時間。</div>
+  </div>
+  <p class="small">深色框上面那一行字告訴你<b>貼去哪裡</b>：貼給 AI agent、貼進 Gemini Notebook 的提問框，或是自己在 PowerShell 打。每一節最後有一個勾選框，勾了進度條會往前走（只存在這台電腦的瀏覽器）。</p>
+</section>
+
+<section class="sec" id="s0">
+  <h2>0　今天的路線、三張證據、就位</h2>
+  <div class="route">
+    <a class="stop" href="#p1-1"><b>第一部分</b><span>用手做一次</span><small>放來源、提問、點引用</small></a>
+    <a class="stop" href="#p2-1"><b>第二部分</b><span>四個詞</span><small>API、專案、同意、權杖</small></a>
+    <a class="stop" href="#p3-1"><b>第三部分</b><span>交給 agent</span><small>安裝、設定、建筆記本</small></a>
+    <a class="stop" href="#p4-1"><b>第四部分</b><span>自己讀回</span><small>打開網頁親眼看</small></a>
+  </div>
+  <p><b>今天留三張截圖當證據</b>（交件方式看 e學苑 公告）：</p>
+  <ul>
+    <li><span class="ev">證據 1</span> 你手動建的筆記本：一句回答＋點開的引用（看得到原文那一段）。</li>
+    <li><span class="ev">證據 2</span> agent 給你的<b>計畫</b>，以及你回「可以」的那一段對話。</li>
+    <li><span class="ev">證據 3</span> Gemini Notebook 網頁上，agent 建的那一本筆記本與它的來源清單。</li>
+  </ul>
+  <div class="warn"><b>先確認一件事：今天第三部分一定要用「個人 Gmail」。</b>（第一部分老師用學校帳號實測可以；API 不行。）Gemini Notebook 的 API 還在公開預覽（Public Preview），Google 官方文件寫明目前<b>只開放個人 Google 帳號</b>；學校帳號（<code>@gms.ndhu.edu.tw</code>）呼叫 API 會被擋，錯誤是 <code>403 PERMISSION_DENIED (WORKSPACE_ACCOUNT_NOT_SUPPORTED)</code>。沒有個人 Gmail 的同學：現在用手機申請一個，或第三部分跟旁邊同學一起看。</div>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>用 Chrome 或 Edge 開一個<b>無痕視窗</b>（教室電腦是共用的，無痕視窗關掉就登出）。<span class="dur">多久：10 秒</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>鍵盤 <code>Ctrl</code>＋<code>Shift</code>＋<code>N</code>。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>深色的無痕視窗。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>下載起始檔、解壓縮到桌面。裡面四個檔：給 agent 的提示詞、來源清單、一份「我的筆記」、一支小工具（agent 跑不動時的備援）。<span class="dur">多久：1 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>按這裡下載：<a href="starter/notebook-agent-starter.zip">notebook-agent-starter.zip</a>，在檔案上按右鍵 →「解壓縮全部」→ 位置選桌面。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>桌面多一個資料夾 <code>notebook-agent-starter</code>，裡面有 <code>agent-prompt.zh-TW.md</code>、<code>sources.txt</code>、<code>my-notes.md</code>、<code>nb.ps1</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>用記事本打開 <code>my-notes.md</code>，把三句話改成<b>你自己的話</b>（題目可以沿用空氣品質，也可以換成你期中報告的題目），存檔。<span class="dur">多久：3 分鐘</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>檔案裡是你寫的三句：想弄清楚的問題、目前的猜想、最想確認的一點。<b>不要寫姓名、學號。</b></p></li>
+  </ol>
+  <label class="check"><input type="checkbox" data-ck="s0"><span>無痕視窗開了、起始檔在桌面、<code>my-notes.md</code> 改成我自己的三句。</span></label>
+</section>
+
+<div class="part" id="part1"><b>第一部分　約 30 分鐘</b><span>先用手：把 Gemini Notebook 用過一輪</span></div>
+
+<section class="sec" id="p1-1">
+  <h2>1-1　認識它、登入</h2>
+  <p class="goal">目標：用個人 Gmail 進到 Gemini Notebook 首頁。</p>
+  <p class="why">一般的聊天 AI 是「它知道什麼就講什麼」，講錯了你很難查。Gemini Notebook 反過來：<b>你先給它來源，它只根據這些來源回答，而且每一句後面有小數字，點下去會跳到原文那一段。</b>所以它適合寫報告時用來「讀懂一疊資料、查證每一句話」。它以前叫 NotebookLM，舊網址會自動轉過來。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>在無痕視窗開 Gemini Notebook，用<b>個人 Gmail</b> 登入。<span class="dur">多久：1 分鐘</span></p>
+      <div class="box"><pre class="cmd" data-where="網址">https://notebook.google.com</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>左上角寫 <b>Gemini Notebook</b>，右上角有一顆藍色的 <b>＋ 新增筆記本</b>。第一次登入可能先出現歡迎畫面，照畫面按下一步就好。</p></li>
+  </ol>
+  <div class="note"><b>為什麼現在就要登入？</b>這一步同時是第三部分的前置：官方文件說，帳號如果從來沒在網頁登入過 Gemini Notebook，等一下 agent 用 API 建筆記本會收到 <code>404 NOT_FOUND (Account not found for user.)</code>。</div>
+  <label class="check"><input type="checkbox" data-ck="p1-1"><span>我用個人 Gmail 看到 Gemini Notebook 首頁。</span></label>
+</section>
+
+<section class="sec" id="p1-2">
+  <h2>1-2　建一本筆記本、放進三種來源</h2>
+  <p class="goal">目標：一本筆記本，左邊「來源」有四項（三個網頁＋一段你自己的文字）。</p>
+  <p class="why">筆記本好不好用，九成看你放了什麼進去。今天練三種最常用的：網頁、YouTube 影片（選做）、自己貼的文字。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>按 <b>＋ 新增筆記本</b>。<span class="dur">多久：5 秒</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>三欄畫面：左邊<b>來源</b>、中間對話、右邊<b>工作室</b>；標題暫時是「未命名的筆記本」。</p>
+      <figure class="real"><img src="img/01-empty-notebook.jpg" alt="Gemini Notebook 空白筆記本：左邊來源、中間對話、右邊工作室" loading="lazy"><figcaption><b>實際畫面</b>（老師 11/10 截）：左「來源」有「＋ 新增來源」，中間是對話，右邊「工作室」可以做語音摘要、心智圖等。</figcaption></figure></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>按左邊的 <b>＋ 新增來源</b>，在跳出的視窗選<b>網站</b>（有連結和 YouTube 圖示的那一顆）。<span class="dur">多久：10 秒</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>標題「網站與 YouTube 網址」，中間一個大框寫「貼上任何連結」。下面的小字值得讀：只會匯入網頁上<b>看得到的文字</b>、<b>不支援付費文章</b>、YouTube 只匯入<b>文字轉錄稿</b>。</p>
+      <figure class="real"><img src="img/02-add-source.jpg" alt="新增來源視窗：上傳檔案、網站、Play 圖書、雲端硬碟、教科書、複製的文字" loading="lazy"><figcaption><b>實際畫面</b>：新增來源有六種入口。今天用「網站」和「複製的文字」。</figcaption></figure></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>把下面三個網址<b>一次貼進去</b>（用換行或空格分開），按<b>插入</b>。想用自己的題目，就換成你期中報告用過的公開網頁。<span class="dur">多久：老師實測三個網頁約 8 秒就處理完</span></p>
+      <div class="box"><pre class="cmd" data-where="來源框">https://zh.wikipedia.org/zh-tw/%E7%A9%BA%E6%B0%A3%E5%93%81%E8%B3%AA%E6%8C%87%E6%A8%99
+https://airtw.moenv.gov.tw/CHT/Information/Standard/AirQualityIndicator.aspx
+https://zh.wikipedia.org/zh-tw/%E6%87%B8%E6%B5%AE%E7%B2%92%E5%AD%90</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>左邊出現三項：「空氣品質指標 - 空氣品質監測網」「空氣品質指標 - 維基百科，自由的百科全書」「懸浮微粒 - 維基百科，自由的百科全書」，每項右邊有打勾。筆記本會<b>自己取名字</b>（老師那次變成「懸浮微粒與空氣品質指標解析」）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>再按一次 <b>＋ 新增來源</b> → <b>複製的文字</b>，把 <code>my-notes.md</code> 的內容整段貼進去，插入。<span class="dur">多久：30 秒</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>左邊變成四項，中間對話框右下寫「4 個來源」。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>（選做）再加一支 YouTube 影片：要<b>公開</b>、而且<b>有字幕</b>的才收得進來。<span class="dur">多久：1 分鐘</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>收得進來就多一項；收不進來會顯示匯入失敗——這正是「沒有字幕就沒有文字可讀」的樣子，記下來，第三部分 agent 也會遇到一樣的事。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：來源加不進去</summary>
+    <ul>
+      <li>網頁要登入才看得到、或是付費文章：收不進來，換一個公開的頁面。</li>
+      <li>貼了雲端硬碟的檔案網址：改按「雲端硬碟」那一顆，不是「網站」。</li>
+      <li>一直轉圈：重新整理頁面，看左邊實際有幾項再決定要不要重加（不要連按，會加出重複的）。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p1-2"><span>我的筆記本左邊有四個來源（三個網頁＋我自己的文字）。</span></label>
+</section>
+
+<section class="sec" id="p1-3">
+  <h2>1-3　問三題、點引用回原文</h2>
+  <p class="goal">目標：三個回答，每一個都點開過至少一個引用。</p>
+  <p class="why">回答後面的小數字就是「這句話是根據哪一段」。<b>點下去看原文，是用這個工具最重要的一個動作</b>——不點，它就跟一般聊天 AI 沒有差別。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>在中間下方的框（寫著「提問或創作內容」）問第一題，按 Enter。<span class="dur">多久：老師實測約 15–20 秒出完</span></p>
+      <div class="box"><pre class="cmd" data-where="提問框">AQI 分成哪幾個等級？每一級的數值範圍和顏色是什麼？請每一點都標出來源。</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>一段條列，每一點後面有灰色小圓圈數字（例如 1、2）。老師那次的開頭是「根據您的來源資料，空氣品質指標（AQI）的分級在不同機構或地區有相近但細節略有不同的分類標準…」，接著列出良好 0～50、普通 51～100…。你的字句會不一樣，這是正常的。</p>
+      <figure class="real"><img src="img/04-answer.jpg" alt="Gemini Notebook 回答 AQI 六個等級，每一點後面有引用數字" loading="lazy"><figcaption><b>實際畫面</b>：每一點後面的小數字就是引用。</figcaption></figure></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>點任何一個小數字。<span class="dur">多久：5 秒</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>跳出一張小卡，寫著來源名稱和被引用的那一段；同時<b>左邊欄位換成那個來源的全文，被引用的那一段反白</b>。小卡右下有「查看來源」。 <span class="ev">證據 1</span> 截這個畫面。</p>
+      <figure class="real"><img src="img/05-citation.jpg" alt="點引用數字後，左邊顯示來源全文並把被引用段落反白，中間跳出引用小卡" loading="lazy"><figcaption><b>實際畫面</b>：點了「良好…綠色」後面的 1，左邊跳到環境部那一頁的「日空氣品質指標」段落。</figcaption></figure></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>再問兩題。第二題請它拿你的筆記去對來源；第三題自己出。<span class="dur">多久：2 分鐘</span></p>
+      <div class="box"><pre class="cmd" data-where="提問框">我的筆記第 2 點的猜想對嗎？請引用其他來源說明哪裡對、哪裡不對。</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>它會引用你貼的那段文字，也引用網頁來源，告訴你猜想跟來源一不一樣。</p></li>
+  </ol>
+  <label class="check"><input type="checkbox" data-ck="p1-3"><span>我問了三題，每一題都點開過引用；證據 1 截好了。</span></label>
+</section>
+
+<section class="sec" id="p1-4">
+  <h2>1-4　找一句「講太滿」的</h2>
+  <p class="goal">目標：找到一句「有標引用，但引用的那一段其實沒這樣寫」的話，寫下來。</p>
+  <p class="why">有引用不等於講對。畫面最下面它自己就寫著：「Gemini Notebook 可能會出錯，請查證回覆內容。」你要練的是<b>把一句話拆成兩半，各自對原文</b>。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>回到第一題的回答，挑一點，例如「良好：數值範圍 0～50，代表顏色為綠色」。把它拆成兩半：<b>①範圍 0～50</b>、<b>②顏色是綠色</b>。點它後面的每個引用，看反白的那一段裡<b>兩半是不是都有寫</b>。<span class="dur">多久：5 分鐘</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>常見的情況是：某一個引用的段落只寫了數字、沒寫顏色（顏色寫在別的引用，或是在來源的表格裡）。請對照上面那張實際畫面：小卡裡的那一段有「良好 0～50」，你找得到「綠色」兩個字嗎？</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>把結果寫成一行，貼在你的筆記裡。<span class="dur">多久：1 分鐘</span></p>
+      <div class="box"><pre class="out">我檢查的句子：＿＿＿＿
+引用 1 有寫到的：＿＿＿＿　沒寫到的：＿＿＿＿
+引用 2 有寫到的：＿＿＿＿　沒寫到的：＿＿＿＿
+我的判斷：□ 兩半都查得到　□ 有一半查不到，我會改寫成＿＿＿＿</pre></div></li>
+  </ol>
+  <div class="note"><b>順手看一眼右邊的工作室</b>：語音摘要、簡報、影片摘要、心智圖、報告、學習卡、測驗、資訊圖表、資料表。這些是筆記本根據來源做出來的延伸品，有空可以按一個「心智圖」看看。記住它們在哪裡——等一下你會發現，<b>這些 API 都還做不到</b>。</div>
+  <label class="check"><input type="checkbox" data-ck="p1-4"><span>我拆了一句話、對過每個引用，寫下判斷。</span></label>
+</section>
+
+<div class="part" id="part2"><b>第二部分　約 10 分鐘</b><span>四個詞：從「用手點」到「程式去做」</span></div>
+
+<section class="sec" id="p2-1">
+  <h2>2-1　為什麼要 API？它能做什麼、還不能做什麼</h2>
+  <p class="goal">目標：說得出 API 做得到的三件事、做不到的三件事。</p>
+  <p class="why">剛才放四個來源，你點了十幾下。如果是一份報告的二十個來源、或每週都要建一本呢？<b>API（應用程式介面）就是服務開給程式用的窗口</b>：你用滑鼠點的事，程式改用「送一個請求」去做。AI agent 會寫程式、會跑指令，所以它可以透過這個窗口替你做。</p>
+  <div class="tw"><table>
+    <tr><th>四個詞</th><th>白話</th><th>今天在哪裡遇到</th></tr>
+    <tr><td><b>API</b></td><td>服務開給程式用的窗口。網址是 <code>https://notebook.googleapis.com/v1</code>。</td><td>agent 送請求去建筆記本、加來源</td></tr>
+    <tr><td><b>Google Cloud 專案</b>（project）</td><td>一個「戶頭」：用了哪些 API、用了幾次，都記在它名下。預覽期間這個 API 免費。</td><td>agent 幫你建一個，名字像 <code>nb-你的代號</code></td></tr>
+    <tr><td><b>OAuth 同意</b></td><td>瀏覽器跳出「某某想要存取你的 Google 帳戶」，你按「允許」的那一步。<b>這一步只有你能按。</b></td><td>第三部分會跳兩次</td></tr>
+    <tr><td><b>權杖</b>（access token）</td><td>你按了允許之後拿到的通行證，一串很長的字。<b>一小時就過期</b>，而且誰拿到誰就能用。</td><td>agent 每次請求都帶著它；不准印出來</td></tr>
+  </table></div>
+  <p>再加一個工具名：<b>gcloud</b>，Google Cloud 的命令列工具，負責登入、開專案、發權杖。等一下 agent 會幫你裝。</p>
+  <h3>API 現在做得到的，就七件</h3>
+  <div class="tw"><table>
+    <tr><th>做得到（官方文件的七個方法）</th><th>還做不到（官方列在未來規劃）</th></tr>
+    <tr><td>建筆記本、看一本筆記本、列出所有筆記本、<b>改筆記本名字</b></td><td><b>刪除</b>筆記本或來源</td></tr>
+    <tr><td>加來源：公開網頁、YouTube（要有字幕）、純文字、Markdown</td><td><b>上傳檔案</b>（PDF 等）、加雲端硬碟的檔案網址</td></tr>
+    <tr><td>看一個來源的處理狀態、列出一本裡的所有來源</td><td><b>向筆記本提問</b>、<b>產生語音摘要</b>等工作室內容</td></tr>
+    <tr><td>個人 Google 帳號</td><td>學校／公司（Workspace）帳號</td></tr>
+  </table></div>
+  <div class="note"><b>所以今天的分工很清楚：agent 負責「搬」（建筆記本、把來源放進去、盯著處理狀態），你負責「問」和「查」。</b>agent 建錯了一本，API 也刪不掉，要你自己到網頁上刪——這就是為什麼要先看它的計畫。</div>
+  <p class="deep">想玩玩看：<a href="concept.html">互動概念頁</a>有「API 做得到嗎」分類遊戲、權杖倒數、請求產生器。</p>
+  <label class="check"><input type="checkbox" data-ck="p2-1"><span>我說得出 API 做得到的三件事、做不到的三件事。</span></label>
+</section>
+
+<div class="part" id="part3"><b>第三部分　約 35 分鐘</b><span>交給 agent：安裝、設定、建筆記本、放來源</span></div>
+
+<section class="sec" id="p3-1">
+  <h2>3-1　把提示詞貼給 agent，先看計畫</h2>
+  <p class="goal">目標：agent 回你一份計畫，你讀完、回「可以」。</p>
+  <p class="why">Google 官方的入門頁第一段就寫「Set up with a coding agent (Recommended)」——官方自己建議交給 agent 設定，還附了一段提示詞。我們把它改成中文，多加三條規矩：<b>先給計畫、權杖不准印出來、不准動你原本的筆記本</b>。</p>
+  <div class="note"><b>用哪一個 agent？</b>任何<b>能在你電腦上跑指令</b>的都可以：ChatGPT 桌面版的 Codex、Antigravity、Claude Code、Gemini CLI、OpenCode。只能聊天、不能跑指令的網頁版 AI 不行（它裝不了東西）——那就走 <a href="#routeb">路線 B：自己貼指令</a>。</div>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>打開你的 agent，把工作資料夾指到桌面的 <code>notebook-agent-starter</code>（Codex、Antigravity：「開啟資料夾」選它）。<span class="dur">多久：1 分鐘</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>agent 的檔案清單裡有 <code>my-notes.md</code>、<code>sources.txt</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>把整段提示詞貼給 agent（也在起始檔的 <code>agent-prompt.zh-TW.md</code> 裡）。<span class="dur">多久：它約 1 分鐘內回計畫</span></p>
+      <div class="box"><pre class="cmd" data-where="agent" id="agent-prompt">請幫我在這台電腦設定並測試 Gemini Notebook API（https://notebook.googleapis.com/v1）。
+官方文件：https://developers.google.com/notebook/docs/quickstart
+
+【規則，全程遵守】
+A. 先只給我「計畫」：你要裝什麼、會開幾次瀏覽器要我登入、哪一步要我自己到網頁上做、會在我的 Google 帳號裡建立什麼。我回「可以」之後才開始動手。
+B. 每做完一步，把你實際看到的輸出貼給我看；失敗就把完整錯誤訊息給我，不要說「應該成功了」。
+C. 需要我在瀏覽器登入或按「允許」的時候，停下來告訴我，等我說「好了」再繼續。我會用「個人 Gmail」，不是學校帳號。
+D. 不要把存取權杖（access token）印在畫面上、寫進檔案或貼進對話；要用就放在變數裡。
+E. 不要修改或刪除我原本的筆記本；只新增這次這一本。
+F. 這台電腦是 Windows 就用 PowerShell；送 JSON 請用 Invoke-RestMethod，並把內容轉成 UTF-8 位元組再送（中文才不會變亂碼）。
+
+【步驟】
+1. 檢查 gcloud（Google Cloud CLI）有沒有裝：`gcloud --version`。
+   沒有的話，Windows 用 `winget install --id Google.CloudSDK -e` 安裝，Mac 用 `brew install --cask gcloud-cli`；裝完重新找到 gcloud 再確認版本。
+2. 登入 gcloud：`gcloud auth login`（會開瀏覽器，等我登入）。
+3. 專案：用 `gcloud projects list --limit=10` 列出我有的專案讓我選。
+   我沒有專案的話，幫我建一個：`gcloud projects create nb-加上六個隨機小寫英數字`（專案 ID 與名稱都不要有空格），再 `gcloud config set project 那個ID`。
+4. 在那個專案啟用 API：`gcloud services enable notebook.googleapis.com --project=專案ID`。
+5. 停下來，請我做一件只有我能做的事：照學生頁 3-4 在 Google Cloud Console 建一個「電腦版應用程式」OAuth 用戶端，
+   把下載的 JSON 改名成 `client.json` 放進這個資料夾。等我說「放好了」再繼續。不要打開或印出這個檔的內容。
+   （原因：官方文件那行不帶用戶端檔的登入，2026-11-10 實測會被 Google 顯示「系統已封鎖這個應用程式」。）
+   接著取得帶 notebook 權限的本機憑證（會再開一次瀏覽器，等我按允許）：
+   `gcloud auth application-default login --client-id-file=client.json --scopes="https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/notebook"`
+6. 取權杖放進變數（不要印出來）：`gcloud auth application-default print-access-token`。
+7. 驗證：帶兩個標頭 `Authorization: Bearer 權杖` 與 `x-goog-user-project: 專案ID`，
+   GET https://notebook.googleapis.com/v1/notebooks ，告訴我 HTTP 狀態與看到幾本筆記本（只講數量）。
+8. 建一本新筆記本：POST https://notebook.googleapis.com/v1/notebooks ，內容 `{"displayName":"W10-agent-空氣品質"}`。
+9. 把下面每個來源加進這本筆記本：POST https://notebook.googleapis.com/v1/{筆記本的 name}/sources
+   - 網頁：內容 `{"webContent":{"url":"網址"}}`
+   - 文字檔：讀檔後內容 `{"displayName":"我的筆記","mimeType":"text/markdown","textContent":{"content":"檔案全文"}}`
+10. 每 3 秒查一次 GET https://notebook.googleapis.com/v1/{筆記本的 name}/sources ，
+    直到每個來源的 state 都是 ACTIVE 或 FAILED。
+11. 最後給我一張表：每個來源的名稱、state；FAILED 的附上 error 訊息。再給我筆記本的 name，我要自己到 https://notebook.google.com 打開它檢查。
+
+【來源】
+- https://zh.wikipedia.org/zh-tw/%E7%A9%BA%E6%B0%A3%E5%93%81%E8%B3%AA%E6%8C%87%E6%A8%99
+- https://airtw.moenv.gov.tw/CHT/Information/Standard/AirQualityIndicator.aspx
+- https://zh.wikipedia.org/zh-tw/%E6%87%B8%E6%B5%AE%E7%B2%92%E5%AD%90
+- 這個資料夾裡的 my-notes.md（如果有）</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>agent <b>沒有馬上動手</b>，而是先列出計畫：要裝 gcloud、會開兩次瀏覽器、有一步要你自己到網頁上建用戶端、會建一個專案和一本筆記本。<span class="ev">證據 2</span> 截這一段。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>讀計畫，對這三題，都答得出來才回「可以」。<span class="dur">多久：2 分鐘</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>① 它要<b>裝</b>什麼？（應該只有 Google Cloud CLI）② 它會在你帳號裡<b>建立</b>什麼？（一個專案、一本筆記本）③ 哪幾步要<b>你</b>動手？（兩次瀏覽器登入、自己建 OAuth 用戶端）。計畫裡如果出現「刪除」「重設」「把權杖存檔」，請它拿掉再開始。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：agent 沒給計畫，直接開始裝</summary>
+    <p>按停止，回它一句：「先停。照規則 A，只給計畫，我說可以再動手。」這不是 agent 壞掉，是你在練「退回一次」。</p>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p3-1"><span>我看到計畫、答得出三題、回了「可以」；證據 2 截好了。</span></label>
+</section>
+
+<section class="sec" id="p3-2">
+  <h2>3-2　agent 安裝 gcloud</h2>
+  <p class="goal">目標：agent 給你看 <code>gcloud --version</code> 的輸出。</p>
+  <p class="why">gcloud 是唯一要裝的東西。教室電腦有還原卡，<b>重開機就會不見</b>，所以每次上課都要重裝——這種重複的苦工正適合交給 agent。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>看著 agent 跑安裝。它可能會問你「可以執行這個指令嗎？」——讀一下指令再按允許。<span class="dur">多久：老師的 Windows 11 實測約 1 分半（教室網路慢的話會更久）</span></p>
+      <div class="box"><pre class="out">winget install --id Google.CloudSDK -e</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>agent 跑的指令長得像上面這行（Mac 是 <code>brew</code> 開頭）。老師實測：這樣裝<b>不用管理員密碼</b>，裝在自己的使用者資料夾 <code>AppData\Local\Google\Cloud SDK</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>等 agent 回報版本。<span class="dur">多久：幾秒</span></p>
+      <div class="box"><pre class="out">Google Cloud SDK 592.0.0
+bq 2.1.41
+core 2026.10.30
+gcloud-crc32c 1.0.0
+gsutil 5.38</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行是 <code>Google Cloud SDK</code> 加一個版本號（老師 11/10 裝到的是 592.0.0，你的可能更新）。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：裝完卻說找不到 gcloud</summary>
+    <p>剛裝好的程式，<b>已經開著的視窗還不認得</b>。告訴 agent：「gcloud 裝在 <code>%LOCALAPPDATA%\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd</code>，請用完整路徑執行，或重新開一個終端機。」</p>
+  </details>
+  <details class="stuck"><summary>卡住了：教室電腦沒有 winget，或安裝被擋 ⚠️ 現場為準</summary>
+    <p>請 agent 改用官方安裝程式：到 <a href="https://cloud.google.com/sdk/docs/install">cloud.google.com/sdk/docs/install</a> 下載 Windows 安裝檔，安裝時選「只為我自己安裝」。再不行，跟旁邊裝好的同學一組，或用自己的筆電。</p>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p3-2"><span>我看到 agent 貼出 <code>Google Cloud SDK</code> 的版本。</span></label>
+</section>
+
+<section class="sec" id="p3-3">
+  <h2>3-3　第一次登入、專案、啟用 API</h2>
+  <p class="goal">目標：你用個人 Gmail 按過一次允許；agent 回報專案 ID，API 啟用成功。</p>
+  <p class="why">agent 可以裝工具、跑指令，但<b>它不能替你同意把帳號交出去</b>。登入和「允許」是你的事。登入之後，Google 要知道「這些請求記在誰的戶頭」——專案就是那個戶頭；在專案裡把 Gemini Notebook API 打開，請求才送得進去。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>agent 跑 <code>gcloud auth login</code>，瀏覽器自己跳出來。選<b>個人 Gmail</b>，讀同意畫面，按允許，回 agent 說「好了」。<span class="dur">多久：1 分鐘</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>同意畫面寫的是 <b>Google Cloud SDK</b> 想要存取你的帳戶（實際字樣 ⚠️ 現場為準）；按允許後網頁顯示已通過驗證。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>agent 列出你現有的專案問你選哪個；第一次用的人沒有專案，讓它建一個新的，再啟用 API。<span class="dur">多久：老師實測建專案約 8 秒、啟用 API 約 4 秒</span></p>
+      <div class="box"><pre class="out">gcloud projects create nb-你的代號
+Create in progress for [https://cloudresourcemanager.googleapis.com/v1/projects/nb-你的代號].
+Waiting for [operations/create_project.global.…] to finish...
+.done.
+gcloud config set project nb-你的代號
+gcloud services enable notebook.googleapis.com --project=nb-你的代號
+Operation "operations/acat.…" finished successfully.</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>像上面這樣：建專案最後一行 <code>.done.</code>，啟用 API 最後一行 <code>finished successfully.</code>。專案 ID 全世界不能重複，所以 agent 會在後面加一串亂碼。<b>不用綁信用卡</b>（老師實測沒有設定帳單也建得起來、啟用得了）。</p></li>
+  </ol>
+  <div class="warn"><b>按允許之前看三件事：</b>① 上面顯示的帳號是不是你的<b>個人 Gmail</b>（選到學校帳號，後面一定 403）；② 網址列是不是 <code>accounts.google.com</code>；③ 它要的權限你看得懂。有一項不對就關掉視窗，問老師。</div>
+  <details class="stuck"><summary>卡住了：瀏覽器沒跳出來</summary>
+    <p>agent 的輸出裡會有一條很長的 <code>https://accounts.google.com/…</code> 網址，把它複製到<b>無痕視窗</b>打開。教室電腦預設瀏覽器若已經登入別人的帳號，一定要用無痕視窗。</p>
+  </details>
+  <details class="stuck"><summary>卡住了：建專案失敗，訊息提到 Terms of Service ⚠️ 現場為準</summary>
+    <p>全新的帳號第一次用 Google Cloud，要先同意服務條款：在無痕視窗開 <a href="https://console.cloud.google.com">console.cloud.google.com</a>，用同一個個人 Gmail 登入，<b>自己讀過條款再勾同意</b>，然後回 agent 說「請再試一次建專案」。</p>
+  </details>
+  <details class="stuck"><summary>卡住了：專案 ID 已被使用、或指令說找不到專案</summary>
+    <p>請 agent 換一串隨機字再建一次；專案 ID 和名稱都<b>不要有空格</b>（老師實測名稱帶空格會讓指令壞掉），也不要放姓名、學號。</p>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p3-3"><span>第一次登入我親手按、是個人 Gmail；agent 告訴我專案 ID，API 已啟用。</span></label>
+</section>
+
+<section class="sec" id="p3-4">
+  <h2>3-4　你來做：建一個自己的 OAuth 用戶端</h2>
+  <p class="goal">目標：起始檔資料夾裡多一個 <code>client.json</code>。</p>
+  <p class="why"><b>這一步官方入門文件沒有寫，是老師實測撞出來的。</b>照官方那一行直接登入，Google 會顯示「<b>系統已封鎖這個應用程式</b>——這個應用程式嘗試存取您 Google 帳戶中的機密資訊」。原因是 gcloud 內建的那張「身分證」不被允許碰你的筆記本。解法是在你自己的專案裡辦一張<b>自己的身分證</b>（OAuth 用戶端），再用它登入。這幾步要在網頁上點，而且牽涉同意條款，所以<b>你自己來，不交給 agent</b>。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>在無痕視窗（個人 Gmail）開下面這個網址，左上角專案確認是 agent 剛建的那一個，按<b>開始</b>。<span class="dur">多久：30 秒</span></p>
+      <div class="box"><pre class="cmd" data-where="網址">https://console.cloud.google.com/auth/overview</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>「專案設定」四步：應用程式資訊、目標對象、聯絡資訊、完成。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>第 1 步<b>應用程式資訊</b>：名稱填 <code>nb-demo</code>，「使用者支援電子郵件」選你自己的 Gmail，按<b>下一步</b>。<span class="dur">多久：30 秒</span></p>
+      <figure class="real"><img src="img/11-oauth-app-info.jpg" alt="Google Auth Platform 專案設定第一步：應用程式名稱與使用者支援電子郵件" loading="lazy"><figcaption><b>實際畫面</b>（老師 11/10 截；專案名稱與信箱已蓋掉）。</figcaption></figure></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>第 2 步<b>目標對象</b>選<b>外部</b> → 下一步。第 3 步<b>聯絡資訊</b>填自己的 Gmail → 下一步。<span class="dur">多久：30 秒</span></p>
+      <figure class="real"><img src="img/12-oauth-audience.jpg" alt="目標對象選外部" loading="lazy"><figcaption><b>實際畫面</b>：選「外部」；它寫明一開始是測試模式，「只有測試使用者清單中的人員可以存取」。</figcaption></figure></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>第 4 步<b>完成</b>：<b>讀過</b>《Google API 服務：使用者資料政策》再勾「我同意」→ <b>繼續</b> → 藍色的<b>建立</b>。<span class="dur">多久：1 分鐘</span></p>
+      <figure class="real"><img src="img/13-oauth-agree.jpg" alt="完成步驟：勾選同意 Google API 服務使用者資料政策" loading="lazy"><figcaption><b>實際畫面</b>：這個勾是你在同意條款，只有你能按。</figcaption></figure></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>左邊選<b>目標對象</b>，往下捲到<b>測試使用者</b> → <b>＋ Add users</b> → 輸入你自己的 Gmail、按 Enter → <b>儲存</b>。<b>等轉圈圈結束</b>再離開。<span class="dur">多久：儲存要等 10 秒左右</span></p>
+      <figure class="real"><img src="img/14-oauth-test-user.jpg" alt="新增測試使用者面板" loading="lazy"><figcaption><b>實際畫面</b>：信箱變成一顆膠囊、右下顯示 1/100，再按儲存。</figcaption></figure>
+      <p class="see"><b class="lab see-l">應該看到</b>面板關掉後，測試使用者表格裡<b>有你的信箱</b>，上面寫「1 位測試使用者」。<b>老師第一次就是沒等它存完就離開，結果後面登入被擋。</b></p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>左邊選<b>用戶端</b> → 建立用戶端 → 「應用程式類型」選<b>電腦版應用程式</b> → <b>建立</b>。<span class="dur">多久：30 秒</span></p>
+      <figure class="real"><img src="img/15-oauth-client-type.jpg" alt="應用程式類型下拉選單，最下面是電腦版應用程式" loading="lazy"><figcaption><b>實際畫面</b>：選最下面的「電腦版應用程式」。名稱用預設的就好。</figcaption></figure></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>跳出「OAuth 用戶端已建立」→ 按<b>下載 JSON</b>。把下載的檔案搬到桌面的 <code>notebook-agent-starter</code> 資料夾，改名成 <code>client.json</code>。回 agent 說「放好了」。<span class="dur">多久：1 分鐘</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>資料夾裡有 <code>client.json</code>。下載的原檔名很長，是 <code>client_secret_</code> 開頭。</p></li>
+  </ol>
+  <div class="warn"><b><code>client.json</code> 裡有一段密鑰，當它是鑰匙：</b>不要貼給 AI、不要傳給同學、不要放進 GitHub。那個視窗關掉以後密鑰就看不到了，所以一定要當下按下載。下課前把這個檔刪掉（<a href="#p5">收尾</a>有寫）。</div>
+  <label class="check"><input type="checkbox" data-ck="p3-4"><span>測試使用者表格裡有我的信箱；<code>client.json</code> 在起始檔資料夾。</span></label>
+</section>
+
+<section class="sec" id="p3-5">
+  <h2>3-5　第二次登入：用自己的用戶端</h2>
+  <p class="goal">目標：agent 那邊出現 <code>Credentials saved to file</code>。</p>
+  <p class="why">這次是替「你電腦上的程式」拿憑證，而且指定它能碰 Gemini Notebook。因為用戶端是你剛剛自己建的、沒有送 Google 審查，所以會多一個「尚未驗證」的警告——<b>這是你自己的東西，可以繼續；如果不是你建的，看到這個警告就該停。</b></p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>agent 會跑下面這一行，瀏覽器再跳一次。選個人 Gmail。<span class="dur">多久：1 分鐘</span></p>
+      <div class="box"><pre class="out">gcloud auth application-default login --client-id-file=client.json --scopes="https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/notebook"</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>警告頁「Google 尚未驗證這個應用程式」→ 按<b>進階</b> → 前往 nb-demo → 把它要求的權限勾起來 → 繼續（實際字樣 ⚠️ 現場為準）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>回到 agent。<span class="dur">多久：幾秒</span></p>
+      <div class="box"><pre class="out">Credentials saved to file: [C:\Users\你的帳號\AppData\Roaming\gcloud\application_default_credentials.json]
+
+These credentials will be used by any library that requests Application Default Credentials (ADC).</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行 <code>Credentials saved to file</code>。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：「系統已封鎖這個應用程式」</summary>
+    <p>指令少了 <code>--client-id-file=client.json</code>（走成官方那行了）。請 agent 補上再跑一次。</p>
+  </details>
+  <details class="stuck"><summary>卡住了：「已封鎖存取權：『nb-demo』未完成 Google 驗證程序」</summary>
+    <p>你登入的帳號不在測試使用者清單裡。回 3-4 第 5 步，確認表格裡真的有你的信箱（要等儲存轉完），再請 agent 重跑登入。</p>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p3-5"><span>第二次登入我親手按完，agent 顯示 <code>Credentials saved to file</code>。</span></label>
+</section>
+
+<section class="sec" id="p3-6">
+  <h2>3-6　agent 建筆記本、放來源、等到 ACTIVE</h2>
+  <p class="goal">目標：agent 給你一張表，每個來源的狀態都是 <code>ACTIVE</code>（或說明為什麼 <code>FAILED</code>）。</p>
+  <p class="why">來源放進去不是馬上能用：Google 要去抓那個網頁、讀完，這段時間狀態是 <code>PROCESSING</code>（處理中），好了變 <code>ACTIVE</code>，抓不到變 <code>FAILED</code>。所以 agent 要<b>每幾秒回去問一次</b>，不能送出去就說完成。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>看 agent 先做驗證（列出筆記本），再建新的一本。<span class="dur">多久：幾秒</span></p>
+      <div class="box"><pre class="out">GET  https://notebook.googleapis.com/v1/notebooks        → 200
+POST https://notebook.googleapis.com/v1/notebooks        → 200
+{
+  "name": "notebooks/（一串英數字）",
+  "displayName": "W10-agent-空氣品質",
+  "createTime": "2026-11-10T…Z"
+}</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>它回報筆記本的 <code>name</code>，格式是 <code>notebooks/</code> 加一長串（老師實測建立成功）。<b>畫面上不應該出現以 <code>ya29.</code> 開頭的一大串字</b>——那是權杖，出現了就請它不要再印。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>看 agent 把三個網頁和 <code>my-notes.md</code> 一個一個加進去，然後每幾秒查一次狀態。<span class="dur">多久：老師實測四個來源加完後約 7 秒全部 ACTIVE</span></p>
+      <div class="box"><pre class="out">ACTIVE      空氣品質指標 - 維基百科，自由的百科全書
+ACTIVE      空氣品質指標 - 空氣品質監測網
+ACTIVE      懸浮微粒 - 維基百科，自由的百科全書
+ACTIVE      我的筆記
+done: nothing is PROCESSING.</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>一張表，四列都是 <code>ACTIVE</code>（上面是老師 11/10 用 <code>nb.ps1</code> 實跑的輸出；網頁來源的名稱是 Google 自己抓的網頁標題）。有 <code>FAILED</code> 的話，agent 應該把原因也貼出來，例如 <code>The source is unreachable.</code>（抓不到）或 <code>The source is behind a paywall.</code>（付費牆）。</p></li>
+  </ol>
+  <h3 id="routeb">路線 B：agent 跑不動，自己貼指令</h3>
+  <p>起始檔裡的 <code>nb.ps1</code> 是一支小工具，把上面的請求包好了（老師在 Windows 內建的 PowerShell 5.1 和 PowerShell 7 都跑過）。先自己完成 3-2 到 3-5（裝 gcloud、登入、選專案、啟用 API、建用戶端、第二次登入），再在起始檔資料夾的空白處按住 <code>Shift</code>＋右鍵 →「在這裡開啟 PowerShell 視窗」：</p>
+  <div class="box"><pre class="cmd" data-where="PowerShell">powershell -ExecutionPolicy Bypass -File .\nb.ps1 check
+powershell -ExecutionPolicy Bypass -File .\nb.ps1 new "W10-agent-空氣品質"</pre></div>
+  <p>第二行會印出 <code>created: notebooks/…</code>，把那一串換進下面的 <code>notebooks/你的ID</code>：</p>
+  <div class="box"><pre class="cmd" data-where="PowerShell">powershell -ExecutionPolicy Bypass -File .\nb.ps1 add notebooks/你的ID "https://zh.wikipedia.org/zh-tw/%E7%A9%BA%E6%B0%A3%E5%93%81%E8%B3%AA%E6%8C%87%E6%A8%99"
+powershell -ExecutionPolicy Bypass -File .\nb.ps1 add notebooks/你的ID "https://airtw.moenv.gov.tw/CHT/Information/Standard/AirQualityIndicator.aspx"
+powershell -ExecutionPolicy Bypass -File .\nb.ps1 add notebooks/你的ID "https://zh.wikipedia.org/zh-tw/%E6%87%B8%E6%B5%AE%E7%B2%92%E5%AD%90"
+powershell -ExecutionPolicy Bypass -File .\nb.ps1 addtext notebooks/你的ID .\my-notes.md "我的筆記"
+powershell -ExecutionPolicy Bypass -File .\nb.ps1 wait notebooks/你的ID</pre></div>
+  <details class="stuck"><summary>卡住了：出現 403、404、429 或 401</summary>
+    <p>四個最常見的錯誤和處置在 <a href="#faq">卡關總表</a>的「API 回了錯誤」那一組。先把<b>完整錯誤訊息</b>貼給 agent（權杖不要貼），問它是哪一種。</p>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p3-6"><span>agent（或我自己）給出來源狀態表，我知道每一列是 ACTIVE 還是 FAILED。</span></label>
+</section>
+
+<div class="part" id="part4"><b>第四部分　約 12 分鐘</b><span>讀回：agent 說好了，你自己去看</span></div>
+
+<section class="sec" id="p4-1">
+  <h2>4-1　回網頁，親眼看那一本</h2>
+  <p class="goal">目標：在 Gemini Notebook 網頁上找到 agent 建的筆記本，來源數量對得上，自己問一題。</p>
+  <p class="why">agent 的回報是「它說的」；網頁上看到的是「真的」。<b>換一條路去確認</b>——它走 API 寫進去，你走瀏覽器讀出來——才算驗過。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>回到無痕視窗的 Gemini Notebook 首頁，重新整理。<span class="dur">多久：10 秒</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>多了一本 <b>W10-agent-空氣品質</b>，底下寫今天的日期和「4 個來源」。<span class="ev">證據 3</span> 點進去，截「標題＋左邊來源清單」。</p>
+      <figure class="real"><img src="img/20-agent-notebook.jpg" alt="Gemini Notebook 網頁上由 API 建立的筆記本 W10-agent-空氣品質，左邊四個來源" loading="lazy"><figcaption><b>實際畫面</b>（老師 11/10）：這一本是程式透過 API 建的，四個來源、中文沒有亂碼；筆記本還自己寫了一段摘要。</figcaption></figure></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>對三件事：① 來源數量跟 agent 的表一樣嗎？② 「我的筆記」點開來，中文有沒有變成亂碼？③ 你<b>原本手動建的那一本</b>還在嗎、有沒有被動到？<span class="dur">多久：2 分鐘</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>三件都對。中文變亂碼＝agent 沒照規則 F 用 UTF-8 送，請它重加一次那個來源（舊的那個要你自己在網頁上移除，API 刪不了）。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>在 agent 建的這一本裡問一題——這件事 API 還做不到，要你來。<span class="dur">多久：1 分鐘</span></p>
+      <div class="box"><pre class="cmd" data-where="提問框">根據來源，我的筆記第 3 點該怎麼回答？請標出來源，並說明哪些族群要更早減少戶外活動。</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>有引用的回答；點一個引用，確認跳得回原文。</p></li>
+  </ol>
+  <label class="check"><input type="checkbox" data-ck="p4-1"><span>網頁上看到 agent 建的筆記本、來源數對、中文正常、我原本那本沒被動；證據 3 截好了。</span></label>
+</section>
+
+<section class="sec" id="p4-2">
+  <h2>4-2　（選做）把筆記本接成 agent 的工具：MCP</h2>
+  <p class="goal">目標：agent 的工具清單裡出現 <code>create_notebook</code> 等七個工具。</p>
+  <p class="why">剛才 agent 是「自己寫指令去敲 API」。<b>MCP</b> 是另一種接法：把一組現成的工具直接掛到 agent 身上，它想建筆記本就直接叫工具。Google 提供了一個遠端 MCP 伺服器，七個工具跟 API 的七個方法一一對應。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>把這段貼給 agent。<span class="dur">多久：3 分鐘</span></p>
+      <div class="box"><pre class="cmd" data-where="agent">請把 Gemini Notebook 的遠端 MCP 伺服器接到你自己身上：
+網址 https://notebook.googleapis.com/mcp（Streamable HTTP），
+標頭 Authorization: Bearer 權杖、x-goog-user-project: 我的專案ID。
+權杖用 gcloud auth application-default print-access-token 取得，不要印出來。
+接好之後列出你看到的工具名稱，再用 list_notebooks 告訴我有幾本筆記本。
+提醒我：權杖一小時後過期，到時要重新設定。</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>七個工具：<code>create_notebook</code>、<code>get_notebook</code>、<code>list_notebooks</code>、<code>update_notebook</code>、<code>create_source</code>、<code>get_source</code>、<code>list_sources</code>。</p></li>
+  </ol>
+  <p class="small">各家 agent 設定 MCP 的方式不同（⚠️ 現場為準）。官方文件給了 Claude Code 和 Cursor 的寫法：<a href="https://developers.google.com/notebook/docs/mcp">developers.google.com/notebook/docs/mcp</a>。</p>
+  <label class="check"><input type="checkbox" data-ck="p4-2"><span>（選做）agent 列出七個工具。</span></label>
+</section>
+
+<section class="sec" id="p5">
+  <h2>收尾：把授權收回來、交證據</h2>
+  <p class="goal">目標：這台電腦上不留你的登入；三張截圖在你自己的雲端或信箱。</p>
+  <p class="why">教室電腦是共用的。還原卡重開機會清掉，但<b>下課到重開機之間，下一個坐這裡的人就是你</b>——自己收乾淨才算數。自己的筆電也建議做第 1 步。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>請 agent 撤銷這台電腦上的兩份登入（或自己在 PowerShell 打）。<span class="dur">多久：30 秒</span></p>
+      <div class="box"><pre class="cmd" data-where="PowerShell">gcloud auth application-default revoke
+gcloud auth revoke --all</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行會問你確定嗎，回 <code>Y</code>；兩行都顯示已撤銷（實際字樣 ⚠️ 現場為準）。之後再跑 <code>nb.ps1 check</code> 會說沒有權杖——這就對了。<b>再把 <code>client.json</code> 刪掉。</b></p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>三張截圖傳到自己的雲端硬碟或寄給自己；把無痕視窗<b>整個關掉</b>。<span class="dur">多久：2 分鐘</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>重新開瀏覽器到 notebook.google.com，會要求登入。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>（回家）不想留的筆記本，自己到網頁上刪：首頁那一本右上角的三個點 → 刪除。<b>API 刪不了，agent 也刪不了。</b></p></li>
+  </ol>
+  <h3>想一想（三選一，寫兩句，跟截圖放一起）</h3>
+  <ul>
+    <li>今天哪一步是「只有我能做、agent 不能替我做」的？為什麼不該讓它做？</li>
+    <li>API 現在不能提問、不能刪除。如果哪天可以了，你會多要求 agent 遵守哪一條規矩？</li>
+    <li>agent 回報「4 個來源都是 ACTIVE」，你用什麼方法確認它沒騙你？</li>
+  </ul>
+  <label class="check"><input type="checkbox" data-ck="p5"><span>授權撤銷了、<code>client.json</code> 刪了、無痕視窗關了、三張證據在我自己手上。</span></label>
+</section>
+
+<section class="sec" id="faq">
+  <h2>卡關總表（可以搜尋）</h2>
+  <p class="why">先把<b>整段錯誤訊息</b>複製下來，貼進搜尋框找；找不到，就把完整錯誤訊息貼給 agent（<b>權杖、密碼不要貼</b>），再不行舉手。</p>
+  <input type="search" class="search" id="q" placeholder="貼上錯誤訊息或關鍵字，例如 403、WORKSPACE、Account not found、找不到 gcloud" aria-label="搜尋卡關對照">
+  <p class="nomatch" id="nomatch">表上沒有這一條：把完整錯誤訊息貼給 agent（權杖不要貼），或舉手叫老師。</p>
+  <div class="tw"><table id="faq-table">
+    <tr><th>看到什麼</th><th>先做這個</th></tr>
+    <tr><td colspan="2"><b>第一部分　用手</b></td></tr>
+    <tr><td>登入後說無法使用、或被導到別的頁面</td><td>確認是個人 Gmail；換無痕視窗重登。</td></tr>
+    <tr><td>來源匯入失敗</td><td>網頁要登入或付費＝收不了，換公開頁面；YouTube 要公開且有字幕。</td></tr>
+    <tr><td>回答沒有引用數字</td><td>確認左邊來源有打勾；問題加一句「請每一點都標出來源」。</td></tr>
+    <tr><td colspan="2"><b>第三部分　安裝與登入</b></td></tr>
+    <tr><td><code>gcloud</code> 不是內部或外部命令／<code>command not found</code>／找不到 gcloud</td><td>剛裝好，舊視窗還不認得：開新的終端機，或請 agent 用完整路徑 <code>%LOCALAPPDATA%\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd</code>。</td></tr>
+    <tr><td><code>winget</code> 找不到、安裝被擋</td><td>改用官方安裝程式（cloud.google.com/sdk/docs/install），選只為自己安裝；或跟同學一組。⚠️ 現場為準</td></tr>
+    <tr><td>瀏覽器沒有跳出登入畫面</td><td>把 agent 輸出裡 <code>https://accounts.google.com/</code> 開頭的長網址貼到無痕視窗。</td></tr>
+    <tr><td>登入畫面自動選了學校帳號</td><td>按「使用其他帳戶」，改個人 Gmail；用無痕視窗最保險。</td></tr>
+    <tr><td>建專案失敗，提到 Terms of Service</td><td>先到 console.cloud.google.com 用同一帳號登入，自己讀過並同意條款，再請 agent 重試。⚠️ 現場為準</td></tr>
+    <tr><td><code>無法載入檔案 nb.ps1，因為這個系統上已停用指令碼執行</code></td><td>指令前面要有 <code>powershell -ExecutionPolicy Bypass -File</code>，照路線 B 的寫法整行複製。</td></tr>
+    <tr><td>瀏覽器顯示「系統已封鎖這個應用程式」</td><td>登入指令沒帶 <code>--client-id-file=client.json</code>：回 3-4 建自己的用戶端，再照 3-5 登入。</td></tr>
+    <tr><td>「已封鎖存取權：『nb-demo』未完成 Google 驗證程序」</td><td>帳號不在測試使用者清單：回 3-4 第 5 步，等儲存轉完、確認表格裡有你的信箱。</td></tr>
+    <tr><td colspan="2"><b>API 回了錯誤</b></td></tr>
+    <tr><td><code>401 UNAUTHENTICATED</code>、<code>CREDENTIALS_MISSING</code></td><td>沒帶權杖或權杖過期（一小時）：請 agent 重新取一次權杖再送。</td></tr>
+    <tr><td><code>403 PERMISSION_DENIED</code>＋<code>WORKSPACE_ACCOUNT_NOT_SUPPORTED</code></td><td>登入成學校帳號了。回 3-3，兩次登入都改用個人 Gmail。</td></tr>
+    <tr><td><code>403 PERMISSION_DENIED</code>（沒有上面那個字）</td><td>少了 <code>x-goog-user-project</code> 標頭、專案沒啟用 API、或第二次登入沒帶 notebook 權限：請 agent 逐項檢查。</td></tr>
+    <tr><td><code>404 NOT_FOUND</code>＋<code>Account not found for user.</code></td><td>這個帳號沒在網頁登入過 Gemini Notebook：回 1-1 登入一次再試。</td></tr>
+    <tr><td><code>429 RESOURCE_EXHAUSTED</code></td><td>送太快（每人每分鐘加來源上限 20 次）：請 agent 等一分鐘再繼續，不要重複加。</td></tr>
+    <tr><td><code>400 INVALID_ARGUMENT</code></td><td>網址格式不對、貼了雲端硬碟／Google 文件的網址（API 不收）、或文字是空的。</td></tr>
+    <tr><td>來源狀態 <code>FAILED</code>：<code>The source is unreachable.</code></td><td>Google 抓不到那個網頁：自己用瀏覽器開開看，換一個公開頁面。</td></tr>
+    <tr><td>來源狀態 <code>FAILED</code>：<code>The source is behind a paywall.</code></td><td>付費牆，換來源。</td></tr>
+    <tr><td>筆記本裡的中文是亂碼／問號</td><td>agent 沒用 UTF-8 送：請它照規則 F 重加；舊的來源自己到網頁移除。</td></tr>
+    <tr><td colspan="2"><b>第四部分　讀回</b></td></tr>
+    <tr><td>網頁上找不到 agent 建的那一本</td><td>重新整理；確認網頁登入的帳號跟 3-3 是<b>同一個</b>個人 Gmail。</td></tr>
+    <tr><td>多出好幾本一樣名字的筆記本</td><td>agent 失敗後重跑、重複建了：請它停，用 <code>list</code> 看清楚；多的自己到網頁刪。</td></tr>
+  </table></div>
+  <h3>問 AI 可以，但照這三條</h3>
+  <ul>
+    <li>貼<b>完整錯誤訊息</b>，不要只說「不能用」。</li>
+    <li><b>權杖、密碼、驗證碼一律不貼</b>。權杖是 <code>ya29.</code> 開頭的一長串。</li>
+    <li>它叫你做「刪除」「重設」「關掉安全設定」之前，先問它為什麼、有沒有別的做法。</li>
+  </ul>
+</section>
+
+<section class="sec" id="basics">
+  <h2>基礎知識補給站：看不懂某個詞，來這裡查</h2>
+  <h3>請求與回應</h3>
+  <p>程式跟 API 講話，一次一個「請求」：<b>動作</b>（<code>GET</code> 是看、<code>POST</code> 是新增、<code>PATCH</code> 是改）＋<b>網址</b>＋<b>標頭</b>（你是誰）＋<b>內容</b>（一段 JSON）。服務回一個「回應」：三位數的<b>狀態碼</b>（200 是成功，4 開頭是你這邊的問題）加一段 JSON。</p>
+  <h3>JSON</h3>
+  <p>一種給程式讀的寫法：大括號包起來，裡面是「名字：值」。例如 <code>{"displayName":"W10-agent-空氣品質"}</code>。</p>
+  <h3>為什麼權杖只活一小時</h3>
+  <p>權杖誰拿到誰就能用。活得短，就算不小心外流，損害也只有一小時。所以它不該被印出來、存成檔案、貼進對話——這些地方都可能被別人看到。</p>
+  <h3>為什麼要兩次登入</h3>
+  <p>第一次（<code>gcloud auth login</code>）是讓 <b>gcloud 這個工具</b>能替你管理專案、開 API。第二次（<code>application-default login</code>）是發一份憑證給<b>你電腦上的程式</b>用，並且指定它能碰 Gemini Notebook。兩份各自獨立，所以收尾時也要撤銷兩次。</p>
+  <h3>為什麼要自己建 OAuth 用戶端</h3>
+  <p>每個要你按「允許」的程式，都要先跟 Google 登記一張身分證（用戶端）。gcloud 內建的那張，Google 不讓它要筆記本的權限；所以改用你自己專案裡的那張。因為沒送審，只有你列在「測試使用者」裡的帳號能用——別人拿到也登不進來。</p>
+  <h3>agent 與 MCP</h3>
+  <p>agent＝會自己決定要跑哪些指令、叫哪些工具，做完再回報的 AI。MCP＝讓 agent 把外部工具「插上來」的共通規格；插上之後，agent 的工具箱就多了那幾樣。</p>
+  <h3>公開預覽（Public Preview）</h3>
+  <p>功能先放出來給大家試，還沒正式定案：可能改、可能壞、支援有限。所以今天學的是<b>做法</b>（看計畫、自己同意、讀回驗證），不是背指令——指令明年可能就不一樣了。</p>
+</section>
+
+<section class="sec" id="terms">
+  <h2>名詞小抄</h2>
+  <div class="tw"><table>
+    <tr><th>詞</th><th>一句話</th></tr>
+    <tr><td>Gemini Notebook</td><td>只根據你給的來源回答、可點回原文的 AI 筆記本；原名 NotebookLM。</td></tr>
+    <tr><td>API</td><td>服務開給程式用的窗口。</td></tr>
+    <tr><td>Google Cloud 專案</td><td>API 用量記在它名下的戶頭。</td></tr>
+    <tr><td>gcloud</td><td>Google Cloud 的命令列工具：登入、開專案、發權杖。</td></tr>
+    <tr><td>OAuth 同意</td><td>瀏覽器裡你按「允許」的那一步。</td></tr>
+    <tr><td>權杖（access token）</td><td>一小時有效的通行證，不能外流。</td></tr>
+    <tr><td>MCP</td><td>把一組工具接到 agent 身上的規格。</td></tr>
+    <tr><td>agent</td><td>會自己跑指令、叫工具，再回報的 AI。</td></tr>
+  </table></div>
+</section>
+
+<footer>國立東華大學　資訊科技與應用（115-1）　讓 AI agent 接上 Gemini Notebook。這一頁沒有接 AI、不收集任何資料；勾選進度只存在你這台電腦的瀏覽器。API 的內容依 Google 官方文件（developers.google.com/notebook/docs）2026-11-10 的版本，公開預覽期間可能改。畫面截圖與標示秒數是老師 11/10 實際操作的；標 ⚠️ 的以現場為準。本頁不印任何真的權杖、專案 ID 或帳號。</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  // 複製鈕：只複製指令本身（框上方的「在電腦／在板子」是 CSS 畫的，不會被複製）
+  var pres = document.querySelectorAll("pre.cmd");
+  for (var i = 0; i < pres.length; i++) {
+    (function(pre){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "copy"; b.textContent = "複製";
+      b.addEventListener("click", function(){
+        var t = pre.textContent;
+        function done(ok){ b.textContent = ok ? "已複製" : "請手動選取"; setTimeout(function(){ b.textContent = "複製"; }, 1500); }
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(t).then(function(){ done(true); }, function(){ done(fallback(t)); });
+        } else { done(fallback(t)); }
+      });
+      pre.parentNode.appendChild(b);
+    })(pres[i]);
+  }
+  function fallback(t){
+    try {
+      var ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.top = "-1000px"; document.body.appendChild(ta);
+      ta.select(); var ok = document.execCommand("copy"); document.body.removeChild(ta); return ok;
+    } catch (e) { return false; }
+  }
+
+  // 進度：勾選框存在這台電腦的瀏覽器（存不了也照常運作）
+  var KEY = "itapply-notebook-agent-v1";
+  var boxes = document.querySelectorAll("input[data-ck]");
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function paint(){
+    var n = 0;
+    for (var i = 0; i < boxes.length; i++) {
+      var on = !!state[boxes[i].getAttribute("data-ck")];
+      boxes[i].checked = on; boxes[i].parentNode.classList.toggle("done", on); if (on) n++;
+    }
+    document.getElementById("plbl").textContent = "完成 " + n + "／" + boxes.length;
+    document.getElementById("pbar").style.width = (boxes.length ? (100 * n / boxes.length) : 0) + "%";
+  }
+  for (var j = 0; j < boxes.length; j++) {
+    boxes[j].addEventListener("change", function(){ state[this.getAttribute("data-ck")] = this.checked; save(); paint(); });
+  }
+  document.getElementById("preset").addEventListener("click", function(){ state = {}; save(); paint(); });
+  paint();
+
+  // 卡關搜尋（分組標題列跟著整組顯示）
+  var q = document.getElementById("q"), rows = document.querySelectorAll("#faq-table tr"), nm = document.getElementById("nomatch");
+  q.addEventListener("input", function(){
+    var v = q.value.trim().toLowerCase(), shown = 0;
+    for (var k = 1; k < rows.length; k++) {
+      var isHead = rows[k].cells.length === 1;
+      var txt = rows[k].textContent.toLowerCase();
+      var hit = !v || isHead || txt.indexOf(v) >= 0 || v.split(/\s+/).filter(function(w){ return w.length > 2; }).some(function(w){ return txt.indexOf(w) >= 0; });
+      rows[k].style.display = hit ? "" : "none"; if (hit && !isHead) shown++;
+    }
+    nm.style.display = (v && !shown) ? "block" : "none";
+  });
+})();
+</script>
+</body>
+</html>

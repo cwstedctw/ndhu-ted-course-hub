@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>W7 觀念頁｜Webhook、雲端、通道、轉接站與密碼</title>
+<style>
+:root{
+  --bg:#f4f6ed;--fg:#153d36;--muted:#51695f;--line:#bbc9bf;--card:#fff;
+  --accent:#1f6153;--accent2:#09695b;--tagbg:#e0ece2;--tagfg:#0b4a3e;
+  --note-bg:#fff9e8;--note-line:#c9963b;
+  --pre-bg:#133e34;--pre-fg:#f4f6ed;--code-bg:#e6ece5;
+  --see-bg:#eef3fb;--see-line:#4b6cb7;
+  --test-bg:#eef7ee;--test-line:#3b8b4a;
+  --stuck-bg:#fbf1f1;--stuck-line:#b85c5c;
+  --todo-bg:#fff3e0;--todo-line:#e08a00;
+  --btn-bg:#1f6153;--btn-fg:#fff;
+  font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  color:var(--fg);background:var(--bg);line-height:1.8
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#121917;--fg:#e4ebe6;--muted:#a8b8ae;--line:#3a4a42;--card:#1b2420;
+    --accent:#6fc3b0;--accent2:#8fd3c3;--tagbg:#243a33;--tagfg:#cfe9df;
+    --note-bg:#2a2414;--note-line:#d7a548;
+    --pre-bg:#0b1b17;--pre-fg:#e8f0ea;--code-bg:#243a33;
+    --see-bg:#17213a;--see-line:#7f9ce6;
+    --test-bg:#162a1b;--test-line:#6cc27a;
+    --stuck-bg:#2e1b1b;--stuck-line:#e08a8a;
+    --todo-bg:#2e2410;--todo-line:#f0b24a;
+    --btn-bg:#6fc3b0;--btn-fg:#0b1b17
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg)}
+main{max-width:900px;margin:auto;padding:28px 20px 90px}
+a{color:var(--accent2);text-underline-offset:4px}
+header{padding:28px 0 22px;border-bottom:2px solid var(--accent)}
+h1{font-size:clamp(26px,5vw,44px);line-height:1.3;margin:.3em 0;max-width:760px}
+h2{font-size:25px;line-height:1.4;margin:52px 0 6px;padding-top:10px;border-top:2px solid var(--accent)}
+h3{font-size:20px;margin:26px 0 8px}
+h4{font-size:17px;margin:6px 0 4px;color:var(--accent2)}
+.eyebrow{letter-spacing:.09em;font-weight:700;color:var(--muted)}
+.lead{font-size:19px}
+section{scroll-margin-top:16px}
+.note{padding:12px 18px;border-left:4px solid var(--note-line);background:var(--note-bg);margin:12px 0}
+.small{font-size:14px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;background:var(--card);table-layout:fixed;margin:10px 0}
+th,td{border:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top;overflow-wrap:anywhere;word-break:break-word}
+th{background:var(--tagbg)}
+pre{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;background:var(--pre-bg);color:var(--pre-fg);padding:14px 16px;border-radius:8px;margin:0;font:15px/1.75 ui-monospace,Consolas,"Microsoft JhengHei",monospace;max-width:100%}
+code{background:var(--code-bg);border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;word-break:break-word;font:15px ui-monospace,Consolas,"Microsoft JhengHei",monospace}
+ol,ul{padding-left:1.3em}
+li{margin:6px 0}
+button{font:inherit;font-size:15px;cursor:pointer;border:0;border-radius:6px;padding:5px 14px;background:var(--btn-bg);color:var(--btn-fg)}
+button.ghost{background:transparent;color:var(--accent2);border:1px solid var(--accent2)}
+button[disabled]{opacity:.45;cursor:not-allowed}
+button:active:not([disabled]){transform:translateY(1px)}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 18px;margin:18px 0}
+.toc ol{margin:6px 0}
+.top{position:fixed;right:10px;bottom:10px;background:var(--btn-bg);color:var(--btn-fg);border-radius:50%;width:36px;height:36px;opacity:.85;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+/* 本頁：每節三句白話＋一個實驗台 */
+.three{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:10px;padding:8px 18px 8px 34px;margin:12px 0;font-size:17px}
+.three li{margin:4px 0}
+.lab{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.tabs button{background:transparent;color:var(--accent2);border:1px solid var(--accent2);font-weight:700}
+.tabs button.on{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg)}
+.status{min-height:1.8em;font-weight:700;margin:10px 0 0;padding:6px 12px;border-radius:0 6px 6px 0;background:var(--see-bg);border-left:4px solid var(--see-line)}
+.status.ok{background:var(--test-bg);border-color:var(--test-line)}
+.status.bad{background:var(--stuck-bg);border-color:var(--stuck-line)}
+.stage{position:relative}
+.stage svg.ov{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+.ov path.edge{fill:none;stroke:var(--muted);stroke-width:2.5}
+.ov path.edge.tun{stroke:var(--accent);stroke-width:4;stroke-dasharray:9 6}
+.ov path.edge.bad{stroke:var(--stuck-line)}
+.ov .ah{fill:var(--muted)}.ov .ahtun{fill:var(--accent)}.ov .ahbad{fill:var(--stuck-line)}
+.ov text.elabel{font-size:13px;font-weight:700;fill:var(--muted);paint-order:stroke;stroke:var(--card);stroke-width:5px;stroke-linejoin:round}
+.pkt{position:absolute;left:0;top:0;width:18px;height:18px;border-radius:50%;background:var(--note-line);border:2px solid var(--card);box-shadow:0 1px 4px rgba(0,0,0,.35);transform:translate(-50%,-50%);display:none;z-index:3;pointer-events:none}
+.pkt.go{display:block}
+.pkt.ok{background:var(--test-line)}
+.pkt.bad{background:var(--stuck-line)}
+.pkt.empty{background:var(--muted);width:12px;height:12px}
+.node{position:relative;z-index:1;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:8px 10px;text-align:center;flex:1 1 0;min-width:0}
+.node b{display:block;font-size:17px}
+.node .small{display:block;line-height:1.5;margin-top:2px}
+.node.dashed{border-style:dashed}
+.node.lit{border-color:var(--test-line);background:var(--test-bg)}
+.node.hit{border-color:var(--stuck-line);background:var(--stuck-bg)}
+.row3{display:flex;gap:64px;align-items:stretch}
+/* 第 2 節：三個區塊（雲端那格兩欄，通道的門牌放 Apps Script 旁邊，箭頭才不會被蓋住） */
+.zones{display:flex;gap:26px;align-items:stretch}
+.zone{flex:1 1 0;min-width:0;border:2px solid var(--line);border-radius:12px;padding:8px 10px 12px;background:var(--bg);display:flex;flex-direction:column}
+.zone[data-zone=phone]{flex:.8 1 0}.zone[data-zone=cloud]{flex:1.7 1 0}.zone[data-zone=pc]{flex:1.1 1 0}
+.zone.pc{border-style:dashed}
+.zone h4{margin:0}
+.zone .small{margin:0 0 6px;line-height:1.5}
+.zone .chips{display:grid;grid-template-columns:1fr;row-gap:16px;align-content:center;flex:1 1 auto;min-height:120px}
+.zone[data-zone=cloud] .chips{grid-template-columns:1fr 1fr;column-gap:90px}
+.zone .empty{color:var(--muted);font-size:14px;text-align:center;grid-column:1/-1}
+.chip{position:relative;z-index:1;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:6px 8px;color:var(--fg);font-weight:700;font-size:15px;text-align:center;line-height:1.4}
+.chip.on{border-color:var(--accent);background:var(--tagbg)}
+.chain{font-family:ui-monospace,Consolas,"Microsoft JhengHei",monospace;font-size:14px;background:var(--code-bg);border-radius:6px;padding:4px 10px;margin:0 0 12px;overflow-wrap:anywhere}
+.pop{margin:10px 0 0;padding:8px 14px;border-left:4px solid var(--note-line);background:var(--note-bg);border-radius:0 6px 6px 0;min-height:2.6em}
+/* 第 3 節：分享器那堵牆 */
+.tgrid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-areas:". sign ." "out wall pc";gap:30px 40px;align-items:center}
+.tgrid .out{grid-area:out}.tgrid .wall{grid-area:wall}.tgrid .pc{grid-area:pc}.tgrid .sign{grid-area:sign}
+.wall{background:var(--tagbg) repeating-linear-gradient(0deg,var(--line) 0 2px,transparent 2px 16px),var(--tagbg) repeating-linear-gradient(90deg,var(--line) 0 2px,transparent 2px 34px);background-color:var(--tagbg);border-color:var(--muted)}
+.wall b,.wall .small{background:var(--card);border-radius:6px;padding:0 6px}
+.wall .small{display:inline-block}
+.sign{visibility:hidden;border-color:var(--accent);background:var(--tagbg)}
+.sign.show{visibility:visible}
+.sign code{display:block;margin-top:2px}
+.propbox{margin:12px 0 0;padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.propbox.stale{border-color:var(--stuck-line);background:var(--stuck-bg)}
+.propbox.fresh{border-color:var(--test-line);background:var(--test-bg)}
+/* 第 4 節：模擬終端機 */
+pre.term{min-height:9em;font-size:14.5px}
+pre.term .req{color:#ffd58a}
+pre.term .res{color:#9ad7a6}
+pre.term .res.bad{color:#ff9f9f}
+pre.term .log{color:#b9c9e8}
+pre.term .see{color:#f4f6ed}
+pre.term .why{color:#f4f6ed;background:rgba(255,255,255,.08);display:block;padding:2px 6px;border-radius:4px}
+/* 第 5 節：放格子 */
+.tray{display:flex;flex-wrap:wrap;gap:8px;min-height:3em;padding:8px;border:1px dashed var(--line);border-radius:8px;margin:0 0 12px}
+.item{background:var(--card);color:var(--fg);border:2px solid var(--accent);font-weight:700;cursor:grab;text-align:left}
+.item.on{background:var(--tagbg);box-shadow:0 0 0 3px var(--accent)}
+.item.done{cursor:default;border-color:var(--test-line);background:var(--test-bg)}
+.slots{display:flex;gap:16px}
+.slot{flex:1 1 0;min-width:0;border:2px solid var(--line);border-radius:10px;padding:8px 12px 12px;min-height:150px;background:var(--bg)}
+.slot.over{border-color:var(--accent);background:var(--tagbg)}
+.slot h4{margin:0}
+.slot .small{margin:0 0 8px;line-height:1.5}
+.slot .placed{display:flex;flex-wrap:wrap;gap:6px}
+/* 第 6 節：小測驗 */
+.quiz{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px 10px;margin:10px 0}
+.quiz .qq{font-weight:700;margin:4px 0 6px}
+.quiz label{display:flex;gap:8px;align-items:flex-start;cursor:pointer;margin:3px 0}
+.quiz label input{margin-top:9px;flex:0 0 auto;accent-color:var(--accent)}
+.quiz .qa{margin:8px 0 0;padding:6px 12px;border-radius:0 6px 6px 0;font-weight:700;display:none}
+.quiz .qa.ok{display:block;background:var(--test-bg);border-left:4px solid var(--test-line)}
+.quiz .qa.no{display:block;background:var(--stuck-bg);border-left:4px solid var(--stuck-line)}
+/* 第 7 節：名詞表 */
+dl.gl{margin:10px 0}
+dl.gl dt{font-weight:700;margin-top:10px}
+dl.gl dd{margin:0 0 4px 0}
+@media (max-width:640px){
+  main{padding:20px 16px 80px}
+  th,td{padding:7px 5px;font-size:14px}
+  pre{font-size:13.5px;padding:12px}
+  code{font-size:13.5px}
+  h2{font-size:22px}
+  .three{font-size:16px;padding-left:30px}
+  .row3{flex-direction:column;gap:38px}
+  .zones{flex-direction:column;gap:30px}
+  .zone .chips{min-height:0}
+  .tgrid{grid-template-columns:1fr;grid-template-areas:"out" "sign" "wall" "pc";gap:34px}
+  .sign:not(.show){display:none}
+  .slots{flex-direction:column}
+  .slot{min-height:0}
+}
+@media print{.top{display:none}main{max-width:none;padding:0}}
+</style>
+</head>
+<body><main id="top">
+
+<header>
+<p class="eyebrow">和 AI 一起寫程式：創意生活應用　第 7 週　2026-10-19（一）　觀念頁</p>
+<h1>Webhook、雲端、通道、轉接站與密碼：用手點、用眼看</h1>
+<p class="lead">這頁是觀念，<a href="student.html">動手步驟在互動頁</a>。這裡每一節都是一個觀念、一個可以按的東西、三句白話；全部在你瀏覽器裡假裝，<b>不連網、不碰你的 bot</b>。先玩這頁再去做步驟，第 3 段改程式時會比較知道自己在做什麼。</p>
+<div class="toc"><b>七個觀念</b>
+<ol>
+<li><a href="#c1">Webhook：誰打給誰</a>——按一下，看封包怎麼走；再看看改成 polling 會差在哪</li>
+<li><a href="#c2">雲端在哪</a>——這週的東西各住在哪台電腦；W5、W6、W7 三種擺法</li>
+<li><a href="#c3">為什麼要通道</a>——外面的箭頭撞牆；開通道、重開、網址換了改哪裡</li>
+<li><a href="#c4">轉接站與密碼</a>——沒帶、帶錯、帶對；同時兩題、45 秒沒答完</li>
+<li><a href="#c5">金鑰放哪</a>——八樣東西，程式碼還是指令碼屬性</li>
+<li><a href="#c6">小測驗</a>——五題，馬上看對錯</li>
+<li><a href="#c7">名詞表</a>——八個詞各一句</li>
+</ol></div>
+</header>
+
+<!-- ======================= 1 Webhook ======================= -->
+<section id="c1"><h2>1　Webhook：誰打給誰</h2>
+<ol class="three">
+<li><b>Webhook 一句話：不是你去問 LINE，是 LINE 主動打到你給它的網址。</b></li>
+<li>所以那個網址要「外面連得到、而且一直開著」——Apps Script 的 <code>/exec</code> 就是。</li>
+<li>你的筆電沒有公開網址，LINE 打不到它，所以才需要通道（第 3 節）。</li>
+</ol>
+<div class="lab">
+<div class="ctl"><button type="button" id="whSend">傳一句話</button><button type="button" class="ghost" id="whPoll" aria-pressed="false">要是改成 polling</button></div>
+<div class="stage row3" id="whStage">
+<div class="node" id="whPhone"><b>手機（LINE）</b><span class="small">你打了一句「明天下午三點要開會」</span></div>
+<div class="node" id="whSrv"><b>LINE 機房</b><span class="small">LINE 公司的電腦，永遠開著</span></div>
+<div class="node" id="whYou"><b>你給它的網址</b><span class="small">Apps Script 的 <code>/exec</code>：外面連得到、一直開著</span></div>
+</div>
+<p class="status" id="whStatus" aria-live="polite">按「傳一句話」，看那一小點怎麼走。</p>
+<p class="small">Webhook＝人家主動找你、要有公開網址；polling＝你主動去問、不用公開網址但一直在問。這週的 bot 走 Webhook，所以接收端一定要住在雲端（第 2 節）。</p>
+</div>
+</section>
+
+<!-- ======================= 2 雲端在哪 ======================= -->
+<section id="c2"><h2>2　雲端在哪：這週的東西各住在哪台電腦</h2>
+<ol class="three">
+<li>雲端就是別人機房裡的電腦：<b>永遠開著、有公開網址</b>。</li>
+<li>你的筆電躲在分享器後面：沒有公開網址，關了就不在。</li>
+<li>這週把 bot 留在雲端，只有「查 …」那條路回到你的電腦——所以關掉轉接站，待辦照常。</li>
+</ol>
+<div class="lab">
+<div class="ctl tabs" role="tablist"><button type="button" data-mode="w5" class="on">W5</button><button type="button" data-mode="w6">W6 簡單版</button><button type="button" data-mode="w7">W7 進階版</button></div>
+<p class="chain" id="cloudChain"></p>
+<div class="stage zones" id="cloudStage">
+<div class="zone" data-zone="phone"><h4>你的手機</h4><p class="small">LINE 住在這裡</p><div class="chips"></div></div>
+<div class="zone" data-zone="cloud"><h4>雲端＝別人的機房</h4><p class="small">永遠開著、有公開網址</p><div class="chips"></div></div>
+<div class="zone pc" data-zone="pc"><h4>你的電腦</h4><p class="small">筆電，在分享器後面；關了就不在</p><div class="chips"></div></div>
+</div>
+<p class="status" id="cloudOff" aria-live="polite"></p>
+<div class="pop" id="cloudPop">點一個元件，看它做什麼、什麼時候醒著。</div>
+<p class="small">實線框＝別人機房裡一直開著的；虛線框＝你的電腦，關了就不在。</p>
+</div>
+</section>
+
+<!-- ======================= 3 通道 ======================= -->
+<section id="c3"><h2>3　為什麼要通道</h2>
+<ol class="three">
+<li>通道借你一個外面連得到的門牌（<code>https://….trycloudflare.com</code>），把打來的東西送進分享器後面的筆電。</li>
+<li><b>門牌每次重開都會換：換了只要改指令碼屬性，不用重新部署。</b></li>
+<li>Webhook 不用動：LINE 還是打 Apps Script 的 <code>/exec</code>；是 Apps Script 走通道來找你的筆電。</li>
+</ol>
+<div class="lab">
+<div class="ctl"><button type="button" id="tnHit">從外面打打看</button><button type="button" class="ghost" id="tnOpen">開通道</button><button type="button" class="ghost" id="tnRestart" disabled>重開（網址會換）</button><button type="button" class="ghost" id="tnFix" disabled>改指令碼屬性</button></div>
+<div class="stage tgrid" id="tnStage">
+<div class="node sign" id="tnSign"><span class="small">通道給的門牌</span><code id="tnUrl">https://….trycloudflare.com</code></div>
+<div class="node out" id="tnOut"><b>外面</b><span class="small">LINE 機房、Apps Script：都在雲端</span></div>
+<div class="node wall" id="tnWall"><b>分享器</b><span class="small">外面看不到裡面</span></div>
+<div class="node pc dashed" id="tnPc"><b>你的筆電</b><span class="small">轉接站只聽 <code>127.0.0.1:8787</code></span></div>
+</div>
+<p class="status" id="tnStatus" aria-live="polite">先按「從外面打打看」。</p>
+<div class="propbox" id="tnProp"><b>Apps Script 的指令碼屬性</b>　<code>SEARCH_RELAY_URL</code> ＝ <code id="tnPropUrl">（還沒填）</code></div>
+<p class="small">門牌上的網址是假的示意，每次按「重開」會換一個，跟真的一樣。</p>
+</div>
+</section>
+
+<!-- ======================= 4 轉接站與密碼 ======================= -->
+<section id="c4"><h2>4　轉接站與密碼：試著打打看</h2>
+<ol class="three">
+<li>轉接站只聽 <code>127.0.0.1:8787</code>：外面只能從通道進來，而且要帶對密碼（<code>x-relay-key</code>）。</li>
+<li>一次一題（<code>429</code>）、最多想 45 秒（<code>504</code>）：因為 LINE 的回覆碼只能用一次、而且很快就失效（官方沒給確切秒數）。</li>
+<li>密碼不印在畫面上、只放剪貼簿和家目錄的 <code>.line-search-relay.key</code> 檔——螢幕可能正在投影。</li>
+</ol>
+<div class="lab">
+<p class="note" style="margin-top:0"><b>全部是假的模擬、不連網</b>：按鈕只是把轉接站（<code>line-search-relay.mjs</code>）真正會回的字印出來給你看。</p>
+<div class="ctl"><button type="button" class="tbtn" data-s="nokey">沒帶密碼打</button><button type="button" class="tbtn" data-s="badkey">帶錯密碼打</button><button type="button" class="tbtn" data-s="okkey">帶對密碼打</button><button type="button" class="tbtn ghost" data-s="two">同時打兩題</button><button type="button" class="tbtn ghost" data-s="slow">45 秒沒答完</button></div>
+<pre class="term" id="term" aria-live="polite">（這裡會印出你送了什麼、轉接站回了什麼、它的視窗印了什麼、手機或 testSetup 會看到什麼。）</pre>
+<table>
+<tr><th style="width:18%">回應碼</th><th>意思</th><th style="width:38%">你該做什麼</th></tr>
+<tr><td><code>200</code></td><td>通了。對密碼回 <code>{"ok":true,"model":"gemma4:e4b"}</code>；問問題回答案＋來源＋秒數</td><td>沒事</td></tr>
+<tr><td><code>401</code></td><td>密碼不對（沒帶跟帶錯一樣）</td><td>檢查指令碼屬性的 <code>SEARCH_RELAY_KEY</code>；密碼要再複製一次：轉接站視窗印的那行 <code>Get-Content … | Set-Clipboard</code></td></tr>
+<tr><td><code>429</code></td><td>正在回答上一題（顯示卡一次只答一題）</td><td>等十幾秒再問</td></tr>
+<tr><td><code>504</code></td><td>想太久了（超過 45 秒）</td><td>換個簡單一點的問法</td></tr>
+<tr><td>連不到</td><td>電腦關了、轉接站視窗被關掉、或通道換了網址</td><td>重開轉接站，把新網址改進指令碼屬性</td></tr>
+</table>
+</div>
+</section>
+
+<!-- ======================= 5 金鑰放哪 ======================= -->
+<section id="c5"><h2>5　金鑰放哪：程式碼，還是指令碼屬性？</h2>
+<ol class="three">
+<li>會被偷走的（密碼、通行碼）、會換的（通道網址）、指著你資料的（試算表代號）→ <b>指令碼屬性</b>。</li>
+<li>規則與邏輯（「查 」才轉、分類五選一、等 50 秒）→ <b>程式碼</b>。</li>
+<li>程式碼會上 GitHub、會被截圖、會整份貼給 AI；指令碼屬性只有你看得到。</li>
+</ol>
+<div class="lab">
+<p style="margin-top:0">點一樣東西、再點它該去的格子（用滑鼠也可以直接拖過去）。放錯會馬上告訴你為什麼。</p>
+<div class="tray" id="keyTray">
+<button type="button" class="item" draggable="true" data-id="relaykey" data-ans="props">通關密碼 <code>SEARCH_RELAY_KEY</code></button>
+<button type="button" class="item" draggable="true" data-id="relayurl" data-ans="props">通道網址 <code>SEARCH_RELAY_URL</code></button>
+<button type="button" class="item" draggable="true" data-id="linetoken" data-ans="props">LINE 長效通行碼</button>
+<button type="button" class="item" draggable="true" data-id="secret" data-ans="props">Channel secret</button>
+<button type="button" class="item" draggable="true" data-id="sheet" data-ans="props">試算表代號 <code>SHEET_ID</code></button>
+<button type="button" class="item" draggable="true" data-id="prefix" data-ans="code">「查 」「搜尋 」開頭才轉的規則</button>
+<button type="button" class="item" draggable="true" data-id="cats" data-ans="code">待辦分類五選一的清單</button>
+<button type="button" class="item" draggable="true" data-id="timeout" data-ans="code">最多等轉接站 50 秒</button>
+</div>
+<div class="slots">
+<div class="slot" data-slot="code"><h4>程式碼 <code>Code.gs</code></h4><p class="small">會上 GitHub、會被截圖、會整份貼給 AI</p><div class="placed"></div></div>
+<div class="slot" data-slot="props"><h4>指令碼屬性</h4><p class="small">專案設定最下面那張表；只有你看得到、換了不用重新部署</p><div class="placed"></div></div>
+</div>
+<p class="status" id="keyMsg" aria-live="polite">先點一樣東西。</p>
+<p class="small"><span id="keyScore">放對 0／8</span>　<button type="button" class="ghost" id="keyReset">重來</button></p>
+</div>
+</section>
+
+<!-- ======================= 6 小測驗 ======================= -->
+<section id="c6"><h2>6　小測驗：五題，馬上看對錯</h2>
+<p>答案都在上面五節裡。分數只存在這台瀏覽器。</p>
+
+<div class="quiz" data-q="q1"><p class="qq">1. Webhook 是誰打給誰？</p>
+<label><input type="radio" name="q1" value="a"> 你的程式每隔幾秒去問 LINE 有沒有新訊息</label>
+<label><input type="radio" name="q1" value="b" data-ok> LINE 主動打到你給它的網址</label>
+<label><input type="radio" name="q1" value="c"> 手機直接連到你的電腦</label>
+<div class="qa" data-why="Webhook 一句話：不是你去問 LINE，是 LINE 主動打到你給它的網址。每隔幾秒去問的那種叫 polling。"></div></div>
+
+<div class="quiz" data-q="q2"><p class="qq">2. 為什麼 Apps Script 的 bot 不用通道？</p>
+<label><input type="radio" name="q2" value="a"> 因為它是 Google 做的，LINE 特別信任它</label>
+<label><input type="radio" name="q2" value="b" data-ok> 因為它的 <code>/exec</code> 網址外面連得到、而且一直開著</label>
+<label><input type="radio" name="q2" value="c"> 因為它跑在你的電腦上</label>
+<div class="qa" data-why="Webhook 要的網址就是「外面連得到、而且一直開著」——Apps Script 那個網址本來就是；你的筆電不是，才需要通道。"></div></div>
+
+<div class="quiz" data-q="q3"><p class="qq">3. 下課按 <code>Ctrl+C</code> 關掉轉接站之後，bot 哪些還在？</p>
+<label><input type="radio" name="q3" value="a"> 整支 bot 都不回了</label>
+<label><input type="radio" name="q3" value="b"> 待辦不回了，「查 …」照常</label>
+<label><input type="radio" name="q3" value="c" data-ok> 「查 …」會回連不到，待辦照常</label>
+<div class="qa" data-why="bot 本體留在 Apps Script（雲端、永遠開著），只有「查 …」那條路經通道回你的電腦；轉接站關了，只有「查」會回「連不到」，其他功能照常。"></div></div>
+
+<div class="quiz" data-q="q4"><p class="qq">4. 重開轉接站、通道網址換了，要改哪裡？</p>
+<label><input type="radio" name="q4" value="a"> 改程式裡的網址，再重新部署</label>
+<label><input type="radio" name="q4" value="b" data-ok> 只改指令碼屬性的 <code>SEARCH_RELAY_URL</code>，不用重新部署</label>
+<label><input type="radio" name="q4" value="c"> 到 LINE 後台把 Webhook 網址改成新的通道網址</label>
+<div class="qa" data-why="轉接站印的那行：「網址每次重開都會換：換了只要改指令碼屬性，不用重新部署。」LINE 後台的 Webhook 網址不用動——那是 W6 簡單版才會改的東西。"></div></div>
+
+<div class="quiz" data-q="q5"><p class="qq">5. 密碼為什麼不寫進程式？</p>
+<label><input type="radio" name="q5" value="a"> 寫進去程式會跑不動</label>
+<label><input type="radio" name="q5" value="b"> 因為指令碼屬性讀起來比較快</label>
+<label><input type="radio" name="q5" value="c" data-ok> 程式碼會上 GitHub、會被截圖、會整份貼給 AI；指令碼屬性只有你看得到</label>
+<div class="qa" data-why="程式碼是會流出去的東西（GitHub、截圖、貼給 AI 改）；密碼、通行碼、通道網址一律放指令碼屬性，程式去那裡讀。轉接站自己也把密碼放在家目錄、不放進專案資料夾，就是怕被連同專案一起推上去。"></div></div>
+
+<p class="status"><span id="quizScore">答對 0／5</span>　<button type="button" class="ghost" id="quizReset">重做</button></p>
+</section>
+
+<!-- ======================= 7 名詞表 ======================= -->
+<section id="c7"><h2>7　名詞表</h2>
+<dl class="gl">
+<dt>Webhook</dt><dd>不是你去問 LINE，是 LINE 主動打到你給它的網址；那個網址要外面連得到、而且一直開著。</dd>
+<dt>polling（輪詢）</dt><dd>你的程式每隔幾秒去問一次有沒有新訊息；不用公開網址，但一直在問。</dd>
+<dt>雲端（cloud）</dt><dd>別人機房裡的電腦——永遠開著、有公開網址；LINE 機房、Apps Script、Gemini 都在那裡。</dd>
+<dt>通道（tunnel）</dt><dd>借一個外面連得到的門牌（<code>https://….trycloudflare.com</code>），把打來的東西送進分享器後面的電腦；每次重開門牌會換。</dd>
+<dt>轉接站（relay）</dt><dd>你電腦上的一支小程式（<code>line-search-relay.mjs</code>）：只聽本機 <code>127.0.0.1:8787</code>、對密碼、叫本地模型查、一次一題、最多想 45 秒。</dd>
+<dt>指令碼屬性</dt><dd>Apps Script「專案設定」最下面的一張表，放網址與密碼；程式用 <code>PROPS.getProperty</code> 讀，不寫進程式、換了不用重新部署。</dd>
+<dt>本地模型</dt><dd>跑在你電腦上的模型（Ollama 的 <code>gemma4:e4b</code>）：會上網搜、附來源；電腦關了就沒了。</dd>
+<dt><code>JSON</code></dt><dd>電腦之間傳資料用的大括號寫法，一個名字配一個值（例如 <code>{"question":"問題"}</code>），轉接站收的、回的都是這種。</dd>
+</dl>
+<p class="small">看完了？<a href="student.html">回互動頁做步驟</a>　｜　<a href="#top">回到頂端</a></p>
+</section>
+
+</main>
+<a class="top" href="#top" aria-label="回到頂端" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑</a>
+<script>
+(function(){
+'use strict';
+var SVGNS='http://www.w3.org/2000/svg';
+function $(s,r){return (r||document).querySelector(s);}
+function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+function dur(ms){return window.__W7C_FAST?Math.max(40,ms/8):ms;}
+function wait(ms){return new Promise(function(r){setTimeout(r,dur(ms));});}
+function setStatus(el,text,cls){el.textContent=text;el.className='status'+(cls?' '+cls:'');}
+
+// ===== 共用：在一個 stage 上畫箭頭、跑一小點 =====
+function rectIn(el,root){var a=el.getBoundingClientRect(),b=root.getBoundingClientRect();return {x:a.left-b.left,y:a.top-b.top,w:a.width,h:a.height,cx:a.left-b.left+a.width/2,cy:a.top-b.top+a.height/2};}
+function anchors(r1,r2){var dx=r2.cx-r1.cx,dy=r2.cy-r1.cy;
+  if(Math.abs(dx)>=Math.abs(dy))return dx>0?[{x:r1.x+r1.w,y:r1.cy},{x:r2.x,y:r2.cy}]:[{x:r1.x,y:r1.cy},{x:r2.x+r2.w,y:r2.cy}];
+  return dy>0?[{x:r1.cx,y:r1.y+r1.h},{x:r2.cx,y:r2.y}]:[{x:r1.cx,y:r1.y},{x:r2.cx,y:r2.y+r2.h}];}
+function overlay(stage){var ov=$('svg.ov',stage);if(ov)return ov;
+  ov=document.createElementNS(SVGNS,'svg');ov.setAttribute('class','ov');
+  var defs=document.createElementNS(SVGNS,'defs');
+  ['ah','ahtun','ahbad'].forEach(function(id){
+    var m=document.createElementNS(SVGNS,'marker');m.setAttribute('id',stage.id+'-'+id);m.setAttribute('viewBox','0 0 10 10');
+    m.setAttribute('refX','9');m.setAttribute('refY','5');m.setAttribute('markerWidth','7');m.setAttribute('markerHeight','7');m.setAttribute('orient','auto');
+    var p=document.createElementNS(SVGNS,'path');p.setAttribute('d','M0 0L10 5L0 10z');p.setAttribute('class',id);m.appendChild(p);defs.appendChild(m);});
+  ov.appendChild(defs);stage.insertBefore(ov,stage.firstChild);return ov;}
+// edges: [{from,to,label,cls,marker}] → [{path,edge}]
+function drawEdges(stage,edges){var ov=overlay(stage);
+  $$('path.edge,text.elabel',ov).forEach(function(n){n.parentNode.removeChild(n);});
+  return edges.map(function(e){var r1=rectIn(e.from,stage),r2=rectIn(e.to,stage),a=anchors(r1,r2);
+    var p=document.createElementNS(SVGNS,'path');
+    p.setAttribute('d','M'+a[0].x+' '+a[0].y+' L'+a[1].x+' '+a[1].y);
+    p.setAttribute('class','edge '+(e.cls||''));
+    p.setAttribute('marker-end','url(#'+stage.id+'-'+(e.marker||'ah')+')');
+    ov.appendChild(p);
+    if(e.label){var t=document.createElementNS(SVGNS,'text');t.setAttribute('class','elabel');
+      var mx=(a[0].x+a[1].x)/2,my=(a[0].y+a[1].y)/2,vert=Math.abs(a[1].x-a[0].x)<Math.abs(a[1].y-a[0].y);
+      if(vert){t.setAttribute('x',mx+12);t.setAttribute('y',my+5);t.setAttribute('text-anchor','start');}
+      else{t.setAttribute('x',mx);t.setAttribute('y',my-8);t.setAttribute('text-anchor','middle');}
+      t.textContent=e.label;ov.appendChild(t);}
+    return {path:p,edge:e};});}
+function pktOf(stage){var p=$('.pkt',stage);if(!p){p=document.createElement('div');p.className='pkt';stage.appendChild(p);}return p;}
+function runAlong(stage,path,ms,cls,reverse,frac){return new Promise(function(res){var p=pktOf(stage);p.className='pkt go '+(cls||'');
+  var L=path.getTotalLength(),t0=null,f=frac||1,total=dur(ms);
+  function step(ts){if(t0===null)t0=ts;var k=Math.min(1,(ts-t0)/total)*f;var pt=path.getPointAtLength((reverse?1-k:k)*L);
+    p.style.left=pt.x+'px';p.style.top=pt.y+'px';if(k<f)requestAnimationFrame(step);else res();}
+  requestAnimationFrame(step);});}
+function hidePkt(stage){var p=$('.pkt',stage);if(p)p.className='pkt';}
+var relayouts=[];
+var rt=null;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){relayouts.forEach(function(f){f();});},150);});
+
+// ===== 1. Webhook：誰打給誰 =====
+(function(){var stage=$('#whStage');if(!stage)return;
+  var phone=$('#whPhone'),srv=$('#whSrv'),you=$('#whYou'),status=$('#whStatus'),btn=$('#whSend'),tog=$('#whPoll');
+  var polling=false,busy=false,edges=[];
+  function layout(){$$('.node',stage).forEach(function(n){n.classList.remove('lit','hit');});hidePkt(stage);
+    if(!polling){you.innerHTML='<b>你給它的網址</b><span class="small">Apps Script 的 <code>/exec</code>：外面連得到、一直開著</span>';
+      edges=drawEdges(stage,[{from:phone,to:srv,label:'①'},{from:srv,to:you,label:'②'}]);
+    }else{you.innerHTML='<b>你的程式</b><span class="small">沒有公開網址也行，但要一直去問</span>';
+      edges=drawEdges(stage,[{from:phone,to:srv,label:'①'},{from:you,to:srv,label:'②'}]);}
+    stage.setAttribute('data-mode',polling?'polling':'webhook');stage.removeAttribute('data-done');}
+  function sendWebhook(){return Promise.resolve()
+    .then(function(){setStatus(status,'① 手機送出一句話，先到 LINE 機房…');return runAlong(stage,edges[0].path,900);})
+    .then(function(){srv.classList.add('lit');setStatus(status,'② LINE 機房收到，主動打到你給它的網址…');return runAlong(stage,edges[1].path,900);})
+    .then(function(){you.classList.add('lit');hidePkt(stage);setStatus(status,'③ 到站：你的網址收到訊息了。你沒有去問，是 LINE 打給你——這就是 Webhook。','ok');stage.setAttribute('data-done','webhook');});}
+  function sendPolling(){var n=0;
+    function poll(empty){n++;return Promise.resolve()
+      .then(function(){setStatus(status,'② 你的程式去問 LINE 機房：有新訊息嗎？（第 '+n+' 次）');return runAlong(stage,edges[1].path,700,'empty');})
+      .then(function(){if(empty){setStatus(status,'　機房說：沒有。空手而回（第 '+n+' 次）');return runAlong(stage,edges[1].path,700,'empty',true);}
+        setStatus(status,'　機房說：有！這次帶回來了（第 '+n+' 次）');return runAlong(stage,edges[1].path,700,'ok',true);});}
+    return poll(true).then(function(){return wait(250);}).then(function(){return poll(true);})
+      .then(function(){setStatus(status,'① 這時手機才送出一句話，先放在 LINE 機房');return runAlong(stage,edges[0].path,900);})
+      .then(function(){srv.classList.add('lit');return wait(250);}).then(function(){return poll(false);})
+      .then(function(){you.classList.add('lit');hidePkt(stage);setStatus(status,'③ 第 3 次才拿到，前面空手而回 2 次。polling＝你主動去問、不用公開網址，但一直在問。','ok');stage.setAttribute('data-done','polling');});}
+  btn.addEventListener('click',function(){if(busy)return;busy=true;btn.disabled=true;tog.disabled=true;layout();
+    (polling?sendPolling():sendWebhook()).then(function(){busy=false;btn.disabled=false;tog.disabled=false;});});
+  tog.addEventListener('click',function(){if(busy)return;polling=!polling;tog.setAttribute('aria-pressed',polling?'true':'false');
+    tog.textContent=polling?'改回 Webhook':'要是改成 polling';layout();
+    setStatus(status,polling?'現在是 polling：箭頭反過來，你的程式去問。按「傳一句話」看它空手而回幾次。':'現在是 Webhook。按「傳一句話」。');});
+  layout();relayouts.push(layout);
+})();
+
+// ===== 2. 雲端在哪 =====
+(function(){var stage=$('#cloudStage');if(!stage)return;
+  var COMP={
+    line:{name:'LINE（手機上）',zone:'phone',what:'你打字的地方；訊息先送到 LINE 機房，不會直接碰你的電腦。',awake:'你手機開著就行。bot 回不回，看的是另一端。'},
+    linesrv:{name:'LINE 機房',zone:'cloud',what:'收到你的訊息，主動打到你登記的 Webhook 網址——這一下就是 Webhook。',awake:'永遠開著（LINE 公司的機房）。'},
+    gas:{name:'Apps Script',zone:'cloud',what:'你的 bot 本體：接 LINE 打來的訊息、問 Gemini、寫試算表、回 LINE。W7 多一條：「查 …」轉給你電腦上的轉接站。',awake:'永遠開著（Google 機房），不管你的電腦開不開。'},
+    gemini:{name:'Gemini',zone:'cloud',what:'把你口語的待辦整理成固定欄位（W5 起）。它不會上網搜。',awake:'永遠（Google 的服務）。'},
+    tunnel:{name:'通道的門牌',zone:'cloud',what:'cloudflared 在你電腦上跑，向 Cloudflare 借一個外面連得到的門牌（<code>…trycloudflare.com</code>）；打到門牌的東西，被送進你分享器後面的電腦。',awake:'轉接站開著時才有；每次重開，門牌都會換。'},
+    py:{name:'一支 Python（整支 bot）',zone:'pc',what:'W6 簡單版：收訊息、叫本機 Ollama、回 LINE，全部在你電腦上。它自己把 Webhook 換到通道，<code>Ctrl+C</code> 時換回 <code>/exec</code>。',awake:'只有那個視窗開著時；關了整支 bot 都不回。'},
+    relay:{name:'轉接站',zone:'pc',what:'在你電腦上等問題：對密碼、叫本地模型查、把答案和來源送回去。只聽 <code>127.0.0.1:8787</code>，外面只能從通道進來。',awake:'只有那個 PowerShell 視窗開著時；<code>Ctrl+C</code> 就沒了。'},
+    ollama:{name:'本地模型（Ollama）',zone:'pc',what:'真的回答「查 …」的那一個：不確定就上網搜、附來源。',awake:'Ollama 開著、模型拉好的時候；電腦關了就沒了。'}};
+  var MODES={
+    // pos＝雲端那格的位置（兩欄）：c 欄、r 列、span＝整列；其他區塊單欄、照 comps 順序排
+    w5:{chain:'W5：LINE → Apps Script（Google 機房）→ Gemini',comps:['line','linesrv','gas','gemini'],
+        pos:{linesrv:{c:1,r:1,span:1},gas:{c:1,r:2,span:1},gemini:{c:1,r:3,span:1}},
+        edges:[['line','linesrv',''],['linesrv','gas','Webhook'],['gas','gemini','']],off:'你的電腦關掉：沒影響，bot 照常。',offCls:'ok'},
+    w6:{chain:'W6 簡單版：LINE → 通道 → 你的電腦（一支 Python 就是 bot）',comps:['line','linesrv','tunnel','py','ollama'],
+        pos:{linesrv:{c:1,r:1},tunnel:{c:2,r:1}},
+        edges:[['line','linesrv',''],['linesrv','tunnel','Webhook'],['tunnel','py',''],['py','ollama','']],off:'你的電腦關掉：bot 整個不回；程式結束時會把 Webhook 換回 Apps Script 那個網址。',offCls:'bad'},
+    w7:{chain:'W7 進階版：LINE → Apps Script → 只有「查 …」→ 通道 → 你的電腦（轉接站＋本地模型）',comps:['line','linesrv','gas','gemini','tunnel','relay','ollama'],
+        pos:{linesrv:{c:1,r:1},gas:{c:1,r:2},tunnel:{c:2,r:2},gemini:{c:1,r:3}},
+        edges:[['line','linesrv',''],['linesrv','gas','Webhook'],['gas','gemini','待辦'],['gas','tunnel','只有「查 …」'],['tunnel','relay',''],['relay','ollama','']],off:'你的電腦關掉：只有「查」會回連不到，待辦照常。',offCls:'ok'}};
+  var chain=$('#cloudChain'),off=$('#cloudOff'),pop=$('#cloudPop'),mode='w5',picked=null;
+  function chipEl(id){return $('.chip[data-id="'+id+'"]',stage);}
+  function drawMode(){var m=MODES[mode];drawEdges(stage,m.edges.map(function(e){return {from:chipEl(e[0]),to:chipEl(e[1]),label:e[2],cls:e[0]==='tunnel'||e[1]==='tunnel'?'tun':'',marker:e[0]==='tunnel'||e[1]==='tunnel'?'ahtun':'ah'};}));}
+  function render(newMode){mode=newMode;var m=MODES[mode];
+    $$('.tabs button',stage.parentNode).forEach(function(b){b.className=b.getAttribute('data-mode')===mode?'on':'';});
+    chain.textContent=m.chain;setStatus(off,m.off,m.offCls);
+    $$('.zone',stage).forEach(function(z){var box=$('.chips',z);box.innerHTML='';var zid=z.getAttribute('data-zone');
+      m.comps.forEach(function(id){var c=COMP[id];if(c.zone!==zid)return;var b=document.createElement('button');b.type='button';b.className='chip';b.setAttribute('data-id',id);b.textContent=c.name;
+        var p=m.pos&&m.pos[id];if(p){b.style.gridColumn=p.span?'1 / -1':String(p.c);b.style.gridRow=String(p.r);}
+        b.addEventListener('click',function(){pick(id);});box.appendChild(b);});
+      if(!box.children.length){var e=document.createElement('div');e.className='empty';e.textContent=zid==='pc'?'（這週沒用到你的電腦）':'';box.appendChild(e);}});
+    if(picked&&m.comps.indexOf(picked)<0){picked=null;pop.textContent='點一個元件，看它做什麼、什麼時候醒著。';}
+    if(picked)chipEl(picked).classList.add('on');
+    requestAnimationFrame(drawMode);}
+  function pick(id){picked=id;$$('.chip',stage).forEach(function(c){c.classList.toggle('on',c.getAttribute('data-id')===id);});
+    var c=COMP[id];pop.innerHTML='<b>'+c.name+'</b><br>做什麼：'+c.what+'<br>什麼時候醒著：'+c.awake;}
+  $$('.tabs button',stage.parentNode).forEach(function(b){b.addEventListener('click',function(){render(b.getAttribute('data-mode'));});});
+  render('w5');relayouts.push(drawMode);
+})();
+
+// ===== 3. 為什麼要通道 =====
+(function(){var stage=$('#tnStage');if(!stage)return;
+  var out=$('#tnOut'),wall=$('#tnWall'),pc=$('#tnPc'),sign=$('#tnSign'),signUrl=$('#tnUrl'),prop=$('#tnProp'),propUrl=$('#tnPropUrl'),status=$('#tnStatus');
+  var bHit=$('#tnHit'),bOpen=$('#tnOpen'),bRestart=$('#tnRestart'),bFix=$('#tnFix');
+  var WORDS=['quiet','river','maple','lemon','harbor','pebble','violet','sunny','meadow','copper','breeze','orchid','island','willow','canyon','amber'];
+  var tunnelUrl='',propVal='',busy=false,edges=[];
+  function fakeUrl(){var w=[];while(w.length<4){var x=WORDS[Math.floor(Math.random()*WORDS.length)];if(w.indexOf(x)<0)w.push(x);}
+    var u='https://'+w.join('-')+'.trycloudflare.com';return u===tunnelUrl?fakeUrl():u;}
+  function layout(){$$('.node',stage).forEach(function(n){n.classList.remove('lit','hit');});hidePkt(stage);
+    if(tunnelUrl){sign.classList.add('show');edges=drawEdges(stage,[{from:out,to:sign,label:'打門牌'},{from:sign,to:pc,label:'通道送進來',cls:'tun',marker:'ahtun'}]);}
+    else{sign.classList.remove('show');edges=drawEdges(stage,[{from:out,to:wall,label:'想直接找你的筆電'}]);}
+    prop.className='propbox'+(tunnelUrl?(propVal===tunnelUrl?' fresh':' stale'):'');
+    bRestart.disabled=!tunnelUrl;bFix.disabled=!tunnelUrl||propVal===tunnelUrl;
+    stage.setAttribute('data-tunnel',tunnelUrl?'on':'off');stage.setAttribute('data-prop',propVal===tunnelUrl&&tunnelUrl?'fresh':'stale');}
+  function lock(on){busy=on;[bHit,bOpen].forEach(function(b){b.disabled=on;});if(on){bRestart.disabled=true;bFix.disabled=true;}}
+  bHit.addEventListener('click',function(){if(busy)return;lock(true);layout();
+    var done=function(){lock(false);layout();};
+    if(!tunnelUrl){setStatus(status,'外面想直接找你的筆電…');
+      runAlong(stage,edges[0].path,900).then(function(){wall.classList.add('hit');var p=$('.pkt',stage);p.classList.add('bad');return runAlong(stage,edges[0].path,350,'bad',true,0.3);})
+      .then(function(){hidePkt(stage);setStatus(status,'✗ 撞牆：你的筆電沒有公開網址，分享器也不會替陌生人開門。外面找不到它。','bad');stage.setAttribute('data-last','wall');lock(false);bRestart.disabled=true;bFix.disabled=true;});return;}
+    if(propVal!==tunnelUrl){setStatus(status,'Apps Script 照指令碼屬性裡的網址打…');
+      runAlong(stage,edges[0].path,900,'bad').then(function(){hidePkt(stage);sign.classList.add('hit');setStatus(status,'✗ 撲空：指令碼屬性裡還是舊門牌，那個門牌已經不在了。按「改指令碼屬性」把那一格換成新的。','bad');stage.setAttribute('data-last','stale');lock(false);bRestart.disabled=false;bFix.disabled=false;});return;}
+    setStatus(status,'外面打門牌…');
+    runAlong(stage,edges[0].path,900).then(function(){sign.classList.add('lit');setStatus(status,'通道把它送進分享器後面…');return runAlong(stage,edges[1].path,900,'ok');})
+    .then(function(){pc.classList.add('lit');hidePkt(stage);setStatus(status,'✓ 到站：外面打的是門牌，通道把它送進你的筆電、交給轉接站。LINE 後台的 Webhook 網址一個字沒動。','ok');stage.setAttribute('data-last','ok');lock(false);bRestart.disabled=false;bFix.disabled=true;});});
+  bOpen.addEventListener('click',function(){if(busy)return;tunnelUrl=fakeUrl();propVal=tunnelUrl;signUrl.textContent=tunnelUrl;propUrl.textContent=tunnelUrl;layout();
+    setStatus(status,'通道開了：冒出一塊門牌，連進分享器後面。門牌已經抄進指令碼屬性。再按「從外面打打看」。','ok');});
+  bRestart.addEventListener('click',function(){if(busy||!tunnelUrl)return;var old=tunnelUrl;tunnelUrl=fakeUrl();signUrl.textContent=tunnelUrl;layout();
+    status.className='status bad';status.innerHTML='重開了，門牌換成新的；指令碼屬性還是舊的（<code>'+old+'</code>）。換了只要改指令碼屬性，不用重新部署——按「改指令碼屬性」。';});
+  bFix.addEventListener('click',function(){if(busy||!tunnelUrl)return;propVal=tunnelUrl;propUrl.textContent=propVal;layout();
+    setStatus(status,'指令碼屬性改好了：只改這一格，沒有重新部署、沒有動 Webhook。再按「從外面打打看」。','ok');});
+  layout();relayouts.push(layout);
+})();
+
+// ===== 4. 轉接站與密碼：模擬終端機 =====
+(function(){var term=$('#term');if(!term)return;
+  var Q='2026 年諾貝爾物理獎得主是誰？';
+  function pad(n){return (n<10?'0':'')+n;}
+  function ts(){var d=new Date();return '['+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())+']';}
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function line(cls,text){return '<span class="'+cls+'">'+esc(text)+'</span>';}
+  var busy=false;
+  var S={
+    nokey:function(){return [line('req','你送的：GET /check-key　　x-relay-key：（沒帶）'),
+      line('res bad','轉接站回：401 {"error":"密碼不對"}'),
+      line('log','轉接站視窗印：'+ts()+' ⛔ 有人來對密碼，但密碼不對'),
+      line('see','testSetup 會印：❌ 本地模型（選做）：轉接站活著，但密碼不對：檢查 SEARCH_RELAY_KEY'),
+      line('why','白話：門開著，但你沒報暗號。它只說「不對」，不會告訴你暗號是什麼。')];},
+    badkey:function(){return [line('req','你送的：GET /check-key　　x-relay-key：abc123（錯的）'),
+      line('res bad','轉接站回：401 {"error":"密碼不對"}'),
+      line('log','轉接站視窗印：'+ts()+' ⛔ 有人來對密碼，但密碼不對'),
+      line('see','testSetup 會印：❌ 本地模型（選做）：轉接站活著，但密碼不對：檢查 SEARCH_RELAY_KEY'),
+      line('why','白話：報錯暗號跟沒報一樣，都是 401。它比的是「長度一樣、每個字都一樣」，差一個字就不行——多半是指令碼屬性貼到舊的，或貼的時候多了空白。')];},
+    okkey:function(){return [line('req','你送的：GET /check-key　　x-relay-key：（剪貼簿裡那一串，對的）'),
+      line('res','轉接站回：200 {"ok":true,"model":"gemma4:e4b"}'),
+      line('log','轉接站視窗印：（對密碼成功它不印東西）'),
+      line('see','testSetup 會印：✅ 本地模型（選做）：轉接站接好了（網址通、密碼對），模型 gemma4:e4b'),
+      line('why','白話：網址通、密碼對，才算接好。testSetup 最後一項做的就是這一下：只對密碼、不叫模型。')];},
+    two:function(){return [line('req','你送的：POST /ask　　x-relay-key：對　　{"question":"'+Q+'"}'),
+      line('log','轉接站視窗印：'+ts()+' 📩 收到一題（'+Q.length+' 字）'),
+      line('req','你又送：POST /ask（第一題還在答）　{"question":"花蓮今天天氣如何？"}'),
+      line('res bad','轉接站回第二題：429 {"error":"正在回答上一題，等一下再問"}'),
+      line('see','手機會看到：⏳ 本地模型正在回答上一題，等十幾秒再問一次。'),
+      line('log','轉接站視窗印：'+ts()+' ✅ 回答好了（3 秒，有上網查）'),
+      line('res','轉接站回第一題：200 {"answer":"…","searched":true,"queries":["…"],"sources":[{"title":"…","url":"…"}],"seconds":3}'),
+      line('why','白話：顯示卡一次只答一題；第二題不是壞了，是在排隊。等第一題答完再問一次就好。')];},
+    slow:function(){return [line('req','你送的：POST /ask　　x-relay-key：對　　{"question":"'+Q+'"}'),
+      line('log','轉接站視窗印：'+ts()+' 📩 收到一題（'+Q.length+' 字）'),
+      '<span class="log">模型想了 <b id="tick">0</b> 秒（快轉）</span>'];},
+    slowEnd:function(){return [line('res bad','轉接站回：504 {"error":"想太久了（超過 45 秒），換個簡單一點的問法"}'),
+      line('log','轉接站視窗印：'+ts()+' ❌ 超過 45 秒，放棄這題'),
+      line('see','手機會看到：🔌 本地模型這次沒答出來（504）：想太久了（超過 45 秒），換個簡單一點的問法'),
+      line('why','白話：LINE 的回覆碼只能用一次、而且很快就失效（官方沒給確切秒數），所以轉接站最多想 45 秒、Apps Script 最多等 50 秒。題目太大就拆小、換個問法。')];}};
+  function show(lines){term.innerHTML=lines.join('\n');}
+  $$('.tbtn').forEach(function(b){b.addEventListener('click',function(){if(busy)return;var s=b.getAttribute('data-s');term.setAttribute('data-last',s);
+    if(s!=='slow'){show(S[s]());return;}
+    busy=true;show(S.slow());var tick=$('#tick'),n=0,iv=setInterval(function(){n+=3;if(tick)tick.textContent=String(Math.min(45,n));
+      if(n>=45){clearInterval(iv);show(S.slow().slice(0,2).concat(['<span class="log">模型想了 45 秒（快轉）</span>'],S.slowEnd()));term.setAttribute('data-last','slow-done');busy=false;}},dur(100));});});
+})();
+
+// ===== 5. 金鑰放哪 =====
+(function(){var tray=$('#keyTray');if(!tray)return;
+  var msg=$('#keyMsg'),score=$('#keyScore'),items=$$('.item',tray),slots=$$('.slot'),picked=null,right=0;
+  var WHY={
+    relaykey:{bad:'密碼進了程式就等於公開：程式碼會上 GitHub、會被截圖、會整份貼給 AI。放指令碼屬性，只有你看得到。',ok:'對。密碼只能在指令碼屬性；轉接站自己也只把它放剪貼簿和家目錄那個密碼檔。'},
+    relayurl:{bad:'通道網址每次重開都會換：寫在程式裡，每換一次就要改程式、重新部署。放指令碼屬性，換了只改屬性、不用重新部署。',ok:'對。網址會換，所以放指令碼屬性：換了只改這一格，不用重新部署。'},
+    linetoken:{bad:'誰拿到長效通行碼，就能用你 bot 的名義發訊息。程式碼會上 GitHub、會被截圖，它只能在指令碼屬性。',ok:'對。通行碼跟密碼一樣，只能在指令碼屬性；截圖也不能露出來。'},
+    secret:{bad:'Channel secret 是密碼類，跟長效通行碼一樣不能進程式。這週的程式其實沒用到它，留在 LINE 後台就好、也不要出現在截圖裡。',ok:'對。密碼類一律不進程式。這週的程式沒用到它，留在 LINE 後台不用抄出來；哪天要用，也是放這格。'},
+    sheet:{bad:'試算表代號指著你自己的資料，換一份表就要改程式。放指令碼屬性；從試算表「擴充功能 → Apps Script」開的專案，連填都不用填。',ok:'對。它指著你的資料、也可能換，放指令碼屬性（選填）。'},
+    prefix:{bad:'這是規則，不是祕密、也不會天天換。藏進屬性反而沒人看得到 bot 怎麼判斷；寫在程式裡，你和 AI 都看得見、改得了。',ok:'對。「查 」「搜尋 」開頭才轉，是程式的邏輯，寫在程式裡才看得到、退回 AI 的時候才對得到。'},
+    cats:{bad:'分類清單是程式的邏輯，不是祕密。寫在程式裡才看得到、改得了，退回 AI 的時候也對得到。',ok:'對。這是邏輯，寫在程式裡。'},
+    timeout:{bad:'等幾秒是程式怎麼等的規則，跟你的帳號無關、也不會換。寫在程式裡。',ok:'對。等 50 秒是規則，寫死在程式裡（對照答案裡那個 50）。'}};
+  function updateScore(){score.textContent='放對 '+right+'／'+items.length;}
+  function labelOf(it){return (it.childNodes[0]&&it.childNodes[0].textContent||it.textContent).trim();}
+  function pick(it){if(it.classList.contains('done'))return;picked=it;items.forEach(function(x){x.classList.toggle('on',x===it);});
+    setStatus(msg,'「'+labelOf(it)+'」要放哪一格？點下面的格子。');}
+  function place(it,slot){var ans=it.getAttribute('data-ans'),target=slot.getAttribute('data-slot'),why=WHY[it.getAttribute('data-id')];
+    items.forEach(function(x){x.classList.remove('on');});picked=null;
+    if(ans===target){it.classList.add('done');it.draggable=false;$('.placed',slot).appendChild(it);right++;updateScore();setStatus(msg,'✅ '+why.ok,'ok');
+      if(right===items.length)setStatus(msg,'✅ 八樣都放對了。記住判準：會被偷走的、會換的 → 指令碼屬性；規則與邏輯 → 程式碼。','ok');}
+    else{setStatus(msg,'❌ 放錯了。'+why.bad,'bad');it.classList.add('on');picked=it;}
+    tray.setAttribute('data-right',String(right));}
+  items.forEach(function(it){it.addEventListener('click',function(){pick(it);});
+    it.addEventListener('dragstart',function(e){if(it.classList.contains('done')){e.preventDefault();return;}pick(it);try{e.dataTransfer.setData('text/plain',it.getAttribute('data-id'));}catch(err){}e.dataTransfer.effectAllowed='move';});});
+  slots.forEach(function(slot){slot.addEventListener('click',function(e){var hit=e.target.closest('.item');if(hit&&!hit.classList.contains('done'))return;  // 點到格子裡已放好的東西，也算點到格子
+      if(!picked){setStatus(msg,'先點上面一樣東西，再點格子。');return;}place(picked,slot);});
+    slot.addEventListener('dragover',function(e){e.preventDefault();slot.classList.add('over');});
+    slot.addEventListener('dragleave',function(){slot.classList.remove('over');});
+    slot.addEventListener('drop',function(e){e.preventDefault();slot.classList.remove('over');var id='';try{id=e.dataTransfer.getData('text/plain');}catch(err){}
+      var it=id?$('.item[data-id="'+id+'"]'):picked;if(it)place(it,slot);});});
+  $('#keyReset').addEventListener('click',function(){items.forEach(function(it){it.classList.remove('done','on');it.draggable=true;tray.appendChild(it);});right=0;picked=null;updateScore();setStatus(msg,'先點一樣東西。');tray.setAttribute('data-right','0');});
+  updateScore();
+})();
+
+// ===== 6. 小測驗 =====
+(function(){var quizzes=$$('.quiz');if(!quizzes.length)return;
+  var KEY='w7-concepts-quiz',scoreEl=$('#quizScore');
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return {};}}
+  function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+  var state=load();
+  function grade(q){var box=$('.qa',q),sel=$('input:checked',q);if(!sel){box.className='qa';box.textContent='';return false;}
+    var ok=sel.hasAttribute('data-ok');box.className='qa '+(ok?'ok':'no');box.textContent=(ok?'✅ 對。':'❌ 不對。')+box.getAttribute('data-why');return ok;}
+  function refresh(){var n=0;quizzes.forEach(function(q){if(grade(q))n++;});scoreEl.textContent='答對 '+n+'／'+quizzes.length;}
+  quizzes.forEach(function(q){var name=q.getAttribute('data-q');
+    if(state[name]){var inp=$('input[value="'+state[name]+'"]',q);if(inp)inp.checked=true;}
+    $$('input',q).forEach(function(inp){inp.addEventListener('change',function(){state[name]=inp.value;save(state);refresh();});});});
+  $('#quizReset').addEventListener('click',function(){state={};save(state);quizzes.forEach(function(q){$$('input',q).forEach(function(i){i.checked=false;});});refresh();});
+  refresh();
+})();
+})();
+</script>
+</body></html>
