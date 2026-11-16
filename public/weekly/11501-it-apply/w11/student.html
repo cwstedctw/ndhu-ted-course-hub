@@ -365,7 +365,7 @@ xelatex report-demo</pre></div>
 <section id="help"><div class="kicker">卡住怎麼辦</div><h2>先看錯誤訊息，再決定問誰</h2>
 <h3>Overleaf／LaTeX</h3>
 <div class="table"><table><thead><tr><th>看到什麼</th><th>通常是</th><th>怎麼處理</th></tr></thead><tbody>
-<tr><td>中文變成方框、空白或缺字</td><td>Compiler 不是 XeLaTeX</td><td>Menu → Settings → Compiler 改 XeLaTeX，再 Recompile</td></tr>
+<tr><td>中文變成方框、空白或缺字</td><td>Compiler 不是 XeLaTeX</td><td>齒輪 <b>Settings</b> → <b>Compiler</b> 分頁 改 XeLaTeX，再 Recompile</td></tr>
 <tr><td>一大堆紅字，第一個跟中文或 <code>xeCJK</code> 有關</td><td>Compiler 沒切 XeLaTeX</td><td>同上，先切 XeLaTeX</td></tr>
 <tr><td>正文出現 <code>[?]</code></td><td>書目還沒跑完，或 <code>\cite{…}</code> 的代號跟 <code>refs.bib</code> 對不上</td><td>再 Recompile 一次；還是一樣就核對 <code>\cite{Su2021}</code> 和 <code>refs.bib</code> 裡的代號</td></tr>
 <tr><td>文末沒有參考文獻</td><td>1-7 那三行的 <code>%</code> 沒拿乾淨，或 <code>refs.bib</code> 檔名不對</td><td>檢查三行開頭都沒有 <code>%</code>；左側檔名是 <code>refs.bib</code>，跟 <code>\bibliography{refs}</code> 對得上</td></tr>
