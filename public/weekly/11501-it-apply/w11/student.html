@@ -80,7 +80,7 @@
 
 <section id="h3"><div class="kicker">1-3 · 約 3 分</div><h2>先看 Overleaf 自己附的範例</h2>
 <ol>
-<li><p class="do"><b>做什麼</b>按 <b>New Project → Example Project</b>。</p>
+<li><p class="do"><b>做什麼</b>按 <b>New Project → Example Project</b>，專案名稱隨便填（例如 <code>example</code>），按 <b>Create</b>。</p>
 <p class="see"><b>應該看到</b>三塊畫面：左邊檔案區、中間原稿、右邊 PDF。範例裡有章節、圖、引用。</p></li>
 <li><p class="do"><b>做什麼</b>按 <b>Recompile</b>，再把中間原稿 <code>\title{…}</code> 大括號裡的字改掉，再按一次 Recompile。</p>
 <p class="see"><b>應該看到</b>右邊 PDF 的標題跟著變了。這就是「改原稿 → 編譯 → PDF 更新」。</p></li>
@@ -95,7 +95,7 @@
 <li><p class="do"><b>做什麼</b>按下面深色框右上角的「複製」，把整份起始檔複製起來。</p>
 <div class="cbox"><pre class="copy">% hand-first.tex：第一部分「先用手做一輪」的起始檔。
 % 百分比符號後面是註解，不會出現在 PDF 裡。
-% Overleaf：Menu → Settings → Compiler 選 XeLaTeX，再按 Recompile。
+% Overleaf：左下角齒輪 Settings → Compiler 分頁選 XeLaTeX，再按 Recompile。
 \documentclass[12pt,a4paper]{article}
 \usepackage{xeCJK}
 % 下面這一行在挑中文字型：Overleaf 用 Noto Serif CJK TC，Windows 用微軟正黑體，Mac 用宋體。
@@ -133,7 +133,7 @@
 <p class="small">這就是起始包裡的 <code>hand-first.tex</code>。想從檔案開也可以：對檔案按右鍵 → 開啟檔案 → 記事本（Mac 用「文字編輯」）。</p></li>
 <li><p class="do"><b>做什麼</b>在 Overleaf 中間的原稿區點一下，按 <kbd>Ctrl</kbd>＋<kbd>A</kbd> 全選（Mac 是 <kbd>⌘</kbd>＋<kbd>A</kbd>），再按 <kbd>Ctrl</kbd>＋<kbd>V</kbd> 貼上，蓋掉原本的內容。</p>
 <p class="see"><b>應該看到</b>原稿第一行變成 <code>% hand-first.tex：…</code>。</p></li>
-<li><p class="do"><b>做什麼</b>把編譯器換成 <b>XeLaTeX</b>（中文需要它）。Overleaf 有新舊兩種介面，位置不同：<br>舊介面：左上角 <b>Menu</b> → 往下找 <b>Settings</b> 區塊的 <b>Compiler</b> → 選 <b>XeLaTeX</b>。<br>新介面：左下角齒輪 <b>Settings</b> → <b>Compiler</b> 分頁 → <b>Compiler</b> 選 <b>XeLaTeX</b>。</p></li>
+<li><p class="do"><b>做什麼</b>把編譯器換成 <b>XeLaTeX</b>（中文需要它）。按畫面左下角的齒輪 <b>Settings</b>（或上方選單 <b>File → Settings</b>），點 <b>Compiler</b> 分頁，把 <b>Compiler</b> 那一格選成 <b>XeLaTeX</b>，關掉設定視窗。<br>你的畫面左上角是 <b>Menu</b> 按鈕的話（舊介面）：按 <b>Menu</b>，往下找 <b>Settings</b> 區塊的 <b>Compiler</b>，選 <b>XeLaTeX</b>。</p></li>
 <li><p class="do"><b>做什麼</b>按 PDF 上方綠色的 <b>Recompile</b>。</p>
 <p class="see"><b>應該看到</b>一頁中文 PDF：標題「我的第一份 LaTeX 文件」，三個有編號的章節，第二節是三點條列。</p></li>
 </ol>
@@ -187,7 +187,7 @@
 }
 </pre></div>
 <p class="see"><b>應該看到</b>左側有兩個檔在同一層：<code>main.tex</code>、<code>refs.bib</code>。<code>refs.bib</code> 裡那一筆開頭是 <code>@article{Su2021,</code>，<code>Su2021</code> 就是這筆的代號。</p></li>
-<li><p class="do"><b>做什麼</b>回到 <code>main.tex</code> 最下面，找到三行開頭有 <code>%</code> 的：<code>…研究 \cite{Su2021}。</code>、<code>\bibliographystyle{plain}</code>、<code>\bibliography{refs}</code>。把這三行開頭的 <code>%</code> 拿掉（寫著「做到加一筆引用那一步時…」的兩行說明留著不動）。</p></li>
+<li><p class="do"><b>做什麼</b>回到 <code>main.tex</code> 最下面，找到三行開頭有 <code>%</code> 的：<code>…研究 \cite{Su2021}。</code>、<code>\bibliographystyle{plain}</code>、<code>\bibliography{refs}</code>。把這三行開頭的 <code>%</code> 都拿掉（少拿一行，參考文獻就不會出現）（寫著「做到加一筆引用那一步時…」的兩行說明留著不動）。</p></li>
 <li><p class="do"><b>做什麼</b>Recompile。</p>
 <p class="see"><b>應該看到</b>正文出現 <code>[1]</code>，文末多一節參考文獻，裡面一筆 BMC Geriatrics 2021 年的文章。看到 <code>[?]</code> 就再按一次 Recompile。<span class="ev">證據 ①</span> 截這一頁（要看得到你的題目和 [1]）。</p></li>
 </ol>
@@ -197,7 +197,7 @@
 <ol>
 <li><p class="do"><b>做什麼</b>在同一個專案（或新開一個 Blank Project），左側按 <b>Upload</b>，上傳起始包裡的三個檔：<code>report-demo.tex</code>、<code>figure-demo.png</code>、<code>refs.bib</code>（已經有 <code>refs.bib</code> 就不用再傳）。</p>
 <p class="see"><b>應該看到</b>左側檔案區同一層有這三個檔。</p></li>
-<li><p class="do"><b>做什麼</b>二選一：<b>Menu → Main document</b> 選 <code>report-demo.tex</code>；或打開 <code>report-demo.tex</code> 全選複製，貼進 <code>main.tex</code>。Compiler 一樣是 <b>XeLaTeX</b>，按 <b>Recompile</b>。</p>
+<li><p class="do"><b>做什麼</b>二選一：到剛才設定編譯器的同一個地方（齒輪 <b>Settings</b> → <b>Compiler</b> 分頁），把 <b>Main document</b> 選成 <code>report-demo.tex</code>；或打開 <code>report-demo.tex</code> 全選複製，貼進 <code>main.tex</code>。Compiler 一樣是 <b>XeLaTeX</b>，按 <b>Recompile</b>。</p>
 <p class="see"><b>應該看到</b>一頁 PDF：有「圖 1」的折線圖、「表 1」的表格、正文有 <code>[1]</code>、文末有參考文獻。</p></li>
 <li><p class="do"><b>做什麼</b>（裝好 gnuplot 之後再回來做）把你自己用 gnuplot 畫出的 <code>figure-demo.png</code> 上傳，蓋掉原本那張，Recompile。</p>
 <p class="see"><b>應該看到</b>PDF 裡的圖換成你畫的那張，原稿一個字都沒改。</p></li>
@@ -249,11 +249,12 @@
 <p><b>什麼時候值得用：</b>資料會一直改、同一張圖要重畫好幾次的時候。</p></div>
 <div class="card" id="card-zotero"><h3>Zotero</h3>
 <p><b>寫論文時它管哪一段：</b>參考文獻。看到一篇要引用的論文，按一下就收進文獻庫；要寫報告時再匯出書目檔。</p>
+<p class="small">2-2 是老師示範，這時你的電腦還沒裝 Zotero，先看就好；2-3 裝好之後再回來自己做。</p>
 <p><b>先裝 Chrome 外掛（Zotero Connector）：</b>它是 Chrome 工具列上的一顆「存進 Zotero」按鈕。</p>
 <ol>
 <li><p class="do"><b>做什麼</b>先把 Zotero 桌面版打開，放著不要關。</p>
-<p class="see"><b>應該看到</b>Zotero 視窗，左邊有「我的文獻庫」。</p></li>
-<li><p class="do"><b>做什麼</b>用 Chrome 打開 <a href="https://www.zotero.org/download/" target="_blank" rel="noopener">zotero.org/download</a>。右半邊是 Zotero Connector，按 <b>Install Chrome Connector</b>；跳到 Chrome 線上應用程式商店後按「加到 Chrome」，再按「新增擴充功能」。</p>
+<p class="see"><b>應該看到</b>Zotero 視窗，左邊是你的文獻庫。</p></li>
+<li><p class="do"><b>做什麼</b>用 Chrome 打開 <a href="https://www.zotero.org/download/" target="_blank" rel="noopener">zotero.org/download</a>。找到 <b>Zotero Connector</b> 那一塊，點 <b>Chrome</b> 的連結；跳到 Chrome 線上應用程式商店後按「加到 Chrome」，再按「新增擴充功能」。</p>
 <p class="see"><b>應該看到</b>Chrome 右上角的拼圖圖示（擴充功能）裡多了 Zotero Connector。按它旁邊的圖釘，把它固定在工具列上。</p></li>
 </ol>
 <p><b>用手做一次：從網頁把論文收進來。</b></p>
@@ -262,11 +263,11 @@
 <div class="cbox"><pre class="copy">https://doi.org/10.1186/s12877-021-02075-3</pre></div>
 <p class="see"><b>應該看到</b>BMC Geriatrics 期刊的一篇論文頁面，2021 年，第一作者 Su。</p></li>
 <li><p class="do"><b>做什麼</b>按工具列上的 Zotero Connector 按鈕。</p>
-<p class="see"><b>應該看到</b>右上角跳出一個小框，寫著正在存到「我的文獻庫」。回到 Zotero，多了一筆這篇論文，題名、作者、期刊、年份都填好了。</p></li>
-<li><p class="do"><b>做什麼</b>在 Zotero 裡對那一筆按右鍵 → <b>匯出項目…</b>（英文介面是 Export Item…），格式選 <b>BibTeX</b>，存檔。</p>
+<p class="see"><b>應該看到</b>右上角跳出一個小框，顯示正在存進你的文獻庫。回到 Zotero，多了一筆這篇論文，題名、作者、期刊、年份都填好了。</p></li>
+<li><p class="do"><b>做什麼</b>在 Zotero 裡對那一筆按右鍵 → 選「匯出」開頭的那一項（英文介面是 Export Item…），格式選 <b>BibTeX</b>，存檔。</p>
 <p class="see"><b>應該看到</b>得到一個 <code>.bib</code> 檔。用記事本打開，跟起始包的 <code>refs.bib</code> 是同一種檔：<code>@article{代號,</code> 開頭，接著作者、題名、期刊。</p></li>
 </ol>
-<p class="small">外掛按了沒反應：多半是 Zotero 桌面版沒開。另一個收文獻的方法：Zotero 工具列的魔術棒圖示「依識別碼新增」，貼上 <code>10.1186/s12877-021-02075-3</code> 按 Enter。</p>
+<p class="small">外掛按了沒反應：多半是 Zotero 桌面版沒開。另一個收文獻的方法：Zotero 工具列的魔術棒圖示（Add Item by Identifier，用編號新增），貼上 <code>10.1186/s12877-021-02075-3</code> 按 Enter。</p>
 <p><b>什麼時候值得用：</b>報告的文獻超過三篇、要一直增減的時候。</p></div>
 <div class="card" id="card-latex"><h3>本機版 LaTeX <span class="tag opt">選做</span></h3>
 <p><b>寫論文時它管哪一段：</b>排版。跟 Overleaf 是同一件事，只是裝在自己電腦。</p>
@@ -320,10 +321,10 @@ xelatex report-demo</pre></div>
 <div class="cbox"><pre class="copy">gnuplot --version</pre></div>
 <p class="see"><b>應該看到</b>一行 <code>gnuplot</code> 加版本號。</p></li>
 <li><p class="do"><b>做什麼</b>從開始功能表（Windows）或「應用程式」資料夾（Mac）打開 Zotero。</p>
-<p class="see"><b>應該看到</b>Zotero 視窗開起來，左邊有「我的文獻庫」。</p></li>
+<p class="see"><b>應該看到</b>Zotero 視窗開起來，左邊是你的文獻庫。</p></li>
 <li><p class="do"><b>做什麼</b>照 <a href="#card-zotero">Zotero 卡</a> 替 Chrome 裝外掛（Zotero Connector）。這步 agent 做不了，要你自己按。</p>
 <p class="see"><b>應該看到</b>Chrome 工具列上有 Zotero Connector 的按鈕。</p></li>
-<li><p class="do"><b>做什麼</b>照 <a href="#card-gnuplot">gnuplot 卡</a> 和 <a href="#card-zotero">Zotero 卡</a> 各自己做一次。</p>
+<li><p class="do"><b>做什麼</b>照 <a href="#card-gnuplot">gnuplot 卡</a> 和 <a href="#card-zotero">Zotero 卡</a> 各自己做一次。gnuplot 卡要先在起始包的資料夾裡開終端機（卡片第一段有寫怎麼開），不然會說找不到資料檔。</p>
 <p class="see"><b>應該看到</b>跑出 <code>figure-demo.png</code> 和 <code>figure-bar.png</code>；Zotero 有那筆 BMC Geriatrics 2021 的文獻。<span class="ev">證據 ②</span> 截 <code>gnuplot --version</code> 的畫面，或 Zotero 開起來、有這筆文獻的畫面。</p></li>
 </ol>
 <label class="check"><input type="checkbox" data-check="t4">（筆電）gnuplot 有版本號、Zotero 開得起來，兩張卡都自己做過；證據 ② 截好了。</label></section>
@@ -378,7 +379,7 @@ xelatex report-demo</pre></div>
 <tr><td>裝完打 <code>gnuplot --version</code> 說找不到</td><td>舊的終端機視窗還不認得新裝的程式</td><td>關掉終端機，重新開一個再打</td></tr>
 <tr><td><code>warning: iconv failed to convert degree sign</code></td><td>只是字元轉換提醒</td><td>可以忽略，圖照樣產生</td></tr>
 <tr><td><code>can't read data file "figure-data.dat"</code></td><td>終端機所在的資料夾不是放資料檔的那個</td><td>用 <code>cd</code> 進到起始包解壓縮後的資料夾再跑</td></tr>
-<tr><td>Zotero Connector 按了沒反應</td><td>桌面版沒開</td><td>先開 Zotero 桌面版再按；或用魔術棒「依識別碼新增」貼 DOI</td></tr>
+<tr><td>Zotero Connector 按了沒反應</td><td>桌面版沒開</td><td>先開 Zotero 桌面版再按；或用魔術棒圖示（用編號新增）貼 DOI</td></tr>
 <tr><td>agent 一直在等，畫面卻沒動</td><td>「使用者帳戶控制」視窗跑到其他視窗後面</td><td>看工作列有沒有閃爍的盾牌圖示，點它叫出視窗，按「是」</td></tr>
 </tbody></table></div>
 <h3>問 AI 可以，但照這三條</h3>

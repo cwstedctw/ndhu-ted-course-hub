@@ -98,7 +98,7 @@ brew install --cask zotero
 裝好之後，告訴學生下面三件事要他自己做（你做不了）：
 
 1. 打開 Zotero。
-2. 用 Chrome 打開 https://www.zotero.org/download/ ，右邊的 Zotero Connector 按 Install，在 Chrome 線上應用程式商店按「加到 Chrome」。
+2. 用 Chrome 打開 https://www.zotero.org/download/ ，在 Zotero Connector 那一塊點 Chrome 的連結，到 Chrome 線上應用程式商店按「加到 Chrome」。
 3. 照學生頁第二部分的 Zotero 那張卡，從網頁收一篇論文進來。
 
 ## 第 4 步：用腳本畫兩張圖
@@ -118,6 +118,8 @@ Windows 如果 `gnuplot` 還不在 PATH 裡，改用完整路徑：
 ```
 
 看到 `warning: iconv failed to convert degree sign` 可以忽略，不影響出圖。
+
+如果錯誤訊息提到 `pngcairo`（這台的 gnuplot 不支援這種輸出），就停下來告訴學生：今天先用起始包附的現成圖，並請他把錯誤訊息拿給老師看。不要自己改腳本。
 
 驗證：兩條指令都正常結束，而且 `figure-demo.png` 和 `figure-bar.png` 的修改時間變成剛剛。時間沒變就是沒畫成功，不可以拿原本附的圖當成果。請學生自己打開這兩張圖看：一張是兩條折線，一張是長條圖。
 
@@ -144,7 +146,7 @@ winget install --id MiKTeX.MiKTeX -e --accept-source-agreements --accept-package
 
 ```
 xelatex --version
-initexmf --set-config-value "[MPM]AutoInstall=1"
+initexmf --set-config-value=[MPM]AutoInstall=1
 ```
 
 第二條讓它編譯時自動補缺少的套件，不然會跳視窗一個一個問。接著在這個資料夾編範本（第一次會下載套件，可能要好幾分鐘，請先告訴學生）：
