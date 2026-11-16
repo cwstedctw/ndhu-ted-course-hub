@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>資訊科技與應用 W11｜LaTeX 與報告工具：先用手寫一頁，再把工具裝好</title>
+<style>
+:root{--ink:#17312f;--muted:#526b66;--bg:#f7f5ee;--panel:#fffefa;--green:#075e56;--line:#d2dfd7;--gold:#e8ae42}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--bg);font:16px/1.75 system-ui,-apple-system,"Microsoft JhengHei",sans-serif}a{color:#075f74;text-underline-offset:3px}button,input,select{font:inherit}button,.btn{cursor:pointer;min-height:44px;border:1px solid #aac0b5;border-radius:8px;padding:.5rem .9rem;background:white;color:var(--ink)}:focus-visible{outline:3px solid #e09d1b;outline-offset:3px}.btn{display:inline-block;text-decoration:none;font-weight:700}.primary{background:var(--green);color:white}.wrap{width:min(1120px,calc(100% - 2rem));margin:auto}.hero{background:#174b42;color:white;padding:3rem 0}.hero a{color:white}.hero .light{background:white;color:var(--ink)}.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:2rem;align-items:center}.hero h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.2;margin:.5rem 0}.eyebrow,.kicker{font-size:.8rem;letter-spacing:.09em;font-weight:800}.eyebrow{color:#f1ca79}.kicker{color:var(--green)}.paper,.card,details,.lab{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1rem 1.2rem}.paper{color:var(--ink);padding:1.5rem;box-shadow:0 12px 0 #103d35}.paper h2{margin:.4rem 0}.layout{display:grid;grid-template-columns:205px minmax(0,1fr);gap:2.5rem}.toc{position:sticky;top:1rem;align-self:start;max-height:90vh;overflow:auto;padding-top:2rem}.toc a{display:block;text-decoration:none;color:var(--muted);padding:.2rem 0}.toc .tg{display:block;font-weight:800;color:var(--green);margin-top:.5rem;font-size:.85rem}.progress{margin-top:1rem;background:#e6f1ea;border-radius:8px;padding:.8rem;font-size:.87rem}main{min-width:0}section{padding:2.6rem 0;border-bottom:1px solid var(--line);scroll-margin-top:1rem}h2{font-size:clamp(1.6rem,3vw,2.2rem);line-height:1.25;margin:.3rem 0 1rem}h3{margin:1.4rem 0 .3rem;scroll-margin-top:1rem}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.callout{background:#fff8e7;border-left:4px solid var(--gold);padding:.8rem 1rem;margin:1rem 0}.small,.source{font-size:.9rem;color:var(--muted)}.table{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:white}table{border-collapse:collapse;min-width:620px;width:100%}th,td{padding:.8rem;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}th{background:#e9f2ec}details{margin:.75rem 0}summary{cursor:pointer;font-weight:750;color:var(--green)}ol li,ul li{margin:.55rem 0}pre{background:#1b3030;color:#f1f7ee;border-radius:8px;padding:1rem;white-space:pre-wrap;overflow-wrap:anywhere}code{font-family:Consolas,monospace}label{display:block;font-weight:700}.check{display:flex;gap:.6rem;font-weight:400;background:#edf5ee;border-radius:8px;padding:.7rem .9rem;margin-top:1rem;align-items:flex-start}.check input{width:1.2rem;height:1.2rem;margin-top:.3rem}.tag{display:inline-block;font-size:.78rem;font-weight:800;border-radius:999px;padding:.1rem .6rem;background:#e6f1ea;color:var(--green);margin-right:.3rem}.tag.opt{background:#fff1d6;color:#8a5a00}.skip{position:absolute;left:-999px}.skip:focus{left:1rem;top:1rem;background:white;padding:.5rem;z-index:9}footer{padding:2rem 0;color:var(--muted);font-size:.9rem}
+.cbox{position:relative}.cbox pre{padding-top:2.2rem}.cbtn{position:absolute;top:.4rem;right:.4rem;min-height:32px;padding:.15rem .7rem;font-size:.85rem;background:#e9f2ec;border-color:#9fbcae}.see{background:#f1f7f3;border-left:4px solid var(--green);padding:.4rem .8rem;margin:.4rem 0}.see>b:first-child{color:var(--green)}.do>b:first-child{color:#8a5a00}.part{background:#174b42;color:white;border-radius:10px;padding:.7rem 1rem;margin:2.2rem 0 0;font-weight:800}.part span{display:block;font-weight:400;font-size:.95rem;color:#dfeee6}.ev{display:inline-block;background:#174b42;color:white;border-radius:6px;padding:0 .5rem;font-size:.85rem;font-weight:800}.docs{background:#eef4fb;border:1px solid #c5d8ea;border-radius:10px;padding:.8rem 1rem;margin:1rem 0}.docs b{color:#0b4f7a}
+@media(max-width:860px){.hero-grid,.layout,.cards{grid-template-columns:1fr}.toc{position:static;max-height:none;padding-top:0;display:flex;flex-wrap:wrap;gap:.4rem .9rem}.toc b,.toc .progress,.toc .tg{flex-basis:100%}}
+</style>
+</head><body><a class="skip" href="#start">跳至教材</a>
+<header class="hero"><div class="wrap hero-grid"><div><div class="eyebrow">資訊科技與應用 · AA／AB · W11</div><h1>LaTeX 與報告工具：先用手寫一頁，再把工具裝好</h1><p>寫一份有圖、有引用的正式報告要三樣工具：LaTeX 排版、gnuplot 畫圖、Zotero 管文獻。今天先在 Overleaf 用手把 LaTeX 走過一輪，再把工具裝好。下週才請 AI agent 替你寫，到時你看得懂它寫了什麼。</p><a class="btn primary" href="#start">開始</a> <a class="btn light" href="#help">卡住了</a></div><div class="paper"><b>今天帶走</b><h2>一頁自己改過的 PDF，加上裝好的工具</h2><p><b>LaTeX</b> 排版 → <b>gnuplot</b> 畫圖 → <b>Zotero</b> 管文獻。<br>今天先熟悉第一樣，把後兩樣裝好。</p></div></div></header>
+
+<div class="wrap layout"><aside class="toc"><b>學習路線</b><nav aria-label="教材目錄"><a href="#start">0 路線與三項證據</a><a href="#pack">起始包</a><span class="tg">第一部分 LaTeX</span><a href="#h1">1-1 LaTeX 是什麼</a><a href="#h2">1-2 登入 Overleaf</a><a href="#h3">1-3 看官方範例</a><a href="#h4">1-4 貼起始檔、編譯</a><a href="#h5">1-5 改三處</a><a href="#h6">1-6 弄壞再修</a><a href="#h7">1-7 加一筆引用</a><a href="#h8">1-8 有圖有表的一頁</a><span class="tg">第二部分 裝工具</span><a href="#t1">2-1 三個工具</a><a href="#t2">2-2 三張工具卡</a><a href="#t3">2-3 筆電：請 agent 裝</a><a href="#t4">2-4 驗證、照卡做</a><a href="#t5">2-5 教室電腦</a><span class="tg">最後</span><a href="#demo">老師示範：串起來</a><a href="#end">收尾</a><a href="#help">卡住怎麼辦</a></nav><div class="progress"><b id="progress">學習記錄 0 / 17</b><p class="small" id="storage-note">自行勾選，保存在這個瀏覽器；不是成績，也不會上傳文字。</p></div></aside>
+<main>
+
+<section id="start"><div class="kicker">0 · 先看全貌</div><h2>今天的路線與三項證據</h2>
+<div class="table"><table><thead><tr><th>段</th><th>做什麼</th><th>約</th><th>證據（截圖）</th></tr></thead><tbody>
+<tr><td><a href="#part1">第一部分 LaTeX</a></td><td>在 Overleaf 看範例、改一頁中文文件、修一個錯、加一筆引用</td><td>45 分</td><td><span class="ev">①</span> 自己改過的那一頁 PDF（有自己的題目與 [1]）</td></tr>
+<tr><td><a href="#part2">第二部分 裝工具</a></td><td>Zotero、gnuplot（筆電請 agent 裝；教室電腦先開帳號）</td><td>25 分</td><td><span class="ev">②</span> 版本畫面或 Zotero 開起來的畫面（教室電腦：zotero.org 登入後的畫面）</td></tr>
+<tr><td><a href="#demo">老師示範</a></td><td>一張圖、放進 LaTeX、接上書目，十分鐘看一次</td><td>10 分</td><td></td></tr>
+<tr><td><a href="#end">收尾</a></td><td>截圖交 e學苑、登出</td><td>5 分</td><td><span class="ev">③</span> 想一想兩句</td></tr>
+</tbody></table></div>
+<div class="callout"><b>底線：</b>證據 ① 做到就算過。</div>
+<p><b>用教室電腦的同學：</b>開無痕視窗，下課登出。</p>
+<p class="small">怎麼讀每一步：<b style="color:#8a5a00">做什麼</b>是這一步的動作；<b style="color:var(--green)">應該看到</b>是做對了畫面上會出現什麼。沒看到，就還沒完成。深色框右上角有「複製」。</p>
+<label class="check"><input type="checkbox" data-check="start">我知道今天要交兩張截圖（①②）加兩句想一想（③），底線是 ①。</label></section>
+
+<section id="pack"><div class="kicker">起始包</div><h2>先把範例檔案拿到手</h2>
+<p>今天用到的範例檔都在這一包。複製指令就看得到結果。</p>
+<ol>
+<li><p class="do"><b>做什麼</b>下載 <a href="starter/w11-starter.zip" download>w11-starter.zip</a>，解壓縮到桌面（Windows：在檔案上按右鍵 →「解壓縮全部」）。</p>
+<p class="see"><b>應該看到</b>一個資料夾，裡面有下表這些檔。</p></li>
+</ol>
+<div class="table"><table><thead><tr><th>檔案</th><th>是什麼</th><th>哪裡用</th></tr></thead><tbody>
+<tr><td><a href="starter/hand-first.tex">hand-first.tex</a></td><td>第一部分的中文起始檔</td><td>1-4 到 1-7</td></tr>
+<tr><td><a href="starter/refs.bib">refs.bib</a></td><td>一筆書目，代號 <code>Su2021</code></td><td>1-7、1-8</td></tr>
+<tr><td><a href="starter/report-demo.tex">report-demo.tex</a></td><td>一頁有圖 1、表 1、引用 [1] 的報告範本</td><td>1-8</td></tr>
+<tr><td><a href="starter/figure-data.dat">figure-data.dat</a></td><td>資料表（內容見下）</td><td>gnuplot 卡</td></tr>
+<tr><td><a href="starter/figure-demo.gp">figure-demo.gp</a></td><td>gnuplot 折線圖腳本，輸出 <code>figure-demo.png</code></td><td>gnuplot 卡</td></tr>
+<tr><td><a href="starter/figure-bar.gp">figure-bar.gp</a></td><td>同一份資料畫長條圖，輸出 <code>figure-bar.png</code></td><td>gnuplot 卡</td></tr>
+<tr><td><a href="starter/figure-demo.png">figure-demo.png</a>、<a href="starter/figure-bar.png">figure-bar.png</a></td><td>現成的圖，沒裝 gnuplot 的人直接用</td><td>1-8</td></tr>
+<tr><td><a href="starter/AGENT-GUIDE.md">AGENT-GUIDE.md</a></td><td>寫給 AI agent 讀的安裝指引：裝什麼、用哪條指令、怎麼驗證、哪些事要停下來等你</td><td>2-3</td></tr>
+<tr><td><a href="starter/install-prompt.txt">install-prompt.txt</a></td><td>你對 agent 說的那一句話</td><td>2-3</td></tr>
+</tbody></table></div>
+<p><code>figure-data.dat</code> 的內容：八週、A 組與 B 組的編譯錯誤數（虛構示範資料）。</p>
+<div class="table"><table style="min-width:0;max-width:360px"><thead><tr><th>週次</th><th>A 組</th><th>B 組</th></tr></thead><tbody>
+<tr><td>1</td><td>9</td><td>11</td></tr><tr><td>2</td><td>7</td><td>10</td></tr><tr><td>3</td><td>6</td><td>8</td></tr><tr><td>4</td><td>5</td><td>8</td></tr><tr><td>5</td><td>4</td><td>6</td></tr><tr><td>6</td><td>3</td><td>5</td></tr><tr><td>7</td><td>2</td><td>4</td></tr><tr><td>8</td><td>2</td><td>3</td></tr>
+</tbody></table></div>
+<p class="small">教室電腦每週還原，下課前把要留的檔寄給自己或放雲端。</p>
+<label class="check"><input type="checkbox" data-check="pack">起始包下載、解壓縮好了。</label></section>
+
+<div class="part" id="part1">第一部分　LaTeX：在 Overleaf 用手寫一頁（約 45 分）<span>全在瀏覽器裡做，教室電腦和筆電一樣。</span></div>
+
+<div class="docs"><b>卡住先查這裡（Overleaf 官方文件）</b><ul>
+<li><a href="https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes" target="_blank" rel="noopener">Learn LaTeX in 30 minutes</a>：從零開始的入門</li>
+<li><a href="https://www.overleaf.com/learn/latex/Inserting_Images" target="_blank" rel="noopener">Inserting Images</a>：放圖</li>
+<li><a href="https://www.overleaf.com/learn/latex/Bibliography_management_with_bibtex" target="_blank" rel="noopener">Bibliography management with bibtex</a>：引用與參考文獻</li>
+<li><a href="https://www.overleaf.com/learn/latex/Chinese" target="_blank" rel="noopener">Chinese</a>：中文怎麼排</li>
+</ul></div>
+
+<section id="h1"><div class="kicker">1-1</div><h2>LaTeX 是什麼</h2>
+<p>LaTeX（排版系統）的原稿是一個純文字檔（<code>.tex</code>）。按下編譯（compile），它才把原稿排成 PDF。圖號、引用號、章節編號都由它自己編。</p>
+<div class="table"><table><thead><tr><th></th><th>Word</th><th>LaTeX</th></tr></thead><tbody>
+<tr><td>怎麼寫</td><td>所見即所得，畫面上看到的就是成品</td><td>寫純文字加標記，例如 <code>\section{…}</code>，編譯後才看到成品</td></tr>
+<tr><td>怎麼排版</td><td>點滑鼠選樣式</td><td>寫標記，排版交給它</td></tr>
+<tr><td>圖號、引用號</td><td>多半要自己顧</td><td>自動編號，增刪一張圖，後面的號碼自己更新</td></tr>
+</tbody></table></div>
+<p>Overleaf 是瀏覽器裡的 LaTeX，免安裝，右邊馬上看到 PDF。第一部分全程用它。</p>
+<label class="check"><input type="checkbox" data-check="h1">我能用一句話說出 LaTeX 跟 Word 差在哪。</label></section>
+
+<section id="h2"><div class="kicker">1-2</div><h2>註冊、登入 Overleaf</h2>
+<ol>
+<li><p class="do"><b>做什麼</b>用 Chrome 打開 <a href="https://www.overleaf.com/" target="_blank" rel="noopener">overleaf.com</a>（教室電腦請開無痕視窗：Chrome 右上角三個點 →「新增無痕式視窗」）。</p></li>
+<li><p class="do"><b>做什麼</b>第一次用：按右上角 <b>Sign up</b>（或登入頁最下面的 <b>Register</b>），選 <b>Log in with Google</b> 用學校的 Google 帳號最快；也可以填 email 和自己設的密碼，再到信箱點確認信。已經有帳號的按 <b>Log in</b>。</p>
+<p class="see"><b>應該看到</b>專案清單頁（網址是 <code>overleaf.com/project</code>），左上有綠色的 <b>New Project</b> 按鈕。第一次進來清單是空的，這是正常的。</p></li>
+</ol>
+<p class="small">跳出 cookie 詢問，選 <b>Essential cookies only</b> 就好。不要把密碼或驗證碼貼給 AI。Overleaf 的介面是英文的，下面每一步都會寫出按鈕上的英文字。</p>
+<label class="check"><input type="checkbox" data-check="h2">我登入了 Overleaf。</label></section>
+
+<section id="h3"><div class="kicker">1-3 · 約 3 分</div><h2>先看 Overleaf 自己附的範例</h2>
+<ol>
+<li><p class="do"><b>做什麼</b>按 <b>New Project → Example Project</b>。</p>
+<p class="see"><b>應該看到</b>三塊畫面：左邊檔案區、中間原稿、右邊 PDF。範例裡有章節、圖、引用。</p></li>
+<li><p class="do"><b>做什麼</b>按 <b>Recompile</b>，再把中間原稿 <code>\title{…}</code> 大括號裡的字改掉，再按一次 Recompile。</p>
+<p class="see"><b>應該看到</b>右邊 PDF 的標題跟著變了。這就是「改原稿 → 編譯 → PDF 更新」。</p></li>
+</ol>
+<p class="small">範例是英文的，看懂結構就好，不用讀完。</p>
+<label class="check"><input type="checkbox" data-check="h3">我開過 Example Project，改了標題，看到 PDF 跟著變。</label></section>
+
+<section id="h4"><div class="kicker">1-4</div><h2>貼上中文起始檔、編譯</h2>
+<ol>
+<li><p class="do"><b>做什麼</b>回到專案清單（按左上角的 Overleaf 圖示或瀏覽器上一頁），按 <b>New Project → Blank Project</b>，名稱填 <code>w11-hand</code>，按 <b>Create</b>。</p>
+<p class="see"><b>應該看到</b>一樣是三塊畫面，中間的 <code>main.tex</code> 只有短短幾行英文。</p></li>
+<li><p class="do"><b>做什麼</b>按下面深色框右上角的「複製」，把整份起始檔複製起來。</p>
+<div class="cbox"><pre class="copy">% hand-first.tex：第一部分「先用手做一輪」的起始檔。
+% 百分比符號後面是註解，不會出現在 PDF 裡。
+% Overleaf：Menu → Settings → Compiler 選 XeLaTeX，再按 Recompile。
+\documentclass[12pt,a4paper]{article}
+\usepackage{xeCJK}
+% 下面這一行在挑中文字型：Overleaf 用 Noto Serif CJK TC，Windows 用微軟正黑體，Mac 用宋體。
+\IfFontExistsTF{Noto Serif CJK TC}{\setCJKmainfont{Noto Serif CJK TC}}{\IfFontExistsTF{Microsoft JhengHei}{\setCJKmainfont{Microsoft JhengHei}}{\setCJKmainfont{Songti TC}}}
+\usepackage[margin=2.5cm]{geometry}
+\renewcommand{\refname}{參考文獻}
+
+\title{我的第一份 LaTeX 文件}
+\author{你的稱呼（可用化名）}
+\date{2026 年 11 月}
+
+\begin{document}
+\maketitle
+
+\section{這份文件在做什麼}
+這是用 LaTeX 寫的一頁文件。原稿是純文字，按下 Recompile 之後才變成 PDF。
+\textbf{粗體}要用標記寫出來，章節編號由它自己排。
+
+\section{三件我今天要學的事}
+\begin{itemize}
+  \item 改原稿、重新編譯，看 PDF 怎麼變。
+  \item 讀懂一個錯誤訊息，把它修好。
+  \item 加一筆引用，讓參考文獻自己出現。
+\end{itemize}
+
+\section{一篇文獻}
+% 做到「加一筆引用」那一步時：把下面這一行開頭的百分比符號拿掉。
+% 這裡引用一篇 2021 年刊登在 BMC Geriatrics 的研究 \cite{Su2021}。
+
+% 做到「加一筆引用」那一步時：把下面兩行開頭的百分比符號也拿掉。
+% \bibliographystyle{plain}
+% \bibliography{refs}
+\end{document}
+</pre></div>
+<p class="small">這就是起始包裡的 <code>hand-first.tex</code>。想從檔案開也可以：對檔案按右鍵 → 開啟檔案 → 記事本（Mac 用「文字編輯」）。</p></li>
+<li><p class="do"><b>做什麼</b>在 Overleaf 中間的原稿區點一下，按 <kbd>Ctrl</kbd>＋<kbd>A</kbd> 全選（Mac 是 <kbd>⌘</kbd>＋<kbd>A</kbd>），再按 <kbd>Ctrl</kbd>＋<kbd>V</kbd> 貼上，蓋掉原本的內容。</p>
+<p class="see"><b>應該看到</b>原稿第一行變成 <code>% hand-first.tex：…</code>。</p></li>
+<li><p class="do"><b>做什麼</b>把編譯器換成 <b>XeLaTeX</b>（中文需要它）。Overleaf 有新舊兩種介面，位置不同：<br>舊介面：左上角 <b>Menu</b> → 往下找 <b>Settings</b> 區塊的 <b>Compiler</b> → 選 <b>XeLaTeX</b>。<br>新介面：左下角齒輪 <b>Settings</b> → <b>Compiler</b> 分頁 → <b>Compiler</b> 選 <b>XeLaTeX</b>。</p></li>
+<li><p class="do"><b>做什麼</b>按 PDF 上方綠色的 <b>Recompile</b>。</p>
+<p class="see"><b>應該看到</b>一頁中文 PDF：標題「我的第一份 LaTeX 文件」，三個有編號的章節，第二節是三點條列。</p></li>
+</ol>
+<p class="small">原稿裡 <code>%</code> 開頭的那幾行是註解，不會出現在 PDF 裡。中文變成方框或整頁編不出來，九成是編譯器還停在 pdfLaTeX，回上一步檢查。</p>
+<label class="check"><input type="checkbox" data-check="h4">我編出一頁中文 PDF。</label></section>
+
+<section id="h5"><div class="kicker">1-5</div><h2>改三處，再編一次</h2>
+<ol>
+<li><p class="do"><b>做什麼</b>把 <code>\title{…}</code> 換成你自己的題目。</p></li>
+<li><p class="do"><b>做什麼</b>把 <code>\author{…}</code> 換成你的稱呼（可以用化名，不要寫學號）。</p></li>
+<li><p class="do"><b>做什麼</b>在 <code>\section{一篇文獻}</code> 前面加一節：</p>
+<div class="cbox"><pre class="copy">\section{我的看法}
+這裡寫第一句。這裡寫第二句。</pre></div>
+<p class="small">兩句話換成你自己的。</p></li>
+<li><p class="do"><b>做什麼</b>Recompile。</p>
+<p class="see"><b>應該看到</b>新題目、新稱呼；「我的看法」自己排成第 3 節，後面那節自動變成第 4 節。</p></li>
+</ol>
+<p>六個最常見的標記，先認得就好：</p>
+<div class="table"><table><thead><tr><th>標記</th><th>做什麼</th></tr></thead><tbody>
+<tr><td><code>\section{標題}</code></td><td>開一個有編號的章節</td></tr>
+<tr><td><code>\textbf{文字}</code></td><td>粗體</td></tr>
+<tr><td><code>\begin{itemize} \item …</code></td><td>條列，每個 <code>\item</code> 一點，最後 <code>\end{itemize}</code></td></tr>
+<tr><td><code>\begin{figure} … \includegraphics{檔名} … \end{figure}</code></td><td>放一張圖，加 <code>\caption{…}</code> 就有「圖 1」</td></tr>
+<tr><td><code>\cite{代號}</code></td><td>引用一筆文獻，PDF 上變成 [1]</td></tr>
+<tr><td><code>% 文字</code></td><td>註解，PDF 上看不到</td></tr>
+</tbody></table></div>
+<label class="check"><input type="checkbox" data-check="h5">我改了題目、稱呼，加了「我的看法」一節。</label></section>
+
+<section id="h6"><div class="kicker">1-6</div><h2>故意弄壞一行，再把它修好</h2>
+<ol>
+<li><p class="do"><b>做什麼</b>把 <code>\section{我的看法}</code> 這一行的 <code>\section</code> 故意打錯，改成 <code>\secton</code>（少一個 i），按 Recompile。</p>
+<p class="see"><b>應該看到</b>Recompile 旁邊出現紅色的數字。點它（或 <b>Logs and output files</b> 圖示），第一個錯誤寫著 <code>Undefined control sequence</code>（看不懂的指令），旁邊有行號，就是你改壞的那一行。右邊的 PDF 可能還停在上一次成功的樣子。</p></li>
+<li><p class="do"><b>做什麼</b>照行號找回去，把 <code>\secton</code> 改回 <code>\section</code>，再 Recompile。</p>
+<p class="see"><b>應該看到</b>紅色數字消失，PDF 恢復正常。</p></li>
+</ol>
+<div class="callout"><b>學到的事：</b>錯誤訊息是文字、有行號。有好幾個錯誤時先看第一個，後面常常是被它連帶出來的。行號是線索，不一定剛好就是錯的那一行（例如少一個 <code>}</code>，常常到後面幾行才報錯），找不到就往前看你最近改過的地方。</div>
+<label class="check"><input type="checkbox" data-check="h6">我弄壞一行、看了錯誤訊息的行號、自己修好了。</label></section>
+
+<section id="h7"><div class="kicker">1-7</div><h2>加一筆引用</h2>
+<ol>
+<li><p class="do"><b>做什麼</b>左側檔案區最上面有一排小圖示，按第一個 <b>New file</b>（一張紙的圖示），檔名填 <code>refs.bib</code>，按 <b>Create</b>。然後複製下面這一筆，貼進這個新檔案。</p>
+<div class="cbox"><pre class="copy">% 這一筆書目是用 DOI 向 doi.org 取回來的（2026-11-16），代號 Su2021 是自己取的。
+@article{Su2021,
+  author = {Su, Hsin-Feng and Koo, Malcolm and Lee, Wen-Li and Sung, Huei-Chuan and Lee, Ru-Ping and Liu, Wen-I},
+  title = {A dementia care training using mobile e-learning with mentoring support for home care workers: a controlled study},
+  journal = {BMC Geriatrics},
+  year = {2021},
+  volume = {21},
+  number = {1},
+  doi = {10.1186/s12877-021-02075-3}
+}
+</pre></div>
+<p class="see"><b>應該看到</b>左側有兩個檔在同一層：<code>main.tex</code>、<code>refs.bib</code>。<code>refs.bib</code> 裡那一筆開頭是 <code>@article{Su2021,</code>，<code>Su2021</code> 就是這筆的代號。</p></li>
+<li><p class="do"><b>做什麼</b>回到 <code>main.tex</code> 最下面，找到三行開頭有 <code>%</code> 的：<code>…研究 \cite{Su2021}。</code>、<code>\bibliographystyle{plain}</code>、<code>\bibliography{refs}</code>。把這三行開頭的 <code>%</code> 拿掉（寫著「做到加一筆引用那一步時…」的兩行說明留著不動）。</p></li>
+<li><p class="do"><b>做什麼</b>Recompile。</p>
+<p class="see"><b>應該看到</b>正文出現 <code>[1]</code>，文末多一節參考文獻，裡面一筆 BMC Geriatrics 2021 年的文章。看到 <code>[?]</code> 就再按一次 Recompile。<span class="ev">證據 ①</span> 截這一頁（要看得到你的題目和 [1]）。</p></li>
+</ol>
+<label class="check"><input type="checkbox" data-check="h7">PDF 有我的題目、有 [1]、有參考文獻；證據 ① 截好了。</label></section>
+
+<section id="h8"><div class="kicker">1-8</div><h2>有圖有表的一頁</h2>
+<ol>
+<li><p class="do"><b>做什麼</b>在同一個專案（或新開一個 Blank Project），左側按 <b>Upload</b>，上傳起始包裡的三個檔：<code>report-demo.tex</code>、<code>figure-demo.png</code>、<code>refs.bib</code>（已經有 <code>refs.bib</code> 就不用再傳）。</p>
+<p class="see"><b>應該看到</b>左側檔案區同一層有這三個檔。</p></li>
+<li><p class="do"><b>做什麼</b>二選一：<b>Menu → Main document</b> 選 <code>report-demo.tex</code>；或打開 <code>report-demo.tex</code> 全選複製，貼進 <code>main.tex</code>。Compiler 一樣是 <b>XeLaTeX</b>，按 <b>Recompile</b>。</p>
+<p class="see"><b>應該看到</b>一頁 PDF：有「圖 1」的折線圖、「表 1」的表格、正文有 <code>[1]</code>、文末有參考文獻。</p></li>
+<li><p class="do"><b>做什麼</b>（裝好 gnuplot 之後再回來做）把你自己用 gnuplot 畫出的 <code>figure-demo.png</code> 上傳，蓋掉原本那張，Recompile。</p>
+<p class="see"><b>應該看到</b>PDF 裡的圖換成你畫的那張，原稿一個字都沒改。</p></li>
+</ol>
+<details open><summary>表格那幾行在做什麼（<code>tabular</code>）</summary>
+<p>在 <code>report-demo.tex</code> 裡找 <code>\begin{tabular}</code>，表格就寫在它和 <code>\end{tabular}</code> 中間：</p>
+<ul>
+<li><code>&amp;</code>：分欄。一列裡每個 <code>&amp;</code> 隔開一格。</li>
+<li><code>\\</code>：換到下一列。</li>
+<li><code>\hline</code>：畫一條橫線。</li>
+</ul>
+<p>外面包一層 <code>table</code> 環境、加 <code>\caption{…}</code>，PDF 上就自動編成「表 1」。</p>
+</details>
+<label class="check"><input type="checkbox" data-check="h8">我編出有圖 1、表 1、[1] 的一頁 PDF。</label></section>
+
+<div class="part" id="part2">第二部分　把工具裝好（約 25 分）<span>自己的筆電請 agent 裝；教室電腦先開帳號，回家再裝。</span></div>
+
+<section id="t1"><div class="kicker">2-1</div><h2>三個工具各做什麼</h2>
+<div class="table"><table><thead><tr><th>工具</th><th>它做什麼</th><th>官方連結</th><th>今天</th></tr></thead><tbody>
+<tr><td><b>Overleaf</b></td><td>瀏覽器裡的 LaTeX 編輯與編譯服務，免安裝，可多人協作。</td><td><a href="https://www.overleaf.com/" target="_blank" rel="noopener">overleaf.com</a></td><td><span class="tag">已經在用</span></td></tr>
+<tr><td><b>Zotero</b></td><td>文獻管理工具（reference manager）：存書目、附 PDF、匯出 <code>.bib</code> 書目檔給 LaTeX。</td><td><a href="https://www.zotero.org/download/" target="_blank" rel="noopener">zotero.org/download</a>（桌面版＋瀏覽器 Connector）</td><td><span class="tag">今天裝</span></td></tr>
+<tr><td><b>gnuplot</b></td><td>用純文字腳本畫圖的程式。資料一改、腳本重跑，圖就更新。</td><td><a href="http://www.gnuplot.info/" target="_blank" rel="noopener">gnuplot.info</a></td><td><span class="tag">今天裝</span></td></tr>
+<tr><td><b>本機版 LaTeX</b></td><td>裝在自己電腦的 LaTeX。Windows 是 MiKTeX，Mac 是 BasicTeX／MacTeX。</td><td><a href="https://miktex.org/download" target="_blank" rel="noopener">miktex.org/download</a>、<a href="https://tug.org/mactex/" target="_blank" rel="noopener">tug.org/mactex</a></td><td><span class="tag opt">選做</span></td></tr>
+</tbody></table></div>
+<p class="small">只從官方連結下載，別點搜尋結果裡的廣告。</p>
+<label class="check"><input type="checkbox" data-check="t1">我知道三個工具各管報告的哪一段。</label></section>
+
+<section id="t2"><div class="kicker">2-2 · 老師用手示範，你先看</div><h2>三張工具卡</h2>
+<p>老師先用手把三張卡各做一次，你看就好。等一下裝好工具（<a href="#t3">2-3</a>），再照卡片自己做一次（<a href="#t4">2-4</a>）。做完 gnuplot 卡，可以回 <a href="#h8">1-8</a> 把自己的圖換進報告。</p>
+<div class="cards">
+<div class="card" id="card-gnuplot"><h3>gnuplot</h3>
+<p><b>寫論文時它管哪一段：</b>圖。</p>
+<p><b>用手做一次：</b>先在起始包的資料夾裡開一個終端機（terminal，用打字下指令的視窗）：</p>
+<ul><li><b>Windows 11：</b>打開解壓縮後的資料夾（要看得到 <code>figure-data.dat</code>；「解壓縮全部」常會多包一層同名資料夾，再點進去一層），在空白處按右鍵 →「在終端機中開啟」。</li><li><b>Mac：</b>打開「終端機」，輸入 <code>cd</code> 加一個空白，再把那個資料夾從 Finder 拖進終端機視窗，按 Enter。</li></ul>
+<p>再一條一條複製貼上、按 Enter：</p>
+<ol>
+<li><div class="cbox"><pre class="copy">gnuplot --version</pre></div>
+<p class="see"><b>應該看到</b>一行 <code>gnuplot</code> 加版本號。Windows 說找不到 <code>gnuplot</code>：把終端機關掉重開；還是找不到，回 Antigravity 請它照指引把 gnuplot 加進 PATH。</p></li>
+<li><div class="cbox"><pre class="copy">gnuplot -e "set terminal dumb size 60,15; plot 'figure-data.dat' using 1:2 with lines title 'Group A'"</pre></div>
+<p class="see"><b>應該看到</b>終端機裡直接出現一張用字元畫的折線圖，一路往下降。這是最快看到結果的方法，不會產生檔案。</p></li>
+<li><div class="cbox"><pre class="copy">gnuplot figure-demo.gp</pre></div>
+<p class="see"><b>應該看到</b>資料夾多出 <code>figure-demo.png</code>，打開是兩條折線（Group A、Group B）。</p></li>
+<li><div class="cbox"><pre class="copy">gnuplot figure-bar.gp</pre></div>
+<p class="see"><b>應該看到</b>多出 <code>figure-bar.png</code>，同一份資料變成長條圖。</p></li>
+<li><p class="do"><b>做什麼</b>用記事本打開 <code>figure-data.dat</code>，改最後一列的數字、存檔，再跑一次第 3 條。</p>
+<p class="see"><b>應該看到</b>圖跟著變了。</p></li>
+</ol>
+<p class="small">出現 <code>warning: iconv failed to convert degree sign</code> 可以忽略，圖照樣會產生。</p>
+<p><b>什麼時候值得用：</b>資料會一直改、同一張圖要重畫好幾次的時候。</p></div>
+<div class="card" id="card-zotero"><h3>Zotero</h3>
+<p><b>寫論文時它管哪一段：</b>參考文獻。看到一篇要引用的論文，按一下就收進文獻庫；要寫報告時再匯出書目檔。</p>
+<p><b>先裝 Chrome 外掛（Zotero Connector）：</b>它是 Chrome 工具列上的一顆「存進 Zotero」按鈕。</p>
+<ol>
+<li><p class="do"><b>做什麼</b>先把 Zotero 桌面版打開，放著不要關。</p>
+<p class="see"><b>應該看到</b>Zotero 視窗，左邊有「我的文獻庫」。</p></li>
+<li><p class="do"><b>做什麼</b>用 Chrome 打開 <a href="https://www.zotero.org/download/" target="_blank" rel="noopener">zotero.org/download</a>。右半邊是 Zotero Connector，按 <b>Install Chrome Connector</b>；跳到 Chrome 線上應用程式商店後按「加到 Chrome」，再按「新增擴充功能」。</p>
+<p class="see"><b>應該看到</b>Chrome 右上角的拼圖圖示（擴充功能）裡多了 Zotero Connector。按它旁邊的圖釘，把它固定在工具列上。</p></li>
+</ol>
+<p><b>用手做一次：從網頁把論文收進來。</b></p>
+<ol>
+<li><p class="do"><b>做什麼</b>用 Chrome 打開這篇論文的網頁：</p>
+<div class="cbox"><pre class="copy">https://doi.org/10.1186/s12877-021-02075-3</pre></div>
+<p class="see"><b>應該看到</b>BMC Geriatrics 期刊的一篇論文頁面，2021 年，第一作者 Su。</p></li>
+<li><p class="do"><b>做什麼</b>按工具列上的 Zotero Connector 按鈕。</p>
+<p class="see"><b>應該看到</b>右上角跳出一個小框，寫著正在存到「我的文獻庫」。回到 Zotero，多了一筆這篇論文，題名、作者、期刊、年份都填好了。</p></li>
+<li><p class="do"><b>做什麼</b>在 Zotero 裡對那一筆按右鍵 → <b>匯出項目…</b>（英文介面是 Export Item…），格式選 <b>BibTeX</b>，存檔。</p>
+<p class="see"><b>應該看到</b>得到一個 <code>.bib</code> 檔。用記事本打開，跟起始包的 <code>refs.bib</code> 是同一種檔：<code>@article{代號,</code> 開頭，接著作者、題名、期刊。</p></li>
+</ol>
+<p class="small">外掛按了沒反應：多半是 Zotero 桌面版沒開。另一個收文獻的方法：Zotero 工具列的魔術棒圖示「依識別碼新增」，貼上 <code>10.1186/s12877-021-02075-3</code> 按 Enter。</p>
+<p><b>什麼時候值得用：</b>報告的文獻超過三篇、要一直增減的時候。</p></div>
+<div class="card" id="card-latex"><h3>本機版 LaTeX <span class="tag opt">選做</span></h3>
+<p><b>寫論文時它管哪一段：</b>排版。跟 Overleaf 是同一件事，只是裝在自己電腦。</p>
+<p><b>用手做一次：</b>裝好後在終端機打：</p>
+<div class="cbox"><pre class="copy">xelatex --version</pre></div>
+<p class="see"><b>應該看到</b>版本號。</p>
+<p>再 <code>cd</code> 進起始包資料夾，四行依序打：</p>
+<div class="cbox"><pre class="copy">xelatex report-demo
+bibtex report-demo
+xelatex report-demo
+xelatex report-demo</pre></div>
+<p class="see"><b>應該看到</b>資料夾多出 <code>report-demo.pdf</code>，跟 Overleaf 編出來的一樣。第一次編譯中文會很慢，是在下載缺的套件，不是當機。更多說明在上週的 <a href="../w10/paper-tools.html">論文工具箱</a>。</p>
+<p><b>什麼時候值得用：</b>沒網路也要寫，或不想把稿子放雲端的時候。有 Overleaf 就夠用。</p></div>
+</div>
+<label class="check"><input type="checkbox" data-check="t2">我看完老師示範三張卡，知道每個工具管報告的哪一段。</label></section>
+
+<section id="t3"><div class="kicker">2-3 · 自己的筆電</div><h2>請 Antigravity 替你安裝</h2>
+<p>用教室電腦的同學先看 <a href="#t5">2-5</a>。</p>
+<p>起始包裡有一份 <a href="starter/AGENT-GUIDE.md">AGENT-GUIDE.md</a>，是老師寫給 AI agent 讀的安裝指引。你不用自己記安裝步驟，只要讓 Antigravity 讀這份指引、照著做，你負責看計畫、回「可以」、按它按不到的視窗。</p>
+<ol>
+<li><p class="do"><b>做什麼</b>打開 Antigravity，用它開啟起始包解壓縮後的那個資料夾（裡面要看得到 <code>AGENT-GUIDE.md</code>）。</p>
+<p class="see"><b>應該看到</b>Antigravity 左側的檔案清單裡有 <code>AGENT-GUIDE.md</code>、<code>figure-data.dat</code> 這些檔。</p></li>
+<li><p class="do"><b>做什麼</b>在對話框貼上這一句，送出：</p>
+<div class="cbox"><pre class="copy">請讀這個資料夾裡的 AGENT-GUIDE.md，照它替我安裝 gnuplot 和 Zotero，再畫出兩張圖。先給我計畫，我回「可以」你再動手。</pre></div>
+<p class="see"><b>應該看到</b>它沒有馬上動手，而是先列計畫：它判斷你的電腦是 Windows 還是 Mac、會跑哪幾條指令、裝到哪裡、大概占多少空間。</p></li>
+<li><p class="do"><b>做什麼</b>把計畫讀一遍。看得懂、沒有奇怪的下載網址，就回它：</p>
+<div class="cbox"><pre class="copy">可以</pre></div>
+<p class="see"><b>應該看到</b>它開始一樣一樣裝，每裝完一樣就跑版本指令給你看。</p></li>
+<li><p class="do"><b>做什麼</b>看著它裝。Windows 會跳「使用者帳戶控制」視窗問你要不要允許，<b>agent 看不到這個視窗，你來按「是」</b>（視窗沒跳到最前面時，看工作列有沒有閃爍的盾牌圖示）。Mac 若問電腦登入密碼，也是你自己打，不要把密碼告訴 agent。</p></li>
+<li><p class="do"><b>做什麼</b>等它做完。</p>
+<p class="see"><b>應該看到</b>最後它給你一張表：裝了什麼、版本、裝在哪、怎麼移除；資料夾裡多了 <code>figure-demo.png</code> 和 <code>figure-bar.png</code> 兩張圖。</p></li>
+</ol>
+<div class="callout"><b>它沒給計畫就開始裝？</b>按停止，回它：「先停。照 AGENT-GUIDE.md 的規則，先只給計畫，我說可以再動手。」這不是它壞掉，是你在練「退回一次」。</div>
+<p>指引裡寫給 agent 的六條規則，各自在防什麼（想看原文就打開 <code>AGENT-GUIDE.md</code>，它是一般的文字檔）：</p>
+<div class="table"><table><thead><tr><th>規則</th><th>在防什麼</th></tr></thead><tbody>
+<tr><td>先給計畫，你說可以才動手</td><td>防它一口氣做完你才發現不對。你看過、說「可以」，主控權在你。</td></tr>
+<tr><td>只用 winget（Windows）或 Homebrew（Mac）裝</td><td>防它從來路不明的網站下載安裝檔。</td></tr>
+<tr><td>一次裝一樣、裝完就驗證</td><td>防它說「都裝好了」其實有一樣沒成功。</td></tr>
+<tr><td>要密碼或要按同意就停</td><td>按同意、打密碼是你的事。agent 不需要知道你的密碼。</td></tr>
+<tr><td>出錯就停、給錯誤原文</td><td>防它自己換來源一直試，越試越亂。錯誤原文你可以拿去問老師。</td></tr>
+<tr><td>只動這次要裝的東西</td><td>防它順手升級或移除你電腦上其他軟體。</td></tr>
+</tbody></table></div>
+<p><b>想裝本機版 LaTeX（選做）：</b>前兩樣裝完之後，再跟它說「我要裝本機版 LaTeX，照 AGENT-GUIDE.md 最後一節做」。檔案很大，課堂上網路慢就回家再裝；Mac 今天先用 Overleaf。</p>
+<div class="callout"><b>沒有 Antigravity？</b>照上週 <a href="../w10/paper-tools.html">論文工具箱</a> 的手動安裝步驟裝，一樣裝完要驗證。</div>
+<label class="check"><input type="checkbox" data-check="t3">（筆電）agent 給了計畫、我說可以、它裝完給了那張表。</label></section>
+
+<section id="t4"><div class="kicker">2-4 · 自己的筆電</div><h2>驗證，再照卡片自己做一次</h2>
+<p>agent 說裝好了不算，你自己跑得起來才算。</p>
+<ol>
+<li><p class="do"><b>做什麼</b>新開一個終端機（Windows 的 PowerShell，或 Mac 的「終端機」），打：</p>
+<div class="cbox"><pre class="copy">gnuplot --version</pre></div>
+<p class="see"><b>應該看到</b>一行 <code>gnuplot</code> 加版本號。</p></li>
+<li><p class="do"><b>做什麼</b>從開始功能表（Windows）或「應用程式」資料夾（Mac）打開 Zotero。</p>
+<p class="see"><b>應該看到</b>Zotero 視窗開起來，左邊有「我的文獻庫」。</p></li>
+<li><p class="do"><b>做什麼</b>照 <a href="#card-zotero">Zotero 卡</a> 替 Chrome 裝外掛（Zotero Connector）。這步 agent 做不了，要你自己按。</p>
+<p class="see"><b>應該看到</b>Chrome 工具列上有 Zotero Connector 的按鈕。</p></li>
+<li><p class="do"><b>做什麼</b>照 <a href="#card-gnuplot">gnuplot 卡</a> 和 <a href="#card-zotero">Zotero 卡</a> 各自己做一次。</p>
+<p class="see"><b>應該看到</b>跑出 <code>figure-demo.png</code> 和 <code>figure-bar.png</code>；Zotero 有那筆 BMC Geriatrics 2021 的文獻。<span class="ev">證據 ②</span> 截 <code>gnuplot --version</code> 的畫面，或 Zotero 開起來、有這筆文獻的畫面。</p></li>
+</ol>
+<label class="check"><input type="checkbox" data-check="t4">（筆電）gnuplot 有版本號、Zotero 開得起來，兩張卡都自己做過；證據 ② 截好了。</label></section>
+
+<section id="t5"><div class="kicker">2-5 · 教室電腦</div><h2>教室電腦：先開帳號，回家再裝</h2>
+<p>教室電腦每週還原，今天裝了下週就不見。今天做兩件事：</p>
+<ol>
+<li><p class="do"><b>做什麼</b>在無痕視窗到 <a href="https://www.zotero.org/" target="_blank" rel="noopener">zotero.org</a> 註冊帳號、登入。書庫跟著帳號走。之後在自己的筆電裝好 Zotero，到它的「設定 → 同步」登入同一個帳號，兩邊的文獻才會接起來。</p>
+<p class="see"><b>應該看到</b>登入後的個人頁面。<span class="ev">證據 ②</span> 截這個畫面。</p></li>
+<li><p class="do"><b>做什麼</b>把本頁網址寄給自己，回家照 <a href="#t3">2-3</a>、<a href="#t4">2-4</a> 在自己的筆電裝好、照卡片做一次。</p></li>
+</ol>
+<p class="small">想練習安裝流程的可以在教室電腦試裝。裝不起來（沒有管理員權限）是正常的，不用在意。</p>
+<label class="check"><input type="checkbox" data-check="t5">（教室電腦）zotero.org 帳號開好了，本頁網址寄給自己了；證據 ② 截好了。</label></section>
+
+<section id="demo"><div class="kicker">老師示範 · 約 10 分</div><h2>照三張卡各做一次給大家看</h2>
+<p>這段你只要看。老師用起始包，把三張卡各做一次：</p>
+<ol>
+<li><p><b><a href="#card-gnuplot">gnuplot 卡</a>。</b>看什麼：一行指令在終端機畫出字元圖；改 <code>figure-data.dat</code> 一個數字、重跑，<code>figure-demo.png</code> 就變了。</p></li>
+<li><p><b><a href="#card-zotero">Zotero 卡</a>。</b>看什麼：在論文網頁上按一下 Chrome 外掛，就收進一筆文獻；匯出的 <code>.bib</code> 跟起始包的 <code>refs.bib</code> 長得一樣。</p></li>
+<li><p><b><a href="#card-latex">本機 LaTeX 卡</a>。</b>看什麼：四行指令編出 <code>report-demo.pdf</code>，跟 Overleaf 的結果一樣；圖換掉、重編，PDF 跟著換。</p></li>
+</ol>
+<div class="callout"><b>下週預告：</b>把這整串交給 AI agent 做。今天你用手走過一輪，下週才看得懂它做了什麼、驗收得了。</div>
+<label class="check"><input type="checkbox" data-check="demo">我看完示範，說得出三個工具怎麼串在一起。</label></section>
+
+<section id="end"><div class="kicker">收尾 · 約 5 分</div><h2>交件、登出</h2>
+<ol>
+<li><p class="do"><b>做什麼</b>截圖和「想一想」交到 e學苑「W11」作業。</p></li>
+<li><p class="do"><b>做什麼</b>教室電腦：登出 Overleaf、zotero.org，再把無痕視窗整個關掉。</p></li>
+</ol>
+<h3>想一想（三選一，寫兩句）<span class="ev">證據 ③</span></h3>
+<ul>
+<li>LaTeX 跟 Word，你覺得差在哪？</li>
+<li>錯誤訊息你是怎麼看懂的？</li>
+<li>哪個工具你覺得期末報告用得上？為什麼？</li>
+</ul>
+<label class="check"><input type="checkbox" data-check="end">截圖和兩句話交了；教室電腦的帳號都登出、無痕視窗關了。</label></section>
+
+<section id="help"><div class="kicker">卡住怎麼辦</div><h2>先看錯誤訊息，再決定問誰</h2>
+<h3>Overleaf／LaTeX</h3>
+<div class="table"><table><thead><tr><th>看到什麼</th><th>通常是</th><th>怎麼處理</th></tr></thead><tbody>
+<tr><td>中文變成方框、空白或缺字</td><td>Compiler 不是 XeLaTeX</td><td>Menu → Settings → Compiler 改 XeLaTeX，再 Recompile</td></tr>
+<tr><td>一大堆紅字，第一個跟中文或 <code>xeCJK</code> 有關</td><td>Compiler 沒切 XeLaTeX</td><td>同上，先切 XeLaTeX</td></tr>
+<tr><td>正文出現 <code>[?]</code></td><td>書目還沒跑完，或 <code>\cite{…}</code> 的代號跟 <code>refs.bib</code> 對不上</td><td>再 Recompile 一次；還是一樣就核對 <code>\cite{Su2021}</code> 和 <code>refs.bib</code> 裡的代號</td></tr>
+<tr><td>文末沒有參考文獻</td><td>1-7 那三行的 <code>%</code> 沒拿乾淨，或 <code>refs.bib</code> 檔名不對</td><td>檢查三行開頭都沒有 <code>%</code>；左側檔名是 <code>refs.bib</code>，跟 <code>\bibliography{refs}</code> 對得上</td></tr>
+<tr><td><code>File 'figure-demo.png' not found</code> 之類</td><td>檔案沒上傳，或檔名大小寫不同</td><td>看左側檔案區有沒有那個檔；名字要跟原稿裡寫的一模一樣</td></tr>
+<tr><td>Overleaf 說編譯逾時（timed out）</td><td>伺服器忙，或原稿有地方卡住</td><td>再按一次 Recompile；還是逾時就把最近改的那幾行先改回來</td></tr>
+</tbody></table></div>
+<h3>安裝</h3>
+<div class="table"><table><thead><tr><th>看到什麼</th><th>通常是</th><th>怎麼處理</th></tr></thead><tbody>
+<tr><td>agent 沒給計畫就開始動手</td><td>它跳過了「先給計畫」</td><td>按停止，回它「先停。照 AGENT-GUIDE.md，先只給計畫，我說可以再動手」</td></tr>
+<tr><td>winget 或 brew 說找不到套件</td><td>套件名稱不對</td><td>請它跑 <code>winget search gnuplot</code>／<code>brew search gnuplot</code> 看正確名稱；還是找不到就照 <a href="../w10/paper-tools.html">論文工具箱</a> 手動裝</td></tr>
+<tr><td>裝完打 <code>gnuplot --version</code> 說找不到</td><td>舊的終端機視窗還不認得新裝的程式</td><td>關掉終端機，重新開一個再打</td></tr>
+<tr><td><code>warning: iconv failed to convert degree sign</code></td><td>只是字元轉換提醒</td><td>可以忽略，圖照樣產生</td></tr>
+<tr><td><code>can't read data file "figure-data.dat"</code></td><td>終端機所在的資料夾不是放資料檔的那個</td><td>用 <code>cd</code> 進到起始包解壓縮後的資料夾再跑</td></tr>
+<tr><td>Zotero Connector 按了沒反應</td><td>桌面版沒開</td><td>先開 Zotero 桌面版再按；或用魔術棒「依識別碼新增」貼 DOI</td></tr>
+<tr><td>agent 一直在等，畫面卻沒動</td><td>「使用者帳戶控制」視窗跑到其他視窗後面</td><td>看工作列有沒有閃爍的盾牌圖示，點它叫出視窗，按「是」</td></tr>
+</tbody></table></div>
+<h3>問 AI 可以，但照這三條</h3>
+<ol>
+<li>不貼密碼、驗證碼。</li>
+<li>只貼錯誤訊息，跟相關的那幾行。</li>
+<li>AI 說「好了」，你自己再跑一次、打開看，才算好。</li>
+</ol></section>
+</main></div><footer><div class="wrap">資訊科技與應用 AA／AB · W11「LaTeX 與報告工具：先用手寫一頁，再把工具裝好」。互動在瀏覽器中執行；個人文字不會由本頁上傳。選單名稱與工具版本以各網站當下畫面為準。2026-11-16 版。</div></footer>
+<script>
+(function(){'use strict';
+const $=id=>document.getElementById(id);
+document.querySelectorAll('pre.copy').forEach(p=>{const b=document.createElement('button');b.type='button';b.className='cbtn';b.textContent='複製';b.addEventListener('click',()=>{const t=p.innerText;const done=()=>{b.textContent='已複製';setTimeout(()=>{b.textContent='複製';},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,()=>fallback(t,done));}else{fallback(t,done);}});(p.parentElement.classList.contains('cbox')?p.parentElement:p).appendChild(b);});
+function fallback(t,done){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){}document.body.removeChild(a);}
+const checks=Array.from(document.querySelectorAll('[data-check]'));let saved={};const key='it-apply-w11-hand-tools-20261116';try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){saved={};$('storage-note').textContent='此瀏覽器無法讀取紀錄，關頁後進度可能消失；本頁仍可使用。';}
+function progress(){const n=checks.filter(c=>c.checked).length;$('progress').textContent='學習記錄 '+n+' / '+checks.length;}
+checks.forEach(c=>{c.checked=!!saved[c.dataset.check];c.addEventListener('change',()=>{saved[c.dataset.check]=c.checked;try{localStorage.setItem(key,JSON.stringify(saved));}catch(e){$('storage-note').textContent='此瀏覽器無法儲存，關頁後進度可能消失；本頁仍可使用。';}progress();});});progress();
+})();
+</script></body></html>
