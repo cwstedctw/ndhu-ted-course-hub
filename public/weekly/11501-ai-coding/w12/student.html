@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>W12｜先講清楚、先出考卷，再請 AI 動手</title>
+  <style>
+    :root { color-scheme: light; font: 100%/1.65 system-ui, sans-serif; color: #182b2a; background: #f4f7f4; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a { color: #075f60; text-underline-offset: .17em; }
+    a:hover { text-decoration-thickness: .16em; }
+    :focus-visible { outline: 3px solid #a35c16; outline-offset: 3px; }
+    [hidden] { display: none !important; }
+    .wrap { width: min(100% - 2rem, 62rem); margin-inline: auto; }
+    .hero { color: #fff; background: #144d4d; padding-block: clamp(2rem, 6vw, 4rem); }
+    .hero a { color: #fce1a1; }
+    .eyebrow { color: #fce1a1; font-weight: 650; letter-spacing: .07em; }
+    .subtitle { font-size: clamp(1.15rem, 3vw, 1.4rem); font-weight: 650; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 .7rem; }
+    h1 { font-size: clamp(1.8rem, 5.4vw, 3rem); }
+    h2 { font-size: clamp(1.3rem, 3.4vw, 1.7rem); }
+    h3 { font-size: 1.12rem; margin-top: 1.2rem; }
+    p, ol, ul { margin: .45rem 0 1rem; }
+    .hero p:last-of-type { max-width: 44rem; }
+    .choices, .jump { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0; list-style: none; margin-bottom: 0; }
+    .choices li { border: 1px solid #91beb9; padding: .25rem .7rem; border-radius: 1rem; }
+    .jump a { display: inline-block; padding: .35rem .65rem; }
+    .jump { margin-block: .85rem; }
+    main { padding-bottom: 2.5rem; }
+    section { scroll-margin-top: .8rem; margin-block: 1.1rem; }
+    .panel { background: #fff; border: 1px solid #d7e1dd; border-radius: 1rem; padding: clamp(1rem, 3.4vw, 1.75rem); }
+    .panel > :last-child { margin-bottom: 0; }
+    .step-num { display: inline-block; margin-right: .1em; padding: .05em .55em; border-radius: 1em; background: #0e6260; color: #fff; font-size: .8em; vertical-align: .1em; white-space: nowrap; }
+    .step-sep { color: #91beb9; margin-right: .1em; }
+    .tag { display: inline-block; font-size: .82em; font-weight: 700; padding: .05rem .55rem; border-radius: 1rem; margin-right: .35rem; vertical-align: .08em; white-space: nowrap; }
+    .tag-a { background: #0e6260; color: #fff; }
+    .tag-b { background: #f1d9a8; color: #5a3a06; }
+    .route { border-radius: .6rem; padding: .65rem .85rem; margin: .6rem 0 1rem; border-left: 5px solid; }
+    .route > :last-child { margin-bottom: 0; }
+    .route p { margin: .2rem 0 .5rem; }
+    .route-a { background: #e6f2f0; border-color: #0e6260; }
+    .route-b { background: #fdf3e0; border-color: #c8952f; }
+    li + li { margin-top: .32rem; }
+    .choices li + li, .jump li + li { margin-top: 0; }
+    .verify { background: #e5f4e9; border: 1px solid #8cc79d; border-left: 5px solid #2d8a4e; padding: .65rem .85rem; border-radius: .4rem; }
+    .stuck { margin: .6rem 0; border: 1px solid #e3c7c2; border-radius: .5rem; background: #fff8f6; }
+    .stuck summary { cursor: pointer; padding: .55rem .8rem; min-height: 44px; font-weight: 650; }
+    .stuck .stuck-tag { display: inline-block; font-size: .82em; font-weight: 700; padding: .05rem .55rem; border-radius: 1rem; margin-right: .4rem; background: #b6403a; color: #fff; vertical-align: .08em; }
+    .stuck p { margin: 0; padding: 0 .9rem .7rem; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; margin: .5rem 0 1rem; font-size: .96em; }
+    caption { text-align: left; font-weight: 700; padding-bottom: .35rem; }
+    th, td { border: 1px solid #d7e1dd; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+    th { background: #eff5f2; }
+    tbody th { white-space: nowrap; }
+    button { background: #0e6260; color: #fff; border: 0; border-radius: .5rem; padding: .45rem .8rem; min-height: 44px; font: inherit; cursor: pointer; }
+    button:hover { background: #10494a; }
+    /* 只寫 monospace 時 Chrome 會把等寬字縮到 13px 基準；先列具體字型才會跟著內文字級 */
+    code, pre { font-family: ui-monospace, Consolas, "Cascadia Mono", monospace; }
+    code { font-size: .93em; overflow-wrap: anywhere; }
+    pre { margin: .55rem 0; padding: .65rem .85rem; background: #182b2a; color: #f4f7f4; border-radius: .5rem; overflow-x: auto; font-size: .95em; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .prompt-box { margin: .6rem 0 1rem; }
+    .prompt-box .actions { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+    .copy-status { color: #1d6b45; font-size: .93em; }
+    .names td:last-child { font-weight: 650; }
+    .resource { margin: 0; }
+    .resource a { display: inline-block; min-height: 44px; max-width: 100%; align-content: center; }
+    @media print { .hero { color: #182b2a; background: #fff; padding-block: .5rem; } .hero a, .eyebrow { color: inherit; } .jump, button { display: none; } .panel { break-inside: avoid; } .stuck { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">和 AI 一起寫程式</p>
+      <h1>W12｜先講清楚、先出考卷，再請 AI 動手</h1>
+      <p class="subtitle">最近 7 天，到底算哪幾天？</p>
+      <ul class="choices" aria-label="今天要用的檔案">
+        <li><a href="starter.zip" download>起步檔 starter.zip</a></li>
+        <li><a href="deck.html">投影片 deck.html</a></li>
+      </ul>
+    </div>
+  </header>
+  <main class="wrap">
+    <nav aria-label="操作步驟">
+      <ol class="jump">
+        <li><a href="#step-1">第 1 步</a></li>
+        <li><a href="#step-2">第 2 步</a></li>
+        <li><a href="#step-3">第 3 步</a></li>
+        <li><a href="#step-4">第 4 步</a></li>
+        <li><a href="#step-5">第 5 步</a></li>
+        <li><a href="#step-6">第 6 步</a></li>
+        <li><a href="#step-7">第 7 步</a></li>
+        <li><a href="#step-8">第 8 步</a></li>
+        <li><a href="#step-9">第 9 步</a></li>
+        <li><a href="#step-10">第 10 步</a></li>
+        <li><a href="#help">卡關時先看這裡</a></li>
+        <li><a href="#basics">基礎知識補給站</a></li>
+        <li><a href="#terms">名詞小抄</a></li>
+      </ol>
+    </nav>
+
+    <section id="intro" class="panel" aria-label="今天的做法">
+      <p>今天做的東西很小：算出「最近 7 天學了幾分鐘、記了幾筆」。上週你用一段話就請 AI 做出來了。今天換一種做法，是東西要交給別人用的時候用的做法：</p>
+      <ol>
+        <li>先講清楚：把你要的規則一條一條寫下來。</li>
+        <li>先出考卷：請 AI 照規則先寫測試。功能還沒寫，測試一定不會過。</li>
+        <li>再請 AI 動手：另開一個對話寫功能，寫到測試全過。</li>
+        <li>自己驗：看它有沒有偷改考卷，再用另一個版本對照。</li>
+      </ol>
+      <div class="table-wrap">
+        <table>
+          <caption>兩條路線，分數一樣</caption>
+          <thead><tr><th></th><th><span class="tag tag-a">路線 A</span></th><th><span class="tag tag-b">路線 B</span></th></tr></thead>
+          <tbody>
+            <tr><th>用什麼</th><td>自己的筆電，加上會讀檔寫檔的 AI（agent）</td><td>教室電腦，加上聊天 AI</td></tr>
+            <tr><th>檔案怎麼改</th><td>agent 直接改資料夾裡的檔</td><td>AI 給你內容，你貼到測試頁和 GitHub</td></tr>
+            <tr><th>怎麼存檔</th><td>請 agent 存檔（commit）並推上 GitHub</td><td>在 GitHub 網頁上編輯，按 <code>Commit changes</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>今天不用新帳號，也不用安裝任何東西。需要：瀏覽器、GitHub 帳號、你平常用的 AI。</p>
+      <p class="resource"><a href="concept.html" target="_blank" rel="noopener">互動概念頁（為什麼要這樣做，會動的圖）</a></p>
+      <p class="resource"><a href="cheatsheet.html" target="_blank" rel="noopener">兩頁小抄（印出來放旁邊對進度）</a></p>
+    </section>
+
+    <section id="how" class="panel" aria-labelledby="how-title">
+      <h2 id="how-title">怎麼讀這一頁</h2>
+      <p>每一步先講要做的事。有分路線的地方，路線 A 和路線 B 各看各的。看到綠色的「看到這裡就對了」，親眼看到了再往下。卡住的時候，點開那一步的「卡住了」，或看最下面的卡關總表。</p>
+      <p>跟 AI 講話的地方，除了第 3 步那一句全班要一樣，其他只列「要講到的事」，用你自己的話說。</p>
+      <p>看不懂的詞，查最下面的基礎知識補給站和名詞小抄。想知道為什麼要這樣做，開互動概念頁。</p>
+      <div class="table-wrap">
+        <table>
+          <caption>每一步大概多久（老師估的，還沒在課堂上量過）</caption>
+          <thead><tr><th scope="col">步</th><th scope="col">做什麼</th><th scope="col">多久</th></tr></thead>
+          <tbody>
+            <tr><td>第 1 步</td><td>先猜答案</td><td>估 10 分鐘</td></tr>
+            <tr><td>第 2 步</td><td>拿起步檔，放進新的 repo</td><td>估 10 分鐘</td></tr>
+            <tr><td>第 3 步</td><td>一句話版</td><td>估 5 分鐘</td></tr>
+            <tr><td>第 4 步</td><td>寫你的規則</td><td>估 10 分鐘</td></tr>
+            <tr><td>第 5 步</td><td>請 AI 先問你問題</td><td>估 15 分鐘</td></tr>
+            <tr><td>第 6 步</td><td>請它只寫測試</td><td>估 20 分鐘</td></tr>
+            <tr><td>第 7 步</td><td>新對話寫功能</td><td>估 20 分鐘</td></tr>
+            <tr><td>第 8 步</td><td>一句話版考同一張考卷</td><td>估 10 分鐘</td></tr>
+            <tr><td>第 9 步</td><td>改版一圈（有時間再做）</td><td>估 20 分鐘</td></tr>
+            <tr><td>第 10 步</td><td>交什麼</td><td>估 5 分鐘</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="step-1" class="panel" aria-labelledby="step-1-title">
+      <h2 id="step-1-title"><span class="step-num">第 1 步</span><span class="step-sep">｜</span>先猜：最近 7 天是幾分鐘、幾筆？（不用 AI）</h2>
+      <p>今天是 11/23（一）。學習紀錄裡有這五筆：</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>日期</th><th>學了幾分鐘</th></tr></thead>
+          <tbody>
+            <tr><td>11/23（今天）</td><td>30</td></tr>
+            <tr><td>11/17</td><td>20</td></tr>
+            <tr><td>11/23（今天）</td><td>沒填</td></tr>
+            <tr><td>11/16</td><td>99</td></tr>
+            <tr><td>11/24</td><td>50</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>網站上那一行「最近 7 天：共幾分鐘、幾筆」，你覺得應該顯示多少？把你的答案寫在紙上。</p>
+      <p class="verify"><strong>看到這裡就對了。</strong> 你寫下了一組數字。跟旁邊的人對一下，不一樣是正常的。</p>
+      <p>「最近 7 天」有好幾種讀法。只講一句話的時候，AI 也只能挑一種來猜。今天要做的，是把你的讀法寫下來，讓它不用猜。</p>
+    </section>
+
+    <section id="step-2" class="panel" aria-labelledby="step-2-title">
+      <h2 id="step-2-title"><span class="step-num">第 2 步</span><span class="step-sep">｜</span>拿起步檔，放進一個新的 repo</h2>
+      <p>下載起步檔 <a href="starter.zip" download><code>starter.zip</code></a>，對它按右鍵 →「解壓縮全部」。裡面有六個檔：</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>檔案</th><th>做什麼</th><th>誰來改</th></tr></thead>
+          <tbody>
+            <tr><td><code>rules.md</code></td><td>你的規則</td><td>你</td></tr>
+            <tr><td><code>tests.js</code></td><td>測試：一條測試＝一個情況，加上它應該算出的答案</td><td>請 AI 照規則寫</td></tr>
+            <tr><td><code>recent7.js</code></td><td>功能：照規則寫的版本</td><td>請 AI 寫</td></tr>
+            <tr><td><code>recent7-quick.js</code></td><td>對照用：只用一句話請 AI 寫的版本</td><td>請 AI 寫</td></tr>
+            <tr><td><code>tests.html</code></td><td>測試頁</td><td>不要改</td></tr>
+            <tr><td><code>README.md</code></td><td>格式說明，主要給 AI 看；裡面的程式你看不懂沒關係</td><td>不用改</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>接著把這六個檔放進一個新的 repo。repo 就是 GitHub 上放這個專案的地方。</p>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>請 agent 打開這個資料夾，建一個 repo 推上 GitHub，名字用 <code>recent7</code>，選公開。它要跑的每一條指令先看過再同意。它說電腦上沒有 <code>gh</code>：你先在 GitHub 網頁建一個空的 <code>recent7</code>（不要勾 Add a README），把網址給它。還是推不上去，就照路線 B 的做法在網頁上傳。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>GitHub 右上角「＋」→ <code>New repository</code>。名字填 <code>recent7</code>，選 <code>Public</code>，按 <code>Create repository</code>。新 repo 的頁面上找 <code>uploading an existing file</code> 那個連結，把解壓出來的六個檔（不是整個資料夾）拖進去，等六個檔名都出現，在下面的訊息欄寫「起步檔」，再按 <code>Commit changes</code>。</p>
+      </div>
+      <p>然後打開測試頁。</p>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>在資料夾裡對 <code>tests.html</code> 點兩下。看到兩個都叫 tests 的檔，選圖示是瀏覽器的那一個；也可以請 agent 幫你用瀏覽器打開它。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>教室電腦用線上的這一頁就好，不用開資料夾裡的那一個：<a href="starter/tests.html#paste" target="_blank" rel="noopener">打開測試頁</a>。頁面最下面的「貼上模式」有三個格子，等一下 AI 給你的內容都貼在那裡。這個分頁先不要關。</p>
+      </div>
+      <p class="verify"><strong>看到這裡就對了。</strong> 瀏覽器打開一頁，最上面寫「還沒有測試」。GitHub 上的 <code>recent7</code> 最外層看得到六個檔。</p>
+      <details class="stuck">
+        <summary><span class="stuck-tag">卡住了</span>點兩下 <code>.js</code> 檔跳出一個錯誤視窗</summary>
+        <p>那是 Windows 想把它當程式執行，按「確定」關掉就好，檔案沒壞。要看 <code>.js</code>、<code>.md</code> 的內容：路線 A 用你的編輯器開；路線 B 到 GitHub 上點那個檔來看。</p>
+      </details>
+    </section>
+
+    <section id="step-3" class="panel" aria-labelledby="step-3-title">
+      <h2 id="step-3-title"><span class="step-num">第 3 步</span><span class="step-sep">｜</span>先做一個對照組：一句話版</h2>
+      <p>開一個新的對話，把下面這句話交給 AI。全班用同一句，等一下才比得起來。</p>
+      <div class="prompt-box">
+        <pre id="prompt-quick">照 README.md 的格式，幫我寫 recent7：算最近 7 天學了幾分鐘、記了幾筆。寫在 recent7-quick.js。</pre>
+        <div class="actions"><button type="button" data-copy="prompt-quick">複製</button><span class="copy-status" aria-live="polite"></span></div>
+      </div>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>在起步檔的資料夾裡跟 agent 說這句話。寫好之後請它存檔（commit）並推上 GitHub，訊息寫「一句話版」。它會先列出要存哪些檔，看過再同意。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>先按下面的鈕複製 <code>README.md</code> 的內容貼給聊天 AI，再貼上面那句話，請它給你完整的 <code>recent7-quick.js</code>。把它給的內容存到 GitHub：點開 <code>recent7-quick.js</code> → 右上鉛筆圖示 → 全選、貼上 → 按綠色的 <code>Commit changes...</code> → 訊息寫「一句話版」→ 再按一次 <code>Commit changes</code>。同一份內容也貼進測試頁「貼上模式」的第三格，按「用貼上的內容跑測試」。畫面還是寫「還沒有測試」是正常的，因為測試還沒寫。</p>
+        <div class="prompt-box">
+          <textarea id="src-readme" hidden readonly aria-hidden="true"># 最近 7 天（W12 起步檔）
+
+這個資料夾只做一件小事：算出「最近 7 天學了幾分鐘、記了幾筆」。
+重點不在這個功能，在做法：先寫規則，先寫測試，再寫功能。
+
+| 檔案 | 做什麼 | 誰來改 |
+|---|---|---|
+| `rules.md` | 你的規則：哪些紀錄算、哪些不算 | 你 |
+| `tests.js` | 測試：一條測試＝一個情況，加上它應該算出的答案 | 請 AI 照規則寫 |
+| `recent7.js` | 功能本體：照規則寫的版本 | 請 AI 寫，寫到測試全過 |
+| `recent7-quick.js` | 對照用：只用一句話請 AI 寫的版本 | 請 AI 寫 |
+| `tests.html` | 測試頁：打開就看到每條測試過了沒 | 不要改 |
+| `README.md` | 這份說明 | 不用改 |
+
+## 怎麼看測試結果
+
+用瀏覽器打開 `tests.html`。表格有四欄：名字、我預期、實際上、一樣嗎。
+全部一樣是綠燈；有一條不一樣就是紅燈。改了檔案之後，重新整理這一頁。
+想看一句話版過了幾條，按頁面上的「考一句話版」。
+
+在 GitHub 網頁上改的檔，不會跑進你電腦裡的資料夾。那種情況用測試頁最下面的「貼上模式」：把內容貼進去，按「用貼上的內容跑測試」。
+
+## 資料長什麼樣
+
+一筆學習紀錄：
+
+    { log_date: '2026-11-23', minutes: 30 }
+
+- `log_date`：哪一天，寫成 `'年-月-日'`。
+- `minutes`：學了幾分鐘。沒填的時候是 `null`。
+- 紀錄可能還有別的欄位（例如 `topic`），這個功能用不到。
+
+## 功能的格式（recent7.js 和 recent7-quick.js 都一樣）
+
+    function recent7(records, today) {
+      // records：一串紀錄（陣列）
+      // today：今天的日期，例如 '2026-11-23'
+      return { minutes: 0, count: 0 };   // minutes＝總共幾分鐘，count＝幾筆
+    }
+
+「今天」一律用傳進來的 `today`，不要自己去問電腦現在幾號。這樣同一條測試哪一天跑都是同樣的結果。
+要怎麼算，不寫在這裡，看 `rules.md`。
+
+## 測試的格式（tests.js）
+
+一條測試呼叫一次 `addCase`：
+
+    addCase({
+      name: '規則 1：（這條測試在檢查什麼）',
+      today: '2026-11-23',
+      records: [
+        { log_date: '2026-11-23', minutes: 30 }
+      ],
+      expect: { minutes: 30, count: 1 }
+    });
+
+- `name` 開頭寫它對應 `rules.md` 的第幾條規則。
+- `expect` 寫「照規則應該算出什麼」。測試頁只比 `expect` 裡寫到的欄位。
+
+## 給 AI 的三條約定
+
+1. 用一般的 `function recent7(records, today) { ... }`。不要用 `export`、`import`、`require`、`module.exports`，測試頁會讀不到。
+2. 不要改 `tests.html`，也不要新增其他檔案。
+3. 一次只做被交代的那個檔。寫測試的時候不寫功能；寫功能的時候不改測試。
+</textarea>
+          <div class="actions"><button type="button" data-copy="src-readme">複製 README.md 的內容</button><span class="copy-status" aria-live="polite"></span></div>
+        </div>
+      </div>
+      <p>現在先不要管它寫得對不對。這個對話可以關了。</p>
+      <p class="verify"><strong>看到這裡就對了。</strong> GitHub 上的 <code>recent7-quick.js</code> 不再是「還沒做」那一行，多了一筆「一句話版」。</p>
+    </section>
+
+    <section id="step-4" class="panel" aria-labelledby="step-4-title">
+      <h2 id="step-4-title"><span class="step-num">第 4 步</span><span class="step-sep">｜</span>寫你的規則（不用 AI）</h2>
+      <p>打開 <code>rules.md</code>。先寫一句話「這個功能要做什麼」，再寫規則，一條一句。不一定要剛好五條。</p>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>用你的編輯器開 <code>rules.md</code>，寫完存檔。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>在 GitHub 上點開 <code>rules.md</code> → 右上鉛筆圖示 → 直接在裡面寫。</p>
+      </div>
+      <p>怎麼知道寫得夠不夠清楚？拿第 1 步的五筆資料，一筆一筆問自己：這一筆算不算？答得出來，而且規則裡找得到那一句，才算寫到了。</p>
+      <p>寫的時候想想這幾種紀錄：今天的、剛好一個星期前的、日期寫到明天的、沒填分鐘的，還有一筆都沒有的時候。</p>
+      <p><strong>再加一條你自己的規矩。</strong> 就是只有你才會這樣規定、別人猜不到的那種。例如：一筆最多算幾分鐘？一天最多算幾筆？少於幾分鐘的不算？挑一個，或自己想一個。</p>
+      <p>「不做什麼」也寫一行：這次不處理的事。</p>
+      <p>存檔一次（commit），訊息寫「規則」。</p>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>請 agent 把這次的改動存檔（commit）並推上 GitHub，訊息寫「規則」。它會先列出要存哪些檔，看過再同意。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>按綠色的 <code>Commit changes...</code>，跳出小視窗後，訊息那一格寫「規則」，再按一次裡面的 <code>Commit changes</code>。</p>
+      </div>
+      <p class="verify"><strong>看到這裡就對了。</strong> 五筆資料每一筆算不算，你都能指著某一條規則回答。規則裡有一條是你自己的規矩。</p>
+    </section>
+
+    <section id="step-5" class="panel" aria-labelledby="step-5-title">
+      <h2 id="step-5-title"><span class="step-num">第 5 步</span><span class="step-sep">｜</span>請 AI 先問你問題</h2>
+      <p>再開一個新的對話，不要用第 3 步那個。這個對話只負責寫測試。</p>
+      <p>先不要請它寫。請它讀 <code>README.md</code> 和 <code>rules.md</code>，把規則裡講得不夠清楚、它得自己猜的地方，一條一條列成問題問你。</p>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>請 agent 讀資料夾裡這兩個檔。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>把兩份內容都貼給它，每一份前面先打一行檔名。<code>README.md</code> 用下面的鈕複製。<code>rules.md</code> 到 GitHub 上點開它 → 鉛筆圖示 → 全選、複製，複製完按 <code>Cancel changes</code> 離開。</p>
+        <div class="prompt-box">
+          <div class="actions"><button type="button" data-copy="src-readme">複製 README.md 的內容</button><span class="copy-status" aria-live="polite"></span></div>
+        </div>
+      </div>
+      <p>它如果一邊問，一邊就把程式寫出來了，請它先停：你還沒回答。</p>
+      <p>它問的每一題，你有三種回答：</p>
+      <ol>
+        <li>我決定是這樣。→ 補進規則。</li>
+        <li>這次不管。→ 寫進「不做什麼」。</li>
+        <li>我沒想過。→ 想一下，再選 1 或 2。</li>
+      </ol>
+      <p>把問答記在 <code>rules.md</code> 最下面，一題一行。老師試的時候，三個 AI 各問了 7 到 19 題。</p>
+      <p>不用每一題都答成規則。跟你的五筆資料無關的，多半可以寫進「不做什麼」。</p>
+      <p>再存檔一次，訊息寫「規則：補上 AI 問的」。</p>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>自己改好 <code>rules.md</code>、存檔，再請 agent 存檔（commit）並推上 GitHub。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>回 GitHub 點開 <code>rules.md</code> → 鉛筆圖示 → 把規則、「不做什麼」和問答補進去 → <code>Commit changes...</code> → 訊息寫「規則：補上 AI 問的」→ 再按一次 <code>Commit changes</code>。</p>
+      </div>
+      <p class="verify"><strong>看到這裡就對了。</strong> <code>rules.md</code> 比剛才長，「不做什麼」不是空的。</p>
+    </section>
+
+    <section id="step-6" class="panel" aria-labelledby="step-6-title">
+      <h2 id="step-6-title"><span class="step-num">第 6 步</span><span class="step-sep">｜</span>請它寫測試，只寫測試</h2>
+      <p>在同一個對話裡，請它照補好的規則寫測試。</p>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>先請它重新讀一次 <code>rules.md</code>。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>先把補好的 <code>rules.md</code> 整份再貼給它一次。它手上那一份還是舊的。</p>
+      </div>
+      <p>你的話裡要講到這三件事：</p>
+      <ul>
+        <li>照 <code>rules.md</code> 寫 <code>tests.js</code>，每條規則至少一個情況，名字開頭標規則幾。</li>
+        <li>只改 <code>tests.js</code>。功能先不要寫，<code>recent7.js</code> 不要動。</li>
+        <li>寫完告訴我一共幾條，每條規則各幾條。</li>
+      </ul>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>它改完之後，回測試頁重新整理。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>請它給你完整的 <code>tests.js</code>，貼進測試頁「貼上模式」的第一格，按「用貼上的內容跑測試」。</p>
+      </div>
+      <p>檢查三件事：</p>
+      <ol>
+        <li>它只動了 <code>tests.js</code> 嗎？</li>
+        <li>測試頁上每一列都是紅的，「實際上」那一格寫「還沒做」。哪一列寫的是「這條測試寫得不完整」，請它把那一條修好。</li>
+        <li>它說的條數，跟測試頁最上面寫的條數一樣嗎？老師試的時候，AI 說它寫了 25 條，測試頁數出來是 23 條。</li>
+      </ol>
+      <p><strong>全紅才對。</strong> 功能還沒寫，測試就過了，代表那一條什麼都沒檢查到，或是它偷偷把功能也寫了。</p>
+      <p>挑兩條測試，自己用手算一次「我預期」那一格對不對。測試也是 AI 寫的，也會錯。測試裡的日期寫成 <code>2026-11-23</code> 這個樣子，沒填分鐘寫成 <code>null</code>。</p>
+      <p>存檔（commit），訊息寫「測試（紅燈）」。這一筆很重要：它證明測試比功能早。</p>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>請 agent 存檔並推上 GitHub。先看它列出的檔：應該只有 <code>tests.js</code>。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>在 GitHub 上點開 <code>tests.js</code> → 鉛筆圖示 → 全選、貼上它給的完整內容 → <code>Commit changes...</code> → 訊息寫「測試（紅燈）」→ 再按一次 <code>Commit changes</code>。</p>
+      </div>
+      <p class="verify"><strong>看到這裡就對了。</strong> 測試頁最上面寫「N 條裡有 N 條不一樣（紅燈）」。GitHub 上多了一筆「測試（紅燈）」。</p>
+      <details class="stuck">
+        <summary><span class="stuck-tag">卡住了</span>功能還沒寫，卻有幾條是綠的</summary>
+        <p>先看測試頁上「現在考的是」那一行，是不是 <code>recent7.js</code>（照規則寫的版本）。不是就按「考照規則寫的版本」。路線 B 再看第二格是不是空的；有東西就清掉，再按「用貼上的內容跑測試」。這兩樣都對，才是 AI 順手把功能也寫了：請它把 <code>recent7.js</code> 改回原來那個只寫「還沒做」的樣子，這一步只留 <code>tests.js</code>。</p>
+      </details>
+      <details class="stuck">
+        <summary><span class="stuck-tag">卡住了</span>測試頁還是寫「還沒有測試」</summary>
+        <p>它可能用了別的寫法。請它照 <code>README.md</code> 裡 <code>addCase</code> 的格式重寫。</p>
+      </details>
+    </section>
+
+    <section id="step-7" class="panel" aria-labelledby="step-7-title">
+      <h2 id="step-7-title"><span class="step-num">第 7 步</span><span class="step-sep">｜</span>另開一個新對話，請 AI 寫功能</h2>
+      <p>為什麼要換一個對話：出考卷的和寫答案的要分開。同一個對話又出題又作答，它看漏的地方會一起過關。</p>
+      <p>你的話裡要講到這三件事：</p>
+      <ul>
+        <li>只看 <code>README.md</code>、<code>rules.md</code>、<code>tests.js</code>。</li>
+        <li>寫 <code>recent7.js</code>，寫到測試全部通過。只改 <code>recent7.js</code>。</li>
+        <li>不准改 <code>tests.js</code>。規則和測試對不上的地方，停下來告訴我。</li>
+      </ul>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>它改完之後，回測試頁重新整理。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>把三個檔的內容貼給它，每一份前面先打一行檔名。<code>README.md</code> 用下面的鈕複製；<code>rules.md</code>、<code>tests.js</code> 到 GitHub 上複製，做法跟第 5 步一樣。請它給你完整的 <code>recent7.js</code>，貼進「貼上模式」的第二格，按「用貼上的內容跑測試」。它如果另外給你一份改過的 <code>tests.js</code>，不要貼。</p>
+        <div class="prompt-box">
+          <div class="actions"><button type="button" data-copy="src-readme">複製 README.md 的內容</button><span class="copy-status" aria-live="polite"></span></div>
+        </div>
+      </div>
+      <p>還有紅的：把紅的那幾列（名字、我預期、實際上）原樣貼回給它，請它對照 <code>rules.md</code> 修。修完看全部的測試，不要只看那一條。</p>
+      <p>它說「是測試寫錯了」：先回 <code>rules.md</code> 看誰對。真的是測試錯，回第 6 步那個對話改測試，而且另外存檔一筆，訊息寫清楚改了哪一條。</p>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>測試改過之後，新的 <code>tests.js</code> 也要貼回測試頁的第一格，再按一次「用貼上的內容跑測試」。</p>
+      </div>
+      <p class="verify"><strong>看到這裡就對了。</strong> 測試頁最上面寫「N 條全部一樣（綠燈）」。</p>
+      <p>存檔（commit），訊息寫「功能（綠燈）」。</p>
+      <div class="route route-a">
+        <p><span class="tag tag-a">路線 A</span>請 agent 存檔並推上 GitHub。</p>
+      </div>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>在 GitHub 上點開 <code>recent7.js</code> → 鉛筆圖示 → 全選、貼上 → <code>Commit changes...</code> → 訊息寫「功能（綠燈）」→ 再按一次 <code>Commit changes</code>。</p>
+      </div>
+      <p>然後看這一筆改了哪些檔：在 <code>recent7</code> 的首頁點 <code>Commits</code>（存檔紀錄），最新的一筆在最上面，點它的訊息。</p>
+      <p class="verify"><strong>看到這裡就對了。</strong> 這一筆只有 <code>recent7.js</code> 一個檔。<code>tests.js</code> 不在裡面。</p>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>你一次只改一個檔，這一筆本來就只有一個檔。你要確認的是另一件事：AI 有沒有另外給你一份改過的 <code>tests.js</code>。</p>
+      </div>
+      <details class="stuck">
+        <summary><span class="stuck-tag">卡住了</span>最上面出現一個黃色的框「有檔案沒讀好，先看這裡」</summary>
+        <p>常見原因：用了 <code>export</code>、<code>import</code>，括號沒對上，或函式的名字不是 <code>recent7</code>。把 <code>recent7.js</code> 的內容貼到「貼上模式」的第二格，按「用貼上的內容跑測試」，再看最上面那個框，詳細的錯誤訊息會出現在裡面。把那段訊息貼回給 AI。</p>
+      </details>
+      <details class="stuck">
+        <summary><span class="stuck-tag">卡住了</span>「實際上」那格的數字有引號，像 <code>minutes: "50"</code></summary>
+        <p>它回傳的是文字不是數字。把那一列貼回給它。</p>
+      </details>
+      <details class="stuck">
+        <summary><span class="stuck-tag">卡住了</span>資料夾裡多了別的檔</summary>
+        <p>請它刪掉。<code>README.md</code> 的約定第 2 條：不新增其他檔案。</p>
+      </details>
+    </section>
+
+    <section id="step-8" class="panel" aria-labelledby="step-8-title">
+      <h2 id="step-8-title"><span class="step-num">第 8 步</span><span class="step-sep">｜</span>讓一句話版考同一張考卷</h2>
+      <p>在測試頁按「考一句話版」。</p>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>先看第三格有沒有第 3 步的一句話版。不見了就回 GitHub 點開 <code>recent7-quick.js</code>，把內容複製回來貼上。第一格要是你的 <code>tests.js</code>。</p>
+      </div>
+      <p>看它幾條一樣、幾條不一樣。每一條不一樣的，在紙上回答兩件事：它對到 <code>rules.md</code> 的哪一條規則？是它猜錯了，還是我沒講？</p>
+      <p>你自己的那條規矩，它只能用猜的，多半沒過。</p>
+      <p>其他條全部都一樣也有可能，代表這次它猜得跟你一樣。差別在這裡：照規則寫的那一版，你知道它為什麼對；一句話那一版，你是考過了才知道。</p>
+      <p>看完按「考照規則寫的版本」切回來。</p>
+      <p class="verify"><strong>看到這裡就對了。</strong> 你說得出一句話版哪幾條跟你不一樣。全部一樣的話，你知道那是它這次剛好猜中。</p>
+    </section>
+
+    <section id="step-9" class="panel" aria-labelledby="step-9-title">
+      <h2 id="step-9-title"><span class="step-num">第 9 步</span><span class="step-sep">｜</span>改版一圈（有時間再做）</h2>
+      <p>加一條新規則：多回報一個數字 <code>days</code>，這 7 天裡有幾天有紀錄。</p>
+      <p>順序一樣，每一步各存檔一筆：</p>
+      <ol>
+        <li>規則：在 <code>rules.md</code> 加一條。</li>
+        <li>測試：回第 6 步那個對話，請它只加新規則的測試。新的那幾條紅，舊的還是綠。</li>
+        <li>功能：回第 7 步那個對話，請它改到全綠。</li>
+      </ol>
+      <div class="route route-b">
+        <p><span class="tag tag-b">路線 B</span>做法跟第 4、6、7 步一樣：在 GitHub 上改檔，新的內容貼進測試頁對應的格子，再按「用貼上的內容跑測試」。</p>
+      </div>
+      <p class="verify"><strong>看到這裡就對了。</strong> 舊的測試一條都沒變紅。改版沒有把原本對的弄壞，這是測試留下來的好處。</p>
+    </section>
+
+    <section id="step-10" class="panel" aria-labelledby="step-10-title">
+      <h2 id="step-10-title"><span class="step-num">第 10 步</span><span class="step-sep">｜</span>交什麼，下課前</h2>
+      <p>老師請你交東西時，交你的 <code>recent7</code> 的 GitHub 網址，和一張測試頁全綠的截圖。作業老師上課時會在 e學苑 開。</p>
+      <p>截圖之前，先確定測試頁考的是「照規則寫的版本」。</p>
+      <div class="table-wrap">
+        <table>
+          <caption>GitHub 上的存檔紀錄，從舊到新應該長這樣（GitHub 的頁面是最新的排在最上面）</caption>
+          <thead><tr><th>第幾筆</th><th>訊息</th><th>這一筆動到的檔</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>起步檔（路線 A 的訊息是 agent 寫的，不一樣沒關係）</td><td>六個檔</td></tr>
+            <tr><td>2</td><td>一句話版</td><td><code>recent7-quick.js</code></td></tr>
+            <tr><td>3</td><td>規則</td><td><code>rules.md</code></td></tr>
+            <tr><td>4</td><td>規則：補上 AI 問的</td><td><code>rules.md</code></td></tr>
+            <tr><td>5</td><td>測試（紅燈）</td><td><code>tests.js</code></td></tr>
+            <tr><td>6</td><td>功能（綠燈）</td><td><code>recent7.js</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>做了第 9 步的人，後面會再多三筆。</p>
+      <p>教室電腦：登出 GitHub 和 AI 工具，再重新開機。教室電腦重開會還原，留下的登入一次清乾淨。</p>
+    </section>
+
+    <section id="names" class="panel" aria-labelledby="names-title">
+      <h2 id="names-title">你剛剛做的事，有名字</h2>
+      <div class="table-wrap">
+        <table class="names">
+          <thead><tr><th>你做的</th><th>名字</th></tr></thead>
+          <tbody>
+            <tr><td>先把規則寫下來，再動手</td><td>規格先行（spec-driven development）</td></tr>
+            <tr><td>先寫測試、看它紅，再寫功能到綠</td><td>測試先行（test-driven development，簡稱 TDD）</td></tr>
+            <tr><td>改版之後，舊測試還在替你守著</td><td>迴歸測試（regression test）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="more" class="panel" aria-labelledby="more-title">
+      <h2 id="more-title">想多做一點（選做）</h2>
+      <ul>
+        <li>把 <code>recent7</code> 接回上週的學習紀錄網站：請 AI 讓那一行「最近 7 天」改用你這個函式。</li>
+        <li>跟同學交換 <code>tests.js</code>，用他的考卷考你的功能。不一樣的地方，就是你們兩個規則不同的地方。</li>
+      </ul>
+    </section>
+
+    <section id="help" class="panel" aria-labelledby="help-title">
+      <h2 id="help-title">卡關時先看這裡</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>你看到</th><th>多半是</th><th>怎麼辦</th></tr></thead>
+          <tbody>
+            <tr><td>測試頁寫「還沒有測試」，可是 AI 說寫好了</td><td><code>tests.js</code> 沒存進資料夾，或它沒用 <code>addCase</code></td><td>路線 B 確認貼在第一格、按了「用貼上的內容跑測試」；請它照 <code>README.md</code> 的格式重寫</td></tr>
+            <tr><td>最上面黃色的框：有檔案沒讀好，先看這裡</td><td>用了 <code>export</code>、<code>import</code>，括號沒對上，或函式的名字不是 <code>recent7</code></td><td>貼到「貼上模式」的第二格再跑一次，看那個框裡的詳細錯誤，貼給 AI</td></tr>
+            <tr><td>每一列都寫「出錯：…」</td><td>功能一執行就壞</td><td>把「出錯：」後面那段貼給 AI</td></tr>
+            <tr><td>功能還沒寫就有綠的</td><td>正在考一句話版、第二格有舊內容，或它順手寫了功能</td><td>先按「考照規則寫的版本」；路線 B 清掉第二格；都對了再退回它一次</td></tr>
+            <tr><td>AI 想改 <code>tests.js</code> 讓測試過</td><td>它在改考卷</td><td>不准。先回 <code>rules.md</code> 看誰對；真的要改測試，回寫測試的那個對話改，另外存檔一筆</td></tr>
+            <tr><td>GitHub 上「功能」那一筆裡有 <code>tests.js</code></td><td>寫功能的時候測試被動過</td><td>點開那一筆看它改了什麼，不同意就改回去</td></tr>
+            <tr><td>AI 問了二十題，答不完</td><td>它把想得到的全問了</td><td>不用全答。跟你的五筆資料無關的寫進「不做什麼」</td></tr>
+            <tr><td>點兩下 <code>.js</code> 跳出錯誤視窗</td><td>Windows 想執行它</td><td>按「確定」關掉；要看內容改用編輯器或到 GitHub 上看</td></tr>
+            <tr><td>貼上之後沒反應</td><td>沒按按鈕</td><td>按「用貼上的內容跑測試」</td></tr>
+            <tr><td>貼上模式裡的內容不見了</td><td>測試頁那個分頁關掉過</td><td>回 GitHub 點開那幾個檔，把內容複製回來貼上。GitHub 上的才是正本</td></tr>
+            <tr><td>按了「考一句話版」，每一列都寫還沒做</td><td>一句話版沒貼進第三格，或 <code>recent7-quick.js</code> 還是空殼</td><td>路線 B 從 GitHub 把內容貼回第三格；還沒做過就回第 3 步</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>卡住先把完整的錯誤訊息貼給 AI。密碼和金鑰不要貼。</p>
+    </section>
+
+    <section id="basics" class="panel" aria-labelledby="basics-title">
+      <h2 id="basics-title">基礎知識補給站</h2>
+      <p>看不懂某個詞、想知道為什麼要這樣做，來這裡查。每一段後面可以連到互動概念頁，那裡的圖會動。</p>
+      <h3>為什麼一句話不夠</h3>
+      <p>「最近 7 天」聽起來很清楚，可是包不包含今天、明天的算不算、沒填分鐘的算不算一筆，每個人想的不一樣。你只講一句，AI 就替你挑一種。它挑的不一定是你要的；你不問，它多半也不會說。</p>
+      <p class="resource"><a href="concept.html#s1" target="_blank" rel="noopener">概念頁：一句話有幾種讀法</a></p>
+      <h3>規則要寫到多清楚</h3>
+      <p>一條一句。拿一筆資料來問，答得出「算」或「不算」，而且指得出是哪一條規則說的，才算寫到了。只有你會這樣規定的事，一定要寫下來，因為別人猜不到。</p>
+      <p class="resource"><a href="concept.html#s2" target="_blank" rel="noopener">概念頁：規則怎麼寫才夠清楚</a></p>
+      <h3>為什麼讓 AI 先問</h3>
+      <p>你寫規則的時候，會漏掉自己覺得理所當然的事。AI 讀完會發現它得自己猜的地方。讓它先問，你回答「我決定是這樣」「這次不管」或「我沒想過」，都比讓它安靜地自己決定好。</p>
+      <p class="resource"><a href="concept.html#s3" target="_blank" rel="noopener">概念頁：讓 AI 先問</a></p>
+      <h3>測試是什麼</h3>
+      <p>一條測試，是一個情況加上它應該算出的答案。測試頁把每一條拿去問功能，再告訴你功能的回答跟你預期的一不一樣。</p>
+      <p class="resource"><a href="concept.html#s4" target="_blank" rel="noopener">概念頁：考卷先出，紅燈與綠燈</a></p>
+      <h3>為什麼先寫測試，而且要看到全紅</h3>
+      <p>功能還沒寫，每一條測試都應該不過。這時候就有綠的，代表那一條什麼都沒檢查到，或是功能已經被偷偷寫了。先看到紅、再看到它變綠，你才知道變綠是因為功能寫對了。</p>
+      <h3>為什麼換一個對話寫功能</h3>
+      <p>同一個對話又出考卷又寫答案，它出題時想錯的地方，作答時會照樣想錯，然後測試全過。換一個對話，寫功能的那一位不知道出題的時候想了什麼，只能照你的規則和考卷做。</p>
+      <h3>存檔是什麼</h3>
+      <p>在 GitHub 上留一筆紀錄：什麼時候、改了哪些檔、為什麼。今天每改完一樣東西就存一筆：規則、測試、功能分開存。之後誰都點得開來看：測試是不是比功能早、寫功能的時候有沒有動到測試。</p>
+      <p class="resource"><a href="concept.html#s5" target="_blank" rel="noopener">概念頁：存檔紀錄是證據</a></p>
+      <h3>路線 A 和路線 B 差在哪裡</h3>
+      <p>路線 A 用的 AI 會自己讀檔、改檔，所以你要看的是它動了哪些檔。路線 B 用的是聊天 AI，它只會回你文字，所以由你把內容貼到測試頁和 GitHub。兩條路做的是同一件事，分數一樣。</p>
+      <h3>recent7 是什麼</h3>
+      <p>它是一個函式：你給它一批紀錄和「今天是哪一天」，它還你一組數字，一開始是兩個：幾分鐘、幾筆。今天是哪一天要由外面給它，不讓它自己去問電腦；不然測試今天會過，明天日期一變就全紅。</p>
+    </section>
+
+    <section id="terms" class="panel" aria-labelledby="terms-title">
+      <h2 id="terms-title">名詞小抄</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">詞</th><th scope="col">白話</th></tr></thead>
+          <tbody>
+            <tr><td>repo</td><td>GitHub 上放這個專案的地方</td></tr>
+            <tr><td>存檔（commit）</td><td>留一筆紀錄：什麼時候、改了哪些檔、為什麼</td></tr>
+            <tr><td>agent</td><td>會自己讀檔、改檔的 AI</td></tr>
+            <tr><td>規則</td><td>你決定的、這個功能該怎麼算，一條一句</td></tr>
+            <tr><td>測試</td><td>一個情況，加上它應該算出的答案</td></tr>
+            <tr><td>紅燈、綠燈</td><td>測試頁上有不一樣的是紅燈，全部一樣是綠燈</td></tr>
+            <tr><td>函式</td><td>給它東西，它照固定的做法還你答案</td></tr>
+            <tr><td>一句話版</td><td>只用一句話請 AI 寫的版本，拿來對照</td></tr>
+            <tr><td>貼上模式</td><td>測試頁最下面的三個格子，把內容貼進去就能考</td></tr>
+            <tr><td>起步檔</td><td>老師給的六個檔，功能和測試都還是空的</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script>
+    document.querySelectorAll("[data-copy]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var source = document.getElementById(button.dataset.copy);
+        var status = button.parentElement.querySelector(".copy-status");
+        var isField = source.tagName === "TEXTAREA";
+        var text = isField ? source.value : source.textContent;
+        function done(ok) {
+          status.textContent = ok ? "已複製，貼給 AI 就好。" : "沒辦法自動複製：已經幫你選好文字，按 Ctrl+C。";
+        }
+        function fallback() {
+          var ok = false;
+          if (isField) {
+            // 收起來的格子選不到字：暫時放一個看不見的輸入框來複製
+            var tmp = document.createElement("textarea");
+            tmp.value = text;
+            tmp.setAttribute("readonly", "");
+            tmp.style.position = "fixed";
+            tmp.style.left = "-9999px";
+            document.body.appendChild(tmp);
+            tmp.select();
+            try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+            document.body.removeChild(tmp);
+            status.textContent = ok ? "已複製，貼給 AI 就好。" : "沒辦法自動複製，請改用電腦上的瀏覽器再試一次。";
+            return;
+          }
+          selectText(source);
+          try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+          done(ok);
+        }
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+        } else {
+          fallback();
+        }
+      });
+    });
+    function selectText(node) {
+      var range = document.createRange();
+      range.selectNodeContents(node);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  </script>
+</body>
+</html>
