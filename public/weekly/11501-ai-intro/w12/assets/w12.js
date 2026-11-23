@@ -116,25 +116,78 @@ if(location.hash.indexOf('#term-') === 0) openLocal(location.hash.slice(1));
 var QUIZ = [
   {q:"Token IDs 5866 (▁cat) and 5867 are next to each other. Are their meanings close?", o:["Yes, close numbers mean close meanings","No, an ID is just a position in the list"], a:1, why:"IDs are positions in the list; meaning comes from embeddings in Stage 2.", link:"token-id", opt:false},
   {q:"You lower temperature from 1.0 to 0.2. What happens?", o:["The model knows more facts","The top choice gets an even bigger share, so answers repeat more","Answers become more random"], a:1, why:"Low temperature sharpens the peak; it doesn't add knowledge.", link:"temperature", opt:false},
-  {q:"In “…because it was too big”, when the model is at “it”, can it see “big”?", o:["Yes, it reads the whole sentence at once","No, the causal mask hides later words"], a:1, why:"Gemma 4 is decoder-only: each word looks only backward. “big” links things up when it arrives.", link:"causal-mask", opt:false},
+  {q:"In “…because it was too big”, when the model is at “it”, can it see “big”?", o:["Yes, it reads the whole sentence at once","No, the causal mask hides later words"], a:1, why:"Gemma 4 is decoder-only: each piece looks only at itself and backward. “big” links things up when it arrives.", link:"causal-mask", opt:false},
   {q:"Chances 50%, 30%, 15%, 5%. With Top-P = 0.9, how many candidates survive?", o:["1","2","3","4"], a:2, why:"50 → 80 → 95. The running total first reaches 90 at the third one.", link:"top-p", opt:true},
   {q:"In a tool call, who actually runs the tool?", o:["The model runs it inside itself","Your program runs it and pastes the result back"], a:1, why:"The model only writes the request and reads the reply.", link:"tool-call", opt:true},
-  {q:"Do ‘river bank’ and ‘money bank’ give the word bank a different starting vector?", o:["Yes, they start different","No. Same starting vector; the context changes it later, in Step 3"], a:1, why:"Same token, same starting vector; attention in Step 3 makes them differ. 同一個 token 起始向量一樣，到第 3 站的注意力才讓它們不同。", link:"embedding", opt:false}
+  {q:"Do ‘river bank’ and ‘money bank’ give the word bank a different starting vector?", o:["Yes, they start different","No. Same starting vector; the context changes it later, in Step 3"], a:1, why:"Same token, same starting vector; attention in Step 3 makes them differ.", link:"embedding", opt:false}
+];
+var QUIZ_ZH = [
+ {
+  "q": "編號 5866（▁cat）和 5867 緊鄰。它們的意思也接近嗎？",
+  "o": [
+   "接近，編號相近代表意思相近",
+   "不接近，編號只是清單裡的位置"
+  ],
+  "why": "編號只是清單上的位置；意思要到第 2 站的嵌入才有。"
+ },
+ {
+  "q": "把溫度從 1.0 調低到 0.2，會怎樣？",
+  "o": [
+   "模型知道的事實變多",
+   "第一名佔的比例更大，所以答案更常重複",
+   "答案變得更隨機"
+  ],
+  "why": "溫度低會讓最高的那個更突出，不會增加知識。"
+ },
+ {
+  "q": "在「…because it was too big」這句，模型處理到 it 的時候，看得到 big 嗎？",
+  "o": [
+   "看得到，它一次讀完整句",
+   "看不到，因果遮罩把後面的字遮住了"
+  ],
+  "why": "Gemma 4 只有解碼器：每一塊只能看自己和前面。big 出現時才回頭把關係連起來。"
+ },
+ {
+  "q": "機率是 50%、30%、15%、5%。Top-P = 0.9 時，留下幾個候選？",
+  "o": [
+   "1 個",
+   "2 個",
+   "3 個",
+   "4 個"
+  ],
+  "why": "50 → 80 → 95。累加到第三個時第一次達到 90。"
+ },
+ {
+  "q": "工具呼叫（tool call）時，實際執行工具的是誰？",
+  "o": [
+   "模型自己在內部執行",
+   "你的程式去執行，再把結果貼回給模型"
+  ],
+  "why": "模型只負責寫出請求、讀回結果。"
+ },
+ {
+  "q": "「river bank」和「money bank」裡的 bank，起始向量不一樣嗎？",
+  "o": [
+   "不一樣，一開始就不同",
+   "一樣。起始向量相同，到第 3 站才被上下文改變"
+  ],
+  "why": "同一個 token 起始向量一樣，到第 3 站的注意力才讓它們不同。"
+ }
 ];
 var qb = $('quizBox');
 if(qb){
   var pick = (qb.getAttribute('data-q') || '0 1 2 3 4').split(' ').map(Number), answered = {};
   pick.forEach(function(n){
     var item = QUIZ[n], d = document.createElement('div'); d.className = 'qz';
-    var h = '<fieldset><legend>' + (STEP === 'finish' ? (n+1) + '. ' : 'Check: ') + esc(item.q) + (item.opt ? ' <span class="opt-tag">optional 自選</span>' : ' <span class="opt-tag">together in class 課堂一起做</span>') + '</legend>';
-    item.o.forEach(function(o,i){ h += '<label><input type="radio" name="qz' + n + '" value="' + i + '"> ' + esc(o) + '</label>'; });
+    var h = '<fieldset><legend>' + (STEP === 'finish' ? (n+1) + '. ' : 'Check: ') + esc(item.q) + (item.opt ? ' <span class="opt-tag">optional 自選</span>' : ' <span class="opt-tag">together in class 課堂一起做</span>') + (QUIZ_ZH[n] ? '<br><span class="qz-zhq">' + esc(QUIZ_ZH[n].q) + '</span>' : '') + '</legend>';
+    item.o.forEach(function(o,i){ h += '<label><input type="radio" name="qz' + n + '" value="' + i + '"> ' + esc(o) + (QUIZ_ZH[n] && QUIZ_ZH[n].o[i] ? ' <span class="qz-zh">' + esc(QUIZ_ZH[n].o[i]) + '</span>' : '') + '</label>'; });
     h += '</fieldset><div class="fb" id="fb' + n + '" aria-live="polite"></div>';
     d.innerHTML = h; qb.appendChild(d);
     d.querySelectorAll('input').forEach(function(inp){
       inp.addEventListener('change', function(){
         var ok = parseInt(inp.value,10) === item.a, fb = document.getElementById('fb' + n);
         fb.className = 'fb ' + (ok ? 'ok' : 'bad');
-        fb.innerHTML = (ok ? '✓ Right. ' : '✗ Not quite. ') + esc(item.why) + ' <a href="#term-' + item.link + '">Open the card</a>';
+        fb.innerHTML = (ok ? '✓ Right. ' : '✗ Not quite. ') + esc(item.why) + (QUIZ_ZH[n] ? ' ' + esc(QUIZ_ZH[n].why) : '') + ' <a href="#term-' + item.link + '">Open the card</a>';
         answered[n] = ok;
         var sc = $('quizScore');
         if(sc){ var keys = Object.keys(answered); sc.textContent = keys.filter(function(k){return answered[k];}).length + ' right out of ' + keys.length + ' answered.'; }

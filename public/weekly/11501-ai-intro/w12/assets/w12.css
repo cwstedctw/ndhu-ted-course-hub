@@ -231,3 +231,6 @@ details.transcript li{margin:.4rem 0}
   nav.progress{position:relative}
   nav.progress::after{content:"";position:absolute;top:0;right:0;bottom:0;width:2.2rem;pointer-events:none;background:linear-gradient(to right,transparent,var(--surface))}
 }
+
+.qz .qz-zh{display:block;margin-left:1.55rem}
+.qz .qz-zhq{font-weight:700}
