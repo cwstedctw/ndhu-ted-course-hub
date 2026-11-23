@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>選做：做得快再加｜資訊科技與應用 W12</title>
+<link rel="stylesheet" href="assets/w12it.css">
+</head>
+<body data-page="more.html">
+<nav class="progress" id="progTop" aria-label="步驟"></nav>
+<header class="top"><div class="wrap"><div class="kicker">資訊科技與應用 · W12 · 選做</div><h1>選做：做得快再加</h1></div></header>
+<main class="wrap">
+<section id="z7"><div class="kicker">1-7 · 做得快再加</div><h2>魔術棒：只靠 DOI 加一篇</h2>
+<p>沒有網頁、只有一串 DOI（例如別人報告裡寫的），用 Zotero 桌面版的<b>魔術棒</b>就能加。<b>它在 Zotero 桌面版視窗上方的工具列</b>，不在 Chrome 的 Connector 小框裡。</p>
+<ol>
+<li><p class="do"><b>做什麼</b>左邊點選 <code>W12-sleep</code>。按 Zotero 工具列上的魔術棒圖示（滑鼠移上去會顯示「依辨識符號加入(可能是複數)項目」，英文介面：Add Item(s) by Identifier）。</p></li>
+<li><p class="do"><b>做什麼</b>在跳出的小框貼上這串 DOI，按 <kbd>Enter</kbd>：</p>
+<div class="cbox"><pre class="copy">10.1073/pnas.2209123120</pre></div>
+<p class="see"><b>應該看到</b>多一筆 2023 年刊在 PNAS（美國國家科學院院刊）的論文，題目是 <i>Nightly sleep duration predicts grade point average in the first year of college</i>，第一作者 Creswell。這篇在三所大學記錄大一新生學期初一個月的睡眠，再看學期末的成績，是追蹤同一群人的研究，不是把很多研究合起來的統合分析。</p></li>
+<li><p class="do"><b>做什麼</b>核對：點那一筆，看作者有幾位。這篇有 19 位作者，數數看 Zotero 有沒有全存進來。</p></li>
+</ol>
+<p class="small">魔術棒也吃 ISBN（書）、PubMed 的 PMID、arXiv 編號。做完記得重新匯出一次 <code>W12-sleep.bib</code>，新的那一筆才會在檔案裡。</p>
+<label class="check"><input type="checkbox" data-check="z7"><span>我用魔術棒加了第二篇，也數過作者人數。</span></label></section><section id="z8"><div class="kicker">1-8 · 做得快再加</div><h2>自己搜：Google Scholar 找兩篇</h2>
+<ol>
+<li><p class="do"><b>做什麼</b>打開 <a href="https://scholar.google.com/" target="_blank" rel="noopener">Google Scholar</a>，搜尋：</p>
+<div class="cbox"><pre class="copy">sleep duration academic performance university students</pre></div>
+<p class="see"><b>應該看到</b>一串論文清單，每篇有題目、作者、期刊與年份。</p></li>
+<li><p class="do"><b>做什麼</b>挑兩篇看起來相關的，<b>點題目進到出版社的網頁</b>，在那邊按 Connector 存（理由見 1-4 最後那段）。存完一樣做 1-5 的核對。</p></li>
+</ol>
+<p class="small">Google Scholar 跳出「我不是機器人」驗證、或說偵測到自動化查詢：全班同一間教室、同一個對外網路位址，查太多次就會被擋（Zotero 官方的 <a href="https://www.zotero.org/support/kb/site_access_limits" target="_blank" rel="noopener">site access limits</a> 說明也寫到，通常幾小時後會恢復）。改用 <a href="https://pubmed.ncbi.nlm.nih.gov/?term=sleep+duration+academic+performance+university+students" target="_blank" rel="noopener">PubMed 搜同樣的字</a>，在論文頁按 Connector 存。</p>
+<label class="check"><input type="checkbox" data-check="z8"><span>我自己搜到、存進、核對了至少一篇。</span></label></section><section id="z9"><div class="kicker">1-9 · 選做（下週一開始就會用到）</div><h2>在 Overleaf 引用：讓 [1] 自己出現</h2>
+<p>上週 1-7 你用過老師給的 <code>refs.bib</code>。這次換成你自己從 Zotero 匯出的 <code>W12-sleep.bib</code>。</p>
+<ol>
+<li><p class="do"><b>做什麼</b>打開上週的 Overleaf 專案（<code>w11-hand</code>），按左邊 File tree 上的上傳圖示，上傳 <code>W12-sleep.bib</code> 和練習包裡的 <code>cite-one.tex</code>。</p>
+<p class="see"><b>應該看到</b>左邊檔案清單多了這兩個檔。</p></li>
+<li><p class="do"><b>做什麼</b>點開 <code>cite-one.tex</code>，找到這一行，把大括號裡換成<b>你在 1-6 找到的代號</b>：</p>
+<div class="cbox"><pre class="copy">\cite{okano_sleep_2019}</pre></div>
+<p>檔名不是 <code>W12-sleep.bib</code> 的，把最後一行 <code>\bibliography{W12-sleep}</code> 的大括號也改成你的檔名（不寫 <code>.bib</code>）。</p></li>
+<li><p class="do"><b>做什麼</b>確認 Compiler 是 XeLaTeX（左下角齒輪 Settings → Compiler；上週設過就不用改），<b>先點著 <code>cite-one.tex</code></b>，再按 Recompile。</p>
+<p class="see"><b>應該看到</b>一頁中文 PDF，句子後面有 <code>[1]</code>，最下面「參考文獻」列出 Okano 那篇。</p></li>
+</ol>
+<p class="small">句子後面出現 <code>[?]</code>：代號跟 <code>.bib</code> 裡的對不上（大小寫也算），或 <code>\bibliography{…}</code> 的檔名不對。改好再 Recompile 一次。做了這步的人，可以把 PDF 換成證據 ② 交（PDF 最下面有參考文獻，就證明 <code>.bib</code> 能用）。</p>
+<label class="check"><input type="checkbox" data-check="z9"><span>（選做）Overleaf 編出 [1] 和參考文獻了。</span></label></section>
+</main>
+<nav class="progress" id="progBot" aria-label="步驟（頁尾）"></nav>
+<div class="wrap"><p class="small storage"><b id="progress">學習記錄 0 / 25</b>　<span id="storage-note">自行勾選，只存在這個瀏覽器；不是成績，也不會上傳。</span></p></div>
+<button type="button" class="theme" id="theme" aria-label="切換深色或淺色">深色／淺色</button>
+<footer><div class="wrap">資訊科技與應用 AA／AB · W12「Zotero 管文獻、gnuplot 畫圖：先用手做一遍」。練習資料 <code>sleep-quiz.dat</code> 為虛構。論文書目以 DOI 登記資料（Crossref）為準。Zotero 選單名稱以 Zotero 10 為準，各網站畫面以當下為準。2026-11-22 版。 <a href="student.html">全部步驟一頁版</a></div></footer>
+<script src="assets/w12it.js"></script>
+</body></html>

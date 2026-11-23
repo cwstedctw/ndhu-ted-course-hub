@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>改一行畫截斷版、並排寫一句話｜資訊科技與應用 W12</title>
+<link rel="stylesheet" href="assets/w12it.css">
+</head>
+<body data-page="step7.html">
+<nav class="progress" id="progTop" aria-label="步驟"></nav>
+<header class="top"><div class="wrap"><div class="kicker">資訊科技與應用 · W12 · 第 7 步／共 7 步</div><h1>改一行畫截斷版、並排寫一句話</h1></div></header>
+<main class="wrap">
+<section id="g3"><div class="kicker">2-3 · 約 7 分</div><h2>改一行，畫截斷版</h2>
+<p>用記事本打開 <code>truncated.gp</code>，跟 <code>scatter.gp</code> 比：只有標了 <code>&lt;--</code> 的兩行不一樣。一行是輸出檔名，另一行才是重點：</p>
+<pre>set yrange [0:100]     ← scatter.gp
+set yrange [69:83]     ← truncated.gp：Y 軸只畫 69 到 83 分</pre>
+<div class="cbox"><pre class="copy" data-ps="1">gnuplot truncated.gp</pre></div>
+<p class="see"><b>應該看到</b>多出（或更新了）<code>truncated.png</code>。同樣 20 個點、同一個標題，這次點從左下角一路衝到右上角，看起來<b>睡多一點、分數就高很多</b>。</p>
+<p class="do"><b>做什麼</b>（想多玩一下）把 <code>truncated.gp</code> 的 <code>[69:83]</code> 改成 <code>[60:90]</code>，存檔再跑一次，看斜度怎麼變。改完記得存檔，記事本要按 <kbd>Ctrl</kbd>＋<kbd>S</kbd>。</p>
+<label class="check"><input type="checkbox" data-check="g3"><span>我畫出了 <code>truncated.png</code>，也知道兩張只差在 <code>set yrange</code>。</span></label></section><section id="g4"><div class="kicker">2-4 · 約 8 分</div><h2>兩張並排，寫一句話</h2>
+<p>這是老師先畫好的兩張（你自己畫的應該長得一樣）：</p>
+<div class="figs"><figure><img src="practice/scatter.png" alt="正常版散點圖：Y 軸 0 到 100 分，20 個點擠在 70 到 82 分之間，看起來差不多平" width="900" height="650" loading="lazy"><figcaption>scatter.png：Y 軸 0–100</figcaption></figure><figure><img src="practice/truncated.png" alt="截斷版散點圖：同樣 20 個點，Y 軸只畫 69 到 83 分，看起來從左下急升到右上" width="900" height="650" loading="lazy"><figcaption>truncated.png：Y 軸 69–83</figcaption></figure></div>
+<ol>
+<li><p class="do"><b>做什麼</b>把你的兩張圖並排打開（Windows：兩個圖片視窗一個拖到螢幕左半、一個拖到右半），截一張圖。<span class="ev">證據 ③</span></p></li>
+<li><p class="do"><b>做什麼</b>寫一句話：<b>哪一張比較容易讓人誤會？誤會成什麼？為什麼？</b></p>
+<p class="see"><b>應該看到</b>（寫完自己對一下）你的句子有講到「Y 軸從哪裡開始」或「軸上的數字」。</p></li>
+</ol>
+<details><summary>寫完再打開：老師的想法</summary>
+<p>兩張的資料一模一樣，差別只在 Y 軸的範圍。截斷版把 12 分的差距撐滿整張圖，看起來像「睡眠決定成績」；正常版放在 0–100 分的尺度上，差距其實不大。</p>
+<p>截斷 Y 軸不一定是作弊：想看清楚小差距時，放大是合理的，<b>只要軸上的數字標清楚、讀的人有看</b>。真正會騙人的是讀圖的人沒看軸。還有兩件事要記得：這份資料是<b>虛構</b>的；就算是真的資料，兩件事「一起出現」也不等於一件造成另一件。</p></details>
+<label class="check"><input type="checkbox" data-check="g4"><span>兩張並排截好了，一句話也寫好了。</span></label></section>
+</main>
+<nav class="progress" id="progBot" aria-label="步驟（頁尾）"></nav>
+<div class="wrap"><p class="small storage"><b id="progress">學習記錄 0 / 25</b>　<span id="storage-note">自行勾選，只存在這個瀏覽器；不是成績，也不會上傳。</span></p></div>
+<button type="button" class="theme" id="theme" aria-label="切換深色或淺色">深色／淺色</button>
+<footer><div class="wrap">資訊科技與應用 AA／AB · W12「Zotero 管文獻、gnuplot 畫圖：先用手做一遍」。練習資料 <code>sleep-quiz.dat</code> 為虛構。論文書目以 DOI 登記資料（Crossref）為準。Zotero 選單名稱以 Zotero 10 為準，各網站畫面以當下為準。2026-11-22 版。 <a href="student.html">全部步驟一頁版</a></div></footer>
+<script src="assets/w12it.js"></script>
+</body></html>

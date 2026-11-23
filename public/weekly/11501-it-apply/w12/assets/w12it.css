@@ -1,0 +1,65 @@
+/* 資訊科技與應用 W12 一步一頁站。基底＝student.html 內嵌樣式原樣搬來 */
+:root{--ink:#17312f;--muted:#4f6863;--bg:#f7f5ee;--panel:#fffefa;--panel2:#ffffff;--green:#075e56;--hero:#174b42;--line:#d2dfd7;--gold:#e8ae42;--link:#075f74;--soft:#edf5ee;--soft2:#e9f2ec;--warn-bg:#fff8e7;--warn-ink:#8a5a00;--see-bg:#f1f7f3;--docs-bg:#eef4fb;--docs-line:#c5d8ea;--docs-ink:#0b4f7a;--pre-bg:#1b3030;--pre-ink:#f1f7ee;--bad:#a3341f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e3ece8;--muted:#a9bdb7;--bg:#111b1a;--panel:#182624;--panel2:#1d2d2b;--green:#7fd1c3;--hero:#0e302b;--line:#2f4642;--gold:#d9a23c;--link:#8fd0e6;--soft:#1f3330;--soft2:#21403b;--warn-bg:#2d2616;--warn-ink:#f0c76e;--see-bg:#1a302c;--docs-bg:#172636;--docs-line:#2c4560;--docs-ink:#9ccaf0;--pre-bg:#0b1414;--pre-ink:#e6f1ea;--bad:#ff9a85}}
+:root[data-theme="dark"]{--ink:#e3ece8;--muted:#a9bdb7;--bg:#111b1a;--panel:#182624;--panel2:#1d2d2b;--green:#7fd1c3;--hero:#0e302b;--line:#2f4642;--gold:#d9a23c;--link:#8fd0e6;--soft:#1f3330;--soft2:#21403b;--warn-bg:#2d2616;--warn-ink:#f0c76e;--see-bg:#1a302c;--docs-bg:#172636;--docs-line:#2c4560;--docs-ink:#9ccaf0;--pre-bg:#0b1414;--pre-ink:#e6f1ea;--bad:#ff9a85}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--bg);font:16px/1.75 system-ui,-apple-system,"Microsoft JhengHei","PingFang TC",sans-serif;overflow-wrap:anywhere}
+a{color:var(--link);text-underline-offset:3px}button,input{font:inherit}
+button,.btn{cursor:pointer;min-height:44px;border:1px solid var(--line);border-radius:8px;padding:.5rem .9rem;background:var(--panel2);color:var(--ink)}
+:focus-visible{outline:3px solid #e09d1b;outline-offset:3px}.btn{display:inline-block;text-decoration:none;font-weight:700}.primary{background:#075e56;color:#fff;border-color:#075e56}
+.wrap{width:min(1120px,calc(100% - 2rem));margin:auto}
+.hero{background:var(--hero);color:#fff;padding:2.6rem 0}.hero a{color:#fff}.hero .light{background:#fff;color:#17312f}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:2rem;align-items:center}.hero h1{font-size:clamp(1.8rem,5vw,3rem);line-height:1.25;margin:.5rem 0}
+.eyebrow,.kicker{font-size:.8rem;letter-spacing:.09em;font-weight:800}.eyebrow{color:#f1ca79}.kicker{color:var(--green)}
+.paper,.card,details,.lab{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1rem 1.2rem}
+.paper{color:#17312f;background:#fffefa;padding:1.4rem;box-shadow:0 10px 0 #103d35}.paper h2{margin:.4rem 0;font-size:1.35rem}.paper code{background:#e9f2ec;color:#17312f}
+.layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:2.5rem}
+.toc{position:sticky;top:1rem;align-self:start;max-height:92vh;overflow:auto;padding-top:2rem}.toc a{display:block;text-decoration:none;color:var(--muted);padding:.15rem 0}.toc .tg{display:block;font-weight:800;color:var(--green);margin-top:.5rem;font-size:.85rem}
+.progress{margin-top:1rem;background:var(--soft);border-radius:8px;padding:.8rem;font-size:.87rem}
+main{min-width:0}section{padding:2.4rem 0;border-bottom:1px solid var(--line);scroll-margin-top:1rem}
+h2{font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.3;margin:.3rem 0 1rem}h3{margin:1.4rem 0 .3rem;scroll-margin-top:1rem}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.callout{background:var(--warn-bg);border-left:4px solid var(--gold);padding:.8rem 1rem;margin:1rem 0}
+.small,.source{font-size:.9rem;color:var(--muted)}
+.table{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel2)}
+table{border-collapse:collapse;min-width:560px;width:100%}th,td{padding:.7rem .8rem;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}th{background:var(--soft2)}
+table.narrow{min-width:0}
+details{margin:.75rem 0}summary{cursor:pointer;font-weight:750;color:var(--green)}
+ol li,ul li{margin:.5rem 0}
+pre{background:var(--pre-bg);color:var(--pre-ink);border-radius:8px;padding:1rem;white-space:pre-wrap;overflow-wrap:anywhere;margin:.5rem 0}code{font-family:Consolas,"Courier New",monospace}
+:not(pre)>code{background:var(--soft2);border-radius:4px;padding:0 .25rem}
+label{display:block;font-weight:700}
+.check{display:flex;gap:.6rem;font-weight:400;background:var(--soft);border-radius:8px;padding:.7rem .9rem;margin-top:1rem;align-items:flex-start}.check input{width:1.2rem;height:1.2rem;margin-top:.3rem;flex:0 0 auto}
+.tag{display:inline-block;font-size:.78rem;font-weight:800;border-radius:999px;padding:.05rem .6rem;background:var(--soft);color:var(--green);margin-right:.3rem}.tag.opt{background:var(--warn-bg);color:var(--warn-ink)}
+.skip{position:absolute;left:-999px}.skip:focus{left:1rem;top:1rem;background:#fff;color:#000;padding:.5rem;z-index:9}
+footer{padding:2rem 0;color:var(--muted);font-size:.9rem}
+.cbox{position:relative}.cbox pre{padding-top:2.4rem}.cbtn{position:absolute;top:.4rem;right:.4rem;min-height:32px;padding:.15rem .7rem;font-size:.85rem;background:var(--soft2);border-color:var(--line)}
+.see{background:var(--see-bg);border-left:4px solid var(--green);padding:.4rem .8rem;margin:.4rem 0}.see>b:first-child{color:var(--green)}.do>b:first-child{color:var(--warn-ink)}
+.see>b:first-child::after,.do>b:first-child::after{content:"　"}
+.part{background:var(--hero);color:#fff;border-radius:10px;padding:.7rem 1rem;margin:2.2rem 0 0;font-weight:800}.part span{display:block;font-weight:400;font-size:.95rem;color:#dfeee6}
+.ev{display:inline-block;background:#174b42;color:#fff;border-radius:6px;padding:0 .5rem;font-size:.85rem;font-weight:800}
+.docs{background:var(--docs-bg);border:1px solid var(--docs-line);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}.docs b{color:var(--docs-ink)}
+.ref{background:var(--panel2);border:1px dashed var(--line);border-radius:8px;padding:.7rem .9rem;margin:.5rem 0}
+.bad{color:var(--bad);font-weight:700;text-decoration:underline wavy}
+.figs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1rem 0}.figs figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:8px;padding:.5rem}.figs img{width:100%;height:auto;display:block}.figs figcaption{color:#334;font-size:.85rem;padding:.3rem .2rem 0}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .3rem;font-size:.9em;background:var(--panel2)}
+.theme{position:fixed;right:.8rem;bottom:.8rem;z-index:5;min-height:40px;font-size:.85rem;opacity:.9}
+@media(max-width:860px){.hero-grid,.layout,.cards,.figs{grid-template-columns:1fr}.toc{position:static;max-height:none;padding-top:1rem;display:flex;flex-wrap:wrap;gap:.2rem .9rem}.toc b,.toc .progress,.toc .tg,.toc nav{flex-basis:100%}.toc nav{display:flex;flex-wrap:wrap;gap:.1rem .9rem}.toc nav a{display:inline-block}}
+
+/* 一步一頁站外框（照概論 W12 的進度條做法改寫） */
+header.top{background:var(--hero);color:#fff;padding:1.4rem 0 1.2rem}
+header.top .kicker{color:#f1ca79}header.top a{color:#fff}header.top h1{font-size:clamp(1.5rem,4.5vw,2.3rem);line-height:1.3;margin:.3rem 0}
+header.top .btn{color:var(--ink)}header.top .btn.primary{color:#fff}header.top .paper{margin-top:1rem}
+.wrap{padding:0}
+main.wrap section:last-of-type{border-bottom:0}
+nav.progress{background:var(--panel);border-bottom:1px solid var(--line);margin:0;border-radius:0;padding:0;font-size:1rem}
+nav.progress#progBot{border-top:1px solid var(--line);margin-top:1rem}
+nav.progress .in{width:min(1120px,calc(100% - 2rem));margin:0 auto;padding:.5rem 0;display:flex;flex-wrap:wrap;gap:.4rem 1rem;align-items:center;justify-content:space-between}
+nav.progress .where{font-weight:700;color:var(--green)}
+nav.progress .pn{display:flex;gap:.6rem;flex-wrap:wrap}
+nav.progress .pn a{text-decoration:none;font-weight:700;border:1px solid var(--line);border-radius:8px;padding:.3rem .7rem;background:var(--bg);min-height:40px;display:inline-flex;align-items:center}
+.dots{display:flex;gap:.3rem;flex-wrap:wrap;list-style:none;margin:0;padding:0;font-size:.85rem}
+.dots li{margin:0}
+.dots a{display:inline-block;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:.05rem .6rem;color:var(--ink)}
+.dots a[aria-current="page"]{background:var(--green);border-color:var(--green);color:var(--bg)}
+ol.steps li{margin:.4rem 0}
+.storage{margin:1rem 0 0}

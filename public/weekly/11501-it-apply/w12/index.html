@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zotero 管文獻、gnuplot 畫圖：先用手做一遍｜資訊科技與應用 W12</title>
+<link rel="stylesheet" href="assets/w12it.css">
+</head>
+<body data-page="index.html">
+<nav class="progress" id="progTop" aria-label="步驟"></nav>
+<header class="top"><div class="wrap"><div class="kicker">資訊科技與應用 · W12 · AA／AB</div><h1>Zotero 管文獻、gnuplot 畫圖：先用手做一遍</h1><p>上週把 LaTeX 走過一輪、看過三張工具卡。這週把其中兩個工具各自用手做一遍：用 Zotero 存一篇真的論文、核對、匯出書目檔；再用 gnuplot 畫兩張圖，看看哪張會騙人。下週（W13）換 AI 來做同樣的事，你才看得出它做得對不對。</p><p><a class="btn primary" href="step1.html">開始第 1 步</a> <a class="btn" href="help.html">卡住了</a> <a class="btn" href="student.html">全部步驟一頁版</a></p><div class="paper"><b>今天帶走</b><h2>Zotero 裡一篇核對過的論文，和兩張同一份資料的圖</h2><p>練習主題：<b>大學生的睡眠與成績</b>。<br>Zotero 存論文 → 匯出 <code>.bib</code> → gnuplot 畫圖 → 寫一句話。</p></div></div></header>
+<main class="wrap">
+<section id="start"><div class="kicker">0 · 先看全貌</div><h2>今天最少要交什麼</h2>
+<div class="callout"><b>出席要交（交了這張就算出席）：</b><br><span class="ev">①</span> Zotero 畫面截圖：左邊點開 <code>W12-sleep</code> 文獻集，中間看得到今天那篇論文（Okano 等人，2019）。<br><b>做到的也一起交：</b><br><span class="ev">②</span> 匯出的 <code>W12-sleep.bib</code> 檔案本身（或用記事本打開它的截圖）。<br>
+<span class="ev">③</span> 兩張 gnuplot 圖並排的一張截圖，加上一句「哪張會騙人、為什麼」（寫在線上文字）。<br>交法見<a href="finish.html#handin">收尾頁</a>。</div>
+<p>第一部分約 55 分鐘，做完 ①② 再休息；第二部分約 25 分鐘。教材寫得很細，照著做就好，每一步最後的<b style="color:var(--green)">應該看到</b>是做對時畫面上會出現的東西。沒看到，就還沒完成。</p>
+<div class="table"><table><thead><tr><th>分鐘</th><th>做什麼</th><th>交什麼</th></tr></thead><tbody>
+<tr><td>0–8</td><td>今天要交什麼；<a href="step1.html#why">手打書目錯在哪</a>（找四個錯）</td><td></td></tr>
+<tr><td>8–22</td><td><a href="step2.html#z1">1-1</a> 裝 Zotero 桌面版、<a href="step2.html#z2">1-2</a> 建文獻集 <code>W12-sleep</code></td><td></td></tr>
+<tr><td>22–30</td><td><a href="step3.html#z3">1-3</a> Chrome 裝 Zotero Connector、釘在工具列</td><td></td></tr>
+<tr><td>30–45</td><td><a href="step3.html#z4">1-4</a> 存今天這篇、<a href="step4.html#z5">1-5</a> 跟出版社網頁核對</td><td><span class="ev">①</span></td></tr>
+<tr><td>45–55</td><td><a href="step5.html#z6">1-6</a> 匯出 <code>W12-sleep.bib</code>、打開看代號</td><td><span class="ev">②</span></td></tr>
+<tr><td>55–60</td><td>休息</td><td></td></tr>
+<tr><td>60–85</td><td>第二部分 gnuplot：<a href="step6.html#g2">正常版</a>、<a href="step7.html#g3">改一行變截斷版</a>、<a href="step7.html#g4">並排寫一句</a></td><td><span class="ev">③</span></td></tr>
+<tr><td>85–100</td><td>做得快的人：<a href="more.html#z7">1-7 魔術棒</a>、<a href="more.html#z8">1-8 自己搜</a>、<a href="more.html#z9">1-9 Overleaf 引用</a>（下週一開始就會用到）</td><td>選做</td></tr>
+<tr><td>100–110</td><td><a href="finish.html#handin">交件</a>、<a href="finish.html#next">下週預告</a>；教室電腦登出</td><td></td></tr>
+</tbody></table></div>
+<p><b>用教室電腦的同學：</b>教室電腦可能裝不了軟體、也可能裝不了 Chrome 擴充功能。先照 1-1 試一次，不行就看 <a href="help.html#zc">教室電腦怎麼辦</a>，不要卡在原地。</p>
+<label class="check"><input type="checkbox" data-check="start"><span>我知道交 ① 就算出席，②③ 做到再一起交。</span></label></section><section id="pack"><div class="kicker">練習包</div><h2>先把練習檔拿到手</h2>
+<ol><li><p class="do"><b>做什麼</b>下載 <a href="practice/w12-practice.zip" download>w12-practice.zip</a>，解壓縮到桌面（Windows：在檔案上按右鍵 →「解壓縮全部」）。</p>
+<p class="see"><b>應該看到</b>一個資料夾，裡面有下表這些檔。「解壓縮全部」常會多包一層同名資料夾，再點進去一層，要看得到 <code>sleep-quiz.dat</code>。</p></li></ol>
+<div class="table"><table><thead><tr><th>檔案</th><th>是什麼</th><th>哪裡用</th></tr></thead><tbody>
+<tr><td><a href="practice/sleep-quiz.dat">sleep-quiz.dat</a></td><td>20 位「假想」學生的每週平均睡眠時數與小考分數。<b>虛構資料</b>，老師編的，只用來練畫圖</td><td>第二部分</td></tr>
+<tr><td><a href="practice/scatter.gp">scatter.gp</a></td><td>gnuplot 腳本：散點圖，Y 軸 0 到 100 分</td><td>2-2</td></tr>
+<tr><td><a href="practice/truncated.gp">truncated.gp</a></td><td>同一支腳本只改兩行：Y 軸只畫 69 到 83 分</td><td>2-3</td></tr>
+<tr><td><a href="practice/scatter.png">scatter.png</a>、<a href="practice/truncated.png">truncated.png</a></td><td>老師先畫好的兩張圖。電腦沒有 gnuplot 的人，拿這兩張做 2-4</td><td>2-4</td></tr>
+<tr><td><a href="practice/cite-one.tex">cite-one.tex</a></td><td>一頁中文 LaTeX，引用一篇論文</td><td>1-9 選做</td></tr>
+<tr><td><a href="practice/okano2019-teacher.bib">okano2019-teacher.bib</a></td><td>老師備的一筆書目，給<b>裝不了 Zotero</b> 的同學用</td><td><a href="help.html#zc">教室電腦怎麼辦</a></td></tr>
+</tbody></table></div>
+<p class="small">教室電腦每週還原，下課前把要留的檔寄給自己或放雲端。</p>
+<label class="check"><input type="checkbox" data-check="pack"><span>練習包下載、解壓縮好了。</span></label></section><section id="steps"><div class="kicker">各步入口</div><h2>一步一頁</h2><ol class="steps"><li><a href="step1.html">第 1 步　手打書目，找錯</a></li><li><a href="step2.html">第 2 步　裝 Zotero、建文獻集 W12-sleep</a></li><li><a href="step3.html">第 3 步　裝 Connector、存今天這篇</a></li><li><a href="step4.html">第 4 步　核對：存進來不等於資料對</a></li><li><a href="step5.html">第 5 步　匯出 W12-sleep.bib</a></li><li><a href="step6.html">第 6 步　gnuplot：開終端機、字元版、正常版</a></li><li><a href="step7.html">第 7 步　改一行畫截斷版、並排寫一句話</a></li><li><a href="finish.html">收尾：回顧與下週預告</a></li></ol><p><a href="more.html">做得快的人：選做三項</a>　·　<a href="help.html">卡住怎麼辦</a></p></section>
+</main>
+<nav class="progress" id="progBot" aria-label="步驟（頁尾）"></nav>
+<div class="wrap"><p class="small storage"><b id="progress">學習記錄 0 / 25</b>　<span id="storage-note">自行勾選，只存在這個瀏覽器；不是成績，也不會上傳。</span></p></div>
+<button type="button" class="theme" id="theme" aria-label="切換深色或淺色">深色／淺色</button>
+<footer><div class="wrap">資訊科技與應用 AA／AB · W12「Zotero 管文獻、gnuplot 畫圖：先用手做一遍」。練習資料 <code>sleep-quiz.dat</code> 為虛構。論文書目以 DOI 登記資料（Crossref）為準。Zotero 選單名稱以 Zotero 10 為準，各網站畫面以當下為準。2026-11-22 版。 <a href="student.html">全部步驟一頁版</a></div></footer>
+<script src="assets/w12it.js"></script>
+</body></html>
