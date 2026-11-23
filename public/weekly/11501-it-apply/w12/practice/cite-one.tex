@@ -1,0 +1,31 @@
+% cite-one.tex：W12 選做——把 Zotero 匯出的 .bib 接到 LaTeX，引用一篇。
+% Overleaf：左下角齒輪 Settings → Compiler 選 XeLaTeX；先點開這個檔，再按 Recompile。
+%
+% 要改的只有兩處（下面標了「改這裡」）：
+%   1. \bibliography{...} 大括號裡＝你上傳的 .bib 檔名，不寫 .bib。
+%      照學生頁存成 W12-sleep.bib 的話，就是 W12-sleep，不用改。
+%   2. \cite{...} 大括號裡＝你 .bib 檔裡那一筆的「代號」：
+%      用記事本打開 .bib，第一行 @article{ 後面、逗號前面那一串就是。
+%      Zotero 內建的 BibTeX 匯出通常長得像 okano_sleep_2019（第一作者姓_題目第一個字_年份），
+%      但請以你自己檔案裡寫的為準，一個字都不能差（大小寫也算）。
+%   沒裝 Zotero、改用老師備的 okano2019-teacher.bib：1 改成 okano2019-teacher，2 改成 Okano_2019。
+\documentclass[12pt,a4paper]{article}
+\usepackage{xeCJK}
+\IfFontExistsTF{Noto Serif CJK TC}{\setCJKmainfont{Noto Serif CJK TC}}{\IfFontExistsTF{Microsoft JhengHei}{\setCJKmainfont{Microsoft JhengHei}}{\setCJKmainfont{Songti TC}}}
+\usepackage[margin=2.5cm]{geometry}
+\renewcommand{\refname}{參考文獻}
+
+\title{W12：用 Zotero 匯出的書目引用一篇論文}
+\author{你的稱呼（可用化名）}
+\date{2026 年 11 月}
+
+\begin{document}
+\maketitle
+
+\section{一句話}
+有研究用穿戴式裝置記錄大學生的睡眠，發現睡得比較好、比較久、比較規律的學生，成績也比較好；
+這是「一起出現」的關係（相關），不是證明「睡多久就決定考幾分」\cite{okano_sleep_2019}。 % <-- 改這裡（2）
+
+\bibliographystyle{plain}
+\bibliography{W12-sleep} % <-- 改這裡（1）
+\end{document}
