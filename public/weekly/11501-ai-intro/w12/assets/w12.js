@@ -34,7 +34,7 @@ function progHTML(){
 var vbox = $('video');
 if(vbox){
   var vkey = vbox.getAttribute('data-key'), vurl = CFG.videos && CFG.videos[vkey];
-  if(vurl){ vbox.querySelector('.vslot').innerHTML = '<video controls preload="metadata" src="'+esc(vurl)+'"></video>'; }
+  if(vurl){ vbox.querySelector('.vslot').innerHTML = '<video controls preload="metadata" playsinline poster="'+esc(vurl.replace(/\.mp4$/,'.jpg'))+'" src="'+esc(vurl)+'"></video>'; }
   else { vbox.remove(); }
 }
 
