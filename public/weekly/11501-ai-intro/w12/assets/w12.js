@@ -39,6 +39,7 @@ if(cbox){
   cbox.innerHTML = CFG.colabUrl
     ? '<a class="btn-official" href="'+esc(CFG.colabUrl)+'" target="_blank" rel="noopener">'+esc(cbox.getAttribute('data-label') || 'Open the Colab notebook (new tab) ↗')+'</a>'
     : '<p class="wait">The teacher will give you the link in class. 老師上課會給連結。</p>';
+  if (STEP !== '0' && STEP !== 'index') cbox.insertAdjacentHTML('beforeend', '<p class="wait" style="margin-top:.5rem">Nothing to write or hand in here: think about it, or tell your neighbour what you saw. 這裡不用寫、不用交：自己想一想，或跟旁邊同學說你看到什麼。</p>');
 }
 
 /* ---------- term cards (same rendering as terms.html) ---------- */
@@ -124,7 +125,7 @@ if(qb){
   var pick = (qb.getAttribute('data-q') || '0 1 2 3 4').split(' ').map(Number), answered = {};
   pick.forEach(function(n){
     var item = QUIZ[n], d = document.createElement('div'); d.className = 'qz';
-    var h = '<fieldset><legend>' + (pick.length > 1 ? (n+1) + '. ' : 'Check: ') + esc(item.q) + (item.opt ? '<span class="opt-tag">optional</span>' : '<span class="opt-tag">in class</span>') + '</legend>';
+    var h = '<fieldset><legend>' + (STEP === 'finish' ? (n+1) + '. ' : 'Check: ') + esc(item.q) + (item.opt ? '<span class="opt-tag">optional</span>' : '<span class="opt-tag">in class</span>') + '</legend>';
     item.o.forEach(function(o,i){ h += '<label><input type="radio" name="qz' + n + '" value="' + i + '"> ' + esc(o) + '</label>'; });
     h += '</fieldset><div class="fb" id="fb' + n + '" aria-live="polite"></div>';
     d.innerHTML = h; qb.appendChild(d);
