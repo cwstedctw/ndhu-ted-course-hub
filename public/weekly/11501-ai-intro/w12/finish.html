@@ -23,7 +23,7 @@
     <p class="zh">今天走過的五站，各一句話</p>
     <ol class="steps">
       <li><b><a href="step1.html">Step 1 · Tokenization</a></b><br>Text is cut into pieces (tokens), and each piece gets an ID number from the vocabulary.<br><span class="zh">文字被切成一小塊一小塊（token），每塊拿到詞表裡的一個編號。</span></li>
-      <li><b><a href="step2.html">Step 2 · Embeddings</a></b><br>Each ID looks up a list of numbers (a vector); pieces with related meanings point in similar directions.<br><span class="zh">每個編號查到一串數字（向量）；意思相近的塊，方向也相近。</span></li>
+      <li><b><a href="step2.html">Step 2 · Embeddings</a></b><br>Each ID looks up a list of numbers (a vector); pieces with related meanings often point in similar directions.<br><span class="zh">每個編號查到一串數字（向量）；意思相近的塊，方向也往往相近。</span></li>
       <li><b><a href="step3.html">Step 3 · Attention &amp; layers</a></b><br>Each piece looks at itself and the pieces before it, and decides how much each one matters.<br><span class="zh">每一塊看自己和前面的塊，決定每一塊有多重要。</span></li>
       <li><b><a href="step4.html">Step 4 · Sampling</a></b><br>The model scores every possible next piece; temperature, softmax, Top-K and Top-P shape the chances, then one piece is drawn.<br><span class="zh">模型替每個可能的下一塊打分數；溫度、softmax、Top-K、Top-P 調整機率後抽出一塊。</span></li>
       <li><b><a href="step5.html">Step 5 · Chat, thinking &amp; tools</a></b><br>The new piece is added to the input and the loop runs again; a chat is the same loop, wrapped in the chat template.<br><span class="zh">新的一塊接回輸入、迴圈再跑；聊天也是同一個迴圈，只是包進了對話範本。</span></li>

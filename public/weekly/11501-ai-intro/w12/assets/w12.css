@@ -224,3 +224,10 @@ details.transcript li{margin:.4rem 0}
   nav.progress .pn{flex-wrap:nowrap}
 }
 @media print{ .sheet .head input{border-bottom:1px solid #000;color:#000} }
+
+/* last batch: map 3+2 at desktop; fade hint on scrollable mobile nav */
+@media (min-width:900px){ .mapgrid{grid-template-columns:repeat(3,1fr)} }
+@media (max-width:640px){
+  nav.progress{position:relative}
+  nav.progress::after{content:"";position:absolute;top:0;right:0;bottom:0;width:2.2rem;pointer-events:none;background:linear-gradient(to right,transparent,var(--surface))}
+}

@@ -118,14 +118,15 @@ var QUIZ = [
   {q:"You lower temperature from 1.0 to 0.2. What happens?", o:["The model knows more facts","The top choice gets an even bigger share, so answers repeat more","Answers become more random"], a:1, why:"Low temperature sharpens the peak; it doesn't add knowledge.", link:"temperature", opt:false},
   {q:"In “…because it was too big”, when the model is at “it”, can it see “big”?", o:["Yes, it reads the whole sentence at once","No, the causal mask hides later words"], a:1, why:"Gemma 4 is decoder-only: each word looks only backward. “big” links things up when it arrives.", link:"causal-mask", opt:false},
   {q:"Chances 50%, 30%, 15%, 5%. With Top-P = 0.9, how many candidates survive?", o:["1","2","3","4"], a:2, why:"50 → 80 → 95. The running total first reaches 90 at the third one.", link:"top-p", opt:true},
-  {q:"In a tool call, who actually runs the tool?", o:["The model runs it inside itself","Your program runs it and pastes the result back"], a:1, why:"The model only writes the request and reads the reply.", link:"tool-call", opt:true}
+  {q:"In a tool call, who actually runs the tool?", o:["The model runs it inside itself","Your program runs it and pastes the result back"], a:1, why:"The model only writes the request and reads the reply.", link:"tool-call", opt:true},
+  {q:"Do ‘river bank’ and ‘money bank’ give the word bank a different starting vector?", o:["Yes, they start different","No. Same starting vector; the context changes it later, in Step 3"], a:1, why:"Same token, same starting vector; attention in Step 3 makes them differ. 同一個 token 起始向量一樣，到第 3 站的注意力才讓它們不同。", link:"embedding", opt:false}
 ];
 var qb = $('quizBox');
 if(qb){
   var pick = (qb.getAttribute('data-q') || '0 1 2 3 4').split(' ').map(Number), answered = {};
   pick.forEach(function(n){
     var item = QUIZ[n], d = document.createElement('div'); d.className = 'qz';
-    var h = '<fieldset><legend>' + (STEP === 'finish' ? (n+1) + '. ' : 'Check: ') + esc(item.q) + (item.opt ? '<span class="opt-tag">optional</span>' : '<span class="opt-tag">in class</span>') + '</legend>';
+    var h = '<fieldset><legend>' + (STEP === 'finish' ? (n+1) + '. ' : 'Check: ') + esc(item.q) + (item.opt ? ' <span class="opt-tag">optional 自選</span>' : ' <span class="opt-tag">together in class 課堂一起做</span>') + '</legend>';
     item.o.forEach(function(o,i){ h += '<label><input type="radio" name="qz' + n + '" value="' + i + '"> ' + esc(o) + '</label>'; });
     h += '</fieldset><div class="fb" id="fb' + n + '" aria-live="polite"></div>';
     d.innerHTML = h; qb.appendChild(d);
