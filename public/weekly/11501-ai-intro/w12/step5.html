@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>W12 Step 5 · Chat</title>
+<title>W12 Step 5 · Chat, thinking &amp; tools</title>
 <meta name="description" content="Week 12 AI Intro, step 5 of 5: Chat, thinking &amp; tools, with a toy, core terms and one sentence to write.">
 <link rel="stylesheet" href="assets/w12.css">
 </head>
@@ -13,10 +13,11 @@
 <header class="top">
   <div class="wrap">
     <div class="kicker">AI Intro · Week 12 · Step 5 of 5</div>
-    <h1>Step 5 · Chat</h1>
+    <h1>Step 5 · Chat, thinking &amp; tools</h1>
     <p class="zh">第 5 站 · 聊天、思考與工具</p>
   </div>
 </header>
+
 <section class="block">
   <div class="wrap">
     <h2><span class="n">1</span>The question this step answers</h2>
@@ -24,10 +25,11 @@
     <p class="bigq">How do Steps 1–4 become a chat that answers you?</p>
     <p class="bigq zh">第 1–4 站怎麼變成會回你話的聊天？</p>
     <div class="hualien"><h3 style="margin-top:0">Our sentence at this step: “Hualien is famous for” · 同一句走到這一站</h3>
-      <p>The 5th stage in the official pipeline diagram is this loop; the official Stage 5 page looks at it through chat. Answering questions well comes from post-training plus the chat format, not from the markers alone.</p>
-      <p>Press Step in the toy below: <code>Hualien is famous for</code> (6 real pieces) grows one piece per run, and each new piece is fed back into the input. In a real chat, your message is first wrapped in the chat template with turn markers such as <code>&lt;|turn&gt;</code> (ID 105) and <code>&lt;turn|&gt;</code> (ID 106); the guide says the prompt handed to the model ends at <code>&lt;|turn&gt;model</code> plus a line break. Then the loop runs: Step 4 draws one piece, the piece is added to the input, and the model continues from Step 2 (looking up the new piece's vector); it does not cut the whole sentence again. With standard token-by-token generation, writing 20 tokens takes about 20 runs. This example stops at <code>&lt;turn|&gt;</code> (106); generation can also stop at <code>&lt;eos&gt;</code> (1).</p>
-      <p class="zh">官方管線圖的第 5 階段就是這個迴圈，官方第 5 頁用聊天來看它。能回答問題靠的是後訓練（post-training）加上聊天格式，不是只靠記號。</p>
-      <p class="zh">按下面玩具的 Step：同一句（真的切法是 6 塊）每跑一次長一塊，新的一塊接回輸入。真的聊天裡，你的訊息會先被包進聊天格式，用 &lt;|turn&gt;（105）和 &lt;turn|&gt;（106）這類記號分段；導覽說交給模型的提示停在 &lt;|turn&gt;model 加一個換行。接著迴圈開始：第 4 站抽出一塊、接回輸入，從第 2 站（查向量）繼續，不會把整句重新斷詞。標準的逐 token 生成寫 20 個 token 約跑 20 次。這個例子停在 &lt;turn|&gt;（106），一般也可能停在 &lt;eos&gt;（1）。</p>
+      <p>Press Step ▶ in the toy below: <code>Hualien is famous for</code> (6 real pieces) grows one piece per run. Each new piece is added to the input, and the model continues from Step 2; it does not cut the whole sentence again. The official pipeline's 5th stage is this loop, and the official Stage 5 page looks at it through chat.</p>
+      <p class="zh">按下面玩具的 Step ▶：同一句（真的切法是 6 塊）每跑一次長一塊。新的一塊接回輸入，從第 2 站繼續，不會把整句重新斷詞。官方管線圖的第 5 階段就是這個迴圈，官方第 5 頁用聊天來看它。</p>
+      <p>Tool calls are covered only on this page and on the official Stage 5 page; the video and the notebook don't include them. 工具呼叫（tool call）只在這一頁與官方第 5 頁談，短片與筆記本沒有。</p>
+      <p>Answering questions well comes from post-training plus the chat template, not from the markers alone. 能回答問題靠的是後訓練（post-training）加上對話範本，不是只靠記號。</p>
+      <p>In a real chat, your message is first wrapped in the chat template with turn markers such as <code>&lt;|turn&gt;</code> (ID 105) and <code>&lt;turn|&gt;</code> (ID 106). 真的聊天裡，訊息會先被包進對話範本，用 &lt;|turn&gt;（105）和 &lt;turn|&gt;（106）這類記號分段。</p>
       <div class="panel"><span class="label-real">Real output from the Gemma 4 chat template, run in Colab on 2026-11-23</span>
       <p style="margin:.4rem 0 .2rem">Asking “What is Hualien famous for?” turns into this one long text before Step 1 starts (it ends with a line break after <code>&lt;|turn&gt;model</code>): 問一句話，送進模型之前先變成這一長串（最後在 &lt;|turn&gt;model 後面有一個換行）：</p>
       <pre class="tokrow" style="display:block;white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace;background:var(--surface-2);padding:.5rem;border-radius:6px">&lt;bos&gt;&lt;|turn&gt;user
@@ -44,28 +46,34 @@ What is Hualien famous for?&lt;turn|&gt;
     <p class="zh">先猜</p>
     <p>When the model “thinks”, is it a different brain or the same next-token loop?</p>
     <p class="zh">模型在「思考」的時候，是換了一顆腦，還是同一個猜下一個字的迴圈？</p>
-    <details class="guess"><summary>Write your guess on paper, then open the answer. 先猜再點開</summary><p>The same loop. Thinking notes are ordinary tokens the model writes between <code>&lt;|channel&gt;thought</code> and <code>&lt;channel|&gt;</code>; thinking mode is switched on by <code>&lt;|think|&gt;</code> in the system turn (from the guide). 同一個迴圈；思考內容只是寫在特定記號之間的一般 token。</p></details>
+    <details class="guess"><summary>Write your guess on paper, then open the answer. 先猜再點開</summary><p>The same loop. Thinking notes are ordinary tokens the model writes between <code>&lt;|channel&gt;thought</code> and <code>&lt;channel|&gt;</code>; thinking mode is switched on by <code>&lt;|think|&gt;</code> in the system turn (from the guide). 同一個迴圈；思考內容只是寫在 &lt;|channel&gt;thought 和 &lt;channel|&gt; 之間的一般 token，思考模式由放在 system turn 的 &lt;|think|&gt; 開啟。</p></details>
   </div>
 </section>
 
-<section class="block" id="video" data-key="step5"><div class="wrap"><h2><span class="n">▶</span>Short video</h2><p class="zh">看短片</p><div class="vslot"></div></div></section>
+<section class="block" id="video" data-key="step5"><div class="wrap"><h2><span class="n">▶</span>Short video</h2><p class="zh">看短片</p><div class="vslot"></div><details class="transcript"><summary>Transcript 逐幕文字（English narration + 中文字幕）</summary><ol><li><p>If Gemma 4 only guesses the next word, why does it answer your question instead of writing another question?</p><p class="zh">模型只會接下一個字，為什麼會回答你而不是反問你？</p></li><li><p>Think of labeled envelopes: each envelope names who is speaking and where their turn stops. This fixed wrapper is a chat template.</p><p class="zh">想成寫好發言者的信封，這套固定包裝格式叫對話範本。</p></li><li><p>Each envelope uses reserved markers called special control tokens. Gemma 4 opens a turn with token 105 and seals it with 106.</p><p class="zh">信封靠特殊控制記號：105 開啟一輪，106 封口。</p></li><li><p>Seeing the open model envelope, the model then writes its reply, one token at a time, stopping once it outputs token 106.</p><p class="zh">看到模型信封打開，就一字一字往下接，這個例子寫出 106 號記號就停。</p></li><li><p>Put token 98 in the system envelope, and Gemma 4 writes a draft in the thought channel first. That reasoning space is called thinking mode.</p><p class="zh">系統信封加上 98 號記號，模型會先寫草稿，這叫思考模式。</p></li><li><p>Even thinking uses the exact same loop. Every draft word feeds back in, so later attention layers can check earlier steps before answering.</p><p class="zh">思考用的也是同一套迴圈：先寫出草稿，後面再回頭檢查。</p></li><li><p>So chat is post-training plus labeled envelopes, with five stations guessing one token at a time.</p><p class="zh">所以聊天＝經過後訓練的模型，加上貼好標籤的信封，一次猜一個 token</p></li></ol></details></div></section>
 <section class="block">
   <div class="wrap">
     <h2><span class="n">3</span>On the official guide</h2>
     <p class="zh">去官方頁做什麼</p>
     <ol class="steps">
-      <li>Pick Stage 5 in the rail. 選第 5 站。</li>
-      <li>On the official Stage 5: find where the thinking notes start and stop. The typed-out stream is a replay of a prepared example. 在官方第 5 站找思考記號的起訖；打字效果是預錄重播。</li>
+      <li>In the row of buttons at the very top of the page, press “05 Chat &amp; tools”. 按頁面最上方的「05 Chat &amp; tools」。</li>
+      <li>Choose “Math &amp; Logic Puzzle”, switch the display to “Raw Token Stream”, turn on “Thinking &lt;|think|&gt;”, and press “▶ Stream Response”. Find where the thinking notes start and stop. The stream is a replay of a prepared example. 選「Math &amp; Logic Puzzle」、切到「Raw Token Stream」、打開「Thinking &lt;|think|&gt;」，按「▶ Stream Response」，找思考記號的起訖；串流是預錄重播。</li>
+      <li>Then choose “Tool Call (&lt;|tool_call&gt;)” and stream it once more. 再換「Tool Call (&lt;|tool_call&gt;)」看一次。</li>
       <li>Back on this page: press Step ▶ in the toy below and watch each new piece join the input. 回本頁按 Step ▶，看新的一塊接回輸入。</li>
-      <li>Read under the heading “How Gemma 4 structures a conversation”, then “Why &lt;|think|&gt; makes LLMs smarter”. 讀這兩個標題底下。</li>
+      <li>Press “>_ Read the details” and read under the heading “How Gemma 4 structures a conversation”, then “Why &lt;|think|&gt; makes LLMs smarter”. 按「>_ Read the details」，讀這兩個標題底下。</li>
       <li>Python on the official page (under “Try it yourself in Python”): read only, don't run it. 官方第 5 頁的 Python 只讀不跑。</li>
       <li>The code you do run is our Colab notebook (section 6 below). 要跑的是我們的 Colab 筆記本（下面第 6 段）。</li>
     </ol>
+    <p class="count">Button names are as seen on 2026-11-23; they may differ after the official page is updated. 按鈕名稱是 2026-11-23 看到的，官方改版後可能不同。</p>
     <p><a class="btn-official" href="https://gemma.ai/learn/how-llms-work/" target="_blank" rel="noopener">Open the official guide (new tab) ↗</a></p>
-    <p style="font-size:.92rem">Real: the chat template format and the special marker strings. Simulation: the typed-out replies are replays. 真的：聊天格式與記號字串；示意：打字回覆是重播。</p>
+    <p style="font-size:.92rem">Real: the chat template format and the special marker strings. Simulation: the typed-out replies are replays. 真的：對話範本與記號字串；示意：打字回覆是重播。</p>
     <p style="font-size:.92rem">If the official page is slow, keep going with the toy here; the teacher will project the official demo. 官方頁很慢的話，先玩這裡的玩具，老師會投影。</p>
   </div>
 </section>
+<section class="block"><div class="wrap"><details class="guess"><summary>More detail: where the prompt ends and when the loop stops 細節：提示停在哪、迴圈何時停</summary>
+      <p>The guide says the prompt handed to the model ends at <code>&lt;|turn&gt;model</code> plus a line break. With standard token-by-token generation, writing 20 tokens takes about 20 runs. This example stops at <code>&lt;turn|&gt;</code> (106); generation can also stop at <code>&lt;eos&gt;</code> (1).</p>
+      <p class="zh">導覽說交給模型的提示停在 &lt;|turn&gt;model 加一個換行。標準的逐 token 生成寫 20 個 token 約跑 20 次。這個例子停在 &lt;turn|&gt;（106），一般也可能停在 &lt;eos&gt;（1）。</p>
+    </details></div></section>
 <section class="block" id="toy">
   <div class="wrap">
     <h2><span class="n">4</span>Play</h2>
@@ -99,8 +107,8 @@ What is Hualien famous for?&lt;turn|&gt;
   <div class="wrap">
     <h2><span class="n">6</span>Run the real model (Colab)</h2>
     <p class="zh">用真的模型跑（Colab）</p>
-    <div class="colab"><p>Run <b>Step 5 Chat</b> in the notebook. The first half uses the real Gemma 4 chat template: you will see “What is Hualien famous for?” turned into one long text with turn markers (shown above). The second half uses the small Gemma 3 270M (same family, same idea, different numbers): you will watch it write its answer one piece at a time, with <code>|</code> after each piece, until it writes its stop mark. A 270M model is tiny, so its answer may be wrong. Describe one piece boundary that surprised you. 跑筆記本的 Step 5：前半用真的 Gemma 4 聊天格式，會看到問句變成一長串（上面那段）；後半用小模型 Gemma 3 270M 一塊一塊生成，每塊後面有 |。小模型答案可能是錯的。請描述一個讓你意外的切塊位置。</p>
-    <div id="colabSlot"></div></div>
+    <div class="colab"><p>Run <b>Step 5 Chat</b> in the notebook. The first half uses the real Gemma 4 chat template: you will see “What is Hualien famous for?” turned into one long text with turn markers (shown above). The second half uses the small Gemma 3 270M (same family, same idea, different numbers): you will watch it write its answer one piece at a time, with <code>|</code> after each piece, until it writes its stop mark or reaches the 80-piece limit. A 270M model is tiny, so its answer may be wrong. Describe one piece boundary that surprised you. 跑筆記本的 Step 5：前半用真的 Gemma 4 對話範本，會看到問句變成一長串（上面那段）；後半用小模型 Gemma 3 270M 一塊一塊生成，每塊後面有 |，直到寫出停止記號或到 80 塊的上限。小模型答案可能是錯的。請描述一個讓你意外的切塊位置。</p>
+    <div id="colabSlot" data-label="Back to your Colab tab; click here only if it is not open yet ↗"></div><p class="zh">回到你的 Colab 分頁；還沒開才按這裡。</p></div>
   </div>
 </section>
 <section class="block" id="write">
@@ -109,7 +117,7 @@ What is Hualien famous for?&lt;turn|&gt;
     <p class="zh">寫一句</p>
     <div class="write">
     <label for="box5"><b>Box 5 · Chat, thinking &amp; tools</b></label>
-    <p class="count">Starter: “Thinking mode is still next-token prediction, because …” or “In a tool call, the model … and my program …”</p>
+    <p class="count">Starter (toy or guide): “Thinking mode is still next-token prediction, because …” or “In a tool call, the model … and my program …”; or (Colab): “In the raw chat text I saw the marks ___, and …”</p>
     <textarea id="box5" data-box="5" aria-label="Box 5"></textarea>
     <p class="saved" id="saved5" aria-live="polite"></p>
     <p style="font-size:.9rem">Your sentence stays only in this computer's browser. Nothing is sent anywhere. You will see all five boxes on the <a href="finish.html">Finish</a> page. 只存在這台電腦的瀏覽器、不會送出；五格會在 Finish 頁彙整。</p>
@@ -121,7 +129,7 @@ What is Hualien famous for?&lt;turn|&gt;
     <h2><span class="n">8</span>Check yourself</h2>
     <p class="zh">自我檢測</p>
     <div id="quizBox" data-q="4"></div>
-    <p><a class="next-btn" href="finish.html">Next: Finish: your five-box card →</a></p>
+    <p><a class="next-btn" href="finish.html">Next: Finish: your card →</a></p>
   </div>
 </section>
 </main>

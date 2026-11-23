@@ -17,6 +17,7 @@
     <p class="zh">第 4 站 · 取樣</p>
   </div>
 </header>
+
 <section class="block">
   <div class="wrap">
     <h2><span class="n">1</span>The question this step answers</h2>
@@ -24,8 +25,8 @@
     <p class="bigq">How does the model pick the next piece?</p>
     <p class="bigq zh">模型怎麼挑下一塊？</p>
     <div class="hualien"><h3 style="margin-top:0">Our sentence at this step: “Hualien is famous for” · 同一句走到這一站</h3>
-      <p>After the layers, the model gives a raw score (a logit) to every entry in its 262,144-piece vocabulary for “what comes after <code>Hualien is famous for</code>”. The order is: temperature first adjusts the scores; softmax turns them into chances; Top-K keeps the K most likely; Top-P keeps candidates from the top until the running total first reaches or passes P; then one piece is drawn. In our made-up Step 5 toy, <code>Taroko</code> gets 41%, <code>its</code> 33%, <code>the</code> 14%. Those numbers are invented: when we ran a real small Gemma model in Colab on 11/23, it chose “ its” almost every time (98.56%). Gemma 4's real defaults (from the guide): temperature 1.0, top_k 64, top_p 0.95.</p>
-      <p class="zh">經過各層之後，模型替詞表 262,144 塊裡的每一塊打一個原始分數（logit），猜 “Hualien is famous for” 後面接什麼。順序是：溫度先調整分數，softmax 再換成機率，接著 Top-K 留前 K 名、Top-P 從最高的往下加到累積機率第一次達到或超過 P，最後抽一塊。在第 5 站的示意資料中，Taroko 41%、its 33%、the 14%，這是編的；我們 11/23 在 Colab 跑真的小模型，幾乎都接 “ its”（98.56%）。Gemma 4 的真實預設：溫度 1.0、top_k 64、top_p 0.95。</p>
+      <p>After the layers, the model gives a raw score (a logit) to every entry in its 262,144-piece vocabulary for “what comes after <code>Hualien is famous for</code>”. The order is: temperature first adjusts the scores; softmax turns them into chances; Top-K keeps the K most likely and rescales them to 100%; Top-P adds up those chances from the top and keeps them until the total first reaches or passes P; the survivors are rescaled to 100% again; then one piece is drawn. This step shows three kinds of examples: the numbers in the video and the toy are made up; the Colab numbers come from a real small model. Gemma 4's real defaults (from the guide): temperature 1.0, top_k 64, top_p 0.95.</p>
+      <p class="zh">經過各層之後，模型替詞表 262,144 塊裡的每一塊打一個原始分數（logit），猜 “Hualien is famous for” 後面接什麼。順序是：溫度先調整分數，softmax 再換成機率，接著 Top-K 只留 K 個並重新算成 100%，Top-P 在這份機率上由高到低累加、留到第一次達到或超過 P，再重新算成 100%，最後抽一塊。這一站有三種例子：短片和玩具的數字是編的，Colab 的是小模型實跑。Gemma 4 的真實預設：溫度 1.0、top_k 64、top_p 0.95。</p>
     </div>
   </div>
 </section>
@@ -39,21 +40,23 @@
   </div>
 </section>
 
-<section class="block" id="video" data-key="step4"><div class="wrap"><h2><span class="n">▶</span>Short video</h2><p class="zh">看短片</p><div class="vslot"></div></div></section>
+<section class="block" id="video" data-key="step4"><div class="wrap"><h2><span class="n">▶</span>Short video</h2><p class="zh">看短片</p><div class="vslot"></div><details class="transcript"><summary>Transcript 逐幕文字（English narration + 中文字幕）</summary><ol><li><p>How does Gemma 4 pick what follows Hualien is famous for? First, it scores all 262,144 tokens and turns scores into percentages.</p><p class="zh">怎麼挑下一個字？先把 262,144 個詞打分轉成機率。</p></li><li><p>Imagine a lucky-draw jar where higher percentages get more tickets. Always picking number one makes answers robotic, so the model draws a ticket.</p><p class="zh">想成抽籤筒：機率越高籤越多，不永遠選第一，而是抽籤。</p></li><li><p>Temperature changes the scores first, before they become percentages. Its default is 1.0: lower sharpens the top choice, higher spreads chances out.</p><p class="zh">溫度先調整分數，再換成機率；預設 1.0，越低越保守，越高越有變化。</p></li><li><p>Next, we toss wild guesses out of the jar. Keeping only a fixed count of top words is called Top-K—64 by default.</p><p class="zh">接著只留前幾名候選叫 Top-K，預設留前 64 個。</p></li><li><p>Then we keep just enough top words to reach a target share of tickets. That flexible cutoff is called Top-P, defaulting to 0.95.</p><p class="zh">Top-P 從機率最高的開始加，達到門檻就停</p></li><li><p>The surviving tickets reset to 100%, and Gemma 4 draws one winner—say, Taroko. That winner joins the prompt to repeat the loop.</p><p class="zh">留下的籤重算成 100% 後抽出一張，接回原句繼續跑。</p></li><li><p>Same scores, different dials, different chances for each answer. Next, Step Five shows how this word-by-word draw turns into a real chat.</p><p class="zh">同一批分數，調整設定會改變每個答案被抽中的機會；下站看聊天。</p></li></ol></details></div></section>
 <section class="block">
   <div class="wrap">
     <h2><span class="n">3</span>On the official guide</h2>
     <p class="zh">去官方頁做什麼</p>
     <ol class="steps">
-      <li>Pick Stage 4 in the rail. 選第 4 站。</li>
-      <li>Drag the temperature slider and sample several times. Note what changes. 拉溫度滑桿、多抽幾次，看什麼變了。</li>
-      <li>Read under the heading “Step 4A: The LM Head &amp; Logits”, then “Step 4B: Softmax &amp; Sampling Controls (Temperature, Top-K, Top-P)”. 讀這兩個標題底下。</li>
+      <li>In the row of buttons at the very top of the page, press “04 Sampling”. Stay on “Standard (1-Token)”; you can skip “Gemma 4 MTP (4-Token)”. 按頁面最上方的「04 Sampling」，留在「Standard (1-Token)」，MTP 可以跳過。</li>
+      <li>Drag the temperature slider (0–2), then press “🎲 Sample Next” several times. Try a low and a high temperature. “Reset Defaults (T=1.0, K=64, P=0.95)” puts everything back. 拉溫度滑桿，按幾次「🎲 Sample Next」；「Reset Defaults」可以回到預設。</li>
+      <li>Press “>_ Read the details” and read under the heading “Step 4A: The LM Head &amp; Logits”, then “Step 4B: Softmax &amp; Sampling Controls (Temperature, Top-K, Top-P)”. 按「>_ Read the details」，讀這兩個標題底下。</li>
     </ol>
+    <p class="count">Button names are as seen on 2026-11-23; they may differ after the official page is updated. 按鈕名稱是 2026-11-23 看到的，官方改版後可能不同。</p>
     <p><a class="btn-official" href="https://gemma.ai/learn/how-llms-work/" target="_blank" rel="noopener">Open the official guide (new tab) ↗</a></p>
     <p style="font-size:.92rem">Real: default settings and all the sampling math, live. Simulation: the candidate scores are a hand-picked top-6 table. 真的：預設值與取樣數學即時真算；示意：候選分數是挑過的 6 個。</p>
     <p style="font-size:.92rem">If the official page is slow, keep going with the toy here; the teacher will project the official demo. 官方頁很慢的話，先玩這裡的玩具，老師會投影。</p>
   </div>
 </section>
+
 <section class="block" id="toy">
   <div class="wrap">
     <h2><span class="n">4</span>Play</h2>
@@ -63,6 +66,7 @@
       <span class="label-ill">Made-up scores (logits) for 8 candidates</span>
       <p>Prompt: <b>“After class, I'm going to eat …”</b> Each candidate has a fixed made-up <a href="#term-logits">logit</a>. Move the sliders and watch the chances change. Pale blue edge = chance after <a href="#term-softmax">softmax</a> only; solid bar = final chance after the cuts. Crossed-out = cut.</p>
       <p class="zh">提示：「下課後我要去吃……」。每個候選有一個固定的假分數。拉滑桿看機率怎麼變；淺藍邊＝只經過 softmax 的機率，實心長條是篩選後的抽樣機率，劃掉的候選不參與抽樣。</p>
+      <p style="font-size:.9rem">Order used here: score ÷ temperature → softmax → Top-K keeps K and rescales to 100% → Top-P adds from the top until the running total first reaches or passes P → rescale to 100% → draw. 順序：分數除以溫度 → softmax → Top-K 留 K 個並重新算成 100% → Top-P 由高到低累加到第一次達到或超過 P → 再重新算成 100% → 抽。</p>
       <div class="slider"><label for="sT">Temperature</label><input type="range" id="sT" min="0" max="2" step="0.05" value="1"><output id="oT"></output></div>
       <div class="slider"><label for="sK">Top-K</label><input type="range" id="sK" min="1" max="8" step="1" value="8"><output id="oK"></output></div>
       <div class="slider"><label for="sP">Top-P</label><input type="range" id="sP" min="0.05" max="1" step="0.01" value="0.95"><output id="oP"></output></div>
@@ -92,8 +96,8 @@
   <div class="wrap">
     <h2><span class="n">6</span>Run the real model (Colab)</h2>
     <p class="zh">用真的模型跑（Colab）</p>
-    <div class="colab"><p>This step uses Gemma 3 270M, a much smaller model from the same family: the idea is the same, the numbers are different. 這一段用的是同家族、小很多的 Gemma 3 270M：道理一樣、數字不一樣。 Run <b>Step 4 Sampling</b> in the notebook. You will see the top 10 next pieces after “Hualien is famous for” with their chances (when we ran it on 11/23, “ its” had 98.56%; yours may differ slightly), then 10 continuations at temperature 0.2 and 10 at 1.5. Changing temperature changes the chances; you may still draw the same result. Describe how the two groups differ. 跑筆記本的 Step 4，會看到下一塊的前 10 名（我們 11/23 那次 “ its” 98.56%，你的可能略有不同），再比 T=0.2 和 T=1.5 各抽 10 次。換溫度會改變機率，仍可能抽到同一個結果。描述兩組差在哪。</p>
-    <div id="colabSlot"></div></div>
+    <div class="colab"><p>This step uses Gemma 3 270M, a much smaller model from the same family: the idea is the same, the numbers are different. 這一段用的是同家族、小很多的 Gemma 3 270M：道理一樣、數字不一樣。 Run <b>Step 4 Sampling</b> in the notebook. You will see the top 10 next pieces after “Hualien is famous for” with their chances (when we ran it on 11/23, “ its” had 98.56%; yours may differ slightly), then, at temperature 0.2 and at 1.5, ten continuations of six pieces each (this is different from the food toy's “Sample 10 times” on this page). Changing temperature changes the chances; you may still draw the same result. Describe how the two groups differ. 跑筆記本的 Step 4，會看到下一塊的前 10 名（我們 11/23 那次 “ its” 98.56%，你的可能略有不同），再用 T=0.2 和 T=1.5，每個溫度各生成十段、每段六塊（這跟本頁食物玩具的「抽 10 次」不一樣）。換溫度會改變機率，仍可能抽到同一個結果。描述兩組差在哪。</p>
+    <div id="colabSlot" data-label="Back to your Colab tab; click here only if it is not open yet ↗"></div><p class="zh">回到你的 Colab 分頁；還沒開才按這裡。</p></div>
   </div>
 </section>
 <section class="block" id="write">
@@ -102,7 +106,7 @@
     <p class="zh">寫一句</p>
     <div class="write">
     <label for="box4"><b>Box 4 · Sampling</b></label>
-    <p class="count">Use the food toy ④: set a temperature, press Sample 10 times, write down what you got; then do it again at a different temperature. Repeats in both groups are fine. Starter: “At temperature ___ I got: ___. At temperature ___ I got: ___.” 用食物玩具：設溫度→按 Sample 10 times→記下來，換一個溫度再做一次；兩組有重複也可以。</p>
+    <p class="count">Use the food toy ④: set a temperature, press Sample 10 times, write down what you got; then do it again at a different temperature. Repeats in both groups are fine. Starter (toy): “At temperature ___ I got: ___. At temperature ___ I got: ___.” or (Colab): “In Colab, at T=0.2 the ten lines were ___, at T=1.5 they were ___.” 用食物玩具：設溫度→按 Sample 10 times→記下來，換一個溫度再做一次；兩組有重複也可以。</p>
     <textarea id="box4" data-box="4" aria-label="Box 4"></textarea>
     <p class="saved" id="saved4" aria-live="polite"></p>
     <p style="font-size:.9rem">Your sentence stays only in this computer's browser. Nothing is sent anywhere. You will see all five boxes on the <a href="finish.html">Finish</a> page. 只存在這台電腦的瀏覽器、不會送出；五格會在 Finish 頁彙整。</p>
@@ -114,7 +118,7 @@
     <h2><span class="n">8</span>Check yourself</h2>
     <p class="zh">自我檢測</p>
     <div id="quizBox" data-q="1 3"></div>
-    <p><a class="next-btn" href="step5.html">Next: Step 5 · Chat →</a></p>
+    <p><a class="next-btn" href="step5.html">Next: Step 5 · Chat, thinking & tools →</a></p>
   </div>
 </section>
 </main>

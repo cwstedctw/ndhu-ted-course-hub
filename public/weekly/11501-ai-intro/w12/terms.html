@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gemma Learn Companion</title>
-<meta name="description" content="Every term in Google's official Gemma 'How LLMs work' guide, explained for non-IT students, with five small toys, a class route, a printable five-box card and a self-check quiz.">
+<meta name="description" content="Every term in Google's official Gemma 'How LLMs work' guide, explained for non-IT students, with five small toys, a class route, a printable card and a self-check quiz.">
 <style>
 :root{
   --bg:#f6f4ee; --surface:#ffffff; --surface-2:#eef1ef; --ink:#1b262b; --muted:#56656c;
@@ -148,7 +148,7 @@ svg.map{width:100%;max-width:520px;height:auto;display:block;background:var(--bg
 @media (max-width:640px){.station .pcf{grid-template-columns:1fr}}
 .station .pcf b{color:var(--muted);font-size:.9rem}
 
-/* five-box card */
+/* card */
 #card .sheet{background:var(--surface);border:2px solid var(--ink);border-radius:6px;padding:1rem}
 .sheet .head{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--ink);padding-bottom:.4rem;margin-bottom:.5rem}
 .sheet .fill-line{display:inline-block;min-width:9em;border-bottom:1px solid var(--ink)}
@@ -210,7 +210,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
     <li><a href="#terms">Term station</a></li>
     <li><a href="#toys">Toys</a></li>
     <li><a href="#route">Class route</a></li>
-    <li><a href="#card">Five-box card</a></li>
+    <li><a href="#card">Your card</a></li>
     <li><a href="#quiz">Quiz</a></li>
   </ul>
 </nav>
@@ -222,10 +222,10 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
     <p class="zh">怎麼搭配官方導覽使用</p>
     <ol class="steps">
       <li><b>Open both.</b> Official guide in one window, this page in another (or phone + laptop). 兩個視窗並排。</li>
-      <li><b>On the official page,</b> pick a stage in the rail to open its live demo; expand the terminal panel when you want the long explanation. 在官方頁的站別列（rail）選站、點開下方說明面板。</li>
+      <li><b>On the official page,</b> pick a stage in the row of buttons at the top (“01 Tokenization” … “05 Chat &amp; tools”) to open its live demo; press “>_ Read the details” when you want the long explanation. 在官方頁的站別列（rail）選站、點開下方說明面板。</li>
       <li><b>When you meet a word you don't know,</b> type it into the search box of the <a href="#terms">term station</a>. Start with ⭐ cards; 💤 cards are safe to skip. 看不懂的字就來這裡搜；先看 ⭐，💤 可以跳過。</li>
-      <li><b>Each card's “Where you'll see it”</b> names the stage and the heading inside the official explanation panel, so you can find the spot. 每張卡都寫了在官方頁哪一站、哪個標題底下。</li>
-      <li><b>Write your five-box card</b> as you go (one sentence per stage). 邊走邊寫<a href="#card">五格卡</a>。</li>
+      <li><b>Each card's “Where you'll see it”</b> names the stage and the heading you see after pressing “>_ Read the details” on the official page, so you can find the spot. 每張卡都寫了在官方頁哪一站、哪個標題底下。</li>
+      <li><b>Write your card</b> as you go (one sentence per stage). 邊走邊寫<a href="#card">學習卡</a>。</li>
     </ol>
     <div class="panel">
       <h3 style="margin-top:0">What's real and what's a teaching simulation on the official page</h3>
@@ -240,7 +240,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
           <tr><td>5 Chat &amp; tools</td><td class="tag-real">The chat template format and the special marker strings.</td><td class="tag-sim">The typed-out replies are replays of prepared examples.</td></tr>
         </tbody>
       </table></div>
-      <p><b>Stage 5 note:</b> don't run the Python example in class (it downloads a real model); the chat stream in the guide's stage-5 demo is simulated. 第 5 站：課堂上不要跑 Python 範例；官方頁的對話打字效果是模擬的。</p>
+      <p><b>Stage 5 note:</b> don't run the Python example on the official page (it downloads a real model); the code you do run is our Colab notebook; the chat stream in the guide's stage-5 demo is simulated. 第 5 站：課堂上不要跑 Python 範例；官方頁的對話打字效果是模擬的。</p>
       <p><b>On this page:</b> every toy number is made up for teaching unless it is marked “from the guide”. 這一頁玩具裡的數字，除了標「from the guide」的以外，全是教學用的假數字。</p>
     </div>
   </div>
@@ -284,7 +284,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
         <li><code>🚀🙂</code> — notice whether each emoji is one piece or several. 注意表情符號是一塊還是好幾塊。</li>
         <li><code>2026</code> — notice whether the number is one piece or one piece per digit, and compare with <code>2,026</code>. 注意數字是整塊還是一個位數一塊。</li>
       </ol>
-      <p>Write the most surprising one in box 1 of your <a href="#card">five-box card</a>. Words to check first: <a href="#term-token">token</a>, <a href="#term-subword">subword tokenization</a>, <a href="#term-token-id">Token ID</a>.</p>
+      <p>Write the most surprising one in box 1 of your <a href="#card">card</a>. Words to check first: <a href="#term-token">token</a>, <a href="#term-subword">subword tokenization</a>, <a href="#term-token-id">Token ID</a>.</p>
     </div>
 
     <div class="toy" id="toy2">
@@ -300,10 +300,10 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
     </div>
 
     <div class="toy" id="toy3">
-      <h3>③ Attention: who does “it” look back at? (Stage 3)</h3>
+      <h3>③ Attention: what does “it” look at, itself and earlier words? (Stage 3)</h3>
       <span class="label-ill">Illustrative weights — made up, not computed by Gemma 4</span>
       <p>A similar trophy/suitcase example appears in the official Stage 3, but don't try to match its percentages — both are illustrations. Click any word to see where it looks. <b>Hatched words come later in the sentence</b>: the <a href="#term-causal-mask">causal mask</a> hides them, so their weight is 0.</p>
-      <p class="zh">官方第 3 站有類似的獎盃／行李箱例子，但不用對它的百分比，兩邊都是示意。點任何一個字，看它往回看誰；斜線的字在後面，被因果遮罩擋住，權重是 0。</p>
+      <p class="zh">官方第 3 站有類似的獎盃／行李箱例子，但不用對它的百分比，兩邊都是示意。點任何一個字，看它在自己和前面的字裡看誰；斜線的字在後面，被因果遮罩擋住，權重是 0。</p>
       <div class="row" role="group" aria-label="Which sentence">
         <button type="button" class="chip-btn" id="partA" aria-pressed="true">A · clue comes before “it”</button>
         <button type="button" class="chip-btn" id="partB" aria-pressed="false">B · clue comes after “it”</button>
@@ -319,6 +319,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
       <span class="label-ill">Made-up scores (logits) for 8 candidates</span>
       <p>Prompt: <b>“After class, I'm going to eat …”</b> Each candidate has a fixed made-up <a href="#term-logits">logit</a>. Move the sliders and watch the chances change. Pale blue edge = chance after <a href="#term-softmax">softmax</a> only; solid bar = final chance after the cuts. Crossed-out = cut.</p>
       <p class="zh">提示：「下課後我要去吃……」。每個候選有一個固定的假分數。拉滑桿看機率怎麼變；淺藍邊＝只經過 softmax 的機率，實心長條是篩選後的抽樣機率，劃掉的候選不參與抽樣。</p>
+      <p style="font-size:.9rem">Order used here: score ÷ temperature → softmax → Top-K keeps K and rescales to 100% → Top-P adds from the top until the running total first reaches or passes P → rescale to 100% → draw. 順序：分數除以溫度 → softmax → Top-K 留 K 個並重新算成 100% → Top-P 由高到低累加到第一次達到或超過 P → 再重新算成 100% → 抽。</p>
       <div class="slider"><label for="sT">Temperature</label><input type="range" id="sT" min="0" max="2" step="0.05" value="1"><output id="oT"></output></div>
       <div class="slider"><label for="sK">Top-K</label><input type="range" id="sK" min="1" max="8" step="1" value="8"><output id="oK"></output></div>
       <div class="slider"><label for="sP">Top-P</label><input type="range" id="sP" min="0.05" max="1" step="0.01" value="0.95"><output id="oP"></output></div>
@@ -357,7 +358,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
   <div class="wrap">
     <h2>Class route · 課堂路線（150 min）</h2>
     <p>Each station: <b>predict</b> → <b>click the official guide</b> → <b>come back and write one sentence</b> on your card. Read the 2–3 core terms first.</p>
-    <p class="zh">每一站：先猜 → 去官方頁點 → 回來在五格卡寫一句。先讀 2–3 個核心名詞。</p>
+    <p class="zh">每一站：先猜 → 去官方頁點 → 回來在學習卡寫一句。先讀 2–3 個核心名詞。</p>
     <div class="tablewrap"><table>
       <thead><tr><th>Minutes</th><th>What we do · 做什麼</th></tr></thead>
       <tbody>
@@ -365,11 +366,11 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
         <tr><td>10–25</td><td>Term station demo (search, stage and tier filters). Each student marks <b>5 terms they don't know</b> on the card. Then Overview: in the model table look only at the E2B row first. 示範名詞站篩選，每人在卡上寫下 5 個不懂的字；總覽表先只看 E2B 那一列。</td></tr>
         <tr><td>25–55</td><td>Station 1 (official tokenizer + box ①) and Station 2 (toy ②). 第 1、2 站。</td></tr>
         <tr><td>55–65</td><td>Break 休息</td></tr>
-        <tr><td>65–100</td><td>Station 3 (toy ③) and Station 4 (toy ④ — write two different answers in box 4). 第 3、4 站。</td></tr>
+        <tr><td>65–100</td><td>Station 3 (toy ③) and Station 4 (toy ④ — write down the results at two temperatures in box 4; repeats are fine). 第 3、4 站。</td></tr>
         <tr><td>100–110</td><td>Break 休息</td></tr>
         <tr><td>110–130</td><td>Station 5 (toy ⑤ + official chat &amp; tools; the Python on the official page is read only, run Step 5 of our Colab notebook instead). 第 5 站：官方頁的 Python 只讀不跑，要跑的是我們的 Colab 筆記本 Step 5。</td></tr>
         <tr><td>130–140</td><td>Quiz: questions 1–3 together (4–5 optional). 小測驗前 3 題。</td></tr>
-        <tr><td>140–150</td><td>Finish and upload your five-box card to e-learning. 完成並上傳五格卡。</td></tr>
+        <tr><td>140–150</td><td>Finish and upload your card to e-learning. 完成並上傳學習卡。</td></tr>
       </tbody>
     </table></div>
 
@@ -382,7 +383,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
     <div class="station"><h3>Station 1 · Tokenization (25–40 min)</h3>
       <div class="pcf"><b>Core terms</b><span><a href="#term-tokenization">Tokenization</a> (with tokenizer &amp; vocabulary) · <a href="#term-token">token</a> · <a href="#term-subword">subword tokenization</a></span>
       <b>Predict</b><span>Will “2026” be one piece or four? Will a Chinese sentence be one piece per character?</span>
-      <b>Official guide</b><span>Stage 1 in the rail; type the five inputs from <a href="#toy1">box ①</a>.</span>
+      <b>Official guide</b><span>“01 Tokenization” in the top row of the official page; type the five inputs from <a href="#toy1">box ①</a>.</span>
       <b>Write</b><span>Box 1: the most surprising split you saw.</span></div></div>
 
     <div class="station"><h3>Station 2 · Embeddings (40–55 min)</h3>
@@ -401,7 +402,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
       <div class="pcf"><b>Core terms</b><span><a href="#term-softmax">Softmax</a> · <a href="#term-temperature">Temperature</a> · <a href="#term-top-p">Top-P</a> (and <a href="#term-top-k">Top-K</a>)</span>
       <b>Predict</b><span>If temperature is very low, will you get the same word every time?</span>
       <b>Official guide</b><span>Stage 4: drag the temperature slider, sample several times.</span>
-      <b>Write</b><span>Box 4: two different answers you got and the settings you used.</span></div></div>
+      <b>Write</b><span>Box 4: the group of results you got at each of two temperatures (repeats or identical results are fine).</span></div></div>
 
     <div class="station"><h3>Station 5 · Chat, thinking &amp; tools (110–130 min)</h3>
       <div class="pcf"><b>Core terms</b><span><a href="#term-autoregressive">autoregressive loop</a> · <a href="#term-chat-template">chat template</a> · <a href="#term-tool-call">tool call</a></span>
@@ -413,9 +414,9 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
 
 <section class="block" id="card">
   <div class="wrap">
-    <h2>Five-box card · 五格卡</h2>
-    <p>The five-box card has moved. Write one sentence at the end of each step page (<a href="step1.html">Step 1</a>–<a href="step5.html">Step 5</a>, plus the 5 unknown terms on the <a href="index.html">Start</a> page), then collect and print all of them as one A4 page on <a href="finish.html">finish.html</a>.</p>
-    <p class="zh">五格卡改到各站頁寫：每一站最後寫一句（Start 頁寫 5 個不懂的字），再到 <a href="finish.html">finish.html</a> 彙整、列印成一張 A4。</p>
+    <h2>Your card · 學習卡</h2>
+    <p>Your card (5 unknown terms + one sentence per step) has moved. Write one sentence at the end of each step page (<a href="step1.html">Step 1</a>–<a href="step5.html">Step 5</a>, plus the 5 unknown terms on the <a href="index.html">Start</a> page), then collect and print all of them as one A4 page on <a href="finish.html">finish.html</a>.</p>
+    <p class="zh">學習卡改到各站頁寫：每一站最後寫一句（Start 頁寫 5 個不懂的字），再到 <a href="finish.html">finish.html</a> 彙整、列印成一張 A4。</p>
   </div>
 </section>
 

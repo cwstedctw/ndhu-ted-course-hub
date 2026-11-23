@@ -13,8 +13,9 @@
 <header class="top">
   <div class="wrap">
     <div class="kicker">AI Intro · Week 12 · Finish</div>
-    <h1>Your five-box card</h1>
-    <p class="zh">五格卡彙整</p>
+    <h1>Your card</h1>
+    <p class="zh">學習卡彙整：5 個不懂的字＋五站各一句</p>
+    <p>Your card = 5 unknown terms + one sentence per step (six boxes).</p>
   </div>
 </header>
 <section class="block" id="card">
@@ -23,27 +24,27 @@
       <p>Here are the sentences you wrote on each step page. They are stored only in this computer's browser and are never sent anywhere. To change a box, click its title and edit it on that page. </p>
       <ol class="steps"><li>Press <b>Print the card (A4)</b>. 按 Print the card (A4)。</li><li>In the print window, choose <b>Save as PDF</b>. 在列印視窗選「另存為 PDF」。</li><li>Upload the PDF to the e-learning assignment your teacher names. 上傳到 e學苑 老師指定的作業。</li></ol>
       <p class="zh">這裡彙整你在每一站寫的那一句。只存在這台電腦的瀏覽器、不會送出。要改某一格就點標題回那一站改。</p>
-      <p><button type="button" class="toybtn" id="printCard">Print the card (A4)</button>
-         <button type="button" class="toybtn secondary" id="clearCard">Clear all boxes</button>
-         <span class="saved" id="clearMsg" aria-live="polite"></span></p>
-      <p style="font-size:.9rem">On a shared classroom computer, press “Clear all boxes” when you are done. 用教室共用電腦的話，做完記得按清除。</p>
+      <p>Your name and student number are not saved anywhere: type them just before you print. 姓名學號不會被存起來，印之前再填。</p>
+      <p><button type="button" class="toybtn" id="printCard">Print the card (A4)</button></p>
     </div>
     <div class="sheet" id="summary">
-      <div class="head"><b>W12 · How LLMs work — five-box card</b><span>Name <span class="fill-line">&nbsp;</span></span><span>No. <span class="fill-line">&nbsp;</span></span></div>
+      <div class="head"><b>W12 · How LLMs work — card</b><label>Name <input type="text" id="cardName" autocomplete="off" aria-label="Name"></label><label>No. <input type="text" id="cardNo" autocomplete="off" aria-label="Student number"></label></div>
       <div class="box"><h4><a class="screen-only" href="index.html">5 terms I didn't know</a><span class="print-only">5 terms I didn't know</span></h4><div class="answer" data-box="0"></div></div>
       <div class="box"><h4><a class="screen-only" href="step1.html">1 · Tokenization</a><span class="print-only">1 · Tokenization</span></h4><div class="answer" data-box="1"></div></div>
       <div class="box"><h4><a class="screen-only" href="step2.html">2 · Embeddings</a><span class="print-only">2 · Embeddings</span></h4><div class="answer" data-box="2"></div></div>
-      <div class="box"><h4><a class="screen-only" href="step3.html">3 · Attention</a><span class="print-only">3 · Attention</span></h4><div class="answer" data-box="3"></div></div>
-      <div class="box"><h4><a class="screen-only" href="step4.html">4 · Sampling — two different answers</a><span class="print-only">4 · Sampling — two different answers</span></h4><div class="answer" data-box="4"></div></div>
+      <div class="box"><h4><a class="screen-only" href="step3.html">3 · Attention &amp; layers</a><span class="print-only">3 · Attention &amp; layers</span></h4><div class="answer" data-box="3"></div></div>
+      <div class="box"><h4><a class="screen-only" href="step4.html">4 · Sampling — results at two temperatures (repeats are fine)</a><span class="print-only">4 · Sampling — results at two temperatures (repeats are fine)</span></h4><div class="answer" data-box="4"></div></div>
       <div class="box"><h4><a class="screen-only" href="step5.html">5 · Chat, thinking &amp; tools</a><span class="print-only">5 · Chat, thinking &amp; tools</span></h4><div class="answer" data-box="5"></div></div>
     </div>
   </div>
 </section>
+<section class="block screen-only"><div class="wrap"><div class="danger-zone"><p>On a shared classroom computer, clear your sentences when you are done (it asks first). 用教室共用電腦的話，做完記得清除（會先確認）。</p>
+      <p><button type="button" class="toybtn secondary" id="clearCard">Clear all boxes</button> <span class="saved" id="clearMsg" aria-live="polite"></span></p></div></div></section>
 <section class="block" id="quiz">
   <div class="wrap">
-    <h2><span class="n"></span>Self-check quiz</h2>
-    <p class="zh">小測驗</p>
-    <p>Questions 1–3 in class; 4–5 are optional. Pick an answer to see feedback. 第 1–3 題課堂做，4–5 題自選。</p>
+    <h2><span class="n"></span>Self-check quiz (optional review, nothing to hand in)</h2>
+    <p class="zh">小測驗：自選複習，不用交（不會印出來）</p>
+    <p>Pick an answer to see feedback. 選一個答案看回饋。</p>
     <div id="quizBox" data-q="0 1 2 3 4"></div>
     <p class="count" id="quizScore" aria-live="polite"></p>
   </div>

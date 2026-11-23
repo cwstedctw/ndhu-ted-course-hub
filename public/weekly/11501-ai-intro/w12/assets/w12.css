@@ -207,3 +207,20 @@ section.block h2 .n{color:var(--muted);font-weight:600;font-size:.8em;margin-rig
 #real .tid{font-size:.7rem;color:var(--muted)}
 #real .tokrow{gap:.3rem}
 .tablewrap td:first-child,.tablewrap th:first-child{white-space:nowrap}
+
+/* round 5 */
+.mapgrid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.alert-colab{border:2px solid var(--warm);background:var(--warm-soft);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.alert-colab p{margin:.2rem 0}
+details.transcript{margin-top:.6rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.4rem .8rem}
+details.transcript summary{cursor:pointer;font-weight:600}
+details.transcript ol{padding-left:1.3rem}
+details.transcript li{margin:.4rem 0}
+.sheet .head input{font:inherit;border:none;border-bottom:1px solid var(--ink);background:transparent;color:var(--ink);width:10em;padding:0 .2rem}
+.danger-zone{margin-top:1.2rem;padding-top:.6rem;border-top:1px dashed var(--line)}
+@media (max-width:640px){
+  nav.progress .in{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+  nav.progress .dots{flex-wrap:nowrap}
+  nav.progress .pn{flex-wrap:nowrap}
+}
+@media print{ .sheet .head input{border-bottom:1px solid #000;color:#000} }

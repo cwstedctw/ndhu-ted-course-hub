@@ -42,7 +42,7 @@ if(vbox){
 var cbox = $('colabSlot');
 if(cbox){
   cbox.innerHTML = CFG.colabUrl
-    ? '<a class="btn-official" href="'+esc(CFG.colabUrl)+'" target="_blank" rel="noopener">Open the Colab notebook (new tab) ↗</a>'
+    ? '<a class="btn-official" href="'+esc(CFG.colabUrl)+'" target="_blank" rel="noopener">'+esc(cbox.getAttribute('data-label') || 'Open the Colab notebook (new tab) ↗')+'</a>'
     : '<p class="wait">The teacher will give you the link in class. 老師上課會給連結。</p>';
 }
 
@@ -140,7 +140,7 @@ if(qb){
   var pick = (qb.getAttribute('data-q') || '0 1 2 3 4').split(' ').map(Number), answered = {};
   pick.forEach(function(n){
     var item = QUIZ[n], d = document.createElement('div'); d.className = 'qz';
-    var h = '<fieldset><legend>' + (n+1) + '. ' + esc(item.q) + (item.opt ? '<span class="opt-tag">optional</span>' : '<span class="opt-tag">in class</span>') + '</legend>';
+    var h = '<fieldset><legend>' + (pick.length > 1 ? (n+1) + '. ' : 'Check: ') + esc(item.q) + (item.opt ? '<span class="opt-tag">optional</span>' : '<span class="opt-tag">in class</span>') + '</legend>';
     item.o.forEach(function(o,i){ h += '<label><input type="radio" name="qz' + n + '" value="' + i + '"> ' + esc(o) + '</label>'; });
     h += '</fieldset><div class="fb" id="fb' + n + '" aria-live="polite"></div>';
     d.innerHTML = h; qb.appendChild(d);
@@ -378,7 +378,7 @@ if($('summary')) (function(){
   draw();
   $('printCard').addEventListener('click', function(){ window.print(); });
   $('clearCard').addEventListener('click', function(){
-    if(!window.confirm('Clear all six boxes in this browser? 確定清除這台電腦上的五格卡？')) return;
+    if(!window.confirm('Clear all six boxes in this browser? This cannot be undone. 確定清除這台電腦上卡片的六格？清除後無法復原。')) return;
     clearAll(); draw();
     $('clearMsg').textContent = 'Cleared. 已清除。';
   });
