@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W12 How LLMs Work</title>
+<meta name="description" content="Week 12 AI Intro: a five-step walk through Google's official Gemma 'How LLMs work' guide.">
+<link rel="stylesheet" href="assets/w12.css">
+</head>
+<body data-step="index">
+<nav class="progress" id="progTop" aria-label="Steps"></nav>
+<main>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">AI Intro · Week 12 · 人工智慧概論 第 12 週</div>
+    <h1>How LLMs work, one step at a time</h1>
+    <p class="zh">大型語言模型怎麼運作：一步一頁</p>
+    <p class="sub">A companion to Google's official interactive guide “How LLMs work (with Gemma 4)”. Keep both open side by side. 把教材和官方導覽並排開啟。</p>
+    <p><b>Start here:</b> 1) click <a href="terms.html">Terms</a> and take a quick look; 2) come back to this Start page and write 5 terms you don't know (section 6 below); 3) click <a href="step1.html">Step 1</a>. 起手順序：先點 Terms 看一眼 → 回 Start 寫五個不懂的字 → 點 Step 1。</p>
+    <a class="btn-official" href="https://gemma.ai/learn/how-llms-work/" target="_blank" rel="noopener">Open the official guide (new tab) ↗</a>
+    <div class="note-slow" role="note">
+      <p>If the official page is slow, keep going with the toys and cards here; the teacher will project the official demo.</p>
+      <p class="zh">官方頁如果很慢（第 1 站要下載 32.2 MB 的檔案，全班同時開會塞車），就先用這裡的玩具和名詞卡，老師會投影官方展示。</p>
+    </div>
+  </div>
+</header>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">0</span>The question for today</h2>
+    <p class="zh">今天的問題</p>
+    <p class="bigq">An LLM only does one thing: guess the next piece of text. How does that become an answer?</p>
+    <p class="bigq zh">大型語言模型只做一件事：猜下一小塊文字。這怎麼變成一個回答？</p>
+    <div class="hualien"><h3 style="margin-top:0">One sentence through all five steps · 一句話走完五站</h3>
+      <p>We follow the same sentence everywhere today: <code>Hualien is famous for</code>. Step 1 cuts it into pieces, Step 2 turns each piece into a vector, Step 3 lets the pieces look at each other, Step 4 draws the next piece. That piece is added to the input and the model continues from Step 2 (looking up its vector); the sentence is not cut again. Step 5 shows this loop through chat.</p>
+      <p class="zh">今天每一站都跟著同一句：“Hualien is famous for”。第 1 站切成小塊、第 2 站每塊變成向量、第 3 站讓各塊互相看、第 4 站抽出下一塊；這一塊接回輸入，從第 2 站（查向量）繼續，不會整句重新斷詞。第 5 站用聊天來看這個迴圈。</p>
+    </div>
+  </div>
+</section>
+<section class="block" id="video" data-key="overview"><div class="wrap"><h2><span class="n">▶</span>Short video</h2><p class="zh">看短片</p><div class="vslot"></div></div></section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">1</span>Five-step map</h2>
+    <p class="zh">五站地圖</p>
+    <div class="mapgrid">
+      <a href="step1.html"><b>Step 1 · Tokenization</b>How does text become numbers the model can use?<br><span class="zh">文字怎麼變成模型能用的數字？</span></a>
+      <a href="step2.html"><b>Step 2 · Embeddings</b>How does an ID number turn into something with meaning?<br><span class="zh">一個編號怎麼變成帶有意思的東西？</span></a>
+      <a href="step3.html"><b>Step 3 · Attention &amp; layers</b>How does each piece (token) use itself and the pieces that came before it?<br><span class="zh">每一小塊文字（token）怎麼利用自己和前面的塊？</span></a>
+      <a href="step4.html"><b>Step 4 · Sampling</b>How does the model pick the next piece?<br><span class="zh">模型怎麼挑下一塊？</span></a>
+      <a href="step5.html"><b>Step 5 · Chat, thinking &amp; tools</b>How do Steps 1–4 become a chat that answers you?<br><span class="zh">第 1–4 站怎麼變成會回你話的聊天？</span></a>
+    </div>
+    <p>Each step page has the same order: question → guess → official guide → toy → core terms → Colab → write one sentence → check. 每一頁順序都一樣：問題、先猜、官方頁、玩具、核心名詞、Colab、寫一句、檢測。</p>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">2</span>How today goes (150 min)</h2>
+    <p class="zh">今天怎麼走（150 分鐘）</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Minutes</th><th>What we do · 做什麼</th></tr></thead>
+      <tbody>
+        <tr><td>0–10</td><td>Wrap up the Kaggle homework; bridge: last week we watched AI cheat, this week we open it up. 收尾上週 Kaggle，銜接本週。</td></tr>
+        <tr><td>10–25</td><td><a href="terms.html">Term station</a> demo (search, stage and tier filters). Each student marks <b>5 terms they don't know</b> on the card. Then Overview: in the model table look only at the E2B row first. 示範名詞站篩選，每人在卡上寫下 5 個不懂的字；總覽表先只看 E2B 那一列。</td></tr>
+        <tr><td>25–55</td><td>First open the Colab notebook and press Run all (Runtime → Run all) so it downloads in the background; running everything takes about 2–4 minutes. Then <a href="step1.html">Step 1</a> (official tokenizer + toy ① + run notebook Step 1) and <a href="step2.html">Step 2</a> (toy ② + run notebook Step 2). 一進第 1 站先打開筆記本按「全部執行」讓它在背景下載（全部跑完約 2–4 分鐘）；第 1、2 站各跑筆記本的 Step 1、Step 2。</td></tr>
+        <tr><td>55–65</td><td>Break 休息</td></tr>
+        <tr><td>65–100</td><td><a href="step3.html">Step 3</a> (toy ③ + run notebook Step 3) and <a href="step4.html">Step 4</a> (toy ④ + run notebook Step 4; write two different answers in box 4). 第 3、4 站，各跑筆記本的 Step 3、Step 4。</td></tr>
+        <tr><td>100–110</td><td>Break 休息</td></tr>
+        <tr><td>110–130</td><td><a href="step5.html">Step 5</a> (toy ⑤ + official chat &amp; tools + run notebook Step 5). 第 5 站，跑筆記本的 Step 5。</td></tr>
+        <tr><td>130–140</td><td>Quiz: questions 1–3 together (4–5 optional). 小測驗前 3 題。</td></tr>
+        <tr><td>140–150</td><td><a href="finish.html">Finish</a> and upload your five-box card to e-learning. 完成並上傳五格卡。</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">3</span>The Gemma 4 family at a glance</h2>
+    <p class="zh">Gemma 4 型號一覽</p>
+    <p>On the official Overview, find the model family table (heading “The Gemma 4 model family at a glance”). Look only at the E2B row first. 官方總覽的型號表先只看 E2B 那一列。</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Model</th><th>Parameters</th><th>Layers</th><th>Max context</th><th>Local window</th></tr></thead>
+      <tbody>
+        <tr><td>E2B</td><td>2.3B effective (5.1B w/ PLE)</td><td>35</td><td>128K</td><td>512 tokens</td></tr>
+        <tr><td>E4B</td><td>4.5B effective (8.0B w/ PLE)</td><td>42</td><td>128K</td><td>512 tokens</td></tr>
+        <tr><td>12B</td><td>11.95B</td><td>48</td><td>256K</td><td>1,024 tokens</td></tr>
+        <tr><td>26B A4B</td><td>25.2B total / 3.8B active</td><td>30</td><td>256K</td><td>1,024 tokens</td></tr>
+        <tr><td>31B</td><td>30.7B</td><td>60</td><td>256K</td><td>1,024 tokens</td></tr>
+      </tbody>
+    </table></div>
+    <p style="font-size:.92rem">All five share one 262,144-piece vocabulary. The guide says 256K tokens is about a 600-page book. Numbers from the guide. 五種大小共用 262,144 塊的詞表；256K 約等於 600 頁的書。數字照官方導覽。</p>
+    <details class="guess"><summary>Guess: E2B is listed as “2.3B effective (5.1B w/ PLE)”. What does each number count? 先猜：兩個數字各算了什麼？</summary><p>2.3B counts the parameters mainly used in each calculation; 5.1B also counts the per-layer look-up tables (PLE). Open the card below. 2.3B 是每次計算主要用到的參數，5.1B 把逐層查表（PLE）也算進去。看下面的卡。</p></details>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">4</span>Core terms before you start</h2>
+    <p class="zh">出發前的核心名詞</p>
+    <p>Guess each card's answer before you open it. 先猜再點開。 Every other word: <a href="terms.html?stage=0#terms">Overview terms in the dictionary</a>.</p>
+    <div id="cores" data-slugs="next-token effective-params context-window"></div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">5</span>Run the real model (Colab)</h2>
+    <p class="zh">用真的模型跑（Colab）</p>
+    <div class="colab"><p>The Colab notebook runs real Gemma code on “Hualien is famous for”, with one part per step: Step 1 Tokenization, Step 2 Embeddings, Step 3 Attention, Step 4 Sampling, Step 5 Chat. Step 1 and the chat format in Step 5 use the real Gemma 4 tokenizer; Steps 2–4 use Gemma 3 270M, a much smaller model from the same family (same idea, different numbers). When you reach Step 1, open it and press Run all (Runtime → Run all) first: everything takes about 2–4 minutes and downloads in the background. Each step page tells you which part to look at.</p>
+    <p>Two kinds of Python, two rules: the Python on the official Stage 5 page is read only, don't run it; the code you do run is this Colab notebook. 官方第 5 頁的 Python 只讀不跑；要跑的是我們的 Colab 筆記本。</p>
+    <p class="zh">筆記本分五段，對應五站。第 1 站與第 5 站的聊天格式用真的 Gemma 4 斷詞器；第 2–4 站用同家族的小模型 Gemma 3 270M（道理一樣、數字不一樣）。一進第 1 站就先按「全部執行」，全部跑完約 2–4 分鐘。</p>
+    <div id="colabSlot"></div></div>
+  </div>
+</section>
+<section class="block" id="write">
+  <div class="wrap">
+    <h2><span class="n">6</span>Mark 5 words you don't know</h2>
+    <p class="zh">寫下 5 個不懂的字</p>
+    <div class="write">
+    <p>Skim the <a href="terms.html">term station</a> and write 5 terms you don't know yet. This goes into the top box of your five-box card. 快速瀏覽名詞站，寫下 5 個還不懂的名詞。</p>
+    <textarea id="box0" data-box="0" aria-label="Five terms I did not know"></textarea>
+    <p class="saved" id="saved0" aria-live="polite"></p>
+    <p style="font-size:.9rem">Saved only in this computer's browser; nothing is sent. 只存在這台電腦的瀏覽器、不會送出。</p>
+    </div>
+    <p><a class="next-btn" href="step1.html">Start: Step 1 · Tokenization →</a></p>
+  </div>
+</section>
+</main>
+<nav class="progress" id="progBot" aria-label="Steps (bottom)"></nav>
+<footer>
+  <div class="wrap">
+    <p>Source for every Gemma fact: Google's official guide “How LLMs work (with Gemma 4)”, gemma.ai/learn/how-llms-work/ (read 2026-11-22). Explanations, analogies, toys and examples are our own words; toy numbers are made up unless marked “from the guide”. If anything here disagrees with the official page, the official page wins. 所有 Gemma 事實出自官方導覽；解釋、比喻、玩具是我們自己寫的，玩具數字除非標明都是假的。與官方不一致時以官方為準。</p>
+    <p>Dictionary of all 113 terms: <a href="terms.html">terms.html</a>. 全部名詞：名詞站。</p>
+  </div>
+</footer>
+<script src="assets/config.js"></script>
+<script src="assets/terms-data.js"></script>
+<script src="assets/w12.js"></script>
+</body>
+</html>

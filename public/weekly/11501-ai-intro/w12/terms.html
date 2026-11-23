@@ -186,6 +186,11 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
 </style>
 </head>
 <body>
+<nav class="sitenav" aria-label="W12 steps" style="background:var(--surface-2);border-bottom:1px solid var(--line)">
+  <ul style="list-style:none;margin:0 auto;padding:.4rem 16px;display:flex;flex-wrap:wrap;gap:.2rem .8rem;max-width:1000px;font-size:.9rem;font-weight:600">
+    <li><a href="index.html">Start</a></li><li><a href="step1.html">Step 1</a></li><li><a href="step2.html">Step 2</a></li><li><a href="step3.html">Step 3</a></li><li><a href="step4.html">Step 4</a></li><li><a href="step5.html">Step 5</a></li><li><a href="finish.html">Finish</a></li><li><a href="terms.html" aria-current="page">Terms 名詞站</a></li>
+  </ul>
+</nav>
 <header class="top">
   <div class="wrap">
     <div class="kicker">AI Intro · Week 12 · 人工智慧概論 第 12 週</div>
@@ -217,7 +222,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
     <p class="zh">怎麼搭配官方導覽使用</p>
     <ol class="steps">
       <li><b>Open both.</b> Official guide in one window, this page in another (or phone + laptop). 兩個視窗並排。</li>
-      <li><b>On the official page,</b> pick a stage in the rail on the left to open its live demo; expand the terminal panel when you want the long explanation. 在官方頁左邊選站、點開下方說明面板。</li>
+      <li><b>On the official page,</b> pick a stage in the rail to open its live demo; expand the terminal panel when you want the long explanation. 在官方頁的站別列（rail）選站、點開下方說明面板。</li>
       <li><b>When you meet a word you don't know,</b> type it into the search box of the <a href="#terms">term station</a>. Start with ⭐ cards; 💤 cards are safe to skip. 看不懂的字就來這裡搜；先看 ⭐，💤 可以跳過。</li>
       <li><b>Each card's “Where you'll see it”</b> names the stage and the heading inside the official explanation panel, so you can find the spot. 每張卡都寫了在官方頁哪一站、哪個標題底下。</li>
       <li><b>Write your five-box card</b> as you go (one sentence per stage). 邊走邊寫<a href="#card">五格卡</a>。</li>
@@ -291,7 +296,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
       <svg class="map" id="vecMap" viewBox="0 0 400 300" role="img" aria-label="Made-up 2-D map of six words"></svg>
       <div class="bars" id="vecBars"></div>
       <div class="explain" id="vecExplain"></div>
-      <p style="font-size:.9rem">Compare with reality: the guide reports cat–kitten at only 0.43 in Gemma 4 E2B's real first table — real numbers are much messier than our toy. 跟真的比：導覽說真模型裡 cat 和 kitten 的相似度只有 0.43，比我們的玩具亂得多。</p>
+      <p style="font-size:.9rem">Compare with reality: the guide reports cat–kitten at only 0.43 in Gemma 4 E2B's starting embedding table (Layer 0) — lower than our toy's value. 跟真的比：導覽說 E2B 起始嵌入表（Layer 0）裡 cat 和 kitten 只有 0.43，這一對在真模型裡的分數比示意值低。</p>
     </div>
 
     <div class="toy" id="toy3">
@@ -313,7 +318,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
       <h3>④ Temperature, Top-K, Top-P (Stage 4)</h3>
       <span class="label-ill">Made-up scores (logits) for 8 candidates</span>
       <p>Prompt: <b>“After class, I'm going to eat …”</b> Each candidate has a fixed made-up <a href="#term-logits">logit</a>. Move the sliders and watch the chances change. Pale blue edge = chance after <a href="#term-softmax">softmax</a> only; solid bar = final chance after the cuts. Crossed-out = cut.</p>
-      <p class="zh">提示：「下課後我要去吃……」。每個候選有一個固定的假分數。拉滑桿看機率怎麼變；淺藍邊＝只經過 softmax 的機率，實心條＝裁切後真正會抽的機率，被劃掉的是被砍掉的。</p>
+      <p class="zh">提示：「下課後我要去吃……」。每個候選有一個固定的假分數。拉滑桿看機率怎麼變；淺藍邊＝只經過 softmax 的機率，實心長條是篩選後的抽樣機率，劃掉的候選不參與抽樣。</p>
       <div class="slider"><label for="sT">Temperature</label><input type="range" id="sT" min="0" max="2" step="0.05" value="1"><output id="oT"></output></div>
       <div class="slider"><label for="sK">Top-K</label><input type="range" id="sK" min="1" max="8" step="1" value="8"><output id="oK"></output></div>
       <div class="slider"><label for="sP">Top-P</label><input type="range" id="sP" min="0.05" max="1" step="0.01" value="0.95"><output id="oP"></output></div>
@@ -362,7 +367,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
         <tr><td>55–65</td><td>Break 休息</td></tr>
         <tr><td>65–100</td><td>Station 3 (toy ③) and Station 4 (toy ④ — write two different answers in box 4). 第 3、4 站。</td></tr>
         <tr><td>100–110</td><td>Break 休息</td></tr>
-        <tr><td>110–130</td><td>Station 5 (toy ⑤ + official chat &amp; tools; read the Python, don't run it). 第 5 站。</td></tr>
+        <tr><td>110–130</td><td>Station 5 (toy ⑤ + official chat &amp; tools; the Python on the official page is read only, run Step 5 of our Colab notebook instead). 第 5 站：官方頁的 Python 只讀不跑，要跑的是我們的 Colab 筆記本 Step 5。</td></tr>
         <tr><td>130–140</td><td>Quiz: questions 1–3 together (4–5 optional). 小測驗前 3 題。</td></tr>
         <tr><td>140–150</td><td>Finish and upload your five-box card to e-learning. 完成並上傳五格卡。</td></tr>
       </tbody>
@@ -409,17 +414,8 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
 <section class="block" id="card">
   <div class="wrap">
     <h2>Five-box card · 五格卡</h2>
-    <p class="screen-only">Type here and print (one A4 page), or copy it onto paper. Nothing you type is saved or sent anywhere. 在這裡打字後列印成一張 A4，或抄在紙上；打的字不會被存起來或送出。</p>
-    <p class="screen-only"><button type="button" class="toybtn" id="printCard">Print the card</button></p>
-    <div class="sheet">
-      <div class="head"><b>W12 · How LLMs work — five-box card</b><span>Name <span class="fill-line">&nbsp;</span></span><span>No. <span class="fill-line">&nbsp;</span></span></div>
-      <div class="box unknown"><h4>5 terms I didn't know (from the term station)</h4><textarea aria-label="Five terms I did not know"></textarea></div>
-      <div class="box"><h4>1 · Tokenization</h4><p class="starter">Starter: “When I typed ___ into the official tokenizer, I noticed …”</p><textarea aria-label="Box 1"></textarea></div>
-      <div class="box"><h4>2 · Embeddings</h4><p class="starter">Starter: “___ was close to ___, but ___ was far, because …”</p><textarea aria-label="Box 2"></textarea></div>
-      <div class="box"><h4>3 · Attention</h4><p class="starter">Starter: “When the word before ‘it’ changed from ___ to ___, ‘it’ looked back at …”</p><textarea aria-label="Box 3"></textarea></div>
-      <div class="box"><h4>4 · Sampling — two different answers</h4><p class="starter">Starter: “Answer A (temperature ___): ___. Answer B (temperature ___): ___. When I raised temperature from 0.2 to 1.5, …”</p><textarea aria-label="Box 4"></textarea></div>
-      <div class="box"><h4>5 · Chat, thinking &amp; tools</h4><p class="starter">Starter: “Thinking mode is still next-token prediction, because …” or “In a tool call, the model … and my program …”</p><textarea aria-label="Box 5"></textarea></div>
-    </div>
+    <p>The five-box card has moved. Write one sentence at the end of each step page (<a href="step1.html">Step 1</a>–<a href="step5.html">Step 5</a>, plus the 5 unknown terms on the <a href="index.html">Start</a> page), then collect and print all of them as one A4 page on <a href="finish.html">finish.html</a>.</p>
+    <p class="zh">五格卡改到各站頁寫：每一站最後寫一句（Start 頁寫 5 個不懂的字），再到 <a href="finish.html">finish.html</a> 彙整、列印成一張 A4。</p>
   </div>
 </section>
 
@@ -439,1040 +435,14 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
   </div>
 </footer>
 
-<script type="application/json" id="heading-data">
-{"0a":"How LLMs work (with Gemma 4)",
-"0b":"The 5-stage LLM pipeline",
-"0c":"The Gemma 4 model family at a glance",
-"1a":"1. Tokenization: From text to numbers",
-"1b":"Why subwords instead of characters or whole words?",
-"1c":"Inside Gemma 4's 262,144-token vocabulary",
-"1d":"What happens when a word isn't in the vocabulary? (e.g., 똠얌꿍 and 加鬮さん)",
-"1e":"Reserved <unusedXX> tokens and their purpose",
-"1f":"Key takeaway",
-"2a":"2. Embeddings: Turning IDs into meaning",
-"2b":"High-dimensional semantic space",
-"2c":"How Gemma 4 unifies images, audio, and on-device memory",
-"3a":"3. Attention & layers: Connecting context",
-"3b":"Stage A: Causal Self-Attention (Query, Key, and Value)",
-"3c":"Stage B: Feed-Forward Network (GeGLU Dense vs. Mixture-of-Experts)",
-"3d":"How Gemma 4 handles 128K–256K context: Interleaved Local & Global Attention",
-"4a":"4. Sampling: Predicting the next token",
-"4b":"Step 4A: The LM Head & Logits",
-"4c":"Step 4B: Softmax & Sampling Controls (Temperature, Top-K, Top-P)",
-"4d":"Multi-Token Prediction (MTP) & Speculative Decoding",
-"4e":"Configuring MTP in Hugging Face transformers",
-"4f":"Key takeaway",
-"5a":"5. Putting it together: Chat, thinking & tools",
-"5b":"How Gemma 4 structures a conversation",
-"5c":"Why <|think|> makes LLMs smarter",
-"5d":"Try it yourself in Python"}
-</script>
 
-<script type="application/json" id="term-data">
-[
-{"s":"next-token","t":"next-token prediction","tier":1,"al":["next-token prediction","next-token","next token"],
-"q":"What is the one job an LLM actually does?",
-"p":"Given the text so far, the model estimates how likely each possible next piece of text is — that is its whole job, repeated over and over.",
-"zh":"下一個 token 預測：看著前面的文字，估計「下一小段字」每一種可能有多大機會；模型做的就是這件事，一再重複。",
-"an":"Finishing a friend's sentence: you can't be sure, but some endings are far more likely than others.",
-"ex":"After “I drink a cup of”, the model gives high chances to pieces like “ tea” or “ coffee” and almost none to “ elephant”. Picking one, adding it, and guessing again is the autoregressive loop — next-token prediction and autoregressive generation describe the same loop: one names a single step, the other names the repeating.",
-"w":["0a","4a"],
-"m":"It doesn't write a whole sentence at once; it commits to one piece, then guesses the next.",
-"r":["token","autoregressive","probability","sampling"],
-"st":["Does the model choose the whole answer first, then type it out?","No. It predicts one next piece at a time; each new piece is added to the input before the next guess."]},
-
-{"s":"effective-params","t":"effective vs. total parameters (the “E” in E2B)","tier":1,"al":["effective parameters","effective vs. total parameters"],
-"q":"Why does the table say E2B has 2.3B and also 5.1B?",
-"p":"“Effective” counts only the numbers that do the heavy math and must sit in fast memory; “total” also counts big look-up tables that can wait in slower storage.",
-"zh":"有效參數 vs. 總參數：「有效」只算真正參與大量計算、必須放在高速記憶體裡的數字；「總數」還包括可以放在較慢儲存空間的大型查表。",
-"an":"A chef's tools on the counter (effective) vs. the whole cookbook shelf in the back room (total) — you only fetch a page or two from the shelf.",
-"ex":"In the guide's model table, look only at the E2B row first: 2.3B effective, 5.1B with Per-Layer Embeddings (PLE). E4B: 4.5B effective, 8.0B with PLE. The 26B A4B row is a different idea: 25.2B total but 3.8B active for each token, because of Mixture-of-Experts. B = billion.",
-"w":["0c","2c"],
-"m":"E2B is not a fake or cut-down model: it really has 5.1B parameters, but only about 2.3B need the expensive fast memory.",
-"r":["parameter","ple","model-sizes","moe"],
-"st":["Which E2B number tells you how much fast memory it mainly needs: 2.3B or 5.1B?","2.3B, the effective part. The rest is look-up tables that can stay in slower storage."]},
-
-{"s":"context-window","t":"context window (Max Context)","tier":1,"al":["context window","Max Context","context length"],
-"q":"How much text can the model keep in view at once?",
-"p":"The most text (counted in small pieces) the model can look at in one go — your input plus everything it has written so far.",
-"zh":"上下文視窗：模型一次能看到的最大文字量（以 token 計），包含你的輸入和它已經寫出來的內容。",
-"an":"The size of your desk: anything on the desk can be used; papers that don't fit fall on the floor, out of reach.",
-"ex":"E2B and E4B: 128K tokens. 12B, 26B A4B and 31B: 256K tokens (K = thousand). The guide compares 256K tokens to roughly a 600-page book. Ever had a chatbot seem to forget the start of a very long chat? A limited window is one reason.",
-"w":["0c","3d"],
-"m":"A bigger window doesn't mean the model remembers you between separate chats; it only covers the text in the current conversation.",
-"r":["token","kv-cache","local-attention","global-attention"],
-"st":["Gemma 4 31B has a 256K context. Is that the same as 256K words?","No. It is counted in tokens, and tokens are not the same as words."]},
-
-{"s":"tokenization","t":"Tokenization","tier":1,"al":["Tokenization","tokenization","tokenized","tokenize"],
-"q":"How does text become numbers?",
-"p":"Step 1: chopping your text into small pieces and swapping each piece for its number in a fixed list.",
-"zh":"斷詞（tokenization）：第一步，把文字切成小塊，再把每一塊換成固定清單裡的編號。",
-"an":"Taking a LEGO model apart into standard bricks and writing down each brick's catalogue number.",
-"ex":"Read these three as one cluster: the tokenizer (the tool) does tokenization (the job) using the vocabulary (the list). The guide's example: “The cat sat on the mat.” becomes [818, 5866, 2838, 580, 506, 1756, 236761] — 7 token IDs, real numbers from Gemma 4.",
-"w":["1a","1f"],
-"m":"No understanding happens yet: it is a fixed dictionary look-up, so the same text always gives the same numbers.",
-"r":["tokenizer","vocabulary","token","token-id"],
-"st":["Does tokenization involve any neural-network math?","No. The guide calls it a dictionary lookup; the math starts at Stage 2."]},
-
-{"s":"token","t":"token","tier":1,"al":["token","tokens","Token","Tokens"],
-"q":"What does the model actually read and write?",
-"p":"One small piece of text that the model handles — a whole common word, part of a word, one digit, or a special marker.",
-"zh":"token：模型處理的一小塊文字，可能是一個常用字、半個字、一個數字或一個特殊標記。",
-"an":"A LEGO brick: small standard pieces that can build anything.",
-"ex":"“ cat” (with its space) is one token, written ▁cat. A long rare word like “unbelievable” is split into several reusable parts. The number “140” becomes three tokens: 1, 4, 0.",
-"w":["1a","1c"],
-"m":"A token is not a word and not a letter, so a token count is not a word count.",
-"r":["tokenization","token-id","subword","vocabulary"],
-"st":["Is “140” one token in Gemma 4?","No. Gemma 4 splits numbers into single digits: 1, 4, 0."]},
-
-{"s":"token-id","t":"Token ID","tier":1,"al":["Token ID","Token IDs","token ID","token IDs"],
-"q":"What number stands for each piece of text?",
-"p":"The whole number that names a piece of text in the model's fixed list; from here on the model only works with these numbers.",
-"zh":"Token ID：每一塊文字在固定清單裡的整數編號；從這裡開始，模型只處理這些數字。",
-"an":"A student ID number: it tells you who someone is, but nothing about their personality.",
-"ex":"▁cat = 5866 and ▁the = 506. Number 5867 sits right next to 5866 but has nothing to do with cats — like neighbouring pages in a dictionary. Meaning is added in Stage 2 (embeddings).",
-"w":["1a","2a"],
-"m":"Close numbers don't mean close meanings; the ID is only a position in the list.",
-"r":["token","vocabulary","embedding","tokenization"],
-"st":["IDs 5866 and 5867: similar meaning?","No. An ID is just a position; similarity comes from embeddings."]},
-
-{"s":"subword","t":"subword tokenization","tier":1,"al":["subword tokenization","Subword tokenization","subword","subwords"],
-"q":"Why are words sometimes cut into parts?",
-"p":"Cutting text into common chunks that are smaller than words but bigger than letters: frequent words stay whole, rare words are built from reusable parts.",
-"zh":"子詞斷詞：把文字切成比字詞小、比字母大的常見片段；常用字整個保留，少見字用可重複使用的片段拼出來。",
-"an":"Spelling with syllables instead of single letters or one stamp per word: “un + believ + able”.",
-"ex":"The guide compares three options. Letters only: a tiny list, but sequences 4–5 times longer. Whole words: millions of entries and still stuck on new words. Subwords (what Gemma 4 uses): the middle ground — ▁cat (ID 5866) stays whole, while “unbelievable” splits into a root with a prefix and a suffix.",
-"w":["1b"],
-"m":"A split word isn't a sign the model is confused; it reads the pieces together just fine.",
-"r":["token","tokenization","bpe","vocabulary"],
-"st":["Why not give every word its own entry?","You would need millions of entries and would still meet new words you can't handle."]},
-
-{"s":"embedding","t":"embedding","tier":1,"al":["embedding","embeddings","Embedding","Embeddings"],
-"q":"How does a number turn into meaning?",
-"p":"Step 2: each ID number is swapped for a long list of decimal numbers that together describe what that piece of text means.",
-"zh":"嵌入（embedding）：第二步，把每個編號換成一長串小數，這串數字一起描述這塊文字的意思。",
-"an":"Swapping a student ID for a detailed profile card: tall or short, sporty or bookish, morning or night person…",
-"ex":"In E2B, ▁cat (ID 5866) becomes a list of 1,536 numbers. ▁kitten gets a list pointing in a similar direction; the guide reports a cosine similarity of 0.43 between the real cat and kitten lists in the first table. Toy ② on this page lets you play with a tiny 3-number version.",
-"w":["2a","2b"],
-"m":"The starting embedding is the same everywhere the piece appears: “bank” (river) and “bank” (money) start identical. Attention in Stage 3 adjusts it to the sentence.",
-"r":["vector","dimension","cosine","attention"],
-"st":["Do “river bank” and “money bank” get different starting embeddings?","No. Same token, same starting vector. Stage 3 (attention) makes them differ."]},
-
-{"s":"attention","t":"attention (self-attention)","tier":1,"al":["attention","Attention","self-attention","Self-Attention","Causal Self-Attention"],
-"q":"How does a word find out what the earlier words mean for it?",
-"p":"Step 3's central move: every piece of text looks back at the earlier pieces and decides how much each one matters to it right now.",
-"zh":"注意力（self-attention）：第三步的核心，每一塊文字回頭看前面的文字，決定每一個對自己現在有多重要。",
-"an":"Reading “it” in a sentence and glancing back to see what “it” is about.",
-"ex":"In a sentence like “…took the trophy out of the suitcase and polished it”, attention from “it” goes mostly to “trophy”; swap “polished” for “zipped” and it goes mostly to “suitcase”. The guide's demo shows this with illustrative (made-up) percentages; toy ③ here does the same.",
-"w":["3a","3b"],
-"m":"Attention gives shares that add up to 100%, not a yes/no choice — and in Gemma 4 a piece can only look backward, never ahead.",
-"r":["query","key","value","causal-mask","layer"],
-"st":["In Gemma 4, can a word pay attention to words that come after it?","No. The causal mask blocks later words (weight 0%)."]},
-
-{"s":"logits","t":"logits","tier":1,"al":["logits","logit","Logits"],
-"q":"What raw scores does the model give each possible next piece?",
-"p":"The raw scores the model gives every possible next piece before they become percentages; they can be any size, even negative.",
-"zh":"logits（原始分數）：模型給每個候選下一塊文字的原始分數，還不是百分比，可大可小，也可以是負數。",
-"an":"Judges' raw points before anyone turns them into a ranking or a percentage.",
-"ex":"Gemma 4 produces 262,144 logits each step — one per entry in its list. Small example: three candidates scored 2, 1 and 0 become about 66.5%, 24.5% and 9.0% after softmax. The formula in the guide is optional; you only need the idea.",
-"w":["4b","4a"],
-"m":"A logit of 2 doesn't mean a 2% chance or “twice as likely”; you only get chances after softmax.",
-"r":["softmax","lm-head","temperature","softcapping"],
-"st":["Can a logit be negative?","Yes. Logits are raw scores; softmax later turns them into positive percentages."]},
-
-{"s":"softmax","t":"Softmax","tier":1,"al":["Softmax","softmax"],
-"q":"How do raw scores become chances that add up to 100%?",
-"p":"A formula that turns any list of raw scores into positive percentages adding up to 100%, keeping the order: higher score, higher chance.",
-"zh":"Softmax：把一串原始分數換成全部為正、加起來 100% 的機率，順序不變，分數越高機率越高。",
-"an":"Turning raw vote counts into a pie chart.",
-"ex":"Scores 2, 1, 0 → e² ≈ 7.39, e¹ ≈ 2.72, e⁰ = 1 → total ≈ 11.11 → 66.5%, 24.5%, 9.0%. The formula is optional: the idea is “bigger score, bigger slice, and the slices fill the pie”.",
-"w":["4c","3b"],
-"m":"It exaggerates gaps: a score just 1 point higher ends up about 2.7 times as likely.",
-"r":["logits","temperature","probability"],
-"st":["After softmax, do all the chances add up to 100%?","Yes, always."]},
-
-{"s":"temperature","t":"Temperature (temperature)","tier":1,"al":["Temperature","temperature"],
-"q":"How do I make answers more predictable or more varied?",
-"p":"A dial that divides every raw score before they become percentages: low makes the top choice dominate, high spreads the chances out. Gemma 4's default is 1.0.",
-"zh":"溫度：換成機率之前，先把每個分數除以 T；調低，第一名更突出、回答更穩定；調高，機率攤平、回答更多變。Gemma 4 預設 1.0。",
-"an":"How adventurous a diner is: low means always ordering the usual; high means happily trying the strange dishes.",
-"ex":"Scores 2, 1, 0. T = 1 → 66.5 / 24.5 / 9.0%. T = 0.5 → 86.7 / 11.7 / 1.6%. T = 2 → 50.6 / 30.7 / 18.6%. Try the slider in toy ④ and write two different answers on your card.",
-"w":["4c","4f"],
-"m":"Temperature doesn't make the model know more or think harder; it only reweights the dice.",
-"r":["softmax","top-k","top-p","greedy","sampling"],
-"st":["You want the same answer almost every time. Raise or lower temperature?","Lower it (toward 0)."]},
-
-{"s":"top-k","t":"Top-K (top_k)","tier":1,"al":["Top-K","top_k","top-K"],
-"q":"How do I stop the model picking from thousands of silly options?",
-"p":"Keep only the K highest-scoring candidates and throw the rest away before the random pick. Gemma 4's default K is 64.",
-"zh":"Top-K：只保留分數最高的 K 個候選，其餘丟掉再抽；Gemma 4 預設 K = 64。",
-"an":"Only the top 64 audition contestants go through to the final.",
-"ex":"Chances 50%, 30%, 15%, 5%. With K = 2, keep 50 and 30, then rescale so they add to 100% → 62.5% and 37.5%. In Gemma 4, K = 64 keeps 64 of 262,144 and drops the other 262,080.",
-"w":["4c"],
-"m":"K is a count, not a percentage: K = 64 always keeps 64 candidates, even when only two of them make sense.",
-"r":["top-p","temperature","sampling","renormalize"],
-"st":["With K = 1, what happens?","Only the top candidate survives, so the pick is always the same (like greedy decoding)."]},
-
-{"s":"top-p","t":"Top-P / Nucleus (top_p)","tier":1,"al":["Top-P","top_p","top-P","Nucleus","nucleus"],
-"q":"How do I cut off the long tail of unlikely options?",
-"p":"Sort the candidates from most to least likely and keep the smallest group whose chances add up to P (Gemma 4's default is 0.95, i.e. 95%); drop the rest.",
-"zh":"Top-P（核心取樣）：候選依機率由高到低排，留下累積機率剛好達到 P 的最少那幾個（Gemma 4 預設 0.95，也就是 95%），其餘丟掉。",
-"an":"Inviting guests from the top of the list until the room is 95% full.",
-"ex":"Chances 50%, 30%, 15%, 5% with P = 0.9: running total 50 → 80 → 95 (reached 90) → keep 3 → rescale → 52.6%, 31.6%, 15.8%.",
-"w":["4c"],
-"m":"Unlike Top-K, the number kept changes every step: a confident step may keep one or two candidates, an unsure step keeps many.",
-"r":["top-k","temperature","sampling","probability"],
-"st":["Chances 50/30/15/5 and P = 0.9. How many survive?","Three (50 + 30 + 15 = 95, which reaches 90)."]},
-
-{"s":"autoregressive","t":"autoregressive loop (autoregressive generation)","tier":1,"al":["autoregressive loop","autoregressive generation","Autoregressive Loop","autoregressive","Autoregressive"],
-"q":"How does one guess become a whole answer?",
-"p":"Writing one piece at a time: each new piece is stuck onto the end of the input, and the whole process runs again to get the next one.",
-"zh":"自迴歸迴圈：一次寫一小塊，新寫出來的接到輸入尾巴，整個流程再跑一次，得到下一塊。",
-"an":"Laying dominoes one by one, each time looking at the whole line so far before placing the next.",
-"ex":"The guide: writing 20 tokens means running the model about 20 times, because token #2 must exist before token #3 can be predicted. The loop stops when the model writes an end marker such as <turn|> (ID 106) or <eos> (ID 1). It is the same loop as next-token prediction: that name describes one step, this one describes the repeating. Toy ⑤ steps through it.",
-"w":["4d","4f","0b"],
-"m":"The model doesn't write a finished answer and then reveal it; text is committed one piece at a time. That is also why thinking mode helps: its notes become input.",
-"r":["next-token","sampling","stop-token","think"],
-"st":["After the model picks a new token, where does it go?","It is added to the end of the input and the next step starts; the guide says it loops back through Stage 2 (embeddings)."]},
-
-{"s":"llm","t":"LLM (Large Language Model)","tier":2,"al":["LLM","LLMs","Large Language Model","large language model"],
-"q":"What kind of program is Gemma 4?",
-"p":"A computer program trained on huge amounts of text that keeps guessing what small piece of text should come next.",
-"zh":"大型語言模型：用海量文字訓練、不斷猜「下一小段文字是什麼」的電腦程式。",
-"an":"A phone keyboard's word-suggestion bar that has read a whole library.",
-"w":["0a"],
-"m":"It doesn't look answers up in a database; it predicts likely text, which is why it can sound sure and still be wrong.",
-"r":["next-token","token","parameter","gemma4"]},
-
-{"s":"gemma4","t":"Gemma 4","tier":2,"al":["Gemma 4"],
-"q":"Which model is the guide using as its example?",
-"p":"A family of language models made by Google that the official guide uses as its running example; it comes in five sizes.",
-"zh":"Gemma 4：Google 推出的一系列語言模型，官方導覽拿它當示範，共有五種大小。",
-"an":"One car design sold with five engine sizes.",
-"w":["0a","0c"],
-"m":"The five sizes share the same five-stage pipeline (the guide's point), even though some details differ — for example, only 26B A4B uses experts.",
-"r":["model-sizes","effective-params","pipeline"]},
-
-{"s":"probability","t":"probability distribution","tier":2,"al":["probability distribution","probabilities","probability"],
-"q":"What does “a chance for every option” look like?",
-"p":"A list that gives every possible option a chance, with all the chances adding up to 100%.",
-"zh":"機率分布：每個選項各有一個機率，全部加起來剛好 100%。",
-"an":"A pie chart of votes: every candidate gets a slice and the slices fill the whole pie.",
-"w":["0a","4c"],
-"m":"The option with the biggest slice isn't guaranteed to be picked; sampling can land on a smaller slice.",
-"r":["softmax","sampling","logits"]},
-
-{"s":"prompt","t":"prompt","tier":2,"al":["prompt","prompts","Prompt"],
-"q":"What do I give the model to start from?",
-"p":"The text (and sometimes images or audio) you hand to the model as its starting point.",
-"zh":"提示詞：你交給模型、讓它接著寫的起點，可以是文字，有時也包括圖片或聲音。",
-"an":"The question card you hand a quiz contestant.",
-"w":["0b","5b"],
-"m":"The model never sees your letters directly: your prompt first becomes a list of token IDs, and in a chat it is wrapped in a chat template.",
-"r":["tokenization","chat-template","context-window"]},
-
-{"s":"parameter","t":"parameters","tier":2,"al":["parameters","parameter","Parameters","weights"],
-"q":"What does “2B” or “31B” count?",
-"p":"The adjustable numbers inside a model that were tuned during training; how many there are is the model's “size”.",
-"zh":"參數：模型裡在訓練時調整出來的數字；數量多寡就是模型的「大小」。",
-"an":"Billions of tiny volume knobs, each left at just the right setting after training.",
-"ex":"31B means about 30.7 billion parameters (B = billion).",
-"w":["0c"],
-"m":"In “sampling parameters” (temperature, top_k, top_p) the same word means settings you choose, not learned numbers.",
-"r":["effective-params","model-sizes","layer"]},
-
-{"s":"tokenizer","t":"tokenizer","tier":2,"al":["tokenizer","tokenizers","Tokenizer"],
-"q":"What tool does the chopping and numbering?",
-"p":"The tool that chops text into pieces and numbers them; each model comes with its own, and the two must match.",
-"zh":"斷詞器（tokenizer）：負責切文字、編號的工具；每個模型都有自己專屬的一套，兩者必須配對。",
-"an":"A shop's barcode scanner, which turns each item into a code the till understands.",
-"ex":"Stage 1 of the official page is real: it loads Gemma 4's actual tokenizer file (32.2 MB) into your browser. That is why it can be slow when a whole class opens it at once.",
-"w":["1a"],
-"m":"Another model's tokenizer would split the same sentence differently and give different numbers.",
-"r":["tokenization","vocabulary","tokenizer-json","webworker"]},
-
-{"s":"vocabulary","t":"vocabulary","tier":2,"al":["vocabulary","Vocabulary","vocab"],
-"q":"How many different pieces does Gemma 4 know?",
-"p":"The fixed list of every piece the model knows; Gemma 4's has 262,144 entries (numbered 0 to 262,143), shared by all five sizes.",
-"zh":"詞表：模型認得的所有片段清單；Gemma 4 有 262,144 個，編號 0 到 262,143，五種大小共用同一份。",
-"an":"A dictionary with numbered entries.",
-"w":["1c","0a"],
-"m":"Bigger isn't automatically better: a huge list costs memory, a tiny one makes text very long — subwords are the middle ground.",
-"r":["token","token-id","subword","logits"]},
-
-{"s":"special-tokens","t":"special control tokens","tier":2,"al":["special control tokens","control tokens","control token","special tokens"],
-"q":"How does the model know where a turn starts or a tool is called?",
-"p":"Reserved pieces that aren't ordinary text but markers — for example the start or end of a turn, thinking, tools, or where an image goes.",
-"zh":"特殊控制 token：保留下來當「記號」用的片段，例如一輪對話的開始或結束、思考、工具、圖片位置。",
-"an":"Stage directions in a play script — [Enter], [Exit] — not lines the actors say.",
-"ex":"<|turn> = 105, <turn|> = 106, <|think|> = 98, <|image|> = 258880 (real IDs from the guide).",
-"w":["1c","5b"],
-"m":"To us they look like odd text, but to the model each one is a single token that is never split.",
-"r":["chat-template","think","tool-call","stop-token"]},
-
-{"s":"vector","t":"vector","tier":2,"al":["vector","vectors","Vector","meaning vector","meaning vectors"],
-"q":"What is an embedding made of?",
-"p":"An ordered list of numbers, which you can picture as an arrow or a point in space.",
-"zh":"向量：一串有順序的數字，可以想成空間中的一個點或一支箭頭。",
-"an":"GPS coordinates are a list of 2 numbers (latitude, longitude); an E2B embedding is like coordinates with 1,536 numbers.",
-"w":["2b"],
-"m":"A single number usually has no neat meaning; the guide's labels like “animal vs. machine” are simplified illustrations.",
-"r":["embedding","dimension","cosine"]},
-
-{"s":"dimension","t":"dimension (d_model)","tier":2,"al":["dimension","dimensions","d_model","high-dimensional","High-dimensional"],
-"q":"How many numbers are in each meaning list?",
-"p":"How many numbers each list has; inside the model this size is called d_model.",
-"zh":"維度（d_model）：每串數字有幾個數；模型內部把這個大小叫 d_model。",
-"an":"A form with 1,536 boxes to fill in about every word.",
-"ex":"E2B: 1,536. E4B: 2,560. 31B: 5,376.",
-"w":["2b"],
-"m":"“High-dimensional” sounds mysterious but just means “lots of numbers per item”.",
-"r":["vector","embedding","semantic-space"]},
-
-{"s":"cosine","t":"cosine similarity","tier":2,"al":["cosine similarity","Cosine similarity","cosine","orthogonal"],
-"q":"How do we measure whether two meanings are close?",
-"p":"A score from −1 to +1 for how much two arrows point the same way: +1 same direction, 0 unrelated (at right angles, “orthogonal”), −1 opposite.",
-"zh":"餘弦相似度：兩支箭頭方向有多像，介於 −1 到 +1；+1 同方向、0 無關（互相垂直）、−1 相反。",
-"an":"Two people pointing: both at the mountain (+1); one at the mountain and one off to the side at the sea (0); back to back (−1).",
-"ex":"Arrows (1, 0) and (1, 1) are 45° apart: cosine ≈ 0.71. Real Gemma 4 E2B numbers from the guide's first table: king–queen 0.58, kitten–puppy 0.54, cat–kitten 0.43.",
-"w":["2b","2c"],
-"m":"It compares direction, not length — and 0.43 doesn't mean “43% the same word”.",
-"r":["vector","embedding","dot-product"]},
-
-{"s":"pretraining","t":"pre-training","tier":2,"al":["pre-training","Pre-training","pretraining"],
-"q":"Where did the model learn all its patterns?",
-"p":"The first, giant round of training, where the model learns by guessing the next piece of text across enormous amounts of writing.",
-"zh":"預訓練：第一輪、規模最大的訓練，模型在海量文字上反覆猜下一小段字來學習。",
-"an":"Reading an entire library before any job training.",
-"w":["2b","5a"],
-"m":"Pre-training alone gives a text-continuer, not a helpful chat assistant; that needs post-training.",
-"r":["post-training","pt-model","parameter"]},
-
-{"s":"illustrative","t":"illustrative / pseudo / simulated (demo labels)","tier":2,"al":["illustrative","Illustrative","pseudo","simulated","Simulated"],
-"q":"Which numbers on the official page are real, and which are made up for teaching?",
-"p":"Labels the official guide puts on demos whose numbers are made up or simplified for teaching rather than computed live by the real model.",
-"zh":"示意／模擬：官方導覽自己標註，某些展示的數字是為了教學而簡化或編出來的，不是真模型即時算出來的。",
-"an":"A cooking show's “here's one I baked earlier” cake: the recipe is real, the timing is staged.",
-"ex":"Real: Stage 1's tokenizer (runs live in your browser), token IDs, layer counts, default settings, the sampling math. Illustrative or simulated: the 2-D meaning map (Stage 2), the attention percentages (Stage 3), the candidate scores (Stage 4), the typed-out replies (Stage 5).",
-"w":["2c","3d","4e","5c"],
-"m":"“Simulated” doesn't mean wrong: the method is real, but the input numbers were hand-picked so you can see the effect.",
-"r":["tokenizer","attention","logits","think"]},
-
-{"s":"layer","t":"layer (Transformer decoder layer)","tier":2,"al":["layer","layers","Layer","Layers","decoder layer","decoder layers","Decoder Layers"],
-"q":"What is one round of processing inside the model?",
-"p":"One round of processing; the model repeats many rounds, each refining every word's meaning list a little more.",
-"zh":"層：一輪處理；模型重複很多輪，每一輪都把每個字的意義再修正一點。",
-"an":"Editing a draft many times; each pass catches more of the meaning.",
-"ex":"E2B has 35 layers, E4B 42, 12B 48, 26B A4B 30, 31B 60. Each layer = attention (words exchange information) + feed-forward (each word is processed on its own).",
-"w":["3a","0c"],
-"m":"More layers isn't simply “smarter”: 26B A4B has fewer layers (30) than E4B (42) but far more parameters.",
-"r":["transformer","attention","ffn","rmsnorm"]},
-
-{"s":"transformer","t":"Transformer","tier":2,"al":["Transformer","Transformers"],
-"q":"What is the name of the overall design?",
-"p":"The overall design used by today's large text models: a tall stack of rounds, each first mixing information between words and then processing each word.",
-"zh":"Transformer：現今大型語言模型的整體架構，由很多層疊起來，每層先讓字與字交流，再各自處理。",
-"an":"A building where every floor has a meeting room and private offices.",
-"w":["3a","0b"],
-"m":"Nothing to do with robot movies or electrical transformers.",
-"r":["layer","attention","ffn","decoder-only"]},
-
-{"s":"query","t":"Query (Q)","tier":2,"al":["Query","Queries","query vector"],
-"q":"What is a word looking for?",
-"p":"The question a word sends backward: “what kind of earlier word am I looking for?”",
-"zh":"Query（查詢）：一個字往回發出的問題：「我在找前面哪一種字？」",
-"an":"A sticky note: “looking for something that can be polished”.",
-"w":["3b"],
-"m":"Query, Key and Value are all made from the same word's list of numbers, each through its own learned conversion.",
-"r":["key","value","attention"]},
-
-{"s":"key","t":"Key (K)","tier":2,"al":["Key","Keys"],
-"q":"What does each word advertise about itself?",
-"p":"What each word advertises about itself so that later words can find it.",
-"zh":"Key（鍵）：每個字對外公布「我是什麼」，讓後面的字找得到它。",
-"an":"A name tag: “metal prize — can be polished”.",
-"w":["3b"],
-"m":"The Query–Key match decides how much attention is paid; what actually gets passed along is the Value.",
-"r":["query","value","kv-cache"]},
-
-{"s":"value","t":"Value (V)","tier":2,"al":["Value","Values"],
-"q":"What information gets passed along?",
-"p":"The information a word hands over when a later word focuses on it.",
-"zh":"Value（值）：當後面的字注意到它時，它真正交出去的內容。",
-"an":"The parcel inside the box: the name tag got it picked, the parcel is what you take home.",
-"w":["3b"],
-"m":"High attention to a word means more of its Value is mixed in; the word itself isn't copied.",
-"r":["query","key","attention"]},
-
-{"s":"causal-mask","t":"causal mask","tier":2,"al":["causal mask","causal masking","Causal mask","mask"],
-"q":"Can a word peek at words that come after it?",
-"p":"A rule that blocks every word from looking at words after it: later positions always get zero weight.",
-"zh":"因果遮罩：規定每個字只能看前面、不能偷看後面；後面的位置權重一律是 0。",
-"an":"Covering the rest of the exam paper so you can only see questions you've already reached.",
-"ex":"In the guide's example “The robot picked up the glass ball because it was fragile.”, at “it” the model can't see “fragile” yet, so both “ball” and “robot” stay possible; when “fragile.” arrives, it looks back and links them. Toy ③ part B shows the same idea.",
-"w":["3b"],
-"m":"It doesn't mean later clues are wasted: the later word does the linking when it arrives, by looking backward.",
-"r":["attention","decoder-only","autoregressive"]},
-
-{"s":"ffn","t":"Feed-Forward Network (FFN)","tier":2,"al":["Feed-Forward Network","feed-forward network","FFN","feed-forward"],
-"q":"What happens to each word after the group discussion?",
-"p":"The second half of every round: each word's numbers are processed on their own, without looking at other words, to deepen its meaning.",
-"zh":"前饋網路（FFN）：每層的後半段，每個字自己處理、不看別的字，讓意義更深入。",
-"an":"After the group meeting, everyone goes back to their own desk to think.",
-"w":["3c"],
-"m":"The guide's summary: attention = communication between words, feed-forward = computation inside each word. Both happen in every layer.",
-"r":["attention","layer","moe","gelu"]},
-
-{"s":"moe","t":"Mixture-of-Experts (MoE)","tier":2,"al":["Mixture-of-Experts","MoE","Mixture of Experts"],
-"q":"How can a big model run as fast as a small one?",
-"p":"Instead of one big processing block per round, there are many smaller specialist blocks, and only a few are switched on for each word.",
-"zh":"混合專家模型（MoE）：每層不是一個大區塊，而是許多較小的「專家」區塊，每個字只啟用其中幾個。",
-"an":"A hospital with 128 specialists: each patient sees 8 relevant ones plus the family doctor.",
-"ex":"Gemma 4 26B A4B: 128 routed experts + 1 shared expert per layer; each token uses 8 + 1, so 3.8B parameters are active out of 25.2B in total.",
-"w":["3c","0c"],
-"m":"Don't picture tidy subject experts (“the maths one”); the guide only says a router picks per token, and its lit-up expert dots are a simulated trace.",
-"r":["expert","router","dense","ffn"]},
-
-{"s":"local-attention","t":"Local (Sliding Window) Attention","tier":2,"al":["Local (Sliding Window) Attention","Local Sliding Window","sliding window","Sliding Window","local attention","Local attention"],
-"q":"How does the model save memory on long texts?",
-"p":"Attention that only looks back a short, fixed distance instead of over the whole text, which keeps memory use small.",
-"zh":"局部（滑動視窗）注意力：只往回看固定的一小段距離，不看整篇，記憶體用量小。",
-"an":"Reading through a ruler-sized window that slides along the page.",
-"ex":"Window = 512 tokens in E2B and E4B; 1,024 tokens in 12B, 26B A4B and 31B. E2B has 4 local layers per global layer; the other sizes have 5.",
-"w":["3d","0c"],
-"m":"Local rounds alone would miss far-away clues; that is why every few rounds a global one looks at everything.",
-"r":["global-attention","kv-cache","context-window","local-global-ratio"]},
-
-{"s":"global-attention","t":"Global (Full) Attention","tier":2,"al":["Global (Full) Attention","Global Attention","global attention","full attention","Global attention"],
-"q":"Which rounds can see the whole text?",
-"p":"Attention that can look back over the entire text; Gemma 4 puts one every few rounds, and the very last round is always this kind.",
-"zh":"全域注意力：可以往回看整段文字；Gemma 4 每隔幾層放一層，而且最後一層一定是全域。",
-"an":"Stepping back to look at the whole whiteboard after zooming in on one corner.",
-"ex":"Every 5th layer in E2B, every 6th layer in the other sizes.",
-"w":["3d","4a"],
-"m":"These are the expensive rounds, so Gemma 4's memory tricks (K = V, KV sharing) are aimed mostly at them.",
-"r":["local-attention","kv-cache","kv-tricks"]},
-
-{"s":"kv-cache","t":"KV cache","tier":2,"al":["KV cache","KV caches","KV-cache"],
-"q":"How does the model avoid redoing work for every new word?",
-"p":"A store of the already-computed look-back information for earlier words, so it isn't recalculated for every new word — at the cost of memory that grows with text length.",
-"zh":"KV 快取：把前面每個字已經算好的「回看資料」存起來，寫下一個字時不必重算；代價是佔用記憶體，文字越長越多。",
-"an":"Keeping your notes from earlier chapters instead of rereading the whole book for every new sentence.",
-"w":["3d","4d"],
-"m":"It stores the Keys and Values of earlier words, not finished answers.",
-"r":["key","value","global-attention","local-attention"]},
-
-{"s":"sampling","t":"sampling","tier":2,"al":["sampling","Sampling","sample","sampled"],
-"q":"How is the next piece actually chosen?",
-"p":"Choosing the next piece by a weighted random draw: likely pieces win more often, but not every time.",
-"zh":"取樣：用「加權抽籤」選出下一塊文字，機會大的比較常被抽中，但不是每次。",
-"an":"Rolling a loaded die whose sides are sized by the percentages.",
-"ex":"tea 50%, coffee 40%, water 10%: draw 10 times and you might get tea 5, coffee 4, water 1 — or a slightly different mix. After the Top-K and Top-P cuts, the survivors are rescaled to 100% and Gemma 4 rolls a weighted die.",
-"w":["4a","4c"],
-"m":"Same prompt, different answer? That is this random draw working as designed, not a bug.",
-"r":["temperature","top-k","top-p","greedy"]},
-
-{"s":"greedy","t":"greedy decoding (T = 0)","tier":2,"al":["greedy decoding","Greedy decoding","greedy","deterministic"],
-"q":"What if the model always takes the top choice?",
-"p":"Always taking the single most likely next piece, no dice: the same input then always gives the same output (it is “deterministic”).",
-"zh":"貪婪解碼：每次都拿機率最高的那一個，不抽籤；同樣的輸入永遠得到同樣的輸出。",
-"an":"Always ordering the most popular dish on the menu.",
-"w":["4c"],
-"m":"Predictable isn't always better: the guide warns it can get stuck in repetitive loops on open-ended tasks.",
-"r":["temperature","sampling","top-k"]},
-
-{"s":"stop-token","t":"stop tokens: <turn|> and <eos>","tier":2,"al":["<turn|>","<eos>","stop token","stop tokens"],
-"q":"How does the model know when to stop?",
-"p":"Special end markers: when the model writes one, the writing loop ends.",
-"zh":"停止 token：模型一寫出這類結束記號，寫作迴圈就停下來。",
-"an":"Saying “over” at the end of a walkie-talkie message.",
-"ex":"<turn|> = ID 106 (end of a turn); <eos> = ID 1 (end of sequence).",
-"w":["4f","5b"],
-"m":"Stopping is itself a prediction: the model predicts this token like any other (code can also set a maximum length).",
-"r":["autoregressive","special-tokens","chat-template"]},
-
-{"s":"post-training","t":"Post-Training (supervised fine-tuning & reinforcement learning)","tier":2,"al":["Post-Training","post-training","Post-training","Supervised Fine-Tuning","Reinforcement Learning"],
-"q":"How does a text-continuer become a helpful assistant?",
-"p":"Training done after the first big round that teaches the model to behave like a helpful assistant — first by copying good example answers, then by being rewarded for preferred behaviour.",
-"zh":"後訓練：在第一輪大訓練之後再做的訓練，教模型像助理一樣回應：先模仿示範答案（監督式微調，SFT），再依好壞回饋強化（強化學習，RL）。",
-"an":"After reading the library, an apprentice shadows a mentor, then gets feedback on real jobs.",
-"w":["5a"],
-"m":"No separate assistant brain is added; the same parameters are adjusted so next-token guesses follow chat style.",
-"r":["pretraining","it-model","chat-template","fine-tuning"]},
-
-{"s":"chat-template","t":"chat template","tier":2,"al":["chat template","Chat Template","chat templates","Chat Templates"],
-"q":"How does the model know who is speaking?",
-"p":"A fixed format that wraps every message in markers saying who is speaking (system, user or model) and where each turn starts and ends.",
-"zh":"對話範本：用固定格式把每則訊息包起來，標明誰在說話（system、user、model）以及每一輪從哪開始、到哪結束。",
-"an":"Screenplay format: CHARACTER NAME, then the line, then a break.",
-"ex":"Your message becomes roughly: <|turn>user (your text) <turn|> <|turn>model — and the model continues from there.",
-"w":["5a","5b"],
-"m":"You never type these markers; the chat app or the library (apply_chat_template) adds them for you.",
-"r":["special-tokens","role","think","stop-token"]},
-
-{"s":"think","t":"thinking mode (<|think|>)","tier":2,"al":["thinking mode","Thinking mode","Thinking Mode","<|think|>"],
-"q":"How can the model work things out before answering?",
-"p":"A switch that makes the model first write private working notes and only then its final answer.",
-"zh":"思考模式：開關打開後，模型先寫一段內部推理草稿，再寫正式回答。",
-"an":"Scratch paper in a maths exam before writing the answer in the box.",
-"ex":"Turned on by putting <|think|> (ID 98) in the system turn. The notes are wrapped as <|channel>thought … <channel|>, and then the answer follows.",
-"w":["5b","5c"],
-"m":"Not a different, smarter engine: it is the same next-token loop, but the notes become extra input that later steps can attend to.",
-"r":["thought-channel","autoregressive","attention","chat-template"]},
-
-{"s":"tool-call","t":"tool call","tier":2,"al":["tool call","tool calls","Tool calls","tool calling","Tool Calling","<|tool_call>"],
-"q":"How can the model use a calculator, a search, or my code?",
-"p":"Instead of answering straight away, the model writes a structured request asking your program to run a function, then reads the result.",
-"zh":"工具呼叫：模型不直接回答，而是寫出有固定格式的請求，請你的程式執行某個功能，再讀回結果。",
-"an":"A receptionist saying “let me check the calendar” and actually opening it before answering.",
-"ex":"Tools are listed between <|tool> and <tool|>. The model writes <|tool_call> … with <|\"|> around text values, pauses at <|tool_response>, your code runs the function and pastes in the result, and the model carries on.",
-"w":["5c","1e"],
-"m":"The model never runs the tool itself — your code does; the model only writes the request and reads the reply.",
-"r":["special-tokens","tool-response","autoregressive","chat-template"]},
-
-{"s":"pipeline","t":"the 5-stage LLM pipeline","tier":3,"al":["5-stage pipeline","five-stage pipeline","pipeline"],
-"q":"What is the big map of the whole guide?",
-"p":"The guide's map of the five steps every input passes through, with a loop back for each new piece.",
-"zh":"五階段流程：每個輸入都會走過的五個步驟，每產生一個新片段就繞回去再走一次。",
-"skip":"It is only the table of contents; the stations themselves are what matter. One detail worth noticing: the loop goes back to Stage 2, not Stage 1.",
-"w":["0b"],
-"r":["tokenization","embedding","attention","sampling","autoregressive"]},
-
-{"s":"model-sizes","t":"E2B, E4B, 12B, 26B A4B, 31B","tier":3,"al":["E2B","E4B","26B A4B","31B","12B"],
-"q":"What do the five model names mean?",
-"p":"The names of the five Gemma 4 sizes; the number roughly says how many billion learned numbers each has.",
-"zh":"五個型號名稱：數字大約代表模型有幾十億（B）個參數。",
-"skip":"Look only at the E2B row first; the other rows follow the same pattern. ⚠️ The guide doesn't spell out what the “A” in 26B A4B stands for; its table lists 3.8B active parameters for that model.",
-"w":["0c"],
-"r":["effective-params","parameter","moe"]},
-
-{"s":"modality","t":"modalities / multimodal","tier":3,"al":["multimodal","Multimodal","modalities","Modalities"],
-"q":"Can the model take pictures and sound?",
-"p":"The kinds of input a model can take — text, images, audio, video; “multimodal” means more than one kind.",
-"zh":"模態／多模態：模型能接收的輸入種類，例如文字、圖片、聲音、影片；多模態就是不只一種。",
-"skip":"Today's class follows text only. The guide's table shows which sizes accept which kinds (26B A4B and 31B list no audio).",
-"w":["0c","2c"],
-"r":["soft-tokens","embedding"]},
-
-{"s":"forward-pass","t":"forward pass","tier":3,"al":["forward pass","forward passes"],
-"q":"What is one full run through the model?",
-"p":"One complete trip of the input through every step of the model, ending in one guess for the next piece.",
-"zh":"前向傳遞：輸入從頭到尾走完模型一遍，得到一次「下一塊是什麼」的猜測。",
-"skip":"It is just the name for “one run”; the autoregressive loop is many of them in a row.",
-"w":["0a","5c"],
-"r":["autoregressive","layer"]},
-
-{"s":"dense","t":"Dense model","tier":3,"al":["Dense","dense model","Dense Models"],
-"q":"Does every part of the model work on every word?",
-"p":"A design where every part of the model works on every single word, with nothing switched off.",
-"zh":"稠密模型：模型的每個部分都會處理每一個字，沒有哪個部分被關掉。",
-"skip":"Just a label in the table; you only need it to contrast with MoE.",
-"w":["0c","3c"],
-"r":["moe","ffn"]},
-
-{"s":"arch-style","t":"Architecture Style: Efficient / Unified","tier":3,"al":["Architecture Style"],
-"q":"What do “Efficient” and “Unified” mean in the table?",
-"p":"Labels for how each size is built: “Efficient” is the phone-sized design with extra per-round look-up tables (E2B, E4B); “Unified” means images and sound enter through one simple conversion step with no separate pre-processing model (12B).",
-"zh":"架構類型：「Efficient」是手機尺寸、每層多一份查表的設計（E2B、E4B）；「Unified」是圖片與聲音只經過一個簡單轉換就進入模型、不另外用前處理模型（12B）。",
-"skip":"Labels only; all sizes run the same five stages.",
-"w":["0c","2c"],
-"r":["ple","linear-projection","dense"]},
-
-{"s":"local-global-ratio","t":"Local : Global Ratio","tier":3,"al":["Local : Global Ratio","Local:Global"],
-"q":"How many near-sighted rounds are there per far-sighted one?",
-"p":"How many short-range rounds there are for each whole-text round: 4 : 1 in E2B, 5 : 1 in the other sizes.",
-"zh":"局部：全域比例：每一層全域注意力搭配幾層局部注意力；E2B 是 4：1，其他是 5：1。",
-"skip":"A speed design detail; “some rounds look near, some look far” is enough.",
-"w":["0c","3d"],
-"r":["local-attention","global-attention"]},
-
-{"s":"char-vs-word","t":"character-by-character vs. word-by-word","tier":3,"al":["character-by-character","Character-by-character","word-by-word","Word-by-word"],
-"q":"Why not just use letters, or whole words?",
-"p":"The two extremes the guide compares: single letters (tiny list, very long sequences) or whole words (huge list, stuck on new words).",
-"zh":"逐字母 vs. 逐字詞：導覽比較的兩個極端：只用字母（清單很小、序列很長），或整個字詞（清單巨大、遇到新字就卡住）。",
-"skip":"Gemma 4 uses neither; read the subword card instead.",
-"w":["1b"],
-"r":["subword","unk"]},
-
-{"s":"bpe","t":"SentencePiece-style Byte-Pair Encoding (BPE)","tier":3,"al":["Byte-Pair Encoding","BPE","SentencePiece"],
-"q":"What recipe built Gemma 4's list of pieces?",
-"p":"The method used to build the list of text chunks; Gemma 4's version comes with 514,906 merge rules for joining smaller chunks into bigger ones.",
-"zh":"SentencePiece 式位元組對編碼（BPE）：建立片段清單的方法；Gemma 4 的版本有 514,906 條「把小片段合併成大片段」的規則。",
-"skip":"The recipe's name doesn't change what you see: text, then pieces, then numbers.",
-"w":["1b","1e"],
-"r":["subword","tokenizer-json"]},
-
-{"s":"leading-space","t":"▁ (leading-space marker)","tier":3,"al":["leading-space marker","Leading-space"],
-"q":"Why is there a strange ▁ in front of words?",
-"p":"A low-line symbol (U+2581) glued to the front of a word to record that a space came before it, so the text can be rebuilt exactly.",
-"zh":"▁（前導空格記號）：黏在字前面的底線符號（U+2581），表示原本前面有空格，這樣文字才能一字不差地還原。",
-"skip":"Just notice it in the Stage 1 demo: ▁cat means “ cat” with a space. With or without the mark can be different pieces: 加 alone is ID 237410, ▁加 is ID 50624.",
-"w":["1c","1d"],
-"r":["token","token-id"]},
-
-{"s":"digits","t":"single-digit number tokens","tier":3,"al":["individual digits","single digits"],
-"q":"How are numbers like 2026 read?",
-"p":"Gemma 4 splits every number into one piece per digit, so place value is handled the same way every time.",
-"zh":"數字逐位切：Gemma 4 把數字拆成一個個位數，位值的處理方式每次都一樣。",
-"skip":"Interesting, but you won't need it to follow the stages. The guide's example: 140 becomes 1, 4, 0 (IDs 236770, 236812, 236771).",
-"w":["1c"],
-"r":["token","tokenization"]},
-
-{"s":"code-tokens","t":"code & indentation tokens","tier":3,"al":["indentation"],
-"q":"Does the model have special pieces for computer code?",
-"p":"Common programming words, and even four spaces of indentation, each get their own single piece (four spaces = ID 140).",
-"zh":"程式碼與縮排 token：常見的程式關鍵字，甚至四個空格的縮排，都各有一個專屬片段（四個空格＝ID 140）。",
-"skip":"Only matters if you use the model to write code.",
-"w":["1c"],
-"r":["token"]},
-
-{"s":"multilingual","t":"multilingual & emoji tokens","tier":3,"al":["emoji","Multilingual"],
-"q":"Does Chinese get split into lots of tiny pieces?",
-"p":"A big list leaves room for whole pieces in many writing systems and for emoji, so non-English text isn't broken into lots of tiny bits; the guide mentions 140+ languages.",
-"zh":"多語言與表情符號 token：清單夠大，就能收進很多文字系統的完整片段和表情符號，非英文文字不會被切得很碎；導覽說支援 140 多種語言。",
-"skip":"Try it yourself in the official tokenizer with a Chinese sentence instead of memorising it.",
-"w":["1c","0a"],
-"r":["vocabulary","byte-fallback"]},
-
-{"s":"unk","t":"<unk> (unknown token)","tier":3,"al":["<unk>","unknown token"],
-"q":"What if a character isn't in the list at all?",
-"p":"A catch-all “I don't know this” marker that replaces text the list doesn't contain; the original characters are lost for good.",
-"zh":"<unk>（未知 token）：遇到清單裡沒有的字就用它代替，原本的字從此消失。",
-"skip":"Gemma 4 has one (ID 3) but is designed never to need it, thanks to byte fallback.",
-"w":["1b","1d"],
-"r":["byte-fallback","vocabulary"]},
-
-{"s":"byte-fallback","t":"UTF-8 byte fallback","tier":3,"al":["UTF-8 byte fallback","byte fallback","byte tokens"],
-"q":"How does Gemma 4 handle a super-rare character like 鬮?",
-"p":"A safety net: a character missing from the list is written as its raw computer bytes, and each of the 256 possible bytes has its own piece, so nothing is lost.",
-"zh":"UTF-8 位元組備援：清單裡沒有的字，就拆成電腦底層的位元組；256 種位元組各有一個片段，所以不會遺失。",
-"skip":"Nice to know, not needed for the stages. Rule from the guide: ID = 238 + byte value (IDs 238–493); a rare character costs 3–4 pieces instead of 1. Try 鬮 in the official tokenizer.",
-"w":["1c","1d"],
-"r":["utf8","unk","token"]},
-
-{"s":"utf8","t":"UTF-8 / Unicode (U+…)","tier":3,"al":["UTF-8","Unicode"],
-"q":"How do computers store any character?",
-"p":"The worldwide standard for storing every character as 1 to 4 bytes; a U+ number (like U+9B2E for 鬮) is a character's official code.",
-"zh":"UTF-8／Unicode：全世界通用的字元儲存標準，每個字元用 1 到 4 個位元組表示；U+ 開頭的號碼（例如「鬮」是 U+9B2E）是字元的正式代碼。",
-"skip":"Only byte fallback depends on it.",
-"w":["1d"],
-"r":["byte-fallback"]},
-
-{"s":"unused","t":"<unusedXX> reserved tokens","tier":3,"al":["<unusedXX>","<unused0>","reserved slots"],
-"q":"Why are there thousands of blank entries?",
-"p":"6,227 empty slots kept in the list so that new special markers can be added later without changing the list's size.",
-"zh":"<unusedXX> 保留 token：清單裡預留的 6,227 個空位，以後要加新的特殊記號時不必改變清單大小。",
-"skip":"Spare parking spaces for developers. Fun fact from the guide: Gemma 4's tool and thinking markers took over slots that were blank in earlier versions.",
-"w":["1e"],
-"r":["special-tokens","fine-tuning"]},
-
-{"s":"tokenizer-json","t":"tokenizer.json","tier":3,"al":["tokenizer.json"],
-"q":"What file holds the tokenizer?",
-"p":"The file that stores the whole list and its joining rules; Gemma 4's is 32.2 MB.",
-"zh":"tokenizer.json：存著整份清單和合併規則的檔案，Gemma 4 的有 32.2 MB。",
-"skip":"It is what makes the official Stage 1 demo slow to load; you never need to open it.",
-"w":["1e"],
-"r":["tokenizer","bpe"]},
-
-{"s":"webworker","t":"Web Worker / IndexedDB (browser caching)","tier":3,"al":["Web Worker","IndexedDB"],
-"q":"Why is the official demo fast the second time?",
-"p":"Browser features the official page uses to load the real text-chopping file in the background and keep a copy on your computer for quick reloads.",
-"zh":"Web Worker／IndexedDB：瀏覽器功能，官方頁用它在背景載入真正的斷詞檔案，並在你電腦上留一份，下次開比較快。",
-"skip":"About how the web page works, not how the model works. If the big file never loads (for example offline), the guide says the demo falls back to a smaller built-in subset.",
-"w":["1e"],
-"r":["tokenizer","tokenizer-json"]},
-
-{"s":"fine-tuning","t":"fine-tuning","tier":3,"al":["fine-tuning","Fine-tuning","fine-tune","fine-tuned"],
-"q":"Can you teach an existing model new habits?",
-"p":"Extra training of an already-trained model on a smaller, specific set of examples to adjust its behaviour.",
-"zh":"微調：拿已經訓練好的模型，再用一小批特定資料多訓練一下，調整它的行為。",
-"skip":"Today we only use the model as it is; the guide mentions it when explaining the spare slots.",
-"w":["1e","5a"],
-"r":["post-training","unused"]},
-
-{"s":"embedding-table","t":"Embedding Lookup Table (embedding matrix)","tier":3,"al":["Embedding Lookup Table","embedding lookup table","embedding matrix","embedding table"],
-"q":"Where are all the meaning lists stored?",
-"p":"A giant table with one row per entry in the list (262,144 rows); the ID number says which row to read.",
-"zh":"嵌入查找表：一張超大表格，清單裡每個片段一列（共 262,144 列），編號就是要讀哪一列。",
-"skip":"The embedding card covers the idea. Size in E2B, from the guide: 262,144 × 1,536, about 0.40B parameters, roughly 805 MB on disk.",
-"w":["2a","2c"],
-"r":["embedding","token-id"]},
-
-{"s":"semantic-space","t":"high-dimensional semantic space (map of meaning)","tier":3,"al":["semantic space","map of meaning"],
-"q":"Why do similar words end up close together?",
-"p":"Picturing all the meaning lists as points on a huge map where similar meanings end up near each other.",
-"zh":"高維語意空間：把所有意義向量想成一張大地圖上的點，意思相近的會靠在一起。",
-"skip":"Toy ② gives you the picture; the guide's labelled directions (“animal vs. machine”) are illustrations.",
-"w":["2b"],
-"r":["vector","cosine","dimension"]},
-
-{"s":"dot-product","t":"dot product","tier":3,"al":["dot product"],
-"q":"What arithmetic compares two lists of numbers?",
-"p":"Multiply the matching numbers from two lists and add the results; a big total means they point in similar directions.",
-"zh":"內積：兩串數字對應位置相乘再加總；結果越大，方向越接近。",
-"skip":"It is the arithmetic inside cosine similarity and attention; the idea “how aligned are they?” is enough.",
-"w":["2b","3b"],
-"r":["cosine","attention"]},
-
-{"s":"floating","t":"floating-point numbers / BF16","tier":3,"al":["BF16","floating-point"],
-"q":"What kind of numbers are stored?",
-"p":"Numbers with decimals as a computer stores them; BF16 is a compact 16-bit format for storing the model's numbers.",
-"zh":"浮點數／BF16：電腦存小數的方式；BF16 是一種精簡的 16 位元格式。",
-"skip":"Storage format only; it changes file size, not the idea.",
-"w":["2b","2c"],
-"r":["embedding-table"]},
-
-{"s":"soft-tokens","t":"multimodal soft tokens","tier":3,"al":["soft tokens","soft token","Soft Tokens"],
-"q":"How do pictures and sound get in?",
-"p":"Lists of numbers made from bits of an image or audio clip, sized exactly like the lists for text so they can travel in the same stream.",
-"zh":"多模態軟 token：從圖片或聲音片段轉出來的數字串，大小跟文字的一模一樣，可以和文字一起處理。",
-"skip":"Class today is text only. Facts from the guide: an image can become 70 to 1,120 visual tokens (adjustable); in E2B each one is 1,536 numbers long, the same as text.",
-"w":["2c"],
-"r":["modality","patch","embedding"]},
-
-{"s":"patch","t":"visual patches / audio frames","tier":3,"al":["patches","audio frames"],
-"q":"What pieces is an image cut into?",
-"p":"Small squares cut from an image, or short slices of sound, each turned into one list of numbers; in 12B the squares are 48 × 48 pixels and the sound slices 40 ms.",
-"zh":"影像小方塊／音訊片段：把圖片切成小方塊、把聲音切成短片段，各自轉成一串數字；12B 用 48×48 像素方塊與 40 毫秒的聲音片段。",
-"skip":"Only for image and audio input.",
-"w":["2c"],
-"r":["soft-tokens"]},
-
-{"s":"linear-projection","t":"encoders vs. linear projection","tier":3,"al":["linear projection","encoders","encoder"],
-"q":"Does 12B use a separate model to read pictures?",
-"p":"An encoder is a separate model that pre-digests images or sound; a linear projection is one simple multiply-and-add step. Gemma 4 12B drops the heavy encoders and uses the simple step.",
-"zh":"編碼器 vs. 線性投影：編碼器是先消化圖片或聲音的另一個模型；線性投影只是一步簡單的乘加運算。Gemma 4 12B 拿掉笨重的編碼器，改用這一步。",
-"skip":"A design detail for image and audio input.",
-"w":["2c","0c"],
-"r":["soft-tokens","arch-style"]},
-
-{"s":"ple","t":"Per-Layer Embeddings (PLE)","tier":3,"al":["Per-Layer Embeddings","Per-Layer Embedding","PLE"],
-"q":"What does “w/ PLE” mean in the model table?",
-"p":"In E2B and E4B, every round gets its own small 256-number look-up table per piece of text, which can be kept in slower storage instead of fast memory.",
-"zh":"逐層嵌入（PLE）：E2B 和 E4B 的每一層都有自己一份小查表（每個片段 256 個數字），可以放在較慢的儲存空間，不必佔用高速記憶體。",
-"skip":"A memory-saving trick for phone-sized models. It explains the two numbers in the table, which the effective-parameters card already covers. Size from the guide: 2.35B parameters in E2B.",
-"w":["2c","0c"],
-"r":["effective-params","memory-vram","embedding-table"]},
-
-{"s":"memory-vram","t":"(V)RAM vs. flash storage","tier":3,"al":["VRAM","(V)RAM","flash storage"],
-"q":"Why does fast memory matter?",
-"p":"RAM and VRAM are fast working memory (VRAM sits on a graphics chip); flash is slower long-term storage, like a phone's storage space.",
-"zh":"（V）RAM vs. 快閃儲存：RAM／VRAM 是高速工作記憶體（VRAM 在顯示晶片上）；快閃儲存比較慢，像手機的儲存空間。",
-"skip":"Only matters for running models on your own device.",
-"w":["2c"],
-"r":["effective-params","ple","gpu"]},
-
-{"s":"flops","t":"FLOPs","tier":3,"al":["FLOPs"],
-"q":"How is computing cost counted?",
-"p":"A count of how many arithmetic operations a calculation needs, used as a measure of compute cost.",
-"zh":"FLOPs：一次計算需要多少次算術運算，用來衡量計算成本。",
-"skip":"An engineers' unit; not needed for the ideas.",
-"w":["2c"],
-"r":["memory-vram"]},
-
-{"s":"big-o","t":"O(1) and O(N²)","tier":3,"al":["O(1)","O(N²)"],
-"q":"How does cost grow as text gets longer?",
-"p":"Shorthand for how cost grows: O(1) means the same cost however long the text; O(N²) means cost grows with the square of the length (double the text, four times the work).",
-"zh":"O(1) 與 O(N²)：描述成本怎麼成長；O(1) 是不管多長都一樣，O(N²) 是長度變兩倍、工作量變四倍。",
-"skip":"It only explains why full attention on long text is expensive.",
-"w":["2c","3d"],
-"r":["global-attention","kv-cache"]},
-
-{"s":"residual","t":"residual stream","tier":3,"al":["residual stream"],
-"q":"Where does each word's running meaning live between rounds?",
-"p":"Each word's running list of numbers, which every round reads from and adds its results back into.",
-"zh":"殘差流：每個字一路帶著走的那串數字，每一層讀它、再把自己的結果加回去。",
-"skip":"Internal plumbing.",
-"w":["2c"],
-"r":["layer","ple"]},
-
-{"s":"gelu","t":"GELU / GeGLU (gates)","tier":3,"al":["GELU","GeLU","GeGLU"],
-"q":"What are the “gates” inside a round?",
-"p":"GELU is a smooth on/off-style function; a “gate” uses it to decide how much of something to let through; GeGLU is the gated design used in Gemma 4's processing blocks.",
-"zh":"GELU／GeGLU：GELU 是一種平滑的「開／關」函數；閘門用它決定放多少東西通過；GeGLU 是 Gemma 4 處理區塊用的閘門設計。",
-"skip":"A math detail inside the feed-forward step.",
-"w":["2c","3c"],
-"r":["ffn","ple"]},
-
-{"s":"analogy-arith","t":"vector arithmetic (king − man + woman ≈ queen)","tier":3,"al":["vector analogy"],
-"q":"Can you do maths with word meanings?",
-"p":"Adding and subtracting meaning lists can land near a related word: king − man + woman lands close to queen.",
-"zh":"向量算術：意義向量相加減，結果會落在相關字附近，例如 king − man + woman 接近 queen。",
-"skip":"A fun demo, not a step. The guide reports cosine 0.56 for this example in the real first table.",
-"w":["2c"],
-"r":["vector","cosine"]},
-
-{"s":"decoder-only","t":"decoder-only","tier":3,"al":["decoder-only","Decoder-only"],
-"q":"Why can Gemma 4 only read left to right?",
-"p":"A type of model, like Gemma 4, that reads strictly left to right in every round; some other models can look both ways.",
-"zh":"純解碼器：像 Gemma 4 這類模型，每一層都只能由左往右讀；有些別的模型可以前後都看。",
-"skip":"The causal-mask card explains the same rule more simply. “Decoder” has nothing to do with secret codes.",
-"w":["3b"],
-"r":["causal-mask","bert"]},
-
-{"s":"bert","t":"BERT (bidirectional encoder)","tier":3,"al":["BERT","bidirectional encoder"],
-"q":"Which model does the guide contrast Gemma 4 with?",
-"p":"A well-known older type of model that reads words on both sides at once; the guide mentions it only as a contrast.",
-"zh":"BERT（雙向編碼器）：一種較早、知名的模型類型，可以同時看左右兩邊的字；導覽只拿它當對照。",
-"skip":"Not part of Gemma 4's pipeline.",
-"w":["3b"],
-"r":["decoder-only","causal-mask"]},
-
-{"s":"coreference","t":"coreference","tier":3,"al":["coreference"],
-"q":"What is the linguistics name for the trophy/suitcase puzzle?",
-"p":"Working out which earlier word a pronoun such as “it” refers to.",
-"zh":"共指消解：判斷「it」這類代名詞指的是前面哪個詞。",
-"skip":"Just a name for the puzzle you'll solve in toy ③.",
-"w":["3a","3d"],
-"r":["attention","causal-mask"]},
-
-{"s":"rope","t":"RoPE (Rotary Position Embeddings)","tier":3,"al":["RoPE","Rotary Position Embeddings"],
-"q":"How does the model know word order?",
-"p":"A way of stamping each word's position onto its look-back numbers by rotating them slightly according to where the word sits.",
-"zh":"旋轉位置編碼（RoPE）：依照字的位置，把它回看用的數字稍微「轉」一個角度，讓模型知道字的順序。",
-"skip":"All you need: the model does know word order.",
-"w":["3b"],
-"r":["p-rope","query","key"]},
-
-{"s":"p-rope","t":"p-RoPE (Proportional RoPE)","tier":3,"al":["p-RoPE","Proportional RoPE"],
-"q":"What is special about Gemma 4's position stamping?",
-"p":"Gemma 4's variant: only 25% of the numbers get the position rotation (p = 0.25), leaving 75% position-free to help recall meaning from far away.",
-"zh":"比例式 RoPE：Gemma 4 的版本只對 25% 的數字做位置旋轉（p = 0.25），留下 75% 不轉，有助於回想很遠之前的意思。",
-"skip":"A deep engineering detail.",
-"w":["3d"],
-"r":["rope","global-attention"]},
-
-{"s":"rmsnorm","t":"RMSNorm","tier":3,"al":["RMSNorm"],
-"q":"What keeps the numbers from blowing up?",
-"p":"A step that rescales a list of numbers to a steady overall size, so values don't explode or shrink as they pass through many rounds.",
-"zh":"RMSNorm：把一串數字的整體大小調回穩定範圍，避免經過很多層後變得太大或太小。",
-"skip":"Housekeeping for stable maths.",
-"w":["3a"],
-"r":["layer"]},
-
-{"s":"heads","t":"attention heads / head dimension (d_k)","tier":3,"al":["attention heads","head dimension","query heads","d_k"],
-"q":"Is attention done once or many times?",
-"p":"The look-back step is done several times in parallel, each copy (a “head”) working on a smaller slice of the numbers; d_k is that slice's size.",
-"zh":"注意力頭／頭維度（d_k）：回看的步驟會平行做好幾份，每一份（head）處理一小段數字；d_k 是那一段的大小。",
-"skip":"A detail of how attention is computed; the idea stays the same.",
-"w":["3b","3d"],
-"r":["attention","gqa"]},
-
-{"s":"expert","t":"routed experts & shared expert","tier":3,"al":["routed experts","shared expert","experts","expert"],
-"q":"Which specialists does each word visit?",
-"p":"The small specialist blocks inside one round: routed ones are picked per word, the shared one is always used.",
-"zh":"路由專家與共用專家：一層裡面的小型專家區塊；routed 依每個字挑選，shared 每次都用。",
-"skip":"The MoE card covers it; only 26B A4B has experts.",
-"w":["3c"],
-"r":["moe","router"]},
-
-{"s":"router","t":"Router","tier":3,"al":["Router","router"],
-"q":"Who decides which experts handle a word?",
-"p":"A small part of a round that looks at each word and picks which specialist blocks will handle it.",
-"zh":"路由器（router）：看每個字、決定交給哪幾個專家處理的小元件。",
-"skip":"Covered by the MoE card. Not a Wi-Fi router.",
-"w":["3c"],
-"r":["moe","expert"]},
-
-{"s":"double-wide","t":"double-wide MLP (E2B)","tier":3,"al":["double-wide","MLP"],
-"q":"Why are some E2B rounds wider?",
-"p":"In E2B, the last 20 rounds make their processing block twice as wide (6,144 → 12,288) to reuse memory saved elsewhere.",
-"zh":"加寬 MLP（E2B）：E2B 最後 20 層把處理區塊加寬一倍（6,144 → 12,288），把別處省下的記憶體拿來用。",
-"skip":"One model's internal detail.",
-"w":["3c"],
-"r":["ffn","kv-tricks"]},
-
-{"s":"gqa","t":"GQA","tier":3,"al":["GQA"],
-"q":"How do several heads share memory?",
-"p":"Several look-back copies share one set of stored look-back data to save memory; “8:1” means 8 question copies share 1 set.",
-"zh":"GQA：好幾份回看共用同一組存起來的資料以省記憶體；「8:1」表示 8 份共用 1 組。",
-"skip":"⚠️ The guide uses only the letters GQA; the full name (grouped-query attention) and the 8:1 reading are standard usage, not spelled out on the page.",
-"w":["3d"],
-"r":["heads","kv-cache"]},
-
-{"s":"kv-tricks","t":"K = V and cross-layer KV sharing","tier":3,"al":["K = V","KV sharing","cross-layer KV sharing","Cross-Layer KV Sharing"],
-"q":"How does Gemma 4 shrink its memory store?",
-"p":"Two memory savers: in 12B, 26B A4B and 31B, the whole-text rounds reuse the stored look-up data as the handed-over data (halving that memory); in E2B and E4B the last 20 or 18 rounds reuse earlier rounds' stored data.",
-"zh":"K = V 與跨層 KV 共用：兩種省記憶體的方法；12B、26B A4B、31B 的全域層把 Key 直接當 Value 用（那部分記憶體減半）；E2B、E4B 最後 20／18 層重複使用前面層存好的資料。",
-"skip":"The engineering behind the 128K/256K context.",
-"w":["3d"],
-"r":["kv-cache","global-attention"]},
-
-{"s":"gpu","t":"GPU / NPU","tier":3,"al":["GPU","NPU","GPU/NPU"],
-"q":"What chips run these models?",
-"p":"Chips built for doing huge amounts of arithmetic at once; models run fastest on them.",
-"zh":"GPU／NPU：專門同時做大量運算的晶片，模型在上面跑最快。",
-"skip":"It explains why the guide's demos can't run the full model in your browser.",
-"w":["3d"],
-"r":["memory-vram","illustrative"]},
-
-{"s":"lm-head","t":"LM Head (lm_head)","tier":3,"al":["LM Head","lm_head","Language Model Head"],
-"q":"What turns the last word's numbers into scores?",
-"p":"The final step that turns the last word's list of numbers into one score for every entry in the list.",
-"zh":"語言模型頭（LM Head）：最後一步，把最後一個字的數字串換成清單上每一項的分數。",
-"skip":"The logits card covers what comes out of it.",
-"w":["4b"],
-"r":["logits","tied-weights"]},
-
-{"s":"softcapping","t":"Final Logit Softcapping","tier":3,"al":["Final Logit Softcapping","softcapping","Softcapping"],
-"q":"What stops extreme scores?",
-"p":"Squashing extreme raw scores so none can go beyond 30 either way, using 30 × tanh(score ÷ 30), before they become percentages.",
-"zh":"最終分數軟上限：用 30 × tanh(分數 ÷ 30) 把極端分數壓住，讓它不超過正負 30。",
-"skip":"A safety rail; ordinary scores barely change. (The guide's text has a typo here, “Logig”; it means Logit.)",
-"w":["4b"],
-"r":["logits"]},
-
-{"s":"tied-weights","t":"tied weights (reused embedding table)","tier":3,"al":["tied weights","tied embedding"],
-"q":"Does the model keep a second giant table for scoring?",
-"p":"The scoring step reuses the same giant table as Stage 2 (turned sideways) instead of keeping a second one.",
-"zh":"權重共用：打分數那一步直接重複使用第二站那張大表（轉置過來），不另外存一份。",
-"skip":"Saves memory; no effect on the ideas. (The guide's text has a typo, “ransposed”; it means transposed.)",
-"w":["4b"],
-"r":["embedding-table","lm-head"]},
-
-{"s":"hidden-state","t":"hidden vector / hidden state","tier":3,"al":["hidden state","hidden vector","hidden activations"],
-"q":"What do we call a word's numbers inside the model?",
-"p":"The list of numbers for a word somewhere inside the model, after some rounds have worked on it.",
-"zh":"隱藏向量／隱藏狀態：模型內部某一層處理過後，某個字的那串數字。",
-"skip":"Just a name for “the numbers in the middle”.",
-"w":["4b","4d"],
-"r":["vector","layer"]},
-
-{"s":"renormalize","t":"re-normalize (rescale to 100%)","tier":3,"al":["re-normalized","re-normalize","renormalize"],
-"q":"What happens to the chances after some candidates are cut?",
-"p":"After cutting candidates, scaling the survivors' chances back up so they add to 100% again.",
-"zh":"重新歸一化：刪掉部分候選後，把剩下的機率等比例放大，讓總和回到 100%。",
-"skip":"The Top-K and Top-P worked examples already show it.",
-"w":["4c"],
-"r":["top-k","top-p"]},
-
-{"s":"mtp","t":"Multi-Token Prediction (MTP) drafter","tier":3,"al":["Multi-Token Prediction","MTP","drafter"],
-"q":"What is the small helper model?",
-"p":"A tiny helper model (4 rounds, about 76M learned numbers for E2B) that quickly guesses several next pieces for the big model to check.",
-"zh":"多 token 預測（MTP）草稿模型：小小的輔助模型（4 層，E2B 版約 76M 個參數），先快速猜好幾個字，再交給大模型檢查。",
-"skip":"A speed-up; it doesn't change what the model says.",
-"w":["4d","4e"],
-"r":["speculative","target-model"]},
-
-{"s":"speculative","t":"speculative decoding","tier":3,"al":["speculative decoding","Speculative Decoding"],
-"q":"How can the big model check several guesses in one go?",
-"p":"A fast helper drafts a few next pieces, then the big model checks all of them in one pass: accepted drafts are kept, and the first wrong one is replaced.",
-"zh":"推測式解碼：小幫手先打草稿寫幾個字，大模型一次檢查全部；對的留下，第一個錯的換掉。",
-"skip":"It speeds up the loop without changing output quality (the guide says the drafter makes the loop about 3× faster).",
-"w":["4d"],
-"r":["mtp","autoregressive"]},
-
-{"s":"target-model","t":"target model / bonus token / partial rejection","tier":3,"al":["target model","bonus token","partial rejection"],
-"q":"What happens when a draft is wrong?",
-"p":"The target is the big model being sped up; if all drafts pass it adds 1 extra (bonus) piece, and if one fails, drafts after it are thrown away and it is replaced.",
-"zh":"目標模型／加碼 token／部分拒絕：目標模型就是被加速的大模型；草稿全對就多送 1 個字，某個錯了就丟掉它之後的草稿並換掉它。",
-"skip":"Details of the speed trick.",
-"w":["4d"],
-"r":["speculative","mtp"]},
-
-{"s":"clustered-head","t":"clustered LM head (Efficient Embedder)","tier":3,"al":["clustered LM head","Clustered LM Head","Efficient Embedder"],
-"q":"How does the helper avoid scoring every entry?",
-"p":"The helper groups similar entries together, picks the most likely groups first, and only scores the entries inside those groups.",
-"zh":"分群式 LM Head：小幫手把相近的片段分群，先挑最可能的群，只在那些群裡打分數。",
-"skip":"A speed detail of the helper model.",
-"w":["4d"],
-"r":["mtp","lm-head"]},
-
-{"s":"num-assistant","t":"num_assistant_tokens / num_assistant_tokens_schedule","tier":3,"al":["num_assistant_tokens","num_assistant_tokens_schedule"],
-"q":"How many guesses does the helper make each time?",
-"p":"Code settings for how many pieces the helper drafts (default 6) and whether that number stays fixed (“constant”) or adjusts (“heuristic”: +2 after full success, −1 after a miss).",
-"zh":"num_assistant_tokens：程式設定，草稿一次寫幾個（預設 6），以及固定不變（constant）還是自動調整（heuristic：全對就 +2、有錯就 −1）。",
-"skip":"Only for people running the code. ⚠️ Small mismatch in the guide: the default here is 6, but its code example sets 4 and the stage summary talks about 4.",
-"w":["4e"],
-"r":["mtp","hf-transformers"]},
-
-{"s":"hf-transformers","t":"Hugging Face transformers (library)","tier":3,"al":["Hugging Face","transformers library"],
-"q":"What library do the guide's code examples use?",
-"p":"A popular Python library for downloading and running models; the guide's code examples use it.",
-"zh":"Hugging Face transformers：常用的 Python 函式庫，用來下載與執行模型；導覽的程式範例都用它。",
-"skip":"Don't run the Python example in class — it downloads a real model; reading it is enough.",
-"w":["4e","5d"],
-"r":["max-new","apply-chat"]},
-
-{"s":"max-new","t":"generate(), max_new_tokens, do_sample","tier":3,"al":["max_new_tokens","do_sample","generate()"],
-"q":"What do the settings in the code mean?",
-"p":"In the code, generate() runs the writing loop, max_new_tokens caps how many new pieces it may write, and do_sample=True turns on the random draw.",
-"zh":"generate() 等設定：程式裡 generate() 負責跑寫作迴圈，max_new_tokens 限制最多寫幾個新片段，do_sample=True 打開隨機抽籤。",
-"skip":"Only needed if you run the code later.",
-"w":["5d","4e"],
-"r":["hf-transformers","sampling"]},
-
-{"s":"pt-model","t":"Pre-Trained (PT) base model","tier":3,"al":["base model","Pre-Trained"],
-"q":"Why might a raw model answer a question with another question?",
-"p":"The model straight out of its first big training: it continues text the way a web page might, which can mean following your question with more questions.",
-"zh":"預訓練基礎模型（PT）：剛做完第一輪大訓練的模型，只會照網頁的樣子「續寫」，可能在你的問題後面接更多問題。",
-"skip":"The post-training card tells the useful part of the story.",
-"w":["5a"],
-"r":["pretraining","post-training","it-model"]},
-
-{"s":"it-model","t":"Instruction-Tuned (-it) model","tier":3,"al":["Instruction-Tuned","instruction-tuned","Instruction-tuned"],
-"q":"What does “-it” at the end of a model name mean?",
-"p":"The version after extra assistant-style training, built to follow instructions in a chat; its name ends in “-it”, like gemma-4-E2B-it.",
-"zh":"指令微調模型（-it）：多經過助理式訓練、會照指令對話的版本；名稱結尾是 -it，例如 gemma-4-E2B-it。",
-"skip":"It just tells you which version you're using. “-it” isn't the English word “it”.",
-"w":["5b"],
-"r":["post-training","pt-model"]},
-
-{"s":"role","t":"roles: system, user, model","tier":3,"al":["system turn","roles"],
-"q":"Who are “system”, “user” and “model”?",
-"p":"Labels for who is talking: system = background instructions, user = you, model = the AI's reply.",
-"zh":"角色：system＝背景指示，user＝你，model＝AI 的回覆。",
-"skip":"The chat-template card shows them in place.",
-"w":["5b"],
-"r":["chat-template"]},
-
-{"s":"thought-channel","t":"thought channel (<|channel>thought … <channel|>)","tier":3,"al":["<|channel>","thought channel","reasoning channel","reasoning channels"],
-"q":"Where do the thinking notes go?",
-"p":"The marked section where the working notes are written, kept apart from the answer the user sees.",
-"zh":"思考頻道：模型寫推理草稿的區塊，和給使用者看的回答分開。",
-"skip":"The thinking-mode card covers it; libraries split it off for you (processor.parse_response()).",
-"w":["5b","5c"],
-"r":["think","thought-stripping"]},
-
-{"s":"thought-stripping","t":"multi-turn thought stripping","tier":3,"al":["thought stripping"],
-"q":"Are old thinking notes kept in a long chat?",
-"p":"In a longer chat, earlier turns' working notes are removed from the history before the next message, keeping the conversation short and fast.",
-"zh":"多輪對話去除思考：長對話裡，前幾輪的推理草稿會在下一則訊息前被拿掉，讓對話保持精簡。",
-"skip":"Libraries handle it automatically; the exception is the middle of a multi-step tool call.",
-"w":["5c"],
-"r":["thought-channel","context-window"]},
-
-{"s":"tool-response","t":"tool response & string delimiter (<|tool_response>, <|\"|>)","tier":3,"al":["<|tool_response>","tool response"],
-"q":"Where does the tool's answer go?",
-"p":"<|tool_response> marks where the model pauses for the result; <|\"|> marks the start and end of text values inside a request.",
-"zh":"工具回應與字串分隔記號：<|tool_response> 標出模型停下來等結果的地方；<|\"|> 標出請求裡文字內容的開頭與結尾。",
-"skip":"The tool-call card covers the flow.",
-"w":["5c","1e"],
-"r":["tool-call","special-tokens"]},
-
-{"s":"apply-chat","t":"apply_chat_template / parse_response","tier":3,"al":["apply_chat_template","parse_response"],
-"q":"Which code builds and unpacks the chat format?",
-"p":"Library functions from the guide's code: one builds the formatted text from your messages, the other splits the output into notes and answer.",
-"zh":"apply_chat_template／parse_response：導覽程式碼裡的函式，一個把訊息組成固定格式，一個把輸出拆成思考草稿和回答。",
-"skip":"Only for people writing code.",
-"w":["5b","5d"],
-"r":["chat-template","thought-channel"]},
-
-{"s":"streamer","t":"streaming (TextStreamer)","tier":3,"al":["TextStreamer","streaming"],
-"q":"Why does text appear word by word?",
-"p":"Showing pieces on screen as they are produced, instead of waiting for the full answer.",
-"zh":"串流輸出：一邊產生一邊顯示，不等整段寫完。",
-"skip":"Note: the stage-5 demo on the official page replays prepared replies this way; it isn't the live model.",
-"w":["5c","5d"],
-"r":["autoregressive","illustrative"]}
-]
-</script>
+<script src="assets/terms-data.js"></script>
 
 <script>
 (function(){
 "use strict";
-var H = JSON.parse(document.getElementById('heading-data').textContent);
-var TERMS = JSON.parse(document.getElementById('term-data').textContent);
+var H = window.W12_HEADINGS;
+var TERMS = window.W12_TERMS;
 var STAGES = [["all","All"],["0","Overview"],["1","1 Tokenization"],["2","2 Embeddings"],["3","3 Attention"],["4","4 Sampling"],["5","5 Chat & tools"]];
 var STAGE_LONG = {"0":"Overview","1":"Stage 1 · Tokenization","2":"Stage 2 · Embeddings","3":"Stage 3 · Attention & layers","4":"Stage 4 · Sampling","5":"Stage 5 · Chat, thinking & tools"};
 var TIERS = [["all","All"],["1","⭐ Must know"],["2","🔹 Recognise"],["3","💤 Skip"]];
@@ -1574,6 +544,8 @@ function resetFilters(){ state = {q:"", stage:"all", tier:"all"}; qInput.value =
 document.getElementById('resetFilters').addEventListener('click', resetFilters);
 document.getElementById('expandAll').addEventListener('click', function(){ document.querySelectorAll('#termList details.card').forEach(function(d){ if(!d.hidden) d.open = true; }); });
 document.getElementById('collapseAll').addEventListener('click', function(){ document.querySelectorAll('#termList details.card').forEach(function(d){ d.open = false; }); });
+/* step pages link here as terms.html?stage=N#terms */
+try { var qsStage = new URLSearchParams(location.search).get('stage'); if(qsStage && STAGES.some(function(s){return s[0]===qsStage;})){ state.stage = qsStage; syncChips(); } } catch(err) {}
 apply();
 
 function openHash(){
@@ -1635,7 +607,7 @@ function drawVec(){
   document.getElementById('vecBars').innerHTML = rows.map(function(r){
     return '<div class="bar"><span class="name">'+r.o.w+'</span><span class="track"><span class="fill" style="width:'+(Math.max(0,r.c)*100).toFixed(1)+'%"></span></span><span class="pct">'+r.c.toFixed(2)+'</span></div>';
   }).join('');
-  document.getElementById('vecExplain').innerHTML = '<b>'+s.w+'</b> = ['+s.v.join(', ')+'] (animal, vehicle, food — invented). Closest: <b>'+rows[0].o.w+'</b> ('+rows[0].c.toFixed(2)+'); farthest: <b>'+rows[rows.length-1].o.w+'</b> ('+rows[rows.length-1].c.toFixed(2)+'). Scores near 1 = pointing the same way; near 0 = unrelated.';
+  document.getElementById('vecExplain').innerHTML = '<b>'+s.w+'</b> = ['+s.v.join(', ')+'] (animal, vehicle, food — invented). Closest: <b>'+rows[0].o.w+'</b> ('+rows[0].c.toFixed(2)+'); farthest: <b>'+rows[rows.length-1].o.w+'</b> ('+rows[rows.length-1].c.toFixed(2)+'). Scores near 1 = pointing the same way; near 0 = at right angles.';
 }
 drawVec();
 
@@ -1649,7 +621,7 @@ var ATT = {
       zipped:   {10:{7:50,9:18,3:8,10:8,1:4,0:3,8:3,2:2,6:2,4:1,5:1}}
     },
     say: function(v,qi){
-      if(qi===10) return v==="polished" ? 'From “it”, the strongest link is <b>trophy</b>: the verb “polished” came <i>before</i> “it”, and you polish trophies. “carefully” and “.” come later, so they are masked (0%).' : 'From “it”, the strongest link is now <b>suitcase</b>: “zipped” came before “it”, and suitcases have zips. Only the earlier verb changed.';
+      if(qi===10) return v==="polished" ? 'In this illustration, from “it”, the strongest link is <b>trophy</b>: the verb “polished” came <i>before</i> “it”, and you polish trophies. “carefully” and “.” come later, so they are masked (0%).' : 'In this illustration, from “it”, the strongest link is now <b>suitcase</b>: “zipped” came before “it”, and suitcases have zips. Only the earlier verb changed.';
       return 'This word can only look back at itself and earlier words. Click “it” to see the interesting case.';
     }
   },
@@ -1661,8 +633,8 @@ var ATT = {
       small: {8:{0:3,1:30,2:6,3:10,4:3,5:3,6:29,7:8,8:8}, 11:{6:32,8:22,10:11,11:10,1:8,3:6,9:4,2:2,7:2,0:1,4:1,5:1}}
     },
     say: function(v,qi){
-      if(qi===8) return 'At “it”, the clue (“'+v+'”) has not arrived yet — the causal mask hides it. So <b>trophy and suitcase stay almost tied</b>, whether the sentence ends in big or small. Now click “'+v+'”.';
-      if(qi===11) return v==="big" ? '“big” looks back at “it” and <b>trophy</b>: too big → the trophy is what didn\'t fit. The later word does the linking.' : '“small” looks back at “it” and <b>suitcase</b>: too small → the suitcase was the problem. The later word does the linking.';
+      if(qi===8) return 'In this illustration, at “it”, the clue (“'+v+'”) has not arrived yet — the causal mask hides it. So <b>trophy and suitcase stay almost tied</b>, whether the sentence ends in big or small. Now click “'+v+'”.';
+      if(qi===11) return v==="big" ? 'In this illustration, “big” looks back at “it” and <b>trophy</b>: too big → the trophy is what didn\'t fit. The later word does the linking.' : 'In this illustration, “small” looks back at “it” and <b>suitcase</b>: too small → the suitcase was the problem. The later word does the linking.';
       return 'This word can only look back at itself and earlier words. Try “it”, then the last clue word.';
     }
   }
@@ -1762,7 +734,7 @@ document.getElementById('sampClear').addEventListener('click', function(){ hist 
 drawSamp();
 
 /* ---------- Toy 5: autoregressive loop ---------- */
-var PROMPT = ["Hualien"," is"," famous"," for"];
+var PROMPT = ["H","ual","ien"," is"," famous"," for"];  /* real Gemma 4 split (Colab 2026-11-23) */
 var STEPS = [
   [[" Taroko",41],[" its",33],[" the",14]],
   [[" Gorge",88],[" National",6],[",",2]],
@@ -1785,7 +757,7 @@ function drawLoop(){
   var cb = document.getElementById('loopCands'), ex = document.getElementById('loopExplain');
   if(loopN === 0){
     cb.innerHTML = '';
-    ex.innerHTML = 'The input is just the prompt (4 pieces). Press <b>Step</b> to run the model once.';
+    ex.innerHTML = 'The input is just the prompt (6 pieces, the real Gemma 4 split). Press <b>Step</b> to run the model once.';
     return;
   }
   var s = STEPS[loopN-1];
@@ -1826,7 +798,7 @@ QUIZ.forEach(function(item, n){
   });
 });
 
-document.getElementById('printCard').addEventListener('click', function(){ window.print(); });
+var pc = document.getElementById('printCard'); if(pc) pc.addEventListener('click', function(){ window.print(); });
 })();
 </script>
 </body>
