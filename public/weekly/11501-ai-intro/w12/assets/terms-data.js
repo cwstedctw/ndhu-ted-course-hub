@@ -128,7 +128,7 @@ window.W12_TERMS = /*JSON-TERMS*/[
 "p":"A dial that divides every raw score before they become percentages: low makes the top choice dominate, high spreads the chances out. Gemma 4's default is 1.0.",
 "zh":"溫度：換成機率之前，先把每個分數除以 T；調低，第一名更突出、回答更穩定；調高，機率攤平、回答更多變。Gemma 4 預設 1.0。",
 "an":"How adventurous a diner is: low means always ordering the usual; high means happily trying the strange dishes.",
-"ex":"Scores 2, 1, 0. T = 1 → 66.5 / 24.5 / 9.0%. T = 0.5 → 86.7 / 11.7 / 1.6%. T = 2 → 50.6 / 30.7 / 18.6%. Try the slider in toy ④ and write down the group of results you got at each of two temperatures (repeats or identical results are fine) on your card.",
+"ex":"Scores 2, 1, 0. T = 1 → 66.5 / 24.5 / 9.0%. T = 0.5 → 86.7 / 11.7 / 1.6%. T = 2 → 50.6 / 30.7 / 18.6%. Try the slider in toy ④ and write down the group of results you got at each of two temperatures (repeats or identical results are fine).",
 "w":["4c","4f"],
 "m":"Temperature doesn't make the model know more or think harder; it only reweights the dice.",
 "r":["softmax","top-k","top-p","greedy","sampling"],
