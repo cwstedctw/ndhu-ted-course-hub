@@ -9,7 +9,7 @@
 <nav class="progress" id="progTop" aria-label="步驟"></nav>
 <header class="top"><div class="wrap"><div class="kicker">資訊科技與應用 · W12 · 第 6 步／共 7 步</div><h1>gnuplot：開終端機、字元版、正常版</h1></div></header>
 <main class="wrap">
-<div class="part" id="part2">第二部分　gnuplot：同一份資料，兩張圖（約 25 分）<span>需要裝好 gnuplot 的電腦（上週在筆電上請 Antigravity 裝的那個）。沒有的，直接用練習包裡老師畫好的兩張圖做 2-4。</span></div><section id="g1"><div class="kicker">2-1 · 約 5 分</div><h2>在練習包資料夾開終端機，先看字元版的圖</h2>
+<div class="part" id="part2">第二部分　gnuplot：同一份資料，兩張圖（約 25 分）<span>需要裝好 gnuplot 的電腦（上週在筆電上請 Antigravity 裝的那個）。沒有的，直接用練習包裡老師畫好的兩張圖做 <a href="step7.html#g4">2-4</a>。還沒下載練習包的回<a href="index.html#pack">開始頁</a>。</span></div><section id="g1"><div class="kicker">2-1 · 約 5 分</div><h2>在練習包資料夾開終端機，先看字元版的圖</h2>
 <ul><li><b>Windows 11：</b>打開練習包資料夾（要看得到 <code>sleep-quiz.dat</code>），在空白處按右鍵 →「在終端機中開啟」。</li><li><b>Mac：</b>打開「終端機」，輸入 <code>cd</code> 加一個空白，把那個資料夾從 Finder 拖進終端機視窗，按 Enter。</li></ul>
 <p>終端機（terminal）是用打字下指令的視窗。複製下面這一行、貼上、按 Enter：</p>
 <div class="cbox"><pre class="copy" data-ps="1">gnuplot -e "set terminal dumb size 70,20; plot 'sleep-quiz.dat' using 1:2 with points pt '*' notitle"</pre></div>
