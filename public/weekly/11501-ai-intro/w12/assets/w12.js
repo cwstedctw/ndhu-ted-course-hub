@@ -11,12 +11,7 @@ var $ = function(id){ return document.getElementById(id); };
 function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];}); }
 function rxEsc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 
-/* ---------- storage (only this browser, never sent) ---------- */
-var KEY = 'w12-card-';
-function load(n){ try { return window.localStorage.getItem(KEY + n) || ''; } catch(e){ return ''; } }
-function save(n, v){ try { window.localStorage.setItem(KEY + n, v); return true; } catch(e){ return false; } }
-function clearAll(){ try { for(var i=0;i<=5;i++) window.localStorage.removeItem(KEY + i); return true; } catch(e){ return false; } }
-window.W12store = {load:load, save:save, clearAll:clearAll};
+/* no localStorage anywhere on this site (2026-11-23: the card was removed) */
 
 /* ---------- progress bar ---------- */
 var PAGES = [["index.html","Start"],["step1.html","Step 1"],["step2.html","Step 2"],["step3.html","Step 3"],["step4.html","Step 4"],["step5.html","Step 5"],["finish.html","Finish"]];
@@ -115,17 +110,6 @@ document.addEventListener('click', function(e){
 });
 if(location.hash.indexOf('#term-') === 0) openLocal(location.hash.slice(1));
 
-/* ---------- write one sentence ---------- */
-document.querySelectorAll('textarea[data-box]').forEach(function(ta){
-  var n = ta.getAttribute('data-box'), msg = document.getElementById('saved' + n), timer = null;
-  ta.value = load(n);
-  ta.addEventListener('input', function(){
-    clearTimeout(timer);
-    var ok = save(n, ta.value);
-    if(msg) msg.textContent = ok ? 'Saved in this browser only. 已存在這台電腦的瀏覽器。' : 'This browser cannot save; copy your sentence onto paper. 這個瀏覽器存不了，請抄在紙上。';
-    timer = setTimeout(function(){ if(msg) msg.textContent = ''; }, 2500);
-  });
-});
 
 /* ---------- quiz (same items and wording as terms.html) ---------- */
 var QUIZ = [
@@ -366,21 +350,4 @@ document.getElementById('loopReset').addEventListener('click', function(){ loopN
 drawLoop();
 })();
 
-/* ---------- finish page: five-box summary ---------- */
-if($('summary')) (function(){
-  function draw(){
-    document.querySelectorAll('#summary .answer').forEach(function(el){
-      var v = load(el.getAttribute('data-box'));
-      el.textContent = v || '(empty — go back to that step and write one sentence) 還沒寫';
-      el.classList.toggle('empty', !v);
-    });
-  }
-  draw();
-  $('printCard').addEventListener('click', function(){ window.print(); });
-  $('clearCard').addEventListener('click', function(){
-    if(!window.confirm('Clear all six boxes in this browser? This cannot be undone. 確定清除這台電腦上卡片的六格？清除後無法復原。')) return;
-    clearAll(); draw();
-    $('clearMsg').textContent = 'Cleared. 已清除。';
-  });
-})();
 })();

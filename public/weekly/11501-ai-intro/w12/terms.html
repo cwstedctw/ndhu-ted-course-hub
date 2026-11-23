@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gemma Learn Companion</title>
-<meta name="description" content="Every term in Google's official Gemma 'How LLMs work' guide, explained for non-IT students, with five small toys, a class route, a printable card and a self-check quiz.">
+<meta name="description" content="Every term in Google's official Gemma 'How LLMs work' guide, explained for non-IT students, with five small toys, a class route and a self-check quiz.">
 <style>
 :root{
   --bg:#f6f4ee; --surface:#ffffff; --surface-2:#eef1ef; --ink:#1b262b; --muted:#56656c;
@@ -210,7 +210,6 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
     <li><a href="#terms">Term station</a></li>
     <li><a href="#toys">Toys</a></li>
     <li><a href="#route">Class route</a></li>
-    <li><a href="#card">Your card</a></li>
     <li><a href="#quiz">Quiz</a></li>
   </ul>
 </nav>
@@ -225,7 +224,6 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
       <li><b>On the official page,</b> pick a stage in the row of buttons at the top (“01 Tokenization” … “05 Chat &amp; tools”) to open its live demo; press “>_ Read the details” when you want the long explanation. 在官方頁的站別列（rail）選站、點開下方說明面板。</li>
       <li><b>When you meet a word you don't know,</b> type it into the search box of the <a href="#terms">term station</a>. Start with ⭐ cards; 💤 cards are safe to skip. 看不懂的字就來這裡搜；先看 ⭐，💤 可以跳過。</li>
       <li><b>Each card's “Where you'll see it”</b> names the stage and the heading you see after pressing “>_ Read the details” on the official page, so you can find the spot. 每張卡都寫了在官方頁哪一站、哪個標題底下。</li>
-      <li><b>Write your card</b> as you go (one sentence per stage). 邊走邊寫<a href="#card">學習卡</a>。</li>
     </ol>
     <div class="panel">
       <h3 style="margin-top:0">What's real and what's a teaching simulation on the official page</h3>
@@ -284,7 +282,7 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
         <li><code>🚀🙂</code> — notice whether each emoji is one piece or several. 注意表情符號是一塊還是好幾塊。</li>
         <li><code>2026</code> — notice whether the number is one piece or one piece per digit, and compare with <code>2,026</code>. 注意數字是整塊還是一個位數一塊。</li>
       </ol>
-      <p>Write the most surprising one in box 1 of your <a href="#card">card</a>. Words to check first: <a href="#term-token">token</a>, <a href="#term-subword">subword tokenization</a>, <a href="#term-token-id">Token ID</a>.</p>
+      <p>Words to check first: <a href="#term-token">token</a>, <a href="#term-subword">subword tokenization</a>, <a href="#term-token-id">Token ID</a>.</p>
     </div>
 
     <div class="toy" id="toy2">
@@ -357,66 +355,52 @@ footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
 <section class="block" id="route">
   <div class="wrap">
     <h2>Class route · 課堂路線（150 min）</h2>
-    <p>Each station: <b>predict</b> → <b>click the official guide</b> → <b>come back and write one sentence</b> on your card. Read the 2–3 core terms first.</p>
-    <p class="zh">每一站：先猜 → 去官方頁點 → 回來在學習卡寫一句。先讀 2–3 個核心名詞。</p>
+    <p>Each station: <b>predict</b> → <b>click the official guide</b> → <b>come back and think about what you saw</b>. Read the 2–3 core terms first.</p>
+    <p class="zh">每一站：先猜 → 去官方頁點 → 回來想一想看到了什麼。先讀 2–3 個核心名詞。</p>
     <div class="tablewrap"><table>
       <thead><tr><th>Minutes</th><th>What we do · 做什麼</th></tr></thead>
       <tbody>
         <tr><td>0–10</td><td>Wrap up the Kaggle homework; bridge: last week we watched AI cheat, this week we open it up. 收尾上週 Kaggle，銜接本週。</td></tr>
-        <tr><td>10–25</td><td>Term station demo (search, stage and tier filters). Each student marks <b>5 terms they don't know</b> on the card. Then Overview: in the model table look only at the E2B row first. 示範名詞站篩選，每人在卡上寫下 5 個不懂的字；總覽表先只看 E2B 那一列。</td></tr>
+        <tr><td>10–25</td><td>Term station demo (search, stage and tier filters). Then Overview: in the model table look only at the E2B row first. 示範名詞站篩選；總覽表先只看 E2B 那一列。</td></tr>
         <tr><td>25–55</td><td>Station 1 (official tokenizer + box ①) and Station 2 (toy ②). 第 1、2 站。</td></tr>
         <tr><td>55–65</td><td>Break 休息</td></tr>
-        <tr><td>65–100</td><td>Station 3 (toy ③) and Station 4 (toy ④ — write down the results at two temperatures in box 4; repeats are fine). 第 3、4 站。</td></tr>
+        <tr><td>65–100</td><td>Station 3 (toy ③) and Station 4 (toy ④). 第 3、4 站。</td></tr>
         <tr><td>100–110</td><td>Break 休息</td></tr>
         <tr><td>110–130</td><td>Station 5 (toy ⑤ + official chat &amp; tools; the Python on the official page is read only, run Step 5 of our Colab notebook instead). 第 5 站：官方頁的 Python 只讀不跑，要跑的是我們的 Colab 筆記本 Step 5。</td></tr>
         <tr><td>130–140</td><td>Quiz: questions 1–3 together (4–5 optional). 小測驗前 3 題。</td></tr>
-        <tr><td>140–150</td><td>Finish and upload your card to e-learning. 完成並上傳學習卡。</td></tr>
+        <tr><td>140–150</td><td>Finish: optional quiz and review. Finish：自選小測驗與回顧。</td></tr>
       </tbody>
     </table></div>
 
     <div class="station"><h3>Overview (10–25 min)</h3>
       <div class="pcf"><b>Core terms</b><span><a href="#term-next-token">next-token prediction</a> · <a href="#term-effective-params">effective vs. total parameters</a> · <a href="#term-context-window">context window</a></span>
       <b>Predict</b><span>E2B is listed as “2.3B effective (5.1B w/ PLE)”. Which number is its real size?</span>
-      <b>Official guide</b><span>Overview: the model family table. Look only at the E2B row first.</span>
-      <b>Write</b><span>Mark 5 terms you don't know in the top box of your card.</span></div></div>
+      <b>Official guide</b><span>Overview: the model family table. Look only at the E2B row first.</span></div></div>
 
     <div class="station"><h3>Station 1 · Tokenization (25–40 min)</h3>
       <div class="pcf"><b>Core terms</b><span><a href="#term-tokenization">Tokenization</a> (with tokenizer &amp; vocabulary) · <a href="#term-token">token</a> · <a href="#term-subword">subword tokenization</a></span>
       <b>Predict</b><span>Will “2026” be one piece or four? Will a Chinese sentence be one piece per character?</span>
-      <b>Official guide</b><span>“01 Tokenization” in the top row of the official page; type the five inputs from <a href="#toy1">box ①</a>.</span>
-      <b>Write</b><span>Box 1: the most surprising split you saw.</span></div></div>
+      <b>Official guide</b><span>“01 Tokenization” in the top row of the official page; type the five inputs from <a href="#toy1">box ①</a>.</span></div></div>
 
     <div class="station"><h3>Station 2 · Embeddings (40–55 min)</h3>
       <div class="pcf"><b>Core terms</b><span><a href="#term-embedding">embedding</a> · <a href="#term-cosine">cosine similarity</a></span>
       <b>Predict</b><span>Which is closer to “cat”: “kitten” or “car”? Guess a number between −1 and +1.</span>
-      <b>Official guide</b><span>Stage 2. Remember: its 2-D map is illustrative.</span>
-      <b>Write</b><span>Box 2: one pair that was close and one that was far, and why.</span></div></div>
+      <b>Official guide</b><span>Stage 2. Remember: its 2-D map is illustrative.</span></div></div>
 
     <div class="station"><h3>Station 3 · Attention &amp; layers (65–82 min)</h3>
       <div class="pcf"><b>Core terms</b><span><a href="#term-attention">attention</a> · <a href="#term-query">Query</a> / <a href="#term-key">Key</a> / <a href="#term-value">Value</a> · <a href="#term-causal-mask">causal mask</a></span>
       <b>Predict</b><span>In “…because it was too big”, when the model is at “it”, can it already see “big”?</span>
-      <b>Official guide</b><span>Stage 3, Tab A. Its percentages are pseudo — look for the pattern, not the numbers.</span>
-      <b>Write</b><span>Box 3: what changed when the verb before “it” changed.</span></div></div>
+      <b>Official guide</b><span>Stage 3, Tab A. Its percentages are pseudo — look for the pattern, not the numbers.</span></div></div>
 
     <div class="station"><h3>Station 4 · Sampling (82–100 min)</h3>
       <div class="pcf"><b>Core terms</b><span><a href="#term-softmax">Softmax</a> · <a href="#term-temperature">Temperature</a> · <a href="#term-top-p">Top-P</a> (and <a href="#term-top-k">Top-K</a>)</span>
       <b>Predict</b><span>If temperature is very low, will you get the same word every time?</span>
-      <b>Official guide</b><span>Stage 4: drag the temperature slider, sample several times.</span>
-      <b>Write</b><span>Box 4: the group of results you got at each of two temperatures (repeats or identical results are fine).</span></div></div>
+      <b>Official guide</b><span>Stage 4: drag the temperature slider, sample several times.</span></div></div>
 
     <div class="station"><h3>Station 5 · Chat, thinking &amp; tools (110–130 min)</h3>
       <div class="pcf"><b>Core terms</b><span><a href="#term-autoregressive">autoregressive loop</a> · <a href="#term-chat-template">chat template</a> · <a href="#term-tool-call">tool call</a></span>
       <b>Predict</b><span>When the model “thinks”, is it a different brain or the same next-token loop?</span>
-      <b>Official guide</b><span>Stage 5: watch where the thinking notes start and stop. The stream is simulated; don't run the Python.</span>
-      <b>Write</b><span>Box 5: one sentence about thinking mode or tool calls.</span></div></div>
-  </div>
-</section>
-
-<section class="block" id="card">
-  <div class="wrap">
-    <h2>Your card · 學習卡</h2>
-    <p>Your card (5 unknown terms + one sentence per step) has moved. Write one sentence at the end of each step page (<a href="step1.html">Step 1</a>–<a href="step5.html">Step 5</a>, plus the 5 unknown terms on the <a href="index.html">Start</a> page), then collect and print all of them as one A4 page on <a href="finish.html">finish.html</a>.</p>
-    <p class="zh">學習卡改到各站頁寫：每一站最後寫一句（Start 頁寫 5 個不懂的字），再到 <a href="finish.html">finish.html</a> 彙整、列印成一張 A4。</p>
+      <b>Official guide</b><span>Stage 5: watch where the thinking notes start and stop. The stream is simulated; don't run the Python.</span></div></div>
   </div>
 </section>
 

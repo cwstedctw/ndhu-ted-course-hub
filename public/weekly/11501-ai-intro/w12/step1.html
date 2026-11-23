@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>W12 Step 1 · Tokenization</title>
-<meta name="description" content="Week 12 AI Intro, step 1 of 5: Tokenization, with a toy, core terms and one sentence to write.">
+<meta name="description" content="Week 12 AI Intro, step 1 of 5: Tokenization, with a toy, core terms, Colab and a self-check.">
 <link rel="stylesheet" href="assets/w12.css">
 </head>
 <body data-step="1">
@@ -87,7 +87,7 @@
         <li><code>加鬮</code> — 加 is one piece; the rare 鬮 becomes three byte pieces <code>&lt;0xE9&gt;</code> <code>&lt;0xAC&gt;</code> <code>&lt;0xAE&gt;</code>. 鬮變成三個位元組塊。</li>
         <li><code>I love 🍉 in 2026</code> — the emoji is one piece with a separate space piece <code>▁</code> before it; 2026 is one piece per digit, also with a space piece in front. 西瓜一塊、前面有獨立的空格塊；2026 一位數一塊，前面也多一個空格塊。</li>
       </ol>
-      <p>Write the most surprising one in box 1 of your <a href="#write">card</a>. Words to check first: <a href="#term-token">token</a>, <a href="#term-subword">subword tokenization</a>, <a href="#term-token-id">Token ID</a>.</p>
+      <p>Words to check first: <a href="#term-token">token</a>, <a href="#term-subword">subword tokenization</a>, <a href="#term-token-id">Token ID</a>.</p>
     </div>
   </div>
 </section>
@@ -107,22 +107,9 @@
     <p>Use the Colab tab you opened at the top of this page. 用本頁最上面開的那個 Colab 分頁。</p></div>
   </div>
 </section>
-<section class="block" id="write">
-  <div class="wrap">
-    <h2><span class="n">7</span>Write one sentence</h2>
-    <p class="zh">寫一句</p>
-    <div class="write">
-    <label for="box1"><b>Box 1 · Tokenization</b></label>
-    <p class="count">Starter: “When I typed ___ into the official tokenizer, I noticed …” (or, without the official page: “In the real split above, ___ surprised me because …”; or from Colab: “In Colab, my own sentence ___ was cut into ___ pieces, and …”)</p>
-    <textarea id="box1" data-box="1" aria-label="Box 1"></textarea>
-    <p class="saved" id="saved1" aria-live="polite"></p>
-    <p style="font-size:.9rem">Your sentence stays only in this computer's browser. Nothing is sent anywhere. You will see all five boxes on the <a href="finish.html">Finish</a> page. 只存在這台電腦的瀏覽器、不會送出；五格會在 Finish 頁彙整。</p>
-    </div>
-  </div>
-</section>
 <section class="block">
   <div class="wrap">
-    <h2><span class="n">8</span>Check yourself</h2>
+    <h2><span class="n">7</span>Check yourself</h2>
     <p class="zh">自我檢測</p>
     <div id="quizBox" data-q="0"></div>
     <p><a class="next-btn" href="step2.html">Next: Step 2 · Embeddings →</a></p>
