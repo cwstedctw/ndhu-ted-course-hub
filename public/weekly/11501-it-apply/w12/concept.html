@@ -58,11 +58,11 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 <section class="sec" id="s0"><div class="kicker">0 · 這一頁怎麼用</div><h2>步驟頁教「怎麼按」，這頁講「為什麼」</h2>
 <p>今天的步驟頁（第 1 步到第 7 步）每一頁都在說：按哪裡、應該看到什麼。照著做就會完成。可是只會照著按，下週換 AI 幫你做的時候，你很難判斷它做得對不對。</p>
 <p>這一頁補的是背後的道理：參考文獻為什麼要有、DOI 是什麼、Zotero 的 Connector 跟桌面版怎麼分工、<code>.bib</code> 裡那串代號怎麼來、同一份資料為什麼能畫出兩種觀感的圖。不用從頭讀到尾，卡在哪一步就跳到對應那一節。</p>
-<p>這一頁不用交，也沒有勾選框；要交的東西只寫在<a href="finish.html#handin">收尾頁</a>。</p>
+<p>這一頁不用交，也不計入學習記錄；要交的東西只寫在<a href="finish.html#handin">收尾頁</a>。</p>
 <div class="widget" id="w0"><p class="wt">小互動：我現在做到哪？</p>
 <div class="row"><label for="s0Pick">我在</label><select id="s0Pick"><option value="">（選一步）</option><option value="1">第 1 步 手打書目找錯</option><option value="2">第 2 步 裝 Zotero、建文獻集</option><option value="3">第 3 步 Connector、存論文</option><option value="4">第 4 步 核對</option><option value="5">第 5 步 匯出 .bib</option><option value="6">第 6 步 gnuplot 正常版</option><option value="7">第 7 步 截斷版、寫一句話</option><option value="m">選做（魔術棒、自己搜、Overleaf）</option></select></div>
 <div class="out" id="s0Out">選一步，這裡會告訴你先讀哪幾節。</div></div>
-<div class="quiz"><p class="qq"><b>先猜</b>這一頁讀完要交嗎？</p><div class="opts"><button type="button" class="opt">要，算出席</button><button type="button" class="opt" data-ok>不用交</button></div><div class="ans" hidden><b>揭曉</b>不用交。出席要交的是 ① Zotero 畫面截圖，②③ 做到再一起交，交法在收尾頁。這一頁是給你弄懂「為什麼」用的。</div></div>
+<div class="quiz"><p class="qq"><b>先猜</b>這一頁讀完要交嗎？</p><div class="opts"><button type="button" class="opt">要，算出席</button><button type="button" class="opt" data-ok>不用交</button></div><div class="ans" hidden><b>揭曉</b>不用交。出席要交的是 ① Zotero 畫面截圖，②③ 做到再一起交，交法在收尾頁。電腦裝不了 Zotero 的同學改交核對畫面，做法在<a href="help.html#zc">卡住了頁</a>。這一頁是給你弄懂「為什麼」用的。</div></div>
 <p class="go">對應：<a href="index.html#start">開始頁「今天最少要交什麼」</a></p></section>
 
 <section class="sec" id="s1"><div class="kicker">1 · 參考文獻是什麼</div><h2>文內引用跟文末書目是一對</h2>
@@ -74,7 +74,7 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 <p><b>參考文獻</b></p>
 <p id="s1Ref">[1] Okano, K., Kaczmarzyk, J. R., Dave, N., Gabrieli, J. D. E., &amp; Grossman, J. C. (2019). Sleep quality, duration, and consistency are associated with better academic performance in college students. <i>npj Science of Learning</i>, 4, 16.</p>
 <div class="out" id="s1Out">還沒點。</div></div>
-<div class="quiz"><p class="qq"><b>先猜</b>只在文末列書目、句子裡完全不標記，會出什麼問題？</p><div class="opts"><button type="button" class="opt">沒問題，書目有列就好</button><button type="button" class="opt" data-ok>讀者不知道哪句話根據哪一篇</button></div><div class="ans" hidden><b>揭曉</b>書目只告訴讀者「我讀過這些」，文內引用才告訴讀者「這一句是根據這一篇」。兩個缺一個，對照就斷了。</div></div>
+<div class="quiz"><p class="qq"><b>先猜</b>只在文末列書目、句子裡完全不標記，會出什麼問題？</p><div class="opts"><button type="button" class="opt">沒問題，書目有列就好</button><button type="button" class="opt" data-ok>讀者不知道哪句話根據哪一篇</button></div><div class="ans" hidden><b>揭曉</b>文末書目給讀者這篇文獻的完整資料；文內引用標出是哪一句用了它。兩個缺一個，對照就斷了。</div></div>
 <p class="go">對應：<a href="step1.html#why">第 1 步 手打參考文獻，錯在哪裡</a>、<a href="more.html#z9">選做 1-9 Overleaf 引用</a></p></section>
 
 <section class="sec" id="s2"><div class="kicker">2 · 一筆書目的欄位</div><h2>作者、年份、題名、期刊、卷、文章編號、DOI</h2>
@@ -83,7 +83,7 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 <div class="row" id="s2Btns"><button type="button" class="chip" data-f="author">作者</button><button type="button" class="chip" data-f="year">年份</button><button type="button" class="chip" data-f="title">題名</button><button type="button" class="chip" data-f="journal">期刊</button><button type="button" class="chip" data-f="vol">卷</button><button type="button" class="chip" data-f="art">文章編號</button><button type="button" class="chip" data-f="doi">DOI</button></div>
 <div class="ref" id="s2Ref"><span data-f="author">Okano, K., Kaczmarzyk, J. R., Dave, N., Gabrieli, J. D. E., &amp; Grossman, J. C.</span> (<span data-f="year">2019</span>). <span data-f="title">Sleep quality, duration, and consistency are associated with better academic performance in college students</span>. <i data-f="journal">npj Science of Learning</i>, <span data-f="vol">4</span>, <span data-f="art">16</span>. https://doi.org/<span data-f="doi">10.1038/s41539-019-0055-z</span></div>
 <div class="out" id="s2Out">點上面任一個欄位。</div></div>
-<div class="quiz"><p class="qq"><b>先猜</b>「4, 16」裡的 16 是什麼？</p><div class="opts"><button type="button" class="opt">第 16 頁</button><button type="button" class="opt">第 16 期</button><button type="button" class="opt" data-ok>文章編號 16</button></div><div class="ans" hidden><b>揭曉</b>4 是卷（volume），16 是文章編號（article number）。出版社網頁上寫的是 Article number 16；在 Zotero 裡核對時，它出現在「頁」（Pages）那一欄。期（issue）是 1，這行沒寫出來。</div></div>
+<div class="quiz"><p class="qq"><b>先猜</b>「4, 16」裡的 16 是什麼？</p><div class="opts"><button type="button" class="opt">第 16 頁</button><button type="button" class="opt">第 16 期</button><button type="button" class="opt" data-ok>文章編號 16</button></div><div class="ans" hidden><b>揭曉</b>4 是卷（volume），16 是文章編號（article number）。出版社網頁上寫的是 Article number 16；存進 Zotero 後，到「頁」（Pages）那一欄核對有沒有 16。期（issue）是 1，這行沒寫出來。</div></div>
 <p class="go">對應：<a href="step3.html#z4">第 3 步 1-4 存今天這篇</a>、<a href="step4.html#z5">第 4 步 核對六欄</a></p></section>
 
 <section class="sec" id="s3"><div class="kicker">3 · DOI 是什麼</div><h2>論文的身分證號碼</h2>
@@ -99,7 +99,7 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 <p class="go">對應：<a href="step3.html#z4">第 3 步 1-4</a>、<a href="help.html#help">卡住怎麼辦</a></p></section>
 
 <section class="sec" id="s4"><div class="kicker">4 · 手打為什麼會錯</div><h2>看一眼、打一次，就會出現的四種錯</h2>
-<p>第 1 步那份「手打版」是照著網頁看一眼、自己打出來的樣子。每個錯都不誇張：少兩位作者、年份差一年、題目少一個字、期刊名記錯。可是交出去，別人就找不到、或找錯那篇。文獻一多、格式一換，手打就顧不完了。</p>
+<p>第 1 步那份「手打版」是照著網頁看一眼、自己打出來的樣子。每個錯都不誇張：少兩位作者、年份差一年、題目少一個字、期刊名記錯。可是交出去，別人可能找不到，或認成另一篇。文獻一多、格式一換，手打就顧不完了。</p>
 <div class="widget" id="w4"><p class="wt">小互動：在手打版上點你覺得錯的地方</p>
 <div class="ref" id="s4Ref"><span class="hit" data-err="0">Okano, K.,</span> <span class="hit" data-err="0">Kaczmarzyk, J.,</span> <span class="hit" data-err="1">&amp; Gabrieli, J.</span> (<span class="hit" data-err="2">2020</span>). <span class="hit" data-err="0">Sleep quality</span> <span class="hit" data-err="3">and duration</span> <span class="hit" data-err="0">are associated with better academic performance in college students.</span> <i class="hit" data-err="4">Nature Science of Learning</i>, <span class="hit" data-err="0">4, 16.</span></div>
 <div class="row"><button type="button" id="s4All">全部揭曉</button><button type="button" id="s4Reset">重來</button></div>
@@ -119,9 +119,9 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 
 <section class="sec" id="s6"><div class="kicker">6 · Connector 是什麼</div><h2>瀏覽器上的按鈕，把資料交給開著的桌面版</h2>
 <p>Zotero Connector 是瀏覽器的<b>擴充功能</b>（extension）。它負責在論文網頁上抓書目資料，再交給你電腦上開著的 Zotero 桌面版存起來。所以第 3 步一開頭就說：桌面版保持開著，不要關。</p>
-<ul><li>Connector 有 Chrome、Firefox、Safari 版；Edge 要裝 Edge 自己的版本，Chrome 裝的 Edge 看不到。Safari 版跟著桌面版一起裝好，到 Safari 設定的延伸功能打開。</li>
+<ul><li>Connector 有 Chrome、Firefox、Safari 版；用 Edge 的同學要在 Edge 裡另外裝；在 Chrome 裝的擴充功能，Edge 的工具列上不會有。Safari 版跟著桌面版一起裝好，到 Safari 設定的延伸功能打開。</li>
 <li>存的時候會跳出一個小框，寫著存進哪個文獻集，可以在小框裡直接改。</li>
-<li>桌面版沒開時，Connector 找不到它，會改問你要不要授權 zotero.org 帳號，存到網路上的文獻庫。</li></ul>
+<li>桌面版沒開時，Connector 找不到它：可能沒反應或顯示 Is Zotero running?，也可能改問你要不要授權 zotero.org 帳號、存到網路上的文獻庫。</li></ul>
 <div class="widget" id="w6"><p class="wt">小互動：開／關桌面版，按 Connector 看看</p>
 <div class="row"><label><input type="checkbox" id="s6Desk" checked> Zotero 桌面版開著</label></div>
 <div class="row"><label for="s6Col">左欄選取的文獻集</label><select id="s6Col"><option value="W12-sleep">W12-sleep</option><option value="我的文獻庫">我的文獻庫（沒點文獻集）</option></select></div>
@@ -132,22 +132,22 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 
 <section class="sec" id="s7"><div class="kicker">7 · 資料從哪來</div><h2>出版社網頁通常比 Google Scholar 好；存進來不等於資料對</h2>
 <p>Zotero 官方說明寫：從出版社網站匯入的資料，通常比從 Google Scholar 匯入好得多。Google Scholar 適合「找」，找到之後點進出版社網頁再存。</p>
-<p>同一篇論文，不同來源給的資料長得不一樣。下面是今天實際比對過的幾個來源，跟 DOI 登記資料（Crossref）逐欄比。</p>
+<p>同一篇論文，不同來源給的資料長得不一樣。下面拿教材查過的幾個來源，跟 DOI 登記資料（Crossref）比。</p>
 <div class="widget" id="w7"><p class="wt">小互動：選一個來源，跟正確資料比</p>
 <div class="row" id="s7Btns"><button type="button" class="chip" data-src="pub">出版社網頁 nature.com</button><button type="button" class="chip" data-src="pm">PubMed</button><button type="button" class="chip" data-src="tb">老師備的 .bib（doi.org）</button><button type="button" class="chip" data-src="hand">第 1 步手打版</button></div>
 <div class="table cmp"><table><thead><tr><th>欄位</th><th>正確（Crossref）</th><th>這個來源</th></tr></thead><tbody id="s7Body"><tr><td colspan="3">選一個來源。</td></tr></tbody></table></div>
-<div class="out" id="s7Out">紅字＝跟正確資料不一樣或缺了。</div></div>
+<div class="out" id="s7Out">紅字＝跟正確資料不一樣或缺了。期刊名只有大小寫不同時，還是同一本期刊。</div></div>
 <div class="quiz"><p class="qq"><b>先猜</b>老師備的 <code>.bib</code> 是用 DOI 直接向 doi.org 要來的，它會不會缺東西？</p><div class="opts"><button type="button" class="opt">不會，官方給的一定完整</button><button type="button" class="opt" data-ok>會，它少了文章編號 16</button></div><div class="ans" hidden><b>揭曉</b>會。那份檔案內容沒改過，就是少了文章編號 16。拿到的書目不一定完整，所以不管資料從哪來，第 4 步的核對都要做。</div></div>
 <p class="go">對應：<a href="step4.html#z5">第 4 步 核對</a>、<a href="help.html#zc">教室電腦怎麼辦（老師備的 .bib）</a></p></section>
 
 <section class="sec" id="s8"><div class="kicker">8 · 魔術棒</div><h2>只靠一個辨識符號加一篇</h2>
-<p>沒有網頁、只有一串號碼（例如別人報告裡寫的 DOI），可以用 Zotero 桌面版的<b>魔術棒</b>。滑鼠移上去會顯示「依辨識符號加入(可能是複數)項目」（英文介面：Add Item(s) by Identifier）。它在<b>桌面版視窗上方的工具列</b>，不在 Chrome 的 Connector 小框裡。</p>
+<p>手上只有一串號碼、還沒打開論文網頁時（例如別人報告裡寫的 DOI），可以用 Zotero 桌面版的<b>魔術棒</b>。滑鼠移上去會顯示「依辨識符號加入(可能是複數)項目」（英文介面：Add Item(s) by Identifier）。它在<b>桌面版視窗上方的工具列</b>，不在 Chrome 的 Connector 小框裡。</p>
 <p>它認得的辨識符號（identifier）：DOI、ISBN（書）、PubMed ID（PMID）、arXiv ID，還有 ADS Bibcode。貼上、按 Enter，它就照號碼去查書目資料。</p>
 <div class="widget" id="w8"><p class="wt">小互動：模擬魔術棒（只認得今天這幾個號碼）</p>
 <div class="row" id="s8Samples"><button type="button" class="chip" data-v="10.1073/pnas.2209123120">PNAS 那篇的 DOI</button><button type="button" class="chip" data-v="31583118">Okano 那篇的 PMID</button><button type="button" class="chip" data-v=" 10.1038/s41539-019-0055">貼錯的 DOI</button></div>
 <div class="row"><input type="text" id="s8In" class="mono" placeholder="貼一個辨識符號" aria-label="辨識符號" autocomplete="off" spellcheck="false"><button type="button" class="primary" id="s8Go">Enter</button></div>
 <div class="out" id="s8Out">還沒查。</div></div>
-<div class="quiz"><p class="qq"><b>先猜</b>PNAS 那篇（DOI <code>10.1073/pnas.2209123120</code>）有幾位作者？</p><div class="opts"><button type="button" class="opt">5 位</button><button type="button" class="opt" data-ok>19 位</button><button type="button" class="opt">1 位</button></div><div class="ans" hidden><b>揭曉</b>19 位，第一作者是 Creswell（不是 Okano，兩篇別混在一起）。這篇記錄三所大學大一新生學期初一個月的睡眠，再看學期末的成績，是追蹤同一群人的研究，不是把很多研究合起來的統合分析。作者這麼多，正好拿來數數看 Zotero 有沒有全存進來。</div></div>
+<div class="quiz"><p class="qq"><b>先猜</b>PNAS 那篇（DOI <code>10.1073/pnas.2209123120</code>）有幾位作者？</p><div class="opts"><button type="button" class="opt">5 位</button><button type="button" class="opt" data-ok>19 位</button><button type="button" class="opt">1 位</button></div><div class="ans" hidden><b>揭曉</b>19 位，第一作者是 Creswell（不是 Okano，兩篇別混在一起）。這篇在三所大學、五個研究裡，記錄大一新生學期初一個月的睡眠，再看學期末的成績，是追蹤同一群人的研究，不是把很多研究合起來的統合分析。作者這麼多，正好拿來數數看 Zotero 有沒有全存進來。</div></div>
 <p class="go">對應：<a href="more.html#z7">選做 1-7 魔術棒</a></p></section>
 
 <section class="sec" id="s9"><div class="kicker">9 · BibTeX 是什麼</div><h2>LaTeX 讀的書目檔，一筆一筆是純文字</h2>
@@ -163,16 +163,16 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 <div class="row"><label for="s9Ti">題目</label><input type="text" id="s9Ti" value="Sleep quality, duration, and consistency are associated with better academic performance in college students" autocomplete="off"></div>
 <div class="row"><label for="s9Yr">年份</label><input type="text" id="s9Yr" value="2019" autocomplete="off" style="width:7rem"></div>
 <div class="out mono" id="s9Key"></div></div>
-<div class="quiz"><p class="qq"><b>先猜</b>同一篇，Zotero 推出來是 <code>okano_sleep_2019</code>，老師備的檔是 <code>Okano_2019</code>。<code>\cite{}</code> 該寫哪一個？</p><div class="opts"><button type="button" class="opt">一定是 okano_sleep_2019</button><button type="button" class="opt">一定是 Okano_2019</button><button type="button" class="opt" data-ok>你上傳的那份 .bib 裡寫哪個就用哪個</button></div><div class="ans" hidden><b>揭曉</b>代號沒有「標準答案」，只要 <code>\cite{}</code> 裡寫的跟你用的那份 <code>.bib</code> 一字不差（大小寫也算）。<code>cite-one.tex</code> 檔頭也寫了：改用老師的檔，代號要改成 <code>Okano_2019</code>。</div></div>
+<div class="quiz"><p class="qq"><b>先猜</b>同一篇，Zotero 推出來是 <code>okano_sleep_2019</code>，老師備的檔是 <code>Okano_2019</code>。<code>\cite{}</code> 該寫哪一個？</p><div class="opts"><button type="button" class="opt">一定是 okano_sleep_2019</button><button type="button" class="opt">一定是 Okano_2019</button><button type="button" class="opt" data-ok>你上傳的那份 .bib 裡寫哪個就用哪個</button></div><div class="ans" hidden><b>揭曉</b>代號沒有「標準答案」，只要 <code>\cite{}</code> 裡寫的跟你用的那份 <code>.bib</code> 一字不差（大小寫也算）。改用老師的檔要改兩處：<code>\cite{Okano_2019}</code> 和 <code>\bibliography{okano2019-teacher}</code>（<code>cite-one.tex</code> 檔頭有寫）。</div></div>
 <p class="go">對應：<a href="step5.html#z6">第 5 步 匯出 W12-sleep.bib</a></p></section>
 
 <section class="sec" id="s10"><div class="kicker">10 · \cite 和 .bib 怎麼對上</div><h2>[1] 是怎麼出現的，[?] 又是怎麼來的</h2>
 <p>LaTeX 編譯時，看到 <code>\cite{okano_sleep_2019}</code>，就去 <code>\bibliography{W12-sleep}</code> 指定的那個檔（<code>W12-sleep.bib</code>，大括號裡不寫 <code>.bib</code>）找代號一模一樣的那一筆。找到了，句子後面變成 <code>[1]</code>，文末「參考文獻」多一筆；找不到，句子後面就印 <code>[?]</code>。</p>
-<p>所以看到 <code>[?]</code>，只有兩個地方要查：代號對不對（大小寫也算），檔名對不對。</p>
+<p>所以看到 <code>[?]</code>，先查兩個地方：代號對不對（大小寫也算）、檔名對不對，改完再重新編譯。</p>
 <div class="widget" id="w10"><p class="wt">小互動：模擬編譯（你的 .bib 裡那筆代號是 <code>okano_sleep_2019</code>，檔名 <code>W12-sleep.bib</code>）</p>
 <div class="row"><label for="s10Key" class="mono">\cite{</label><input type="text" id="s10Key" class="mono" value="okano_sleep_2019" autocomplete="off" spellcheck="false" style="width:14rem"><span class="mono">}</span></div>
 <div class="row"><label for="s10Bib" class="mono">\bibliography{</label><input type="text" id="s10Bib" class="mono" value="W12-sleep" autocomplete="off" spellcheck="false" style="width:10rem"><span class="mono">}</span></div>
-<div class="row"><button type="button" class="chip" id="s10Typo">改錯一個字</button><button type="button" class="chip" id="s10Case">只改大小寫</button><button type="button" class="chip" id="s10Fix">改回正確</button></div>
+<div class="row"><button type="button" class="chip" id="s10Typo">少打一個字母</button><button type="button" class="chip" id="s10Case">只改大小寫</button><button type="button" class="chip" id="s10Fix">改回正確</button></div>
 <div class="out" id="s10Out"></div></div>
 <div class="quiz"><p class="qq"><b>先猜</b>代號寫成 <code>Okano_sleep_2019</code>（只有第一個字母大寫），會印出什麼？</p><div class="opts"><button type="button" class="opt">[1]</button><button type="button" class="opt" data-ok>[?]</button></div><div class="ans" hidden><b>揭曉</b><code>[?]</code>。大小寫也算不一樣。卡住了頁的處理：回去打開 <code>.bib</code> 抄代號，一個字都不能差，再 Recompile。</div></div>
 <p class="go">對應：<a href="more.html#z9">選做 1-9 在 Overleaf 引用</a>、<a href="help.html#help">卡住怎麼辦</a></p></section>
@@ -181,7 +181,7 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 <p><b>終端機</b>（terminal）是用打字下指令的視窗。在練習包資料夾開終端機，是因為腳本裡寫的是 <code>sleep-quiz.dat</code> 這個檔名，gnuplot 會在「終端機現在所在的資料夾」找它；不在那個資料夾，就會出現 <code>can't read data file "sleep-quiz.dat"</code>。</p>
 <p>雙擊 <code>.gp</code> 檔，黑色視窗一閃就關：腳本跑完馬上結束，你看不到訊息。所以步驟頁要你在終端機打 <code>gnuplot scatter.gp</code>，跑完再看資料夾裡 PNG 的修改時間。</p>
 <p>第 6 步先畫的字元版沒設 Y 軸範圍，gnuplot 自己把軸縮到剛好包住資料，Y 軸從 70 左右開始。這一點在下一節很重要。</p>
-<div class="widget" id="w11"><p class="wt">小互動：點 scatter.gp 的任一行（# 開頭的是註解，gnuplot 不執行）</p>
+<div class="widget" id="w11"><p class="wt">小互動：點 scatter.gp 的任一行（練習包裡的檔，原樣）</p>
 <pre class="lines" id="s11Gp"></pre>
 <div class="out" id="s11Out">點上面任一行。</div></div>
 <div class="quiz"><p class="qq"><b>先猜</b>練習包本來就附了 <code>scatter.png</code>。跑完 <code>gnuplot scatter.gp</code>，怎麼確定是你自己畫的？</p><div class="opts"><button type="button" class="opt">看到 scatter.png 存在就好</button><button type="button" class="opt" data-ok>看修改時間是不是現在</button></div><div class="ans" hidden><b>揭曉</b>看修改時間。檔案本來就在，「存在」不算數。不確定的話，先把舊的刪掉再跑。</div></div>
@@ -192,11 +192,11 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 <p>下面這張圖是用 <code>sleep-quiz.dat</code> 的 20 個點在網頁裡直接畫的（<span class="fake">虛構資料，老師編的</span>）。拉滑桿或按按鈕，只改 Y 軸的下限和上限。</p>
 <div class="widget" id="w12"><p class="wt">小互動：拉 Y 軸</p>
 <div class="row"><button type="button" class="chip" id="s12A" data-y0="0" data-y1="100">0–100（scatter.gp）</button><button type="button" class="chip" id="s12B" data-y0="69" data-y1="83">69–83（truncated.gp）</button><button type="button" class="chip" id="s12C" data-y0="60" data-y1="90">60–90（步驟頁的加碼題）</button></div>
-<div class="row"><label for="s12Lo">下限</label><input type="range" id="s12Lo" min="0" max="75" step="1" value="0"><span id="s12LoV" class="mono">0</span></div>
-<div class="row"><label for="s12Hi">上限</label><input type="range" id="s12Hi" min="80" max="100" step="1" value="100"><span id="s12HiV" class="mono">100</span></div>
+<div class="row"><label for="s12Lo">下限</label><input type="range" id="s12Lo" min="0" max="100" step="1" value="0"><span id="s12LoV" class="mono">0</span></div>
+<div class="row"><label for="s12Hi">上限</label><input type="range" id="s12Hi" min="0" max="100" step="1" value="100"><span id="s12HiV" class="mono">100</span></div>
 <svg class="plot" id="s12Svg" viewBox="0 0 600 380" role="img" aria-label="睡眠時數與小考分數散點圖，虛構資料"></svg>
 <div class="out" id="s12Out"></div></div>
-<div class="quiz"><p class="qq"><b>先猜</b>從 0–100 換成 69–83，資料改了幾個點？</p><div class="opts"><button type="button" class="opt" data-ok>0 個</button><button type="button" class="opt">一半</button><button type="button" class="opt">全部</button></div><div class="ans" hidden><b>揭曉</b>0 個。兩張圖資料一模一樣，差別只在 Y 軸範圍。截斷版把 12 分的差距撐滿整張圖。截斷 Y 軸不一定是作弊：想看清楚小差距時放大是合理的，只要軸上的數字標清楚、讀的人有看。</div></div>
+<div class="quiz"><p class="qq"><b>先猜</b>從 0–100 換成 69–83，資料改了幾個點？</p><div class="opts"><button type="button" class="opt" data-ok>0 個</button><button type="button" class="opt">一半</button><button type="button" class="opt">全部</button></div><div class="ans" hidden><b>揭曉</b>0 個。兩張圖資料一模一樣，差別只在 Y 軸範圍。截斷版讓同樣 12 分的差距占了圖高約 <span id="s12Pct">86</span>%。截斷 Y 軸不一定是作弊：想看清楚小差距時放大是合理的，只要軸上的數字標清楚、讀的人有看。</div></div>
 <p class="go">對應：<a href="step7.html#g3">第 7 步 2-3 改一行</a>、<a href="step7.html#g4">2-4 並排寫一句</a></p></section>
 
 <section class="sec" id="s13"><div class="kicker">13 · 相關不等於因果</div><h2>「一起出現」不等於「一件造成另一件」</h2>
@@ -224,7 +224,7 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 <label class="check"><input type="checkbox" data-hc="1"><span>軸的範圍有交代；沒從 0 開始的，文字裡有說明</span></label>
 <label class="check"><input type="checkbox" data-hc="1"><span>資料是虛構或真實、有幾筆，有寫出來</span></label></div>
 <div class="out" id="s14Out">勾了 0 / 5 項。</div></div>
-<div class="quiz"><p class="qq"><b>先猜</b>兩張圖哪一張「會騙人」？</p><div class="opts"><button type="button" class="opt">截斷版，一定是作弊</button><button type="button" class="opt" data-ok>看讀的人有沒有看軸</button></div><div class="ans" hidden><b>揭曉</b>截斷版比較容易讓人誤會成「睡眠決定成績」；但截斷本身不一定是作弊。真正會騙人的是讀圖的人沒看軸。所以你寫的那一句話，要講到「Y 軸從哪裡開始」或「軸上的數字」。</div></div>
+<div class="quiz"><p class="qq"><b>先猜</b>哪一張比較容易讓人高估分數的差距？</p><div class="opts"><button type="button" class="opt">0–100 那張</button><button type="button" class="opt" data-ok>69–83 那張</button></div><div class="ans" hidden><b>揭曉</b>69–83 那張。同樣 12 分的差距，在這張圖上占的高度大得多。截斷不一定是作弊；畫圖的人把軸的範圍標清楚，讀圖的人記得看軸。兩張都是同一份虛構資料，哪一張都不能拿來說睡眠會影響成績。你寫的那一句話，要講到 Y 軸從哪裡開始或軸上的數字。</div></div>
 <p class="go">對應：<a href="step7.html#g4">第 7 步 2-4 兩張並排，寫一句話</a></p></section>
 
 <section class="sec" id="s15"><div class="kicker">15 · 名詞表</div><h2>今天用到的詞，一個一句白話</h2>
@@ -252,7 +252,7 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 <dt>gnuplot 腳本（script）</dt><dd>.gp 檔，一行一個畫圖指令，用 gnuplot 檔名 執行。</dd>
 <dt>散點圖（scatter plot）</dt><dd>每一筆資料畫成一個點，看兩個數字的關係。</dd>
 <dt>yrange</dt><dd>gnuplot 設定 Y 軸範圍的指令，例如 set yrange [0:100]。</dd>
-<dt>截斷 Y 軸（truncated axis）</dt><dd>Y 軸不從 0 開始，小差距會被放大。</dd>
+<dt>截斷 Y 軸（truncated axis）</dt><dd>Y 軸不從 0 開始、只畫一小段範圍，同樣的差距看起來會變大。</dd>
 <dt>相關（correlation）</dt><dd>兩件事一起出現、一起變化。</dd>
 <dt>因果（causation）</dt><dd>一件事造成另一件事；光看相關分不出來。</dd>
 <dt>虛構資料</dt><dd>為了練習編出來的數字，不能拿來下結論；sleep-quiz.dat 就是。</dd>
@@ -263,7 +263,7 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 
 <section class="sec" id="s16"><div class="kicker">16 · 下週 W13</div><h2>換 AI 做同樣的事：今天做過，才看得出它做得對不對</h2>
 <p>下週換 AI 上場：裝一個讓 AI 幫忙寫論文的技能（skill）、讓 AI 透過 Zotero MCP 替你加論文和查文獻庫，再請 agent 用你今天存的文獻和畫的圖，寫一頁有引用、有圖的 LaTeX。</p>
-<p>AI 很會說「我已經存好了」。今天你親手核對過作者、年份、期刊、卷、文章編號、DOI，下週它交回來的東西，你才有東西可以對。</p>
+<p>AI 說「我已經存好了」的時候，打開 Zotero 看那一筆真的在不在，再逐欄核對。今天你親手核對過作者、年份、期刊、卷、文章編號、DOI，下週它交回來的東西，你才有東西可以對。</p>
 <div class="widget" id="w16"><p class="wt">小互動：假設 AI 交回這一筆（<span class="fake">示範用，故意放錯</span>），你看得出哪裡不對嗎？</p>
 <div class="ref mono" id="s16Ai">author = Okano, Kana and Kaczmarzyk, Jakub R. and Gabrieli, John D. E. and Grossman, Jeffrey C.<br>year = 2020<br>journal = npj Science of Learning<br>volume = 4</div>
 <div class="row"><button type="button" class="primary" id="s16Chk">拿今天核對過的資料對一次</button></div>
@@ -272,7 +272,7 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
 <p class="go">對應：<a href="finish.html#next">收尾頁 下週預告</a></p></section>
 </main>
 <nav class="progress" id="progBot" aria-label="步驟（頁尾）"></nav>
-<div class="wrap"><p class="small storage"><b id="progress">學習記錄 0 / 25</b>　<span id="storage-note">這一頁沒有勾選記錄；勾選框在各步驟頁。</span></p></div>
+<div class="wrap"><p class="small storage"><b id="progress">學習記錄 0 / 25</b>　<span id="storage-note">這一頁的勾選不計入學習記錄；記錄用的勾選框在各步驟頁。</span></p></div>
 <button type="button" class="theme" id="theme" aria-label="切換深色或淺色">深色／淺色</button>
 <footer><div class="wrap">資訊科技與應用 AA／AB · W12 背景知識（詳細版）。練習資料 <code>sleep-quiz.dat</code> 為虛構。論文書目以 DOI 登記資料（Crossref）為準。Zotero 選單名稱以 Zotero 10 為準，各網站畫面以當下為準。頁面上的 Zotero 畫面、魔術棒、編譯都是模擬，不是真的軟體。2026-11-24 版。 <a href="student.html">全部步驟一頁版</a></div></footer>
 <script type="application/json" id="sleepData">[[5.1,71],[5.4,74],[5.6,70],[5.8,73],[6.0,75],[6.1,72],[6.3,76],[6.4,74],[6.6,77],[6.7,73],[6.9,78],[7.0,76],[7.1,79],[7.3,75],[7.4,78],[7.6,80],[7.8,77],[7.9,81],[8.1,79],[8.4,82]]</script>
@@ -289,7 +289,12 @@ svg.plot text{font-family:system-ui,sans-serif;fill:#17312f}
   year={2019},
   month=Oct
 }</script>
-<script type="text/plain" id="gpText">set terminal pngcairo size 900,650 font "Sans,16"
+<script type="text/plain" id="gpText"># scatter.gp：散點圖（scatter plot），Y 軸從 0 畫到 100（滿分）
+# 用法：這個檔和 sleep-quiz.dat 放同一個資料夾，在那個資料夾開終端機，輸入
+#   gnuplot scatter.gp
+# 跑完會多出 scatter.png。圖裡的字用英文：中文字型每台電腦不同，先求圖出得來。
+
+set terminal pngcairo size 900,650 font "Sans,16"
 set output "scatter.png"
 
 set title "Sleep vs. quiz score (FICTIONAL data, n = 20)"
@@ -328,7 +333,7 @@ $('s0Pick').addEventListener('change',function(){var v=this.value;$('s0Out').inn
 $('s1Cite').addEventListener('click',function(){var on=$('s1Ref').classList.toggle('lit');this.setAttribute('aria-pressed',on);$('s1Out').textContent=on?'對上了：句子後面的 [1] ↔ 參考文獻第 1 筆。讀者靠這個記號找到原文。':'取消標示。再點一次 [1]。';});
 
 /* s2 */
-var F2={author:'作者：5 位，順序照論文上排，第一作者 Kana Okano。手打最常漏掉中間幾位。',year:'年份：2019。DOI 登記的線上出版日是 2019-10-01。',title:'題名：一個字都不能少，注意 quality, duration, and consistency 三個詞。',journal:'期刊：npj Science of Learning，小寫的 npj 是 DOI 登記資料的寫法。',vol:'卷（volume）：4。期（issue）是 1，這一行格式沒寫出來。',art:'文章編號（article number）：16。網頁上寫 Article number 16；Zotero 放在「頁」（Pages）欄。',doi:'DOI：10.1038/s41539-019-0055-z，論文的身分證號碼，下一節細講。'};
+var F2={author:'作者：5 位，順序照論文上排，第一作者 Kana Okano。第 1 步的手打版就漏了兩位。',year:'年份：2019。DOI 登記的線上出版日是 2019-10-01。',title:'題名：一個字都不能少，注意 quality, duration, and consistency 三個詞。',journal:'期刊：npj Science of Learning，小寫的 npj 是 DOI 登記資料的寫法。',vol:'卷（volume）：4。期（issue）是 1，這一行格式沒寫出來。',art:'文章編號（article number）：16。網頁上寫 Article number 16；存進 Zotero 後，到「頁」（Pages）那一欄核對有沒有 16。',doi:'DOI：10.1038/s41539-019-0055-z，論文的身分證號碼，下一節細講。'};
 $('s2Btns').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var f=b.getAttribute('data-f');
   $('s2Btns').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b);});
   $('s2Ref').querySelectorAll('[data-f]').forEach(function(s){s.classList.toggle('lit',s.getAttribute('data-f')===f);});
@@ -341,13 +346,13 @@ function s3(){var raw=$('s3In').value,t=raw.trim(),msg=[];
   if(!t){$('s3Out').textContent='（空的）';return;}
   if(raw!==t)msg.push('⚠ 前後有空白：魔術棒可能查詢失敗，貼的時候只貼 10. 開頭那一串。');
   if(!/^10\./.test(t))msg.push('⚠ 不是 10. 開頭，看起來不像 DOI（例如多貼了 https://doi.org/）。');
-  $('s3Out').innerHTML='https://doi.org/'+esc(t)+(msg.length?'<br>'+msg.join('<br>'):'<br>貼進瀏覽器網址列，doi.org 會把你轉到出版社的頁面。');}
+  $('s3Out').innerHTML='https://doi.org/'+esc(t)+(msg.length?'<br>'+msg.join('<br>'):(t==='10.1038/s41539-019-0055-z'?'<br>今天那串：打開會到 nature.com/articles/s41539-019-0055-z 那一頁。':'<br>這是組出來的網址；號碼對不對，要打開才知道。'));}
 $('s3In').addEventListener('input',s3);s3();
 
 /* s4 */
-var E4=['','少了 Dave、Grossman 兩位作者（正確是 5 位）','年份錯：正確是 2019','題目少一個字：正確是 quality, duration, and consistency','期刊名錯：正確是 npj Science of Learning'];
+var E4=['','作者少兩位：少了 Dave、Grossman（正確是 5 位），留下的兩位名字縮寫也不完整','年份錯：正確是 2019','題目少了 consistency，連接的寫法也跟著變：正確是 quality, duration, and consistency','期刊名錯：正確是 npj Science of Learning'];
 var found={};
-function s4show(){var n=Object.keys(found).length;$('s4Out').innerHTML='找到 '+n+' / 4 個錯。'+Object.keys(found).sort().map(function(k){return '<br>・'+E4[k];}).join('')+(n===4?'<br>全部找到了。每一個都是看一眼、打一次就會發生的錯。':'');}
+function s4show(){var n=Object.keys(found).length;$('s4Out').innerHTML='找到 '+n+' / 4 個錯。'+Object.keys(found).sort().map(function(k){return '<br>・'+E4[k];}).join('')+(n===4?'<br>全部找到了。每一個都是看一眼、打一次都可能發生的錯。':'');}
 $('s4Ref').addEventListener('click',function(e){var s=e.target.closest('[data-err]');if(!s)return;var k=s.getAttribute('data-err');
   if(k==='0'){s.classList.add('okspan');$('s4Out').textContent='這裡沒錯，再找找。（已找到 '+Object.keys(found).length+' / 4）';return;}
   $('s4Ref').querySelectorAll('[data-err="'+k+'"]').forEach(function(x){x.classList.add('found');});found[k]=1;s4show();});
@@ -362,17 +367,17 @@ document.querySelectorAll('#w5 [data-col]').forEach(function(b){b.addEventListen
   var keys=Object.keys(ITEMS).filter(function(k){return c==='lib'||ITEMS[k].in.indexOf(c)>=0;});
   $('s5List').innerHTML=keys.map(function(k){return '<button type="button" data-item="'+k+'">'+ITEMS[k].t+'</button>';}).join('');
   $('s5Detail').textContent='點中間任一筆。';
-  $('s5Out').textContent='「'+COLN[c]+'」裡有 '+keys.length+' 筆。'+(c==='lib'?'Okano 那篇放在兩個文獻集，這裡仍只有一筆。':'');});});
+  $('s5Out').textContent=(c==='lib'?'文獻庫共 '+keys.length+' 筆：':'「'+COLN[c]+'」裡有 '+keys.length+' 筆。')+(c==='lib'?'Okano 1 筆、Creswell 1 筆。Okano 雖然列在兩個文獻集，仍只算一筆。':'');});});
 $('s5List').addEventListener('click',function(e){var b=e.target.closest('[data-item]');if(!b)return;var it=ITEMS[b.getAttribute('data-item')];
   $('s5Detail').innerHTML=it.d+'<br><span class="small">在這些文獻集裡：'+it.in.map(function(c){return COLN[c];}).join('、')+'</span>';});
 
 /* s6 */
 $('s6Save').addEventListener('click',function(){var on=$('s6Desk').checked,col=$('s6Col').value,t=new Date().toLocaleTimeString('zh-TW');
-  $('s6Out').innerHTML=(on?(col==='W12-sleep'?'小框：存進 <b>W12-sleep</b>。回到 Zotero，中間多了一筆。':'小框：存進 <b>我的文獻庫</b>，沒有進 W12-sleep。可以在小框裡直接改文獻集；或之後在 Zotero 把那一筆拖到 W12-sleep 上。'):'Connector 找不到桌面版：說「Is Zotero running?」，或改問你要不要授權 zotero.org 帳號、存到網路上的文獻庫。有裝桌面版的，先把它打開再按。')+' <span class="small">（'+t+'）</span>';});
+  $('s6Out').innerHTML=(on?(col==='W12-sleep'?'（模擬）小框：存進 <b>W12-sleep</b>。回到 Zotero，中間多了一筆。':'（模擬）小框：存進 <b>我的文獻庫</b>，沒有進 W12-sleep。可以在小框裡直接改文獻集；或之後在 Zotero 把那一筆拖到 W12-sleep 上。'):'（模擬）Connector 找不到桌面版：可能沒反應或說「Is Zotero running?」，或改問你要不要授權 zotero.org 帳號、存到網路上的文獻庫。有裝桌面版的，先把它打開再按。')+' <span class="small">（'+t+'）</span>';});
 
 /* s7 */
 var TRUTH=[['作者','5 位，第一位 Okano'],['年份','2019'],['題名','…quality, duration, and consistency…'],['期刊','npj Science of Learning'],['卷','4'],['文章編號','16'],['DOI','10.1038/s41539-019-0055-z']];
-var SRC={pub:{v:['5 位，第一位 Okano','2019','…quality, duration, and consistency…','npj Science of Learning','4','16','10.1038/s41539-019-0055-z'],n:'出版社網頁是這篇資料的源頭，Connector 從這裡存最好。'},
+var SRC={pub:{v:['5 位，第一位 Okano','2019','…quality, duration, and consistency…','npj Science of Learning','4','16','10.1038/s41539-019-0055-z'],n:'Zotero 官方建議優先從出版社網頁存；存完照樣要核對。'},
 pm:{v:[null,null,null,'NPJ science of learning',null,null,null],n:'今天只比對了期刊名：大小寫不同。其他欄位這一頁沒列（不是沒有）。'},
 tb:{v:['5 位，第一位 Okano','2019','…quality, duration, and consistency…','npj Science of Learning','4','（沒有）','10.1038/s41539-019-0055-z'],n:'向 doi.org 要來的，內容沒改過：少了文章編號 16。'},
 hand:{v:['3 位（少 Dave、Grossman）','2020','…quality and duration…','Nature Science of Learning','4','16','（沒寫）'],n:'第 1 步那份手打版：四個錯，外加沒寫 DOI。'}};
@@ -386,20 +391,20 @@ $('s7Btns').addEventListener('click',function(e){var b=e.target.closest('button'
 var LK={'10.1073/pnas.2209123120':'加入一筆：Creswell 等人（2023）Nightly sleep duration predicts grade point average in the first year of college，PNAS。19 位作者，記得數數看有沒有全存進來。','10.1038/s41539-019-0055-z':'加入一筆：Okano 等人（2019），npj Science of Learning。你可能已經有這篇了。','31583118':'這是 PubMed ID（PMID），指到的是同一篇 Okano 等人（2019）。同一篇論文，不同資料庫各有自己的編號。'};
 function s8(){var raw=$('s8In').value,t=raw.trim();
   if(!raw){$('s8Out').textContent='先貼一個辨識符號。';return;}
-  if(raw!==t){$('s8Out').textContent='查詢失敗（Lookup Failed）：前後多了空白。只貼 10. 開頭那一串再試。';return;}
-  $('s8Out').textContent=LK[t]||('查詢失敗（Lookup Failed）：這串號碼查不到（這一頁的模擬只認得今天的幾個號碼；真的魔術棒失敗，多半是 DOI 貼錯）。');}
+  if(raw!==t){$('s8Out').textContent='（模擬）偵測到前後有空白。真的魔術棒可能因此查詢失敗，去掉空白再貼一次。';return;}
+  $('s8Out').textContent=LK[t]||('查詢失敗（Lookup Failed）：這串號碼查不到（這一頁的模擬只認得今天的幾個號碼；真的魔術棒查不到時，先檢查號碼有沒有貼完整、貼錯或夾了空白）。');}
 $('s8Samples').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$('s8In').value=b.getAttribute('data-v');s8();});
 $('s8Go').addEventListener('click',s8);$('s8In').addEventListener('keydown',function(e){if(e.key==='Enter')s8();});
 
 /* s9 逐行 */
-var BEXP=[[/^@article\{/,'@article 表示這一筆是期刊論文；大括號後面、逗號前面的 Okano_2019 是代號（doi.org 給的）。'],[/^\s*title=/,'題名。'],[/^\s*volume=/,'卷：4。'],[/^\s*ISSN=/,'ISSN：這一行今天用不到，核對時可以先跳過。'],[/^\s*url=/,'網址：指到這篇的 DOI 連結。'],[/^\s*DOI=/,'DOI：論文的身分證號碼。'],[/^\s*number=/,'期（issue）：1。注意這份沒有文章編號 16 的欄位。'],[/^\s*journal=/,'期刊名。'],[/^\s*publisher=/,'出版者。'],[/^\s*author=/,'作者，用 and 隔開，每位「姓, 名」。數一數：5 位。'],[/^\s*year=/,'年份：2019。'],[/^\s*month=/,'月份：Oct（10 月）。'],[/^\}/,'這一筆結束。']];
+var BEXP=[[/^@article\{/,'@article 表示這一筆是期刊論文；左大括號 { 後面、第一個逗號前面的 Okano_2019 是代號（doi.org 給的）。'],[/^\s*title=/,'題名。'],[/^\s*volume=/,'卷：4。'],[/^\s*ISSN=/,'ISSN：這一行今天用不到，核對時可以先跳過。'],[/^\s*url=/,'網址：指到這篇的 DOI 連結。'],[/^\s*DOI=/,'DOI：論文的身分證號碼。'],[/^\s*number=/,'期（issue）：1。注意這份沒有文章編號 16 的欄位。'],[/^\s*journal=/,'期刊名。'],[/^\s*publisher=/,'出版者。'],[/^\s*author=/,'作者，用 and 隔開，每位「姓, 名」。數一數：5 位。'],[/^\s*year=/,'年份：2019。'],[/^\s*month=/,'月份：Oct（10 月）。'],[/^\}/,'這一筆結束。']];
 function lines(pre,text,explain,out){pre.innerHTML='';text.split('\n').forEach(function(l){var s=document.createElement('span');s.className='ln';s.textContent=l||' ';s.addEventListener('click',function(){pre.querySelectorAll('.ln').forEach(function(x){x.classList.remove('on');});s.classList.add('on');$(out).textContent=explain(l);});pre.appendChild(s);});}
 lines($('s9Bib'),$('bibText').textContent,function(l){for(var i=0;i<BEXP.length;i++)if(BEXP[i][0].test(l))return BEXP[i][1];return '這一行是欄位內容。';},'s9Out');
 /* s9 代號 */
 var STOP=['a','an','the','of','and','or','in','on','at','to','for','by','with','from'];
 function s9(){var au=$('s9Au').value.trim().toLowerCase().replace(/[^a-z]/g,''),yr=$('s9Yr').value.trim().replace(/[^0-9]/g,'');
   var w=$('s9Ti').value.toLowerCase().split(/[^a-z0-9]+/).filter(function(x){return x&&STOP.indexOf(x)<0;})[0]||'';
-  $('s9Key').innerHTML='代號 ＝ '+esc(au||'?')+'_'+esc(w||'?')+'_'+esc(yr||'?')+'<br><span class="small">（推出來的，以你自己 .bib 裡寫的為準）</span>';}
+  $('s9Key').innerHTML='代號 ＝ '+esc(au||'?')+'_'+esc(w||'?')+'_'+esc(yr||'?')+'<br><span class="small">示範推算（簡化規則）；引用時抄你自己 .bib 裡的代號</span>';}
 ['s9Au','s9Ti','s9Yr'].forEach(function(id){$(id).addEventListener('input',s9);});
 $('s9PresetA').addEventListener('click',function(){$('s9Au').value='Okano';$('s9Ti').value='Sleep quality, duration, and consistency are associated with better academic performance in college students';$('s9Yr').value='2019';s9();});
 $('s9PresetB').addEventListener('click',function(){$('s9Au').value='Creswell';$('s9Ti').value='Nightly sleep duration predicts grade point average in the first year of college';$('s9Yr').value='2023';s9();});
@@ -417,13 +422,14 @@ $('s10Fix').addEventListener('click',function(){$('s10Key').value='okano_sleep_2
 s10();
 
 /* s11 */
-var GEXP=[[/^set terminal/,'輸出成 PNG 圖檔，900×650 像素，字型 Sans、16 號。'],[/^set output "/,'圖存成這個檔名；truncated.gp 這一行改成 truncated.png（兩支腳本不同的第一行）。'],[/^set title/,'圖的標題；寫明 FICTIONAL（虛構）和 n = 20（20 筆）。'],[/^set xlabel/,'X 軸名稱，括號裡是單位 hours。'],[/^set ylabel/,'Y 軸名稱，括號裡是單位 points。'],[/^set grid/,'畫格線，方便對數字。'],[/^set key off/,'不畫圖例（只有一組資料，不需要）。'],[/^set xrange/,'X 軸範圍：4.5 到 9 小時。'],[/^set yrange/,'Y 軸範圍：0 到 100 分。truncated.gp 只改這一行成 [69:83]，觀感就完全不同（下一節自己拉）。'],[/^plot/,'真正畫圖：拿 sleep-quiz.dat 第 1 欄（睡眠時數）當 X、第 2 欄（分數）當 Y，畫成點；後面是點的樣式與顏色。'],[/^set output$/,'最後一行：結束這張圖的輸出。'],[/^$/,'空行，只是讓腳本好讀。']];
+var GEXP=[[/^set terminal/,'輸出成 PNG 圖檔，900×650 像素，字型 Sans、16 號。'],[/^set output "/,'圖存成這個檔名；truncated.gp 這一行改成 truncated.png（兩支腳本有兩行不同，這是其中一行）。'],[/^set title/,'圖的標題；寫明 FICTIONAL（虛構）和 n = 20（20 筆）。'],[/^set xlabel/,'X 軸名稱，括號裡是單位 hours。'],[/^set ylabel/,'Y 軸名稱，括號裡是單位 points。'],[/^set grid/,'畫格線，方便對數字。'],[/^set key off/,'不畫圖例（只有一組資料，不需要）。'],[/^set xrange/,'X 軸範圍：4.5 到 9 小時。'],[/^set yrange/,'Y 軸範圍：0 到 100 分。truncated.gp 只改這一行成 [69:83]，觀感就完全不同（下一節自己拉）。'],[/^plot/,'真正畫圖：拿 sleep-quiz.dat 第 1 欄（睡眠時數）當 X、第 2 欄（分數）當 Y，畫成點；後面是點的樣式與顏色。'],[/^set output$/,'最後一行：結束這張圖的輸出。'],[/^$/,'空行，只是讓腳本好讀。'],[/^#/,'這一行是給人看的註解，gnuplot 不會執行。']];
 lines($('s11Gp'),$('gpText').textContent,function(l){for(var i=0;i<GEXP.length;i++)if(GEXP[i][0].test(l))return GEXP[i][1];return '';},'s11Out');
 
 /* s12 散點圖 */
 var DATA=JSON.parse($('sleepData').textContent);
 var X0=60,X1=580,Y0=20,Y1=320,xa=4.5,xb=9;
-function s12(){var lo=+$('s12Lo').value,hi=+$('s12Hi').value;if(hi<=lo)hi=lo+1;
+function pct(lo,hi){return Math.round((82-70)/(hi-lo)*100);}
+function s12(){var lo=+$('s12Lo').value,hi=+$('s12Hi').value;if(hi<=lo){if(lo>=100){lo=99;$('s12Lo').value=lo;}hi=lo+1;$('s12Hi').value=hi;}
   $('s12LoV').textContent=lo;$('s12HiV').textContent=hi;
   var px=function(x){return X0+(x-xa)/(xb-xa)*(X1-X0);},py=function(y){return Y1-(y-lo)/(hi-lo)*(Y1-Y0);};
   var g='<rect x="0" y="0" width="600" height="380" fill="#fff"/>';
@@ -434,26 +440,27 @@ function s12(){var lo=+$('s12Lo').value,hi=+$('s12Hi').value;if(hi<=lo)hi=lo+1;
   var shown=0;DATA.forEach(function(d){if(d[1]<lo||d[1]>hi)return;shown++;g+='<circle cx="'+px(d[0]).toFixed(1)+'" cy="'+py(d[1]).toFixed(1)+'" r="6" fill="#1f6f8b"/>';});
   g+='<text x="320" y="356" font-size="14" text-anchor="middle">Average sleep per week (hours)</text><text x="16" y="170" font-size="14" text-anchor="middle" transform="rotate(-90 16 170)">Quiz score (points)</text><text x="320" y="14" font-size="13" text-anchor="middle">FICTIONAL data, n = 20</text>';
   $('s12Svg').innerHTML=g;
-  var rise=Math.round((82-70)/(hi-lo)*100);
-  $('s12Out').innerHTML='Y 軸 '+lo+'–'+hi+' 分。資料點：20 個，一個都沒改（畫面上看得到 '+shown+' 個'+(shown<20?'，其他落在軸外':'')+'）。<br>分數最低 70、最高 82，這 12 分的差距占了圖高的 <b>'+Math.min(rise,999)+'%</b>：'+(rise>=60?'看起來很陡。':rise>=25?'看起來有點斜。':'看起來差不多平。');
+  if(shown<20){$('s12Out').innerHTML='目前 Y 軸 '+lo+'–'+hi+' 分，畫面上看得到 '+shown+' 個點，其餘在範圍外。資料點一個都沒改。';}
+  else{$('s12Out').innerHTML='Y 軸 '+lo+'–'+hi+' 分。資料點：20 個，一個都沒改，畫面上全部看得到。<br>分數最低 70、最高 82，這 12 分的差距占了圖高的 <b>'+pct(lo,hi)+'%</b>。';}
   document.querySelectorAll('#w12 [data-y0]').forEach(function(b){b.setAttribute('aria-pressed',+b.getAttribute('data-y0')===lo&&+b.getAttribute('data-y1')===hi);});}
 ['s12Lo','s12Hi'].forEach(function(id){$(id).addEventListener('input',s12);});
 document.querySelectorAll('#w12 [data-y0]').forEach(function(b){b.addEventListener('click',function(){$('s12Lo').value=b.getAttribute('data-y0');$('s12Hi').value=b.getAttribute('data-y1');s12();});});
 s12();
+(function(){var b=$('s12B');$('s12Pct').textContent=pct(+b.getAttribute('data-y0'),+b.getAttribute('data-y1'));})();
 
 /* s13 */
 var A13={'1':'研究有說：睡得比較好、比較久、比較規律的學生，成績也比較好。這是「一起出現」（相關）。','0':'研究沒說：這是因果的說法（一件造成另一件）。這篇只觀察兩件事一起出現。','x':'不行：sleep-quiz.dat 是老師編的虛構資料，只用來練畫圖。'};
 $('s13List').addEventListener('click',function(e){var b=e.target.closest('[data-said]');if(!b)return;$('s13List').querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b);});$('s13Out').textContent='「'+b.textContent+'」→ '+A13[b.getAttribute('data-said')];});
 
 /* s14 */
-document.querySelectorAll('#s14List input').forEach(function(c){c.addEventListener('change',function(){var n=document.querySelectorAll('#s14List input:checked').length;$('s14Out').textContent='勾了 '+n+' / 5 項。'+(n===5?'五項都有。剩下的就看讀圖的人有沒有看軸了。':'沒勾到的那幾項，交出去之前補上。');});});
+document.querySelectorAll('#s14List input').forEach(function(c){c.addEventListener('change',function(){var n=document.querySelectorAll('#s14List input:checked').length;$('s14Out').textContent='勾了 '+n+' / 5 項。'+(n===5?'五項都自查過了。':'用自己畫的圖時，把缺的補上；用老師畫好的圖，照步驟頁做並排截圖和一句話就好。');});});
 
 /* s15 */
 function s15(){var q=$('s15Q').value.trim().toLowerCase(),n=0;document.querySelectorAll('#s15List dt').forEach(function(dt){var dd=dt.nextElementSibling,hit=!q||(dt.textContent+dd.textContent).toLowerCase().indexOf(q)>=0;dt.hidden=!hit;dd.hidden=!hit;if(hit)n++;});$('s15Out').textContent=q?'找到 '+n+' 個。':'共 '+n+' 個名詞，打字可以篩選。';}
 $('s15Q').addEventListener('input',s15);s15();
 
 /* s16 */
-$('s16Chk').addEventListener('click',function(){$('s16Out').innerHTML='對出三件事：<br>・作者只有 4 位，少了 Dave（正確是 5 位）<br>・年份寫 2020，正確是 2019<br>・沒有文章編號 16，也沒有 DOI<br>期刊名和卷是對的。今天核對過，這些一眼就看得出來。';});
+$('s16Chk').addEventListener('click',function(){$('s16Out').innerHTML='對出兩個錯：<br>・作者只有 4 位，少了 Dave（正確是 5 位）<br>・年份寫 2020，正確是 2019<br><br>期刊名和卷是對的。這裡只列了四欄；題名、文章編號 16、DOI 都沒給，也要補。今天核對過，這些一眼就看得出來。';});
 })();
 </script>
 </body></html>
