@@ -201,6 +201,11 @@ details summary{overflow-wrap:anywhere}
 .logkey li{margin:2px 0}
 .ans > p:first-child{margin-top:0}
 .ans > p:last-child{margin-bottom:0}
+.gatehint{border:1px dashed var(--line);border-radius:10px;padding:8px 12px;text-align:center}
+.tw.fade{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 56px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 56px),transparent)}
+.tw.fade.at-end{-webkit-mask-image:none;mask-image:none}
+.swipe{margin:6px 0 0;font-weight:800;color:var(--gold-deep)}
+svg.fig .vlabel{paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
 footer.sec{color:var(--ink-soft);font-size:14.5px}
 footer.sec h2{font-size:20px;color:var(--ink)}
 footer.sec li{margin:4px 0;overflow-wrap:anywhere}
@@ -222,7 +227,7 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <p>Last time we submitted a hand-written rule: “guess transported for people in cryosleep.” Kaggle gave it 0.72550 <span class="tag">§〇 J</span>. This time we let the computer find its own rules in the data, and the submission scored 0.80126 <span class="tag">§〇 J</span>. What happened in between? This page explains each step. The first layer of every section uses plain words. To dig further, open “Go deeper.” At the bottom you will find a tool guide, a word list, and ten questions to think about.</p>
 <p class="zh" lang="zh-Hant-TW">上次我們交了一條人寫的規則「冬眠的人猜被傳送」，Kaggle 給 0.72550 <span class="tag">§〇 J</span>。這次讓電腦自己從資料裡找規則，交上去拿 0.80126 <span class="tag">§〇 J</span>。中間到底發生了什麼事？這一頁把每一步拆開講。每節第一層用白話講完；想往下挖，點「深入一層」。最下面有工具百科、名詞表和十題想一想。</p>
     <div class="legend" aria-label="數字的出處">
-      <span>Every number has a source tag. It points to a cell in §〇 of the content spec (hover over a tag to see its full name): <span class="zh" lang="zh-Hant-TW">每個數字後面都掛出處標籤，對到內容規格 §〇 的那一格（滑鼠停在標籤上看全名）：</span></span>
+      <span>The small tag after a number (for example §〇 A) is a source code; you can ignore it in class. ⚠️ is a reminder: this sentence has not been tested yet, or it is only a general explanation. Hover over a tag to see its full name: <span class="zh" lang="zh-Hant-TW">數字後面的小標籤（例如 §〇 A）是出處代號，上課不用管它。⚠️ 是提醒：這一句還沒實測，或只是一般說法。滑鼠停在標籤上看全名：</span></span>
       <span><span class="tag">§〇 A</span>Competition and data <span class="zh" lang="zh-Hant-TW">比賽與資料</span></span>
       <span><span class="tag">§〇 B</span>Hand-written rules <span class="zh" lang="zh-Hant-TW">人寫的規則</span></span>
       <span><span class="tag">§〇 C</span>One decision tree <span class="zh" lang="zh-Hant-TW">一棵決策樹</span></span>
@@ -274,9 +279,9 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
 
 <!-- ============================== §0 ============================== -->
 <section class="sec" id="s0">
-  <h2><span class="n">0</span>Full route map: how one prediction becomes a score on the leaderboard</h2><p class="zh hzh" lang="zh-Hant-TW">全路徑地圖：一筆預測怎麼變成榜上的分數</p>
-  <p class="lead">This page follows one prediction from start to finish, through eight boxes. The data comes from Kaggle (the competition website). The middle five boxes run on Colab (Google's free cloud computer). The submission file comes back and goes to Kaggle for scoring, and the score goes on the leaderboard. Click any box to see what it does and which section of this page covers it <span class="tag">§〇 K</span>.</p>
-<p class="zh lead" lang="zh-Hant-TW">這一頁跟著一筆預測走完全程，一共八格。資料從 Kaggle（比賽網站）來；中間五格在 Colab（Google 的免費雲端電腦）上跑；答案檔帶回來交給 Kaggle 打分，分數上排行榜。點任何一格，看它在做什麼、對到這頁第幾節 <span class="tag">§〇 K</span>。</p>
+  <h2><span class="n">0</span>Full route map: from the competition data to a score on the leaderboard</h2><p class="zh hzh" lang="zh-Hant-TW">全路徑地圖：從比賽資料到榜上的分數</p>
+  <p class="lead">This page follows the data from start to finish, through eight boxes. The data comes from Kaggle (the competition website). The middle five boxes run on Colab (Google's free cloud computer). The submission file comes back and goes to Kaggle for scoring, and the score goes on the leaderboard. Click any box to see what it does and which section of this page covers it <span class="tag">§〇 K</span>.</p>
+<p class="zh lead" lang="zh-Hant-TW">這一頁跟著資料走完全程，一共八格。資料從 Kaggle（比賽網站）來；中間五格在 Colab（Google 的免費雲端電腦）上跑；答案檔帶回來交給 Kaggle 評分，分數上排行榜。點任何一格，看它在做什麼、對到這頁第幾節 <span class="tag">§〇 K</span>。</p>
   <svg class="fig" id="mapSvg" viewBox="0 0 900 404" role="group" aria-label="Eight-box route map (八格全路徑地圖)" data-src="§〇 A／K／J">
     <rect x="232" y="14" width="660" height="156" rx="16" fill="none" stroke="var(--teal)" stroke-width="2" stroke-dasharray="6 5"/>
     <rect x="232" y="196" width="660" height="196" rx="16" fill="none" stroke="var(--teal)" stroke-width="2" stroke-dasharray="6 5"/>
@@ -288,9 +293,9 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <g role="button" tabindex="0" data-node="prep" aria-label="Preparing the columns (整理欄位)"><rect class="box colab" x="246" y="48" width="200" height="112" rx="12"/><text x="346" y="74" text-anchor="middle" font-size="16" font-weight="800">② Prepare columns</text><text x="346" y="94" text-anchor="middle" font-size="13" class="soft">② 整理欄位</text><text x="346" y="122" text-anchor="middle" font-size="13">14 columns → 15</text><text x="346" y="141" text-anchor="middle" font-size="12" class="soft">14 欄變 15 欄</text></g>
     <g role="button" tabindex="0" data-node="train" aria-label="Training (訓練)"><rect class="box colab" x="466" y="48" width="200" height="112" rx="12"/><text x="566" y="74" text-anchor="middle" font-size="16" font-weight="800">③ Training</text><text x="566" y="94" text-anchor="middle" font-size="13" class="soft">③ 訓練</text><text x="566" y="122" text-anchor="middle" font-size="13">The computer finds a way</text><text x="566" y="141" text-anchor="middle" font-size="12" class="soft">電腦自己找猜法</text></g>
     <g role="button" tabindex="0" data-node="cv" aria-label="Self-test first (自己先考一次)"><rect class="box colab" x="686" y="48" width="196" height="112" rx="12"/><text x="784" y="74" text-anchor="middle" font-size="16" font-weight="800">④ Self-test first</text><text x="784" y="94" text-anchor="middle" font-size="13" class="soft">④ 自己先考一次</text><text x="784" y="122" text-anchor="middle" font-size="13">Five parts, taking turns</text><text x="784" y="141" text-anchor="middle" font-size="12" class="soft">切五份、輪流當考題</text></g>
-    <g role="button" tabindex="0" data-node="pred" aria-label="Guess the 4,277 people in test (猜 test 的 4,277 人)"><rect class="box colab" x="686" y="214" width="196" height="112" rx="12"/><text x="784" y="240" text-anchor="middle" font-size="16" font-weight="800">⑤ Guess test.csv</text><text x="784" y="260" text-anchor="middle" font-size="13" class="soft">⑤ 猜 test 的人</text><text x="784" y="288" text-anchor="middle" font-size="13">4,277 people, no answers</text><text x="784" y="307" text-anchor="middle" font-size="12" class="soft">4,277 人，沒有答案</text></g>
+    <g role="button" tabindex="0" data-node="pred" aria-label="Guess the 4,277 people in test.csv (猜 test.csv 的 4,277 人)"><rect class="box colab" x="686" y="214" width="196" height="112" rx="12"/><text x="784" y="240" text-anchor="middle" font-size="16" font-weight="800">⑤ Guess test.csv</text><text x="784" y="260" text-anchor="middle" font-size="13" class="soft">⑤ 猜 test.csv 的人</text><text x="784" y="288" text-anchor="middle" font-size="13">4,277 people, no answers</text><text x="784" y="307" text-anchor="middle" font-size="12" class="soft">4,277 人，沒有答案</text></g>
     <g role="button" tabindex="0" data-node="sub" aria-label="Submission file (答案檔)"><rect class="box colab" x="246" y="214" width="186" height="100" rx="12"/><text x="339" y="240" text-anchor="middle" font-size="16" font-weight="800">⑥ Submission file</text><text x="339" y="260" text-anchor="middle" font-size="13" class="soft">⑥ 答案檔</text><text x="339" y="290" text-anchor="middle" font-size="13" class="mono">submission.csv</text></g>
-    <g role="button" tabindex="0" data-node="score" aria-label="Kaggle scores it (Kaggle 打分)"><rect class="box kg" x="16" y="214" width="200" height="66" rx="12"/><text x="116" y="240" text-anchor="middle" font-size="16" font-weight="800">⑦ Kaggle scores it</text><text x="116" y="262" text-anchor="middle" font-size="13" class="soft">⑦ Kaggle 打分</text></g>
+    <g role="button" tabindex="0" data-node="score" aria-label="Kaggle scores it (Kaggle 評分)"><rect class="box kg" x="16" y="214" width="200" height="66" rx="12"/><text x="116" y="240" text-anchor="middle" font-size="16" font-weight="800">⑦ Kaggle scores it</text><text x="116" y="262" text-anchor="middle" font-size="13" class="soft">⑦ Kaggle 評分</text></g>
     <g role="button" tabindex="0" data-node="lb" aria-label="Leaderboard (排行榜)"><rect class="box kg" x="16" y="296" width="200" height="66" rx="12"/><text x="116" y="322" text-anchor="middle" font-size="16" font-weight="800">⑧ Leaderboard</text><text x="116" y="344" text-anchor="middle" font-size="13" class="soft">⑧ 排行榜</text></g>
     <path class="wire" d="M216 104 H240"/><polygon class="arrow" points="238,98 246,104 238,110"/>
     <path class="wire" d="M446 104 H460"/><polygon class="arrow" points="458,98 466,104 458,110"/>
@@ -305,17 +310,17 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <button type="button" class="btn" data-node="prep">② Prepare columns<span class="zh zb" lang="zh-Hant-TW">② 整理欄位</span></button>
     <button type="button" class="btn" data-node="train">③ Training<span class="zh zb" lang="zh-Hant-TW">③ 訓練</span></button>
     <button type="button" class="btn" data-node="cv">④ Self-test first<span class="zh zb" lang="zh-Hant-TW">④ 自己先考一次</span></button>
-    <button type="button" class="btn" data-node="pred">⑤ Guess test.csv<span class="zh zb" lang="zh-Hant-TW">⑤ 猜 test 的人</span></button>
+    <button type="button" class="btn" data-node="pred">⑤ Guess test.csv<span class="zh zb" lang="zh-Hant-TW">⑤ 猜 test.csv 的人</span></button>
     <button type="button" class="btn" data-node="sub">⑥ Submission file<span class="zh zb" lang="zh-Hant-TW">⑥ 答案檔</span></button>
-    <button type="button" class="btn" data-node="score">⑦ Kaggle scores it<span class="zh zb" lang="zh-Hant-TW">⑦ Kaggle 打分</span></button>
+    <button type="button" class="btn" data-node="score">⑦ Kaggle scores it<span class="zh zb" lang="zh-Hant-TW">⑦ Kaggle 評分</span></button>
     <button type="button" class="btn" data-node="lb">⑧ Leaderboard<span class="zh zb" lang="zh-Hant-TW">⑧ 排行榜</span></button>
   </div>
   <div class="panel" id="mapPanel" aria-live="polite"><h4>Click a box to read about it</h4><p class="zh hzh" lang="zh-Hant-TW">點一格看說明</p><p>(loading) <span class="zh" lang="zh-Hant-TW">（載入中）</span></p></div>
   <div class="guess">
-    <p class="gq">Of the eight boxes, which one is where we cannot see the answers at all?<span class="zh zb" lang="zh-Hant-TW">八格裡，哪一格是「我們自己完全看不到答案」的？</span></p>
+    <p class="gq">Which box uses data whose answers we do not have at all?<span class="zh zb" lang="zh-Hant-TW">哪一格用到的資料，答案根本不在我們手上？</span></p>
     <div class="opts">
       <button type="button" class="opt">④ Self-test first: we did not look at the answers of the part we held out<span class="zh zb" lang="zh-Hant-TW">④ 自己先考一次：留下來的那份我們沒看答案</span></button>
-      <button type="button" class="opt" data-ok="1">⑦ Kaggle scores it: only Kaggle has the answers for test.csv<span class="zh zb" lang="zh-Hant-TW">⑦ Kaggle 打分：test.csv 的答案只有 Kaggle 有</span></button>
+      <button type="button" class="opt" data-ok="1">⑦ Kaggle scores it: only Kaggle has the answers for test.csv<span class="zh zb" lang="zh-Hant-TW">⑦ Kaggle 評分：test.csv 的答案只有 Kaggle 有</span></button>
       <button type="button" class="opt">③ Training: the computer learns by itself, and we do not look<span class="zh zb" lang="zh-Hant-TW">③ 訓練：電腦自己學，我們不看</span></button>
     </div>
     <div class="ans" hidden><p>It is ⑦. test.csv has no answer column at all; the answers are only on Kaggle's side <span class="tag">§〇 A</span>. For ④, the answers of the held-out part are actually in train.csv; we just hide them from the model during training. So the ④ score is “our own estimate,” and only ⑦ is scored by someone else (Section 11).</p><p class="zh" lang="zh-Hant-TW">是 ⑦。test.csv 本來就沒有答案欄，答案只在 Kaggle 那邊 <span class="tag">§〇 A</span>。④ 留下來的那份，答案其實就在 train.csv 裡，只是訓練時故意不給模型看——所以 ④ 的分數是「自己估的」，⑦ 才是別人打的（第 11 節）。</p></div>
@@ -337,7 +342,8 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
 <p class="zh lead" lang="zh-Hant-TW">比賽給的表格叫 <code>train.csv</code>：8,693 列，一列一位乘客，14 欄，最後一欄 <code>Transported</code> 就是答案，有沒有被傳送 <span class="tag">§〇 A</span>。另一份 <code>test.csv</code> 有 4,277 列，少了答案欄；要猜的就是這 4,277 人 <span class="tag">§〇 A</span>。下面是自編的 6 位乘客，點欄名看每一欄的意思。</p>
   <p><span class="fake">Made-up example, not competition data</span> <span class="small">The competition rules do not allow passing the data to people who have not joined. So the six passengers in this table, and every value in it, were made up by the teacher. Use it only to learn what the data looks like <span class="tag">§〇 M</span>. “(blank)” marks a cell we left empty on purpose.</span></p>
   <p class="zh" lang="zh-Hant-TW"><span class="fake">自編示意，不是比賽資料</span> <span class="small">比賽規則不准把資料轉給沒參賽的人，所以這張表的 6 位乘客、每一格數值都是老師自己編的，只學它的長相 <span class="tag">§〇 M</span>。「（空）」是故意留的缺格。</span></p>
-  <div class="tw"><table id="fakeTbl" aria-label="自編示意乘客表（不是比賽資料）">
+  <p class="small swipe">Swipe right to see all 14 columns (the last one is Transported) →<span class="zh zb" lang="zh-Hant-TW">往右滑看全部 14 欄（最後一欄是 Transported）→</span></p>
+  <div class="tw fade" id="fakeWrap"><table id="fakeTbl" aria-label="自編示意乘客表（不是比賽資料）">
     <thead><tr>
       <th><button type="button" data-col="PassengerId">PassengerId</button></th>
       <th><button type="button" data-col="HomePlanet">HomePlanet</button></th>
@@ -392,6 +398,8 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
   <h2><span class="n">2</span>How far one hand-written rule can go</h2><p class="zh hzh" lang="zh-Hant-TW">人寫的一條規則能走多遠</p>
   <p class="lead">Before the computer learns anything, we first guess with hand-written rules (rules that people thought of). The share of people we guess right is called accuracy, and every “score” below means accuracy. The simplest way is to guess “transported” for everyone. This is called a baseline: a starting point to compare with. The other two rules are the Week 11 rule, “guess transported for people in cryosleep,” and “guess transported for people who spent nothing” <span class="tag">§〇 B</span>. Guess first, then pick a rule to see its score.</p>
 <p class="zh lead" lang="zh-Hant-TW">還沒讓電腦學之前，先用人想的規則猜。猜對的人占全部的比例，叫準確率（accuracy），下面講的「分數」都是它。最簡單的做法是全部猜「被傳送」，這叫基準（baseline），是拿來比較的起點。另外兩條是 W11 那條「冬眠的人猜被傳送」，和「沒花錢的人猜被傳送」<span class="tag">§〇 B</span>。先猜，再選一條規則看分數。</p>
+  <p>Both rules give an answer for every person: people who match the condition are guessed “transported,” and everyone else is guessed “not transported.”</p>
+<p class="zh" lang="zh-Hant-TW">這兩條規則都會替每個人作答：符合條件的猜「被傳送」，其餘的猜「沒被傳送」。</p>
   <div class="guess">
     <p class="gq">Which is more accurate: “guess transported for people in cryosleep” or “guess transported for people who spent nothing at all”?<span class="zh zb" lang="zh-Hant-TW">「冬眠的人猜被傳送」跟「完全沒花錢的人猜被傳送」，哪一條比較準？</span></p>
     <div class="opts">
@@ -406,7 +414,7 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <button type="button" class="btn" data-rule="cryo">In cryosleep: guess transported<span class="zh zb" lang="zh-Hant-TW">冬眠的猜被傳送</span></button>
     <button type="button" class="btn" data-rule="spend">Spent nothing: guess transported<span class="zh zb" lang="zh-Hant-TW">沒花錢的猜被傳送</span></button>
   </div>
-  <svg class="fig" id="ruleSvg" viewBox="0 0 900 230" role="img" aria-label="規則把乘客分群，每群被傳送的人數"></svg>
+  <svg class="fig hidden" id="ruleSvg" viewBox="0 0 900 230" role="img" aria-label="規則把乘客分群，每群被傳送的人數"></svg>
   <div class="panel" id="rulePanel" aria-live="polite"><h4>No rule picked yet</h4><p class="zh hzh" lang="zh-Hant-TW">還沒選規則</p><p>First guess the question above. Then click a rule to see which groups it makes and what score it gets.</p><p class="zh" lang="zh-Hant-TW">先猜上面那一題，再按一條規則，看它把人分成哪幾群、拿幾分。</p></div>
   <p class="small">Bar length = how many people are in that group. The dark part = the people in that group who were transported. All counts are real counts from the 8,693 people in train.csv <span class="tag">§〇 B</span>.</p>
 <p class="zh small" lang="zh-Hant-TW">長條的長度＝那一群有幾個人；深色那一段＝那一群裡被傳送的人。人數都是 train.csv 8,693 人的真實計數 <span class="tag">§〇 B</span>。</p>
@@ -425,18 +433,9 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
 <!-- ============================== §3 ============================== -->
 <section class="sec" id="s3">
   <h2><span class="n">3</span>Training = letting the computer find rules</h2><p class="zh hzh" lang="zh-Hant-TW">訓練＝讓電腦自己找規則</p>
-  <p class="lead">Training means letting the computer use data that has answers to work out its own way to guess. The way it works out is called a model. A decision tree is a series of yes-or-no questions. On every column, the computer tries every possible cut point and picks the question that best puts “transported” and “not transported” on two different sides. The next question looks only at the people who went down that side <span class="tag">§〇 C</span>. First, guess which column it picks for the first question.</p>
-<p class="zh lead" lang="zh-Hant-TW">訓練（training）就是讓電腦拿有答案的資料，自己整理出一套猜法；整理出來的那套叫模型（model）。決策樹（decision tree）是一連串是非題：電腦在每一欄上把可能的分界都試一遍，挑最能把「被傳送」和「沒被傳送」分到兩邊的那一題；下一題只看走到那一邊的人 <span class="tag">§〇 C</span>。下面先猜它第一題會挑哪一欄。</p>
-  <div class="ctrl">
-    <button type="button" class="btn primary" id="treeMore">Ask one more question<span class="zh zb" lang="zh-Hant-TW">再問一題</span></button>
-    <button type="button" class="btn" id="treeLess">Ask one fewer question<span class="zh zb" lang="zh-Hant-TW">少問一題</span></button>
-    <span id="treeAcc" class="big" aria-live="polite"></span>
-  </div>
-  <p class="small">The two numbers in each leaf are how many people ended up there: “not transported｜transported.” Each leaf guesses the answer that more of its people have. The left line = “yes,” and the right line = “no” <span class="tag">§〇 C</span>.</p>
-<p class="zh small" lang="zh-Hant-TW">每片葉子裡的兩個數字是落在那裡的人數：「沒被傳送｜被傳送」。葉子猜人數多的那一邊。左邊的線＝「是」，右邊＝「否」<span class="tag">§〇 C</span>。</p>
-  <svg class="fig" id="treeSvg" viewBox="0 0 900 360" role="img" aria-label="Decision tree (決策樹)"></svg>
-  <div class="panel" id="treePanel" aria-live="polite"><h4>(loading)</h4></div>
-  <div class="guess">
+  <p class="lead">Training means letting the computer use data that has answers to work out its own way to guess. The way it works out is called a model. A decision tree is a series of yes-or-no questions. On every column, the computer tries every possible cut point and picks the question that best puts “transported” and “not transported” on two different sides. The next question looks only at the people who went down that side <span class="tag">§〇 C</span>. Guess first below: will its first question be “in cryosleep or not”?</p>
+<p class="zh lead" lang="zh-Hant-TW">訓練（training）就是讓電腦拿有答案的資料，自己整理出一套猜法，這套猜法叫模型（model）。決策樹（decision tree）是一連串是非題：電腦把每一欄可能的分界都試一遍，挑最能把「被傳送」和「沒被傳送」分到兩邊的那一題；下一題只看走到那一邊的人 <span class="tag">§〇 C</span>。下面先猜：它第一題會不會挑「有沒有冬眠」？</p>
+<div class="guess">
     <p class="gq">The computer can pick any column for its first question. Do you think it will pick “in cryosleep or not”?<span class="zh zb" lang="zh-Hant-TW">電腦可以挑任何一欄當第一題。你覺得它會挑「有沒有冬眠」嗎？</span></p>
     <div class="opts">
       <button type="button" class="opt">Yes, the cryosleep rule is the one we submitted last time<span class="zh zb" lang="zh-Hant-TW">會，冬眠那條是我們上次交的</span></button>
@@ -445,6 +444,21 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     </div>
     <div class="ans" hidden><p>It picks “total spend ≤ 0.5,” which means whether the person spent any money <span class="tag">§〇 C</span>. This is the same rule as the third rule in Section 2, and on train.csv it also scores 0.7371 <span class="tag">§〇 C</span>. The computer does not know what “cryosleep” means. It just picks by “which question separates the two kinds of people the most.” By the way, this question is also more accurate than the cryosleep rule's 0.7183 <span class="tag">§〇 B</span>, but that is not why it was picked.</p><p class="zh" lang="zh-Hant-TW">它挑「總消費 ≤ 0.5」，也就是有沒有花錢 <span class="tag">§〇 C</span>。這跟第 2 節第三條規則是同一條，在 train.csv 上一樣是 0.7371 <span class="tag">§〇 C</span>。電腦不知道「冬眠」是什麼意思，它只是照「哪一題把兩種人分得最開」去挑。順帶一提，這一題的準確率也比冬眠那條的 0.7183 高 <span class="tag">§〇 B</span>，但那不是它挑這一題的原因。</p></div>
   </div>
+  <p class="small gatehint" id="gh3">Answer the question above first; then the tree appears.<span class="zh zb" lang="zh-Hant-TW">先回答上面那一題，樹圖才會出現。</span></p>
+  <div class="gate" hidden>
+  <div class="ctrl">
+    <button type="button" class="btn primary" id="treeMore">Ask one more question<span class="zh zb" lang="zh-Hant-TW">再問一題</span></button>
+    <button type="button" class="btn" id="treeLess">Ask one fewer question<span class="zh zb" lang="zh-Hant-TW">少問一題</span></button>
+    <span id="treeAcc" class="big" aria-live="polite"></span>
+  </div>
+  <p class="small">Click “Ask one more question” to add one more level to the tree, and watch how the leaves and the score change.</p>
+<p class="zh small" lang="zh-Hant-TW">按「再問一題」讓樹多問一層，看葉子與分數怎麼變。</p>
+  <p class="small">The two numbers in each leaf are how many people ended up there: “not transported｜transported.” Each leaf guesses the answer that more of its people have. The left line = “yes,” and the right line = “no” <span class="tag">§〇 C</span>.</p>
+<p class="zh small" lang="zh-Hant-TW">每片葉子裡的兩個數字是落在那裡的人數：「沒被傳送｜被傳送」。葉子猜人數多的那一邊。左邊的線＝「是」，右邊＝「否」<span class="tag">§〇 C</span>。</p>
+  <svg class="fig" id="treeSvg" viewBox="0 0 900 360" role="img" aria-label="Decision tree (決策樹)"></svg>
+  <div class="panel" id="treePanel" aria-live="polite"><h4>(loading)</h4></div>
+  </div>
+  
   <details class="deep"><summary>How these three trees were measured, and how they differ from the Section 4 scores <span class="zh" lang="zh-Hant-TW">這三棵樹是怎麼量的；跟第 4 節的分數差在哪</span></summary><div class="in">
     <p>The tree is scikit-learn's <code>DecisionTreeClassifier</code>, fed the 15 columns prepared in Section 6 <span class="tag">§〇 C</span>. All three trees in this section were trained on all 8,693 people and then checked against the same 8,693 people: one question 0.7371, two questions 0.7386, three questions 0.7584 <span class="tag">§〇 C</span>.</p>
 <p class="zh" lang="zh-Hant-TW">樹是 scikit-learn 的 <code>DecisionTreeClassifier</code>，餵第 6 節整理好的 15 欄 <span class="tag">§〇 C</span>。這一節的三棵樹都用全部 8,693 人訓練，再拿同樣這 8,693 人對答案：問一題 0.7371、兩題 0.7386、三題 0.7584 <span class="tag">§〇 C</span>。</p>
@@ -452,10 +466,10 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
 <p class="zh" lang="zh-Hant-TW">第 4 節表格裡的「練習題」是另一種量法：切五份，拿訓練用的那四份自己對答案、五輪取平均，所以問兩題寫 0.7389、問三題寫 0.7592 <span class="tag">§〇 C</span>，跟這裡差一點點。兩個都是「看過答案」的分數。</p>
     <p>During preparation, <code>HomePlanet</code> was changed into codes in alphabetical order: Earth 0, Europa 1, Mars 2 <span class="tag">§〇 E</span>. So among people who filled it in, “HomePlanet ≤ 0.5” means Earth, and “&gt; 0.5” means Europa or Mars. 201 people left this column blank <span class="tag">§〇 A</span>. Which side the tree put them on, we did not check this time <span class="tag">§〇 ⚠️7</span>.</p>
 <p class="zh" lang="zh-Hant-TW"><code>HomePlanet</code> 在整理時換成代號，照字母順序 Earth 0、Europa 1、Mars 2 <span class="tag">§〇 E</span>；所以「HomePlanet ≤ 0.5」在有填的人裡就是 Earth，「&gt; 0.5」是 Europa 或 Mars。這一欄沒填的 201 人 <span class="tag">§〇 A</span>，被樹歸到哪一邊，這次沒查 <span class="tag">§〇 ⚠️7</span>。</p>
-    <p>Passengers with missing values go to one side of the tree (scikit-learn's built-in way). Which side, we did not check this time <span class="tag">§〇 ⚠️3</span>.</p>
-<p class="zh" lang="zh-Hant-TW">缺值的乘客在樹裡會被分到其中一邊（scikit-learn 內建的做法），是哪一邊這次沒有查 <span class="tag">§〇 ⚠️3</span>。</p>
+    <p>How people with blanks are split: during training, scikit-learn tries two ways at every possible cut point (all the people with blanks go left, or all go right) and keeps the one that separates better (scikit-learn 1.6 official explanation) <span class="tag">§〇 ⚠️3</span>. Which way the people with blanks actually went in these three trees, we did not check this time <span class="tag">§〇 ⚠️7</span>.</p>
+<p class="zh" lang="zh-Hant-TW">空格的人怎麼分邊：scikit-learn 在訓練時，每個可能的分界都試兩種走法（空格的人全部走左邊，或全部走右邊），留下分得比較好的那一種（scikit-learn 1.6 官方說明）<span class="tag">§〇 ⚠️3</span>。這三棵樹裡空格的人實際走了哪邊，這次沒查 <span class="tag">§〇 ⚠️7</span>。</p>
     <p>How the computer judges “how well separated”: the measure is called Gini impurity. In plain words, it is “how mixed up the two kinds of answers are in this group of people.” It picks the question that makes the two sides, taken together, the least mixed (the side with more people counts more). It does not compare accuracy directly <span class="tag">§〇 C</span>.</p>
-<p class="zh" lang="zh-Hant-TW">電腦怎麼評「分得多開」：用的算法叫吉尼不純度（Gini impurity），白話是「這一堆人裡兩種答案混得多亂」；它挑讓兩邊合起來最不混的那一題（人多的那一邊算得比較重），不是直接比準確率 <span class="tag">§〇 C</span>。</p>
+<p class="zh" lang="zh-Hant-TW">電腦怎麼評「分得多開」：用的演算法叫吉尼不純度（Gini impurity），白話是「這一堆人裡兩種答案混得多亂」；它挑讓兩邊合起來最不混的那一題（人多的那一邊算得比較重），不是直接比準確率 <span class="tag">§〇 C</span>。</p>
   </div></details>
 </section>
 
@@ -476,7 +490,7 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
       <button type="button" class="opt" data-ok="1">Worse: lower than with 6 questions<span class="zh zb" lang="zh-Hant-TW">變差，比問 6 題還低</span></button>
       <button type="button" class="opt">No change<span class="zh zb" lang="zh-Hant-TW">不變</span></button>
     </div>
-    <div class="ans" hidden><p>Worse. The practice questions climb to 0.9984, but unseen questions drop to 0.7424. Unseen questions are highest at 6 questions (0.7820) and fall after that <span class="tag">§〇 C</span>. 1,451 leaves for 8,693 people means only about 6 people per leaf on average <span class="tag">§〇 C</span>. With leaves cut this fine, the tree has likely also learned the accidental details of these few people. That is not a pattern that also works for the next group of people <span class="wn">⚠️ general explanation</span>.</p><p class="zh" lang="zh-Hant-TW">變差。練習題爬到 0.9984，沒看過的題只剩 0.7424；沒看過的題在問 6 題時最高（0.7820），之後往下掉 <span class="tag">§〇 C</span>。1,451 片葉子分 8,693 人，平均一片葉子只有 6 個人 <span class="tag">§〇 C</span>。葉子切得這麼細，很可能把這幾個人碰巧的樣子也學了進去，不是下一批人也適用的規律 <span class="wn">⚠️ 一般說法</span>。</p></div>
+    <div class="ans" hidden><p>Worse. The practice questions climb to 0.9984, but unseen questions drop to 0.7424. Unseen questions are highest at 6 questions (0.7820) and mostly fall after that <span class="tag">§〇 C</span>. 1,451 leaves for 8,693 people means only about 6 people per leaf on average <span class="tag">§〇 C</span>. With leaves cut this fine, the tree has likely also learned the accidental details of these few people. That is not a pattern that also works for the next group of people <span class="wn">⚠️ general explanation</span>.</p><p class="zh" lang="zh-Hant-TW">變差。練習題爬到 0.9984，沒看過的題只剩 0.7424；沒看過的題在問 6 題時最高（0.7820），之後大致往下掉 <span class="tag">§〇 C</span>。1,451 片葉子分 8,693 人，平均一片葉子只有 6 個人 <span class="tag">§〇 C</span>。葉子切得這麼細，很可能把這幾個人碰巧的樣子也學了進去，不是下一批人也適用的規律 <span class="wn">⚠️ 一般說法</span>。</p></div>
   </div>
   <details class="deep"><summary>Full table for 15 depths <span class="zh" lang="zh-Hant-TW">15 種深度的完整表</span></summary><div class="in">
     <div class="tw"><table data-src="§〇 C">
@@ -493,6 +507,8 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
   <h2><span class="n">5</span>So we hold out a test: split into five parts, take turns</h2><p class="zh hzh" lang="zh-Hant-TW">所以要留考題：切五份、輪流當考題</p>
   <p class="lead">On the practice questions the model has already seen the answers, so those scores cannot tell us how it would do on new people. So we split the 8,693 people into five parts. Each round, four parts are used for training and one part is held out as the test. We do five rounds and average them. This is called 5-fold cross-validation <span class="tag">§〇 D</span>. Every person is in the test exactly once, and we can also see how much the score moves around. Click a round to see.</p>
 <p class="zh lead" lang="zh-Hant-TW">練習題的分數看過答案，不能拿來估換一批人會考幾分。所以把 8,693 人切成五份，每輪拿四份訓練、留一份當考題，輪五次再平均，這叫五折交叉驗證（5-fold cross-validation）<span class="tag">§〇 D</span>。每個人剛好當一次考題，也看得出分數會晃多少。點第幾輪看看。</p>
+  <p>Each round trains a brand-new model from the start, and the people in this round's test take no part in this round's training.</p>
+<p class="zh" lang="zh-Hant-TW">每一輪都從頭訓練一個新的模型，這一輪當考題的人完全不參加這一輪的訓練。</p>
   <div class="ctrl" role="group" aria-label="選第幾輪" id="foldBtns">
     <button type="button" class="btn" data-fold="0">Round 1<span class="zh zb" lang="zh-Hant-TW">第 1 輪</span></button>
     <button type="button" class="btn" data-fold="1">Round 2<span class="zh zb" lang="zh-Hant-TW">第 2 輪</span></button>
@@ -500,11 +516,11 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <button type="button" class="btn" data-fold="3">Round 4<span class="zh zb" lang="zh-Hant-TW">第 4 輪</span></button>
     <button type="button" class="btn" data-fold="4">Round 5<span class="zh zb" lang="zh-Hant-TW">第 5 輪</span></button>
   </div>
-  <p class="small">The five blocks below always show the original split (random seed 0). A random seed is a number that decides how the data is shuffled; the same number gives the same shuffle every time <span class="tag">§〇 D</span>.</p>
-<p class="zh small" id="foldNote" lang="zh-Hant-TW">下面五個方塊固定是原本的切法（亂數種子 0）。亂數種子是決定怎麼打散的編號，同一個編號每次打散的結果都一樣 <span class="tag">§〇 D</span>。</p>
   <svg class="fig" id="foldSvg" viewBox="0 0 900 160" role="img" aria-label="The original split (random seed 0): five parts, and which one is the test. 原本的切法（亂數種子 0）：五份資料，哪一份當考題"></svg>
   <div class="panel" id="foldPanel" aria-live="polite"><h4>(loading)</h4></div>
   <div class="ctrl"><button type="button" class="btn" id="reshuffleBtn">Try another split<span class="zh zb" lang="zh-Hant-TW">換一種切法</span></button><span class="small" id="seedNote"></span></div>
+  <p class="small">The five blocks above always use the same split (random seed 0); “Try another split” only changes the five-round average shown here. A random seed is a number that decides how the data is shuffled; the same number gives the same shuffle every time <span class="tag">§〇 D</span>.</p>
+<p class="zh small" id="foldNote" lang="zh-Hant-TW">上面五個方塊固定是同一種切法（亂數種子 0）；「換一種切法」只換這裡顯示的五輪平均。亂數種子是決定怎麼打散的編號，同一個編號每次打散的結果都一樣 <span class="tag">§〇 D</span>。</p>
   <div class="panel" id="seedPanel" aria-live="polite"><h4>(loading)</h4></div>
   <div class="guess">
     <p class="gq">Think back to Section 4: if we scored the no-limit tree on the practice questions, what would it get?<span class="zh zb" lang="zh-Hant-TW">回想第 4 節：如果直接拿練習題算分，不設上限的那棵樹會拿幾分？</span></p>
@@ -528,8 +544,8 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
 <!-- ============================== §6 ============================== -->
 <section class="sec" id="s6">
   <h2><span class="n">6</span>Preparing the columns: turning words into numbers</h2><p class="zh hzh" lang="zh-Hant-TW">整理欄位：把字變成數字</p>
-  <p class="lead">The tool we use needs every column to be a number (or a blank). Each column we feed the model is called a feature. We split a cabin string like <code>B/0/P</code> into three columns: deck, cabin number, and side. We add up the five kinds of spending, and we count how many people are in the same group. So 14 columns become 15 <span class="tag">§〇 E</span>. Not every new column helps; we only know after we measure. (This step is called feature engineering.)</p>
-<p class="zh lead" lang="zh-Hant-TW">我們用的工具要每一欄都是數字（或空格）。餵給模型的每一欄叫特徵（feature）。我們把艙房 <code>B/0/P</code> 這種字串拆成甲板、房號、舷三欄，把五種消費加總，再算同一團有幾個人，14 欄整理成 15 欄 <span class="tag">§〇 E</span>。不是每個新欄都有用，要量了才知道。</p>
+  <p class="lead">The tool we use needs every column to be a number (or a blank). Each column we feed the model is called a feature. We split a cabin string like <code>B/0/P</code> into three columns: deck, cabin number, and side. We add up the five kinds of spending, and we count how many people are in the same group (this step is called feature engineering) <span class="tag">§〇 E</span>. One of the 14 columns in train.csv is the answer; after preparing, the model is fed 15 columns.</p>
+<p class="zh lead" lang="zh-Hant-TW">我們用的工具要每一欄都是數字（或空格）。餵給模型的每一欄叫特徵（feature）。我們把艙房 <code>B/0/P</code> 這種字串拆成甲板、房號、舷三欄，把五種消費加總，再算同一團有幾個人（這一步叫特徵工程，feature engineering）<span class="tag">§〇 E</span>。train.csv 的 14 欄裡有一欄是答案；整理之後，餵給模型的是 15 欄。</p>
   <h3>Small tool 1: split a cabin <span class="fake">Made-up example</span></h3><p class="zh hzh" lang="zh-Hant-TW">小工具一：拆艙房 <span class="fake">自編示意</span></p>
   <div class="ctrl"><label for="cabinIn">Cabin: <span class="zh" lang="zh-Hant-TW">艙房：</span></label><input id="cabinIn" class="txt" type="text" value="B/0/P" autocomplete="off" spellcheck="false" style="max-width:220px"></div>
   <div class="panel" id="cabinOut" aria-live="polite"><h4>(loading)</h4></div>
@@ -537,6 +553,18 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
   <div class="ctrl"><label for="pidIn">Passenger ID: <span class="zh" lang="zh-Hant-TW">乘客編號：</span></label><input id="pidIn" class="txt" type="text" value="9901_02" autocomplete="off" spellcheck="false" style="max-width:220px"></div>
   <div class="panel" id="pidOut" aria-live="polite"><h4>(loading)</h4></div>
   <h3>Small tool 3: add layers one by one and see how the score changes</h3><p class="zh hzh" lang="zh-Hant-TW">小工具三：一層一層疊上去，分數怎麼變</p>
+  <p>Not every new column helps; we only know after we measure.</p>
+<p class="zh" lang="zh-Hant-TW">不是每個新欄都有用，要量了才知道。</p>
+<div class="guess">
+    <p class="gq">“Total spend” adds up the five kinds of spending, and it looks useful. Will adding it make the score better?<span class="zh zb" lang="zh-Hant-TW">「總消費」把五種消費加起來，看起來很有用。加了它，分數會變好嗎？</span></p>
+    <div class="opts">
+      <button type="button" class="opt">Yes, clearly better<span class="zh zb" lang="zh-Hant-TW">會，明顯變好</span></button>
+      <button type="button" class="opt" data-ok="1">No, it got a tiny bit lower<span class="zh zb" lang="zh-Hant-TW">沒有變好，還低了一點點</span></button>
+    </div>
+    <div class="ans" hidden><p>0.7921 → 0.7912, not better. This gap is smaller than the wobble from changing the split (about 0.004), so we cannot see a difference <span class="tag">§〇 E</span>. This time the biggest gain came from splitting the cabin: 0.7912 → 0.8095, up by about 0.018 <span class="tag">§〇 E</span>. Total spend is calculated from the original five columns and brings no new information. That may be why it did not help <span class="wn">⚠️ our inference, not checked separately</span>.</p><p class="zh" lang="zh-Hant-TW">0.7921 → 0.7912，沒有變好；這個差距比換切法造成的晃動（0.004 左右）還小，看不出差別 <span class="tag">§〇 E</span>。這次加分最多的是把艙房拆開：0.7912 → 0.8095，多了約 0.018 <span class="tag">§〇 E</span>。總消費是從原本五欄算出來的，沒有帶進新資訊，這可能是它沒幫上忙的原因 <span class="wn">⚠️ 推論，沒另外驗</span>。</p></div>
+  </div>
+  <p class="small gatehint" id="gh6">Answer the question above first; then the switches and scores appear.<span class="zh zb" lang="zh-Hant-TW">先回答上面那一題，開關與分數才會出現。</span></p>
+  <div class="gate" hidden>
   <p class="small">These four sets were measured by stacking one layer on top of another. So the switches only stack in order: turning on a later one also turns on the earlier ones, and turning off an earlier one also turns off the later ones. All scores use the same model and the same split into five parts, taking turns as the test <span class="tag">§〇 E</span>.</p>
 <p class="zh small" lang="zh-Hant-TW">這四組是一層一層疊上去量的，所以開關只能照順序疊：開後面的會順便開前面的，關前面的會順便關後面的。分數都是同一個模型、同樣切五份輪流當考題 <span class="tag">§〇 E</span>。</p>
   <div class="sw" id="fsSw">
@@ -546,14 +574,8 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <label><input type="checkbox" data-lv="4" checked> <span>+ group size (1 column)<span class="zh zb" lang="zh-Hant-TW">＋同團人數（1 欄）</span></span></label>
   </div>
   <div class="panel" id="fsOut" aria-live="polite"><h4>(loading)</h4></div>
-  <div class="guess">
-    <p class="gq">“Total spend” adds up the five kinds of spending, and it looks useful. Will adding it make the score better?<span class="zh zb" lang="zh-Hant-TW">「總消費」把五種消費加起來，看起來很有用。加了它，分數會變好嗎？</span></p>
-    <div class="opts">
-      <button type="button" class="opt">Yes, clearly better<span class="zh zb" lang="zh-Hant-TW">會，明顯變好</span></button>
-      <button type="button" class="opt" data-ok="1">No, it got a tiny bit lower<span class="zh zb" lang="zh-Hant-TW">沒有變好，還低了一點點</span></button>
-    </div>
-    <div class="ans" hidden><p>0.7921 → 0.7912, not better. This gap is smaller than the wobble from changing the split (about 0.004), so we cannot see a difference <span class="tag">§〇 E</span>. This time the biggest gain came from splitting the cabin: 0.7912 → 0.8095, up by about 0.018 <span class="tag">§〇 E</span>. Total spend is calculated from the original five columns and brings no new information. That may be why it did not help <span class="wn">⚠️ our inference, not checked separately</span>.</p><p class="zh" lang="zh-Hant-TW">0.7921 → 0.7912，沒有變好；這個差距比換切法造成的晃動（0.004 左右）還小，看不出差別 <span class="tag">§〇 E</span>。這次加分最多的是把艙房拆開：0.7912 → 0.8095，多了約 0.018 <span class="tag">§〇 E</span>。總消費是從原本五欄算出來的，沒有帶進新資訊，這可能是它沒幫上忙的原因 <span class="wn">⚠️ 推論，沒另外驗</span>。</p></div>
   </div>
+  
   <details class="deep"><summary>Where each of the 15 columns comes from <span class="zh" lang="zh-Hant-TW">15 欄各是怎麼來的</span></summary><div class="in">
     <div class="tw"><table data-src="§〇 E">
       <tr><th>Column fed to the model<span class="zh zb" lang="zh-Hant-TW">餵給模型的欄</span></th><th>Where it comes from<span class="zh zb" lang="zh-Hant-TW">怎麼來的</span></th></tr>
@@ -566,10 +588,10 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     </table></div>
     <p>Columns not used: <code>Name</code> is not fed in, and <code>PassengerId</code> itself is used only to count group size <span class="tag">§〇 E</span>.</p>
 <p class="zh" lang="zh-Hant-TW">沒用的欄：<code>Name</code> 沒餵；<code>PassengerId</code> 本身只拿來算同團人數 <span class="tag">§〇 E</span>。</p>
-    <p>Missing values are not filled in; they stay blank. The model we use (scikit-learn's <code>HistGradientBoostingClassifier</code>) accepts blanks by design <span class="tag">§〇 E</span>. The blanks in the five spending columns stay as they are. Only when adding up total spend do we count a blank as 0, and if all five are blank, total spend stays blank too <span class="tag">§〇 E</span>.</p>
-<p class="zh" lang="zh-Hant-TW">缺值沒有補，直接留空；我們用的模型（scikit-learn 的 <code>HistGradientBoostingClassifier</code>）本來就接受空格 <span class="tag">§〇 E</span>。五種消費欄的空格照樣留著；只有算總消費時把空格當 0 來加，五欄全空的人總消費也留空 <span class="tag">§〇 E</span>。</p>
-    <p>To count group sizes and assign the text codes, we put the passengers of train.csv and test.csv together (13,970 people). The answer column was not used <span class="tag">§〇 E</span>.</p>
-<p class="zh" lang="zh-Hant-TW">算同團人數與文字代號時，把 train.csv 與 test.csv 的乘客放在一起算（13,970 人），沒有用到答案欄 <span class="tag">§〇 E</span>。</p>
+    <p>Missing values are not filled in; they stay blank. The model we use (scikit-learn's <code>HistGradientBoostingClassifier</code>) accepts blanks by design <span class="tag">§〇 E</span>. The blanks in the five spending columns stay as they are. Only when adding up total spend do we count a blank as 0, and if all five are blank, total spend stays blank too; in this data, nobody has all five blank <span class="tag">§〇 E</span>.</p>
+<p class="zh" lang="zh-Hant-TW">缺值沒有補，直接留空；我們用的模型（scikit-learn 的 <code>HistGradientBoostingClassifier</code>）本來就接受空格 <span class="tag">§〇 E</span>。五種消費欄的空格照樣留著；只有算總消費時把空格當 0 來加，五欄全空的人總消費也留空；這份資料裡沒有人五欄全空 <span class="tag">§〇 E</span>。</p>
+    <p>To count group sizes and assign the text codes, we put the passengers of train.csv and test.csv together (12,970 people). The answer column was not used <span class="tag">§〇 E</span>.</p>
+<p class="zh" lang="zh-Hant-TW">算同團人數與文字代號時，把 train.csv 與 test.csv 的乘客放在一起算（12,970 人），沒有用到答案欄 <span class="tag">§〇 E</span>。</p>
   </div></details>
 </section>
 
@@ -598,29 +620,33 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     </table></div>
     <p>The model is <code>HistGradientBoostingClassifier(max_iter=number_of_trees, learning_rate=0.05, random_state=0)</code> <span class="tag">§〇 F</span>. In plain words, <code>learning_rate=0.05</code> means each tree only makes up a small step <span class="tag">§〇 ⚠️4</span> (this sentence and “start with a guess, then make up the gap tree by tree” above are both general explanations, not something we measured this time).</p>
 <p class="zh" lang="zh-Hant-TW">模型是 <code>HistGradientBoostingClassifier(max_iter=棵數, learning_rate=0.05, random_state=0)</code> <span class="tag">§〇 F</span>。<code>learning_rate=0.05</code> 的白話是每一棵只補一小步 <span class="tag">§〇 ⚠️4</span>（這句與上面「先有起始猜測、再一棵一棵把差距補回來」都是一般說法，不是這次量的）。</p>
-    <p>In this table, 100 trees (0.8139) is 0.002 higher than 300 trees (0.8119). This gap is smaller than the wobble from changing the split (about 0.004, Section 5), so from this table alone we cannot tell which is better <span class="tag">§〇 F</span> <span class="tag">§〇 D</span>.</p>
-<p class="zh" lang="zh-Hant-TW">照這張表，100 棵（0.8139）比 300 棵（0.8119）還高 0.002；這個差距比換切法造成的晃動（0.004 左右，第 5 節）還小，只憑這張表分不出誰比較好 <span class="tag">§〇 F</span> <span class="tag">§〇 D</span>。</p>
+    <p>In this table, 100 trees (0.8139) is 0.002 higher than 300 trees (0.8119). This gap is smaller than the wobble from changing the split (about 0.004, Section 5), so from this table alone we cannot tell which is better <span class="tag">§〇 F</span> <span class="tag">§〇 D</span>. We submitted 300 trees because the program was set that way from the start; we measured this table after submitting <span class="tag">§〇 F</span>.</p>
+<p class="zh" lang="zh-Hant-TW">照這張表，100 棵（0.8139）比 300 棵（0.8119）還高 0.002；這個差距比換切法造成的晃動（0.004 左右，第 5 節）還小，只憑這張表分不出誰比較好 <span class="tag">§〇 F</span> <span class="tag">§〇 D</span>。我們交 300 棵，是因為程式一開始就這樣設，交出去之後才量這張表 <span class="tag">§〇 F</span>。</p>
   </div></details>
 </section>
 
 <!-- ============================== §8 ============================== -->
 <section class="sec" id="s8">
   <h2><span class="n">8</span>Does more data help?</h2><p class="zh hzh" lang="zh-Hant-TW">資料多一點有用嗎</p>
-  <p class="lead">Same model, same test; only the number of training people changes. With only 50 people, the model scores 0.6827 on unseen questions. That is lower than the cryosleep rule's 0.7183 on train.csv <span class="tag">§〇 G</span> <span class="tag">§〇 B</span>. Among the six sizes we measured this time, more people gave a higher score, but the gains got smaller later: training on 1,000 people already reaches 0.7829, while almost 6,000 more people only bring it to 0.8119 <span class="tag">§〇 G</span>. Drag the slider and compare with the red reference line.</p>
-<p class="zh lead" lang="zh-Hant-TW">同一個模型、同一批考題，只換訓練的人數。只給 50 個人，模型在沒看過的題上拿 0.6827，比冬眠那條規則在 train.csv 上的 0.7183 還低 <span class="tag">§〇 G</span> <span class="tag">§〇 B</span>。這次量的六個人數裡，人數越多分數越高，但後面漲得慢：用 1,000 人訓練就到 0.7829，再多將近 6,000 人只到 0.8119 <span class="tag">§〇 G</span>。拖滑桿對照紅色參考線。</p>
-  <div class="ctrl"><label for="lcSlider">How many people to train on: <span class="zh" lang="zh-Hant-TW">拿幾個人訓練：</span></label><input type="range" id="lcSlider" min="0" max="5" step="1" value="0" aria-describedby="lcOut"></div>
-  <div class="kv" id="lcOut" aria-live="polite"></div>
-  <svg class="fig" id="lcSvg" viewBox="0 0 900 372" role="img" aria-label="Training size and the score on unseen questions (訓練人數與沒看過的題的分數)"></svg>
-  <p class="small">Teal = the model's score on unseen questions. Red dashed line = reference line: the cryosleep rule's 0.7183 on all of train.csv <span class="tag">§〇 B</span>. Each step on the x-axis is one number of people we actually measured. The steps look evenly spaced on screen, but the real gaps are not equal <span class="tag">§〇 G</span>. The two scores are measured differently: the rule is checked against answers on all of train.csv, while the model is tested on unseen questions. The line is only for comparison <span class="tag">§〇 G</span>.</p>
-<p class="zh small" lang="zh-Hant-TW">青色＝模型在沒看過的題上的分數；紅色虛線＝參考線：冬眠規則在整份 train.csv 上的 0.7183 <span class="tag">§〇 B</span>。橫軸每一格是一個實際量過的人數，畫面上間距一樣，人數差距不一樣 <span class="tag">§〇 G</span>。兩個分數量法不一樣：規則是在整份 train.csv 上對答案，模型是在沒看過的題上考；這條線只拿來對照 <span class="tag">§〇 G</span>。</p>
-  <div class="guess">
+  <p class="lead">Same model, same test; only the number of training people changes. Among the six sizes we measured this time, more people gave a higher score, but the gains got smaller later: training on 1,000 people already reaches 0.7829, while almost 6,000 more people only bring it to 0.8119 <span class="tag">§〇 G</span>. Guess the question below first, then drag the slider and compare with the red reference line.</p>
+<p class="zh lead" lang="zh-Hant-TW">同一個模型、同一批考題，只換訓練的人數。這次量的六個人數裡，人數越多分數越高，但後面漲得慢：用 1,000 人訓練就到 0.7829，再多將近 6,000 人只到 0.8119 <span class="tag">§〇 G</span>。先猜下面那一題，再拖滑桿對照紅色參考線。</p>
+<div class="guess">
     <p class="gq">Will a model trained on only 50 people score higher than the cryosleep rule's 0.7183? <span class="tag">§〇 B</span><span class="zh zb" lang="zh-Hant-TW">只看 50 個人的模型，分數會比冬眠那條規則的 0.7183 高嗎？<span class="tag">§〇 B</span></span></p>
     <div class="opts">
       <button type="button" class="opt">Yes, a model is always stronger than a hand-written rule<span class="zh zb" lang="zh-Hant-TW">會，模型一定比人寫的規則強</span></button>
       <button type="button" class="opt" data-ok="1">No, it is lower<span class="zh zb" lang="zh-Hant-TW">不會，比較低</span></button>
     </div>
-    <div class="ans" hidden><p>Lower: 0.6827 versus 0.7183 <span class="tag">§〇 G</span> <span class="tag">§〇 B</span>. At 100 people they are almost the same (0.7184). From 300 people up it is clearly higher (0.7434) <span class="tag">§〇 G</span>. The two scores are not measured in quite the same way: the rule is checked on all of train.csv, and the model is tested on unseen questions. The rule needs no training, so we use it as a reference line <span class="tag">§〇 G</span>. With only 50 examples, the model probably cannot find a stable pattern yet <span class="wn">⚠️ our inference</span>.</p><p class="zh" lang="zh-Hant-TW">比較低，0.6827 對 0.7183 <span class="tag">§〇 G</span> <span class="tag">§〇 B</span>。100 人時幾乎一樣（0.7184）；300 人以上才高出一截（0.7434）<span class="tag">§〇 G</span>。兩個分數量法不完全一樣：規則在整份 train.csv 對答案，模型在沒看過的題上考；規則不用訓練，所以拿來當參考線 <span class="tag">§〇 G</span>。50 個人的例子太少，模型還抓不到穩定的規律 <span class="wn">⚠️ 推論</span>。</p></div>
+    <div class="ans" hidden><p>Lower: 0.6827 versus 0.7183 <span class="tag">§〇 G</span> <span class="tag">§〇 B</span>. At 100 people they are almost the same (0.7184). At 300 people it is clearly higher (0.7434) <span class="tag">§〇 G</span>. The two scores are not measured in quite the same way: the rule is checked on all of train.csv, and the model is tested on unseen questions. The rule needs no training, so we use it as a reference line <span class="tag">§〇 G</span>. With only 50 examples, the model probably cannot find a stable pattern yet <span class="wn">⚠️ our inference</span>.</p><p class="zh" lang="zh-Hant-TW">比較低，0.6827 對 0.7183 <span class="tag">§〇 G</span> <span class="tag">§〇 B</span>。100 人時幾乎一樣（0.7184）；300 人時高出一截（0.7434）<span class="tag">§〇 G</span>。兩個分數量法不完全一樣：規則在整份 train.csv 對答案，模型在沒看過的題上考；規則不用訓練，所以拿來當參考線 <span class="tag">§〇 G</span>。50 個人的例子太少，模型還抓不到穩定的規律 <span class="wn">⚠️ 推論</span>。</p></div>
   </div>
+  <p class="small gatehint" id="gh8">Answer the question above first; then the slider and chart appear.<span class="zh zb" lang="zh-Hant-TW">先回答上面那一題，滑桿與圖才會出現。</span></p>
+  <div class="gate" hidden>
+  <div class="ctrl"><label for="lcSlider">How many people to train on: <span class="zh" lang="zh-Hant-TW">拿幾個人訓練：</span></label><input type="range" id="lcSlider" min="0" max="5" step="1" value="0" aria-describedby="lcOut"></div>
+  <div class="kv" id="lcOut" aria-live="polite"></div>
+  <svg class="fig" id="lcSvg" viewBox="0 0 900 372" role="img" aria-label="Training size and the score on unseen questions (訓練人數與沒看過的題的分數)"></svg>
+  <p class="small">Teal = the model's score on unseen questions. Red dashed line = reference line: the cryosleep rule's 0.7183 on all of train.csv <span class="tag">§〇 B</span>. Each step on the x-axis is one number of people we actually measured. The steps look evenly spaced on screen, but the real gaps are not equal <span class="tag">§〇 G</span>. The two scores are measured differently: the rule is checked against answers on all of train.csv, while the model is tested on unseen questions. The line is only for comparison <span class="tag">§〇 G</span>.</p>
+<p class="zh small" lang="zh-Hant-TW">青色＝模型在沒看過的題上的分數；紅色虛線＝參考線：冬眠規則在整份 train.csv 上的 0.7183 <span class="tag">§〇 B</span>。橫軸每一格是一個實際量過的人數，畫面上間距一樣，人數差距不一樣 <span class="tag">§〇 G</span>。兩個分數量法不一樣：規則是在整份 train.csv 上對答案，模型是在沒看過的題上考；這條線只拿來對照 <span class="tag">§〇 G</span>。</p>
+  </div>
+  
   <details class="deep"><summary>Full table <span class="zh" lang="zh-Hant-TW">完整的表</span></summary><div class="in">
     <div class="tw"><table data-src="§〇 G">
       <tr><th class="r">People for training<span class="zh zb" lang="zh-Hant-TW">拿幾個人訓練</span></th><th class="r">Unseen questions<span class="zh zb" lang="zh-Hant-TW">沒看過的題</span></th></tr>
@@ -634,7 +660,7 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
 <!-- ============================== §9 ============================== -->
 <section class="sec" id="s9">
   <h2><span class="n">9</span>Which columns does the model lean on?</h2><p class="zh hzh" lang="zh-Hant-TW">模型到底看重哪幾欄</p>
-  <p class="lead">To find out which columns the model leans on, we can shuffle one column's values among the test passengers, leave the other columns alone, and see how much the score drops. The bigger the drop, the more the model leans on that column (this is called permutation importance) <span class="tag">§〇 H</span>. Remember: the model leaning on a column does not mean that column causes people to be transported <span class="tag">§〇 ⚠️4</span>.</p>
+  <p class="lead">To find out which columns the model leans on, we can shuffle one column's values among the test passengers, leave the other columns alone, and see how much the score drops. The bigger the drop, the more the model leans on that column <span class="tag">§〇 H</span>. Remember: the model leaning on a column does not mean that column causes people to be transported <span class="tag">§〇 ⚠️4</span>.</p>
 <p class="zh lead" lang="zh-Hant-TW">想知道模型靠哪幾欄，可以把考題裡某一欄的值在乘客之間打亂、其他欄不動，看分數掉多少：掉越多，表示模型越靠它 <span class="tag">§〇 H</span>。要記得：模型看重，不等於那一欄是被傳送的原因 <span class="tag">§〇 ⚠️4</span>。</p>
   <div class="ctrl" role="group" aria-label="排序">
     <button type="button" class="btn" data-sort="drop">Sort by drop<span class="zh zb" lang="zh-Hant-TW">照掉幾分排</span></button>
@@ -652,10 +678,10 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <div class="ans" hidden><p>After shuffling VIP, the score drops only 0.0006, the smallest drop of the 15 columns <span class="tag">§〇 H</span>. For this model and this round's test, shuffling VIP barely changes the score. That does not mean VIP has nothing to do with being transported <span class="tag">§〇 H</span>.</p><p class="zh" lang="zh-Hant-TW">VIP 打亂後分數只掉 0.0006，15 欄裡最少 <span class="tag">§〇 H</span>。在這個模型、這一輪考題上，打亂 VIP 幾乎不影響分數；不代表 VIP 跟被傳送沒有關係 <span class="tag">§〇 H</span>。</p></div>
   </div>
   <details class="deep"><summary>How it was measured, and why looking at one column alone may underestimate <span class="zh" lang="zh-Hant-TW">怎麼量的、為什麼單看一欄可能低估</span></summary><div class="in">
-    <p>We used round 1: 6,954 people for training and 1,739 people as the test, with an original score of 0.8148. Each column was shuffled 10 times and averaged <span class="tag">§〇 H</span>.</p>
-<p class="zh" lang="zh-Hant-TW">用第 1 輪：6,954 人訓練、1,739 人當考題，原本 0.8148；每一欄打亂 10 次取平均 <span class="tag">§〇 H</span>。</p>
-    <p>When several columns say the same thing (for example, people in cryosleep spent nothing anyway), shuffling one of them may not hurt much, because the model can fill in from the others <span class="wn">⚠️ general explanation</span>. The five spending columns and total spend all say “how much money was spent.” So looking at one of them alone may underestimate “spending.” To know, we would shuffle all six together, and we did not do that this time <span class="tag">§〇 ⚠️8</span>.</p>
-<p class="zh" lang="zh-Hant-TW">幾欄講同一件事的時候（例如冬眠的人本來就沒花錢），打亂其中一欄，模型可能還能從別欄補回來 <span class="wn">⚠️ 一般說法</span>。五種消費與總消費這六欄講的都是「花了多少錢」，所以單看其中一欄掉多少，可能低估「花錢」這件事；要把六欄一起打亂才知道，這次沒做 <span class="tag">§〇 ⚠️8</span>。</p>
+    <p>We used round 1: 6,954 people for training and 1,739 people as the test, with an original score of 0.8148. Each column was shuffled 10 times and averaged <span class="tag">§〇 H</span>. This method is called permutation importance.</p>
+<p class="zh" lang="zh-Hant-TW">用第 1 輪：6,954 人訓練、1,739 人當考題，原本 0.8148；每一欄打亂 10 次取平均 <span class="tag">§〇 H</span>。這種做法叫排列重要性（permutation importance）。</p>
+    <p>When several columns say the same thing (for example, in this data the 3,037 people in cryosleep all have a total of 0 for the five kinds of spending <span class="tag">§〇 H</span>), shuffling one of them may not hurt much, because the model can fill in from the others <span class="wn">⚠️ general explanation</span>. The five spending columns and total spend all say “how much money was spent.” So looking at one of them alone may underestimate “spending.” To know, we would shuffle all six together, and we did not do that this time <span class="tag">§〇 ⚠️8</span>.</p>
+<p class="zh" lang="zh-Hant-TW">幾欄講同一件事的時候（例如這份資料裡，冬眠的 3,037 人五種消費加總都是 0 <span class="tag">§〇 H</span>），打亂其中一欄，模型可能還能從別欄補回來 <span class="wn">⚠️ 一般說法</span>。五種消費與總消費這六欄講的都是「花了多少錢」，所以單看其中一欄掉多少，可能低估「花錢」這件事；要把六欄一起打亂才知道，這次沒做 <span class="tag">§〇 ⚠️8</span>。</p>
   </div></details>
 </section>
 
@@ -683,8 +709,8 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
   <details class="deep"><summary>The name of this table, and how it connects to 0.8119 <span class="zh" lang="zh-Hant-TW">這張表的名字、跟 0.8119 的關係</span></summary><div class="in">
     <p>This four-box table is called a confusion matrix. The right guesses are top-left and bottom-right: 3,512 + 3,546 = 7,058 people, and 7,058 ÷ 8,693 = 0.8119 <span class="tag">§〇 I</span>. To four decimal places, this equals the five-round average of 0.8119 <span class="tag">§〇 D</span> (one pools the people from all five rounds; the other scores each round and then averages).</p>
 <p class="zh" lang="zh-Hant-TW">這種四格表叫混淆矩陣（confusion matrix）。猜對的是左上與右下：3,512＋3,546＝7,058 人，7,058 ÷ 8,693＝0.8119 <span class="tag">§〇 I</span>，跟五輪平均的 0.8119 取到小數第四位一樣 <span class="tag">§〇 D</span>（一個是把五輪的人合起來算，一個是五輪各算再平均）。</p>
-    <p>Each row adds up to the real number of people: 4,315 not transported and 4,378 transported <span class="tag">§〇 I</span>.</p>
-<p class="zh" lang="zh-Hant-TW">兩列加起來就是實際人數：沒被傳送 4,315、被傳送 4,378 <span class="tag">§〇 I</span>。</p>
+    <p>Each row, added up on its own, is the real number of people in that group: 4,315 not transported and 4,378 transported <span class="tag">§〇 I</span>.</p>
+<p class="zh" lang="zh-Hant-TW">每一列各自加起來，就是那一類的實際人數：沒被傳送 4,315、被傳送 4,378 <span class="tag">§〇 I</span>。</p>
   </div></details>
 </section>
 
@@ -692,10 +718,12 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
 <section class="sec" id="s11">
   <h2><span class="n">11</span>Three scores: which one counts?</h2><p class="zh hzh" lang="zh-Hant-TW">三個分數，哪一個算數</p>
   <p class="lead">The same method has three scores. Practice questions 0.9252 and our own held-out test 0.8119 were measured during the five-part split. Kaggle's 0.80126 (the public score) comes from training once more on all 8,693 people and then guessing test.csv; Kaggle scored it, and we do not have those answers <span class="tag">§〇 J</span>. This time our own estimate was about 0.011 higher. The leaderboard has 2,142 teams, and most are packed between 0.79 and 0.81 <span class="tag">§〇 J</span>.</p>
-<p class="zh lead" lang="zh-Hant-TW">同一套做法有三個分數。練習題 0.9252、自己留考題 0.8119 是切五份時量的；Kaggle 的 0.80126 是用全部 8,693 人再訓練一次、猜 test.csv，由 Kaggle 打分，答案我們沒有 <span class="tag">§〇 J</span>。這次自己估的高約 0.011。排行榜（leaderboard）上 2,142 隊，大多擠在 0.79 到 0.81 <span class="tag">§〇 J</span>。</p>
+<p class="zh lead" lang="zh-Hant-TW">同一套做法有三個分數。練習題 0.9252、自己留考題 0.8119 是切五份時量的；Kaggle 的 0.80126 是用全部 8,693 人再訓練一次、猜 test.csv，由 Kaggle 評分，答案我們沒有 <span class="tag">§〇 J</span>。這次自己估的高約 0.011。排行榜（leaderboard）上 2,142 隊，大多擠在 0.79 到 0.81 <span class="tag">§〇 J</span>。</p>
   <svg class="fig" id="threeSvg" viewBox="0 0 900 250" role="img" aria-label="Three scores and one rule (三個分數加一條規則)"></svg>
   <p class="small">The x-axis starts at 0.70, not at 0, so the bars look more different than they really are.</p>
 <p class="zh small" lang="zh-Hant-TW">橫軸從 0.70 開始，不是從 0；長條差距看起來會比實際大。</p>
+  <p>Each of the three scores answers one question: 0.9252 shows how well the model learned the practice questions; 0.8119 estimates how well it would guess for a new group of people; 0.80126 is this time's result on the Kaggle public leaderboard <span class="tag">§〇 J</span>.</p>
+<p class="zh" lang="zh-Hant-TW">三個分數各回答一件事：0.9252 看模型把練習題學得多熟；0.8119 估換一批人會猜得多準；0.80126 是這次在 Kaggle 公開榜上的成績 <span class="tag">§〇 J</span>。</p>
   <h3>Score bands on the leaderboard</h3><p class="zh hzh" lang="zh-Hant-TW">榜上的分數帶</p>
   <div class="ctrl"><button type="button" class="btn" id="lbMark" aria-pressed="true">Mark our two submissions<span class="zh zb" lang="zh-Hant-TW">標出我們兩次提交</span></button></div>
   <svg class="fig" id="lbSvg" viewBox="0 0 900 330" role="group" aria-label="Leaderboard score bands and number of teams (排行榜分數帶與隊數)"></svg>
@@ -716,16 +744,26 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
 <p class="zh" lang="zh-Hant-TW">2,142 隊裡有 1,505 隊擠在 0.79 到 0.81 之間；這份快照裡，從 0.80 到 0.81 要追過 1,102 隊 <span class="tag">§〇 J</span>。</p>
     <p>Practice questions 0.9252 and our own held-out test 0.8119 were measured during the five-part split, with each round training on four parts. Kaggle's 0.80126 comes from a model trained once more on all 8,693 people <span class="tag">§〇 J</span>. This time our own estimate was about 0.011 higher than the public score <span class="tag">§〇 J</span>. The two scores test different people, so a small gap is normal. Whether it is always higher, we cannot tell from this one time <span class="wn">⚠️ our inference</span>.</p>
 <p class="zh" lang="zh-Hant-TW">練習題 0.9252 和自己留考題 0.8119 是切五份時量的，每輪用四份訓練；Kaggle 的 0.80126 是用全部 8,693 人再訓練一次的模型 <span class="tag">§〇 J</span>。這次自己估的比榜上高約 0.011 <span class="tag">§〇 J</span>。兩個分數考的是不同的人，差一點很正常；會不會每次都偏高，只看這一次看不出來 <span class="wn">⚠️ 推論</span>。</p>
-    <p>Whether the public score uses all of test.csv or only part of it, and how the top two got above 0.93, we did not check this time <span class="tag">§〇 ⚠️2</span>. The rules page says submissions older than two months drop off the leaderboard, so the number of teams changes <span class="tag">§〇 J</span>. At most 10 submissions a day; after this submission, the command line printed <code>9 submissions remaining today.</code> <span class="tag">§〇 J</span>.</p>
-<p class="zh" lang="zh-Hant-TW">公開分數是用 test.csv 的全部還是一部分算的、前兩名 0.93 以上是怎麼做到的，這次都沒查 <span class="tag">§〇 ⚠️2</span>。規則頁寫提交超過兩個月會從榜上消失，所以榜上隊數會變 <span class="tag">§〇 J</span>。一天最多交 10 筆；這次交完 CLI 印 <code>9 submissions remaining today.</code> <span class="tag">§〇 J</span>。</p>
+    <p>The public score is calculated with all 4,277 people in test.csv (the competition's Leaderboard page says: “This leaderboard is calculated with all of the test data.”) <span class="tag">§〇 J</span>. How the top two got above 0.93, we did not check this time <span class="tag">§〇 ⚠️2</span>. The rules page says submissions older than two months drop off the leaderboard, so the number of teams changes <span class="tag">§〇 J</span>. At most 10 submissions a day; after this submission, the command line printed <code>9 submissions remaining today.</code> <span class="tag">§〇 J</span>.</p>
+<p class="zh" lang="zh-Hant-TW">公開分數是用 test.csv 全部 4,277 人算的（比賽的 Leaderboard 頁寫明用全部測試資料）<span class="tag">§〇 J</span>；前兩名怎麼拿到 0.93 以上，這次沒查 <span class="tag">§〇 ⚠️2</span>。規則頁寫提交超過兩個月會從榜上消失，所以榜上隊數會變 <span class="tag">§〇 J</span>。一天最多交 10 筆；這次交完 CLI 印 <code>9 submissions remaining today.</code> <span class="tag">§〇 J</span>。</p>
   </div></details>
 </section>
 
 <!-- ============================== §12 ============================== -->
 <section class="sec" id="s12">
   <h2><span class="n">12</span>How the teacher ran it this time</h2><p class="zh hzh" lang="zh-Hant-TW">老師這次是怎麼跑的</p>
-  <p class="lead">This is how the teacher ran it this time. It is not a set of steps for students to copy; the browser route in Colab has not been tried yet <span class="tag">§〇 ⚠️1</span>. The teacher used the command line to start a free Colab CPU machine. The whole run took 51 seconds, and the program itself ran only 9.4 seconds <span class="tag">§〇 K</span>. Click “Next” to go through the eight commands one line at a time.</p>
-<p class="zh lead" lang="zh-Hant-TW">這是老師這次的跑法，不是給同學照做的步驟；用瀏覽器開 Colab 那條路還沒走過 <span class="tag">§〇 ⚠️1</span>。老師用命令列開一台免費的 Colab CPU 機器，整趟 51 秒，程式本身只跑 9.4 秒 <span class="tag">§〇 K</span>。按「下一步」逐行看八行指令在做什麼。</p>
+  <p class="lead">This is how the teacher ran it this time. It is not a set of steps for students to copy; the browser route in Colab has not been tried yet <span class="tag">§〇 ⚠️1</span>. The teacher used the command line to start a free Colab CPU machine. The whole run took 51 seconds <span class="tag">§〇 K</span>. Guess the question below first, then click “Next” to go through the eight commands one line at a time.</p>
+<p class="zh lead" lang="zh-Hant-TW">這是老師這次的跑法，不是給同學照做的步驟；用瀏覽器開 Colab 那條路還沒走過 <span class="tag">§〇 ⚠️1</span>。老師用命令列開一台免費的 Colab CPU 機器，整趟 51 秒 <span class="tag">§〇 K</span>。先猜下面那一題，再按「下一步」逐行看八行指令在做什麼。</p>
+<div class="guess">
+    <p class="gq">The whole run was 51 seconds. How many seconds did the program itself (reading data, training, writing the submission file) run?<span class="zh zb" lang="zh-Hant-TW">整趟 51 秒，程式本身（讀資料、訓練、寫出答案檔）跑了幾秒？</span></p>
+    <div class="opts">
+      <button type="button" class="opt">40 seconds or more<span class="zh zb" lang="zh-Hant-TW">40 秒以上</span></button>
+      <button type="button" class="opt" data-ok="1">Under 10 seconds<span class="zh zb" lang="zh-Hant-TW">10 秒以內</span></button>
+    </div>
+    <div class="ans" hidden><p>9.4 seconds <span class="tag">§〇 K</span>. In these 9.4 seconds it trained six times. In the first five rounds, each round trained on four parts and held out one part as the test (the five round scores were printed 7.9 seconds after the program started). Then it trained once more on all 8,693 people, guessed test.csv, and wrote the submission file <span class="tag">§〇 K</span>. The rest of the time went to starting the machine, uploading, downloading, and shutting the machine down.</p><p class="zh" lang="zh-Hant-TW">9.4 秒 <span class="tag">§〇 K</span>。這 9.4 秒裡一共訓練六次：前五輪各拿四份訓練、留一份當考題（程式開始後 7.9 秒印出五輪分數），接著用全部 8,693 人再訓練一次、猜 test.csv、寫出答案檔 <span class="tag">§〇 K</span>。其他時間花在開機器、上傳、下載、關機器。</p></div>
+  </div>
+  <p class="small gatehint" id="gh12">Answer the question above first; then the commands and the run log appear.<span class="zh zb" lang="zh-Hant-TW">先回答上面那一題，指令與執行紀錄才會出現。</span></p>
+  <div class="gate" hidden>
   <div class="ctrl">
     <button type="button" class="btn" id="kPrev">Back<span class="zh zb" lang="zh-Hant-TW">上一步</span></button>
     <button type="button" class="btn primary" id="kNext">Next<span class="zh zb" lang="zh-Hant-TW">下一步</span></button>
@@ -757,14 +795,8 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <li><code>DONE</code> = the program finished, 9.4 seconds after it started <span class="tag">§〇 K</span>.</li>
   </ul></div>
   </div>
-  <div class="guess">
-    <p class="gq">The whole run was 51 seconds. How many seconds did the program itself (reading data, training, writing the submission file) run?<span class="zh zb" lang="zh-Hant-TW">整趟 51 秒，程式本身（讀資料、訓練、寫出答案檔）跑了幾秒？</span></p>
-    <div class="opts">
-      <button type="button" class="opt">40 seconds or more<span class="zh zb" lang="zh-Hant-TW">40 秒以上</span></button>
-      <button type="button" class="opt" data-ok="1">Under 10 seconds<span class="zh zb" lang="zh-Hant-TW">10 秒以內</span></button>
-    </div>
-    <div class="ans" hidden><p>9.4 seconds <span class="tag">§〇 K</span>. In these 9.4 seconds it trained six times. In the first five rounds, each round trained on four parts and held out one part as the test (the five round scores were printed 7.9 seconds after the program started). Then it trained once more on all 8,693 people, guessed test.csv, and wrote the submission file <span class="tag">§〇 K</span>. The rest of the time went to starting the machine, uploading, downloading, and shutting the machine down.</p><p class="zh" lang="zh-Hant-TW">9.4 秒 <span class="tag">§〇 K</span>。這 9.4 秒裡一共訓練六次：前五輪各拿四份訓練、留一份當考題（程式開始後 7.9 秒印出五輪分數），接著用全部 8,693 人再訓練一次、猜 test.csv、寫出答案檔 <span class="tag">§〇 K</span>。其他時間花在開機器、上傳、下載、關機器。</p></div>
   </div>
+  
   <details class="deep"><summary>The Kaggle submission step, and the extra run that measured the numbers <span class="zh" lang="zh-Hant-TW">交上 Kaggle 那一步、補量數字的那一趟</span></summary><div class="in">
     <p>After getting <code>submission.csv</code> back, the teacher submitted it with the Kaggle command line:</p>
 <p class="zh" lang="zh-Hant-TW">拿回 <code>submission.csv</code> 之後，用 Kaggle 命令列交上去：</p>
@@ -797,13 +829,13 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <details class="tool"><summary>scikit-learn</summary><div class="in"><dl>
       <dt>What it is <span class="zh" lang="zh-Hant-TW">是什麼</span></dt><dd>A Python machine-learning package with many ready-made models and scoring tools. This time the version was 1.6.1 <span class="tag">§〇 K</span>; with another version, the numbers may shift a little <span class="tag">§〇 ⚠️5</span>.<span class="zh zb" lang="zh-Hant-TW">Python 的機器學習套件，裡面有各種現成的模型與評分工具。這次的版本是 1.6.1 <span class="tag">§〇 K</span>；換版本數字可能差一點 <span class="tag">§〇 ⚠️5</span>。</span></dd>
       <dt>Used here for <span class="zh" lang="zh-Hant-TW">這次用在哪</span></dt><dd>The three tools below are all inside it. In code it is written as <code>sklearn</code>.<span class="zh zb" lang="zh-Hant-TW">下面三個工具都在它裡面。程式裡寫成 <code>sklearn</code>。</span></dd></dl></div></details>
-    <details class="tool"><summary>DecisionTreeClassifier (one decision tree) <span class="zh" lang="zh-Hant-TW">DecisionTreeClassifier（一棵決策樹）</span></summary><div class="in"><dl>
-      <dt>What it is <span class="zh" lang="zh-Hant-TW">是什麼</span></dt><dd>scikit-learn's decision tree: it finds a series of yes-or-no questions by itself. <code>max_depth</code> sets the maximum number of questions <span class="tag">§〇 C</span>.<span class="zh zb" lang="zh-Hant-TW">scikit-learn 的決策樹：自己找出一連串是非題。<code>max_depth</code> 設最多問幾題 <span class="tag">§〇 C</span>。</span></dd>
+    <details class="tool"><summary>DecisionTreeClassifier（one decision tree／<span class="zh" lang="zh-Hant-TW">一棵決策樹</span>）</summary><div class="in"><dl>
+      <dt>What it is <span class="zh" lang="zh-Hant-TW">是什麼</span></dt><dd>scikit-learn's decision tree: it finds a series of yes-or-no questions by itself. <code>max_depth</code> sets the most questions one person can be asked, from the first question down to a leaf <span class="tag">§〇 C</span>.<span class="zh zb" lang="zh-Hant-TW">scikit-learn 的決策樹：自己找出一連串是非題。<code>max_depth</code> 設一個人從第一題走到葉子，最多被問幾題 <span class="tag">§〇 C</span>。</span></dd>
       <dt>Used here for <span class="zh" lang="zh-Hant-TW">這次用在哪</span></dt><dd>Sections 3 and 4: trees with 1 to 3 questions, and 15 depths from 1 question up to no limit <span class="tag">§〇 C</span>.<span class="zh zb" lang="zh-Hant-TW">第 3、4 節：問 1 到 3 題的樹，與從 1 題到不設上限的 15 種深度 <span class="tag">§〇 C</span>。</span></dd></dl></div></details>
-    <details class="tool"><summary>HistGradientBoostingClassifier (many trees in a relay) <span class="zh" lang="zh-Hant-TW">HistGradientBoostingClassifier（很多棵樹接力）</span></summary><div class="in"><dl>
+    <details class="tool"><summary>HistGradientBoostingClassifier（many trees in a relay／<span class="zh" lang="zh-Hant-TW">很多棵樹接力</span>）</summary><div class="in"><dl>
       <dt>What it is <span class="zh" lang="zh-Hant-TW">是什麼</span></dt><dd>scikit-learn's gradient boosting model: it starts with one starting guess, then many small trees work in a relay, and each one makes up a little of what is still missing <span class="tag">§〇 ⚠️4</span>. It accepts blanks by design <span class="tag">§〇 E</span>.<span class="zh zb" lang="zh-Hant-TW">scikit-learn 的梯度提升模型：先有一個起始猜測，再讓很多棵小樹接力，每一棵把還差的補一點回來 <span class="tag">§〇 ⚠️4</span>；本來就接受空格 <span class="tag">§〇 E</span>。</span></dd>
       <dt>Used here for <span class="zh" lang="zh-Hant-TW">這次用在哪</span></dt><dd>The model we submitted: <code>max_iter=300, learning_rate=0.05, random_state=0</code> <span class="tag">§〇 F</span> (Section 7).<span class="zh zb" lang="zh-Hant-TW">我們交出去的模型：<code>max_iter=300, learning_rate=0.05, random_state=0</code> <span class="tag">§〇 F</span>（第 7 節）。</span></dd></dl></div></details>
-    <details class="tool"><summary>StratifiedKFold (split into five parts) <span class="zh" lang="zh-Hant-TW">StratifiedKFold（切五份）</span></summary><div class="in"><dl>
+    <details class="tool"><summary>StratifiedKFold（split into five parts／<span class="zh" lang="zh-Hant-TW">切五份</span>）</summary><div class="in"><dl>
       <dt>What it is <span class="zh" lang="zh-Hant-TW">是什麼</span></dt><dd>scikit-learn's tool for splitting data: it cuts the data into parts and keeps the share of the two answers about the same in each part <span class="tag">§〇 D</span>.<span class="zh zb" lang="zh-Hant-TW">scikit-learn 的切資料工具：切成幾份，並讓每一份裡兩種答案的比例差不多 <span class="tag">§〇 D</span>。</span></dd>
       <dt>Used here for <span class="zh" lang="zh-Hant-TW">這次用在哪</span></dt><dd>Section 5: <code>n_splits=5, shuffle=True, random_state=0</code>, giving parts of 1,739, 1,739, 1,739, 1,738, and 1,738 people <span class="tag">§〇 D</span>.<span class="zh zb" lang="zh-Hant-TW">第 5 節：<code>n_splits=5, shuffle=True, random_state=0</code>，切成 1,739、1,739、1,739、1,738、1,738 人 <span class="tag">§〇 D</span>。</span></dd></dl></div></details>
     <details class="tool"><summary>Colab</summary><div class="in"><dl>
@@ -838,7 +870,7 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <tr><td>訓練資料／測試資料</td><td>training set／test set</td><td>The file with answers, used for learning (train.csv) / the file without answers, to be guessed (test.csv)<span class="zh zb" lang="zh-Hant-TW">有答案、拿來學的那份（train.csv）／沒答案、要猜的那份（test.csv）</span></td><td><a href="#s1">§1</a></td></tr>
     <tr><td>缺值</td><td>missing value</td><td>An empty cell in a table; this time we did not fill them in and left them blank<span class="zh zb" lang="zh-Hant-TW">表格裡空著的格子；這次沒有補，直接留空</span></td><td><a href="#s1">§1</a>、<a href="#s6">§6</a></td></tr>
     <tr><td>混淆矩陣</td><td>confusion matrix</td><td>The four-box table of right and wrong guesses<span class="zh zb" lang="zh-Hant-TW">猜對猜錯排成的四格表</span></td><td><a href="#s10">§10</a></td></tr>
-    <tr><td>提交</td><td>submission</td><td>Handing the submission file to Kaggle for scoring; at most 10 a day <span class="tag">§〇 M</span><span class="zh zb" lang="zh-Hant-TW">把答案檔交給 Kaggle 打分；一天最多 10 筆 <span class="tag">§〇 M</span></span></td><td><a href="#s12">§12</a></td></tr>
+    <tr><td>提交</td><td>submission</td><td>Handing the submission file to Kaggle for scoring; at most 10 a day <span class="tag">§〇 M</span><span class="zh zb" lang="zh-Hant-TW">把答案檔交給 Kaggle 評分；一天最多 10 筆 <span class="tag">§〇 M</span></span></td><td><a href="#s12">§12</a></td></tr>
     <tr><td>公開分數</td><td>public score</td><td>The score Kaggle gives and shows on the public leaderboard<span class="zh zb" lang="zh-Hant-TW">Kaggle 打完分、顯示在公開榜上的那個分數</span></td><td><a href="#s11">§11</a></td></tr>
   </table></div>
   <p class="small" id="termNone" hidden>No word matches. Try another word. <span class="zh" lang="zh-Hant-TW">沒有符合的名詞，換個字試試。</span></p>
@@ -856,7 +888,7 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
 <footer class="sec" id="refs">
   <h2>Sources</h2><p class="zh hzh" lang="zh-Hant-TW">出處</p>
   <ul>
-    <li>The only source of numbers on this page: the content spec <code>內容規格.md</code> (v3, revised 2026-11-24 after the second review) in the same folder, §〇. The tags “§〇 A” to “§〇 M” point to those cells.<span class="zh zb" lang="zh-Hant-TW">本頁唯一的數字來源：同資料夾 <code>內容規格.md</code>（v3，2026-11-24 第二輪複驗後修訂）§〇。標籤「§〇 A」到「§〇 M」就是那一格。</span></li>
+    <li>The only source of numbers on this page: the content spec <code>內容規格.md</code> (v3, revised 2026-11-24 after the second review) in the same folder, §〇. The tags “§〇 A” to “§〇 M” point to those cells.<span class="zh zb" lang="zh-Hant-TW">本頁唯一的數字來源：同資料夾 <code>內容規格.md</code>（v4，2026-11-24 全員複驗後修訂）§〇。標籤「§〇 A」到「§〇 M」就是那一格。</span></li>
     <li>§〇 A: the Kaggle Spaceship Titanic Data page (read 11/24) and <code>shape</code> in <code>runs/explore.json</code>.<span class="zh zb" lang="zh-Hant-TW">§〇 A：Kaggle Spaceship Titanic 的 Data 頁（11/24 讀）與 <code>runs/explore.json</code> 的 <code>shape</code>。</span></li>
     <li>§〇 B–I: <code>runs/explore.json</code> (<code>rules</code>, <code>tree_text</code>, <code>tree_depth</code>, <code>reshuffle</code>, <code>feature_sets</code>, <code>boost_rounds</code>, <code>learning</code>, <code>perm_importance</code>, <code>confusion</code>), produced by <code>explore.py</code> on 2026-11-24 on a free Colab CPU machine; that run took 138.8 seconds.<span class="zh zb" lang="zh-Hant-TW">§〇 B–I：<code>runs/explore.json</code>（<code>rules</code>、<code>tree_text</code>、<code>tree_depth</code>、<code>reshuffle</code>、<code>feature_sets</code>、<code>boost_rounds</code>、<code>learning</code>、<code>perm_importance</code>、<code>confusion</code>），由 <code>explore.py</code> 2026-11-24 在 Colab 免費 CPU 機器上跑出來，那一趟 138.8 秒。</span></li>
     <li>§〇 D, K: <code>runs/train-job.log</code> and <code>runs/train-metrics.json</code>, produced by <code>train.py</code> on the same day.<span class="zh zb" lang="zh-Hant-TW">§〇 D、K：<code>runs/train-job.log</code> 與 <code>runs/train-metrics.json</code>，由 <code>train.py</code> 同一天跑出來。</span></li>
@@ -867,8 +899,8 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
   <h3>Eight things not verified (“§〇 ⚠️n” on the page means item n here)</h3><p class="zh hzh" lang="zh-Hant-TW">沒驗的八件（頁面上的「§〇 ⚠️n」就是這裡的第 n 件）</p>
   <ol>
     <li>The browser route for students in Colab has not been tried; Section 12 is only how the teacher ran it this time <span class="tag">§〇 ⚠️1</span>.<span class="zh zb" lang="zh-Hant-TW">學生用瀏覽器開 Colab 的路沒走過；第 12 節只是老師這次的跑法 <span class="tag">§〇 ⚠️1</span>。</span></li>
-    <li>What share of test.csv the public score uses, and how the top teams did it: not checked <span class="tag">§〇 ⚠️2</span>.<span class="zh zb" lang="zh-Hant-TW">公開分數用 test.csv 的多少比例算、榜首怎麼做到的，沒查 <span class="tag">§〇 ⚠️2</span>。</span></li>
-    <li>What rule a decision tree uses to send blanks to one side: not checked in the official explanation <span class="tag">§〇 ⚠️3</span>.<span class="zh zb" lang="zh-Hant-TW">決策樹遇到空格時照什麼規則分邊，沒查官方說明 <span class="tag">§〇 ⚠️3</span>。</span></li>
+    <li>How the top two got above 0.93: not checked <span class="tag">§〇 ⚠️2</span>.<span class="zh zb" lang="zh-Hant-TW">前兩名怎麼拿到 0.93 以上，沒查 <span class="tag">§〇 ⚠️2</span>。</span></li>
+    <li>The rule for which side the blanks go to is written from the scikit-learn 1.6 official explanation; we did not run our own experiment to confirm it <span class="tag">§〇 ⚠️3</span>.<span class="zh zb" lang="zh-Hant-TW">空格分邊的規則是照 scikit-learn 1.6 官方說明寫的，我們沒有另外做實驗確認 <span class="tag">§〇 ⚠️3</span>。</span></li>
     <li>The plain-words explanation of gradient boosting is a general explanation; “the model leans on it” does not mean cause <span class="tag">§〇 ⚠️4</span>.<span class="zh zb" lang="zh-Hant-TW">梯度提升的白話是一般說法；「模型看重」不等於因果 <span class="tag">§〇 ⚠️4</span>。</span></li>
     <li>These numbers come from scikit-learn 1.6.1; if Colab changes versions later, the numbers may shift a little <span class="tag">§〇 ⚠️5</span>.<span class="zh zb" lang="zh-Hant-TW">這些數字是 scikit-learn 1.6.1 的結果；Colab 之後換版本，數字可能差一點 <span class="tag">§〇 ⚠️5</span>。</span></li>
     <li>This page is scheduled for Week 13; the matching student hands-on page is not made yet <span class="tag">§〇 ⚠️6</span>.<span class="zh zb" lang="zh-Hant-TW">這一頁排在第 13 週用；配套的學生動手頁還沒做 <span class="tag">§〇 ⚠️6</span>。</span></li>
@@ -1112,10 +1144,10 @@ const CELLS = { A: "比賽與資料", B: "人寫的規則拿幾分", C: "電腦�
   F: "很多棵樹接力", G: "資料多寡", H: "模型看重哪幾欄", I: "猜對猜錯四格", J: "交上 Kaggle 的分數", K: "整趟怎麼跑的", L: "名詞", M: "比賽規則裡跟教材有關的" };
 const CELLS_EN = { A: "Competition and data", B: "Scores of hand-written rules", C: "The computer finds rules: one decision tree", D: "Holding out a test and 5-fold cross-validation", E: "Preparing the columns",
   F: "Many trees in a relay", G: "More or less data", H: "Which columns the model leans on", I: "The four boxes of right and wrong guesses", J: "Scores on Kaggle", K: "How the whole run worked", L: "Words", M: "Competition rules that matter for this page" };
-const WARNS = { 1: "學生用瀏覽器 Colab 的路沒走過", 2: "公開分數用 test.csv 的多少比例算、榜首怎麼做到的，沒查", 3: "決策樹遇到空格時照什麼規則分邊，沒查官方說明",
+const WARNS = { 1: "學生用瀏覽器 Colab 的路沒走過", 2: "前兩名怎麼拿到 0.93 以上，沒查", 3: "空格分邊的規則是照 scikit-learn 1.6 官方說明寫的，我們沒有另外做實驗確認",
   4: "梯度提升的白話是一般說法；模型看重不等於因果", 5: "這些數字是 scikit-learn 1.6.1 的結果，換版本可能差一點", 6: "這一頁排在第 13 週用；配套的學生動手頁還沒做",
   7: "HomePlanet 沒填的 201 人，在這幾棵樹裡實際被歸到哪一邊，沒查", 8: "六個消費相關欄一起打亂會掉多少，沒做" };
-const WARNS_EN = { 1: "the browser route in Colab for students has not been tried", 2: "what share of test.csv the public score uses, and how the top teams did it, not checked", 3: "what rule a decision tree uses to send blanks to one side, not checked in the official explanation",
+const WARNS_EN = { 1: "the browser route in Colab for students has not been tried", 2: "how the top two got above 0.93, not checked", 3: "the rule for which side the blanks go to is written from the scikit-learn 1.6 official explanation; we did not run our own experiment to confirm it",
   4: "the plain-words explanation of gradient boosting is a general explanation; the model leaning on a column does not mean cause", 5: "these numbers come from scikit-learn 1.6.1 and may shift a little with another version", 6: "this page is scheduled for Week 13; the matching student hands-on page is not made yet",
   7: "where the 201 people with a blank HomePlanet actually went in these trees, not checked", 8: "how much the score drops when the six spending-related columns are shuffled together, not done" };
 function tagTitle(text) {
@@ -1146,8 +1178,15 @@ $$(".guess").forEach(g => {
       x.classList.toggle("wrong", x === b && !x.hasAttribute("data-ok"));
     });
     g.querySelector(".ans").hidden = false;
+    const sec = g.closest("section");
+    if (sec) { sec.querySelectorAll(".gate").forEach(x => { x.hidden = false; }); sec.querySelectorAll(".gatehint").forEach(x => { x.hidden = true; }); }
   }));
 });
+(() => {
+  const w = $("#fakeWrap");
+  const f = () => w.classList.toggle("at-end", w.scrollLeft + w.clientWidth >= w.scrollWidth - 2);
+  w.addEventListener("scroll", f); window.addEventListener("resize", f); f();
+})();
 
 /* ================= §0 全路徑地圖 ================= */
 const MAP = {
@@ -1167,9 +1206,9 @@ const MAP = {
     `After the five rounds, train once more on all 8,693 people, and use this model to guess the 4,277 people in test.csv. It predicts “transported” for 50.22% of them ${tg("§〇 J")}.`,
     `五輪考完之後，用全部 8,693 人重新訓練一次，拿這個模型去猜 test.csv 的 4,277 人；預測「被傳送」的佔 50.22% ${tg("§〇 J")}。`],
   sub: ["⑥ Submission file (written on Colab, brought back)", "⑥ 答案檔（Colab 寫出、帶回來）",
-    `Written as <code>submission.csv</code> (4,277 rows, 2 columns) ${tg("§〇 K")}. Download it from Colab, then submit it with the Kaggle command line ${tg("§〇 K")}. See Section 12.`,
-    `寫成 <code>submission.csv</code>（4,277 列、2 欄）${tg("§〇 K")}，從 Colab 下載回來，再用 Kaggle 命令列交上去 ${tg("§〇 K")}。看第 12 節。`],
-  score: ["⑦ Kaggle scores it", "⑦ Kaggle 打分",
+    `This submission file (it holds our guesses, not the correct answers) is written as <code>submission.csv</code> (4,277 rows, 2 columns) ${tg("§〇 K")}. Download it from Colab, then submit it with the Kaggle command line ${tg("§〇 K")}. See Section 12.`,
+    `這個答案檔（裡面是我們猜的答案，不是正確答案）寫成 <code>submission.csv</code>（4,277 列、2 欄）${tg("§〇 K")}，從 Colab 下載回來，再用 Kaggle 命令列交上去 ${tg("§〇 K")}。看第 12 節。`],
+  score: ["⑦ Kaggle scores it", "⑦ Kaggle 評分",
     `Only Kaggle has the answers for test.csv. This time the public score is 0.80126; the rule from Week 11 got 0.72550 ${tg("§〇 J")}. See Section 11.`,
     `只有 Kaggle 有 test.csv 的答案。這次的公開分數 0.80126；上次那條規則 0.72550 ${tg("§〇 J")}。看第 11 節。`],
   lb: ["⑧ Leaderboard", "⑧ 排行榜",
@@ -1190,14 +1229,14 @@ showMap("data");
 
 /* ================= §1 欄位 ================= */
 const COLS = {
-  PassengerId: "乘客編號，長得像 gggg_pp：前四碼是同行的那一團，後兩碼是團裡第幾位。同團常是家人，但不一定。",
+  PassengerId: "乘客編號，長得像 gggg_pp：前四碼是同一團（一起上船的人）的編號，後兩碼是團裡第幾位。同團常是家人，但不一定。",
   HomePlanet: "出發的星球。三種：Earth、Europa、Mars。",
   CryoSleep: "航程中有沒有選擇冬眠。冬眠的人待在自己艙房裡。",
   Cabin: "艙房，長得像「甲板/房號/左右舷」，舷是 P（左舷）或 S（右舷）。甲板有 A、B、C、D、E、F、G、T 八種。",
   Destination: "要去的星球。三種：55 Cancri e、PSO J318.5-22、TRAPPIST-1e。",
   Age: "年齡。0 到 79 歲，中位數 27。",
   VIP: "有沒有付費買 VIP 服務。",
-  RoomService: "五種消費之一：客房服務花了多少錢（欄名直譯）。缺的那格，加總時當沒有。",
+  RoomService: "五種消費之一：客房服務花了多少錢（欄名直譯）。缺的那格，加總時當 0。",
   FoodCourt: "五種消費之一：美食街花了多少錢（欄名直譯）。",
   ShoppingMall: "五種消費之一：購物中心花了多少錢（欄名直譯）。",
   Spa: "五種消費之一：水療花了多少錢（欄名直譯）。",
@@ -1206,14 +1245,14 @@ const COLS = {
   Transported: "答案欄：有沒有被傳送。只有 train.csv 有，test.csv 沒有。"
 };
 const COLS_EN = {
-  PassengerId: "Passenger ID, shaped like gggg_pp: the first four digits are the group traveling together, and the last two are the person's number in that group. A group is often a family, but not always.",
+  PassengerId: "Passenger ID, shaped like gggg_pp: the first four digits are the number of the group (people who boarded together), and the last two are the person's number in that group. A group is often a family, but not always.",
   HomePlanet: "The planet the person left from. Three kinds: Earth, Europa, Mars.",
   CryoSleep: "Whether the person chose cryosleep (a deep sleep) for the trip. People in cryosleep stay in their own cabins.",
   Cabin: "Cabin, shaped like “deck/number/side.” The side is P (port, the left side) or S (starboard, the right side). There are eight decks: A, B, C, D, E, F, G, T.",
   Destination: "The planet the person is going to. Three kinds: 55 Cancri e, PSO J318.5-22, TRAPPIST-1e.",
   Age: "Age. From 0 to 79, median 27.",
   VIP: "Whether the person paid for VIP service.",
-  RoomService: "One of the five kinds of spending: how much was spent on room service (a literal reading of the column name). When we add up spending, a blank counts as nothing.",
+  RoomService: "One of the five kinds of spending: how much was spent on room service (a literal reading of the column name). When we add up spending, a blank counts as 0.",
   FoodCourt: "One of the five kinds of spending: how much was spent at the food court (a literal reading of the column name).",
   ShoppingMall: "One of the five kinds of spending: how much was spent at the shopping mall (a literal reading of the column name).",
   Spa: "One of the five kinds of spending: how much was spent at the spa (a literal reading of the column name).",
@@ -1251,7 +1290,7 @@ function showRule(k) {
     s += `<text x="${L + 6}" y="${y + 73}" font-size="12" class="soft">${fmtInt(g.n)} 人裡 ${fmtInt(g.t)} 人被傳送${g.pct ? "（" + g.pct + "）" : ""}</text>`;
   });
   const h = 14 + r.groups.length * rowH;
-  const svg = $("#ruleSvg"); svg.setAttribute("viewBox", `0 0 900 ${h}`); svg.innerHTML = s;
+  const svg = $("#ruleSvg"); svg.setAttribute("viewBox", `0 0 900 ${h}`); svg.innerHTML = s; svg.classList.remove("hidden");
   const groupsEn = r.groups.map((g, i) => `${esc(e.labels[i])}: ${fmtInt(g.n)} people, ${fmtInt(g.t)} of them transported${g.pct ? " (" + g.pct + ")" : ""}; this group is guessed “${g.guess ? "transported" : "not transported"}”`).join("; ");
   const groupsTxt = r.groups.map(g => `${esc(g.label)} ${fmtInt(g.n)} 人裡 ${fmtInt(g.t)} 人被傳送${g.pct ? "（" + g.pct + "）" : ""}，這群猜「${g.guess ? "被傳送" : "沒被傳送"}」`).join("；");
   $("#rulePanel").innerHTML = H4(esc(e.name), esc(r.name)) + P2(`${groupsEn} ${tg("§〇 B")}.`, `${groupsTxt} ${tg("§〇 B")}。`) +
@@ -1319,12 +1358,13 @@ function lineChart(svg, o) {
   o.labels.forEach((lb, i) => { (Array.isArray(lb) ? lb : [lb]).forEach((tx, k) => { s += `<text x="${x(i)}" y="${H - B + 22 + k * 16}" text-anchor="middle" font-size="${k || n > 10 ? 12 : 14}" class="soft">${esc(tx)}</text>`; }); });
   if (o.xTitle) s += `<text x="${(L + W - R) / 2}" y="${H - 12}" text-anchor="middle" font-size="14" class="soft">${esc(o.xTitle)}</text>`;
   if (o.hline) s += `<line class="ln-rule" x1="${L}" x2="${W - R}" y1="${y(o.hline.v)}" y2="${y(o.hline.v)}"/><text x="${W - R}" y="${y(o.hline.v) - 26}" text-anchor="end" font-size="13" fill="var(--red)">${esc(o.hline.label[0])}</text><text x="${W - R}" y="${y(o.hline.v) - 9}" text-anchor="end" font-size="12" fill="var(--red)">${esc(o.hline.label[1])}</text>`;
+  if (o.legend) o.legend.forEach((lg, k) => { s += `<line x1="${L + 14}" x2="${L + 40}" y1="${T + 14 + k * 20}" y2="${T + 14 + k * 20}" class="${lg[0]}"/><text x="${L + 48}" y="${T + 19 + k * 20}" font-size="13">${esc(lg[1])}</text>`; });
   s += `<line class="selline" x1="${x(o.sel)}" x2="${x(o.sel)}" y1="${T}" y2="${H - B}"/>`;
   o.series.forEach(se => {
     s += `<polyline class="${se.cls}" points="${se.vals.map((v, i) => `${x(i)},${y(v)}`).join(" ")}"/>`;
     se.vals.forEach((v, i) => { s += `<circle class="${se.dot}" cx="${x(i)}" cy="${y(v)}" r="${i === o.sel ? 8 : 4.5}"/>`; });
     const v = se.vals[o.sel];
-    s += `<text x="${x(o.sel) + (o.sel > n * 0.7 ? -12 : 12)}" y="${Math.max(T + 14, y(v) + (se.above ? -12 : 22))}" text-anchor="${o.sel > n * 0.7 ? "end" : "start"}" font-size="15" font-weight="900">${fmt4(v)}</text>`;
+    s += `<text x="${x(o.sel) + (o.sel > n * 0.7 ? -12 : 12)}" y="${Math.max(T + 14, y(v) + (se.above ? -12 : 22))}" text-anchor="${o.sel > n * 0.7 ? "end" : "start"}" font-size="15" font-weight="900" class="vlabel">${fmt4(v)}</text>`;
   });
   svg.setAttribute("viewBox", `0 0 900 ${H}`);
   svg.innerHTML = s;
@@ -1334,7 +1374,7 @@ function kv(items) { return items.map(([k, v]) => `<div><div class="k">${k}</div
 /* ================= §4 樹深度 ================= */
 function showDepth(i) {
   const rows = D.tree_depth, idx = clampIdx(rows, i), r = rows[idx];
-  lineChart($("#tdSvg"), { labels: rows.map(x => (x.max_depth === null ? [depthLabelEn(x), depthLabel(x)] : depthLabel(x))), sel: idx, lo: 0.70, hi: 1.0, ticks: [0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.0], xTitle: "Maximum number of questions (depth)／最多問幾題",
+  lineChart($("#tdSvg"), { labels: rows.map(x => (x.max_depth === null ? [depthLabelEn(x), depthLabel(x)] : depthLabel(x))), sel: idx, lo: 0.70, hi: 1.0, ticks: [0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.0], xTitle: "Maximum number of questions (depth)／最多問幾題", legend: [["ln-train", "Practice questions／練習題"], ["ln-val", "Unseen questions／沒看過的題"]],
     series: [{ vals: rows.map(x => x.train), cls: "ln-train", dot: "dot-train", above: true }, { vals: rows.map(x => x.val), cls: "ln-val", dot: "dot-val" }] });
   $("#tdOut").innerHTML = kv([["Max questions" + ZB("最多問幾題"), esc(depthLabelEn(r)) + (r.max_depth === null ? ZB(esc(depthLabel(r))) : "")],
     ["Practice questions " + tg("§〇 C") + ZB("練習題"), fmt4(r.train)], ["Unseen questions " + tg("§〇 C") + ZB("沒看過的題"), fmt4(r.val)], ["Leaves " + tg("§〇 C") + ZB("葉子"), fmtInt(r.leaves_full_fit)]]);
@@ -1374,8 +1414,8 @@ function showSeed(i) {
   const r = D.reshuffle[seedI];
   $("#seedNote").innerHTML = esc(`Now: random seed ${r.seed} (${D.reshuffle.length} splits in all)`) + ZB(esc(`現在是亂數種子 ${r.seed}（共 ${D.reshuffle.length} 種切法）`));
   $("#seedPanel").innerHTML = H4(`Split ${seedI + 1}: five-round average ${fmt4(r.val)}`, `切法 ${seedI + 1}：五輪平均 ${fmt4(r.val)}`) +
-    P2(`Averages of the five splits: ${D.reshuffle.map((x, j) => j === seedI ? "<b>" + fmt4(x.val) + "</b>" : fmt4(x.val)).join(", ")} ${tg("§〇 D")}. Same model, same data: just changing the split moves the score by about 0.004 ${tg("§〇 D")}. ${seedI === 0 ? "The per-round scores in the five blocks above come from this split." : "The five blocks above still show the original split (random seed 0). This page does not list the per-round scores for this split, only its average."}`,
-      `五種切法的平均：${D.reshuffle.map((x, j) => j === seedI ? "<b>" + fmt4(x.val) + "</b>" : fmt4(x.val)).join("、")} ${tg("§〇 D")}。同一個模型、同一份資料，光是切法不同就差到 0.004 左右 ${tg("§〇 D")}。${seedI === 0 ? "上面五個方塊的每輪分數就是這一種切法。" : "上面五個方塊仍是原本的切法（亂數種子 0）；這一種切法每一輪的分數，這頁沒有列，只列平均。"}`);
+    P2(`The average of each of the five splits: ${D.reshuffle.map((x, j) => j === seedI ? "<b>" + fmt4(x.val) + "</b>" : fmt4(x.val)).join(", ")} ${tg("§〇 D")}. Same model, same data: just changing the split moves the score by about 0.004 ${tg("§〇 D")}. ${seedI === 0 ? "The per-round scores in the five blocks above come from this split." : "The five blocks above still show the original split (random seed 0). This page does not list the per-round scores for this split, only its average."}`,
+      `五種切法各自的平均：${D.reshuffle.map((x, j) => j === seedI ? "<b>" + fmt4(x.val) + "</b>" : fmt4(x.val)).join("、")} ${tg("§〇 D")}。同一個模型、同一份資料，光是切法不同就差到 0.004 左右 ${tg("§〇 D")}。${seedI === 0 ? "上面五個方塊的每輪分數就是這一種切法。" : "上面五個方塊仍是原本的切法（亂數種子 0）；這一種切法每一輪的分數，這頁沒有列，只列平均。"}`);
 }
 $("#reshuffleBtn").addEventListener("click", () => showSeed((seedI + 1) % D.reshuffle.length));
 showSeed(0);
@@ -1400,8 +1440,8 @@ function showPid() {
   if (!r.inTable) { $("#pidOut").innerHTML = H4("This ID is not in the made-up table", "這筆不在自編表") + P2(`The format can be split: the first four digits are the group number, and the last two are the person's number in the group ${tg("§〇 A")}. But the made-up table in Section 1 does not have this ID, so we cannot look up its group size. Try an ID from the table, for example <code>9901_01</code>.`,
     `格式拆得開：前四碼是團號、後兩碼是團裡的序號 ${tg("§〇 A")}。可是第 1 節那張自編表裡沒有這一筆，查不到同團人數。試試表裡的編號，例如 <code>9901_01</code>。`); return; }
   $("#pidOut").innerHTML = H4(`Group ${esc(r.group)}, person ${r.idx}`, `第 ${esc(r.group)} 團的第 ${r.idx} 位`) +
-    P2(`Same group = same first four digits ${tg("§〇 E")}. In the made-up table in Section 1, group ${esc(r.group)} has ${r.groupSize} ${r.groupSize > 1 ? "people" : "person"}, so <code>GroupSize</code> would be ${r.groupSize} (made-up example). The real count puts the 13,970 people of train.csv and test.csv together ${tg("§〇 E")}.`,
-      `同一團＝前四碼相同 ${tg("§〇 E")}。在第 1 節那張自編表裡，第 ${esc(r.group)} 團有 ${r.groupSize} 人，所以 <code>GroupSize</code> 會是 ${r.groupSize}（自編示意）。真的計算是把 train.csv 與 test.csv 的 13,970 人放在一起數 ${tg("§〇 E")}。`);
+    P2(`Same group = same first four digits ${tg("§〇 E")}. In the made-up table in Section 1, group ${esc(r.group)} has ${r.groupSize} ${r.groupSize > 1 ? "people" : "person"}, so <code>GroupSize</code> would be ${r.groupSize} (made-up example). The real count puts the 12,970 people of train.csv and test.csv together ${tg("§〇 E")}.`,
+      `同一團＝前四碼相同 ${tg("§〇 E")}。在第 1 節那張自編表裡，第 ${esc(r.group)} 團有 ${r.groupSize} 人，所以 <code>GroupSize</code> 會是 ${r.groupSize}（自編示意）。真的計算是把 train.csv 與 test.csv 的 12,970 人放在一起數 ${tg("§〇 E")}。`);
 }
 $("#cabinIn").addEventListener("input", showCabin); showCabin();
 $("#pidIn").addEventListener("input", showPid); showPid();
@@ -1426,7 +1466,7 @@ showFs();
 /* ================= §7 接力 ================= */
 function showBoost(i) {
   const rows = D.boost_rounds, idx = clampIdx(rows, i), r = rows[idx];
-  lineChart($("#brSvg"), { labels: rows.map(x => fmtInt(x.max_iter)), sel: idx, lo: 0.78, hi: 1.0, ticks: [0.78, 0.82, 0.86, 0.90, 0.94, 0.98], xTitle: "Number of trees in the relay／接力幾棵",
+  lineChart($("#brSvg"), { labels: rows.map(x => fmtInt(x.max_iter)), sel: idx, lo: 0.78, hi: 1.0, ticks: [0.78, 0.82, 0.86, 0.90, 0.94, 0.98], xTitle: "Number of trees in the relay／接力幾棵", legend: [["ln-train", "Practice questions／練習題"], ["ln-val", "Unseen questions／沒看過的題"]],
     series: [{ vals: rows.map(x => x.train), cls: "ln-train", dot: "dot-train", above: true }, { vals: rows.map(x => x.val), cls: "ln-val", dot: "dot-val" }] });
   $("#brOut").innerHTML = kv([["Trees in the relay" + ZB("接力幾棵"), fmtInt(r.max_iter) + (r.max_iter === 300 ? " (submitted)" + ZB("（交出去的）") : "")], ["Practice questions " + tg("§〇 F") + ZB("練習題"), fmt4(r.train)],
     ["Unseen questions " + tg("§〇 F") + ZB("沒看過的題"), fmt4(r.val)], ["All five rounds " + tg("§〇 F") + ZB("五輪一共"), r.seconds + " seconds" + ZB(r.seconds + " 秒")]]);
@@ -1611,9 +1651,9 @@ const QS = [
     e: `練習題一路升到 0.9984，沒看過的題從 0.7820（問 6 題）掉到 0.7424 ${tg("§〇 C")}。這就是過度擬合。`,
     qEn: "With no limit, the tree grows to 1,451 leaves, but on unseen questions it scores only 0.7424. Why?", oEn: ["The computer made a math mistake", "Too many leaves: about 6 people per leaf on average, so it has likely also learned the accidental details of these few people", "The data is not clean enough", "More leaves are always more accurate; this is an exception"],
     eEn: `Practice questions climb all the way to 0.9984, while unseen questions fall from 0.7820 (6 questions) to 0.7424 ${tg("§〇 C")}. This is overfitting.` },
-  { q: "為什麼不能拿練習題的分數去跟別人比？", o: ["因為練習題太少", "因為練習題模型看過答案；300 棵的練習題 0.9252，交上去只有 0.80126", "因為 Kaggle 不准", "其實可以比"], a: 1,
+  { q: "為什麼不能拿練習題的分數，當成模型遇到新乘客時的成績？", o: ["因為練習題太少", "因為練習題模型看過答案；300 棵的練習題 0.9252，交上去只有 0.80126", "因為 Kaggle 不准", "其實可以比"], a: 1,
     e: `練習題 0.9252 ${tg("§〇 F")}，自己留考題 0.8119 ${tg("§〇 D")}，Kaggle 0.80126 ${tg("§〇 J")}。這張表每一個設定都是練習題比較高 ${tg("§〇 F")}。`,
-    qEn: "Why can't we compare practice-question scores with other people's scores?", oEn: ["Because there are too few practice questions", "Because the model has seen the answers to the practice questions; with 300 trees the practice questions score 0.9252, but the submission scored only 0.80126", "Because Kaggle does not allow it", "Actually we can"],
+    qEn: "Why can't we use the practice-question score as the model's score on new passengers?", oEn: ["Because there are too few practice questions", "Because the model has seen the answers to the practice questions; with 300 trees the practice questions score 0.9252, but the submission scored only 0.80126", "Because Kaggle does not allow it", "Actually we can"],
     eEn: `Practice questions 0.9252 ${tg("§〇 F")}, our own held-out test 0.8119 ${tg("§〇 D")}, Kaggle 0.80126 ${tg("§〇 J")}. In this table, the practice questions score higher for every setting ${tg("§〇 F")}.` },
   { q: "同一個模型換切法，平均就差到 0.004 左右。那 100 棵（0.8139）比 300 棵（0.8119）高 0.002，算不算 100 棵贏？", o: ["算，0.8139 比較大", "不算，這個差距比換切法造成的晃動還小，只憑這張表分不出誰比較好", "算，而且贏很多", "不算，因為 300 棵比較慢"], a: 1,
     e: `0.002 比 0.004 小，只憑這張表分不出誰比較好 ${tg("§〇 D")} ${tg("§〇 F")}。`,
@@ -1631,10 +1671,10 @@ const QS = [
     e: `0.0006 是 15 欄裡最少的 ${tg("§〇 H")}。這只說在這個模型、這一輪考題上打亂 VIP 幾乎不影響分數，不說誰造成被傳送，也不代表 VIP 跟被傳送沒有關係 ${tg("§〇 ⚠️4")}。`,
     qEn: "Shuffling VIP drops the score by only 0.0006. What does this mean?", oEn: ["VIP has nothing at all to do with being transported", "We can only say: for this model and this round's test, shuffling VIP barely changes the score", "The VIP data is fake", "VIP is the most important column"],
     eEn: `0.0006 is the smallest drop of the 15 columns ${tg("§〇 H")}. It only says that for this model and this round's test, shuffling VIP barely changes the score. It says nothing about what causes being transported, and it does not mean VIP has nothing to do with being transported ${tg("§〇 ⚠️4")}.` },
-  { q: "榜上 0.80126，比自己估的 0.8119 低約 0.011。差在哪？", o: ["Kaggle 算錯", "Kaggle 用的是 test.csv，答案我們手上沒有；自己估的是 train.csv 留下來的那份", "交錯檔案了", "兩個其實一樣"], a: 1,
-    e: `自己估的比榜上高約 0.011 ${tg("§〇 J")}。兩個分數考的是不同的人，差一點很正常；會不會每次都偏高，只看這一次看不出來 <span class="wn">⚠️ 推論</span>。公開分數是用 test.csv 的全部還是一部分算的，這次沒查 ${tg("§〇 ⚠️2")}。`,
+  { q: "榜上 0.80126，比自己估的 0.8119 低約 0.011。差在哪？", o: ["Kaggle 算錯", "Kaggle 用的是 test.csv，答案我們手上沒有；自己估的是 train.csv 五輪各留下來的那一份", "交錯檔案了", "兩個其實一樣"], a: 1,
+    e: `自己估的比榜上高約 0.011 ${tg("§〇 J")}。兩個分數考的是不同的人，差一點很正常；會不會每次都偏高，只看這一次看不出來 <span class="wn">⚠️ 推論</span>。公開分數是用 test.csv 全部 4,277 人算的（比賽的 Leaderboard 頁寫明用全部測試資料）${tg("§〇 J")}。`,
     qEn: "On the leaderboard we got 0.80126, about 0.011 lower than our own estimate of 0.8119. What is different about the two scores?", oEn: ["Kaggle made a mistake", "Kaggle uses test.csv, and we do not have its answers; our own estimate uses the parts of train.csv we held out in the five rounds", "We submitted the wrong file", "The two are actually the same"],
-    eEn: `This time our own estimate was about 0.011 higher than the public score ${tg("§〇 J")}. The two scores test different people, so a small gap is normal. Whether it is always higher, we cannot tell from this one time <span class="wn">⚠️ our inference</span>. Whether the public score uses all of test.csv or only part of it, we did not check this time ${tg("§〇 ⚠️2")}.` },
+    eEn: `This time our own estimate was about 0.011 higher than the public score ${tg("§〇 J")}. The two scores test different people, so a small gap is normal. Whether it is always higher, we cannot tell from this one time <span class="wn">⚠️ our inference</span>. The public score is calculated with all 4,277 people in test.csv (the competition's Leaderboard page says it uses all of the test data) ${tg("§〇 J")}.` },
   { q: "從 0.80 往上再爬 0.01 到 0.81，大約要追過多少隊？", o: ["幾十隊", "一千隊以上：0.80–0.805 有 465 隊、0.805–0.81 有 637 隊", "兩三百隊", "不用追，0.80 已經是前面"], a: 1,
     e: `465 與 637 兩帶加起來超過一千隊 ${tg("§〇 J")}。2,142 隊裡有 1,505 隊擠在 0.79 到 0.81 ${tg("§〇 J")}；在 0.80 到 0.81 這一段，每一點點都很擠。`,
     qEn: "To climb another 0.01, from 0.80 to 0.81, about how many teams do you need to pass?", oEn: ["A few dozen", "More than a thousand: 465 teams in 0.80–0.805 and 637 teams in 0.805–0.81", "Two or three hundred", "None; 0.80 is already near the front"],
