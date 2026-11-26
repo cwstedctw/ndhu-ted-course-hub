@@ -204,7 +204,7 @@ footer{margin:30px 0 0;color:var(--mist);font-size:14px}
       <li><b>起始檔要在連 ESP32 基地台<u>之前</u>抓好</b>（連上之後板子沒有外網）。</li>
       <li><b>藍牙套件已經在起始檔裡（<code>vendor/</code> 資料夾），不用也不要自己 pip 安裝。</b>AI 叫你裝，先給老師看。</li>
       <li><b>第 10 課程式裡叫 <code>blue</code> 的那顆燈，板子上是<u>綠燈</u></b>（GPIO 13）。看到「blue」別找藍燈。</li>
-      <li><b>老師 11/26 上午已經用一塊 ESP32＋一塊 UNO Q 真的跑過</b>：WiFi 線、藍牙線、連基地台、解壓起始檔、板上跑假的 ESP32 都通。<b>還沒驗、以現場為準的只剩三件</b>：光線感測器遮住時數字變大還是變小；十組同時開基地台會不會互相干擾；用 SSH 進板子時 <code>nmcli</code> 連 WiFi 會不會要權限。一問一答要多久，<b>今天你自己量</b>。</li>
+      <li><b>老師 11/26 上午已經用一塊 ESP32＋一塊 UNO Q 真的跑過</b>：WiFi 線、藍牙線、連基地台、解壓起始檔、板上跑假的 ESP32 都通。<b>還沒驗、以現場為準的只剩兩件</b>：十組同時開基地台會不會互相干擾；用 SSH 進板子時 <code>nmcli</code> 連 WiFi 會不會要權限。一問一答要多久，<b>今天你自己量</b>。</li>
     </ol>
   </div>
 
@@ -335,7 +335,7 @@ nmcli device wifi connect maker-XXXX password makerXXXX</pre></div>
       <div class="box"><pre class="out" data-src="out">連線中…
 WiFi 連上 http://192.168.4.1（回應 … ms）
 HH:MM:SS wifi  溫度    … 濕度    … 光線     … 旋鈕     … 門檻    … | 讀     … ms | 送：red關、yellow關、green開、彩色燈(0, 0, 0)</pre></div>
-      <p class="see"><b class="lab see-l">應該看到</b>板子上的綠燈亮（程式裡叫 <code>blue</code>，板子上是綠燈）；溫度 ≥ 門檻時紅燈亮、蜂鳴器嗶一聲。ESP32 的感測值大約每 2 秒才更新一次，大腦每秒問，所以常連續兩行一模一樣——正常。<b>別用手機同時開 ESP32 的網頁</b>：第 10 課一次只服務一個連線，會跟大腦搶；真的想同時開，大腦那行最後加 <code>--period 2</code>（兩秒問一次）。<b>光線</b>：遮住時數字變小，夜燈就會亮；要是遮住反而變大、或沒遮夜燈就一直亮，把 <code>rules.py</code> 裡的 <code>DARK_WHEN_LOW</code> 改成 <code>False</code>（第四部分會教怎麼改；⚠️ 方向老師還沒用手遮過，現場為準）。</p></li>
+      <p class="see"><b class="lab see-l">應該看到</b>板子上的綠燈亮（程式裡叫 <code>blue</code>，板子上是綠燈）；溫度 ≥ 門檻時紅燈亮、蜂鳴器嗶一聲。ESP32 的感測值大約每 2 秒才更新一次，大腦每秒問，所以常連續兩行一模一樣——正常。<b>別用手機同時開 ESP32 的網頁</b>：第 10 課一次只服務一個連線，會跟大腦搶；真的想同時開，大腦那行最後加 <code>--period 2</code>（兩秒問一次）。<b>光線</b>：遮住時數字變小，夜燈就會亮；要是遮住反而變大、或沒遮夜燈就一直亮，把 <code>rules.py</code> 裡的 <code>DARK_WHEN_LOW</code> 改成 <code>False</code>（第四部分會教怎麼改）。老師的板子實測是遮住變小、掉到接近 0，沒遮大約兩千；教室比較暗的話數字會低一些。</p></li>
     <li><p class="do"><b class="lab do-l">做什麼</b>60 秒到了，看統計那一行，<b>抄下中位數、最快、最慢、95%</b>，跟第一部分假板子的比一比。這是你今天量到的<b>真的 WiFi 一問一答時間</b>。<span class="dur">多久：2 分鐘</span></p>
       <p class="type"><b class="lab type-l">打什麼</b>不用打，它自己停。</p>
       <div class="box"><pre class="out" data-src="out">==== 這次跑了 N 輪，失敗 0 次；紀錄在 log_wifi_….csv ====

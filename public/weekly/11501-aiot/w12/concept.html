@@ -462,7 +462,7 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <li><b>先按「走一輪」</b>：第一輪一定印 <code>送：red關、yellow關、green開、彩色燈(0, 0, 0)</code>——大腦還不知道 ESP32 上的燈是什麼樣子，所以全部送一次；黃燈在起始檔的規則裡沒用到，永遠關 <span class="tag" title="內容規格 §〇 D 第 4 點〈黃燈〉">§〇 D·每次啟動第一輪印的是</span>。</li>
     <li><b>拉溫度到 30</b>（WiFi、旋鈕不動＝門檻 28.1）：紅燈亮、綠燈滅，<b>只有剛變熱那一輪嗶</b>；之後每一輪都印「沒變」——燈本來就是那樣，不再送一次。熱的判斷是「到門檻（含）以上」<span class="tag" title="內容規格 §〇 D 第 4 點立霧複驗後修正 ⑥">§〇 D·到門檻（含）以上</span>。</li>
     <li><b>轉旋鈕到最右邊</b>：門檻變 35.0，30 度不算熱了 → <code>送：red關、green開</code> <span class="tag" title="內容規格 §〇 D 第 1 點 假 ESP32 × WiFi 線">§〇 D·假 ESP32 × WiFi 線</span>。</li>
-    <li><b>光線拉到 1000 以下</b>：彩色燈變夜燈 <code>(255, 160, 60)</code>；取消勾選 <code>DARK_WHEN_LOW</code> 就反過來（數字大才算暗）。真板子遮光時數字往哪走沒驗，今天自己看 <span class="wn">⚠️</span> <span class="tag" title="內容規格 §〇 D 第 5 點 沒驗：光感方向">§〇 D·光感方向</span>。</li>
+    <li><b>光線拉到 1000 以下</b>：彩色燈變夜燈 <code>(255, 160, 60)</code>；取消勾選 <code>DARK_WHEN_LOW</code> 就反過來（數字大才算暗）。老師的板子實測：遮住時數字變小（掉到接近 0），預設值不用改；你的教室多亮，數字自己看 <span class="tag" title="內容規格 §〇 G 真板實測：光感方向">§〇 G·光感方向</span>。</li>
     <li><b>試改規則</b>（延伸）：勾「濕度 ≥ 70 亮黃燈」、把濕度拉到 70 以上，黃燈亮、終端機送 <code>yellow開</code>。這條是頁面上的試改，起始檔沒有；第四部分你在 <code>rules.py</code> 自己加，只要改那一支，<code>brain.py</code> 和兩條線都認得黃燈 <span class="tag" title="內容規格 §〇 D 第 4 點〈黃燈〉">§〇 D·學生都只要改</span>。</li>
     <li><b>切到藍牙、按 A 鍵</b>：A 鍵一按下，板子主動「通知」大腦，下一輪就嗶；WiFi 模式按 A，大腦完全看不到。同時注意：藍牙模式光線、旋鈕印 <code>--</code>，門檻固定 28 <span class="tag" title="內容規格 §〇 D 第 2 點 模擬藍牙">§〇 D·模擬藍牙</span>。</li>
   </ol>
