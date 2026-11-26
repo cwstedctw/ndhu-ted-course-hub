@@ -526,7 +526,7 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
       <h4>藍牙：連線本身斷了</h4>
       <p>藍牙是一條「連著」的線。斷掉時 <code>link_ble.py</code> 會叫醒正在等回話的人，這一輪印：</p>
       <pre class="term">HH:MM:SS ESP32 沒回應（第 1 次）：藍牙斷線了</pre>
-      <p>下一輪先印 <code>藍牙斷線了，重新連線…</code>，重新掃描名字。掃到就印 <code>藍牙連上 maker-XXXX（…）</code>，但<b>這一輪還是算失敗</b>（ESP32 可能重開過、燈都滅了），印 <code>ESP32 沒回應（第 N 次）：藍牙剛重新連上，下一輪重送燈號</code>，下一輪燈號全部重送；掃不到這一輪也算失敗，冒號後面接 <code>掃不到 maker-XXXX：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？</code> <span class="tag" title="內容規格 §〇 D 第 4 點 ④ 藍牙斷線會叫醒等待、下一輪自動重新掃描重連">§〇 D·自動重新掃描重連</span>。</p>
+      <p>下一輪先印 <code>藍牙斷線了，重新連線…</code>，重新掃描名字。掃到就印 <code>藍牙連上 maker-XXXX（…）</code>，但<b>這一輪還是算失敗</b>（ESP32 可能重開過、燈都滅了），印 <code>ESP32 沒回應（第 N 次）：藍牙剛重新連上，下一輪重送燈號</code>，下一輪燈號全部重送；掃不到這一輪也算失敗，冒號後面接 <code>掃不到 maker-XXXX：附近沒有任何 maker- 開頭的板子在廣播。ESP32 有按住 A 開機嗎（OLED 顯示 BLE）？名字打對了嗎？上一位同學的程式停了嗎（藍牙一次只能連一台）？</code> <span class="tag" title="內容規格 §〇 D 第 4 點 ④ 藍牙斷線會叫醒等待、下一輪自動重新掃描重連">§〇 D·自動重新掃描重連</span>。</p>
       <p class="small">真的藍牙多久才發現斷線、斷線那一刻會不會先出現別的字樣，沒驗 <span class="wn">⚠️</span>：今天拔電看看。藍牙「掃不到 maker-XXXX」先查：ESP32 是不是<b>真的重開過</b>、按住 A 開機、<b>看到 OLED 顯示 BLE 才放開</b>；手機程式是不是先連著它（一次只能一個中心）。</p>
     </div>
   </div>
@@ -691,6 +691,23 @@ import urllib.request
 LED_NAME = {"red": "red", "yellow": "yellow", "green": "blue"}   # 我們說 green，d10 叫它 blue
 
 
+def current_wifi():
+    """問 Linux：UNO Q 現在連的是哪個 WiFi？（不是 Linux 或問不到就回空字串）
+    ESP32 輪流用的時候很重要：UNO Q 會記得上一塊板子，可能自己連回鄰座那一塊。"""
+    import subprocess
+    try:
+        # 問 wlan0 這張網卡現在用的是哪一筆連線（名字就是 WiFi 名稱；這樣問不用重新掃描，很快）
+        out = subprocess.run(["nmcli", "-t", "-f", "GENERAL.CONNECTION", "device", "show", "wlan0"],
+                             capture_output=True, text=True, timeout=5).stdout
+        for line in out.splitlines():
+            name = line.partition(":")[2].strip()
+            if name and name != "--":
+                return name
+    except Exception:
+        pass
+    return ""
+
+
 class WifiLink:
     kind = "wifi"
 
@@ -707,8 +724,17 @@ class WifiLink:
         return json.loads(body)
 
     async def connect(self):
-        st = self._get("/api/status")          # 先問一次，確定找得到板子
-        return "WiFi 連上 {}（回應 {:.0f} ms）".format(self.base, self.last_rtt_ms)
+        try:
+            st = self._get("/api/status")      # 先問一次，確定找得到板子
+        except OSError as e:
+            ap = current_wifi()
+            now = "UNO Q 現在連的 WiFi 是 {}".format(ap) if ap else "UNO Q 現在沒有連任何 WiFi"
+            raise RuntimeError("{}（{}）。要連真的 ESP32，先連它的 WiFi：\n"
+                               "  nmcli device wifi connect maker-XXXX password makerXXXX"
+                               "（XXXX 看 ESP32 的 OLED）".format(e, now))
+        ap = current_wifi()
+        where = "；UNO Q 現在連的 WiFi 是 {}——跟你手上 ESP32 的 OLED 一樣嗎？".format(ap) if ap else ""
+        return "WiFi 連上 {}（回應 {:.0f} ms）{}".format(self.base, self.last_rtt_ms, where)
 
     async def read(self):
         st = self._get("/api/status")
@@ -814,7 +840,15 @@ class BleLink:
             await asyncio.sleep(2)
             dev = await BleakScanner.find_device_by_name(self.name, timeout=10.0)
         if dev is None:
-            raise RuntimeError("掃不到 {}：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？".format(self.name))
+            seen = []
+            try:
+                found = await BleakScanner.discover(timeout=4.0)
+                seen = sorted({d.name for d in found if d.name and d.name.startswith("maker-")})
+            except Exception:
+                pass
+            hint = "附近看得到的板子：{}。".format("、".join(seen)) if seen else "附近沒有任何 maker- 開頭的板子在廣播。"
+            raise RuntimeError("掃不到 {}：{}ESP32 有按住 A 開機嗎（OLED 顯示 BLE）？名字打對了嗎？"
+                               "上一位同學的程式停了嗎（藍牙一次只能連一台）？".format(self.name, hint))
         self.client = BleakClient(dev, disconnected_callback=self._on_disconnect)
         await self.client.connect()
         await self.client.start_notify(NUS_TX, self._on_text)
@@ -1429,7 +1463,7 @@ async function connect() {
   } else {
     seqAdd("大腦掃描藍牙名字", "", "maker-XXXX");
     if (SIM.speed && !REDUCED) await sleep(500 / SIM.speed);
-    if (!SIM.power) { term("連不上 ESP32：掃不到 maker-XXXX：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？", "redl"); return false; }
+    if (!SIM.power) { term("連不上 ESP32：掃不到 maker-XXXX：附近沒有任何 maker- 開頭的板子在廣播。ESP32 有按住 A 開機嗎（OLED 顯示 BLE）？名字打對了嗎？上一位同學的程式停了嗎（藍牙一次只能連一台）？", "redl"); return false; }
     term("藍牙連上 maker-XXXX（板子的藍牙位址）", "okl");
   }
   SIM.connected = true;
@@ -1456,7 +1490,7 @@ async function oneRound() {
         term("藍牙斷線了，重新連線…", "warnl");
         seqAdd("大腦重新掃描藍牙名字", "", "maker-XXXX");
         if (SIM.speed && !REDUCED) await sleep(500 / SIM.speed);
-        if (!SIM.power) throw new Fail("掃不到 maker-XXXX：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？", "RuntimeError");
+        if (!SIM.power) throw new Fail("掃不到 maker-XXXX：附近沒有任何 maker- 開頭的板子在廣播。ESP32 有按住 A 開機嗎（OLED 顯示 BLE）？名字打對了嗎？上一位同學的程式停了嗎（藍牙一次只能連一台）？", "RuntimeError");
         term("藍牙連上 maker-XXXX（板子的藍牙位址）", "okl");
         SIM.connected = true;
         // link_ble.py 的 _ensure()：重連成功也算這一輪失敗，大腦下一輪把燈號全部重送

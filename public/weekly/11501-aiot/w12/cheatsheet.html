@@ -69,7 +69,7 @@ a{color:var(--teal)}
 <nav><a href="student.html">學生頁（完整步驟）</a><a href="concept.html">互動概念頁</a></nav>
 <h1>W12 指令小抄：雙腦合作——UNO Q 當大腦、ESP32 當手腳</h1>
 <p class="sub">AIoT 智慧裝置實作 115-1・11/26（四）E307。照順序一行一行打；<span class="where">教室機</span>＝視窗 A、<span class="where b">板子</span>＝SSH 視窗 B、<span class="where b">視窗 C</span>＝第二個 SSH、<span class="where p">瀏覽器／ESP32</span>＝網頁或板子上按。<code>XXXX</code> 一律換成你那塊 ESP32 OLED 上的四個字。看不懂為什麼 → 學生頁同一節；卡住 → 學生頁「卡關總表」，或把完整錯誤訊息貼給 AI agent（板子密碼不要貼）。印成 A4 兩頁。</p>
-<div class="musts"><b>①</b> SSH 只走 USB <code>192.168.7.2</code>　<b>②</b> 起始檔要在連 ESP32 基地台<b>之前</b>抓好（連上後沒有外網）　<b>③</b> 藍牙套件已經在起始檔裡，不用也不要自己 pip 安裝；今天不用 sudo　<b>④</b> 第 10 課的 <code>blue</code> 是<b>綠燈</b>　<b>⑤</b> 還沒驗、現場為準：十組同時開、SSH 下 <code>nmcli</code> 要不要權限；毫秒數今天自己量</div>
+<div class="musts"><b>①</b> SSH 只走 USB <code>192.168.7.2</code>　<b>②</b> 起始檔要在連 ESP32 基地台<b>之前</b>抓好（連上後沒有外網）　<b>③</b> 藍牙套件已經在起始檔裡，不用也不要自己 pip 安裝；今天不用 sudo　<b>④</b> 第 10 課的 <code>blue</code> 是<b>綠燈</b>　<b>⑤</b> 還沒驗、現場為準：十組同時開、SSH 下 <code>nmcli</code> 要不要權限；毫秒數今天自己量　<b>⑥</b> 交出 ESP32 前先 Ctrl＋C</div>
 <div class="parts">
 
 <div class="part">
@@ -120,6 +120,14 @@ nmcli device wifi connect maker-XXXX password makerXXXX</pre>
 <pre>python3 brain.py --link wifi --esp 192.168.4.1</pre>
 <p class="k">每輪 <code>ESP32 沒回應（第 N 次）</code>；ESP32 重開後 UNO Q 會自己連回去，第一輪燈號全部重送。還連著嗎：</p>
 <pre>nmcli -t dev status</pre></div>
+
+<div class="card"><h3>換一塊 ESP32（輪流）</h3>
+<p><span class="where b">板子</span><b>交出去</b>：先 Ctrl＋C，再讓 UNO Q 忘掉這塊；<b>接過來</b>：<code>XXXX</code> 換成新那塊的 OLED，WiFi 掃、連，藍牙直接用名字</p>
+<pre>nmcli connection delete maker-XXXX
+nmcli device wifi list
+nmcli device wifi connect maker-XXXX password makerXXXX
+python3 brain.py --link ble --name maker-XXXX</pre>
+<p class="k">大腦第一行的 <code>UNO Q 現在連的 WiFi 是 …</code> 要跟 OLED 一樣。</p></div>
 </div>
 
 </div>
@@ -169,8 +177,8 @@ python3 webui.py --link ble-sim --esp 127.0.0.1:8090</pre>
 
 <div class="card stuck"><h3>🆘 三個最常見的卡關</h3>
 <p><b>① SSH 斷線</b>：用了 WiFi 的位址。改 <code>ssh arduino@192.168.7.2</code>；說鑰匙變了 → 教室機 <code>ssh-keygen -R 192.168.7.2</code>。</p>
-<p><b>② 一直 <code>ESP32 沒回應</code>／<code>連不上 ESP32：…</code></b>：UNO Q 還連在 <code>maker-XXXX</code> 嗎（<code>nmcli -t dev status</code>）？ESP32 重開了嗎？名字對照 OLED。燈顏色怪：<code>blue</code> 是綠燈。</p>
-<p><b>③ 藍牙起不來、<code>掃不到 maker-XXXX</code>／<code>No module named 'bleak'</code></b>：ESP32 要真的重開（按住 A 再按 EN、看到 <code>BLE</code> 才放開）；手機 App 別先連著它；要在 <code>w12-starter</code> 裡跑，還是不行就重新解壓。</p></div>
+<p><b>② <code>ESP32 沒回應</code>／<code>連不上 ESP32：…</code></b>：ESP32 剛重開就等它，UNO Q 會自己連回；說沒連任何 WiFi → 照下一行打 <code>nmcli device wifi connect</code>；WiFi 名字跟 OLED 不一樣 → <code>nmcli connection delete</code> 那個名字。燈顏色怪：<code>blue</code> 是綠燈。</p>
+<p><b>③ 藍牙 <code>掃不到 maker-XXXX</code>／<code>No module named 'bleak'</code></b>：OLED 要 <code>BLE</code>（按住 A 再按 EN）→ 名字 → 請上一位 Ctrl＋C（走了就重開 ESP32）；要在 <code>w12-starter</code> 裡跑，不行就重新解壓。</p></div>
 </div>
 
 </div>
