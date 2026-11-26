@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W12 指令小抄｜雙腦合作：UNO Q 當大腦、ESP32 當手腳</title>
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --ink:#132525; --mist:#5E7676; --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF;
+  --gold-tint:#FBF0D9; --gold-deep:#7A5510; --red:#B4553F; --red-tint:#F7E4DE; --code-bg:#F3F6F5; --dark:#062524;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#0B1A1A;--surface:#112424;--ink:#E6F2F2;--mist:#8FA9A8;--line:#26403F;--teal:#5CC8C6;--teal-tint:#123A39;--gold-tint:#3A2F18;--gold-deep:#F3D08A;--red:#E58B74;--red-tint:#3A2019;--code-bg:#0D1F1F;--dark:#041716;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0B1A1A;--surface:#112424;--ink:#E6F2F2;--mist:#8FA9A8;--line:#26403F;--teal:#5CC8C6;--teal-tint:#123A39;--gold-tint:#3A2F18;--gold-deep:#F3D08A;--red:#E58B74;--red-tint:#3A2019;--code-bg:#0D1F1F;--dark:#041716;color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:15px;line-height:1.55}
+main{max-width:1280px;margin:0 auto;padding:16px 16px 40px}
+h1{font-size:22px;margin:0 0 2px}
+.sub{color:var(--mist);font-size:13.5px;margin:0 0 10px}
+.parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.pg2{margin-top:14px}
+.part > h2{margin:0 0 8px;padding:6px 10px;border-radius:10px;background:var(--dark);color:#E6F2F2;font-size:15.5px;line-height:1.35}
+.part > h2 small{display:block;color:#E8B85A;font-size:12px;font-weight:700;letter-spacing:.08em}
+.card{break-inside:avoid;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:0 0 10px}
+.card h3{font-size:14.5px;margin:0 0 4px;color:var(--teal)}
+.card.stuck{border-color:var(--red);background:var(--red-tint)}
+.card.stuck h3{color:var(--red)}
+.where{display:inline-block;font-size:12px;font-weight:700;padding:0 6px;border-radius:6px;background:var(--teal-tint);color:var(--teal);margin-right:4px}
+.where.b{background:var(--gold-tint);color:var(--gold-deep)}
+.where.p{background:var(--code-bg);color:var(--ink);border:1px solid var(--line)}
+pre{margin:4px 0 6px;padding:6px 8px;background:var(--code-bg);border-radius:8px;white-space:pre-wrap;overflow-wrap:anywhere;font:12.8px/1.5 var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+code{font-family:var(--mono);font-size:.92em;background:var(--code-bg);border-radius:4px;padding:0 3px;font-variant-ligatures:none;overflow-wrap:anywhere}
+p{margin:3px 0}
+.k{font-size:13px;color:var(--mist)}
+.warn{color:var(--red);font-weight:700}
+.musts{border:2px solid var(--red);border-radius:12px;padding:6px 12px;margin:0 0 12px;background:var(--red-tint);font-size:14px}
+.musts b{color:var(--red)}
+nav{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;margin-bottom:8px}
+a{color:var(--teal)}
+@media (max-width:900px){ .parts{grid-template-columns:minmax(0,1fr)} }
+@media print{
+  @page{size:A4;margin:9mm}
+  body{background:#fff;color:#000;font-size:13px;line-height:1.45}
+  main{padding:0;max-width:none}
+  nav{display:none}
+  h1{font-size:18px}
+  .sub{font-size:11.5px;margin-bottom:6px}
+  .musts{font-size:12px;padding:4px 8px;margin-bottom:8px;border-radius:6px}
+  .parts{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .part > h2{font-size:14px;padding:4px 8px;margin-bottom:6px;border-radius:6px;background:#062524;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .part > h2 small{font-size:10.5px;color:#E8B85A}
+  .card{padding:5px 9px;margin:0 0 8px;border-radius:6px}
+  .card h3{font-size:13.5px;margin-bottom:2px}
+  pre{font-size:11.4px;line-height:1.4;padding:3px 6px;margin:3px 0}
+  p{margin:2px 0}
+  .k{font-size:11.5px}
+  .where{font-size:10.5px}
+  .pg2{break-before:page;margin-top:0}
+}
+</style>
+</head>
+<body>
+<main>
+<nav><a href="student.html">學生頁（完整步驟）</a><a href="concept.html">互動概念頁</a></nav>
+<h1>W12 指令小抄：雙腦合作——UNO Q 當大腦、ESP32 當手腳</h1>
+<p class="sub">AIoT 智慧裝置實作 115-1・11/26（四）E307。照順序一行一行打；<span class="where">教室機</span>＝視窗 A、<span class="where b">板子</span>＝SSH 視窗 B、<span class="where b">視窗 C</span>＝第二個 SSH、<span class="where p">瀏覽器／ESP32</span>＝網頁或板子上按。<code>XXXX</code> 一律換成你那塊 ESP32 OLED 上的四個字。看不懂為什麼 → 學生頁同一節；卡住 → 學生頁「卡關總表」，或把完整錯誤訊息貼給 AI agent（板子密碼不要貼）。印成 A4 兩頁。</p>
+<div class="musts"><b>①</b> SSH 只走 USB <code>192.168.7.2</code>　<b>②</b> 起始檔、bleak 都在連 ESP32 基地台<b>之前</b>弄好　<b>③</b> 不准 <code>sudo pip install</code>、不准 <code>--break-system-packages</code>　<b>④</b> 第 10 課的 <code>blue</code> 是<b>綠燈</b>　<b>⑤</b> 真板延遲、bleak 能不能裝、開機選單、光感方向：現場為準</div>
+<div class="parts">
+
+<div class="part">
+<h2><small>準備＋第一部分 14:10–14:45</small>SSH 走 USB、假的 ESP32</h2>
+
+<div class="card"><h3>0 準備</h3>
+<p><span class="where p">ESP32</span>插電、開機<b>不按鍵</b>（WiFi 模式）；OLED 抄下 <code>maker-XXXX</code></p>
+<p><span class="where">教室機</span>開視窗 B 進板子（只用這個位址）</p>
+<pre>ssh arduino@192.168.7.2</pre>
+<p><span class="where b">板子</span>抓起始檔、解開、走進去，<code>ls</code> 看到 <code>brain.py</code>、<code>rules.py</code></p>
+<pre>curl -LO https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-aiot/w12/starter/w12-starter.tar.gz
+tar xzf w12-starter.tar.gz
+cd w12-starter
+ls</pre>
+<p class="k">抓不到 → 跟老師拿資料夾，<span class="where">教室機</span>（在資料夾上一層）：</p>
+<pre>scp -r w12-starter arduino@192.168.7.2:~/</pre></div>
+
+<div class="card"><h3>1 假的 ESP32（📸 截圖一張）</h3>
+<p><span class="where b">板子</span>開假板子，一直跑著</p>
+<pre>python3 fake_esp32.py</pre>
+<p><span class="where p">瀏覽器</span>教室機開 <code>http://192.168.7.2:8090</code>（虛擬 EZ 板）</p>
+<p><span class="where">教室機</span>再開一個 SSH 當視窗 C</p>
+<pre>ssh arduino@192.168.7.2</pre>
+<p><span class="where b">視窗 C</span>大腦連假板子，每秒一行</p>
+<pre>cd w12-starter
+python3 brain.py --link wifi --esp 127.0.0.1:8090</pre>
+<p class="k">拉桿：溫度 31 → 紅燈＋嗶（只在剛變熱那輪）；光線 300 → 夜燈 <code>(255, 160, 60)</code>；旋鈕 4095 → 門檻 35。兩個視窗 Ctrl＋C 停；看「讀一次感測值來回」那行。假板子的紀錄也叫 <code>log_wifi_…</code>，交作業挑時間晚的。</p></div>
+</div>
+
+<div class="part">
+<h2><small>第二部分 14:45–15:25</small>WiFi 真板（第 10 課）</h2>
+
+<div class="card"><h3>2-1 <span class="warn">先</span>裝 bleak（板子還能上網）</h3>
+<p><span class="where b">板子</span>只裝進自己的 <code>~/w12env</code>；裝不了 → 藍牙改看示範＋<code>ble-sim</code></p>
+<pre>python3 -m venv --system-site-packages ~/w12env
+~/w12env/bin/pip install bleak</pre></div>
+
+<div class="card"><h3>2-2 連 ESP32 的基地台</h3>
+<p><span class="where b">板子</span>先掃再連；<code>sudo</code> 問板子密碼，再問 WiFi 密碼 <code>makerXXXX</code></p>
+<pre>nmcli device wifi list
+sudo nmcli --ask device wifi connect maker-XXXX</pre>
+<p class="k">視窗 B 不會斷（走 USB）。連上之後板子就上不了網。</p></div>
+
+<div class="card"><h3>2-3 跑 60 秒、抄統計</h3>
+<p><span class="where b">板子</span>手握 DHT11、轉旋鈕、遮光；60 秒自己停 → 抄中位數、最快、最慢、95%</p>
+<pre>python3 brain.py --link wifi --esp 192.168.4.1 --seconds 60</pre>
+<p class="k">感測值約每 2 秒更新一次，連續幾行一樣正常。手機別同時開 ESP32 網頁（會搶連線；要開就加 <code>--period 2</code>）。遮光數字反了 → <code>rules.py</code> 的 <code>DARK_WHEN_LOW</code> 改 <code>False</code>。</p></div>
+
+<div class="card"><h3>2-4 斷線長什麼樣子</h3>
+<p><span class="where b">板子</span>跑起來後拔 ESP32 電 10 秒再插回，看完 Ctrl＋C</p>
+<pre>python3 brain.py --link wifi --esp 192.168.4.1</pre>
+<p class="k">每輪 <code>ESP32 沒回應（第 N 次）</code>；接回來第一輪燈號全部重送。還連著嗎：</p>
+<pre>nmcli -t dev status</pre></div>
+</div>
+
+</div>
+<div class="parts pg2">
+
+<div class="part">
+<h2><small>第三部分 15:35–16:10</small>藍牙（第 11 課）</h2>
+
+<div class="card"><h3>3-1 ESP32 換藍牙模式</h3>
+<p><span class="where p">ESP32</span><b>按住 A</b>、按 EN／RST（或重插電），<b>看到 OLED 顯示 <code>BLE</code> 才放開</b></p></div>
+
+<div class="card"><h3>3-2 跑 60 秒、按 A 鍵、抄統計</h3>
+<p><span class="where b">板子</span>開頭是 <code>~/w12env/bin/python</code>；光線、旋鈕 <code>--</code>、門檻固定 28；按 A → <code>有人按了 ESP32 的 A 鍵</code>（同一秒按兩下只算一次）</p>
+<pre>~/w12env/bin/python brain.py --link ble --name maker-XXXX --seconds 60</pre>
+<p><span class="where b">板子</span>斷線長相：跑起來後拔 ESP32 電，看完 Ctrl＋C（⚠️ 現場為準）</p>
+<pre>~/w12env/bin/python brain.py --link ble --name maker-XXXX</pre></div>
+
+<div class="card"><h3>3-3 退路：模擬藍牙</h3>
+<p><span class="where b">板子</span>假板子；<span class="where b">視窗 C</span>大腦（作業註明「模擬藍牙」，延遲不算數）</p>
+<pre>python3 fake_esp32.py</pre>
+<pre>python3 brain.py --link ble-sim --esp 127.0.0.1:8090 --seconds 60</pre></div>
+</div>
+
+<div class="part">
+<h2><small>第四部分 16:10–16:40</small>改大腦、收尾、交作業</h2>
+
+<div class="card"><h3>4 改 <code>rules.py</code>（三選一）</h3>
+<p><span class="where b">板子</span>先讀一次</p>
+<pre>cat rules.py</pre>
+<p class="k">① 濕度高 → 黃燈（把 <code>decide()</code> 裡的 <code>"yellow": False</code> 換成濕度判斷；假板子改濕度 <code>http://192.168.7.2:8090/sim/set?hum=80</code>）② 按 A → 換夜燈顏色（藍牙線讀不到光線，夜燈不會自己亮）③ 自己想。改完 Ctrl＋C 重跑才生效。</p>
+<p><span class="where b">視窗 C</span>用假板子測（題目二用這條）</p>
+<pre>python3 brain.py --link ble-sim --esp 127.0.0.1:8090</pre></div>
+
+<div class="card"><h3>收尾、交作業（e學苑，10 點）</h3>
+<p><span class="where">教室機</span>把紀錄檔拿下來</p>
+<pre>scp arduino@192.168.7.2:~/w12-starter/log_*.csv .</pre>
+<p><span class="where b">板子</span>查原本的網路叫什麼，再 <code>sudo nmcli connection up</code> 接那個名字</p>
+<pre>nmcli connection show</pre>
+<p class="k">交：兩份紀錄檔（WiFi 真板、藍牙或 <code>ble-sim</code> 並註明）＋三句比較（各讀得到什麼、中位數各幾 ms、斷線怎麼表現）＋<code>rules.py</code> 改了哪一條、為什麼。</p></div>
+
+<div class="card stuck"><h3>🆘 三個最常見的卡關</h3>
+<p><b>① SSH 斷線</b>：用了 WiFi 的位址。改 <code>ssh arduino@192.168.7.2</code>；說鑰匙變了 → 教室機 <code>ssh-keygen -R 192.168.7.2</code>。</p>
+<p><b>② 一直 <code>ESP32 沒回應</code>／<code>連不上 ESP32：…</code></b>：UNO Q 還連在 <code>maker-XXXX</code> 嗎（<code>nmcli -t dev status</code>）？ESP32 重開了嗎？名字對照 OLED。燈顏色怪：<code>blue</code> 是綠燈。</p>
+<p><b>③ 藍牙 <code>掃不到 maker-XXXX</code>／<code>No module named 'bleak'</code></b>：按住 A 開機、看到 <code>BLE</code> 才放開；手機 App 別先連著它；要用 <code>~/w12env/bin/python</code> 跑。</p></div>
+</div>
+
+</div>
+</main>
+</body>
+</html>

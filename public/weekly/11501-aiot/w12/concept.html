@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W12 雙腦合作概念頁</title>
+<meta name="description" content="AIoT 智慧裝置實作 W12 互動概念頁：UNO Q 當大腦、ESP32 當手腳。全路徑地圖、雙腦模擬器（WiFi／藍牙兩條線、逐輪畫出封包先後）、先猜再揭曉、兩條線對照表、斷線長相、延伸、名詞、想一想。">
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --surface-2:#F1F5F4; --ink:#132525; --ink-soft:#3E5656; --mist:#5A7272;
+  --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF; --gold:#D9A441; --gold-deep:#7A5510; --gold-tint:#FBF0D9;
+  --dark:#062524; --red:#B0503A; --red-tint:#F7E4DE; --violet:#5B4B9A; --violet-tint:#ECE8F7;
+  --pc:#2F5B9E; --pc-tint:#E5EDF8;
+  --code-bg:#F3F6F5; --code-ink:#1B3433;
+  --pcb:#1D5C4A; --pcb-ink:#E9F5EF; --led-off:#55625F;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC","Heiti TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono","Liberation Mono","Noto Sans Mono CJK TC",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#93ADAC;
+    --line:#2A4544; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+    --dark:#041716; --red:#EC9580; --red-tint:#3D2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+    --pc:#8DB4F0; --pc-tint:#16273F;
+    --code-bg:#0D1F1F; --code-ink:#D5E6E5;
+    --pcb:#123A30; --pcb-ink:#D8EEE5; --led-off:#3A4846;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#93ADAC;
+  --line:#2A4544; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+  --dark:#041716; --red:#EC9580; --red-tint:#3D2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+  --pc:#8DB4F0; --pc-tint:#16273F;
+  --code-bg:#0D1F1F; --code-ink:#D5E6E5;
+  --pcb:#123A30; --pcb-ink:#D8EEE5; --led-off:#3A4846;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:16.5px;line-height:1.8}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.5}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+a{color:var(--teal);text-underline-offset:3px}
+code,pre,kbd{font-family:var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+code{font-size:.92em;background:var(--code-bg);color:var(--code-ink);border-radius:5px;padding:0 4px;overflow-wrap:anywhere}
+pre{margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--code-bg);color:var(--code-ink);font-size:14px;line-height:1.6;white-space:pre;overflow-x:auto;max-width:100%}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header.hero{background:var(--dark);color:#E6F2F2;padding:28px 0 22px}
+.hero .kicker{font-weight:800;font-size:13px;letter-spacing:.12em;color:#E8B85A}
+.hero h1{font-size:clamp(26px,5vw,40px);line-height:1.25;margin:6px 0 10px;font-weight:900}
+.hero p{margin:6px 0;color:#BFD6D5}
+.hero code{background:rgba(230,242,242,.12);color:#F3D08A}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-top:10px;font-size:14px;color:#BFD6D5}
+.tag{display:inline-block;padding:0 7px;margin:0 2px;border-radius:7px;background:var(--teal-tint);color:var(--teal);font-size:12.5px;font-weight:800;line-height:1.7;white-space:nowrap;vertical-align:1px;font-family:var(--zh)}
+.hero .tag{background:rgba(92,200,198,.18);color:#8FE0C9}
+.wn{color:var(--red);font-weight:800}
+nav.toc{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 20px;margin:20px 0}
+nav.toc h2{font-size:18px;margin:0 0 6px}
+nav.toc ol{margin:0;padding-left:0;list-style:none;columns:2 260px}
+nav.toc li{margin:2px 0}
+nav.toc .n{display:inline-block;width:26px;font-weight:900;color:var(--gold-deep)}
+.toc-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:5px 12px;font-size:14.5px;line-height:1.4;flex:0 0 auto;max-width:100%}
+.btn:hover:not(:disabled){border-color:var(--teal)}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#062524}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#062524}}
+.btn[aria-pressed="true"]{background:var(--gold-tint);border-color:var(--gold);color:var(--gold-deep);font-weight:800}
+.btn.danger[aria-pressed="true"]{background:var(--red-tint);border-color:var(--red);color:var(--red)}
+section.sec{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:20px 0;scroll-margin-top:16px}
+section.sec h2{font-size:clamp(21px,3.4vw,26px);line-height:1.4;margin:0 0 6px}
+section.sec h2 .n{color:var(--gold-deep);margin-right:8px}
+h3{font-size:18px;margin:18px 0 4px}
+.lead{margin:2px 0 10px;color:var(--ink-soft)}
+.small{font-size:14.5px;color:var(--mist)}
+.note{padding:10px 14px;border-left:4px solid var(--gold);background:var(--gold-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.warn{padding:10px 14px;border-left:4px solid var(--red);background:var(--red-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface-2);padding:12px 16px;margin:10px 0;min-width:0}
+.panel h4{margin:0 0 4px;font-size:16.5px}
+.panel p{margin:4px 0}
+.panel .exc{font-size:13.5px;color:var(--mist);margin:8px 0 -4px}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.ctrl label{font-size:15px;flex:0 0 auto}
+.ctrl .txt{flex:1 1 180px;min-width:0;max-width:100%}
+.ctrl select{flex:0 1 auto;max-width:100%;padding:4px 9px;border:2px solid var(--teal);border-radius:10px;background:var(--surface)}
+.seg{display:inline-flex;border:2px solid var(--teal);border-radius:12px;overflow:hidden;flex:0 0 auto}
+.seg button{border:0;background:var(--surface);padding:5px 14px;font-size:15px;font-weight:700}
+.seg button[aria-pressed="true"]{background:var(--teal);color:#fff}
+:root[data-theme="dark"] .seg button[aria-pressed="true"]{color:#062524}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg button[aria-pressed="true"]{color:#062524}}
+details.deep{border:1px solid var(--line);border-radius:12px;margin:12px 0;background:var(--surface)}
+details.deep > summary{cursor:pointer;font-weight:800;padding:8px 14px}
+details.deep > summary::before{content:"🔍 深入一層：";color:var(--violet)}
+details.deep > .in{padding:2px 16px 14px}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px;margin:10px 0}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.cmpt td:first-child{font-weight:800;white-space:nowrap}
+.cmpt input{width:100%;min-width:0;padding:4px 8px;border:2px solid var(--teal);border-radius:8px;background:var(--surface);font-family:var(--mono)}
+svg.fig{display:block;width:100%;height:auto;margin:8px 0;font-family:var(--zh)}
+svg.fig text{fill:var(--ink)}
+svg.fig .mono{font-family:var(--mono)}
+svg.fig .soft{fill:var(--mist)}
+svg.fig .box{fill:var(--surface);stroke:var(--line);stroke-width:2}
+svg.fig .box.pc{fill:var(--pc-tint);stroke:var(--pc)}
+svg.fig .box.bd{fill:var(--teal-tint);stroke:var(--teal)}
+svg.fig .box.gold{fill:var(--gold-tint);stroke:var(--gold)}
+svg.fig .box.red{fill:var(--red-tint);stroke:var(--red)}
+svg.fig .box.vio{fill:var(--violet-tint);stroke:var(--violet)}
+svg.fig .wire{stroke:var(--mist);stroke-width:3;fill:none}
+svg.fig .wire.hot{stroke:var(--gold);stroke-width:4}
+svg.fig .wire.dash{stroke-dasharray:8 6}
+svg.fig .arrow{fill:var(--mist)}
+svg.fig [role="button"]{cursor:pointer}
+svg.fig [role="button"]:focus{outline:none}
+svg.fig [role="button"]:focus .box,svg.fig .sel .box{stroke:var(--gold);stroke-width:4}
+svg.fig .zone{fill:none;stroke-width:2;stroke-dasharray:6 5}
+.node-grid{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+pre.term{background:var(--dark);color:#D5E6E5;border:1px solid #244443}
+pre.term .cmdline{color:#F3D08A;font-weight:700}
+pre.term .okl{color:#8FE0C9}
+pre.term .redl{color:#EC9580;font-weight:700}
+pre.term .sim{color:#93ADAC;font-style:italic}
+pre.term .warnl{color:#E8B85A}
+.cap{font-size:13.5px;color:var(--mist);margin:-4px 0 8px}
+/* ===== 模擬器 ===== */
+.simbar{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:10px 0;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2)}
+.simbar .grp{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-width:0}
+.simbar .lab{font-size:14px;color:var(--mist);font-weight:800;flex:0 0 auto}
+.simgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:14px;align-items:start}
+@media (max-width:820px){.simgrid{grid-template-columns:minmax(0,1fr)}}
+.board{background:var(--pcb);color:var(--pcb-ink);border-radius:16px;padding:12px 14px;min-width:0;border:2px solid #0F3B2F}
+.board h4{margin:0 0 6px;font-size:16px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.board h4 span{font-size:13px;font-weight:400;opacity:.85}
+.oled{background:#05080A;color:#9FE7FF;font-family:var(--mono);font-size:13.5px;line-height:1.45;border-radius:6px;padding:6px 10px;margin:0 0 10px;border:2px solid #2A3438;min-height:72px;white-space:pre;overflow:hidden}
+.leds{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end;margin:4px 0 10px}
+.ledw{display:flex;flex-direction:column;align-items:center;gap:2px;flex:0 0 auto;font-size:12.5px;text-align:center;line-height:1.3}
+.led{width:30px;height:30px;border-radius:50%;background:var(--led-off);border:2px solid rgba(0,0,0,.35);transition:background .15s,box-shadow .15s}
+.led.on{box-shadow:0 0 14px 3px var(--glow,#fff)}
+.buzz{padding:3px 9px;border-radius:8px;border:2px solid rgba(255,255,255,.35);font-size:13px;font-weight:800;flex:0 0 auto}
+.buzz.on{background:#F2C14E;color:#1d1300;border-color:#F2C14E}
+.sl{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin:6px 0 8px}
+.sl label{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 8px;font-size:14.5px}
+.sl label b{font-family:var(--mono)}
+.sl input[type=range]{width:100%;accent-color:#F2C14E}
+.rd{display:inline-block;font-size:12px;font-weight:800;padding:0 6px;border-radius:6px;line-height:1.7}
+.rd.yes{background:#CFEFE2;color:#0B4D3A}
+.rd.no{background:#F7D7CF;color:#7A2414}
+.abtn{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
+.abtn .key{width:54px;height:54px;border-radius:50%;border:3px solid #0C2A22;background:#E9E3D2;color:#1d1d1d;font-weight:900;font-size:18px;flex:0 0 auto;touch-action:none}
+.abtn .key.down{background:#C8BFA6;transform:translateY(2px)}
+.board .hint{font-size:13px;opacity:.9;margin:4px 0 0;line-height:1.55}
+.board .btn{background:rgba(255,255,255,.1);color:var(--pcb-ink);border-color:rgba(255,255,255,.35)}
+.lane{border:1px solid var(--line);border-radius:14px;background:var(--surface-2);padding:6px 10px;min-width:0}
+.lane svg{display:block;width:100%;height:auto}
+.lane .lt{fill:var(--ink)}
+.lane .ls{fill:var(--mist)}
+.lane .pk{fill:var(--gold-tint);stroke:var(--gold);stroke-width:2}
+.lane .pk.dn{fill:var(--teal-tint);stroke:var(--teal)}
+.lane .pk.lost{fill:var(--red-tint);stroke:var(--red)}
+.lane .trk{stroke:var(--mist);stroke-width:2;stroke-dasharray:4 5}
+.lane .end{fill:var(--surface);stroke:var(--teal);stroke-width:2}
+ol.seqlist{margin:6px 0 0;padding-left:0;list-style:none;font-size:14px;max-height:230px;overflow:auto;counter-reset:q}
+ol.seqlist li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 8px;padding:3px 6px;border-radius:8px;counter-increment:q}
+ol.seqlist li::before{content:counter(q);font-weight:900;color:var(--gold-deep);min-width:1.4em;text-align:right}
+ol.seqlist li.cur{background:var(--gold-tint)}
+ol.seqlist .who{font-weight:800;color:var(--ink-soft)}
+ol.seqlist .who.dn{color:var(--teal)}
+ol.seqlist .who.lost{color:var(--red)}
+ol.seqlist code{grid-column:2;overflow-wrap:anywhere}
+ol.seqlist .think{grid-column:2;color:var(--violet)}
+.timing{font-size:14px;font-weight:800;color:var(--red);margin:4px 0}
+#simTerm{max-height:300px;min-height:150px;overflow:auto;font-size:13px;line-height:1.55}
+@media (max-width:640px){#simTerm{white-space:pre-wrap;overflow-wrap:anywhere}}
+.csvline{font-family:var(--mono);font-size:12.5px;overflow-wrap:anywhere;padding:6px 10px;border-radius:8px;background:var(--code-bg);color:var(--code-ink)}
+.cnt{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin:8px 0}
+.cnt div{border:1px solid var(--line);border-radius:10px;padding:6px 10px;background:var(--surface);font-size:14px;min-width:0}
+.cnt b{display:block;font-size:20px;font-family:var(--mono);color:var(--teal)}
+/* 想一想 */
+.qq{border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:12px 0;background:var(--surface)}
+.qq h3{margin:0 0 6px;font-size:16.5px}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:6px 12px;font-size:15px}
+.opt[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-tint)}
+.opt.right{border-color:var(--teal);background:var(--teal-tint)}
+.opt.wrong{border-color:var(--red);background:var(--red-tint)}
+.qbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.qbar .yours{font-size:14px;color:var(--mist)}
+.ans{margin-top:8px;padding:8px 12px;border-radius:10px;background:var(--teal-tint)}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:10px;margin:8px 0}
+.fc{border:1px solid var(--line);border-radius:14px;padding:10px 14px;background:var(--surface);min-width:0}
+.fc h4{margin:0 0 4px;font-size:16px}
+.fc ul{padding-left:22px;margin:4px 0}
+.fc li{overflow-wrap:anywhere}
+.fc.wifi{border-left:6px solid var(--pc)}
+.fc.ble{border-left:6px solid var(--violet)}
+.fc.ext{border-left:6px solid var(--gold)}
+.chip{display:inline-block;padding:0 8px;margin:0 4px 0 0;border-radius:8px;font-size:13px;font-weight:800;line-height:1.8;background:var(--gold-tint);color:var(--gold-deep)}
+.gloss td:first-child{font-weight:800;white-space:nowrap}
+@media (max-width:640px){
+  .tw::before{content:"← 表格可以左右滑 →";display:block;font-size:13px;color:var(--gold-deep);font-weight:800;text-align:center;padding:3px 0;border-bottom:1px dashed var(--line)}
+  th{white-space:normal}
+  .cmpt td:first-child,.gloss td:first-child{white-space:normal}
+}
+.hidden{display:none!important}
+footer.sec{color:var(--mist);font-size:14px}
+footer.sec h2{font-size:18px;color:var(--ink)}
+footer.sec li{margin:4px 0;overflow-wrap:anywhere}
+@media (max-width:560px){
+  section.sec,footer.sec{padding:16px 13px}
+  body{font-size:15.5px}
+  .panel{padding:10px 12px}
+  .board{padding:10px 11px}
+}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.led{transition:none}}
+@media print{nav.toc .toc-tools,.simbar{display:none}details.deep > .in{display:block}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">AIoT 智慧裝置實作 · W12（2026-11-26 四 14:10–17:00，理工二館 E307）· 互動概念頁</div>
+    <h1>雙腦合作：UNO Q 當大腦、ESP32 當手腳</h1>
+    <p><b>ESP32＋EZ 擴充板＝感官和手腳</b>（溫溼度、光線、旋鈕、A 鍵、燈、蜂鳴器……），<b>UNO Q 的 Linux＝大腦</b>（跑 Python：判斷、存檔、量延遲，以後可以接 AI）<span class="tag" title="內容規格 §〇 A 點子一句話">§〇 A·感官和手腳</span>。兩塊板子用 <b>WiFi</b> 或 <b>藍牙</b>講話：WiFi 那條線走網頁問答的規矩（HTTP），板子回一段大括號的資料格式（JSON）；藍牙那條線走藍牙低功耗（BLE），大腦「寫入」一行字、板子主動通知（notify）回一行字。同一個大腦，換一條線就能用。</p>
+    <p>這頁最重要的是 <a href="#s2" style="color:#F3D08A">§2 雙腦模擬器</a>：左邊拉桿改環境，右邊看大腦每一輪印什麼、送了什麼。模擬器<b>只畫先後順序、不放任何延遲數字</b>——真的要多久，今天在真板上自己量。</p>
+    <div class="legend" aria-label="出處標籤">
+      <span>每個事實後面標出處，對到本週內容規格（滑鼠停在標籤上看全名）：</span>
+      <span><span class="tag">§〇 B</span>ESP32 那邊</span>
+      <span><span class="tag">§〇 C</span>UNO Q 起始檔</span>
+      <span><span class="tag">§〇 D</span>11/26 早上實跑</span>
+      <span><span class="tag">§〇 E</span>怎麼連</span>
+      <span><span class="wn">⚠️</span>沒驗，照實標</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<nav class="toc" aria-label="目錄">
+  <h2>目錄</h2>
+  <ol>
+    <li><a href="#s1"><span class="n">1</span>全路徑地圖：從元件到終端機</a></li>
+    <li><a href="#s2"><span class="n">2</span>雙腦模擬器（主角）</a></li>
+    <li><a href="#s3"><span class="n">3</span>先猜再揭曉（三題）</a></li>
+    <li><a href="#s4"><span class="n">4</span>WiFi 和藍牙對照表</a></li>
+    <li><a href="#s5"><span class="n">5</span>斷線長什麼樣子</a></li>
+    <li><a href="#s6"><span class="n">6</span>延伸（今天不做）</a></li>
+    <li><a href="#terms"><span class="n">7</span>名詞</a></li>
+    <li><a href="#quiz"><span class="n">8</span>想一想（八題）</a></li>
+    <li><a href="#refs"><span class="n">※</span>出處</a></li>
+  </ol>
+  <div class="toc-tools">
+    <button type="button" class="btn" id="openAll">「深入一層」全部展開</button>
+    <button type="button" class="btn" id="closeAll">全部收合</button>
+    <button type="button" class="btn" id="themeBtn">切換深色／淺色</button>
+  </div>
+</nav>
+
+<!-- ============================== §1 ============================== -->
+<section class="sec" id="s1">
+  <h2><span class="n">1</span>全路徑地圖：從元件到終端機</h2>
+  <p class="lead">一個溫度數字從 ESP32 板上的感測器出發，要走過：第 10 課或第 11 課的程式 → WiFi 或藍牙 → UNO Q 的 <code>link_wifi.py</code> 或 <code>link_ble.py</code> → <code>brain.py</code> 交給 <code>rules.py</code> 想一想 → 再把動作送回去，同時印在終端機、寫進記錄檔（CSV）<span class="tag" title="內容規格 §〇 C UNO Q 那邊：起始檔">§〇 C·brain.py</span>。點圖上一格（或下面的按鈕），看它是哪個檔、哪幾行。</p>
+  <svg class="fig" id="mapSvg" viewBox="0 0 900 330" role="group" aria-label="全路徑地圖：ESP32 元件、第 10 課、開機選單、第 11 課、WiFi、藍牙、link_wifi.py、假的 ESP32、link_ble.py、brain.py、rules.py、記錄檔與終端機">
+    <rect class="zone" x="4" y="6" width="338" height="282" rx="16" stroke="var(--teal)"/>
+    <text x="16" y="306" font-size="14" font-weight="900" fill="var(--teal)">ESP32 那邊（創客課現成兩課，不寫新程式）</text>
+    <rect class="zone" x="514" y="6" width="382" height="282" rx="16" stroke="var(--pc)"/>
+    <text x="526" y="306" font-size="14" font-weight="900" fill="var(--pc)">UNO Q 那邊（起始檔 w12-starter，跑 Python）</text>
+    <g role="button" tabindex="0" data-node="parts" aria-label="ESP32 板上元件">
+      <rect class="box bd" x="16" y="20" width="140" height="256" rx="12"/>
+      <text x="86" y="48" text-anchor="middle" font-size="16" font-weight="800">ESP32＋EZ 板</text>
+      <text x="86" y="74" text-anchor="middle" font-size="13" class="soft">感官</text>
+      <text x="86" y="96" text-anchor="middle" font-size="13">溫溼度 DHT11</text>
+      <text x="86" y="116" text-anchor="middle" font-size="13">光線・旋鈕</text>
+      <text x="86" y="136" text-anchor="middle" font-size="13">A 鍵</text>
+      <text x="86" y="166" text-anchor="middle" font-size="13" class="soft">手腳</text>
+      <text x="86" y="188" text-anchor="middle" font-size="13">紅黃綠三顆燈</text>
+      <text x="86" y="208" text-anchor="middle" font-size="13">彩色燈・蜂鳴器</text>
+      <text x="86" y="228" text-anchor="middle" font-size="13">OLED 小螢幕</text>
+      <text x="86" y="258" text-anchor="middle" font-size="12" class="soft">共 13 種元件</text>
+    </g>
+    <path class="wire" d="M156 60 H182"/><path class="wire" d="M156 148 H182"/><path class="wire" d="M156 236 H182"/>
+    <g role="button" tabindex="0" data-node="d10" aria-label="第 10 課 WiFi 網頁">
+      <rect class="box bd" x="182" y="20" width="148" height="80" rx="12"/>
+      <text x="256" y="46" text-anchor="middle" font-size="15" font-weight="800">第 10 課</text>
+      <text x="256" y="68" text-anchor="middle" font-size="12" class="mono">d10_wifi_web.py</text>
+      <text x="256" y="88" text-anchor="middle" font-size="12" class="soft">只會回答</text>
+    </g>
+    <g role="button" tabindex="0" data-node="menu" aria-label="開機選單 main_w12.py">
+      <rect class="box gold" x="182" y="110" width="148" height="76" rx="12"/>
+      <text x="256" y="136" text-anchor="middle" font-size="15" font-weight="800">開機選單</text>
+      <text x="256" y="156" text-anchor="middle" font-size="12" class="mono">main_w12.py</text>
+      <text x="256" y="176" text-anchor="middle" font-size="12" class="soft">按住 A 開機＝藍牙</text>
+    </g>
+    <g role="button" tabindex="0" data-node="d11" aria-label="第 11 課 藍牙遙控">
+      <rect class="box vio" x="182" y="196" width="148" height="80" rx="12"/>
+      <text x="256" y="222" text-anchor="middle" font-size="15" font-weight="800">第 11 課</text>
+      <text x="256" y="244" text-anchor="middle" font-size="12" class="mono">d11_ble_remote.py</text>
+      <text x="256" y="264" text-anchor="middle" font-size="12" class="soft">A 鍵會主動通知</text>
+    </g>
+    <path class="wire" d="M330 60 H356"/><path class="wire" d="M330 236 H356"/>
+    <g role="button" tabindex="0" data-node="wifi" aria-label="WiFi 線">
+      <rect class="box pc" x="356" y="20" width="146" height="80" rx="12"/>
+      <text x="429" y="46" text-anchor="middle" font-size="15" font-weight="800">WiFi 線</text>
+      <text x="429" y="68" text-anchor="middle" font-size="12">網頁問答</text>
+      <text x="429" y="88" text-anchor="middle" font-size="12" class="mono">192.168.4.1</text>
+    </g>
+    <g role="button" tabindex="0" data-node="ble" aria-label="藍牙線">
+      <rect class="box vio" x="356" y="196" width="146" height="80" rx="12"/>
+      <text x="429" y="222" text-anchor="middle" font-size="15" font-weight="800">藍牙線</text>
+      <text x="429" y="244" text-anchor="middle" font-size="12">寫入／通知</text>
+      <text x="429" y="264" text-anchor="middle" font-size="12" class="mono">maker-XXXX</text>
+    </g>
+    <path class="wire hot" d="M502 60 H528"/><path class="wire hot" d="M502 236 H528"/>
+    <g role="button" tabindex="0" data-node="lwifi" aria-label="link_wifi.py">
+      <rect class="box pc" x="528" y="20" width="150" height="80" rx="12"/>
+      <text x="603" y="50" text-anchor="middle" font-size="14" font-weight="800" class="mono">link_wifi.py</text>
+      <text x="603" y="74" text-anchor="middle" font-size="12" class="soft">Python 內建 urllib</text>
+      <text x="603" y="92" text-anchor="middle" font-size="12" class="soft">不用裝套件</text>
+    </g>
+    <g role="button" tabindex="0" data-node="fake" aria-label="假的 ESP32 fake_esp32.py">
+      <rect class="box gold" x="528" y="110" width="150" height="76" rx="12"/>
+      <text x="603" y="136" text-anchor="middle" font-size="13" font-weight="800" class="mono">fake_esp32.py</text>
+      <text x="603" y="156" text-anchor="middle" font-size="12">假的 ESP32</text>
+      <text x="603" y="176" text-anchor="middle" font-size="12" class="soft">沒板子也能練</text>
+    </g>
+    <g role="button" tabindex="0" data-node="lble" aria-label="link_ble.py">
+      <rect class="box vio" x="528" y="196" width="150" height="80" rx="12"/>
+      <text x="603" y="226" text-anchor="middle" font-size="14" font-weight="800" class="mono">link_ble.py</text>
+      <text x="603" y="250" text-anchor="middle" font-size="12" class="soft">bleak 套件</text>
+      <text x="603" y="268" text-anchor="middle" font-size="12" class="soft">要先裝好</text>
+    </g>
+    <path class="wire" d="M678 60 H704"/><path class="wire" d="M678 236 Q692 236 692 150 Q692 60 704 60"/>
+    <g role="button" tabindex="0" data-node="brain" aria-label="brain.py">
+      <rect class="box gold" x="704" y="20" width="180" height="80" rx="12"/>
+      <text x="794" y="48" text-anchor="middle" font-size="15" font-weight="800" class="mono">brain.py</text>
+      <text x="794" y="70" text-anchor="middle" font-size="12">讀 → 想 → 只送有變的</text>
+      <text x="794" y="90" text-anchor="middle" font-size="12" class="soft">每秒一輪（預設）</text>
+    </g>
+    <path class="wire" d="M794 100 V110"/>
+    <g role="button" tabindex="0" data-node="rules" aria-label="rules.py">
+      <rect class="box red" x="704" y="110" width="180" height="76" rx="12"/>
+      <text x="794" y="138" text-anchor="middle" font-size="15" font-weight="800" class="mono">rules.py</text>
+      <text x="794" y="160" text-anchor="middle" font-size="12">熱、暗、按鍵→要做什麼</text>
+      <text x="794" y="178" text-anchor="middle" font-size="12" class="soft">你要改的那支</text>
+    </g>
+    <path class="wire" d="M794 186 V196"/>
+    <g role="button" tabindex="0" data-node="out" aria-label="終端機與記錄檔">
+      <rect class="box" x="704" y="196" width="180" height="80" rx="12"/>
+      <text x="794" y="222" text-anchor="middle" font-size="15" font-weight="800">終端機＋記錄檔</text>
+      <text x="794" y="244" text-anchor="middle" font-size="12" class="mono">每輪印一行</text>
+      <text x="794" y="264" text-anchor="middle" font-size="12" class="mono">log_wifi_….csv</text>
+    </g>
+  </svg>
+  <div class="node-grid" role="group" aria-label="選一格看說明">
+    <button type="button" class="btn" data-node="parts">ESP32 元件</button>
+    <button type="button" class="btn" data-node="d10">第 10 課</button>
+    <button type="button" class="btn" data-node="menu">開機選單</button>
+    <button type="button" class="btn" data-node="d11">第 11 課</button>
+    <button type="button" class="btn" data-node="wifi">WiFi 線</button>
+    <button type="button" class="btn" data-node="ble">藍牙線</button>
+    <button type="button" class="btn" data-node="lwifi">link_wifi.py</button>
+    <button type="button" class="btn" data-node="fake">fake_esp32.py</button>
+    <button type="button" class="btn" data-node="lble">link_ble.py</button>
+    <button type="button" class="btn" data-node="brain">brain.py</button>
+    <button type="button" class="btn" data-node="rules">rules.py</button>
+    <button type="button" class="btn" data-node="out">終端機＋記錄檔</button>
+  </div>
+  <div class="panel" id="mapPanel" aria-live="polite"><h4>點一格看說明</h4><p>先點「rules.py」：今天第四部分你要改的就是它。</p></div>
+</section>
+
+<!-- ============================== §2 ============================== -->
+<section class="sec" id="s2">
+  <h2><span class="n">2</span>雙腦模擬器：左邊是手腳，右邊是大腦</h2>
+  <p class="lead">左邊這塊虛擬 EZ 板的拉桿是「環境」（溫度、光線、旋鈕），燈和蜂鳴器是「大腦叫它做的事」。按「開始跑」，右邊的 UNO Q 終端機每一輪印一行，格式跟 <code>brain.py</code> 一樣；中間那條線畫出這一輪<b>誰先講、誰回話</b>。規則是照 <code>rules.py</code> 一比一寫成網頁程式，跟 starter 對過答案（出處欄的 <code>check_concept.py</code>）<span class="tag" title="內容規格 §〇 C rules.py">§〇 C·rules.py</span>。</p>
+  <div class="simbar" role="group" aria-label="模擬器控制">
+    <div class="grp"><span class="lab">連法</span>
+      <div class="seg" role="group" aria-label="選連法"><button type="button" id="linkWifi" aria-pressed="true">WiFi（第 10 課）</button><button type="button" id="linkBle" aria-pressed="false">藍牙（第 11 課）</button></div>
+    </div>
+    <div class="grp">
+      <button type="button" class="btn primary" id="simRun">▶ 開始跑</button>
+      <button type="button" class="btn" id="simStep">走一輪</button>
+      <button type="button" class="btn" id="simStop">停下來（Ctrl+C）</button>
+    </div>
+    <div class="grp">
+      <button type="button" class="btn danger" id="simPower" aria-pressed="false">拔掉 ESP32 的電</button>
+      <label class="small"><input type="checkbox" id="darkLow" checked aria-label="DARK_WHEN_LOW：遮光時數字變小"> <code>DARK_WHEN_LOW = True</code></label>
+      <label class="small"><input type="checkbox" id="tryYellow" aria-label="試改規則：濕度 70 以上亮黃燈"> 試改規則：濕度 ≥ 70 亮黃燈</label>
+      <label for="simSpeed" class="lab">動畫</label>
+      <select id="simSpeed"><option value="0.5">慢</option><option value="1" selected>正常</option><option value="2.5">快</option><option value="0">不畫</option></select>
+    </div>
+  </div>
+  <div class="simgrid">
+    <div class="board" id="board" aria-label="虛擬 EZ 板">
+      <h4>虛擬 EZ 板（ESP32）<span id="boardProg">跑第 10 課 d10_wifi_web.py</span></h4>
+      <div class="oled" id="oled" aria-label="OLED 小螢幕"></div>
+      <div class="leds">
+        <div class="ledw"><div class="led" id="ledRed" style="--glow:#FF5A4E"></div>紅燈</div>
+        <div class="ledw"><div class="led" id="ledYellow" style="--glow:#F2C14E"></div>黃燈</div>
+        <div class="ledw"><div class="led" id="ledGreen" style="--glow:#3DDC84"></div>綠燈<br><span style="opacity:.8">（d10 叫 blue）</span></div>
+        <div class="ledw"><div class="led" id="ledRgb" style="--glow:#fff"></div>彩色燈</div>
+        <div class="ledw"><div class="buzz" id="buzz">蜂鳴器</div></div>
+      </div>
+      <div class="sl">
+        <label for="inTemp"><span>溫度 <b id="vTemp">26</b> °C</span><span class="rd yes" id="rdTemp">大腦讀得到</span></label>
+        <input type="range" id="inTemp" min="15" max="40" step="1" value="26">
+        <label for="inLight"><span>光線 <b id="vLight">2400</b>（0–4095）</span><span class="rd yes" id="rdLight">大腦讀得到</span></label>
+        <input type="range" id="inLight" min="0" max="4095" step="1" value="2400">
+        <label for="inKnob"><span>旋鈕 <b id="vKnob">2200</b>（0–4095）→ 門檻 <b id="vLimit">28.1</b> °C</span><span class="rd yes" id="rdKnob">大腦讀得到</span></label>
+        <input type="range" id="inKnob" min="0" max="4095" step="1" value="2200">
+        <label for="inHum"><span>濕度 <b id="vHum">60</b> %</span><span class="rd yes">大腦讀得到</span></label>
+        <input type="range" id="inHum" min="20" max="95" step="1" value="60">
+        <div class="small" style="color:inherit;opacity:.85">（假板子 <code style="background:transparent;color:inherit">fake_esp32.py</code> 沒有濕度拉桿、固定 60；這裡多一根是為了試黃燈）</div>
+      </div>
+      <div class="abtn">
+        <button type="button" class="key" id="keyA" aria-label="A 鍵（按住）">A</button>
+        <span id="rdBtn" class="rd no">大腦看不到</span>
+        <button type="button" class="btn" id="dhtFail" disabled>讓溫溼度讀失敗一次</button>
+      </div>
+      <p class="hint" id="boardHint"></p>
+    </div>
+    <div style="min-width:0">
+      <div class="lane" aria-label="這一輪的封包先後">
+        <svg viewBox="0 0 560 150" id="laneSvg" role="img" aria-label="左邊 ESP32、右邊 UNO Q 大腦，中間的封包照先後順序來回">
+          <rect class="end" x="4" y="38" width="96" height="74" rx="12"/>
+          <text class="lt" x="52" y="70" text-anchor="middle" font-size="15" font-weight="800">ESP32</text>
+          <text class="ls" x="52" y="92" text-anchor="middle" font-size="12" id="laneLeftSub">第 10 課</text>
+          <rect class="end" x="460" y="38" width="96" height="74" rx="12"/>
+          <text class="lt" x="508" y="70" text-anchor="middle" font-size="15" font-weight="800">UNO Q</text>
+          <text class="ls" x="508" y="92" text-anchor="middle" font-size="12">大腦</text>
+          <line class="trk" x1="100" y1="75" x2="460" y2="75"/>
+          <text class="ls" x="280" y="24" text-anchor="middle" font-size="13" font-weight="800" id="laneTitle">WiFi：網頁問答（一問一答）</text>
+          <text class="ls" x="280" y="140" text-anchor="middle" font-size="12.5" id="laneStep">按「開始跑」或「走一輪」</text>
+          <g id="pkt" opacity="0">
+            <rect class="pk" id="pktBox" x="-110" y="-15" width="220" height="30" rx="9"/>
+            <text class="lt" id="pktTxt" x="0" y="5" text-anchor="middle" font-size="12" font-family="var(--mono)"></text>
+          </g>
+        </svg>
+      </div>
+      <p class="timing">⏱ 只畫先後順序：真的毫秒數今天自己量（<code>brain.py</code> 按 Ctrl+C 停下時會印中位數、最快、最慢）。</p>
+      <ol class="seqlist" id="seqList" aria-live="polite" aria-label="這一輪的每一步"></ol>
+      <h3 style="margin-top:12px">UNO Q 終端機</h3>
+      <pre class="term" id="simTerm" aria-live="polite"></pre>
+      <p class="cap">「讀 ‥ ms」那一格模擬器印 <code>--</code>：不放假數字，真板上 <code>brain.py</code> 會印量到的來回時間。</p>
+      <div class="small">記錄檔最後一行（<code id="csvName">log_wifi_….csv</code>）：</div>
+      <div class="csvline" id="csvLine">（還沒跑）</div>
+      <div class="cnt" aria-live="polite">
+        <div>跑了幾輪<b id="cRounds">0</b></div>
+        <div>失敗幾次<b id="cFails">0</b></div>
+        <div>只送有變的：送了幾個動作<b id="cSent">0</b></div>
+        <div>如果每輪四種燈都送一次：<b id="cNaive">0</b></div>
+      </div>
+    </div>
+  </div>
+  <div class="note" id="modeNote"></div>
+  <h3>先試這幾件事</h3>
+  <ol>
+    <li><b>先按「走一輪」</b>：第一輪一定印 <code>送：red關、yellow關、green開、彩色燈(0, 0, 0)</code>——大腦還不知道 ESP32 上的燈是什麼樣子，所以全部送一次；黃燈在起始檔的規則裡沒用到，永遠關 <span class="tag" title="內容規格 §〇 D 第 4 點〈黃燈〉">§〇 D·每次啟動第一輪印的是</span>。</li>
+    <li><b>拉溫度到 30</b>（WiFi、旋鈕不動＝門檻 28.1）：紅燈亮、綠燈滅，<b>只有剛變熱那一輪嗶</b>；之後每一輪都印「沒變」——燈本來就是那樣，不再送一次。熱的判斷是「到門檻（含）以上」<span class="tag" title="內容規格 §〇 D 第 4 點立霧複驗後修正 ⑥">§〇 D·到門檻（含）以上</span>。</li>
+    <li><b>轉旋鈕到最右邊</b>：門檻變 35.0，30 度不算熱了 → <code>送：red關、green開</code> <span class="tag" title="內容規格 §〇 D 第 1 點 假 ESP32 × WiFi 線">§〇 D·假 ESP32 × WiFi 線</span>。</li>
+    <li><b>光線拉到 1000 以下</b>：彩色燈變夜燈 <code>(255, 160, 60)</code>；取消勾選 <code>DARK_WHEN_LOW</code> 就反過來（數字大才算暗）。真板子遮光時數字往哪走沒驗，今天自己看 <span class="wn">⚠️</span> <span class="tag" title="內容規格 §〇 D 第 5 點 沒驗：光感方向">§〇 D·光感方向</span>。</li>
+    <li><b>試改規則</b>（延伸）：勾「濕度 ≥ 70 亮黃燈」、把濕度拉到 70 以上，黃燈亮、終端機送 <code>yellow開</code>。這條是頁面上的試改，起始檔沒有；第四部分你在 <code>rules.py</code> 自己加，只要改那一支，<code>brain.py</code> 和兩條線都認得黃燈 <span class="tag" title="內容規格 §〇 D 第 4 點〈黃燈〉">§〇 D·學生都只要改</span>。</li>
+    <li><b>切到藍牙、按 A 鍵</b>：A 鍵一按下，板子主動「通知」大腦，下一輪就嗶；WiFi 模式按 A，大腦完全看不到。同時注意：藍牙模式光線、旋鈕印 <code>--</code>，門檻固定 28 <span class="tag" title="內容規格 §〇 D 第 2 點 模擬藍牙">§〇 D·模擬藍牙</span>。</li>
+  </ol>
+  <details class="deep"><summary>模擬器跟真的有哪裡不一樣</summary><div class="in">
+    <ul>
+      <li><b>一樣的</b>：判斷規則（<code>rules.decide()</code>）、只送有變的（<code>brain.py</code> 的 <code>apply()</code>，跟「ESP32 上確定已經是這樣」比）、終端機那一行的欄位與寬度、記錄檔的欄位、網址與藍牙文字指令的字樣——都照 starter，<code>check_concept.py</code> 用同一批輸入讓網頁程式和 Python 對答案。</li>
+      <li><b>d10 的狀態大約每 2 秒才更新</b>：WiFi 模式下大腦每秒問一次，常常連續兩輪拿到同一筆（模擬器每兩輪才換新值，終端機會看到同樣的數字）<span class="tag" title="內容規格 §〇 D 第 4 點 立霧另外提醒">§〇 D·約每 2 秒更新</span>；藍牙那條線的 <code>temp</code> 每次怎麼讀，模擬器照假板子每問一次就讀一次。</li>
+      <li><b>沒有的</b>：任何延遲數字；真的 DHT11 只給整數、光線旋鈕會抖（假板子有加一點抖動，這裡沒有，讓你看得清楚）。</li>
+      <li><b>一輪多久</b>：<code>brain.py</code> 預設 <code>--period 1</code>＝每秒一輪；模擬器的動畫速度跟這個無關。手機同時開 d10 的網頁會跟大腦搶連線（d10 一次只服務一個），想同時開就 <code>--period 2</code> <span class="tag" title="內容規格 §〇 D 第 4 點 立霧另外提醒">§〇 D·搶連線</span>。</li>
+      <li><b>A 鍵連按兩下</b>，在同一輪裡只算一次（大腦每輪只看「上一輪之後有沒有人按過」）<span class="tag" title="內容規格 §〇 D 第 4 點 立霧另外提醒">§〇 D·連按兩下</span>。</li>
+    </ul>
+  </div></details>
+  <details class="deep"><summary><code>rules.py</code> 全文（模擬器的規則就是照這份寫的）</summary><div class="in">
+    <pre id="rulesFull"></pre>
+  </div></details>
+</section>
+
+<!-- ============================== §3 ============================== -->
+<section class="sec" id="s3">
+  <h2><span class="n">3</span>先猜再揭曉</h2>
+  <p class="lead">先選一個答案，再按「揭曉」。第一題的數字是頁面當場拿 §2 的規則（照 <code>rules.py</code>＋<code>brain.py</code> 的「只送有變的」）跑 60 輪算出來的，不是寫死的 <span class="tag" title="內容規格 §〇 C brain.py：只送有變的動作">§〇 C·只送有變的動作</span>。</p>
+  <div id="guess"></div>
+  <div class="ctrl"><button type="button" class="btn" id="guessReset">三題重來</button></div>
+</section>
+
+<!-- ============================== §4 ============================== -->
+<section class="sec" id="s4">
+  <h2><span class="n">4</span>WiFi 和藍牙對照表</h2>
+  <p class="lead">上半是今天這兩課程式的實際行為（§〇 B），下半是課程規劃文件那張表的口徑<span class="tag" title="aiot-course/_planning/20260828-WiFi完整學習路徑與課程整合.md〈先回答〉那張表">規劃表</span>。這裡<b>不寫</b>誰快多少、誰傳多遠：場地、距離、同時有幾組都會改變結果，數字今天自己量。最後一列填你量到的：一問一答來回的時間（RTT）的中位數。</p>
+  <div class="tw"><table class="cmpt">
+    <tr><th></th><th>WiFi（第 10 課 <code>d10_wifi_web.py</code>）</th><th>藍牙（第 11 課 <code>d11_ble_remote.py</code>）</th></tr>
+    <tr><td>怎麼連上</td><td>板子自己開基地台：WiFi 名稱 <code>maker-XXXX</code>、密碼 <code>makerXXXX</code>、網址 <code>http://192.168.4.1</code>；UNO Q 用 <code>nmcli</code> 連上去 <span class="tag" title="內容規格 §〇 B 第 10 課 連法">§〇 B·第 10 課</span> <span class="tag" title="內容規格 §〇 E UNO Q 去連 ESP32 的基地台">§〇 E·去連 ESP32 的基地台</span></td><td>藍牙名稱 <code>maker-XXXX</code>（OLED 第二行）；UNO Q 用 bleak 掃描名字、連上 <span class="tag" title="內容規格 §〇 B 第 11 課 連法">§〇 B·第 11 課</span></td></tr>
+    <tr><td>大腦讀得到</td><td><code>GET /api/status</code> 回 JSON：溫度、濕度、光線、旋鈕、三顆燈的狀態</td><td>寫入 <code>temp</code> → 通知 <code>temp 25 C, hum 61 %</code>：溫度、濕度 <span class="tag" title="內容規格 §〇 B 讀">§〇 B·寫入 temp</span></td></tr>
+    <tr><td>大腦讀不到</td><td><b>A 鍵</b>（JSON 裡沒有按鈕）</td><td><b>光線、旋鈕</b>（所以門檻固定 28） <span class="tag" title="內容規格 §〇 B 讀不到">§〇 B·讀不到</span></td></tr>
+    <tr><td>板子會不會主動說</td><td>不會，只會回答</td><td>會：A 鍵按下／放開 → 按鈕特徵值通知 <code>1</code>／<code>0</code> <span class="tag" title="內容規格 §〇 B 板子主動說">§〇 B·板子主動說</span></td></tr>
+    <tr><td>叫它做事</td><td><code>GET /api/led?name=red&amp;on=1</code>、<code>/api/rgb?r=&amp;g=&amp;b=</code>、<code>/api/beep</code>、<code>/api/off</code></td><td>寫入 <code>red on</code>／<code>rgb 255 0 0</code>／<code>beep</code>／<code>off</code> → 通知 <code>OK red on</code>、<code>OK rgb</code>、<code>OK beep</code>、<code>OK all off</code>；每個指令等<b>自己的</b>回話 <span class="tag" title="內容規格 §〇 D 第 4 點 ③">§〇 D·等自己的回話</span></td></tr>
+    <tr><td>雷</td><td>第三顆燈在程式裡叫 <code>blue</code>，板子上是<b>綠燈</b>；溫溼度每 2 秒才讀一次；一次只處理一個連線 <span class="tag" title="內容規格 §〇 B 雷">§〇 B·雷</span></td><td>文字指令最多 128 位元組、回話截 100 位元組 <span class="tag" title="內容規格 §〇 B 雷">§〇 B·雷</span></td></tr>
+    <tr><td>適合什麼資料</td><td>網頁、較密集資料、圖片、聲音、檔案 <span class="tag" title="規劃文件那張表：適合資料">規劃表</span></td><td>短命令、狀態、少量感測值 <span class="tag" title="規劃文件那張表：適合資料">規劃表</span></td></tr>
+    <tr><td>連線入口</td><td>基地台／路由器、WiFi 名稱、網路上的門牌（IP）、埠號</td><td>掃描、廣播、藍牙裡「服務＋特徵值」那套擺資料的方式（GATT）</td></tr>
+    <tr><td>耗電</td><td>通常較高</td><td>通常較低 <span class="tag" title="規劃文件那張表：耗電">規劃表</span></td></tr>
+    <tr><td>要不要網路</td><td>通常要在同一個基地台；也可以由裝置自己開基地台（今天就是這樣）</td><td>兩個裝置之間直接連</td></tr>
+    <tr><td>教室裡的風險</td><td>門牌號碼會變、校網隔離、帳密、基地台容量、斷線重連</td><td>多塊板子名字混在一起、配對、藍牙被別的程式佔住 <span class="tag" title="規劃文件那張表：教室風險">規劃表</span></td></tr>
+    <tr><td>你量到的中位數</td><td><label class="small" for="myWifi">WiFi（填 ms）</label><input id="myWifi" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="Ctrl+C 後那一行的中位數"></td><td><label class="small" for="myBle">藍牙（填 ms；做不到就填 ble-sim 並註明）</label><input id="myBle" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="Ctrl+C 後那一行的中位數"></td></tr>
+  </table></div>
+  <p class="small">這兩格只存在你這台瀏覽器裡，重新整理後可能不見；要交的是記錄檔與比較三句（週作業）。<code>ble-sim</code> 量到的是電腦裡面的網頁問答，<b>不能</b>當藍牙的數字 <span class="tag" title="內容規格 §〇 D 第 2 點 模擬藍牙 結尾印的那句">§〇 D·模擬藍牙</span>。</p>
+</section>
+
+<!-- ============================== §5 ============================== -->
+<section class="sec" id="s5">
+  <h2><span class="n">5</span>斷線長什麼樣子</h2>
+  <p class="lead">兩條線斷掉的樣子不一樣，但 <code>brain.py</code> 處理的方法一樣：<b>這一輪算失敗、計數加一、下一輪再試</b>；而且因為「不確定 ESP32 現在是什麼樣子了」，下一輪成功時<b>燈號全部重送一次</b> <span class="tag" title="內容規格 §〇 D 第 4 點 ②">§〇 D·燈號全部重送一次</span>。在 §2 按「拔掉 ESP32 的電」就看得到。</p>
+  <div class="flow">
+    <div class="fc wifi">
+      <h4>WiFi：問了沒人回</h4>
+      <p>每一輪都是一次新的問答，問不到就印：</p>
+      <pre class="term">HH:MM:SS ESP32 沒回應（第 1 次）：timed out</pre>
+      <p class="small">冒號後面那半句是 Python 給的錯誤說明，會隨情況不同。11/26 早上把電腦上的假板子關掉 3 秒再開，印的是 <code>ESP32 沒回應（第 1 次）：&lt;urlopen error [WinError 10061] …&gt;</code>，下一輪 <code>送：red關、green開、彩色燈(255, 160, 60)</code> 全部重送 <span class="tag" title="內容規格 §〇 D 第 4 點 重跑">§〇 D·假板子中途關掉 3 秒再開</span>；真的 ESP32 拔電時後半句長怎樣，以你的畫面為準 <span class="wn">⚠️</span> <span class="tag" title="內容規格 §三 第 5 節">§三·5</span>。</p>
+      <p>一直沒回應：先查 UNO Q 是不是還連在 ESP32 的 WiFi（<code>nmcli -t dev status</code>）、ESP32 是不是重開了。ESP32 重開後 UNO Q 會不會自己連回基地台，沒驗 <span class="wn">⚠️</span>。</p>
+    </div>
+    <div class="fc ble">
+      <h4>藍牙：連線本身斷了</h4>
+      <p>藍牙是一條「連著」的線。斷掉時 <code>link_ble.py</code> 會叫醒正在等回話的人，這一輪印：</p>
+      <pre class="term">HH:MM:SS ESP32 沒回應（第 1 次）：藍牙斷線了</pre>
+      <p>下一輪先印 <code>藍牙斷線了，重新連線…</code>，重新掃描名字。掃到就印 <code>藍牙連上 maker-XXXX（…）</code>，但<b>這一輪還是算失敗</b>（ESP32 可能重開過、燈都滅了），印 <code>ESP32 沒回應（第 N 次）：藍牙剛重新連上，下一輪重送燈號</code>，下一輪燈號全部重送；掃不到這一輪也算失敗，冒號後面接 <code>掃不到 maker-XXXX：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？</code> <span class="tag" title="內容規格 §〇 D 第 4 點 ④ 藍牙斷線會叫醒等待、下一輪自動重新掃描重連">§〇 D·自動重新掃描重連</span>。</p>
+      <p class="small">真的藍牙多久才發現斷線、斷線那一刻會不會先出現別的字樣，沒驗 <span class="wn">⚠️</span>：今天拔電看看。藍牙「掃不到 maker-XXXX」先查：ESP32 是不是按住 A 開機、<b>看到 OLED 顯示 BLE 才放開</b>；手機程式是不是先連著它（一次只能一個中心）。</p>
+    </div>
+  </div>
+  <h3>兩件一開始就連不上的</h3>
+  <ul>
+    <li>一開始就連不上：<code>brain.py</code> 印 <code>連不上 ESP32：…</code> 後直接結束（不會進入每秒一輪）<span class="tag" title="內容規格 §〇 D 第 4 點 重跑">§〇 D·連不上 ESP32</span>。</li>
+    <li>停下來（Ctrl+C）時關燈指令沒送到：印 <code>⚠️ 關燈指令沒送到（ESP32 可能還亮著燈）：重開 ESP32 或再跑一次再 Ctrl+C</code> <span class="tag" title="內容規格 §〇 D 第 4 點 ⑤">§〇 D·關燈指令沒送到</span>。</li>
+  </ul>
+  <details class="deep"><summary><code>brain.py</code> 一輪失敗時做了哪三件事（原始碼）</summary><div class="in">
+    <p>計數加一、把「ESP32 上確定已經是這樣」清空（下一輪全部重送）、印一行並在記錄檔寫一列 <code>fail＝1</code>，最後一欄是錯誤的種類。</p>
+    <pre id="exFail"></pre>
+    <p class="cap" id="exFailCap"></p>
+    <p>藍牙那條線斷了以後，<code>link_ble.py</code> 在下一輪重新掃描、重連；重連成功也故意丟一個錯，讓這一輪算失敗、下一輪燈號全部重送：</p>
+    <div id="exLost"></div>
+  </div></details>
+  <div class="ctrl"><button type="button" class="btn" id="goUnplug">到 §2 拔電看看</button></div>
+</section>
+
+<!-- ============================== §6 ============================== -->
+<section class="sec" id="s6">
+  <h2><span class="n">6</span>延伸（今天不做）</h2>
+  <p class="lead">三個方向都還是「手腳＋大腦」，只是把線換一條、或把大腦變聰明。<b>都是延伸、今天不做</b> <span class="tag" title="內容規格 §三 第 6 節 延伸">§三·6</span>。點一張看它要動到哪裡。</p>
+  <div class="flow" id="extCards">
+    <div class="fc ext"><h4><span class="chip">延伸</span>反過來：UNO Q 當基地台、ESP32 去連</h4><p>要改 d10 的 <code>WIFI_SSID</code>：填了它，板子就不自己開基地台，改去連現有的 WiFi（只認 2.4 GHz）<span class="tag" title="內容規格 §〇 B 第 10 課 連法">§〇 B·WIFI_SSID</span>。</p><button type="button" class="btn" data-ext="ap">要動哪裡？</button></div>
+    <div class="fc ext"><h4><span class="chip">延伸</span>讓 UNO Q 唸出溫度</h4><p>接 W8 的 USB 音效卡：大腦讀到溫度，用聲音說出來。</p><button type="button" class="btn" data-ext="voice">要動哪裡？</button></div>
+    <div class="fc ext"><h4><span class="chip">延伸</span>讓模型來判斷</h4><p>接 W13–W14 的模型：模型判斷 → ESP32 亮燈。</p><button type="button" class="btn" data-ext="model">要動哪裡？</button></div>
+  </div>
+  <div class="panel" id="extPanel" aria-live="polite"><p>點上面任一張的「要動哪裡？」。</p></div>
+</section>
+
+<!-- ============================== 名詞 ============================== -->
+<section class="sec" id="terms">
+  <h2><span class="n">7</span>名詞</h2>
+  <p class="lead">本週的英文詞只有這八個（規格 §〇 F）<span class="tag" title="內容規格 §〇 F 名詞">§〇 F·一問一答來回的時間</span>。打中文或英文都能篩選。</p>
+  <div class="ctrl"><label for="termQ">搜尋：</label><input id="termQ" class="txt" type="search" autocomplete="off" spellcheck="false" style="max-width:260px"><span class="small" id="termN"></span></div>
+  <div class="tw"><table class="gloss" id="termTable">
+    <tr><th>白話</th><th>英文</th><th>一句話</th><th>看哪節</th></tr>
+    <tr><td>網頁問答的規矩</td><td>HTTP</td><td>大腦問一句（<code>GET /api/status</code>），板子回一段；WiFi 那條線每一輪都是新的一問一答</td><td><a href="#s2">§2</a>、<a href="#s5">§5</a></td></tr>
+    <tr><td>大括號的資料格式</td><td>JSON</td><td>d10 回答的那段 <code>{"temp": 26, "hum": 60, …}</code>：欄位名加值</td><td><a href="#s2">§2</a></td></tr>
+    <tr><td>網路上的門牌</td><td>IP</td><td>ESP32 自己開基地台時是 <code>192.168.4.1</code>；UNO Q 走 USB 時是 <code>192.168.7.2</code></td><td><a href="#s1">§1</a>、<a href="#s3">§3</a></td></tr>
+    <tr><td>藍牙低功耗</td><td>BLE</td><td>第 11 課用的那種藍牙；不用基地台，兩個裝置直接連</td><td><a href="#s4">§4</a></td></tr>
+    <tr><td>服務＋特徵值</td><td>GATT</td><td>藍牙裡擺資料的方式：文字指令服務下面有「寫入」和「通知」兩個特徵值，另有一個按鈕特徵值</td><td><a href="#s1">§1</a></td></tr>
+    <tr><td>板子主動通知</td><td>notify</td><td>不用問，板子有話就推過來：藍牙回話、A 鍵按下</td><td><a href="#s2">§2</a></td></tr>
+    <tr><td>一問一答來回的時間</td><td>RTT</td><td><code>brain.py</code> 停下時印的「讀一次感測值來回」；今天要量的就是它</td><td><a href="#s4">§4</a></td></tr>
+    <tr><td>逗號分隔的記錄檔</td><td>CSV</td><td><code>log_wifi_….csv</code>、<code>log_ble_….csv</code>：每輪一列，週作業要交</td><td><a href="#s2">§2</a></td></tr>
+  </table></div>
+  <p class="small" id="termNone" hidden>沒有符合的名詞，換個字試試。</p>
+</section>
+
+<!-- ============================== 想一想 ============================== -->
+<section class="sec" id="quiz">
+  <h2><span class="n">8</span>想一想（八題，先猜再揭曉）</h2>
+  <p class="lead">先選再按「揭曉」；選項每次重新整理會換順序。</p>
+  <div class="ctrl"><button type="button" class="btn" id="qsReset">全部重來</button></div>
+  <div id="qs"></div>
+</section>
+
+<footer class="sec" id="refs">
+  <h2>出處</h2>
+  <ul>
+    <li>本週內容規格 <code>內容規格.md</code> §〇：A 點子一句話、B ESP32 那邊（第 10／11 課、開機選單）、C UNO Q 起始檔、D 11/26 早上 msi 實跑（含立霧複驗後的修正）與沒驗的事、E 怎麼連、F 名詞；§三 本頁要有哪幾節。</li>
+    <li>起始檔 <code>w12-starter/</code>：<code>rules.py</code>、<code>link_wifi.py</code>、<code>link_ble.py</code>、<code>esp32/main_w12.py</code> 全文，與 <code>brain.py</code> 從 <code>make_link()</code> 起到檔尾，逐字嵌在這一頁（§1 的程式片段就是從這裡切的）；<code>check_concept.py</code> 會比對嵌入的跟起始檔一模一樣，並用 node 讓網頁的規則和 Python 的 <code>rules.decide()</code>、<code>brain.apply()</code> 對同一批輸入的答案。</li>
+    <li>WiFi／藍牙對照表的下半：<code>aiot-course/_planning/20260828-WiFi完整學習路徑與課程整合.md</code>〈先回答〉那張表。</li>
+  </ul>
+  <p>這一頁沒有接任何網路、不收集任何資料，離線打得開。模擬器是照起始檔的規則寫的教學示意，<b>不是</b>真的 ESP32，也不放任何延遲數字。</p>
+</footer>
+</main>
+
+<!-- 起始檔逐字嵌入（check_concept.py ⑥ 比對） -->
+<script type="text/plain" data-file="rules.py" data-path="rules.py">
+# ============================================
+# rules.py — UNO Q 大腦的「規則」（你主要改這一支）
+# ============================================
+# 大腦每一輪做三件事：
+#   1. 從 ESP32 讀到「現在的感測值」s（溫度、濕度、光線、旋鈕、A 鍵）
+#   2. 用 decide() 想一想，決定要 ESP32 做什麼動作
+#   3. 把動作送回 ESP32（紅燈、綠燈、彩色燈、嗶一聲）
+#
+# decide() 只管「想」，不管「怎麼傳」——
+# 所以同一份規則，WiFi 跟藍牙兩條線都能用。
+# 拿不到的值是 None（例如藍牙那條線讀不到光線和旋鈕），規則要自己處理。
+# ============================================
+
+# ---- 可以改的數字 ----
+TEMP_HOT_FIXED = 28      # 沒有旋鈕可讀時（藍牙那條線），溫度到這個數字（含）以上就算「熱」
+KNOB_MIN_C = 20          # 有旋鈕可讀時（WiFi 那條線）：旋鈕轉到底＝20 度
+KNOB_MAX_C = 35          #                               轉到頂＝35 度
+LIGHT_DARK = 1000        # 光線數字低於（或高於）這個就算「暗」——先遮光看數字往哪走再改
+DARK_WHEN_LOW = True     # 遮住光感測器時數字變小＝True；變大＝False
+NIGHT_RGB = (255, 160, 60)   # 暗的時候彩色燈亮暖黃色（夜燈）
+
+
+def threshold(s):
+    """熱的門檻：有旋鈕就用旋鈕（0–4095 對到 20–35 度），沒有就用固定值"""
+    if s.get("knob") is None:
+        return TEMP_HOT_FIXED
+    return round(KNOB_MIN_C + (KNOB_MAX_C - KNOB_MIN_C) * s["knob"] / 4095, 1)
+
+
+def is_dark(light):
+    if light is None:
+        return False
+    return light < LIGHT_DARK if DARK_WHEN_LOW else light > LIGHT_DARK
+
+
+def decide(s, prev):
+    """s＝這一輪的感測值；prev＝上一輪的決定（第一輪是空的 dict）
+    回傳這一輪的決定：要哪些燈亮、要不要嗶、以及「為什麼」"""
+    why = []
+    limit = threshold(s)
+    if s.get("temp") is None:
+        # 溫溼度感測器偶爾讀失敗（d11 會回 DHT11 read failed）：維持上一輪的判斷，不要當成「變涼了」
+        hot = prev.get("red", False)
+        why.append("溫度沒讀到，維持上一輪")
+    else:
+        hot = s["temp"] >= limit
+    dark = is_dark(s.get("light"))
+
+    if hot and s.get("temp") is not None:
+        why.append("溫度 {} ≥ 門檻 {}".format(s["temp"], limit))
+    if dark:
+        why.append("光線 {} 算暗→夜燈".format(s["light"]))
+
+    # 只在「剛變熱」那一輪嗶一聲，不要每秒一直叫
+    beep = hot and not prev.get("red", False)  # 第一輪一開始就熱，也會嗶一聲
+    # A 鍵（只有藍牙那條線讀得到）：按一下就嗶一聲，代表大腦收到了
+    if s.get("button"):
+        beep = True
+        why.append("有人按了 ESP32 的 A 鍵")
+
+    return {
+        "red": hot,
+        "yellow": False,               # 黃燈現在沒用到——留給你（例如濕度太高就亮）
+        "green": not hot,              # 綠燈＝一切正常、大腦有在顧
+        "rgb": NIGHT_RGB if dark else (0, 0, 0),
+        "beep": beep,
+        "limit": limit,
+        "why": why,
+    }
+</script>
+<script type="text/plain" data-file="link_wifi.py" data-path="link_wifi.py">
+# ============================================
+# link_wifi.py — WiFi 這條線：UNO Q 用 HTTP 跟 ESP32 講話
+# ============================================
+# ESP32 跑的是創客課第 10 課 d10_wifi_web.py（不用改），它開了這幾個網址：
+#   GET /api/status                    → 回一段 JSON：溫度、濕度、光線、旋鈕、三顆燈的狀態
+#   GET /api/led?name=red&on=1         → 紅燈開（name 可以是 red／yellow／blue）
+#   GET /api/rgb?r=255&g=0&b=0         → 彩色燈
+#   GET /api/beep                      → 嗶一聲
+#   GET /api/off                       → 全部關
+# ⚠️ d10 裡第三顆燈的名字叫 blue，但它在板子上其實是「綠燈」（GPIO 13）。
+#
+# 只用 Python 內建的 urllib，UNO Q 上不用另外裝套件。
+# ============================================
+
+import json
+import time
+import urllib.request
+
+LED_NAME = {"red": "red", "yellow": "yellow", "green": "blue"}   # 我們說 green，d10 叫它 blue
+
+
+class WifiLink:
+    kind = "wifi"
+
+    def __init__(self, host, timeout=3.0):
+        self.base = "http://" + host
+        self.timeout = timeout
+        self.last_rtt_ms = None
+
+    def _get(self, path):
+        t0 = time.perf_counter()
+        with urllib.request.urlopen(self.base + path, timeout=self.timeout) as r:
+            body = r.read()
+        self.last_rtt_ms = (time.perf_counter() - t0) * 1000
+        return json.loads(body)
+
+    async def connect(self):
+        st = self._get("/api/status")          # 先問一次，確定找得到板子
+        return "WiFi 連上 {}（回應 {:.0f} ms）".format(self.base, self.last_rtt_ms)
+
+    async def read(self):
+        st = self._get("/api/status")
+        sensors = {
+            "temp": st.get("temp"),
+            "hum": st.get("hum"),
+            "light": st.get("light"),
+            "knob": st.get("knob"),
+            "button": None,                    # d10 的 JSON 裡沒有按鈕，WiFi 這條線讀不到
+        }
+        return sensors, self.last_rtt_ms
+
+    async def send(self, action, value=None):
+        """action：'red'／'yellow'／'green'（value＝True/False）、'rgb'（value＝(r,g,b)）、'beep'、'off'"""
+        if action in LED_NAME:
+            self._get("/api/led?name={}&on={}".format(LED_NAME[action], 1 if value else 0))
+        elif action == "rgb":
+            r, g, b = value
+            self._get("/api/rgb?r={}&g={}&b={}".format(r, g, b))
+        elif action == "beep":
+            self._get("/api/beep")
+        elif action == "off":
+            self._get("/api/off")
+
+    async def close(self):
+        pass
+</script>
+<script type="text/plain" data-file="link_ble.py" data-path="link_ble.py">
+# ============================================
+# link_ble.py — 藍牙這條線：UNO Q 當「中心」去連 ESP32
+# ============================================
+# ESP32 跑的是創客課第 11 課 d11_ble_remote.py（不用改），它提供兩組服務：
+#   文字指令服務（Nordic UART，NUS）
+#     RX 6E400002-…  UNO Q「寫入」一行字：red on／green off／rgb 255 0 0／beep／off／temp
+#     TX 6E400003-…  ESP32「通知」回一行字：OK red on／temp 25 C, hum 60 %
+#   LED 與按鈕服務（Nordic LBS）
+#     按鈕 00001524-…  ESP32 的 A 鍵按下／放開時「通知」1／0
+#
+# 手機 App 做得到的事，UNO Q 的 Linux 用 Python 也做得到：
+# 這裡用 bleak 這個套件（透過 Linux 的 BlueZ 用板子的藍牙）。
+# 藍牙這條線讀不到光線和旋鈕（d11 沒有提供），這就是「協定決定你拿得到什麼」。
+# ============================================
+
+import asyncio
+import re
+import time
+
+NUS_RX = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"   # UNO Q → ESP32（寫入）
+NUS_TX = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"   # ESP32 → UNO Q（通知）
+LBS_BUTTON = "00001524-1212-efde-1523-785feabcd123"  # A 鍵（通知）
+
+TEMP_RE = re.compile(r"temp\s+(-?\d+(?:\.\d+)?)\s*C,\s*hum\s+(-?\d+(?:\.\d+)?)")
+
+
+class BleLink:
+    kind = "ble"
+
+    def __init__(self, name, timeout=3.0):
+        self.name = name
+        self.timeout = timeout
+        self.client = None
+        self.lines = asyncio.Queue()    # ESP32 通知回來的每一行字
+        self.pressed = False            # 上一輪之後有沒有人按過 A 鍵
+        self.last_rtt_ms = None
+
+    def _on_text(self, _char, data):
+        for line in bytes(data).decode(errors="replace").splitlines():
+            if line.strip():
+                self.lines.put_nowait(line.strip())
+
+    def _on_disconnect(self, _client):
+        self.lines.put_nowait("__DISCONNECTED__")   # 叫醒正在等回話的人
+
+    async def _ensure(self):
+        """斷線了就重新掃描、重連一次（d11 斷線後會自己重新廣播）"""
+        if self.client is None or not self.client.is_connected:
+            print("藍牙斷線了，重新連線…")
+            print(await self.connect())
+            # ESP32 可能重開過、燈都滅了：這一輪算失敗，大腦下一輪會把燈號全部重送
+            raise ConnectionError("藍牙剛重新連上，下一輪重送燈號")
+
+    def _on_button(self, _char, data):
+        if bytes(data)[:1] == b"\x01":   # 1＝按下
+            self.pressed = True
+
+    async def connect(self):
+        from bleak import BleakClient, BleakScanner   # 只有走藍牙才需要裝 bleak
+        dev = await BleakScanner.find_device_by_name(self.name, timeout=10.0)
+        if dev is None:
+            raise RuntimeError("掃不到 {}：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？".format(self.name))
+        self.client = BleakClient(dev, disconnected_callback=self._on_disconnect)
+        await self.client.connect()
+        await self.client.start_notify(NUS_TX, self._on_text)
+        await self.client.start_notify(LBS_BUTTON, self._on_button)
+        return "藍牙連上 {}（{}）".format(self.name, dev.address)
+
+    async def _say(self, text, expect=None):
+        """寫一行指令過去；expect 有給就等 ESP32 回一行開頭是 expect 的字"""
+        while not self.lines.empty():           # 先把之前沒讀的回覆清掉
+            self.lines.get_nowait()
+        t0 = time.perf_counter()
+        await asyncio.wait_for(self.client.write_gatt_char(NUS_RX, text.encode(), response=True),
+                               timeout=self.timeout)
+        if expect is None:
+            self.last_rtt_ms = (time.perf_counter() - t0) * 1000
+            return None
+        deadline = t0 + self.timeout
+        while True:
+            left = deadline - time.perf_counter()
+            if left <= 0:
+                raise TimeoutError("ESP32 沒回「{}」".format(expect))
+            line = await asyncio.wait_for(self.lines.get(), timeout=left)
+            if line == "__DISCONNECTED__":
+                raise ConnectionError("藍牙斷線了")
+            if line.startswith(expect):
+                self.last_rtt_ms = (time.perf_counter() - t0) * 1000
+                return line
+
+    async def read(self):
+        await self._ensure()
+        temp = hum = None
+        line = await self._say("temp", expect=("temp", "DHT11"))
+        m = TEMP_RE.search(line or "")
+        if m:
+            temp, hum = [float(x) if "." in x else int(x) for x in m.groups()]
+        sensors = {
+            "temp": temp, "hum": hum,
+            "light": None, "knob": None,        # d11 沒有提供，藍牙這條線讀不到
+            "button": self.pressed,
+        }
+        self.pressed = False
+        return sensors, self.last_rtt_ms
+
+    async def send(self, action, value=None):
+        # 每個指令都等「它自己的」回話，免得把上一個指令遲到的 OK 當成這一個的
+        if action in ("red", "yellow", "green"):
+            word = "{} {}".format(action, "on" if value else "off")
+            await self._say(word, expect="OK " + word)
+        elif action == "rgb":
+            await self._say("rgb {} {} {}".format(*value), expect="OK rgb")
+        elif action == "beep":
+            await self._say("beep", expect="OK beep")
+        elif action == "off":
+            await self._say("off", expect="OK all off")
+
+    async def close(self):
+        if self.client is not None and self.client.is_connected:
+            try:
+                await asyncio.wait_for(self.client.disconnect(), timeout=self.timeout)
+            except Exception:
+                pass
+
+
+class SimBleLink(BleLink):
+    """模擬藍牙：不用真的藍牙，改把同樣的文字指令送到 fake_esp32.py 的 /sim/ble。
+    指令、回話格式都跟真的 d11 一樣；但延遲是電腦內部的，不能拿來當藍牙的數字。"""
+    kind = "ble-sim"
+
+    def __init__(self, host, timeout=3.0):
+        super().__init__(name="sim", timeout=timeout)
+        self.base = "http://" + host
+
+    async def _ensure(self):
+        pass
+
+    async def connect(self):
+        await self._say("temp", expect="temp")
+        return "模擬藍牙連上 {}（假的，延遲不算數）".format(self.base)
+
+    async def _say(self, text, expect=None):
+        import json
+        import urllib.parse
+        import urllib.request
+        t0 = time.perf_counter()
+        url = self.base + "/sim/ble?cmd=" + urllib.parse.quote(text)
+        with urllib.request.urlopen(url, timeout=self.timeout) as r:
+            data = json.loads(r.read())
+        self.last_rtt_ms = (time.perf_counter() - t0) * 1000
+        if data.get("pressed"):
+            self.pressed = True
+        line = data.get("reply", "")
+        if expect is not None and not line.startswith(expect):
+            raise TimeoutError("ESP32 沒回「{}」，回的是「{}」".format(expect, line))
+        return line
+
+    async def close(self):
+        pass
+</script>
+<script type="text/plain" data-file="main_w12.py" data-path="esp32/main_w12.py">
+# ============================================
+# main_w12.py — AIoT W12 用的 ESP32 開機選單（上傳成板子的 main.py）
+# ============================================
+# 開機（按 EN／RST 或重新插電）時：
+#   沒按任何鍵      → 跑第 10 課 WiFi 網頁（d10_wifi_web）
+#   按住 A 鍵開機   → 跑第 11 課藍牙遙控（d11_ble_remote）
+# 兩課的程式都不用改，跟創客課用的是同一份。
+#
+# 老師課前（在創客課 repo maker-esp32 的資料夾）：
+#   ./tools/upload.sh                                    先把 lib／demos 全部傳上去
+#   uv run mpremote connect auto sleep 2 cp <本檔路徑> :main.py
+#   uv run mpremote connect auto reset
+# 還原成創客課的選單：再跑一次 ./tools/upload.sh
+# ============================================
+
+from lib.ezkit import btn_a, oled
+import time
+
+time.sleep_ms(300)                 # 等手指按穩
+use_ble = btn_a.value() == 0       # A 鍵按下＝0（上拉電阻）
+
+oled.fill(0)
+oled.text("AIoT W12", 0, 0, 1)
+oled.text("BLE  (d11)" if use_ble else "WiFi (d10)", 0, 16, 1)
+oled.show()
+print("W12 選單：", "藍牙 d11" if use_ble else "WiFi d10")
+time.sleep_ms(800)
+
+__import__("demos.d11_ble_remote" if use_ble else "demos.d10_wifi_web")
+</script>
+<script type="text/plain" data-file="brain.py" data-path="brain.py" data-from="32">
+def make_link(a):
+    if a.link == "wifi":
+        from link_wifi import WifiLink
+        return WifiLink(a.esp)
+    if a.link == "ble":
+        from link_ble import BleLink
+        return BleLink(a.name)
+    from link_ble import SimBleLink
+    return SimBleLink(a.esp)
+
+
+async def apply(link, now, shown, sent):
+    """只送「有變的」動作：燈本來就亮著就不再送一次，省流量也省時間。
+    shown＝ESP32 上「確定已經是這樣」的燈；每送成功一個才記一個。"""
+    for led in ("red", "yellow", "green"):
+        want = bool(now.get(led, False))        # 規則沒提到的燈＝關
+        if want != shown.get(led):
+            await link.send(led, want)
+            shown[led] = want
+            sent.append("{}{}".format(led, "開" if want else "關"))
+    if now["rgb"] != shown.get("rgb"):
+        await link.send("rgb", now["rgb"])
+        shown["rgb"] = now["rgb"]
+        sent.append("彩色燈{}".format(now["rgb"]))
+    if now["beep"]:
+        await link.send("beep")
+        sent.append("嗶")
+    return sent
+
+
+def fmt(v, unit=""):
+    return "--" if v is None else "{}{}".format(v, unit)
+
+
+async def run(a):
+    link = make_link(a)
+    print("連線中…")
+    try:
+        print(await link.connect())
+    except Exception as e:
+        await link.close()
+        print("連不上 ESP32：{}".format(e))
+        return
+    stamp = time.strftime("%Y%m%d-%H%M%S")
+    path = "log_{}_{}.csv".format(link.kind, stamp)
+    f = open(path, "w", newline="", encoding="utf-8")
+    w = csv.writer(f)
+    w.writerow(["time", "link", "temp", "hum", "light", "knob", "button",
+                "limit", "red", "green", "rgb", "sent", "read_ms", "fail", "why"])
+    rtts, fails, rounds, prev, shown = [], 0, 0, {}, {}
+    t_end = time.time() + a.seconds if a.seconds else None
+    try:
+        while t_end is None or time.time() < t_end:
+            t0 = time.time()
+            rounds += 1
+            sent = []
+            try:
+                s, rtt = await link.read()
+                rtts.append(rtt)
+                now = rules.decide(s, prev)
+                prev = now
+                await apply(link, now, shown, sent)
+                print("{} {:>4}  溫度 {:>4} 濕度 {:>4} 光線 {:>5} 旋鈕 {:>5} 門檻 {:>4} | 讀 {:5.0f} ms | {}{}".format(
+                    time.strftime("%H:%M:%S"), link.kind, fmt(s["temp"]), fmt(s["hum"]),
+                    fmt(s["light"]), fmt(s["knob"]), now["limit"], rtt,
+                    "送：" + "、".join(sent) if sent else "沒變",
+                    "（" + "；".join(now["why"]) + "）" if now["why"] else ""))
+                w.writerow([time.strftime("%H:%M:%S"), link.kind, s["temp"], s["hum"], s["light"],
+                            s["knob"], s["button"], now["limit"], now["red"], now["green"],
+                            " ".join(map(str, now["rgb"])), " ".join(sent), round(rtt, 1), 0,
+                            "；".join(now["why"])])
+            except Exception as e:                    # 逾時、斷線、藍牙錯誤都算這一輪失敗，下一輪再試
+                fails += 1
+                shown.clear()                         # 不確定 ESP32 現在是什麼樣子了：下一輪成功時全部重送一次
+                print("{} ESP32 沒回應（第 {} 次）：{}".format(time.strftime("%H:%M:%S"), fails, e or type(e).__name__))
+                w.writerow([time.strftime("%H:%M:%S"), link.kind] + [""] * 11 + [1, type(e).__name__])
+            f.flush()
+            await asyncio.sleep(max(0, a.period - (time.time() - t0)))
+    except (KeyboardInterrupt, asyncio.CancelledError):
+        pass
+    finally:
+        try:
+            await asyncio.wait_for(link.send("off"), timeout=5)
+        except Exception:
+            print("⚠️ 關燈指令沒送到（ESP32 可能還亮著燈）：重開 ESP32 或再跑一次再 Ctrl+C")
+        f.close()
+        try:
+            await link.close()
+        except Exception:
+            pass
+        print("\n==== 這次跑了 {} 輪，失敗 {} 次；紀錄在 {} ====".format(rounds, fails, path))
+        if len(rtts) >= 2:
+            q = sorted(rtts)
+            p95 = q[min(len(q) - 1, int(len(q) * 0.95))]
+            print("讀一次感測值來回：中位數 {:.0f} ms、最快 {:.0f} ms、最慢 {:.0f} ms、95% 在 {:.0f} ms 內".format(
+                statistics.median(q), q[0], q[-1], p95))
+        if link.kind == "ble-sim":
+            print("⚠️ 這是模擬藍牙：延遲是電腦裡面的 HTTP，不代表真的藍牙有多快。")
+
+
+def main():
+    ap = argparse.ArgumentParser(description="UNO Q 大腦：跟 ESP32 合作")
+    ap.add_argument("--link", choices=["wifi", "ble", "ble-sim"], default="wifi")
+    ap.add_argument("--esp", default="192.168.4.1", help="wifi／ble-sim：ESP32 的 IP（可加 :port）")
+    ap.add_argument("--name", default="", help="ble：ESP32 的藍牙名字，OLED 第二行那個 maker-XXXX")
+    ap.add_argument("--period", type=float, default=1.0, help="幾秒問一次（預設 1）")
+    ap.add_argument("--seconds", type=float, default=0, help="跑幾秒就停（0＝一直跑到 Ctrl+C）")
+    a = ap.parse_args()
+    if a.link == "ble" and not a.name:
+        ap.error("--link ble 要加 --name maker-XXXX（看 ESP32 的 OLED）")
+    try:
+        asyncio.run(run(a))
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == "__main__":
+    main()
+</script>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const tg = (cell, title) => `<span class="tag" title="${esc(title || "內容規格 " + cell)}">${esc(cell)}</span>`;
+const WN = `<span class="wn">⚠️</span>`;
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SRC = {};
+$$('script[type="text/plain"][data-file]').forEach(s => {
+  SRC[s.getAttribute("data-file")] = { text: s.textContent.replace(/^\n/, ""), from: Number(s.getAttribute("data-from") || 1) };
+});
+
+/* ================= 工具列 ================= */
+$("#openAll").addEventListener("click", () => $$("details.deep").forEach(d => { d.open = true; }));
+$("#closeAll").addEventListener("click", () => $$("details.deep").forEach(d => { d.open = false; }));
+$("#themeBtn").addEventListener("click", () => {
+  const root = document.documentElement;
+  const dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.setAttribute("data-theme", dark ? "light" : "dark");
+});
+
+/* ================= 程式片段：從嵌入的起始檔切 ================= */
+function excerpt(file, start, end, extra) {
+  const src = SRC[file];
+  if (!src) return { lines: ["（找不到 " + file + "）"], a: 0, b: 0 };
+  const L = src.text.split("\n");
+  const i = L.findIndex(l => l.includes(start));
+  let j = end ? L.findIndex((l, k) => k >= i && l.includes(end)) : i;
+  if (i < 0 || j < 0) return { lines: ["（" + file + " 裡找不到「" + start + "」）"], a: 0, b: 0 };
+  j = Math.min(L.length - 1, j + (extra || 0));
+  return { lines: L.slice(i, j + 1), a: src.from + i, b: src.from + j };
+}
+function exHtml(file, start, end, extra) {
+  const e = excerpt(file, start, end, extra);
+  return `<p class="exc"><code>${esc(file)}</code> 第 ${e.a}–${e.b} 行</p><pre>${esc(e.lines.join("\n"))}</pre>`;
+}
+const EX = {
+  rules: ["rules.py", "def decide(", "\"why\": why,", 1],
+  rulesConst: ["rules.py", "TEMP_HOT_FIXED =", "NIGHT_RGB =", 0],
+  apply: ["brain.py", "async def apply(", "return sent", 0],
+  line: ["brain.py", "print(\"{} {:>4}", "\"（\" + \"；\".join(now[\"why\"])", 0],
+  csvHead: ["brain.py", "w.writerow([\"time\"", "\"limit\", \"red\"", 0],
+  fail: ["brain.py", "逾時、斷線、藍牙錯誤", "w.writerow([time.strftime(\"%H:%M:%S\"), link.kind] + [\"\"]", 0],
+  wifiRead: ["link_wifi.py", "LED_NAME =", "LED_NAME =", 0],
+  wifiRead2: ["link_wifi.py", "async def read(self):", "return sensors, self.last_rtt_ms", 0],
+  wifiSend: ["link_wifi.py", "async def send(self", "self._get(\"/api/off\")", 0],
+  bleUuid: ["link_ble.py", "NUS_RX =", "LBS_BUTTON =", 0],
+  bleRead: ["link_ble.py", "async def read(self):", "return sensors, self.last_rtt_ms", 0],
+  bleSend: ["link_ble.py", "async def send(self", "expect=\"OK all off\")", 0],
+  bleLost: ["link_ble.py", "def _on_disconnect(", "raise ConnectionError(\"藍牙剛重新連上", 0],
+  menu: ["main_w12.py", "use_ble =", "__import__(", 0],
+};
+const ex = k => exHtml(...EX[k]);
+$("#rulesFull").textContent = SRC["rules.py"] ? SRC["rules.py"].text : "";
+$("#exFail").innerHTML = esc(excerpt(...EX.fail).lines.join("\n"));
+(() => { const e = excerpt(...EX.fail); $("#exFailCap").textContent = `brain.py 第 ${e.a}–${e.b} 行`; })();
+$("#exLost").innerHTML = ex("bleLost");
+
+/* ================= §1 全路徑地圖 ================= */
+const MAP = {
+  parts: ["ESP32＋EZ 擴充板：感官和手腳", `板上焊好 13 種元件：溫溼度 DHT11、光線、旋鈕、A／B 鍵、紅黃綠三顆燈、彩色燈、蜂鳴器、OLED、紅外線、繼電器 ${tg("§〇 A·13 種元件")}。今天大腦用到的：溫度、濕度、光線、旋鈕、A 鍵（感官）；紅燈、綠燈、彩色燈、蜂鳴器（手腳）。ESP32 借創客課的 EZ Start Kit+。`],
+  d10: ["第 10 課 d10_wifi_web.py（WiFi）", `正本在創客課 repo <code>maker-esp32</code> 的 <code>esp32/demos/</code>，不用改。板子自己開基地台：名稱 <code>maker-XXXX</code>、密碼 <code>makerXXXX</code>、網址 <code>http://192.168.4.1</code>（XXXX 由晶片決定，OLED 會顯示）${tg("§〇 B·第 10 課")}。它<b>只會回答</b>：大腦問 <code>GET /api/status</code>，它回一段 JSON，欄位 <code>red</code>、<code>yellow</code>、<code>blue</code>、<code>rgb</code>、<code>temp</code>、<code>hum</code>、<code>light</code>、<code>knob</code>、<code>last</code>、<code>requests</code>；叫它做事是 <code>/api/led?name=red&amp;on=1</code>（name＝<code>red</code>／<code>yellow</code>／<code>blue</code>）、<code>/api/rgb?r=&amp;g=&amp;b=</code>、<code>/api/beep</code>、<code>/api/off</code>。⚠️ 第三顆燈在程式裡叫 <code>blue</code>，板子上是<b>綠燈</b> ${tg("§〇 B·雷")}。`],
+  menu: ["開機選單 esp32/main_w12.py", `本週新寫：沒按鍵開機＝第 10 課（WiFi），<b>按住 A 鍵開機＝第 11 課（藍牙）</b>；按住到 <b>OLED 顯示 BLE 才放開</b> ${tg("§〇 B·開機選單")} ${tg("§〇 D·看到 OLED 顯示 BLE 才放開", "內容規格 §〇 D 第 4 點 立霧另外提醒")}。${WN} 這支<b>沒在實板跑過</b> ${tg("§〇 D·main_w12.py 實板", "內容規格 §〇 D 第 5 點 沒驗")}；退路是在 maker-esp32 跑 <code>./tools/upload.sh d10_wifi_web</code>（或 <code>d11_ble_remote</code>）直接把那一課變成 <code>main.py</code>。` + ex("menu")],
+  d11: ["第 11 課 d11_ble_remote.py（藍牙）", `藍牙名稱 <code>maker-XXXX</code>（OLED 第二行）。大腦<b>寫入</b>一行字，板子<b>通知</b>回一行字：寫 <code>temp</code> → <code>temp 25 C, hum 61 %</code>（讀失敗回 <code>DHT11 read failed</code>）；寫 <code>red on</code>／<code>green off</code>／<code>rgb 255 0 0</code>／<code>beep</code>／<code>off</code> → <code>OK red on</code>、<code>OK rgb</code>、<code>OK beep</code>、<code>OK all off</code> ${tg("§〇 B·第 11 課")}。它會<b>主動說</b>：A 鍵按下／放開 → 按鈕特徵值通知 <code>1</code>／<code>0</code>。讀不到光線、旋鈕 ${tg("§〇 B·讀不到")}。`],
+  wifi: ["WiFi 線：網頁問答", `<b>建議 UNO Q 去連 ESP32 的基地台</b>（不用校網、不用路由器）：<code>nmcli device wifi list</code> → <code>sudo nmcli --ask device wifi connect maker-XXXX</code>（會問密碼 <code>makerXXXX</code>）；掃描快取過期會連不上，先 <code>list</code> 再連 ${tg("§〇 E·去連 ESP32 的基地台")}。連上後 UNO Q 的 WiFi 離開原本網路——<b>這週 SSH 一律走 USB <code>192.168.7.2</code></b> ${tg("§〇 E·SSH 一律走 USB")}。10 組同時開基地台會不會互相干擾沒驗（d10 已把頻道錯開 1／6／11）${WN} ${tg("§〇 D·10 組同時開基地台的干擾", "內容規格 §〇 D 第 5 點 沒驗")}。`],
+  ble: ["藍牙線：寫入／通知", `UNO Q 當「中心」去連 ESP32，用 Python 套件 bleak（msi 上裝到 3.1.0、介面對過）${tg("§〇 C·link_ble.py")}。bleak 要網路才裝得到，所以<b>在連 ESP32 基地台之前</b>裝好：<code>python3 -m venv --system-site-packages ~/w12env</code> → <code>~/w12env/bin/pip install bleak</code> → <code>~/w12env/bin/python brain.py --link ble --name maker-XXXX</code> ${tg("§〇 E·先裝 bleak")}。${WN} 這幾步<b>沒在 UNO Q 上驗</b>；Linux 的藍牙服務會不會被別的程式佔住也沒驗 ${tg("§〇 D·佔住", "內容規格 §〇 D 第 5 點 沒驗：BlueZ 有沒有被別的 App 佔住")}。不准 <code>sudo pip install</code> 或 <code>--break-system-packages</code>；裝不起來＝看老師示範＋自己跑 <code>ble-sim</code>。` + ex("bleUuid")],
+  lwifi: ["link_wifi.py：WiFi 這條線", `只用 Python 內建的 <code>urllib</code>，UNO Q 不用裝套件 ${tg("§〇 C·link_wifi.py")}。注意兩件事：我們說 <code>green</code>，送出去要寫成 d10 的 <code>blue</code>；JSON 裡沒有按鈕，所以 <code>"button": None</code>——<b>WiFi 這條線讀不到 A 鍵</b>。` + ex("wifiRead") + ex("wifiRead2")],
+  fake: ["fake_esp32.py：假的 ESP32", `沒板子也能練：網址、JSON 欄位跟第 10 課一樣；另有模擬專用的 <code>/sim/ble</code>（照第 11 課的回話）、<code>/sim/set</code>、<code>/sim/press</code>、<code>/sim/state</code>。瀏覽器開 <code>http://127.0.0.1:8090</code> 是一塊虛擬 EZ 板；預設埠號 8090；初值溫度 26、濕度 60、光線 2400、旋鈕 2200（門檻 28.1）；假板子「數字小＝暗」${tg("§〇 C·fake_esp32.py")}。第一部分就是 <code>python3 fake_esp32.py</code> 加另一個終端機 <code>python3 brain.py --link wifi --esp 127.0.0.1:8090</code>；假板子跑在別台電腦時，<code>--esp</code> 要寫那台的門牌加 <code>:8090</code> ${tg("§〇 D·別台電腦", "內容規格 §〇 D 第 4 點 立霧另外提醒")}。§2 的模擬器初值就照它。`],
+  lble: ["link_ble.py：藍牙這條線", `讀：寫入 <code>temp</code>、等通知回 <code>temp … C, hum … %</code>；<code>"light": None, "knob": None</code>——<b>藍牙這條線讀不到光線和旋鈕</b>，所以門檻用固定 28。A 鍵靠按鈕特徵值的通知記下「上一輪之後有沒有人按過」${tg("§〇 C·link_ble.py")}。另有 <code>SimBleLink</code>：同樣的文字指令送到 <code>fake_esp32.py</code> 的 <code>/sim/ble</code>（<code>--link ble-sim</code>）。` + ex("bleRead") + ex("bleSend") + ex("bleLost")],
+  brain: ["brain.py：讀 → 想 → 只送有變的 → 記下來", `<code>--link wifi</code>／<code>ble</code>／<code>ble-sim</code>；<code>--esp</code>（預設 <code>192.168.4.1</code>，可加冒號和埠號）；<code>--name</code>（藍牙名字）；<code>--period</code>（幾秒一輪，預設 1）；<code>--seconds</code>（跑幾秒停，0＝到 Ctrl+C）${tg("§〇 C·brain.py")}。<code>apply()</code> 照順序處理紅、黃、綠三顆燈（規則沒提到的燈＝關）和彩色燈，只送「跟 ESP32 上確定已經是這樣」不同的；送成功一個才記一個 ${tg("§〇 D·燈號全部重送一次", "內容規格 §〇 D 第 4 點 ②")}。` + ex("apply")],
+  rules: ["rules.py：你要改的那支", `只管「想」、不管「怎麼傳」，所以 WiFi、藍牙兩條線用同一份。熱的門檻：有旋鈕＝旋鈕 0–4095 對到 20–35 °C；沒旋鈕（藍牙）＝固定 28；熱＝到門檻（含）以上 → 紅燈亮、綠燈滅、<b>剛變熱那一輪嗶</b>；暗 → 彩色燈夜燈 <code>(255, 160, 60)</code>；A 鍵 → 嗶；溫度沒讀到 → 維持上一輪；黃燈 <code>"yellow": False</code> 留給你用 ${tg("§〇 C·rules.py")} ${tg("§〇 D·維持上一輪判斷", "內容規格 §〇 D 第 4 點 ①")}。` + ex("rulesConst") + ex("rules")],
+  out: ["終端機一行＋記錄檔一列", `每輪印一行、寫一列進 <code>log_&lt;連法&gt;_&lt;時間&gt;.csv</code>；Ctrl+C 停下時送 <code>off</code>、印「讀一次感測值來回：中位數…最快…最慢…95% 在…內」${tg("§〇 C·brain.py")}。記錄檔欄位：<code>time,link,temp,hum,light,knob,button,limit,red,green,rgb,sent,read_ms,fail,why</code> ${tg("§〇 D·CSV 欄位多一欄", "內容規格 §〇 D 第 4 點")}。` + ex("csvHead") + ex("line")],
+};
+function showMap(k) {
+  const m = MAP[k]; if (!m) return;
+  $("#mapPanel").innerHTML = `<h4>${esc(m[0])}</h4><div>${m[1]}</div>`;
+  $$("#mapSvg [data-node]").forEach(g => g.classList.toggle("sel", g.getAttribute("data-node") === k));
+  $$("#s1 .node-grid .btn").forEach(b => b.setAttribute("aria-pressed", b.getAttribute("data-node") === k ? "true" : "false"));
+}
+$$("#s1 [data-node]").forEach(el => {
+  el.addEventListener("click", () => showMap(el.getAttribute("data-node")));
+  el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); showMap(el.getAttribute("data-node")); } });
+});
+
+/* ==== RULES-BEGIN（一比一照起始檔 rules.py 的 decide() 與 brain.py 的 apply()、印一行；check_concept.py 用 node 跟 Python 對答案）==== */
+const TEMP_HOT_FIXED = 28;
+const KNOB_MIN_C = 20;
+const KNOB_MAX_C = 35;
+const LIGHT_DARK = 1000;
+const NIGHT_RGB = [255, 160, 60];
+const RULES = { DARK_WHEN_LOW: true, TRY_HUM_YELLOW: false };   // TRY_HUM_YELLOW：頁面上的「試改規則」，起始檔沒有
+const isNone = v => v === null || v === undefined;
+const pyStr = v => typeof v === "boolean" ? (v ? "True" : "False") : String(v);
+const pyTuple = a => "(" + a.join(", ") + ")";
+function threshold(s) {
+  if (isNone(s.knob)) return { v: TEMP_HOT_FIXED, t: String(TEMP_HOT_FIXED) };
+  const v = Math.round((KNOB_MIN_C + (KNOB_MAX_C - KNOB_MIN_C) * s.knob / 4095) * 10) / 10;
+  return { v: v, t: v.toFixed(1) };
+}
+function isDark(light) {
+  if (isNone(light)) return false;
+  return RULES.DARK_WHEN_LOW ? light < LIGHT_DARK : light > LIGHT_DARK;
+}
+function decide(s, prev) {
+  const why = [];
+  const lim = threshold(s);
+  let hot;
+  if (isNone(s.temp)) {
+    hot = prev.red || false;
+    why.push("溫度沒讀到，維持上一輪");
+  } else {
+    hot = s.temp >= lim.v;
+  }
+  const dark = isDark(s.light);
+  if (hot && !isNone(s.temp)) why.push("溫度 " + pyStr(s.temp) + " ≥ 門檻 " + lim.t);
+  if (dark) why.push("光線 " + pyStr(s.light) + " 算暗→夜燈");
+  let beep = hot && !(prev.red || false);
+  if (s.button) {
+    beep = true;
+    why.push("有人按了 ESP32 的 A 鍵");
+  }
+  let yellow = false;   // rules.py：黃燈現在沒用到
+  if (RULES.TRY_HUM_YELLOW && !isNone(s.hum) && s.hum >= 70) { yellow = true; why.push("（試改）濕度 " + pyStr(s.hum) + " ≥ 70→黃燈"); }
+  return { red: hot, yellow: yellow, green: !hot, rgb: dark ? NIGHT_RGB : [0, 0, 0], beep: beep, limit: lim.v, limitText: lim.t, why: why };
+}
+/* brain.py 的 apply()：shown＝ESP32 上「確定已經是這樣」的燈；回傳要送的動作（照順序） */
+function planSends(now, shown) {
+  const acts = [];
+  for (const led of ["red", "yellow", "green"]) {
+    const want = !!now[led];   // 規則沒提到的燈＝關
+    if (want !== shown[led]) acts.push({ act: led, value: want, label: led + (want ? "開" : "關") });
+  }
+  if (isNone(shown.rgb) || now.rgb.join() !== shown.rgb.join()) acts.push({ act: "rgb", value: now.rgb, label: "彩色燈" + pyTuple(now.rgb) });
+  if (now.beep) acts.push({ act: "beep", label: "嗶" });
+  return acts;
+}
+function commit(shown, a) { if (a.act !== "beep") shown[a.act] = a.value; }
+const rj = (v, n) => String(v).padStart(n);
+const fmtv = v => isNone(v) ? "--" : pyStr(v);
+function brainLine(hms, kind, s, now, sent) {
+  return hms + " " + rj(kind, 4) + "  溫度 " + rj(fmtv(s.temp), 4) + " 濕度 " + rj(fmtv(s.hum), 4) +
+    " 光線 " + rj(fmtv(s.light), 5) + " 旋鈕 " + rj(fmtv(s.knob), 5) + " 門檻 " + rj(now.limitText, 4) +
+    " | 讀 " + rj("--", 5) + " ms | " + (sent.length ? "送：" + sent.join("、") : "沒變") +
+    (now.why.length ? "（" + now.why.join("；") + "）" : "");
+}
+/* ==== RULES-END ==== */
+
+/* ================= §2 模擬器 ================= */
+const BOARD = { red: false, yellow: false, blue: false, rgb: [0, 0, 0], temp: 26, hum: 60, light: 2400, knob: 2200, last: "", requests: 0 };
+const SIM = { link: "wifi", running: false, busy: false, power: true, connected: false, started: false,
+  rounds: 0, fails: 0, prev: {}, shown: {}, pressed: false, dhtFail: false, sentN: 0, naiveN: 0,
+  cache: null, cacheAge: 0, speed: 1, stamp: "", okRounds: 0, stopReq: false };
+const LANE = { L: 160, R: 400 };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const two = n => String(n).padStart(2, "0");
+const hms = () => { const d = new Date(); return two(d.getHours()) + ":" + two(d.getMinutes()) + ":" + two(d.getSeconds()); };
+const stampNow = () => { const d = new Date(); return d.getFullYear() + two(d.getMonth() + 1) + two(d.getDate()) + "-" + two(d.getHours()) + two(d.getMinutes()) + two(d.getSeconds()); };
+const pyJson = o => "{" + Object.keys(o).map(k => JSON.stringify(k) + ": " + (Array.isArray(o[k]) ? "[" + o[k].join(", ") + "]" : JSON.stringify(o[k]))).join(", ") + "}";
+
+function term(text, cls) {
+  const t = $("#simTerm");
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = text + "\n";
+  t.appendChild(span);
+  while (t.childNodes.length > 80) t.removeChild(t.firstChild);
+  t.scrollTop = t.scrollHeight;
+}
+function cmdLine() {
+  return SIM.link === "wifi" ? "$ python3 brain.py --link wifi --esp 192.168.4.1" : "$ ~/w12env/bin/python brain.py --link ble --name maker-XXXX";
+}
+function renderBoard() {
+  const on = (id, v, col) => { const el = $(id); el.classList.toggle("on", !!v); el.style.background = v ? col : ""; };
+  on("#ledRed", BOARD.red, "#FF5A4E");
+  on("#ledYellow", BOARD.yellow, "#F2C14E");
+  on("#ledGreen", BOARD.blue, "#3DDC84");
+  const lit = BOARD.rgb.some(x => x > 0);
+  const col = "rgb(" + BOARD.rgb.join(",") + ")";
+  const el = $("#ledRgb"); el.classList.toggle("on", lit); el.style.background = lit ? col : ""; el.style.setProperty("--glow", lit ? col : "#fff");
+  const oled = !SIM.power ? "" : SIM.link === "wifi" ? "maker-XXXX\npw makerXXXX\n192.168.4.1" : "BLE  (d11)\nmaker-XXXX\n（第 11 課）";
+  $("#oled").textContent = oled;
+  $("#board").style.opacity = SIM.power ? "1" : ".55";
+}
+function beepFlash() {
+  const b = $("#buzz"); b.classList.add("on"); b.textContent = "嗶！";
+  setTimeout(() => { b.classList.remove("on"); b.textContent = "蜂鳴器"; }, 450);
+}
+function renderMode() {
+  const w = SIM.link === "wifi";
+  $("#linkWifi").setAttribute("aria-pressed", String(w));
+  $("#linkBle").setAttribute("aria-pressed", String(!w));
+  $("#boardProg").textContent = w ? "跑第 10 課 d10_wifi_web.py" : "按住 A 開機 → 第 11 課 d11_ble_remote.py";
+  $("#laneLeftSub").textContent = w ? "第 10 課" : "第 11 課";
+  $("#laneTitle").textContent = w ? "WiFi：網頁問答（一問一答）" : "藍牙：寫入一行字 → 通知回一行字";
+  const rd = (id, yes) => { const e = $(id); e.className = "rd " + (yes ? "yes" : "no"); e.textContent = yes ? "大腦讀得到" : "大腦讀不到"; };
+  rd("#rdTemp", true); rd("#rdLight", w); rd("#rdKnob", w);
+  const b = $("#rdBtn"); b.className = "rd " + (w ? "no" : "yes"); b.textContent = w ? "大腦看不到" : "會主動通知大腦";
+  $("#dhtFail").disabled = w;
+  $("#boardHint").textContent = w
+    ? "WiFi 模式：d10 只會回答、JSON 裡沒有按鈕，所以按 A 鍵大腦看不到。門檻跟著旋鈕走。"
+    : "藍牙模式：A 鍵一按下板子就主動通知；光線、旋鈕 d11 沒提供，終端機印 --、門檻固定 28。";
+  $("#modeNote").innerHTML = w
+    ? `<b>WiFi 模式</b>：每一輪大腦先 <code>GET /api/status</code>，ESP32 回 JSON；要改燈再一個一個 <code>GET /api/led?…</code>、<code>/api/rgb?…</code>、<code>/api/beep</code>。綠燈送出去寫成 <code>name=blue</code> ${tg("§〇 B·雷")}。d10 的狀態大約每 2 秒才更新，所以常常連續兩輪讀到同一筆 ${tg("§〇 D·約每 2 秒更新", "內容規格 §〇 D 第 4 點 立霧另外提醒")}。`
+    : `<b>藍牙模式</b>：每一輪大腦先寫入 <code>temp</code>，ESP32 通知回 <code>temp … C, hum … %</code>；要改燈就寫入 <code>red on</code> 這種一行字，等它<b>自己的</b>回話 <code>OK red on</code> 才送下一個 ${tg("§〇 D·等自己的回話", "內容規格 §〇 D 第 4 點 ③")}。「讓溫溼度讀失敗一次」＝板子回 <code>DHT11 read failed</code>，規則維持上一輪 ${tg("§〇 D·維持上一輪判斷", "內容規格 §〇 D 第 4 點 ①")}。`;
+  $("#csvName").textContent = "log_" + SIM.link + "_….csv";
+  showLimit();
+  renderBoard();
+}
+function showLimit() {
+  $("#vTemp").textContent = BOARD.temp;
+  $("#vLight").textContent = BOARD.light;
+  $("#vKnob").textContent = BOARD.knob;
+  $("#vHum").textContent = BOARD.hum;
+  $("#vLimit").textContent = SIM.link === "wifi" ? threshold({ knob: BOARD.knob }).t : "28";
+}
+function counters() {
+  $("#cRounds").textContent = SIM.rounds;
+  $("#cFails").textContent = SIM.fails;
+  $("#cSent").textContent = SIM.sentN;
+  $("#cNaive").textContent = SIM.naiveN;
+}
+/* —— 封包動畫：只畫先後，不量時間 —— */
+let seqItems = [];
+let seqKeep = [];   // 上一輪之後 A 鍵的主動通知，換新一輪時留著
+function seqClear() { $("#seqList").innerHTML = ""; seqItems = []; const k = seqKeep; seqKeep = []; k.forEach(x => seqAdd(...x)); }
+function seqAdd(who, cls, body, isThink) {
+  const li = document.createElement("li");
+  li.innerHTML = `<span class="who ${cls || ""}">${esc(who)}</span>` + (isThink ? `<span class="think">${body}</span>` : `<code>${esc(body)}</code>`);
+  $$("#seqList li.cur").forEach(x => x.classList.remove("cur"));
+  li.classList.add("cur");
+  $("#seqList").appendChild(li);
+  $("#seqList").scrollTop = $("#seqList").scrollHeight;
+}
+async function fly(dir, text, lost) {
+  // dir：up＝大腦→ESP32（右到左）、dn＝ESP32→大腦（左到右）
+  const who = dir === "up" ? (SIM.link === "wifi" ? "大腦 → ESP32（問）" : "大腦 → ESP32（寫入）") : (SIM.link === "wifi" ? "ESP32 → 大腦（回答）" : "ESP32 → 大腦（通知）");
+  seqAdd(lost ? who + "：沒人接" : who, lost ? "lost" : (dir === "dn" ? "dn" : ""), text);
+  $("#laneStep").textContent = `第 ${SIM.rounds} 輪：${who}`;
+  if (SIM.speed === 0 || REDUCED) { if (lost) await sleep(60); return; }
+  const g = $("#pkt"), box = $("#pktBox"), tx = $("#pktTxt");
+  const short = text.length > 34 ? text.slice(0, 33) + "…" : text;
+  tx.textContent = short;
+  box.setAttribute("class", "pk" + (dir === "dn" ? " dn" : "") + (lost ? " lost" : ""));
+  const from = dir === "up" ? LANE.R : LANE.L, to = lost ? 280 : (dir === "up" ? LANE.L : LANE.R);
+  const dur = 700 / SIM.speed;
+  const t0 = performance.now();
+  g.setAttribute("opacity", "1");
+  await new Promise(res => {
+    const step = t => {
+      const k = Math.min(1, (t - t0) / dur);
+      const e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      g.setAttribute("transform", `translate(${from + (to - from) * e},75)`);
+      if (lost) g.setAttribute("opacity", String(1 - k * .7));
+      if (k < 1) requestAnimationFrame(step); else res();
+    };
+    requestAnimationFrame(step);
+  });
+  await sleep(160 / SIM.speed);
+  g.setAttribute("opacity", "0");
+}
+async function think(html) {
+  seqAdd("大腦想一想", "", html, true);
+  $("#laneStep").textContent = `第 ${SIM.rounds} 輪：UNO Q 跑 rules.decide()`;
+  if (SIM.speed && !REDUCED) await sleep(450 / SIM.speed);
+}
+class Fail extends Error { constructor(m, kind) { super(m); this.kind = kind; } }
+/* —— 一問一答：照 link_wifi.py／link_ble.py 的字樣 —— */
+async function ask(text) {
+  if (!SIM.power) {
+    await fly("up", text, true);
+    throw new Fail(SIM.link === "wifi" ? "timed out" : "藍牙斷線了", SIM.link === "wifi" ? "TimeoutError" : "ConnectionError");
+  }
+  await fly("up", text);
+}
+function espDo(act, value) {
+  // ESP32 收到指令後真的動作（d10 的 blue＝板子上的綠燈）
+  if (act === "red") BOARD.red = value;
+  if (act === "yellow") BOARD.yellow = value;
+  if (act === "green") BOARD.blue = value;
+  if (act === "rgb") BOARD.rgb = value.slice();
+  if (act === "beep") beepFlash();
+  if (act === "off") { BOARD.red = BOARD.yellow = BOARD.blue = false; BOARD.rgb = [0, 0, 0]; }
+  renderBoard();
+}
+function statusJson() {
+  return pyJson({ red: BOARD.red, yellow: BOARD.yellow, blue: BOARD.blue, rgb: BOARD.rgb, temp: SIM.cache.temp, hum: SIM.cache.hum, light: SIM.cache.light, knob: SIM.cache.knob, last: BOARD.last, requests: BOARD.requests });
+}
+async function readSensors() {
+  if (SIM.link === "wifi") {
+    await ask("GET /api/status");
+    BOARD.requests += 1;
+    let note = "";
+    if (!SIM.cache || SIM.cacheAge >= 2) { SIM.cache = { temp: BOARD.temp, hum: BOARD.hum, light: BOARD.light, knob: BOARD.knob }; SIM.cacheAge = 0; }
+    else note = "（跟上一次問到的同一筆：d10 大約每 2 秒才更新）";
+    SIM.cacheAge += 1;
+    await fly("dn", statusJson() + note);
+    return { temp: SIM.cache.temp, hum: SIM.cache.hum, light: SIM.cache.light, knob: SIM.cache.knob, button: null };
+  }
+  await ask("temp");
+  let temp = null, hum = null, reply;
+  if (SIM.dhtFail) { reply = "DHT11 read failed"; SIM.dhtFail = false; }
+  else { temp = BOARD.temp; hum = BOARD.hum; reply = "temp " + temp + " C, hum " + hum + " %"; }
+  await fly("dn", reply);
+  const pressed = SIM.pressed; SIM.pressed = false;
+  return { temp: temp, hum: hum, light: null, knob: null, button: pressed };
+}
+async function send(a) {
+  if (SIM.link === "wifi") {
+    let url;
+    const LED_NAME = { red: "red", yellow: "yellow", green: "blue" };   // 照 link_wifi.py：我們說 green，d10 叫它 blue
+    if (LED_NAME[a.act]) url = "/api/led?name=" + LED_NAME[a.act] + "&on=" + (a.value ? 1 : 0);
+    else if (a.act === "rgb") url = "/api/rgb?r=" + a.value[0] + "&g=" + a.value[1] + "&b=" + a.value[2];
+    else url = "/api/" + a.act;
+    await ask("GET " + url);
+    BOARD.requests += 1;
+    if (LED_NAME[a.act]) BOARD.last = LED_NAME[a.act] + (a.value ? " on" : " off");
+    espDo(a.act, a.value);
+    await fly("dn", "JSON（目前狀態）");
+    return;
+  }
+  let word, okw;
+  if (a.act === "red" || a.act === "yellow" || a.act === "green") { word = a.act + " " + (a.value ? "on" : "off"); okw = "OK " + word; }
+  else if (a.act === "rgb") { word = "rgb " + a.value.join(" "); okw = "OK rgb"; }
+  else if (a.act === "beep") { word = "beep"; okw = "OK beep"; }
+  else { word = "off"; okw = "OK all off"; }
+  await ask(word);
+  espDo(a.act, a.value);
+  await fly("dn", okw);
+}
+function csvCell(v) { const s = isNone(v) ? "" : pyStr(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+async function connect() {
+  term(SIM.link === "wifi" ? "連線中…" : "連線中…");
+  if (SIM.link === "wifi") {
+    if (!SIM.power) { await fly("up", "GET /api/status", true); term("連不上 ESP32：timed out", "redl"); return false; }
+    await fly("up", "GET /api/status"); BOARD.requests += 1;
+    SIM.cache = { temp: BOARD.temp, hum: BOARD.hum, light: BOARD.light, knob: BOARD.knob }; SIM.cacheAge = 1;
+    await fly("dn", statusJson());
+    term("WiFi 連上 http://192.168.4.1（回應 -- ms）", "okl");
+  } else {
+    seqAdd("大腦掃描藍牙名字", "", "maker-XXXX");
+    if (SIM.speed && !REDUCED) await sleep(500 / SIM.speed);
+    if (!SIM.power) { term("連不上 ESP32：掃不到 maker-XXXX：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？", "redl"); return false; }
+    term("藍牙連上 maker-XXXX（板子的藍牙位址）", "okl");
+  }
+  SIM.connected = true;
+  return true;
+}
+async function oneRound() {
+  if (SIM.busy) return;
+  SIM.busy = true;
+  try {
+    seqClear();
+    if (!SIM.started) {
+      term(cmdLine(), "cmdline");
+      SIM.started = true;
+      SIM.stamp = stampNow();
+      const ok = await connect();
+      if (!ok) { SIM.started = false; term("（brain.py 結束了：插回電再按一次）", "sim"); stopRunning(); return; }
+      seqClear();
+    }
+    SIM.rounds += 1;
+    const t = hms();
+    const sent = [];
+    try {
+      if (SIM.link === "ble" && !SIM.connected) {
+        term("藍牙斷線了，重新連線…", "warnl");
+        seqAdd("大腦重新掃描藍牙名字", "", "maker-XXXX");
+        if (SIM.speed && !REDUCED) await sleep(500 / SIM.speed);
+        if (!SIM.power) throw new Fail("掃不到 maker-XXXX：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？", "RuntimeError");
+        term("藍牙連上 maker-XXXX（板子的藍牙位址）", "okl");
+        SIM.connected = true;
+        // link_ble.py 的 _ensure()：重連成功也算這一輪失敗，大腦下一輪把燈號全部重送
+        const f = new Fail("藍牙剛重新連上，下一輪重送燈號", "ConnectionError"); f.stillConnected = true; throw f;
+      }
+      const s = await readSensors();
+      const now = decide(s, SIM.prev);
+      SIM.prev = now;
+      const acts = planSends(now, SIM.shown);
+      await think(`門檻 ${esc(now.limitText)}；${now.red ? "熱" : "不熱"}、${now.rgb[0] ? "暗" : "不暗"}${now.beep ? "、要嗶" : ""} → ${acts.length ? "要送 " + acts.map(a => esc(a.label)).join("、") : "跟 ESP32 上的一樣，什麼都不用送"}`);
+      for (const a of acts) {
+        await send(a);
+        commit(SIM.shown, a);
+        sent.push(a.label);
+        SIM.sentN += 1;
+      }
+      SIM.okRounds += 1;
+      SIM.naiveN += 4 + (now.beep ? 1 : 0);
+      term(brainLine(t, SIM.link, s, now, sent), now.red ? "redl" : "");
+      const row = [t, SIM.link, s.temp, s.hum, s.light, s.knob, s.button, now.limitText, now.red, now.green, now.rgb.join(" "), sent.join(" "), "（真板上量）", 0, now.why.join("；")];
+      $("#csvLine").textContent = row.map(csvCell).join(",");
+    } catch (e) {
+      if (!(e instanceof Fail)) throw e;
+      SIM.fails += 1;
+      SIM.shown = {};
+      if (SIM.link === "ble" && !e.stillConnected) SIM.connected = false;   // 剛重連成功那一輪：連線還在，只是這輪算失敗
+      term(t + " ESP32 沒回應（第 " + SIM.fails + " 次）：" + e.message, "redl");
+      $("#csvLine").textContent = [t, SIM.link, "", "", "", "", "", "", "", "", "", "", "", 1, e.kind].join(",");
+      if (SIM.link === "wifi") term("（真的 ESP32 拔電時冒號後面那半句可能不同，以畫面為準）", "sim");
+    }
+    counters();
+    $("#laneStep").textContent = `第 ${SIM.rounds} 輪做完`;
+  } finally {
+    SIM.busy = false;
+  }
+}
+async function runLoop() {
+  while (SIM.running) {
+    await oneRound();
+    if (!SIM.running) break;
+    await sleep(SIM.speed ? 500 / SIM.speed : 300);
+  }
+}
+function stopRunning() {
+  SIM.running = false;
+  $("#simRun").textContent = "▶ 開始跑";
+  $("#simRun").classList.add("primary");
+}
+async function ctrlC() {
+  stopRunning();
+  while (SIM.busy) await sleep(50);
+  if (!SIM.started) return;
+  term("^C", "cmdline");
+  seqClear();
+  try {
+    if (SIM.link === "ble" && !SIM.connected) throw new Fail("", "ConnectionError");
+    await send({ act: "off" });
+  } catch (e) {
+    if (!(e instanceof Fail)) throw e;
+    term("⚠️ 關燈指令沒送到（ESP32 可能還亮著燈）：重開 ESP32 或再跑一次再 Ctrl+C", "warnl");
+  }
+  term("");
+  term("==== 這次跑了 " + SIM.rounds + " 輪，失敗 " + SIM.fails + " 次；紀錄在 log_" + SIM.link + "_" + SIM.stamp + ".csv ====");
+  if (SIM.okRounds >= 2) {
+    term("讀一次感測值來回：中位數 -- ms、最快 -- ms、最慢 -- ms、95% 在 -- ms 內");
+    term("（模擬器不放假數字：這四格今天在真板上自己量，填進 §4 最後一列）", "sim");
+  }
+  SIM.started = false; SIM.connected = false; SIM.prev = {}; SIM.shown = {};
+  SIM.rounds = 0; SIM.fails = 0; SIM.okRounds = 0; SIM.sentN = 0; SIM.naiveN = 0; SIM.cache = null;
+}
+$("#simRun").addEventListener("click", () => {
+  if (SIM.running) { stopRunning(); return; }
+  SIM.running = true;
+  $("#simRun").textContent = "⏸ 暫停";
+  $("#simRun").classList.remove("primary");
+  runLoop();
+});
+$("#simStep").addEventListener("click", () => { if (!SIM.running) oneRound(); });
+$("#simStop").addEventListener("click", ctrlC);
+$("#simPower").addEventListener("click", () => {
+  SIM.power = !SIM.power;
+  $("#simPower").setAttribute("aria-pressed", String(!SIM.power));
+  $("#simPower").textContent = SIM.power ? "拔掉 ESP32 的電" : "插回 ESP32 的電";
+  if (!SIM.power) {
+    if (SIM.link === "ble" && SIM.connected) { SIM.connected = false; term("（藍牙那頭：連線斷了，link_ble.py 會叫醒正在等回話的人）", "sim"); }
+    BOARD.red = BOARD.yellow = BOARD.blue = false; BOARD.rgb = [0, 0, 0]; SIM.cache = null;
+  }
+  renderBoard();
+});
+async function switchLink(to) {
+  if (SIM.link === to) return;
+  await ctrlC();
+  SIM.link = to;
+  BOARD.red = BOARD.yellow = BOARD.blue = false; BOARD.rgb = [0, 0, 0]; BOARD.requests = 0; BOARD.last = "";
+  term("");
+  term(to === "ble" ? "（ESP32 按住 A 鍵開機，看到 OLED 顯示 BLE 才放開 → 跑第 11 課）" : "（ESP32 不按鍵開機 → 跑第 10 課）", "sim");
+  seqClear();
+  counters();
+  renderMode();
+}
+$("#linkWifi").addEventListener("click", () => switchLink("wifi"));
+$("#linkBle").addEventListener("click", () => switchLink("ble"));
+$("#darkLow").addEventListener("change", e => {
+  RULES.DARK_WHEN_LOW = e.target.checked;
+  e.target.nextElementSibling.textContent = "DARK_WHEN_LOW = " + (e.target.checked ? "True" : "False");
+});
+$("#tryYellow").addEventListener("change", e => {
+  RULES.TRY_HUM_YELLOW = e.target.checked;
+  term(e.target.checked ? "（試改規則開了：濕度 ≥ 70 亮黃燈——起始檔的 rules.py 沒有這條，第四部分你可以自己加）" : "（試改規則關了：回到起始檔的 rules.py，黃燈永遠關）", "sim");
+});
+$("#simSpeed").addEventListener("change", e => { SIM.speed = Number(e.target.value); });
+[["#inTemp", "temp"], ["#inLight", "light"], ["#inKnob", "knob"], ["#inHum", "hum"]].forEach(([id, k]) => {
+  $(id).addEventListener("input", e => { BOARD[k] = Number(e.target.value); showLimit(); });
+});
+$("#dhtFail").addEventListener("click", () => { SIM.dhtFail = true; term("（下一輪板子的溫溼度會讀失敗一次）", "sim"); });
+/* A 鍵：按下／放開 */
+const keyA = $("#keyA");
+function aDown(e) {
+  if (e) e.preventDefault();
+  if (keyA.classList.contains("down")) return;
+  keyA.classList.add("down");
+  if (!SIM.power) return;
+  if (SIM.link === "ble") {
+    if (SIM.connected) { SIM.pressed = true; const x = ["ESP32 → 大腦（按鈕特徵值主動通知，A 鍵按下）", "dn", "1"]; seqAdd(...x); if (!SIM.busy) seqKeep.push(x); }
+  } else {
+    seqAdd("（沒有封包）", "lost", "d10 不會主動說、JSON 裡也沒有按鈕：大腦看不到 A 鍵", true);
+  }
+}
+function aUp() {
+  if (!keyA.classList.contains("down")) return;
+  keyA.classList.remove("down");
+  if (SIM.power && SIM.link === "ble" && SIM.connected) { const x = ["ESP32 → 大腦（按鈕特徵值主動通知，A 鍵放開）", "dn", "0"]; seqAdd(...x); if (!SIM.busy) seqKeep.push(x); }
+}
+keyA.addEventListener("pointerdown", aDown);
+keyA.addEventListener("pointerup", aUp);
+keyA.addEventListener("pointerleave", aUp);
+keyA.addEventListener("keydown", e => { if (e.key === " " || e.key === "Enter") aDown(e); });
+keyA.addEventListener("keyup", e => { if (e.key === " " || e.key === "Enter") aUp(); });
+renderMode();
+counters();
+term("（按「開始跑」或「走一輪」：這裡會出現 brain.py 印的東西）", "sim");
+
+/* ================= §3 先猜再揭曉 ================= */
+function minuteCount() {
+  // 一直熱 60 輪（溫度 30、旋鈕 2200＝門檻 28.1、光線 2400 不暗），照 §2 同一套規則算
+  const keep = [RULES.DARK_WHEN_LOW, RULES.TRY_HUM_YELLOW]; RULES.DARK_WHEN_LOW = true; RULES.TRY_HUM_YELLOW = false;
+  let prev = {}; const shown = {}; const cnt = {}; let total = 0;
+  for (let i = 0; i < 60; i++) {
+    const now = decide({ temp: 30, hum: 60, light: 2400, knob: 2200, button: null }, prev);
+    prev = now;
+    for (const a of planSends(now, shown)) { commit(shown, a); cnt[a.label] = (cnt[a.label] || 0) + 1; total += 1; }
+  }
+  [RULES.DARK_WHEN_LOW, RULES.TRY_HUM_YELLOW] = keep;
+  return { cnt: cnt, total: total };
+}
+const MC = minuteCount();
+const GUESS = [
+  { q: "溫度一直是 30、門檻 28.1，大腦跑一分鐘（每秒一輪、60 輪）。「每秒都送一次紅燈開」和「只送有變的」，紅燈開各送幾次？", o: ["60 次 vs 60 次", "60 次 vs 1 次", "1 次 vs 1 次", "60 次 vs 0 次"], a: 1,
+    e: `頁面剛剛拿 §2 的規則跑了 60 輪：只送有變的，紅燈開送了 <b>${MC.cnt["red開"] || 0}</b> 次（第一輪）；整分鐘總共只送 <b>${MC.total}</b> 個動作：${Object.keys(MC.cnt).map(k => `<code>${esc(k)}</code>×${MC.cnt[k]}`).join("、")}——嗶只在剛變熱那一輪。每秒都送就是 60 次紅燈開。省下來的是網路上的來回，也省下 ESP32「一次只處理一個連線」的時間 ${tg("§〇 B·雷")} ${tg("§〇 C·brain.py")}。` },
+  { q: "藍牙那條線，終端機的門檻一直是 28，轉旋鈕也不變。為什麼？", o: ["藍牙比較慢，來不及讀旋鈕", "第 11 課沒有提供旋鈕，大腦拿到的是「沒有值」，規則就改用固定的 TEMP_HOT_FIXED = 28", "旋鈕壞了", "藍牙模式下 rules.py 不會跑"], a: 1,
+    e: `<code>link_ble.py</code> 讀回來 <code>"knob": None</code>；<code>threshold()</code> 看到沒有旋鈕就回 <code>TEMP_HOT_FIXED</code>＝28 ${tg("§〇 C·rules.py")} ${tg("§〇 B·讀不到")}。這就是「協定決定你拿得到什麼」：同一份規則，換一條線，能用的資料就不一樣。` },
+  { q: "UNO Q 連上 ESP32 的基地台之後，你用 UNO Q 在教室 WiFi 的門牌 SSH 進去，會怎樣？", o: ["沒差，兩條都能用", "會斷線：UNO Q 的 WiFi 已經離開原本的網路，改連 ESP32 了；這週 SSH 一律走 USB 的 192.168.7.2", "ESP32 會幫你轉過去", "要改用藍牙 SSH"], a: 1,
+    e: `UNO Q 只有一個 WiFi，連上 <code>maker-XXXX</code> 就離開原本網路，原本的門牌找不到它了 ${tg("§〇 E·SSH 一律走 USB")}。所以 bleak 和起始檔都要在連 ESP32 <b>之前</b>先弄好 ${tg("§〇 E·先裝 bleak")}；要回原網路：<code>sudo nmcli connection up</code> 加原本連線的名字（<code>nmcli connection show</code> 查）。` },
+];
+const QS = [
+  { q: "d10 的 JSON 裡 blue 是 true，板子上亮的是哪顆？", o: ["藍色那顆", "綠燈：d10 程式裡叫 blue，板子上是綠燈", "彩色燈變藍", "黃燈"], a: 1,
+    e: `第三顆燈在 d10 程式裡叫 <code>blue</code>，板子上是<b>綠燈</b>；所以 <code>link_wifi.py</code> 有一行 <code>LED_NAME = {"red": "red", "green": "blue"}</code> ${tg("§〇 B·雷")}。` },
+  { q: "WiFi 模式、DARK_WHEN_LOW = True、光線讀到 300。彩色燈會怎樣？", o: ["不變", "亮夜燈 (255, 160, 60)", "變紅", "關掉"], a: 1,
+    e: `300 小於 <code>LIGHT_DARK = 1000</code>，<code>DARK_WHEN_LOW = True</code> 時算暗 → <code>NIGHT_RGB = (255, 160, 60)</code>；11/26 實跑那輪印 <code>送：彩色燈(255, 160, 60)（…光線 302 算暗→夜燈）</code> ${tg("§〇 D·假 ESP32 × WiFi 線")}。真板子遮光數字往哪走沒驗 ${WN}。` },
+  { q: "WiFi 模式，旋鈕轉到最右邊（4095）。門檻是多少？", o: ["28", "35.0", "20.0", "4095"], a: 1,
+    e: `20 + (35 − 20) × 4095 ÷ 4095 ＝ 35.0；11/26 實跑旋鈕 4087 也印門檻 35.0 ${tg("§〇 D·假 ESP32 × WiFi 線")}。到底（0）是 20.0。` },
+  { q: "溫度一直 30、門檻 28.1，一分鐘裡蜂鳴器嗶幾次？", o: ["60 次", "1 次：只在剛變熱那一輪", "0 次", "每 2 秒一次"], a: 1,
+    e: `<code>beep = hot and not prev.get("red", False)</code>：上一輪已經是紅燈就不再嗶 ${tg("§〇 C·rules.py")}。§3 第一題跑 60 輪的結果裡，嗶也只有 ${MC.cnt["嗶"] || 0} 次。` },
+  { q: "WiFi 模式按 A 鍵，終端機會出現「有人按了 ESP32 的 A 鍵」嗎？", o: ["會", "不會：d10 只會回答、JSON 裡沒有按鈕", "會，但晚一輪", "只有按兩下才會"], a: 1,
+    e: `<code>link_wifi.py</code> 讀回來 <code>"button": None</code>；要讓大腦知道按鍵，就要換一條「板子會主動說」的線——藍牙 ${tg("§〇 B·板子主動說")}。` },
+  { q: "藍牙模式，板子回了 DHT11 read failed。這一輪紅燈會怎樣？", o: ["一律關掉", "維持上一輪：印「溫度沒讀到，維持上一輪」，不亂切燈、不重嗶", "一律打開", "程式當掉"], a: 1,
+    e: `11/26 立霧複驗後改的：溫度讀不到就維持上一輪判斷 ${tg("§〇 D·維持上一輪判斷", "內容規格 §〇 D 第 4 點 ①")}。§2 藍牙模式按「讓溫溼度讀失敗一次」試試。` },
+  { q: "拔掉 ESP32 的電兩輪再插回去，下一輪成功時大腦送了什麼？", o: ["什麼都不送，因為燈的判斷沒變", "紅燈、綠燈、彩色燈全部重送一次", "只送嗶", "只送 off"], a: 1,
+    e: `任何一輪失敗，<code>brain.py</code> 就把「ESP32 上確定已經是這樣」清空；下一輪成功時燈號全部重送。11/26 重跑：假板子關 3 秒再開 → <code>送：red關、green開、彩色燈(255, 160, 60)</code> ${tg("§〇 D·燈號全部重送一次", "內容規格 §〇 D 第 4 點 ②")}。` },
+  { q: "用 --link ble-sim 量到的「讀一次感測值來回」，可以填在週作業的藍牙欄嗎？", o: ["可以，一樣是藍牙指令", "要註明：那是電腦裡面的網頁問答，不代表真的藍牙有多快", "可以，還比較準", "ble-sim 不會印統計"], a: 1,
+    e: `結尾就印「⚠️ 這是模擬藍牙：延遲是電腦裡面的 HTTP，不代表真的藍牙有多快。」${tg("§〇 D·模擬藍牙")}。藍牙做不到可以交 <code>ble-sim</code>，但要註明。` },
+];
+function quiz(box, list, label) {
+  const shuffled = n => { const a = Array.from({ length: n }, (_, i) => i); for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  box.innerHTML = list.map((q, i) => `<div class="qq" data-q="${i}"><h3>${label}${i + 1}. ${esc(q.q)}</h3><div class="opts">${shuffled(q.o.length).map(k => `<button type="button" class="opt" data-k="${k}" aria-pressed="false">${esc(q.o[k])}</button>`).join("")}</div><div class="qbar"><button type="button" class="btn primary rv">揭曉</button><span class="yours"></span></div><div class="ans" hidden></div></div>`).join("");
+  box.querySelectorAll(".qq").forEach(div => {
+    const q = list[Number(div.getAttribute("data-q"))];
+    let pick = -1;
+    div.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => {
+      pick = Number(b.getAttribute("data-k"));
+      div.querySelectorAll(".opt").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+      div.querySelector(".yours").textContent = "你選了一個答案，按「揭曉」看對不對。";
+    }));
+    div.querySelector(".rv").addEventListener("click", () => {
+      div.querySelectorAll(".opt").forEach(x => {
+        const k = Number(x.getAttribute("data-k"));
+        x.classList.toggle("right", k === q.a);
+        x.classList.toggle("wrong", k === pick && k !== q.a);
+      });
+      div.querySelector(".yours").textContent = pick < 0 ? "沒選也可以看答案。" : (pick === q.a ? "答對了！" : "再想想看下面的解釋。");
+      const ans = div.querySelector(".ans"); ans.hidden = false; ans.innerHTML = q.e;
+    });
+  });
+}
+const initGuess = () => quiz($("#guess"), GUESS, "猜");
+const initQs = () => quiz($("#qs"), QS, "");
+$("#guessReset").addEventListener("click", initGuess);
+$("#qsReset").addEventListener("click", initQs);
+initGuess();
+initQs();
+
+/* ================= §4 你量到的（只存在這台瀏覽器） ================= */
+["myWifi", "myBle"].forEach(id => {
+  const el = $("#" + id);
+  try { const v = localStorage.getItem("w12-" + id); if (v) el.value = v; } catch (e) { /* 沒有也沒關係 */ }
+  el.addEventListener("input", () => { try { localStorage.setItem("w12-" + id, el.value); } catch (e) { /* 沒有也沒關係 */ } });
+});
+
+/* ================= §5、§6 ================= */
+$("#goUnplug").addEventListener("click", () => { $("#s2").scrollIntoView({ behavior: REDUCED ? "auto" : "smooth" }); $("#simPower").focus(); });
+const EXT = {
+  ap: ["UNO Q 當基地台、ESP32 去連", `ESP32 那邊：d10 的 <code>WIFI_SSID</code> 填 UNO Q 開的那個名字（只認 2.4 GHz）${tg("§〇 B·WIFI_SSID")}；UNO Q 那邊要自己開基地台，<code>brain.py --esp</code> 改成 ESP32 拿到的門牌。UNO Q 怎麼開基地台、ESP32 拿到哪個門牌，這週都沒驗 ${WN}。想一想：跟今天「UNO Q 去連 ESP32」比，誰要改程式、誰的 WiFi 會離開原本的網路？`],
+  voice: ["讓 UNO Q 唸出溫度", `大腦這邊多一步：<code>rules.decide()</code> 判斷「剛變熱」那一輪，除了嗶，再讓 UNO Q 從 W8 的 USB 音效卡講話 ${tg("§三·6", "內容規格 §三 第 6 節 延伸")}。要動的是 UNO Q 這邊的程式，ESP32 不用改。怎麼接、要裝什麼，這週沒驗 ${WN}。`],
+  model: ["讓模型來判斷", `把 <code>rules.py</code> 的「如果溫度 ≥ 門檻」換成 W13–W14 的模型判斷，判斷完照樣用 <code>apply()</code> 只送有變的給 ESP32 亮燈 ${tg("§三·6", "內容規格 §三 第 6 節 延伸")}。ESP32 那邊一樣不用改——這就是把「想」和「傳」分開的好處。`],
+};
+$$("#extCards [data-ext]").forEach(b => b.addEventListener("click", () => {
+  const m = EXT[b.getAttribute("data-ext")];
+  $("#extPanel").innerHTML = `<h4>${esc(m[0])}（延伸、今天不做）</h4><p>${m[1]}</p>`;
+  $$("#extCards [data-ext]").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+}));
+
+/* ================= 名詞表：搜尋 ================= */
+function filterTerms() {
+  const q = $("#termQ").value.trim().toLowerCase();
+  let n = 0;
+  $$("#termTable tr").forEach((tr, i) => {
+    if (i === 0) return;
+    const hit = !q || tr.textContent.toLowerCase().includes(q);
+    tr.classList.toggle("hidden", !hit);
+    if (hit) n++;
+  });
+  $("#termN").textContent = `${n} 個名詞`;
+  $("#termNone").hidden = n > 0;
+}
+$("#termQ").addEventListener("input", filterTerms);
+filterTerms();
+</script>
+</body>
+</html>
