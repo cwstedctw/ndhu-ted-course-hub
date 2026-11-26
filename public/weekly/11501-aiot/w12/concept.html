@@ -331,8 +331,8 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
     <g role="button" tabindex="0" data-node="lble" aria-label="link_ble.py">
       <rect class="box vio" x="528" y="196" width="150" height="80" rx="12"/>
       <text x="603" y="226" text-anchor="middle" font-size="14" font-weight="800" class="mono">link_ble.py</text>
-      <text x="603" y="250" text-anchor="middle" font-size="12" class="soft">bleak 套件</text>
-      <text x="603" y="268" text-anchor="middle" font-size="12" class="soft">要先裝好</text>
+      <text x="603" y="250" text-anchor="middle" font-size="12" class="soft">bleak（起始檔帶了）</text>
+      <text x="603" y="268" text-anchor="middle" font-size="12" class="soft">不用安裝</text>
     </g>
     <path class="wire" d="M678 60 H704"/><path class="wire" d="M678 236 Q692 236 692 150 Q692 60 704 60"/>
     <g role="button" tabindex="0" data-node="brain" aria-label="brain.py">
@@ -441,11 +441,11 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
           </g>
         </svg>
       </div>
-      <p class="timing">⏱ 只畫先後順序：真的毫秒數今天自己量（<code>brain.py</code> 按 Ctrl+C 停下時會印中位數、最快、最慢）。</p>
+      <p class="timing">⏱ 只畫先後順序：真的毫秒數今天自己量（<code>brain.py</code> 按 Ctrl+C 停下時會印中位數、最快、最慢）。老師的板子兩條線都跑通了（各跑滿 60 輪、0 失敗），數字你自己量 <span class="tag" title="內容規格 §〇 G 真板實測：WiFi 真線">§〇 G·WiFi 真線</span> <span class="tag" title="內容規格 §〇 G 真板實測：藍牙真線">§〇 G·藍牙真線</span>。</p>
       <ol class="seqlist" id="seqList" aria-live="polite" aria-label="這一輪的每一步"></ol>
       <h3 style="margin-top:12px">UNO Q 終端機</h3>
       <pre class="term" id="simTerm" aria-live="polite"></pre>
-      <p class="cap">「讀 ‥ ms」那一格模擬器印 <code>--</code>：不放假數字，真板上 <code>brain.py</code> 會印量到的來回時間。</p>
+      <p class="cap">「讀 ‥ ms」那一格模擬器印 <code>--</code>：不放假數字，真板上 <code>brain.py</code> 會印量到的來回時間。真板上每行開頭的時間和記錄檔名會是 <b>5 月底</b>的日期：板子沒連外網時時鐘停在映像日期，正常、不影響量延遲 <span class="tag" title="內容規格 §〇 E 板子時鐘">§〇 E·板子時鐘</span>。</p>
       <div class="small">記錄檔最後一行（<code id="csvName">log_wifi_….csv</code>）：</div>
       <div class="csvline" id="csvLine">（還沒跑）</div>
       <div class="cnt" aria-live="polite">
@@ -491,7 +491,7 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
 <!-- ============================== §4 ============================== -->
 <section class="sec" id="s4">
   <h2><span class="n">4</span>WiFi 和藍牙對照表</h2>
-  <p class="lead">上半是今天這兩課程式的實際行為（§〇 B），下半是課程規劃文件那張表的口徑<span class="tag" title="aiot-course/_planning/20260828-WiFi完整學習路徑與課程整合.md〈先回答〉那張表">規劃表</span>。這裡<b>不寫</b>誰快多少、誰傳多遠：場地、距離、同時有幾組都會改變結果，數字今天自己量。最後一列填你量到的：一問一答來回的時間（RTT）的中位數。</p>
+  <p class="lead">上半是今天這兩課程式的實際行為（§〇 B），下半是課程規劃文件那張表的口徑<span class="tag" title="aiot-course/_planning/20260828-WiFi完整學習路徑與課程整合.md〈先回答〉那張表">規劃表</span>。這裡<b>不寫</b>誰快多少、誰傳多遠：場地、距離、同時有幾組都會改變結果，數字今天自己量。最後一列填你量到的：一問一答來回的時間（RTT）的中位數。老師 11/26 上午用一塊 UNO Q＋一塊 ESP32 把兩條線都跑過 60 輪、0 失敗，但數字只是那一塊板、那一張桌子、那一次，所以這頁不放 <span class="tag" title="內容規格 §〇 G 真板實測（最後一句）">§〇 G·這一塊板、這張桌子、這一次</span>。</p>
   <div class="tw"><table class="cmpt">
     <tr><th></th><th>WiFi（第 10 課 <code>d10_wifi_web.py</code>）</th><th>藍牙（第 11 課 <code>d11_ble_remote.py</code>）</th></tr>
     <tr><td>怎麼連上</td><td>板子自己開基地台：WiFi 名稱 <code>maker-XXXX</code>、密碼 <code>makerXXXX</code>、網址 <code>http://192.168.4.1</code>；UNO Q 用 <code>nmcli</code> 連上去 <span class="tag" title="內容規格 §〇 B 第 10 課 連法">§〇 B·第 10 課</span> <span class="tag" title="內容規格 §〇 E UNO Q 去連 ESP32 的基地台">§〇 E·去連 ESP32 的基地台</span></td><td>藍牙名稱 <code>maker-XXXX</code>（OLED 第二行）；UNO Q 用 bleak 掃描名字、連上 <span class="tag" title="內容規格 §〇 B 第 11 課 連法">§〇 B·第 11 課</span></td></tr>
@@ -520,18 +520,20 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
       <p>每一輪都是一次新的問答，問不到就印：</p>
       <pre class="term">HH:MM:SS ESP32 沒回應（第 1 次）：timed out</pre>
       <p class="small">冒號後面那半句是 Python 給的錯誤說明，會隨情況不同。11/26 早上把電腦上的假板子關掉 3 秒再開，印的是 <code>ESP32 沒回應（第 1 次）：&lt;urlopen error [WinError 10061] …&gt;</code>，下一輪 <code>送：red關、green開、彩色燈(255, 160, 60)</code> 全部重送 <span class="tag" title="內容規格 §〇 D 第 4 點 重跑">§〇 D·假板子中途關掉 3 秒再開</span>；真的 ESP32 拔電時後半句長怎樣，以你的畫面為準 <span class="wn">⚠️</span> <span class="tag" title="內容規格 §三 第 5 節">§三·5</span>。</p>
-      <p>一直沒回應：先查 UNO Q 是不是還連在 ESP32 的 WiFi（<code>nmcli -t dev status</code>）、ESP32 是不是重開了。ESP32 重開後 UNO Q 會不會自己連回基地台，沒驗 <span class="wn">⚠️</span>。</p>
+      <p>一直沒回應：先查 UNO Q 是不是還連在 ESP32 的 WiFi（<code>nmcli -t dev status</code>）、ESP32 是不是重開了。ESP32 重開機後 UNO Q 會自己連回基地台（11/26 真板驗過）<span class="tag" title="內容規格 §〇 E">§〇 E·ESP32 重開機後 UNO Q 會自己連回去</span>。</p>
     </div>
     <div class="fc ble">
       <h4>藍牙：連線本身斷了</h4>
       <p>藍牙是一條「連著」的線。斷掉時 <code>link_ble.py</code> 會叫醒正在等回話的人，這一輪印：</p>
       <pre class="term">HH:MM:SS ESP32 沒回應（第 1 次）：藍牙斷線了</pre>
       <p>下一輪先印 <code>藍牙斷線了，重新連線…</code>，重新掃描名字。掃到就印 <code>藍牙連上 maker-XXXX（…）</code>，但<b>這一輪還是算失敗</b>（ESP32 可能重開過、燈都滅了），印 <code>ESP32 沒回應（第 N 次）：藍牙剛重新連上，下一輪重送燈號</code>，下一輪燈號全部重送；掃不到這一輪也算失敗，冒號後面接 <code>掃不到 maker-XXXX：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？</code> <span class="tag" title="內容規格 §〇 D 第 4 點 ④ 藍牙斷線會叫醒等待、下一輪自動重新掃描重連">§〇 D·自動重新掃描重連</span>。</p>
-      <p class="small">真的藍牙多久才發現斷線、斷線那一刻會不會先出現別的字樣，沒驗 <span class="wn">⚠️</span>：今天拔電看看。藍牙「掃不到 maker-XXXX」先查：ESP32 是不是按住 A 開機、<b>看到 OLED 顯示 BLE 才放開</b>；手機程式是不是先連著它（一次只能一個中心）。</p>
+      <p class="small">真的藍牙多久才發現斷線、斷線那一刻會不會先出現別的字樣，沒驗 <span class="wn">⚠️</span>：今天拔電看看。藍牙「掃不到 maker-XXXX」先查：ESP32 是不是<b>真的重開過</b>、按住 A 開機、<b>看到 OLED 顯示 BLE 才放開</b>；手機程式是不是先連著它（一次只能一個中心）。</p>
     </div>
   </div>
-  <h3>兩件一開始就連不上的</h3>
+  <h3>幾件一開始就會碰到的</h3>
   <ul>
+    <li><b>換線（WiFi ↔ 藍牙）要真的重開 ESP32</b>：按 EN 或重插電；第 10 課還在跑時直接啟動第 11 課，藍牙起不來，畫面看起來就像「掃不到」或「斷線」<span class="tag" title="內容規格 §〇 B ESP32 開機選單">§〇 B·換線一定要真的重開 ESP32</span>。</li>
+    <li>畫面時間是 5 月：板子沒連外網、時鐘停住，正常 <span class="tag" title="內容規格 §〇 E 板子時鐘">§〇 E·板子時鐘</span>。</li>
     <li>一開始就連不上：<code>brain.py</code> 印 <code>連不上 ESP32：…</code> 後直接結束（不會進入每秒一輪）<span class="tag" title="內容規格 §〇 D 第 4 點 重跑">§〇 D·連不上 ESP32</span>。</li>
     <li>停下來（Ctrl+C）時關燈指令沒送到：印 <code>⚠️ 關燈指令沒送到（ESP32 可能還亮著燈）：重開 ESP32 或再跑一次再 Ctrl+C</code> <span class="tag" title="內容規格 §〇 D 第 4 點 ⑤">§〇 D·關燈指令沒送到</span>。</li>
   </ul>
@@ -587,7 +589,7 @@ footer.sec li{margin:4px 0;overflow-wrap:anywhere}
 <footer class="sec" id="refs">
   <h2>出處</h2>
   <ul>
-    <li>本週內容規格 <code>內容規格.md</code> §〇：A 點子一句話、B ESP32 那邊（第 10／11 課、開機選單）、C UNO Q 起始檔、D 11/26 早上 msi 實跑（含立霧複驗後的修正）與沒驗的事、E 怎麼連、F 名詞；§三 本頁要有哪幾節。</li>
+    <li>本週內容規格 <code>內容規格.md</code> §〇：A 點子一句話、B ESP32 那邊（第 10／11 課、開機選單）、C UNO Q 起始檔、D 11/26 早上 msi 實跑（含立霧複驗後的修正）與還沒驗的事、E 怎麼連（真板驗過的寫法）、F 名詞、G 真板實測（兩條線各 60 輪；毫秒數依規定不放進本頁）；§二〈卡關〉；§三 本頁要有哪幾節。</li>
     <li>起始檔 <code>w12-starter/</code>：<code>rules.py</code>、<code>link_wifi.py</code>、<code>link_ble.py</code>、<code>esp32/main_w12.py</code> 全文，與 <code>brain.py</code> 從 <code>make_link()</code> 起到檔尾，逐字嵌在這一頁（§1 的程式片段就是從這裡切的）；<code>check_concept.py</code> 會比對嵌入的跟起始檔一模一樣，並用 node 讓網頁的規則和 Python 的 <code>rules.decide()</code>、<code>brain.apply()</code> 對同一批輸入的答案。</li>
     <li>WiFi／藍牙對照表的下半：<code>aiot-course/_planning/20260828-WiFi完整學習路徑與課程整合.md</code>〈先回答〉那張表。</li>
   </ul>
@@ -746,7 +748,7 @@ class WifiLink:
 #     按鈕 00001524-…  ESP32 的 A 鍵按下／放開時「通知」1／0
 #
 # 手機 App 做得到的事，UNO Q 的 Linux 用 Python 也做得到：
-# 這裡用 bleak 這個套件（透過 Linux 的 BlueZ 用板子的藍牙）。
+# 這裡用 bleak 這個套件（透過 Linux 的 BlueZ 用板子的藍牙）；起始檔的 vendor/ 已經帶一份，UNO Q 不用安裝。
 # 藍牙這條線讀不到光線和旋鈕（d11 沒有提供），這就是「協定決定你拿得到什麼」。
 # ============================================
 
@@ -793,7 +795,14 @@ class BleLink:
             self.pressed = True
 
     async def connect(self):
-        from bleak import BleakClient, BleakScanner   # 只有走藍牙才需要裝 bleak
+        try:
+            from bleak import BleakClient, BleakScanner
+        except ImportError:
+            # UNO Q 的系統 Python 沒有 pip：改用起始檔自己帶的那一份（vendor/ 資料夾）
+            import os
+            import sys
+            sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor"))
+            from bleak import BleakClient, BleakScanner
         dev = await BleakScanner.find_device_by_name(self.name, timeout=10.0)
         if dev is None:
             raise RuntimeError("掃不到 {}：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？".format(self.name))
@@ -1110,10 +1119,10 @@ $("#exLost").innerHTML = ex("bleLost");
 const MAP = {
   parts: ["ESP32＋EZ 擴充板：感官和手腳", `板上焊好 13 種元件：溫溼度 DHT11、光線、旋鈕、A／B 鍵、紅黃綠三顆燈、彩色燈、蜂鳴器、OLED、紅外線、繼電器 ${tg("§〇 A·13 種元件")}。今天大腦用到的：溫度、濕度、光線、旋鈕、A 鍵（感官）；紅燈、綠燈、彩色燈、蜂鳴器（手腳）。ESP32 借創客課的 EZ Start Kit+。`],
   d10: ["第 10 課 d10_wifi_web.py（WiFi）", `正本在創客課 repo <code>maker-esp32</code> 的 <code>esp32/demos/</code>，不用改。板子自己開基地台：名稱 <code>maker-XXXX</code>、密碼 <code>makerXXXX</code>、網址 <code>http://192.168.4.1</code>（XXXX 由晶片決定，OLED 會顯示）${tg("§〇 B·第 10 課")}。它<b>只會回答</b>：大腦問 <code>GET /api/status</code>，它回一段 JSON，欄位 <code>red</code>、<code>yellow</code>、<code>blue</code>、<code>rgb</code>、<code>temp</code>、<code>hum</code>、<code>light</code>、<code>knob</code>、<code>last</code>、<code>requests</code>；叫它做事是 <code>/api/led?name=red&amp;on=1</code>（name＝<code>red</code>／<code>yellow</code>／<code>blue</code>）、<code>/api/rgb?r=&amp;g=&amp;b=</code>、<code>/api/beep</code>、<code>/api/off</code>。⚠️ 第三顆燈在程式裡叫 <code>blue</code>，板子上是<b>綠燈</b> ${tg("§〇 B·雷")}。`],
-  menu: ["開機選單 esp32/main_w12.py", `本週新寫：沒按鍵開機＝第 10 課（WiFi），<b>按住 A 鍵開機＝第 11 課（藍牙）</b>；按住到 <b>OLED 顯示 BLE 才放開</b> ${tg("§〇 B·開機選單")} ${tg("§〇 D·看到 OLED 顯示 BLE 才放開", "內容規格 §〇 D 第 4 點 立霧另外提醒")}。${WN} 這支<b>沒在實板跑過</b> ${tg("§〇 D·main_w12.py 實板", "內容規格 §〇 D 第 5 點 沒驗")}；退路是在 maker-esp32 跑 <code>./tools/upload.sh d10_wifi_web</code>（或 <code>d11_ble_remote</code>）直接把那一課變成 <code>main.py</code>。` + ex("menu")],
+  menu: ["開機選單 esp32/main_w12.py", `本週新寫：沒按鍵開機＝第 10 課（WiFi），<b>按住 A 鍵開機＝第 11 課（藍牙）</b>；按住到 <b>OLED 顯示 BLE 才放開</b> ${tg("§〇 B·開機選單")} ${tg("§〇 D·看到 OLED 顯示 BLE 才放開", "內容規格 §〇 D 第 4 點 立霧另外提醒")}。沒按鍵那條 11/26 上午在示範板實跑過（序列埠印 <code>W12 選單： WiFi d10</code>，接著基地台開好）；${WN}「按住 A 開機」那條要用手按，還沒驗 ${tg("§〇 D·按住 A 開機", "內容規格 §〇 D 第 5 點 還沒驗")}。<b>換線一定要真的重開 ESP32（按 EN 或重插電）</b>：第 10 課還在跑時直接啟動第 11 課，藍牙起不來（實測 <code>OSError: [Errno 5] EIO</code>，再試變 <code>ETIMEDOUT</code>，要重開機才恢復）${tg("§〇 B·換線一定要真的重開 ESP32")}。退路是在 maker-esp32 跑 <code>./tools/upload.sh d10_wifi_web</code>（或 <code>d11_ble_remote</code>）直接把那一課變成 <code>main.py</code>。` + ex("menu")],
   d11: ["第 11 課 d11_ble_remote.py（藍牙）", `藍牙名稱 <code>maker-XXXX</code>（OLED 第二行）。大腦<b>寫入</b>一行字，板子<b>通知</b>回一行字：寫 <code>temp</code> → <code>temp 25 C, hum 61 %</code>（讀失敗回 <code>DHT11 read failed</code>）；寫 <code>red on</code>／<code>green off</code>／<code>rgb 255 0 0</code>／<code>beep</code>／<code>off</code> → <code>OK red on</code>、<code>OK rgb</code>、<code>OK beep</code>、<code>OK all off</code> ${tg("§〇 B·第 11 課")}。它會<b>主動說</b>：A 鍵按下／放開 → 按鈕特徵值通知 <code>1</code>／<code>0</code>。讀不到光線、旋鈕 ${tg("§〇 B·讀不到")}。`],
-  wifi: ["WiFi 線：網頁問答", `<b>建議 UNO Q 去連 ESP32 的基地台</b>（不用校網、不用路由器）：<code>nmcli device wifi list</code> → <code>sudo nmcli --ask device wifi connect maker-XXXX</code>（會問密碼 <code>makerXXXX</code>）；掃描快取過期會連不上，先 <code>list</code> 再連 ${tg("§〇 E·去連 ESP32 的基地台")}。連上後 UNO Q 的 WiFi 離開原本網路——<b>這週 SSH 一律走 USB <code>192.168.7.2</code></b> ${tg("§〇 E·SSH 一律走 USB")}。10 組同時開基地台會不會互相干擾沒驗（d10 已把頻道錯開 1／6／11）${WN} ${tg("§〇 D·10 組同時開基地台的干擾", "內容規格 §〇 D 第 5 點 沒驗")}。`],
-  ble: ["藍牙線：寫入／通知", `UNO Q 當「中心」去連 ESP32，用 Python 套件 bleak（msi 上裝到 3.1.0、介面對過）${tg("§〇 C·link_ble.py")}。bleak 要網路才裝得到，所以<b>在連 ESP32 基地台之前</b>裝好：<code>python3 -m venv --system-site-packages ~/w12env</code> → <code>~/w12env/bin/pip install bleak</code> → <code>~/w12env/bin/python brain.py --link ble --name maker-XXXX</code> ${tg("§〇 E·先裝 bleak")}。${WN} 這幾步<b>沒在 UNO Q 上驗</b>；Linux 的藍牙服務會不會被別的程式佔住也沒驗 ${tg("§〇 D·佔住", "內容規格 §〇 D 第 5 點 沒驗：BlueZ 有沒有被別的 App 佔住")}。不准 <code>sudo pip install</code> 或 <code>--break-system-packages</code>；裝不起來＝看老師示範＋自己跑 <code>ble-sim</code>。` + ex("bleUuid")],
+  wifi: ["WiFi 線：網頁問答", `<b>UNO Q 去連 ESP32 的基地台</b>（不用校網、不用路由器、<b>不用 sudo</b>）：<code>nmcli device wifi list</code> → <code>nmcli device wifi connect maker-XXXX password makerXXXX</code>；成功時 UNO Q 拿到 <code>192.168.4.2</code>、ESP32 是 <code>192.168.4.1</code>；ESP32 重開機後 UNO Q 會自己連回去 ${tg("§〇 E·UNO Q 去連 ESP32 的基地台")}。連上後 UNO Q 的 WiFi 離開原本網路——<b>這週進板子一律走 USB <code>192.168.7.2</code></b> ${tg("§〇 E·這週進板子一律走 USB")}。用 SSH 進板子時 <code>nmcli</code> 會不會要求授權還沒試 ${WN} ${tg("§〇 D·會不會要求授權", "內容規格 §〇 D 第 5 點 還沒驗")}。10 組同時開基地台會不會互相干擾沒驗（d10 已把頻道錯開 1／6／11）${WN} ${tg("§〇 D·10 組同時開基地台的干擾", "內容規格 §〇 D 第 5 點 沒驗")}。`],
+  ble: ["藍牙線：寫入／通知", `UNO Q 當「中心」去連 ESP32，用 Python 套件 bleak ${tg("§〇 C·link_ble.py")}。<b>藍牙不用安裝任何東西</b>：起始檔的 <code>vendor/</code> 已經帶 bleak 3.1.0（和它在 Linux 上要用的 dbus_fast 5.2.0），<code>link_ble.py</code> 找不到系統的 bleak 就用這份；指令就是 <code>python3 brain.py --link ble --name maker-XXXX</code> ${tg("§〇 E·藍牙不用安裝任何東西")}。老師的 UNO Q 上 <code>import bleak</code> 成功、掃描看得到附近的藍牙裝置 ${tg("§〇 G·起始檔帶的 bleak")}。畫面出現 <code>連不上 ESP32：No module named 'bleak'</code>＝你不在 <code>w12-starter</code> 資料夾裡跑，或 <code>vendor/</code> 沒解出來，重新解壓 ${tg("§二·卡關")}。<b>換線一定要真的重開 ESP32</b>（按 EN 或重插電）：第 10 課還在跑時直接啟動第 11 課，藍牙起不來 ${tg("§〇 B·換線一定要真的重開 ESP32")}。` + ex("bleUuid")],
   lwifi: ["link_wifi.py：WiFi 這條線", `只用 Python 內建的 <code>urllib</code>，UNO Q 不用裝套件 ${tg("§〇 C·link_wifi.py")}。注意兩件事：我們說 <code>green</code>，送出去要寫成 d10 的 <code>blue</code>；JSON 裡沒有按鈕，所以 <code>"button": None</code>——<b>WiFi 這條線讀不到 A 鍵</b>。` + ex("wifiRead") + ex("wifiRead2")],
   fake: ["fake_esp32.py：假的 ESP32", `沒板子也能練：網址、JSON 欄位跟第 10 課一樣；另有模擬專用的 <code>/sim/ble</code>（照第 11 課的回話）、<code>/sim/set</code>、<code>/sim/press</code>、<code>/sim/state</code>。瀏覽器開 <code>http://127.0.0.1:8090</code> 是一塊虛擬 EZ 板；預設埠號 8090；初值溫度 26、濕度 60、光線 2400、旋鈕 2200（門檻 28.1）；假板子「數字小＝暗」${tg("§〇 C·fake_esp32.py")}。第一部分就是 <code>python3 fake_esp32.py</code> 加另一個終端機 <code>python3 brain.py --link wifi --esp 127.0.0.1:8090</code>；假板子跑在別台電腦時，<code>--esp</code> 要寫那台的門牌加 <code>:8090</code> ${tg("§〇 D·別台電腦", "內容規格 §〇 D 第 4 點 立霧另外提醒")}。§2 的模擬器初值就照它。`],
   lble: ["link_ble.py：藍牙這條線", `讀：寫入 <code>temp</code>、等通知回 <code>temp … C, hum … %</code>；<code>"light": None, "knob": None</code>——<b>藍牙這條線讀不到光線和旋鈕</b>，所以門檻用固定 28。A 鍵靠按鈕特徵值的通知記下「上一輪之後有沒有人按過」${tg("§〇 C·link_ble.py")}。另有 <code>SimBleLink</code>：同樣的文字指令送到 <code>fake_esp32.py</code> 的 <code>/sim/ble</code>（<code>--link ble-sim</code>）。` + ex("bleRead") + ex("bleSend") + ex("bleLost")],
@@ -1217,7 +1226,7 @@ function term(text, cls) {
   t.scrollTop = t.scrollHeight;
 }
 function cmdLine() {
-  return SIM.link === "wifi" ? "$ python3 brain.py --link wifi --esp 192.168.4.1" : "$ ~/w12env/bin/python brain.py --link ble --name maker-XXXX";
+  return SIM.link === "wifi" ? "$ python3 brain.py --link wifi --esp 192.168.4.1" : "$ python3 brain.py --link ble --name maker-XXXX";
 }
 function renderBoard() {
   const on = (id, v, col) => { const el = $(id); el.classList.toggle("on", !!v); el.style.background = v ? col : ""; };
@@ -1239,7 +1248,7 @@ function renderMode() {
   const w = SIM.link === "wifi";
   $("#linkWifi").setAttribute("aria-pressed", String(w));
   $("#linkBle").setAttribute("aria-pressed", String(!w));
-  $("#boardProg").textContent = w ? "跑第 10 課 d10_wifi_web.py" : "按住 A 開機 → 第 11 課 d11_ble_remote.py";
+  $("#boardProg").textContent = w ? "跑第 10 課 d10_wifi_web.py" : "按住 A 重開 → 第 11 課 d11_ble_remote.py";
   $("#laneLeftSub").textContent = w ? "第 10 課" : "第 11 課";
   $("#laneTitle").textContent = w ? "WiFi：網頁問答（一問一答）" : "藍牙：寫入一行字 → 通知回一行字";
   const rd = (id, yes) => { const e = $(id); e.className = "rd " + (yes ? "yes" : "no"); e.textContent = yes ? "大腦讀得到" : "大腦讀不到"; };
@@ -1512,7 +1521,7 @@ async function switchLink(to) {
   SIM.link = to;
   BOARD.red = BOARD.yellow = BOARD.blue = false; BOARD.rgb = [0, 0, 0]; BOARD.requests = 0; BOARD.last = "";
   term("");
-  term(to === "ble" ? "（ESP32 按住 A 鍵開機，看到 OLED 顯示 BLE 才放開 → 跑第 11 課）" : "（ESP32 不按鍵開機 → 跑第 10 課）", "sim");
+  term(to === "ble" ? "（ESP32 真的重開：按住 A 再按 EN，看到 OLED 顯示 BLE 才放開 → 跑第 11 課）" : "（ESP32 真的重開：不按鍵按 EN → 跑第 10 課）", "sim");
   seqClear();
   counters();
   renderMode();
@@ -1579,7 +1588,7 @@ const GUESS = [
   { q: "藍牙那條線，終端機的門檻一直是 28，轉旋鈕也不變。為什麼？", o: ["藍牙比較慢，來不及讀旋鈕", "第 11 課沒有提供旋鈕，大腦拿到的是「沒有值」，規則就改用固定的 TEMP_HOT_FIXED = 28", "旋鈕壞了", "藍牙模式下 rules.py 不會跑"], a: 1,
     e: `<code>link_ble.py</code> 讀回來 <code>"knob": None</code>；<code>threshold()</code> 看到沒有旋鈕就回 <code>TEMP_HOT_FIXED</code>＝28 ${tg("§〇 C·rules.py")} ${tg("§〇 B·讀不到")}。這就是「協定決定你拿得到什麼」：同一份規則，換一條線，能用的資料就不一樣。` },
   { q: "UNO Q 連上 ESP32 的基地台之後，你用 UNO Q 在教室 WiFi 的門牌 SSH 進去，會怎樣？", o: ["沒差，兩條都能用", "會斷線：UNO Q 的 WiFi 已經離開原本的網路，改連 ESP32 了；這週 SSH 一律走 USB 的 192.168.7.2", "ESP32 會幫你轉過去", "要改用藍牙 SSH"], a: 1,
-    e: `UNO Q 只有一個 WiFi，連上 <code>maker-XXXX</code> 就離開原本網路，原本的門牌找不到它了 ${tg("§〇 E·SSH 一律走 USB")}。所以 bleak 和起始檔都要在連 ESP32 <b>之前</b>先弄好 ${tg("§〇 E·先裝 bleak")}；要回原網路：<code>sudo nmcli connection up</code> 加原本連線的名字（<code>nmcli connection show</code> 查）。` },
+    e: `UNO Q 只有一個 WiFi，連上 <code>maker-XXXX</code> 就離開原本網路，原本的門牌找不到它了 ${tg("§〇 E·這週進板子一律走 USB")}。所以起始檔要在連 ESP32 <b>之前</b>先抓好，連上之後板子就沒有外網 ${tg("§〇 E·起始檔放到板子上")}；要回原網路：<code>nmcli connection show</code> 查名字 → <code>nmcli connection up</code> 加那個名字。` },
 ];
 const QS = [
   { q: "d10 的 JSON 裡 blue 是 true，板子上亮的是哪顆？", o: ["藍色那顆", "綠燈：d10 程式裡叫 blue，板子上是綠燈", "彩色燈變藍", "黃燈"], a: 1,

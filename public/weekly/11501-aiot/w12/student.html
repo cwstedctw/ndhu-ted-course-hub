@@ -201,24 +201,24 @@ footer{margin:30px 0 0;color:var(--mist);font-size:14px}
     <h3>今天五件一定要記得的事</h3>
     <ol>
       <li><b>這週 SSH 只走 USB：<code>ssh arduino@192.168.7.2</code>。</b>UNO Q 的 WiFi 等一下會去連 ESP32 的基地台、離開原本的網路；你要是用 WiFi 那個位址連板子，一連 ESP32 就斷線。</li>
-      <li><b>bleak（藍牙用的 Python 套件）要在連 ESP32 基地台<u>之前</u>裝好。</b>裝套件要網路，連上 ESP32 之後板子就上不了網。起始檔也一樣，先抓好。</li>
-      <li><b>不准 <code>sudo pip install</code>、不准 <code>--break-system-packages</code>。</b>（W6 的規矩）套件只裝進自己的 <code>~/w12env</code>；AI 叫你這樣做也不准，先給老師看。</li>
+      <li><b>起始檔要在連 ESP32 基地台<u>之前</u>抓好</b>（連上之後板子沒有外網）。</li>
+      <li><b>藍牙套件已經在起始檔裡（<code>vendor/</code> 資料夾），不用也不要自己 pip 安裝。</b>AI 叫你裝，先給老師看。</li>
       <li><b>第 10 課程式裡叫 <code>blue</code> 的那顆燈，板子上是<u>綠燈</u></b>（GPIO 13）。看到「blue」別找藍燈。</li>
-      <li><b>有幾件事老師還沒在真板上驗過，以現場為準：</b>真的 ESP32 上 WiFi、藍牙一問一答要多久（<b>這正是你今天要量的</b>）；UNO Q 上建 <code>~/w12env</code>、<code>pip install bleak</code> 行不行，E307 連不連得到套件庫；UNO Q 的藍牙有沒有被別的程式佔住；ESP32 的開機選單（按住 A 開機進藍牙）在實板上的樣子；光線感測器遮住時數字變大還是變小；十組同時開基地台會不會互相干擾。</li>
+      <li><b>老師 11/26 上午已經用一塊 ESP32＋一塊 UNO Q 真的跑過</b>：WiFi 線、藍牙線、連基地台、解壓起始檔、板上跑假的 ESP32 都通。<b>還沒驗、以現場為準的只剩四件</b>：按住 A 開機進藍牙那一下；光線感測器遮住時數字變大還是變小；十組同時開基地台會不會互相干擾；用 SSH 進板子時 <code>nmcli</code> 連 WiFi 會不會要權限。一問一答要多久，<b>今天你自己量</b>。</li>
     </ol>
   </div>
 
   <div class="legend">
     <div><b>每一步分四欄</b>：<span class="lab do-l">做什麼</span>（這一步要做的事，和為什麼）、<span class="lab type-l">打什麼</span>（深色指令框，或寫「不用打」）、<span class="lab see-l">應該看到</span>（老師實跑看到的；你的數字會不同）、<span class="lab dur-l">多久</span>（老師量到的；沒量過的照實寫）。</div>
     <div><b>深色框＝指令</b>。左上角寫在哪裡打：<b>教室機（視窗 A）</b>、<b>板子（SSH 視窗 B）</b>、第二個 <b>SSH 視窗 C</b>。右上角有「複製」鈕。一次打（或貼）一行，按 Enter，看完它回什麼再打下一行。</div>
-    <div><b>淺色虛線框＝畫面上會看到的樣子</b>，不用打。<code>HH:MM:SS</code> 是時間，<code>…</code> 是會變的數字。字樣是老師 11/26 早上在電腦上用假的 ESP32 實跑的；真板的數字今天由你量。</div>
+    <div><b>淺色虛線框＝畫面上會看到的樣子</b>，不用打。<code>HH:MM:SS</code> 是時間，<code>…</code> 是會變的數字。字樣是老師 11/26 上午實跑的（假的 ESP32 和真板都有）；毫秒數字故意不寫，今天由你量。</div>
     <div><b><code>maker-XXXX</code> 的 <code>XXXX</code></b>：換成<b>你那塊 ESP32 的 OLED 上顯示的四個字</b>。每塊板都不一樣，打錯就連到別組的板子。</div>
     <div><b>🆘 卡住了</b>：每一部分最後都有，點開看常見狀況；全部整理在<a href="#faq">卡關總表</a>，可以搜尋。</div>
     <div><b>綠色勾選框＝檢查點</b>。親眼看到了才勾；最上面的進度列會跟著動（只存在你這台電腦的瀏覽器）。</div>
   </div>
   <ul>
     <li>Ubuntu 終端機裡，複製是 <b>Ctrl＋Shift＋C</b>、貼上是 <b>Ctrl＋Shift＋V</b>。少了 Shift 的 Ctrl＋C 是「中斷」（停 <code>brain.py</code>、停假的 ESP32 都是用它）。</li>
-    <li>今天會打幾次<b>板子的密碼</b>（<code>ssh</code>、<code>sudo</code>）：打的時候畫面不會動，打完按 Enter。</li>
+    <li>今天會打幾次<b>板子的密碼</b>（<code>ssh</code>、<code>scp</code>）：打的時候畫面不會動，打完按 Enter。今天<b>不用 <code>sudo</code></b>。</li>
     <li>名詞第一次出現會先講白話、再附英文；看不懂查<a href="#basics">基礎知識補給站</a>和<a href="#terms">名詞小抄</a>。</li>
   </ul>
 </section>
@@ -228,27 +228,27 @@ footer{margin:30px 0 0;color:var(--mist);font-size:14px}
   <p class="goal">目標：視窗 B 進到板子（走 USB）；板子上有 <code>~/w12-starter</code>；紙上寫好你那塊 ESP32 的名字。</p>
   <div class="route">
     <a class="stop" href="#p1"><b>第一部分 14:20</b><span>假的 ESP32</span><small>不用任何板子：在 UNO Q 上跑一塊虛擬 EZ 板，大腦先跟它練</small></a>
-    <a class="stop" href="#p2"><b>第二部分 14:45</b><span>WiFi 真板</span><small>先裝 bleak → 連 ESP32 的基地台 → 跑 60 秒量來回時間</small></a>
-    <a class="stop" href="#p3"><b>第三部分 15:35</b><span>藍牙</span><small>ESP32 按住 A 開機 → 藍牙連上 → 按 A 鍵、跑 60 秒</small></a>
+    <a class="stop" href="#p2"><b>第二部分 14:45</b><span>WiFi 真板</span><small>連 ESP32 的基地台（不用 sudo）→ 跑 60 秒量來回時間</small></a>
+    <a class="stop" href="#p3"><b>第三部分 15:35</b><span>藍牙</span><small>ESP32 按住 A 再按 EN 重開 → 藍牙連上（不用安裝）→ 按 A 鍵、跑 60 秒</small></a>
     <a class="stop" href="#p4"><b>第四部分 16:10</b><span>改大腦</span><small>改 <code>rules.py</code> 一條規則；收尾比較兩條線、交作業</small></a>
   </div>
-  <p class="why">今天至少開三個終端機：<b>視窗 A</b> 留在教室機；<b>視窗 B</b>、<b>視窗 C</b> 都 SSH 進板子（第一部分要同時跑假的 ESP32 和大腦，所以要兩個）。<b>起始檔一定要在第二部分連 ESP32 之前抓好</b>：連上之後板子就上不了網。</p>
+  <p class="why">今天至少開三個終端機：<b>視窗 A</b> 留在教室機；<b>視窗 B</b>、<b>視窗 C</b> 都 SSH 進板子（第一部分要同時跑假的 ESP32 和大腦，所以要兩個）。<b>起始檔一定要在第二部分連 ESP32 之前抓好</b>：連上之後板子就沒有外網。</p>
   <ol class="steps">
     <li><p class="do"><b class="lab do-l">做什麼</b>接線：UNO Q 用 USB-C 資料線插在教室機上；老師發的 ESP32（已經放好今天的開機選單）照老師說的插上 USB 通電，<b>開機時不要按任何鍵</b>（那樣會進 WiFi 模式）。兩人一組、一組一塊 ESP32。<span class="dur">多久：UNO Q 等到心跳動畫出現；ESP32 幾秒</span></p>
       <p class="type"><b class="lab type-l">打什麼</b>不用打。</p>
-      <p class="see"><b class="lab see-l">應該看到</b>UNO Q 點陣變成心跳動畫。ESP32 的 OLED 先閃過 <code>AIoT W12</code>、<code>WiFi (d10)</code>，接著顯示 <code>maker-XXXX</code>、<code>pw makerXXXX</code>、<code>192.168.4.1</code>。⚠️ 開機選單老師沒在實板跑過，畫面現場為準；OLED 一直沒字就舉手。</p></li>
+      <p class="see"><b class="lab see-l">應該看到</b>UNO Q 點陣變成心跳動畫。ESP32 的 OLED 先閃過 <code>AIoT W12</code>、<code>WiFi (d10)</code>，接著顯示 <code>maker-XXXX</code>、<code>pw makerXXXX</code>、<code>192.168.4.1</code>。OLED 一直沒字就舉手。</p></li>
     <li><p class="do"><b class="lab do-l">做什麼</b>把 OLED 上的名字<b>抄在紙上</b>：<code>maker-</code> 後面那四個字，就是今天所有指令裡 <code>XXXX</code> 要換成的字（WiFi 密碼也是 <code>maker</code>＋同樣四個字）。全班十組同時開，名字要對。<span class="dur">多久：1 分鐘</span></p>
       <p class="type"><b class="lab type-l">打什麼</b>不用打，寫在紙上。</p>
       <p class="see"><b class="lab see-l">應該看到</b>你們這組的名字跟隔壁組不一樣。</p></li>
     <li><p class="do"><b class="lab do-l">做什麼</b>打開終端機（Ctrl＋Alt＋T），這是<b>視窗 A</b>。再開一個終端機當<b>視窗 B</b>，用 USB 線上的位址 SSH 進板子（W6 做好的 USB 網卡）。<span class="dur">多久：打完密碼就進去</span></p>
       <div class="box"><pre class="cmd" data-where="電腦" data-src="src">ssh arduino@192.168.7.2</pre></div>
       <p class="see"><b class="lab see-l">應該看到</b>問密碼時打<b>板子的密碼</b>；提示字元變成 <code>arduino@</code> 開頭，這個視窗現在是<b>視窗 B</b>。<b>今天只用這一個位址連板子。</b></p></li>
-    <li><p class="do"><b class="lab do-l">做什麼</b>在板子上抓起始檔、解開、走進去（視窗 B）。三行一行一行打。<span class="dur">多久：檔很小，幾秒</span></p>
+    <li><p class="do"><b class="lab do-l">做什麼</b>在板子上抓起始檔、解開、走進去（視窗 B）。三行一行一行打。<span class="dur">多久：約 1 MB，幾秒</span></p>
       <div class="box"><pre class="cmd" data-where="板子" data-src="src">curl -LO https://cwstedctw.github.io/ndhu-ted-course-hub/weekly/11501-aiot/w12/starter/w12-starter.tar.gz
 tar xzf w12-starter.tar.gz
 cd w12-starter</pre></div>
       <div class="box"><pre class="cmd" data-where="板子" data-src="rewrite:new" data-note="檔案清單照 starter README.md 的表＋esp32/ 資料夾">ls</pre></div>
-      <p class="see"><b class="lab see-l">應該看到</b><code>ls</code> 列出 <code>README.md</code>、<code>brain.py</code>、<code>rules.py</code>、<code>link_wifi.py</code>、<code>link_ble.py</code>、<code>fake_esp32.py</code> 和一個 <code>esp32</code> 資料夾（那是老師燒 ESP32 用的，你不用動）。提示字元最後變成 <code>w12-starter</code>。<code>curl</code> 抓不到：看下面的「卡住了」，用教室機的退路。</p></li>
+      <p class="see"><b class="lab see-l">應該看到</b><code>ls</code> 列出 <code>README.md</code>、<code>brain.py</code>、<code>rules.py</code>、<code>link_wifi.py</code>、<code>link_ble.py</code>、<code>fake_esp32.py</code>，和 <code>esp32</code>（老師燒 ESP32 用的）、<code>vendor</code>（藍牙套件，已經帶好）兩個資料夾，都不用動。提示字元最後變成 <code>w12-starter</code>。<code>curl</code> 抓不到：看下面的「卡住了」，用教室機的退路。</p></li>
   </ol>
   <details class="stuck"><summary>卡住了：SSH 連不上、起始檔抓不到</summary>
     <ul>
@@ -257,9 +257,11 @@ cd w12-starter</pre></div>
     </ul>
     <div class="box"><pre class="cmd" data-where="電腦" data-src="src">ssh-keygen -R 192.168.7.2</pre></div>
     <ul>
-      <li><code>curl:</code> 開頭的錯誤、或抓下來的檔解不開：課程網還沒放上去，或教室網路擋住了。退路：跟老師拿 <code>w12-starter</code> 資料夾放到教室機，在<b>視窗 A</b>（教室機，在那個資料夾的上一層）用下面這行整個複製上板子，再回視窗 B 打 <code>cd w12-starter</code>。</li>
+      <li><code>curl:</code> 開頭的錯誤、或抓下來的檔解不開：課程網還沒放上去，或板子連不到外面。退路：在教室機用瀏覽器（或跟老師拿）把 <code>w12-starter.tar.gz</code> 存到教室機，在<b>視窗 A</b>（教室機，在那個檔所在的資料夾）傳上板子，再回視窗 B 解開、走進去（就是第 4 步的第二、三行）。</li>
     </ul>
-    <div class="box"><pre class="cmd" data-where="電腦" data-src="src">scp -r w12-starter arduino@192.168.7.2:~/</pre></div>
+    <div class="box"><pre class="cmd" data-where="電腦" data-src="src">scp w12-starter.tar.gz arduino@192.168.7.2:~/</pre></div>
+    <div class="box"><pre class="cmd" data-where="板子" data-src="src">tar xzf w12-starter.tar.gz
+cd w12-starter</pre></div>
   </details>
   <label class="check"><input type="checkbox" data-ck="s0"><span>視窗 B 是 <code>arduino@</code> 開頭（走 <code>192.168.7.2</code>）；<code>ls</code> 看到 <code>brain.py</code> 和 <code>rules.py</code>；紙上寫好 <code>maker-XXXX</code>。</span></label>
 </section>
@@ -299,7 +301,7 @@ HH:MM:SS wifi  溫度   26 濕度   60 光線  2400 旋鈕  2200 門檻 28.1 | �
       <p class="type"><b class="lab type-l">打什麼</b>兩個視窗各按一次 Ctrl＋C。</p>
       <div class="box"><pre class="out" data-src="out">==== 這次跑了 N 輪，失敗 0 次；紀錄在 log_wifi_….csv ====
 讀一次感測值來回：中位數 … ms、最快 … ms、最慢 … ms、95% 在 … ms 內</pre></div>
-      <p class="see"><b class="lab see-l">應該看到</b>停的時候大腦會叫 ESP32 把燈全關（網頁上的燈都熄了）。資料夾裡多一個 <code>log_wifi_日期-時間.csv</code>：一行一筆的表格檔（CSV），第一行欄位是 <code>time,link,temp,hum,light,knob,button,limit,red,green,rgb,sent,read_ms,fail,why</code>（最後一欄 <code>why</code>＝那一輪的理由）。<b>注意</b>：這份是假板子的，第二部分真板那份也叫 <code>log_wifi_…</code>，交作業時挑時間比較晚的那份。</p></li>
+      <p class="see"><b class="lab see-l">應該看到</b>停的時候大腦會叫 ESP32 把燈全關（網頁上的燈都熄了）。資料夾裡多一個 <code>log_wifi_日期-時間.csv</code>：一行一筆的表格檔（CSV），第一行欄位是 <code>time,link,temp,hum,light,knob,button,limit,red,green,rgb,sent,read_ms,fail,why</code>（最後一欄 <code>why</code>＝那一輪的理由）。<b>注意</b>：這份是假板子的，第二部分真板那份也叫 <code>log_wifi_…</code>，交作業時挑時間比較晚的那份。板子沒連外網時時鐘會停住，畫面每行的時間和檔名可能是 <b>5 月</b>的日期——正常，不影響量時間。</p></li>
   </ol>
   <details class="stuck"><summary>卡住了：網頁打不開、大腦說沒回應</summary>
     <ul>
@@ -318,34 +320,31 @@ HH:MM:SS wifi  溫度   26 濕度   60 光線  2400 旋鈕  2200 門檻 28.1 | �
 <section class="sec" id="p2">
   <h2>2　WiFi 真板（第 10 課 <code>d10_wifi_web.py</code>）</h2>
   <p class="goal">目標：UNO Q 連上 <code>maker-XXXX</code>，大腦讀真的溫度、光線、旋鈕，跑滿 60 秒拿到延遲統計。產出：<code>log_wifi_*.csv</code>＋統計那一行。</p>
-  <p class="why">ESP32 現在自己當一台基地台（WiFi 名稱 <code>maker-XXXX</code>、密碼 <code>makerXXXX</code>、網址 <code>http://192.168.4.1</code>），不用校網、不用路由器。大腦每秒用網頁問答的規矩（HTTP）問一次 <code>/api/status</code>，板子回一段大括號的資料（JSON）；要開燈就再問一個網址，例如 <code>/api/led?name=red&amp;on=1</code>。<b>但先做第 1 步</b>：連上 ESP32 之後板子就上不了網。</p>
+  <p class="why">ESP32 現在自己當一台基地台（WiFi 名稱 <code>maker-XXXX</code>、密碼 <code>makerXXXX</code>、網址 <code>http://192.168.4.1</code>），不用校網、不用路由器。大腦每秒用網頁問答的規矩（HTTP）問一次 <code>/api/status</code>，板子回一段大括號的資料（JSON）；要開燈就再問一個網址，例如 <code>/api/led?name=red&amp;on=1</code>。連上 ESP32 之後板子就沒有外網——起始檔你在第 0 部分已經抓好了。</p>
   <ol class="steps">
-    <li><p class="do"><b class="lab do-l">做什麼</b><span class="pin">先做</span><b>趁板子還能上網，先把藍牙要用的 bleak 裝好</b>（視窗 B）。做法是開一個自己的 Python 環境 <code>~/w12env</code>，套件只裝在裡面，不碰系統的 Python。<b>不准 <code>sudo pip install</code>、不准 <code>--break-system-packages</code>。</b><span class="dur">多久：⚠️ 老師沒在板上跑過，看教室網路</span></p>
-      <div class="box"><pre class="cmd" data-where="板子" data-src="src">python3 -m venv --system-site-packages ~/w12env
-~/w12env/bin/pip install bleak</pre></div>
-      <p class="see"><b class="lab see-l">應該看到</b>第一行不印字或印幾行就回到提示字元；第二行下載、安裝，最後說裝好了（⚠️ 字樣現場為準）。<b>建不起來或裝不了</b>：不要硬試別的裝法，第三部分改看老師示範＋自己跑模擬藍牙（<code>ble-sim</code>），作業照交、註明就好。</p></li>
     <li><p class="do"><b class="lab do-l">做什麼</b>確認 ESP32 是 WiFi 模式：OLED 上有 <code>maker-XXXX</code>、<code>pw makerXXXX</code>、<code>192.168.4.1</code>。不是的話，<b>不要按任何鍵</b>，按一下 ESP32 的重開鍵（EN／RST）或重新插電。<span class="dur">多久：幾秒</span></p>
       <p class="type"><b class="lab type-l">打什麼</b>不用打，看 OLED。</p>
       <p class="see"><b class="lab see-l">應該看到</b>那三行字。ESP32 讀溫溼度（DHT11）每 2 秒才讀一次、一次只處理一個連線——所以一塊 ESP32 只給你們這組連。</p></li>
-    <li><p class="do"><b class="lab do-l">做什麼</b>讓 UNO Q 去連 ESP32 的基地台（視窗 B）。先掃一次、再連（W6 踩過的雷：掃描結果太舊會連不上）。<b>把 <code>XXXX</code> 換成你紙上那四個字。</b><code>sudo</code> 先問板子的密碼，接著問 WiFi 密碼，打 <code>makerXXXX</code>（同樣四個字）。<span class="dur">多久：⚠️ 現場為準，十組同時開沒測過</span></p>
+    <li><p class="do"><b class="lab do-l">做什麼</b>讓 UNO Q 去連 ESP32 的基地台（視窗 B，<b>不用 <code>sudo</code></b>）。先掃一次、再連（W6 踩過的雷：掃描結果太舊會連不上）。<b>兩個 <code>XXXX</code> 都換成你紙上那四個字</b>（名字 <code>maker-XXXX</code>、密碼 <code>makerXXXX</code>）。<span class="dur">多久：幾秒；⚠️ 十組同時開沒測過</span></p>
       <div class="box"><pre class="cmd" data-where="板子" data-src="src">nmcli device wifi list
-sudo nmcli --ask device wifi connect maker-XXXX</pre></div>
-      <p class="see"><b class="lab see-l">應該看到</b>第一行列出附近的 WiFi，裡面有你的 <code>maker-XXXX</code>（也會看到別組的，別連錯）；第二行成功會說連上了（字樣現場為準）。<b>視窗 B 不會斷</b>——因為你是走 USB 的 <code>192.168.7.2</code> 進來的。這也是為什麼今天不准用 WiFi 的位址連板子。</p></li>
+nmcli device wifi connect maker-XXXX password makerXXXX</pre></div>
+      <div class="box"><pre class="out" data-src="out">Device 'wlan0' successfully activated with '…'.</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>第一行列出附近的 WiFi，裡面有你的 <code>maker-XXXX</code>（也會看到別組的，別連錯）；第二行成功印上面那句。UNO Q 拿到 <code>192.168.4.2</code>，ESP32 是 <code>192.168.4.1</code>。<b>視窗 B 不會斷</b>——因為你是走 USB 的 <code>192.168.7.2</code> 進來的；這也是為什麼今天不准用 WiFi 的位址連板子。⚠️ 老師是用 USB 除錯線（adb）進板子跑的，用 SSH 進來會不會說沒有權限還沒試過；說沒有權限就舉手。</p></li>
     <li><p class="do"><b class="lab do-l">做什麼</b>跑大腦，跑滿 60 秒自己停（視窗 B；<code>--seconds 60</code>＝60 秒後自動停）。跑的時候：① <b>手握住 DHT11</b>（溫溼度那顆）讓溫度往上爬；② <b>轉旋鈕</b>看 <code>門檻</code> 跟著變；③ <b>用手遮住光線感測器</b>，看 <code>光線</code> 數字往哪邊走。<span class="dur">多久：60 秒</span></p>
       <div class="box"><pre class="cmd" data-where="板子" data-src="src">python3 brain.py --link wifi --esp 192.168.4.1 --seconds 60</pre></div>
       <div class="box"><pre class="out" data-src="out">連線中…
 WiFi 連上 http://192.168.4.1（回應 … ms）
 HH:MM:SS wifi  溫度    … 濕度    … 光線     … 旋鈕     … 門檻    … | 讀     … ms | 送：red關、yellow關、green開、彩色燈(0, 0, 0)</pre></div>
-      <p class="see"><b class="lab see-l">應該看到</b>板子上的綠燈亮（程式裡叫 <code>blue</code>，板子上是綠燈）；溫度 ≥ 門檻時紅燈亮、蜂鳴器嗶一聲。ESP32 的感測值大約每 2 秒才更新一次，大腦每秒問，所以常連續兩行一模一樣——正常。<b>別用手機同時開 ESP32 的網頁</b>：第 10 課一次只服務一個連線，會跟大腦搶；真的想同時開，大腦那行最後加 <code>--period 2</code>（兩秒問一次）。<b>光線</b>：遮住時數字變小，夜燈就會亮；要是遮住反而變大、或沒遮夜燈就一直亮，把 <code>rules.py</code> 裡的 <code>DARK_WHEN_LOW</code> 改成 <code>False</code>（第四部分會教怎麼改；方向老師沒在實板驗過）。</p></li>
+      <p class="see"><b class="lab see-l">應該看到</b>板子上的綠燈亮（程式裡叫 <code>blue</code>，板子上是綠燈）；溫度 ≥ 門檻時紅燈亮、蜂鳴器嗶一聲。ESP32 的感測值大約每 2 秒才更新一次，大腦每秒問，所以常連續兩行一模一樣——正常。<b>別用手機同時開 ESP32 的網頁</b>：第 10 課一次只服務一個連線，會跟大腦搶；真的想同時開，大腦那行最後加 <code>--period 2</code>（兩秒問一次）。<b>光線</b>：遮住時數字變小，夜燈就會亮；要是遮住反而變大、或沒遮夜燈就一直亮，把 <code>rules.py</code> 裡的 <code>DARK_WHEN_LOW</code> 改成 <code>False</code>（第四部分會教怎麼改；⚠️ 方向老師還沒用手遮過，現場為準）。</p></li>
     <li><p class="do"><b class="lab do-l">做什麼</b>60 秒到了，看統計那一行，<b>抄下中位數、最快、最慢、95%</b>，跟第一部分假板子的比一比。這是你今天量到的<b>真的 WiFi 一問一答時間</b>。<span class="dur">多久：2 分鐘</span></p>
       <p class="type"><b class="lab type-l">打什麼</b>不用打，它自己停。</p>
       <div class="box"><pre class="out" data-src="out">==== 這次跑了 N 輪，失敗 0 次；紀錄在 log_wifi_….csv ====
 讀一次感測值來回：中位數 … ms、最快 … ms、最慢 … ms、95% 在 … ms 內</pre></div>
-      <p class="see"><b class="lab see-l">應該看到</b>數字是你自己的，老師也還不知道真板會是多少（ms＝毫秒，千分之一秒）。<code>失敗</code> 不是 0 也照實記下來。</p></li>
+      <p class="see"><b class="lab see-l">應該看到</b>數字是你自己的：每塊板、每張桌子、每一次都不一樣，所以這頁不寫老師的數字（ms＝毫秒，千分之一秒）。<code>失敗</code> 不是 0 也照實記下來。</p></li>
     <li><p class="do"><b class="lab do-l">做什麼</b>看「斷線長什麼樣子」（作業要寫）：再跑一次大腦（這次不加 <code>--seconds</code>，會一直跑），跑起來之後<b>拔掉 ESP32 的電 10 秒再插回</b>，看視窗 B 印什麼；看完 Ctrl＋C。<span class="dur">多久：3 分鐘</span></p>
       <div class="box"><pre class="cmd" data-where="板子" data-src="src">python3 brain.py --link wifi --esp 192.168.4.1</pre></div>
       <div class="box"><pre class="out" data-src="out">HH:MM:SS ESP32 沒回應（第 1 次）：…</pre></div>
-      <p class="see"><b class="lab see-l">應該看到</b>拔電之後每輪印一行 <code>ESP32 沒回應（第 N 次）</code>，大腦會一直數、一直試，不會整支停掉。接回來之後的<b>第一輪成功，會把燈號全部重送一次</b>（<code>送：red關、yellow關、green開、彩色燈(…)</code> 那樣）——因為斷線之後大腦不確定 ESP32 現在是什麼樣子。插回去之後 UNO Q 接不接得回 WiFi、要不要重打 <code>nmcli</code> 那行，老師沒在真板試過——<b>照實記下你看到的</b>；接不回來就再打第 3 步第二行。ESP32 還沒電的時候按 Ctrl＋C，會多印 <code>⚠️ 關燈指令沒送到（ESP32 可能還亮著燈）：重開 ESP32 或再跑一次再 Ctrl+C</code>。</p></li>
+      <p class="see"><b class="lab see-l">應該看到</b>拔電之後每輪印一行 <code>ESP32 沒回應（第 N 次）</code>，大腦會一直數、一直試，不會整支停掉。接回來之後的<b>第一輪成功，會把燈號全部重送一次</b>（<code>送：red關、yellow關、green開、彩色燈(…)</code> 那樣）——因為斷線之後大腦不確定 ESP32 現在是什麼樣子。ESP32 重開機後 UNO Q 會自己連回它的基地台（老師實測過）；萬一過了半分鐘還接不回來，再打第 2 步第二行。<b>照實記下你看到的。</b>ESP32 還沒電的時候按 Ctrl＋C，會多印 <code>⚠️ 關燈指令沒送到（ESP32 可能還亮著燈）：重開 ESP32 或再跑一次再 Ctrl+C</code>。</p></li>
   </ol>
   <details class="stuck"><summary>卡住了：連不上基地台、一直沒回應、燈顏色不對</summary>
     <ul>
@@ -358,11 +357,11 @@ HH:MM:SS wifi  溫度    … 濕度    … 光線     … 旋鈕     … 門檻 
       <li>燈的顏色不對：第 10 課的 <code>blue</code> 是<b>綠燈</b>，沒有藍燈。</li>
       <li>溫度一直不動、連續幾行一模一樣：ESP32 的感測值大約每 2 秒才更新一次，手要握久一點。</li>
       <li>手機開著 ESP32 的網頁之後大腦開始沒回應：第 10 課一次只服務一個連線。關掉手機網頁，或大腦加 <code>--period 2</code>。</li>
-      <li><code>連不上 ESP32：…</code> 然後就結束：UNO Q 還沒連上 <code>maker-XXXX</code>，回第 3 步。</li>
-      <li><code>pip install bleak</code> 抓不到、<code>~/w12env</code> 建不起來：不要改用 <code>sudo pip install</code> 或 <code>--break-system-packages</code>（不准）。藍牙改看老師示範＋跑 <code>ble-sim</code>。</li>
+      <li><code>連不上 ESP32：…</code> 然後就結束：UNO Q 還沒連上 <code>maker-XXXX</code>，回第 2 步。</li>
+      <li><code>nmcli</code> 說沒有權限：舉手（用 SSH 進來的情況老師還沒試過）。</li>
     </ul>
   </details>
-  <label class="check"><input type="checkbox" data-ck="p2"><span>bleak 裝了（或確定裝不了）；UNO Q 連上 <code>maker-XXXX</code>；跑滿 60 秒、抄下中位數；看過 <code>ESP32 沒回應</code> 長什麼樣子。</span></label>
+  <label class="check"><input type="checkbox" data-ck="p2"><span>UNO Q 連上 <code>maker-XXXX</code>（<code>successfully activated</code>）；跑滿 60 秒、抄下中位數；看過 <code>ESP32 沒回應</code> 長什麼樣子。</span></label>
 </section>
 
 <div class="part" id="part3"><b>第三部分　15:35–16:10（35 分，前面休息 10 分）</b><span>藍牙：寫一行字過去，板子通知回來</span></div>
@@ -370,17 +369,17 @@ HH:MM:SS wifi  溫度    … 濕度    … 光線     … 旋鈕     … 門檻 
 <section class="sec" id="p3">
   <h2>3　藍牙（第 11 課 <code>d11_ble_remote.py</code>）</h2>
   <p class="goal">目標：UNO Q 用藍牙低功耗（BLE）連上 ESP32，按 A 鍵大腦會嗶，跑滿 60 秒拿到延遲統計。產出：<code>log_ble_*.csv</code>＋統計那一行。</p>
-  <p class="why">藍牙這條線不用基地台：UNO Q 當「中心」去掃描、連上 ESP32。大腦<b>寫入</b>一行字（例如 <code>temp</code>、<code>red on</code>），ESP32 用<b>通知</b>（notify）回一行字（例如 <code>temp 25 C, hum 61 %</code>、<code>OK red on</code>）。A 鍵被按的時候，ESP32 會<b>主動</b>通知——這是 WiFi 那條線做不到的。反過來，第 11 課沒有提供光線和旋鈕，所以這條線讀不到：<b>協定決定你拿得到什麼</b>。</p>
+  <p class="why">藍牙這條線不用基地台，<b>也不用安裝任何東西</b>（藍牙套件已經在起始檔的 <code>vendor/</code> 裡）：UNO Q 當「中心」去掃描、連上 ESP32。大腦<b>寫入</b>一行字（例如 <code>temp</code>、<code>red on</code>），ESP32 用<b>通知</b>（notify）回一行字（例如 <code>temp 25 C, hum 61 %</code>、<code>OK red on</code>）。A 鍵被按的時候，ESP32 會<b>主動</b>通知——這是 WiFi 那條線做不到的。反過來，第 11 課沒有提供光線和旋鈕，所以這條線讀不到：<b>協定決定你拿得到什麼</b>。</p>
   <ol class="steps">
-    <li><p class="do"><b class="lab do-l">做什麼</b>把 ESP32 換成藍牙模式：<b>按住 A 鍵不放</b>，按一下重開鍵（EN／RST）或重新插電，<b>一直按著，看到 OLED 顯示 <code>BLE</code> 才放開 A</b>（太早放開會進 WiFi 模式）。<span class="dur">多久：幾秒</span></p>
+    <li><p class="do"><b class="lab do-l">做什麼</b>把 ESP32 換成藍牙模式：<b>按住 A 再按 EN，看到 OLED 顯示 <code>BLE</code> 才放開 A</b>（太早放開會進 WiFi 模式）。換線<b>一定要真的重開 ESP32</b>（按 EN 或重插電）；只停掉大腦、不重開，藍牙起不來。<span class="dur">多久：幾秒</span></p>
       <p class="type"><b class="lab type-l">打什麼</b>不用打，按鍵。</p>
-      <p class="see"><b class="lab see-l">應該看到</b>OLED 先 <code>AIoT W12</code>、<code>BLE  (d11)</code>，接著第二行是藍牙名稱 <code>maker-XXXX</code>（跟 WiFi 那個同一個名字）。⚠️ 開機選單老師沒在實板跑過，現場為準；進不去藍牙模式就舉手，老師會直接把第 11 課放上去。</p></li>
-    <li><p class="do"><b class="lab do-l">做什麼</b>用第二部分裝好的環境跑大腦，走藍牙、跑滿 60 秒（視窗 B，要在 <code>w12-starter</code> 裡）。注意開頭是 <code>~/w12env/bin/python</code>，不是 <code>python3</code>。<b>把 <code>XXXX</code> 換成你的。</b>跑的時候手握 DHT11，讓溫度超過 28。<span class="dur">多久：掃描最多等 10 秒，之後 60 秒</span></p>
-      <div class="box"><pre class="cmd" data-where="板子" data-src="src">~/w12env/bin/python brain.py --link ble --name maker-XXXX --seconds 60</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>OLED 先 <code>AIoT W12</code>、<code>BLE  (d11)</code>，接著第二行是藍牙名稱 <code>maker-XXXX</code>（跟 WiFi 那個同一個名字）。⚠️「按住 A 開機」這一下老師還沒用手按過，現場為準；進不去藍牙模式就舉手，老師會直接把第 11 課放上去。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>跑大腦，走藍牙、跑滿 60 秒（視窗 B，<b>要在 <code>w12-starter</code> 資料夾裡</b>）。不用安裝任何東西。<b>把 <code>XXXX</code> 換成你的。</b>跑的時候手握 DHT11，讓溫度超過 28。<span class="dur">多久：掃描最多等 10 秒，之後 60 秒</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">python3 brain.py --link ble --name maker-XXXX --seconds 60</pre></div>
       <div class="box"><pre class="out" data-src="out">連線中…
 藍牙連上 maker-XXXX（…）
 HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28 | 讀     … ms | 送：red關、yellow關、green開、彩色燈(0, 0, 0)</pre></div>
-      <p class="see"><b class="lab see-l">應該看到</b><code>光線</code>、<code>旋鈕</code> 是 <code>--</code>（讀不到）；沒有旋鈕可讀，<code>門檻</code> 固定 28。溫度 ≥ 28 時紅燈亮、嗶一聲。偶爾溫溼度感測器讀失敗，那一行括號會寫 <code>溫度沒讀到，維持上一輪</code>：大腦照上一輪的判斷，不亂切燈、不亂嗶。⚠️ UNO Q 的藍牙有沒有被別的程式佔住，老師沒驗，現場為準。</p></li>
+      <p class="see"><b class="lab see-l">應該看到</b><code>光線</code>、<code>旋鈕</code> 是 <code>--</code>（讀不到）；沒有旋鈕可讀，<code>門檻</code> 固定 28。溫度 ≥ 28 時紅燈亮、嗶一聲。偶爾溫溼度感測器讀失敗，那一行括號會寫 <code>溫度沒讀到，維持上一輪</code>：大腦照上一輪的判斷，不亂切燈、不亂嗶。</p></li>
     <li><p class="do"><b class="lab do-l">做什麼</b>趁它還在跑，<b>按一下 ESP32 的 A 鍵</b>，看下一行。<span class="dur">多久：1 分鐘</span></p>
       <p class="type"><b class="lab type-l">打什麼</b>不用打，按 A 鍵。</p>
       <div class="box"><pre class="out" data-src="out">送：嗶（…；有人按了 ESP32 的 A 鍵）</pre></div>
@@ -391,22 +390,22 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
 讀一次感測值來回：中位數 … ms、最快 … ms、最慢 … ms、95% 在 … ms 內</pre></div>
       <p class="see"><b class="lab see-l">應該看到</b>你自己的藍牙一問一答時間。藍牙的「一問」＝寫入 <code>temp</code>、「一答」＝等到通知回 <code>temp … C, hum … %</code>。</p></li>
     <li><p class="do"><b class="lab do-l">做什麼</b>看藍牙「斷線長什麼樣子」：再跑一次（不加 <code>--seconds</code>），跑起來之後拔掉 ESP32 的電，看畫面；看完 Ctrl＋C。<span class="dur">多久：3 分鐘</span></p>
-      <div class="box"><pre class="cmd" data-where="板子" data-src="src">~/w12env/bin/python brain.py --link ble --name maker-XXXX</pre></div>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">python3 brain.py --link ble --name maker-XXXX</pre></div>
       <div class="box"><pre class="out" data-src="out">HH:MM:SS ESP32 沒回應（第 1 次）：藍牙斷線了
 藍牙斷線了，重新連線…</pre></div>
-      <p class="see"><b class="lab see-l">應該看到</b>程式寫好的做法是：斷線那一輪算失敗，下一輪印 <code>藍牙斷線了，重新連線…</code>、重新掃描（最多 10 秒）；ESP32 插回電、重新廣播之後連回來，第一輪把燈號全部重送一次。⚠️ 這些老師沒在真板試過，畫面現場為準（記得插回電時<b>按住 A</b> 才會回到藍牙模式）。把最後幾行抄進作業，跟 WiFi 那條線的 <code>ESP32 沒回應</code> 比一比：哪條線比較「撐得住」？</p></li>
-    <li><p class="do"><b class="lab do-l">做什麼</b><b>藍牙做不起來的退路</b>（bleak 沒裝成、一直掃不到）：用模擬藍牙。同樣的文字指令送到假的 ESP32，練到的流程一樣。視窗 B 開假板子，視窗 C 跑大腦（記得 <code>cd w12-starter</code>）。<span class="dur">多久：60 秒</span></p>
+      <p class="see"><b class="lab see-l">應該看到</b>程式寫好的做法是：斷線那一輪算失敗，下一輪印 <code>藍牙斷線了，重新連線…</code>、重新掃描（最多 10 秒）；ESP32 插回電、重新廣播之後連回來，第一輪把燈號全部重送一次。老師在真板試過：連回來的那一輪會多印一行 <code>ESP32 沒回應（第 2 次）：藍牙剛重新連上，下一輪重送燈號</code>，再下一輪就把燈號全部重送（記得重開時<b>按住 A</b> 才會回到藍牙模式）。把最後幾行抄進作業，跟 WiFi 那條線的 <code>ESP32 沒回應</code> 比一比：哪條線比較「撐得住」？</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b><b>藍牙做不起來的退路</b>（一直掃不到、進不去藍牙模式）：用模擬藍牙。同樣的文字指令送到假的 ESP32，練到的流程一樣。視窗 B 開假板子，視窗 C 跑大腦（記得 <code>cd w12-starter</code>）。<span class="dur">多久：60 秒</span></p>
       <div class="box"><pre class="cmd" data-where="板子" data-src="src">python3 fake_esp32.py</pre></div>
       <div class="box"><pre class="cmd" data-where="板子C" data-src="src">python3 brain.py --link ble-sim --esp 127.0.0.1:8090 --seconds 60</pre></div>
       <div class="box"><pre class="out" data-src="out">⚠️ 這是模擬藍牙：延遲是電腦裡面的 HTTP，不代表真的藍牙有多快。</pre></div>
       <p class="see"><b class="lab see-l">應該看到</b>最後多一行上面那句警告。網頁上的 A 鍵可以按（<code>http://192.168.7.2:8090</code>）。紀錄檔叫 <code>log_ble-sim_….csv</code>；交作業時註明「模擬藍牙」，延遲數字不能拿來當藍牙的。</p></li>
   </ol>
-  <details class="stuck"><summary>卡住了：掃不到、找不到 bleak</summary>
+  <details class="stuck"><summary>卡住了：掃不到、藍牙起不來</summary>
     <ul>
-      <li>印 <code>連不上 ESP32：掃不到 maker-XXXX：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？</code> 就結束：ESP32 是不是按住 A 開機（OLED 顯示 <code>BLE</code>）？名字打對了嗎？有沒有人用手機 App 先連著它（藍牙一次只能有一個中心連）？</li>
-      <li><code>連不上 ESP32：No module named 'bleak'</code>：你用了 <code>python3</code>，要用 <code>~/w12env/bin/python</code>（第二部分第 1 步裝在那裡）。</li>
+      <li>印 <code>連不上 ESP32：掃不到 maker-XXXX：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？</code> 就結束：ESP32 是不是按住 A 再按 EN、真的重開進藍牙模式（OLED 顯示 <code>BLE</code>）？只停程式不重開不算。名字打對了嗎？有沒有人用手機 App 先連著它（藍牙一次只能有一個中心連）？</li>
+      <li><code>連不上 ESP32：No module named 'bleak'</code>：你不在 <code>w12-starter</code> 資料夾裡跑，或 <code>vendor/</code> 沒解出來——<code>cd w12-starter</code>；還是一樣就回第 0 部分重新解壓。</li>
       <li><code>--link ble 要加 --name maker-XXXX（看 ESP32 的 OLED）</code>：少打了 <code>--name</code>。</li>
-      <li>AI 叫你 <code>sudo pip install</code> 或加 <code>--break-system-packages</code>：不准，先給老師看。</li>
+      <li>AI 叫你自己 pip 安裝藍牙套件：不用也不要，套件已經在起始檔裡；先給老師看。</li>
     </ul>
   </details>
   <label class="check"><input type="checkbox" data-ck="p3"><span>藍牙連上（或改跑 <code>ble-sim</code> 並記下來）；按 A 鍵看到 <code>有人按了 ESP32 的 A 鍵</code>；跑滿 60 秒、抄下中位數；看過斷線的樣子。</span></label>
@@ -433,7 +432,7 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
     <li><p class="do"><b class="lab do-l">做什麼</b>試給自己看：先用假板子（第一部分那兩個視窗的做法），再上真板。題目二用 <code>ble-sim</code>。<span class="dur">多久：5 分鐘</span></p>
       <div class="box"><pre class="cmd" data-where="板子C" data-src="src">python3 brain.py --link ble-sim --esp 127.0.0.1:8090</pre></div>
       <p class="see"><b class="lab see-l">應該看到</b>你改的那件事出現在每一行最後面的 <code>送：…</code> 或括號理由裡；網頁上的燈跟著變。沒變：Ctrl＋C、確定存檔了、重跑。</p></li>
-    <li><p class="do"><b class="lab do-l">做什麼</b>收尾：把兩份紀錄檔從板子拿到教室機（<b>視窗 A</b>，教室機），填下面的比較表，交作業。最後讓 UNO Q 回原本的網路：先查原本那個連線叫什麼，再打 <code>sudo nmcli connection up</code> 後面接那個名字。<span class="dur">多久：10 分鐘</span></p>
+    <li><p class="do"><b class="lab do-l">做什麼</b>收尾：把兩份紀錄檔從板子拿到教室機（<b>視窗 A</b>，教室機），填下面的比較表，交作業。最後讓 UNO Q 回原本的網路：先查原本那個連線叫什麼，再打 <code>nmcli connection up</code> 後面接那個名字（不用 sudo）。<span class="dur">多久：10 分鐘</span></p>
       <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 E 的 scp 反方向（板→教室機）；檔名照 §〇 C log_&lt;連法&gt;_&lt;時間&gt;.csv；⚠️ 沒實跑">scp arduino@192.168.7.2:~/w12-starter/log_*.csv .</pre></div>
       <div class="box"><pre class="cmd" data-where="板子" data-src="src">nmcli connection show</pre></div>
       <p class="see"><b class="lab see-l">應該看到</b>教室機目前的資料夾多了幾個 <code>log_wifi_…</code>、<code>log_ble_…</code>（或 <code>log_ble-sim_…</code>）。<code>nmcli connection show</code> 列出板子記得的 WiFi，原本那個就是你接在 <code>up</code> 後面的名字。</p></li>
@@ -468,8 +467,9 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
     <tr><td><code>ssh arduino@192.168.7.2</code> 沒反應、<code>No route to host</code></td><td>USB 網卡沒起來：拔線重插、等心跳再試；不行改走 W8 第 0 節的 adb 通道（也走 USB），並舉手。</td></tr>
     <tr><td><code>REMOTE HOST IDENTIFICATION HAS CHANGED</code></td><td>教室機記著別塊板的鑰匙：視窗 A 打 <code>ssh-keygen -R 192.168.7.2</code>，再連。</td></tr>
     <tr><td>SSH 連到一半斷線</td><td>你用了 WiFi 的位址連板子。改 <code>ssh arduino@192.168.7.2</code>（這週只走 USB）。</td></tr>
-    <tr><td><code>curl:</code> 開頭的錯誤、<code>tar</code> 解不開</td><td>課程網還沒放上去或教室網路擋住：跟老師拿資料夾，教室機打 <code>scp -r w12-starter arduino@192.168.7.2:~/</code>。</td></tr>
-    <tr><td>ESP32 的 OLED 沒字、不是 <code>maker-XXXX</code></td><td>按重開鍵或重插電；還是沒有就舉手（開機選單沒在實板驗過）。</td></tr>
+    <tr><td><code>curl:</code> 開頭的錯誤、<code>tar</code> 解不開</td><td>課程網還沒放上去或板子連不到外面：把 <code>w12-starter.tar.gz</code> 存到教室機，教室機打 <code>scp w12-starter.tar.gz arduino@192.168.7.2:~/</code>，再到板子上 <code>tar xzf w12-starter.tar.gz</code>。</td></tr>
+    <tr><td>畫面每行的時間、<code>log_…csv</code> 檔名是 5 月的日期</td><td><b>正常</b>：板子沒連外網，時鐘停在映像那天。不影響量時間。</td></tr>
+    <tr><td>ESP32 的 OLED 沒字、不是 <code>maker-XXXX</code></td><td>按重開鍵（EN）或重插電；還是沒有就舉手。</td></tr>
     <tr><td colspan="2"><b>第一部分 假的 ESP32</b></td></tr>
     <tr><td>瀏覽器打不開 <code>http://192.168.7.2:8090</code></td><td>視窗 B 的 <code>fake_esp32.py</code> 還在跑嗎？網址要用 <code>192.168.7.2</code>（板子）。</td></tr>
     <tr><td><code>連不上 ESP32：…</code> 然後就結束</td><td>連不到 ESP32（假的或真的）：假的有沒有在跑？<code>--esp</code> 打對了嗎？真的：UNO Q 連上 <code>maker-XXXX</code> 了嗎？</td></tr>
@@ -484,17 +484,17 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
     <tr><td>溫度一直不動、連續幾行一模一樣</td><td>ESP32 的感測值大約每 2 秒才更新一次，手握久一點。</td></tr>
     <tr><td>手機開著 ESP32 的網頁，大腦就開始沒回應</td><td>第 10 課一次只服務一個連線：關掉手機網頁，或大腦加 <code>--period 2</code>。</td></tr>
     <tr><td><code>⚠️ 關燈指令沒送到（ESP32 可能還亮著燈）</code></td><td>停下來的時候 ESP32 沒回應（沒電、斷線）：重開 ESP32，或再跑一次大腦再 Ctrl＋C。</td></tr>
-    <tr><td><code>pip install bleak</code> 抓不到、<code>~/w12env</code> 建不起來</td><td><b>不准</b>改用 <code>sudo pip install</code> 或 <code>--break-system-packages</code>。藍牙改看老師示範＋跑 <code>ble-sim</code>，作業註明。</td></tr>
+    <tr><td><code>nmcli</code> 說沒有權限</td><td>舉手（用 SSH 進來的情況老師還沒試過）。今天不用 <code>sudo</code>。</td></tr>
     <tr><td colspan="2"><b>第三部分 藍牙</b></td></tr>
-    <tr><td><code>連不上 ESP32：掃不到 maker-XXXX：ESP32 有在跑第 11 課嗎？</code></td><td>ESP32 有按住 A 開機、<b>看到 OLED 顯示 <code>BLE</code> 才放開</b>嗎？名字打對了嗎？手機 App 有沒有先連著它（一次只能一個中心）？</td></tr>
-    <tr><td><code>連不上 ESP32：No module named 'bleak'</code></td><td>要用 <code>~/w12env/bin/python</code> 跑，不是 <code>python3</code>。</td></tr>
+    <tr><td>藍牙起不來、<code>連不上 ESP32：掃不到 maker-XXXX：ESP32 有在跑第 11 課嗎？</code></td><td>ESP32 要<b>真的重開</b>（按 EN 或重插電），不能只停程式；有按住 A 再按 EN、<b>看到 OLED 顯示 <code>BLE</code> 才放開</b>嗎？名字打對了嗎？手機 App 有沒有先連著它（一次只能一個中心）？</td></tr>
+    <tr><td><code>連不上 ESP32：No module named 'bleak'</code></td><td>你不在 <code>w12-starter</code> 資料夾裡跑（先 <code>cd w12-starter</code>），或 <code>vendor/</code> 沒解出來（重新解壓）。</td></tr>
     <tr><td><code>--link ble 要加 --name maker-XXXX（看 ESP32 的 OLED）</code></td><td>少打 <code>--name maker-XXXX</code>。</td></tr>
     <tr><td>藍牙線 <code>光線</code>、<code>旋鈕</code> 都是 <code>--</code>、門檻固定 28</td><td><b>正常</b>：第 11 課沒提供光線、旋鈕，沒旋鈕就用固定門檻 28。</td></tr>
     <tr><td>括號寫 <code>溫度沒讀到，維持上一輪</code></td><td><b>正常</b>：溫溼度感測器偶爾讀失敗（藍牙回 <code>DHT11 read failed</code>），大腦照上一輪判斷。一直出現就舉手。</td></tr>
     <tr><td><code>藍牙斷線了，重新連線…</code></td><td>大腦自己重新掃描、重連；ESP32 要還在藍牙模式（重開時按住 A）。</td></tr>
     <tr><td>連按兩下 A 只嗶一次</td><td><b>正常</b>：大腦一秒看一次，同一秒裡按幾下都只算一次。</td></tr>
     <tr><td>按 A 鍵 WiFi 線沒反應</td><td><b>正常</b>：第 10 課的回答裡沒有按鈕，WiFi 線讀不到 A 鍵。</td></tr>
-    <tr><td>AI 叫你 <code>sudo pip install</code> 或 <code>--break-system-packages</code></td><td><b>不准</b>，先給老師看。</td></tr>
+    <tr><td>AI 叫你 pip 安裝藍牙套件、加 <code>sudo</code></td><td>不用也不要：藍牙套件已經在起始檔裡。先給老師看。</td></tr>
     <tr><td colspan="2"><b>第四部分 改大腦</b></td></tr>
     <tr><td>改了 <code>rules.py</code> 沒變</td><td>要 Ctrl＋C 再重跑大腦；確認存檔了。</td></tr>
     <tr><td><code>IndentationError</code>、<code>SyntaxError</code></td><td>縮排沒對齊或少了括號、冒號：看它指的那一行。</td></tr>
@@ -505,7 +505,7 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
   <ol>
     <li><b>把事實給足</b>：你打的完整指令、原本預期看到什麼、實際看到的完整錯誤原文、走的是哪條線（WiFi／藍牙／假的）。</li>
     <li><b>板子密碼不給 AI。</b>WiFi 密碼是 <code>maker</code>＋OLED 上的四個字，那是程式寫死的公開規則，沒關係。</li>
-    <li><b>AI 叫你 <code>sudo pip install</code>、加 <code>--break-system-packages</code>、改 ESP32 的程式，先給老師看。</b>這三樣今天都不准。</li>
+    <li><b>AI 叫你自己 pip 安裝套件、加 <code>sudo</code>、改 ESP32 的程式，先給老師看。</b>今天都用不到；W6 的規矩照舊：不准 <code>sudo pip install</code>、不准 <code>--break-system-packages</code>。</li>
   </ol>
 </section>
 
@@ -517,16 +517,16 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
   <p>大腦像用瀏覽器開網頁一樣，對 ESP32 送一個網址，ESP32 回一段字——這套「問一個網址、回一段答案」的規矩叫 <b>HTTP</b>。第 10 課開了這幾個網址：<code>GET /api/status</code> 回一段大括號的資料（<b>JSON</b>），欄位有 <code>red</code>、<code>yellow</code>、<code>blue</code>、<code>rgb</code>、<code>temp</code>、<code>hum</code>、<code>light</code>、<code>knob</code>、<code>last</code>、<code>requests</code>；<code>/api/led?name=red&amp;on=1</code> 開紅燈（<code>name</code> 可以是 <code>red</code>／<code>yellow</code>／<code>blue</code>）、<code>/api/rgb?r=&amp;g=&amp;b=</code> 彩色燈、<code>/api/beep</code> 嗶、<code>/api/off</code> 全關。<code>192.168.4.1</code> 是 ESP32 在它自己那個網路裡的門牌（<b>IP</b>）。重點：<b>ESP32 只會回答、不會主動開口</b>——A 鍵被按了它也不會說，所以 WiFi 線讀不到按鈕。</p>
 
   <h3>藍牙線：寫入與通知</h3>
-  <p>藍牙低功耗（<b>BLE</b>）連上之後，資料擺在「服務＋特徵值」一層一層的架子上（GATT）。第 11 課開了兩組：<b>文字指令服務</b>——大腦往 RX（<code>6E400002-…</code>）<b>寫入</b>一行字，ESP32 從 TX（<code>6E400003-…</code>）<b>通知</b>（<b>notify</b>）回一行字；<b>按鈕</b>（<code>00001524-…</code>）——A 鍵按下／放開，ESP32 主動通知 <code>1</code>／<code>0</code>。指令：<code>temp</code> → <code>temp 25 C, hum 61 %</code>（讀失敗回 <code>DHT11 read failed</code>）；<code>red on</code> → <code>OK red on</code>；<code>rgb 255 0 0</code> → <code>OK rgb</code>；<code>beep</code> → <code>OK beep</code>；<code>off</code> → <code>OK all off</code>。一行指令最多 128 個位元組、回話截到 100 個位元組。UNO Q 的 Linux 用 Python 的 bleak 套件，做的事跟手機 App 一樣。</p>
+  <p>藍牙低功耗（<b>BLE</b>）連上之後，資料擺在「服務＋特徵值」一層一層的架子上（GATT）。第 11 課開了兩組：<b>文字指令服務</b>——大腦往 RX（<code>6E400002-…</code>）<b>寫入</b>一行字，ESP32 從 TX（<code>6E400003-…</code>）<b>通知</b>（<b>notify</b>）回一行字；<b>按鈕</b>（<code>00001524-…</code>）——A 鍵按下／放開，ESP32 主動通知 <code>1</code>／<code>0</code>。指令：<code>temp</code> → <code>temp 25 C, hum 61 %</code>（讀失敗回 <code>DHT11 read failed</code>）；<code>red on</code> → <code>OK red on</code>；<code>rgb 255 0 0</code> → <code>OK rgb</code>；<code>beep</code> → <code>OK beep</code>；<code>off</code> → <code>OK all off</code>。一行指令最多 128 個位元組、回話截到 100 個位元組。UNO Q 的 Linux 用 Python 的 bleak 套件（起始檔 <code>vendor/</code> 已經帶好；UNO Q 的系統 Python 沒有 pip，所以不用也不要自己裝），做的事跟手機 App 一樣。</p>
 
   <h3>為什麼「只送有變的」</h3>
   <p>大腦每秒想一次，但<b>只有決定跟「ESP32 上確定已經是這樣」不一樣時才送</b>：紅燈本來就亮著就不再叫一次，嗶聲只在「剛變熱」那一輪叫。哪一輪失敗了（逾時、斷線），大腦就不確定 ESP32 現在是什麼樣子，<b>下一輪成功時把燈號全部重送一次</b>。理由三個：① 每送一次就多一次一問一答，WiFi 線一次只處理一個連線、ESP32 忙著回你就沒空讀感測器；② 藍牙一行一行排隊，送越多越慢；③ 紀錄檔的 <code>sent</code> 欄乾淨，一眼看得出「哪一輪發生了事」。所以第一部分你看到滿滿的 <code>沒變</code>——那是好事。</p>
 
   <h3>為什麼這週 SSH 走 USB（<code>192.168.7.2</code>）</h3>
-  <p>UNO Q 只有一張 WiFi 網卡。第二部分它去連 ESP32 的基地台，就<b>離開了原本的網路</b>；你要是用原本那個 WiFi 位址 SSH 進來，連線當場就斷。USB 線上那張網卡（W6 做的）跟 WiFi 無關，<code>192.168.7.2</code> 永遠在，所以今天一律走它。也因為這樣，<b>起始檔、bleak 都要在連 ESP32 之前弄好</b>——連上之後板子就上不了網。回原本的網路：<code>nmcli connection show</code> 查名字，再 <code>sudo nmcli connection up</code> 接那個名字。</p>
+  <p>UNO Q 只有一張 WiFi 網卡。第二部分它去連 ESP32 的基地台，就<b>離開了原本的網路</b>；你要是用原本那個 WiFi 位址 SSH 進來，連線當場就斷。USB 線上那張網卡（W6 做的）跟 WiFi 無關，<code>192.168.7.2</code> 永遠在，所以今天一律走它。也因為這樣，<b>起始檔要在連 ESP32 之前抓好</b>——連上之後板子就沒有外網（時鐘也會停住，所以畫面時間是 5 月）。回原本的網路：<code>nmcli connection show</code> 查名字，再 <code>nmcli connection up</code> 接那個名字（都不用 sudo）。</p>
 
   <h3>一問一答多久（RTT）、中位數、95%</h3>
-  <p>「讀一次感測值來回」＝從大腦送出問題，到拿到答案的時間，叫<b>來回時間</b>（<b>RTT</b>）。每一輪量一次，停下來時排序：<b>中位數</b>是正中間那個（不怕偶爾一次特別慢），<b>95% 在 … 內</b>是「一百次裡九十五次都比這快」。假的 ESP32 的數字是電腦內部的，<b>不代表</b> WiFi 或藍牙；真的數字今天你自己量。紀錄檔是一行一筆的表格（<b>CSV</b>），<code>read_ms</code> 欄就是每一輪的來回時間、<code>fail</code> 欄 1＝那一輪沒回應、<code>why</code> 欄是理由。另外：WiFi 線問到的感測值是 ESP32 大約每 2 秒更新一次的那一筆，所以每秒問會連續拿到同一筆；量到的是「一問一答多久」，不是「感測器多快」。</p>
+  <p>「讀一次感測值來回」＝從大腦送出問題，到拿到答案的時間，叫<b>來回時間</b>（<b>RTT</b>）。每一輪量一次，停下來時排序：<b>中位數</b>是正中間那個（不怕偶爾一次特別慢），<b>95% 在 … 內</b>是「一百次裡九十五次都比這快」。假的 ESP32 的數字是電腦內部的，<b>不代表</b> WiFi 或藍牙；真的數字今天你自己量（每塊板、每張桌子、每一次都不同）。紀錄檔是一行一筆的表格（<b>CSV</b>），<code>read_ms</code> 欄就是每一輪的來回時間、<code>fail</code> 欄 1＝那一輪沒回應、<code>why</code> 欄是理由。另外：WiFi 線問到的感測值是 ESP32 大約每 2 秒更新一次的那一筆，所以每秒問會連續拿到同一筆；量到的是「一問一答多久」，不是「感測器多快」。</p>
 </section>
 
 <section class="sec" id="terms">
@@ -546,10 +546,10 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
     <tr><td>門檻</td><td>—</td><td>溫度 ≥ 它就算熱；WiFi 線用旋鈕調（20–35 °C），藍牙線固定 28</td></tr>
     <tr><td>夜燈</td><td>—</td><td>光線算暗時彩色燈亮暖黃 <code>(255, 160, 60)</code></td></tr>
   </table></div>
-  <p class="small">SSH、sudo、USB 網卡（<code>192.168.7.2</code>）是前幾週的詞；ESP32、OLED、DHT11、第 10／11 課是創客課的詞。</p>
+  <p class="small">SSH、USB 網卡（<code>192.168.7.2</code>）是前幾週的詞；ESP32、OLED、DHT11、第 10／11 課是創客課的詞。</p>
 </section>
 
-<footer>國立東華大學　AIoT 智慧裝置實作（115-1）　W12 學生步驟（完整版）。這一頁沒有接 AI、不收集任何資料，離線打得開；勾選進度只存在你這台電腦的瀏覽器。板子密碼、晶片序號本頁都不印；<code>maker-XXXX</code>／<code>makerXXXX</code> 是第 10、11 課程式寫死的公開規則，<code>XXXX</code> 看你那塊 OLED。字樣是老師 11/26 早上在電腦上用假的 ESP32 實跑的；標 ⚠️ 的以現場為準。</footer>
+<footer>國立東華大學　AIoT 智慧裝置實作（115-1）　W12 學生步驟（完整版）。這一頁沒有接 AI、不收集任何資料，離線打得開；勾選進度只存在你這台電腦的瀏覽器。板子密碼、晶片序號本頁都不印；<code>maker-XXXX</code>／<code>makerXXXX</code> 是第 10、11 課程式寫死的公開規則，<code>XXXX</code> 看你那塊 OLED。字樣是老師 11/26 上午用假的 ESP32 和一組真板實跑的；標 ⚠️ 的以現場為準。</footer>
 </main>
 
 <script>
