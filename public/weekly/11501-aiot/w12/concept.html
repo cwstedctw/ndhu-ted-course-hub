@@ -732,6 +732,7 @@ class WifiLink:
             raise RuntimeError("{}（{}）。要連真的 ESP32，先連它的 WiFi（XXXX 換成 ESP32 的 OLED 上那四個字）：\n"
                                "  nmcli device wifi connect maker-XXXX password makerXXXX".format(e, now))
         ap = current_wifi()
+        self.ap_at_start = ap                  # 記住一開始連的是哪一塊，之後斷線接回來要比對
         where = "；UNO Q 現在連的 WiFi 是 {}——跟你手上 ESP32 的 OLED 一樣嗎？".format(ap) if ap else ""
         return "WiFi 連上 {}（回應 {:.0f} ms）{}".format(self.base, self.last_rtt_ms, where)
 
@@ -763,6 +764,11 @@ class WifiLink:
         """斷線又接回來之後，讓大腦再說一次現在連的是哪一塊（可能已經換了一塊）"""
         ap = current_wifi()
         return "UNO Q 現在連的 WiFi 是 {}——跟你手上 ESP32 的 OLED 一樣嗎？".format(ap) if ap else ""
+
+    def moved(self):
+        """UNO Q 是不是自己跳到「另一個」WiFi 了？是就回傳新的名字（沒有就回空字串）"""
+        ap, start = current_wifi(), getattr(self, "ap_at_start", "")
+        return ap if (ap and start and ap != start) else ""
 
     async def close(self):
         pass
@@ -1056,6 +1062,7 @@ async def run(a):
                 "limit", "red", "green", "rgb", "sent", "read_ms", "fail", "why"])
     rtts, fails, rounds, prev, shown = [], 0, 0, {}, {}
     failing = False
+    wrong_board = False
     t_end = time.time() + a.seconds if a.seconds else None
     try:
         while t_end is None or time.time() < t_end:
@@ -1067,6 +1074,12 @@ async def run(a):
                 rtts.append(rtt)
                 if failing:                                   # 剛從「沒回應」恢復：說清楚現在連的是哪一塊
                     failing = False
+                    other = getattr(link, "moved", lambda: "")()
+                    if other:                                 # UNO Q 自己跳到另一塊板子的 WiFi：停手，別去動別人的燈
+                        print("⚠️ UNO Q 的 WiFi 換成 {} 了，不是一開始那一塊。大腦先停下來，不送任何指令。".format(other))
+                        print("   連回你手上那塊再重跑：nmcli device wifi connect maker-XXXX password makerXXXX")
+                        wrong_board = True
+                        break
                     again = getattr(link, "where", lambda: "")()
                     if again:
                         print("接回來了。" + again)
@@ -1094,7 +1107,8 @@ async def run(a):
         pass
     finally:
         try:
-            await asyncio.wait_for(link.send("off"), timeout=5)
+            if not wrong_board:                               # 連到別人的板子時，連「關燈」都不送
+                await asyncio.wait_for(link.send("off"), timeout=5)
         except Exception:
             print("⚠️ 關燈指令沒送到（ESP32 可能還亮著燈）：重開 ESP32 或再跑一次再 Ctrl+C")
         f.close()
