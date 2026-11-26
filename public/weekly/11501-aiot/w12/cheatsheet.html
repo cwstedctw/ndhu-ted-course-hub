@@ -160,6 +160,13 @@ nmcli device wifi connect maker-XXXX password makerXXXX</pre>
 <pre>nmcli connection show</pre>
 <p class="k">交：兩份紀錄檔（WiFi 真板、藍牙或 <code>ble-sim</code> 並註明）＋三句比較（各讀得到什麼、中位數各幾 ms、斷線怎麼表現）＋<code>rules.py</code> 改了哪一條、為什麼。</p></div>
 
+<div class="card"><h3>5 加碼：網頁儀表板＋A 鍵搖桿（跟 <code>brain.py</code> 二選一跑）</h3>
+<p><span class="where b">板子</span>WiFi 看儀表板；Ctrl＋C、ESP32 按住 A 再按 EN 換藍牙玩遊戲；沒板子用假板子＋<code>ble-sim</code></p>
+<pre>python3 webui.py --link wifi --esp 192.168.4.1
+python3 webui.py --link ble --name maker-XXXX
+python3 webui.py --link ble-sim --esp 127.0.0.1:8090</pre>
+<p class="k"><span class="where p">瀏覽器</span>教室機開 <code>http://192.168.7.2:8088</code>。<code>埠 8088 已經有人在用</code> → 前一個 <code>webui.py</code> 沒關。</p></div>
+
 <div class="card stuck"><h3>🆘 三個最常見的卡關</h3>
 <p><b>① SSH 斷線</b>：用了 WiFi 的位址。改 <code>ssh arduino@192.168.7.2</code>；說鑰匙變了 → 教室機 <code>ssh-keygen -R 192.168.7.2</code>。</p>
 <p><b>② 一直 <code>ESP32 沒回應</code>／<code>連不上 ESP32：…</code></b>：UNO Q 還連在 <code>maker-XXXX</code> 嗎（<code>nmcli -t dev status</code>）？ESP32 重開了嗎？名字對照 OLED。燈顏色怪：<code>blue</code> 是綠燈。</p>

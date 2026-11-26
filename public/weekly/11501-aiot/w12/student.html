@@ -178,7 +178,7 @@ footer{margin:30px 0 0;color:var(--mist);font-size:14px}
 <div class="progress" aria-label="進度"><div class="in">
   <span class="lbl" id="plbl">完成 0／0</span>
   <span class="bar" aria-hidden="true"><i id="pbar"></i></span>
-  <span class="toc"><a href="#how">怎麼讀</a><a href="#s0">0 準備</a><a href="#p1">1 假的 ESP32</a><a href="#p2">2 WiFi</a><a href="#p3">3 藍牙</a><a href="#p4">4 改大腦</a><a href="#faq">卡住了</a><a href="#basics">基礎</a><a href="#terms">名詞</a></span>
+  <span class="toc"><a href="#how">怎麼讀</a><a href="#s0">0 準備</a><a href="#p1">1 假的 ESP32</a><a href="#p2">2 WiFi</a><a href="#p3">3 藍牙</a><a href="#p4">4 改大腦</a><a href="#p5">5 加碼網頁</a><a href="#faq">卡住了</a><a href="#basics">基礎</a><a href="#terms">名詞</a></span>
   <button type="button" class="btn" id="preset">清除勾選</button>
 </div></div>
 
@@ -416,6 +416,7 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
 <section class="sec" id="p4">
   <h2>4　改大腦（<code>rules.py</code>）、收尾、交作業</h2>
   <p class="goal">目標：三題挑一題，<b>只改 <code>rules.py</code></b>，用假板子或真板試給自己看。產出：改了什麼＋為什麼。</p>
+  <p class="note"><b>改規則和開網頁二選一，都做更好</b>：這一節改 <code>rules.py</code>，或跳去<a href="#p5">第 5 節加碼</a>讓 UNO Q 開網頁（儀表板＋用 A 鍵玩的小遊戲）。</p>
   <p class="why"><code>rules.py</code> 的 <code>decide()</code> 只管「想」、不管「怎麼傳」，所以同一份規則 WiFi、藍牙兩條線都能用。拿不到的值是 <code>None</code>（藍牙線的光線、旋鈕），規則要自己處理。<code>brain.py</code> 每次開跑才讀一次 <code>rules.py</code>：<b>改完要 Ctrl＋C、重跑大腦才會生效。</b></p>
   <div class="pick">
     <div><h4>題目一：濕度高 → 黃燈亮</h4>目標：濕度超過你定的數字，黃燈亮；降回來就關。<br><b>提示</b>：黃燈已經接好了——<code>decide()</code> 回傳的大括號裡有一行 <code>"yellow": False</code>（現在永遠不亮），<code>brain.py</code> 和兩條線都認得它。把 <code>False</code> 換成「這一輪的濕度 <code>s.get("hum")</code> 夠不夠高」的判斷就好；記得濕度可能是 <code>None</code>（沒讀到）。<br><b>怎麼測</b>：假板子沒有濕度拉桿，用網址改：<code>http://192.168.7.2:8090/sim/set?hum=80</code>；真板對 DHT11 哈一口氣，濕度會不會上去自己看。</div>
@@ -432,7 +433,7 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
     <li><p class="do"><b class="lab do-l">做什麼</b>試給自己看：先用假板子（第一部分那兩個視窗的做法），再上真板。題目二用 <code>ble-sim</code>。<span class="dur">多久：5 分鐘</span></p>
       <div class="box"><pre class="cmd" data-where="板子C" data-src="src">python3 brain.py --link ble-sim --esp 127.0.0.1:8090</pre></div>
       <p class="see"><b class="lab see-l">應該看到</b>你改的那件事出現在每一行最後面的 <code>送：…</code> 或括號理由裡；網頁上的燈跟著變。沒變：Ctrl＋C、確定存檔了、重跑。</p></li>
-    <li><p class="do"><b class="lab do-l">做什麼</b>收尾：把兩份紀錄檔從板子拿到教室機（<b>視窗 A</b>，教室機），填下面的比較表，交作業。最後讓 UNO Q 回原本的網路：先查原本那個連線叫什麼，再打 <code>nmcli connection up</code> 後面接那個名字（不用 sudo）。<span class="dur">多久：10 分鐘</span></p>
+    <li><p class="do"><b class="lab do-l">做什麼</b>收尾：把兩份紀錄檔從板子拿到教室機（<b>視窗 A</b>，教室機），填下面的比較表，交作業。最後讓 UNO Q 回原本的網路：先查原本那個連線叫什麼，再打 <code>nmcli connection up</code> 後面接那個名字（不用 sudo）；要做第 5 節加碼的，等做完再回。<span class="dur">多久：10 分鐘</span></p>
       <div class="box"><pre class="cmd" data-where="電腦" data-src="rewrite:new" data-note="§〇 E 的 scp 反方向（板→教室機）；檔名照 §〇 C log_&lt;連法&gt;_&lt;時間&gt;.csv；⚠️ 沒實跑">scp arduino@192.168.7.2:~/w12-starter/log_*.csv .</pre></div>
       <div class="box"><pre class="cmd" data-where="板子" data-src="src">nmcli connection show</pre></div>
       <p class="see"><b class="lab see-l">應該看到</b>教室機目前的資料夾多了幾個 <code>log_wifi_…</code>、<code>log_ble_…</code>（或 <code>log_ble-sim_…</code>）。<code>nmcli connection show</code> 列出板子記得的 WiFi，原本那個就是你接在 <code>up</code> 後面的名字。</p></li>
@@ -450,10 +451,50 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
     <ol>
       <li><b>兩份紀錄檔</b>：<code>log_wifi_*.csv</code>（第二部分真板那份）、<code>log_ble_*.csv</code>（藍牙做不到就交 <code>ble-sim</code> 那份，並註明）。</li>
       <li><b>三句比較</b>：兩條線各讀得到什麼；一問一答的中位數各幾 ms；哪條線斷了怎麼表現。</li>
-      <li><b><code>rules.py</code> 改了哪一條、為什麼。</b></li>
+      <li><b><code>rules.py</code> 改了哪一條、為什麼。</b>（做了第 5 節加碼的，網頁截圖可以附在這一欄。）</li>
     </ol>
     到期日照 e學苑 作業頁（老師定）。</div>
   <label class="check"><input type="checkbox" data-ck="p4"><span>改了一條規則、自己試過；兩份紀錄檔在教室機；比較表填好；UNO Q 回到原本的網路。</span></label>
+</section>
+
+<div class="part" id="part5"><b>加碼　第四部分二選一，做完還有時間就兩個都做</b><span>網頁儀表板＋把 ESP32 的 A 鍵變成搖桿</span></div>
+
+<section class="sec" id="p5">
+  <h2>5　加碼：網頁儀表板＋搖桿遊戲（<code>webui.py</code>）</h2>
+  <p class="goal">目標：UNO Q 自己開一個網頁，教室機瀏覽器看得到 ESP32 傳過來的每個數字；再換藍牙，用 ESP32 的 A 鍵玩一局小遊戲。產出：WiFi 儀表板截一張、藍牙遊戲截一張最高分（可以附在作業「改了什麼」那一欄）。</p>
+  <p class="why"><code>webui.py</code> 跟 <code>brain.py</code> 用同一套 WiFi／藍牙連法，但不跑 <code>rules.py</code>：它把讀到的東西整理成網頁（埠 8088），網頁有兩個分頁——<b>儀表板</b>和<b>遊戲</b>。遊戲是一塊小電路板沿著地面跑、按一下跳過障礙，越來越快；開始時綠燈亮，每滿 5 分彩色燈閃一下，撞到紅燈亮、嗶一聲。<b><code>brain.py</code> 和 <code>webui.py</code> 二選一跑</b>：藍牙一次只能一條連線。</p>
+  <ol class="steps">
+    <li><p class="do"><b class="lab do-l">做什麼</b>先停掉還在跑的 <code>brain.py</code>（視窗 B、C 都看一下）。要看儀表板，ESP32 要在 WiFi 模式（<b>不按任何鍵</b>，按 EN 重開），UNO Q 要連在它的基地台上：ESP32 重開後 UNO Q 會自己連回去；你在第四部分收尾已經讓 UNO Q 回原網路的，再打一次第二部分第 2 步的連線那行。<span class="dur">多久：1 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>在跑 <code>brain.py</code> 的視窗按 Ctrl＋C。</p>
+      <p class="see"><b class="lab see-l">應該看到</b><code>brain.py</code> 印完統計、回到提示字元；ESP32 的 OLED 有 <code>maker-XXXX</code>、<code>pw makerXXXX</code>、<code>192.168.4.1</code>。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>開網頁、走 WiFi 線（視窗 B，在 <code>w12-starter</code> 裡），然後在<b>教室機的瀏覽器</b>打開它。WiFi 這條線拿得到的最多，儀表板最完整。轉旋鈕、遮光、手握 DHT11，看卡片跟著變；<b>截一張圖</b>。<span class="dur">多久：5 分鐘</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">python3 webui.py --link wifi --esp 192.168.4.1</pre></div>
+      <div class="box"><pre class="out" data-src="out">網頁開好了：教室機瀏覽器開 http://192.168.7.2:8088（在板子自己上面是 http://127.0.0.1:8088）
+WiFi 連上 http://192.168.4.1（回應 … ms）</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>瀏覽器開 <code>http://192.168.7.2:8088</code>：右上角寫 <code>wifi → 192.168.4.1</code>；<b>儀表板</b>每個量一張卡——溫度、濕度、光線、旋鈕（光線、旋鈕用 0–4095 的橫條）、三顆燈、彩色燈、請求數、來回毫秒；一張折線圖畫最近 60 筆的來回時間，旁邊是中位數、最快、最慢。切到<b>遊戲</b>分頁，上方寫「WiFi 這條線讀不到按鍵，ESP32 當不了搖桿——換藍牙那條線再來（現在先用空白鍵）」：空白鍵或點畫面可以玩。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>換藍牙、用 A 鍵玩：視窗 B 按 Ctrl＋C 停掉網頁；ESP32 <b>按住 A 再按 EN，看到 OLED 顯示 <code>BLE</code> 才放開</b>；再開網頁、走藍牙線（<code>XXXX</code> 換成你的）。瀏覽器重新整理，切到<b>遊戲</b>分頁，按 ESP32 的 A 鍵跳。玩一局，<b>截最高分</b>。<span class="dur">多久：10 分鐘</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">python3 webui.py --link ble --name maker-XXXX</pre></div>
+      <div class="box"><pre class="out" data-src="out">網頁關了。
+網頁開好了：教室機瀏覽器開 http://192.168.7.2:8088（在板子自己上面是 http://127.0.0.1:8088）
+藍牙連上 maker-XXXX（…）</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>右上角變成 <code>ble → maker-XXXX</code>；遊戲上方那句「讀不到按鍵」不見了。按 A 鍵角色就跳，畫面上「上一次跳是誰按的」寫 ESP32 A 鍵（鍵盤空白鍵、點畫面也還能玩）；開始時 ESP32 綠燈亮、每滿 5 分彩色燈閃一下、撞到紅燈亮嗶一聲；旁邊記著最高分。遊戲進行中藍牙線先不量溫溼度（免得 ESP32 忙著量、漏掉按鍵），所以儀表板那時候不動是正常的；藍牙線讀不到光線、旋鈕、燈，那幾張卡是灰的。老師在真板用 A 鍵玩過：按鍵會即時送到網頁，但藍牙天生慢一點點（ESP32 隔一小段時間才看一次按鍵、藍牙也是隔一小段時間才傳一次），所以要比用空白鍵早一點點按——這個差別就是今天要你感覺到的東西。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b>想一想（跟同組講，寫進作業的三句比較也可以）：為什麼 WiFi 那條線當不了搖桿？為什麼藍牙那條線的儀表板比較空？提示：回頭看第二、三部分「誰先開口」那一列。<span class="dur">多久：3 分鐘</span></p>
+      <p class="type"><b class="lab type-l">打什麼</b>不用打。做完按 Ctrl＋C 停掉網頁。</p>
+      <p class="see"><b class="lab see-l">應該看到</b>你講得出：WiFi 線是大腦問、板子答，第 10 課的回答裡沒有按鈕；藍牙線的 A 鍵是板子主動通知，所以能當搖桿，但第 11 課沒提供光線、旋鈕、燈的狀態。</p></li>
+    <li><p class="do"><b class="lab do-l">做什麼</b><b>沒板子的練法</b>：假的 ESP32＋模擬藍牙。視窗 B 開假板子，視窗 C 開網頁；教室機兩個分頁：<code>http://192.168.7.2:8090</code>（假板子，在這裡按 A 鍵）和 <code>http://192.168.7.2:8088</code>（遊戲）。<span class="dur">多久：5 分鐘</span></p>
+      <div class="box"><pre class="cmd" data-where="板子" data-src="src">python3 fake_esp32.py</pre></div>
+      <div class="box"><pre class="cmd" data-where="板子C" data-src="src">python3 webui.py --link ble-sim --esp 127.0.0.1:8090</pre></div>
+      <p class="see"><b class="lab see-l">應該看到</b>右上角 <code>ble-sim → …</code>；在假板子網頁按 A 鍵，遊戲角色就跳，「上一次跳是誰按的」寫 ESP32 A 鍵。</p></li>
+  </ol>
+  <details class="stuck"><summary>卡住了：埠被佔用、藍牙搶不到、網頁說斷線</summary>
+    <ul>
+      <li><code>埠 8088 已經有人在用：是不是前一個 webui.py 還沒關？關掉它，或加 --port 換一個埠。</code>：前一個 <code>webui.py</code> 沒關，到那個視窗按 Ctrl＋C。</li>
+      <li>藍牙連不上、<code>掃不到 maker-XXXX</code>：<code>brain.py</code> 和 <code>webui.py</code> 不能同時用藍牙（一次只能一條連線）——先把另一支停掉；ESP32 也要真的重開進藍牙模式。</li>
+      <li>網頁上方出現「跟 UNO Q 斷線了，重新連線中…」：<code>webui.py</code> 被關了，或跑它的 SSH 視窗關了。重新跑一次，網頁會自己接回去。</li>
+      <li>卡片寫「這條線讀不到」：<b>正常</b>，那個量這條線拿不到（WiFi 讀不到按鍵；藍牙讀不到光線、旋鈕、燈）。</li>
+    </ul>
+  </details>
+  <label class="check"><input type="checkbox" data-ck="p5"><span>WiFi 儀表板截了一張；換藍牙用 A 鍵玩了一局、截了最高分（或用 <code>ble-sim</code> 練過）；講得出 WiFi 線為什麼當不了搖桿。</span></label>
 </section>
 
 <section class="sec" id="faq">
@@ -500,6 +541,11 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
     <tr><td><code>IndentationError</code>、<code>SyntaxError</code></td><td>縮排沒對齊或少了括號、冒號：看它指的那一行。</td></tr>
     <tr><td>題目一：黃燈不亮</td><td><code>decide()</code> 回傳的 <code>"yellow"</code> 還是寫死的 <code>False</code> 嗎？濕度真的超過你定的數字了嗎（假板子用網址改 <code>hum</code>）？改完要重跑大腦。濕度沒讀到是 <code>None</code>，要先判斷。</td></tr>
     <tr><td>題目二：藍牙線夜燈怎樣都不亮</td><td>藍牙線讀不到光線，<code>is_dark()</code> 永遠「不暗」：讓 A 鍵自己決定彩色燈。</td></tr>
+      <tr><td colspan="2"><b>第 5 節 加碼網頁</b></td></tr>
+    <tr><td><code>埠 8088 已經有人在用：是不是前一個 webui.py 還沒關？</code></td><td>前一個 <code>webui.py</code> 沒關：到那個視窗按 Ctrl＋C（或照它說的加 <code>--port</code> 換一個埠）。</td></tr>
+    <tr><td>開網頁走藍牙連不上、掃不到</td><td><code>brain.py</code> 和 <code>webui.py</code> 不能同時用藍牙（一次只能一條連線）：先停掉另一支。</td></tr>
+    <tr><td>網頁上方「跟 UNO Q 斷線了，重新連線中…」</td><td><code>webui.py</code> 被關了，或跑它的 SSH 視窗關了：重新跑，網頁會自己接回去。</td></tr>
+    <tr><td>遊戲上方寫「WiFi 這條線讀不到按鍵，ESP32 當不了搖桿」</td><td><b>正常</b>：WiFi 線讀不到 A 鍵。換藍牙線，或先用空白鍵。</td></tr>
   </table></div>
   <h3>問 AI 可以，但照這三條</h3>
   <ol>
@@ -524,6 +570,9 @@ HH:MM:SS  ble  溫度    … 濕度    … 光線    -- 旋鈕    -- 門檻   28
 
   <h3>為什麼這週 SSH 走 USB（<code>192.168.7.2</code>）</h3>
   <p>UNO Q 只有一張 WiFi 網卡。第二部分它去連 ESP32 的基地台，就<b>離開了原本的網路</b>；你要是用原本那個 WiFi 位址 SSH 進來，連線當場就斷。USB 線上那張網卡（W6 做的）跟 WiFi 無關，<code>192.168.7.2</code> 永遠在，所以今天一律走它。也因為這樣，<b>起始檔要在連 ESP32 之前抓好</b>——連上之後板子就沒有外網（時鐘也會停住，所以畫面時間是 5 月）。回原本的網路：<code>nmcli connection show</code> 查名字，再 <code>nmcli connection up</code> 接那個名字（都不用 sudo）。</p>
+
+  <h3>UNO Q 怎麼把資料推給瀏覽器（第 5 節加碼）</h3>
+  <p>一般網頁是瀏覽器問一次、主機答一次。<code>webui.py</code> 的網頁不一樣：瀏覽器一打開，就跟 UNO Q 開一條<b>不掛斷的連線</b>，UNO Q 每讀到一筆新資料、或 ESP32 的 A 鍵一被按下，就順著這條線送過去，瀏覽器不用一直問。所以 A 鍵按下去，遊戲角色馬上跳——那一下不用等大腦的下一輪。這條線斷了，網頁會寫「跟 UNO Q 斷線了，重新連線中…」，自己再接一次。整條路是：ESP32 →（WiFi 或藍牙）→ UNO Q 的 <code>webui.py</code> →（USB 線上的 <code>192.168.7.2:8088</code>）→ 教室機瀏覽器。</p>
 
   <h3>一問一答多久（RTT）、中位數、95%</h3>
   <p>「讀一次感測值來回」＝從大腦送出問題，到拿到答案的時間，叫<b>來回時間</b>（<b>RTT</b>）。每一輪量一次，停下來時排序：<b>中位數</b>是正中間那個（不怕偶爾一次特別慢），<b>95% 在 … 內</b>是「一百次裡九十五次都比這快」。假的 ESP32 的數字是電腦內部的，<b>不代表</b> WiFi 或藍牙；真的數字今天你自己量（每塊板、每張桌子、每一次都不同）。紀錄檔是一行一筆的表格（<b>CSV</b>），<code>read_ms</code> 欄就是每一輪的來回時間、<code>fail</code> 欄 1＝那一輪沒回應、<code>why</code> 欄是理由。另外：WiFi 線問到的感測值是 ESP32 大約每 2 秒更新一次的那一筆，所以每秒問會連續拿到同一筆；量到的是「一問一答多久」，不是「感測器多快」。</p>

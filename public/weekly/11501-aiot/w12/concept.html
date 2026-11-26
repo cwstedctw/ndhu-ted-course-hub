@@ -712,6 +712,7 @@ class WifiLink:
 
     async def read(self):
         st = self._get("/api/status")
+        self.last_status = st                  # 整包 JSON 留著（webui.py 的儀表板要看燈的狀態）
         sensors = {
             "temp": st.get("temp"),
             "hum": st.get("hum"),
@@ -772,6 +773,7 @@ class BleLink:
         self.client = None
         self.lines = asyncio.Queue()    # ESP32 通知回來的每一行字
         self.pressed = False            # 上一輪之後有沒有人按過 A 鍵
+        self.on_button = None           # 有人想「一按就知道」可以放一個函式在這裡（webui.py 的遊戲用）
         self.last_rtt_ms = None
 
     def _on_text(self, _char, data):
@@ -793,6 +795,8 @@ class BleLink:
     def _on_button(self, _char, data):
         if bytes(data)[:1] == b"\x01":   # 1＝按下
             self.pressed = True
+            if self.on_button:
+                self.on_button()
 
     async def connect(self):
         try:
@@ -804,6 +808,11 @@ class BleLink:
             sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor"))
             from bleak import BleakClient, BleakScanner
         dev = await BleakScanner.find_device_by_name(self.name, timeout=10.0)
+        if dev is None and self._drop_stale():
+            # 上一次的程式沒好好收尾（例如直接關掉視窗），板子的藍牙還連著 ESP32，ESP32 就不會再廣播
+            print("上一次的藍牙連線還掛著，先斷開再找一次…")
+            await asyncio.sleep(2)
+            dev = await BleakScanner.find_device_by_name(self.name, timeout=10.0)
         if dev is None:
             raise RuntimeError("掃不到 {}：ESP32 有在跑第 11 課嗎？名字（OLED 第二行）打對了嗎？".format(self.name))
         self.client = BleakClient(dev, disconnected_callback=self._on_disconnect)
@@ -811,6 +820,22 @@ class BleLink:
         await self.client.start_notify(NUS_TX, self._on_text)
         await self.client.start_notify(LBS_BUTTON, self._on_button)
         return "藍牙連上 {}（{}）".format(self.name, dev.address)
+
+    def _drop_stale(self):
+        """問 Linux 的藍牙（BlueZ）：是不是還連著同名的裝置？是就斷開。回傳有沒有斷開過。"""
+        import subprocess
+        try:
+            out = subprocess.run(["bluetoothctl", "devices", "Connected"], capture_output=True,
+                                 text=True, timeout=5).stdout
+            dropped = False
+            for line in out.splitlines():                 # 每行三段：Device、裝置位址、名字
+                parts = line.split(None, 2)
+                if len(parts) == 3 and parts[2].strip() == self.name:
+                    subprocess.run(["bluetoothctl", "disconnect", parts[1]], capture_output=True, timeout=10)
+                    dropped = True
+            return dropped
+        except Exception:
+            return False                                  # 不是 Linux，或沒有 bluetoothctl：當作沒這回事
 
     async def _say(self, text, expect=None):
         """寫一行指令過去；expect 有給就等 ESP32 回一行開頭是 expect 的字"""
@@ -896,10 +921,16 @@ class SimBleLink(BleLink):
         self.last_rtt_ms = (time.perf_counter() - t0) * 1000
         if data.get("pressed"):
             self.pressed = True
+            if self.on_button:
+                self.on_button()
         line = data.get("reply", "")
         if expect is not None and not line.startswith(expect):
             raise TimeoutError("ESP32 沒回「{}」，回的是「{}」".format(expect, line))
         return line
+
+    async def poll_button(self):
+        """模擬專用：送一句空指令，順便問假板子 A 鍵有沒有被按"""
+        await self._say("")
 
     async def close(self):
         pass
