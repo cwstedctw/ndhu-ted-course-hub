@@ -729,9 +729,8 @@ class WifiLink:
         except OSError as e:
             ap = current_wifi()
             now = "UNO Q 現在連的 WiFi 是 {}".format(ap) if ap else "UNO Q 現在沒有連任何 WiFi"
-            raise RuntimeError("{}（{}）。要連真的 ESP32，先連它的 WiFi：\n"
-                               "  nmcli device wifi connect maker-XXXX password makerXXXX"
-                               "（XXXX 看 ESP32 的 OLED）".format(e, now))
+            raise RuntimeError("{}（{}）。要連真的 ESP32，先連它的 WiFi（XXXX 換成 ESP32 的 OLED 上那四個字）：\n"
+                               "  nmcli device wifi connect maker-XXXX password makerXXXX".format(e, now))
         ap = current_wifi()
         where = "；UNO Q 現在連的 WiFi 是 {}——跟你手上 ESP32 的 OLED 一樣嗎？".format(ap) if ap else ""
         return "WiFi 連上 {}（回應 {:.0f} ms）{}".format(self.base, self.last_rtt_ms, where)
@@ -759,6 +758,11 @@ class WifiLink:
             self._get("/api/beep")
         elif action == "off":
             self._get("/api/off")
+
+    def where(self):
+        """斷線又接回來之後，讓大腦再說一次現在連的是哪一塊（可能已經換了一塊）"""
+        ap = current_wifi()
+        return "UNO Q 現在連的 WiFi 是 {}——跟你手上 ESP32 的 OLED 一樣嗎？".format(ap) if ap else ""
 
     async def close(self):
         pass
@@ -1051,6 +1055,7 @@ async def run(a):
     w.writerow(["time", "link", "temp", "hum", "light", "knob", "button",
                 "limit", "red", "green", "rgb", "sent", "read_ms", "fail", "why"])
     rtts, fails, rounds, prev, shown = [], 0, 0, {}, {}
+    failing = False
     t_end = time.time() + a.seconds if a.seconds else None
     try:
         while t_end is None or time.time() < t_end:
@@ -1060,6 +1065,11 @@ async def run(a):
             try:
                 s, rtt = await link.read()
                 rtts.append(rtt)
+                if failing:                                   # 剛從「沒回應」恢復：說清楚現在連的是哪一塊
+                    failing = False
+                    again = getattr(link, "where", lambda: "")()
+                    if again:
+                        print("接回來了。" + again)
                 now = rules.decide(s, prev)
                 prev = now
                 await apply(link, now, shown, sent)
@@ -1074,6 +1084,7 @@ async def run(a):
                             "；".join(now["why"])])
             except Exception as e:                    # 逾時、斷線、藍牙錯誤都算這一輪失敗，下一輪再試
                 fails += 1
+                failing = True
                 shown.clear()                         # 不確定 ESP32 現在是什麼樣子了：下一輪成功時全部重送一次
                 print("{} ESP32 沒回應（第 {} 次）：{}".format(time.strftime("%H:%M:%S"), fails, e or type(e).__name__))
                 w.writerow([time.strftime("%H:%M:%S"), link.kind] + [""] * 11 + [1, type(e).__name__])
