@@ -399,7 +399,25 @@
       ],
       "poster": "/images/talks/t09-poster.webp",
       "worksheetUrl": null,
-      "materials": []
+      "materials": [
+        {
+          "label": "講者簡報預告版（PDF，18 頁，講後換完整版）",
+          "url": "https://drive.google.com/file/d/1T4YwGhxSCMqf9SgSb0YLUy5wfPaZSK7E/view"
+        },
+        {
+          "label": "講前導讀一頁卡（原圖，3 分鐘看完）",
+          "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/images/talks/t09-preread.webp"
+        },
+        {
+          "label": "30 秒預告短片（橫式）",
+          "url": "https://drive.google.com/file/d/16vu1HX-yUXRqf_9nGIOf5PDyQnMYU5fW/view"
+        }
+      ],
+      "preread": "/images/talks/t09-preread.webp",
+      "teaser": {
+        "src": "/videos/t09-teaser-720p.mp4",
+        "poster": "/images/talks/t09-teaser-poster.jpg"
+      }
     },
     {
       "id": "t10",
