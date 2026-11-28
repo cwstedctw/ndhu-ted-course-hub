@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>最近 7 天：測試頁</title>
+<style>
+  /* 這一頁不連網：沒有外部字型、圖片、程式。配色沿用同一門課的頁面。 */
+  :root { color-scheme: light; font: 17px/1.6 system-ui, "Microsoft JhengHei", "PingFang TC", sans-serif; color: #182b2a; background: #f4f7f4; }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 3px solid #a35c16; outline-offset: 3px; }
+  .wrap { width: min(100% - 2rem, 64rem); margin-inline: auto; padding-block: 1.2rem 2.5rem; }
+  h1 { font-size: clamp(1.6rem, 5vw, 2.2rem); line-height: 1.25; margin: .4rem 0 .5rem; color: #144d4d; }
+  h2 { font-size: 1.2rem; margin: 0 0 .5rem; }
+  p { margin: .4rem 0 .8rem; }
+  .intro { max-width: 46rem; }
+  code, .mono { font-family: ui-monospace, Consolas, "Courier New", monospace; font-size: 15px; overflow-wrap: anywhere; }
+
+  .panel { background: #fff; border: 1px solid #d7e1dd; border-radius: .8rem; padding: .9rem 1rem; margin-block: .8rem; }
+
+  /* 讀檔出錯的說明 */
+  #load-error { background: #fff4db; border: 2px solid #a56721; border-radius: .8rem; padding: .9rem 1rem; margin-block: .8rem; }
+  #load-error h2 { color: #6b3d07; }
+  #load-error .problem + .problem { border-top: 1px dashed #c99a5b; margin-top: .7rem; padding-top: .7rem; }
+  #load-error .problem-title { font-weight: 700; margin: 0 0 .3rem; }
+  #load-error .said { background: #fff; border-left: 4px solid #a56721; padding: .4rem .7rem; overflow-wrap: anywhere; }
+  #load-error ul { margin: .3rem 0 .6rem; padding-left: 1.3rem; }
+
+  /* 總結 */
+  #summary { font-size: 1.25rem; font-weight: 700; border-radius: .8rem; padding: .8rem 1rem; margin-block: .8rem; border: 2px solid #91a9a5; background: #eef3f1; }
+  #summary[data-state="green"] { background: #dff3e4; border-color: #2f7d47; color: #14532d; }
+  #summary[data-state="red"] { background: #fde2df; border-color: #b6403a; color: #7f1d1d; }
+  #hint { background: #eef3f1; border-left: 4px solid #0e6260; padding: .5rem .8rem; }
+
+  /* 現在考誰、來源 */
+  .controls { display: flex; flex-wrap: wrap; gap: .5rem; margin: .5rem 0; }
+  button { min-height: 44px; font: inherit; font-size: 16px; padding: .45rem .9rem; border-radius: .5rem; border: 2px solid #0e6260; background: #fff; color: #0e6260; cursor: pointer; }
+  button:hover { background: #e3efec; }
+  button[aria-pressed="true"] { background: #0e6260; color: #fff; }
+  button.primary { background: #0e6260; color: #fff; }
+  button.primary:hover { background: #10494a; }
+  #impl-current { font-weight: 700; margin: 0 0 .3rem; }
+  #source { margin: .3rem 0 0; color: #3d5552; }
+  #source[data-source="pasted"] { color: #6b3d07; font-weight: 700; }
+
+  /* 表格：太寬時在自己的框裡左右捲，整頁不橫向捲動 */
+  .table-wrap { overflow-x: auto; max-width: 100%; }
+  table { border-collapse: collapse; width: 100%; min-width: 34rem; background: #fff; }
+  th, td { border: 1px solid #d7e1dd; padding: .5rem .6rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+  th { background: #eff5f2; white-space: nowrap; }
+  td.c-name { width: 34%; }
+  td.c-expect, td.c-actual { font-family: ui-monospace, Consolas, "Courier New", monospace; font-size: 15px; }
+  td.c-same { width: 7.5rem; font-weight: 700; white-space: nowrap; }
+  tr[data-result="same"] td.c-same { background: #dff3e4; color: #14532d; }
+  tr[data-result="diff"] td.c-same { background: #fde2df; color: #8a1c1c; }
+  /* 勾與叉用內嵌 SVG 畫（符號字元在不同電腦會掉到別套字型） */
+  td.c-same svg { width: 1.05em; height: 1.05em; vertical-align: -0.15em; margin-right: .3em; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  tr[data-result="diff"] td.c-actual { color: #8a1c1c; }
+
+  /* 手機寬：每條測試變成一張卡，「一樣嗎」放最上面，不用左右捲就看得到 */
+  @media (max-width: 640px) {
+    table, tbody, tr, td { display: block; }
+    table { min-width: 0; background: transparent; }
+    thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    tbody tr { display: flex; flex-direction: column; background: #fff; border: 1px solid #d7e1dd; border-radius: .6rem; margin-bottom: .7rem; overflow: hidden; }
+    td { border: 0; width: auto !important; padding: .35rem .8rem; }
+    td.c-same { order: -1; white-space: normal; }
+    td.c-name { font-weight: 700; padding-top: .55rem; }
+    td.c-expect::before, td.c-actual::before { display: block; font-family: system-ui, "Microsoft JhengHei", sans-serif; font-size: 15px; font-weight: 700; color: #3d5552; }
+    td.c-expect::before { content: "我預期"; }
+    td.c-actual::before { content: "實際上"; }
+    td.c-actual { padding-bottom: .6rem; }
+  }
+
+  /* 貼上模式 */
+  details#paste { margin-top: 1.4rem; background: #fff; border: 1px solid #d7e1dd; border-radius: .8rem; }
+  details#paste > summary { min-height: 44px; display: flex; align-items: center; padding: .5rem 1rem; cursor: pointer; font-weight: 700; color: #144d4d; }
+  .paste-body { padding: 0 1rem 1rem; }
+  .paste-body label { display: block; font-weight: 700; margin: .9rem 0 .3rem; }
+  textarea { display: block; width: 100%; min-height: 8rem; font-family: ui-monospace, Consolas, "Courier New", monospace; font-size: 15px; padding: .5rem; border: 1px solid #91a9a5; border-radius: .4rem; resize: vertical; }
+  .paste-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .9rem; }
+  .note { color: #3d5552; }
+  footer { margin-top: 1.5rem; color: #4b6b67; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>最近 7 天：測試頁</h1>
+  <p class="intro">這一頁把 <code>tests.js</code> 裡的每一條測試，交給 <code>recent7()</code> 算一次，再跟你寫的「我預期」比一比。改了資料夾裡的檔案之後，回來按重新整理就會重考一次。用貼上模式的人：改了之後重新貼上，再按一次「用貼上的內容跑測試」。這一頁不用改。</p>
+
+  <div id="load-error" role="alert" hidden></div>
+
+  <div id="summary" data-state="empty" data-total="0" data-diff="0" aria-live="polite">正在跑測試…</div>
+  <p id="hint" hidden>tests.js 裡要用 addCase，寫法在 README.md</p>
+
+  <div class="panel">
+    <p id="impl-current" data-impl="main">現在考的是：recent7.js</p>
+    <div class="controls" role="group" aria-label="要考哪一個版本">
+      <button type="button" id="impl-main">考照規則寫的版本</button>
+      <button type="button" id="impl-quick">考一句話版</button>
+    </div>
+    <p id="source" data-source="files">現在讀的是資料夾裡的檔案。</p>
+  </div>
+
+  <div class="table-wrap">
+    <table id="results">
+      <thead>
+        <tr><th scope="col">名字</th><th scope="col">我預期</th><th scope="col">實際上</th><th scope="col">一樣嗎</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <details id="paste">
+    <summary>貼上模式：把程式直接貼進來跑</summary>
+    <div class="paste-body">
+      <p class="note">兩種時候用這一塊：</p>
+      <ul class="note">
+        <li>沒辦法改資料夾裡的檔案的時候，例如在教室電腦上、檔案是在 GitHub 網頁上改的。</li>
+        <li>檔案讀不到，或最上面只說「Script error.」、想看詳細錯誤訊息的時候。</li>
+      </ul>
+      <p class="note">把檔案的內容整份複製，貼進對應的格子，按「用貼上的內容跑測試」。格子裡有內容，就用它取代同名的檔案（切換版本、重新整理也一樣）；空著的格子照舊讀資料夾裡的檔案。貼上的內容會自動記住，重新整理還在。貼上的程式寫錯時，詳細的錯誤訊息會出現在頁面最上面的說明框。</p>
+      <label for="paste-tests">第一格：tests.js 的內容</label>
+      <textarea id="paste-tests" spellcheck="false" autocomplete="off"></textarea>
+      <label for="paste-main">第二格：recent7.js 的內容（照規則寫的版本）</label>
+      <textarea id="paste-main" spellcheck="false" autocomplete="off"></textarea>
+      <label for="paste-quick">第三格：recent7-quick.js 的內容（一句話版）</label>
+      <textarea id="paste-quick" spellcheck="false" autocomplete="off"></textarea>
+      <div class="paste-actions">
+        <button type="button" id="paste-run" class="primary">用貼上的內容跑測試</button>
+        <button type="button" id="paste-clear">清掉貼上的內容，改回讀檔案</button>
+      </div>
+    </div>
+  </details>
+
+  <footer><p>測試寫在 <code>tests.js</code>，規則寫在 <code>rules.md</code>，格式說明在 <code>README.md</code>。</p></footer>
+</div>
+
+<!-- 每一次跑測試，都在這裡開兩個新的小框：一個讀 tests.js，一個讀被考的那個實作檔。跑下一次之前整個清掉，所以一次只載入一個實作檔。 -->
+<div id="sandbox" hidden></div>
+<!-- 勾與叉的樣子（內嵌 SVG，複製到「一樣嗎」那格用；cloneNode 會連 id 一起複製，所以用前先拿掉 id） -->
+<div id="icons" hidden>
+  <svg id="icon-same" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5l5 5L20 6.5"/></svg>
+  <svg id="icon-diff" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var FILE = { tests: 'tests.js', main: 'recent7.js', quick: 'recent7-quick.js' };
+  var BOX = { tests: '第一格', main: '第二格', quick: '第三格' };
+  var STORE_KEY = 'w12-tests-paste';
+  var FIELDS = ['tests', 'main', 'quick'];
+
+  function $(s) { return document.querySelector(s); }
+
+  var state = {
+    impl: 'main',
+    pasted: { tests: '', main: '', quick: '' },
+    run: 0
+  };
+
+  // ---------- sessionStorage：瀏覽器不給存也不能壞 ----------
+  function readStore() {
+    try {
+      var raw = window.sessionStorage.getItem(STORE_KEY);
+      if (!raw) return null;
+      var o = JSON.parse(raw);
+      var out = {};
+      FIELDS.forEach(function (k) { out[k] = typeof o[k] === 'string' ? o[k] : ''; });
+      return out;
+    } catch (e) { return null; }
+  }
+  function writeStore(p) {
+    try { window.sessionStorage.setItem(STORE_KEY, JSON.stringify(p)); } catch (e) { /* 不給存就算了，這一次照樣跑 */ }
+  }
+  function clearStore() {
+    try { window.sessionStorage.removeItem(STORE_KEY); } catch (e) { /* 同上 */ }
+  }
+
+  // ---------- 顯示格式（H5） ----------
+  function fmtVal(v) {
+    if (typeof v === 'string') return JSON.stringify(v);
+    if (v === null) return 'null';
+    if (v === undefined) return 'undefined';
+    if (typeof v === 'object') {
+      try { return JSON.stringify(v); } catch (e) { return String(v); }
+    }
+    return String(v);
+  }
+  function fmtFields(obj, keys) {
+    return keys.map(function (k) {
+      var has = obj !== null && typeof obj === 'object' && (k in obj);
+      return k + ': ' + (has ? fmtVal(obj[k]) : '（沒有）');
+    }).join(', ');
+  }
+  function fmtReturn(r) {
+    if (Array.isArray(r)) return '[' + r.map(fmtVal).join(', ') + ']';
+    return fmtVal(r);
+  }
+  function typeWord(v) {
+    if (v === null) return 'null';
+    if (Array.isArray(v)) return '陣列';
+    var t = typeof v;
+    return { string: '文字', number: '數字', boolean: '是非值（true／false）', object: '物件', 'function': '函式', undefined: 'undefined' }[t] || t;
+  }
+
+  // ---------- 小框：載入一段程式 ----------
+  function newFrame() {
+    var f = document.createElement('iframe');
+    f.setAttribute('aria-hidden', 'true');
+    f.tabIndex = -1;
+    $('#sandbox').appendChild(f);
+    return f.contentWindow;
+  }
+
+  function fileUrl(name) {
+    // 後面加一段時間，避免瀏覽器拿舊的檔案（改了檔案、重新整理就要看到新的）
+    var u = new URL(name, window.location.href);
+    u.search = '?t=' + Date.now();
+    return u.href;
+  }
+
+  // 回傳 { missing, errors:[{msg,line}], compile }
+  function loadInto(win, item) {
+    return new Promise(function (resolve) {
+      var doc = win.document;
+      var res = { missing: false, errors: [], compile: '' };
+      win.onerror = function (msg, file, line, col, err) {
+        res.errors.push({ msg: String(msg), line: line || 0 });
+        return true;
+      };
+      if (item.pasted) {
+        // 先用瀏覽器自己的編譯器看一次，語法錯時拿得到詳細的訊息
+        try { new Function(item.code); } catch (e) { res.compile = (e && e.name ? e.name + ': ' : '') + (e && e.message !== undefined ? e.message : String(e)); }
+        var s = doc.createElement('script');
+        s.textContent = item.code;
+        (doc.body || doc.documentElement).appendChild(s);
+        resolve(res);
+        return;
+      }
+      var done = false;
+      function finish() { if (!done) { done = true; resolve(res); } }
+      var sc = doc.createElement('script');
+      sc.onload = finish;
+      sc.onerror = function () { res.missing = true; finish(); };
+      sc.src = fileUrl(item.name);
+      (doc.head || doc.documentElement).appendChild(sc);
+      setTimeout(function () { if (!done) { res.missing = true; finish(); } }, 5000);
+    });
+  }
+
+  // 在實作的小框裡找 recent7（function、const、let、var 都找得到）
+  function pickRecent7(win) {
+    try {
+      var s = win.document.createElement('script');
+      s.textContent = "try { window.__w12pick = (typeof recent7 === 'function') ? recent7 : null; } catch (e) { window.__w12pick = null; }";
+      win.document.body.appendChild(s);
+      var fn = win.__w12pick;
+      try { delete win.__w12pick; } catch (e) { /* 沒關係 */ }
+      return typeof fn === 'function' ? fn : null;
+    } catch (e) { return null; }
+  }
+
+  // ---------- 一條測試 ----------
+  var KEYS = ['name', 'today', 'records', 'expect'];
+
+  function checkCase(c) {
+    if (c === null || typeof c !== 'object') {
+      return { incomplete: '這條測試寫得不完整：addCase() 裡面什麼都沒放（要放 { name, today, records, expect }）', name: null };
+    }
+    var missing = [], bad = [];
+    KEYS.forEach(function (k) { if (!(k in c) || c[k] === undefined) missing.push(k); });
+    if (missing.indexOf('name') < 0 && typeof c.name !== 'string') bad.push('name 應該是文字，這裡是' + typeWord(c.name));
+    if (missing.indexOf('today') < 0 && typeof c.today !== 'string') bad.push('today 應該是文字（像 \'2026-11-23\'），這裡是' + typeWord(c.today));
+    if (missing.indexOf('records') < 0 && !Array.isArray(c.records)) bad.push('records 應該是陣列（[ … ]），這裡是' + typeWord(c.records));
+    if (missing.indexOf('expect') < 0 && (c.expect === null || typeof c.expect !== 'object' || Array.isArray(c.expect))) bad.push('expect 應該是物件（{ … }），這裡是' + typeWord(c.expect));
+    var parts = [];
+    if (missing.length) parts.push('少了 ' + missing.join('、'));
+    if (bad.length) parts.push(bad.join('；'));
+    // expect 是空的 {}：一條什麼都沒檢查的測試，不能算過
+    if (!parts.length && Object.keys(c.expect).length === 0) parts.push('expect 裡沒有要比的欄位（例如 { minutes: 30, count: 1 }）');
+    return {
+      incomplete: parts.length ? '這條測試寫得不完整：' + parts.join('；') : '',
+      name: typeof c.name === 'string' ? c.name : null
+    };
+  }
+
+  function runCase(c, fn, implWin) {
+    var chk = checkCase(c);
+    var row = { name: chk.name === null ? '（沒有名字）' : chk.name, expect: '', actual: '', same: false };
+    if (chk.incomplete) {
+      if (c && c.expect && typeof c.expect === 'object' && !Array.isArray(c.expect)) {
+        var ek = Object.keys(c.expect);
+        row.expect = ek.length ? fmtFields(c.expect, ek) : '（空的）';
+      }
+      row.actual = chk.incomplete;
+      return row;
+    }
+    var keys = Object.keys(c.expect);
+    row.expect = fmtFields(c.expect, keys);   // 先算好，實作怎麼改都動不到這格
+    if (!fn) { row.actual = '讀不到 recent7'; return row; }
+    var copy;
+    try { copy = implWin.structuredClone(c.records); }
+    catch (e) { row.actual = '這條測試的 records 裡有沒辦法複製的東西（例如函式），測試頁沒辦法給 recent7 一份副本'; return row; }
+    var r;
+    try { r = fn(copy, c.today); }
+    catch (e) {
+      var msg = (e && e.message !== undefined) ? String(e.message) : String(e);
+      row.actual = msg === '還沒做' ? '還沒做' : '出錯：' + msg;
+      return row;
+    }
+    if (r === null || typeof r !== 'object' || Array.isArray(r)) {
+      row.actual = '回傳的是 ' + fmtReturn(r) + '，不是 { minutes, count } 這種格式';
+      return row;
+    }
+    row.actual = fmtFields(r, keys);
+    row.same = keys.every(function (k) { return (k in r) && r[k] === c.expect[k]; });
+    return row;
+  }
+
+  // ---------- 讀檔出錯的白話說明（H9、H10） ----------
+  function detailOf(res) {
+    if (res.compile) {
+      // 語法錯：用編譯器給的乾淨訊息，再從實際執行那一次借行號
+      var line = 0;
+      res.errors.forEach(function (e) { if (!line && e.line) line = e.line; });
+      return res.compile + (line ? '（大約在第 ' + line + ' 行）' : '');
+    }
+    return res.errors.map(function (e) { return e.msg + (e.line ? '（大約在第 ' + e.line + ' 行）' : ''); }).join('；');
+  }
+  function onlyScriptError(res) {
+    return !res.compile && res.errors.length > 0 && res.errors.every(function (e) { return /^Script error\.?$/i.test(e.msg.trim()); });
+  }
+
+  function problemTests(res, item, added) {
+    var f = FILE.tests;
+    if (res.missing) {
+      return {
+        title: '讀不到 ' + f + '：資料夾裡找不到這個檔。',
+        why: ['檔案不在 tests.html 同一個資料夾（例如被放進子資料夾）', '檔名被改了，例如變成 tests (1).js 或 tests.js.txt'],
+        todo: '確認 tests.html 旁邊有一個叫 tests.js 的檔，再重新整理這一頁。或者把它的內容貼到最下面「貼上模式」的' + BOX.tests + '。'
+      };
+    }
+    var said = detailOf(res);
+    var src = item.pasted ? '貼上的 ' + f : f;
+    var p = {
+      title: src + ' 跑到一半出錯了。' + (added > 0 ? '出錯之前已經加入的 ' + added + ' 條測試，照常列在下面。' : '一條測試都沒有加進來。'),
+      said: said,
+      why: ['括號、引號沒有成對，或少了逗號', '呼叫了不存在的東西（名字打錯）'],
+      todo: ''
+    };
+    if (onlyScriptError(res)) {
+      p.todo = '瀏覽器在這裡不肯說細節。把 ' + f + ' 的內容整份複製，貼到最下面「貼上模式」的' + BOX.tests + '，按「用貼上的內容跑測試」，那裡會顯示詳細的錯誤訊息（哪裡不對、大約第幾行）。也可以把錯誤訊息貼給 AI，請它修 ' + f + '。';
+    } else {
+      p.todo = '照上面瀏覽器說的位置去找；看不懂的話，把這段錯誤訊息和 ' + f + ' 一起貼給 AI，請它只修 ' + f + '。';
+    }
+    return p;
+  }
+
+  function problemImpl(res, item, fn, which) {
+    var f = FILE[which];
+    var src = item.pasted ? '貼上的 ' + f : f;
+    var hasPort = item.pasted && /^\s*(export|import)\b/m.test(item.code);
+    if (res.missing) {
+      return {
+        title: '讀不到 ' + f + '：資料夾裡找不到這個檔，所以每一條都是「讀不到 recent7」。',
+        why: ['檔案不在 tests.html 同一個資料夾', '檔名打錯，例如變成 ' + f.replace('.js', ' (1).js') + ' 或 ' + f + '.txt'],
+        todo: '確認 tests.html 旁邊有一個叫 ' + f + ' 的檔，再重新整理這一頁。或者把它的內容貼到最下面「貼上模式」的' + BOX[which] + '。'
+      };
+    }
+    if (res.errors.length || res.compile) {
+      var p = {
+        title: src + ' 讀進來的時候出錯了' + (fn ? '。' : '，所以找不到 recent7，每一條都是「讀不到 recent7」。'),
+        said: detailOf(res),
+        why: hasPort ? ['用了 export 或 import：測試頁讀不懂這種寫法（README.md「給 AI 的三條約定」第 1 條）'] :
+          ['語法錯：括號、引號沒有成對，或少了逗號', '用了 export 或 import：測試頁讀不懂這種寫法（README.md「給 AI 的三條約定」第 1 條）'],
+        todo: ''
+      };
+      if (onlyScriptError(res)) {
+        p.todo = '瀏覽器在這裡不肯說細節。把 ' + f + ' 的內容整份複製，貼到最下面「貼上模式」的' + BOX[which] + '，按「用貼上的內容跑測試」，那裡會顯示詳細的錯誤訊息。也可以直接請 AI 檢查 ' + f + ' 有沒有語法錯、有沒有用 export。';
+      } else {
+        p.todo = hasPort ? '把 export、import 那幾個字拿掉，改成一般的 function recent7(records, today) { … }；或請 AI 照 README.md 的格式重寫。' :
+          '照上面瀏覽器說的位置去找；看不懂的話，把這段錯誤訊息和 ' + f + ' 一起貼給 AI，請它只修 ' + f + '。';
+      }
+      return p;
+    }
+    if (!fn) {
+      return {
+        title: src + ' 讀得到，但裡面找不到叫 recent7 的函式，所以每一條都是「讀不到 recent7」。',
+        why: ['函式名字打錯，例如寫成 recent_7、Recent7', '整段被註解掉了'],
+        todo: '請 AI 照 README.md 的格式寫 function recent7(records, today) { … }，名字要一字不差。'
+      };
+    }
+    return null;
+  }
+
+  function showProblems(list) {
+    var box = $('#load-error');
+    box.textContent = '';
+    if (!list.length) { box.hidden = true; return; }
+    var h = document.createElement('h2');
+    h.textContent = '有檔案沒讀好，先看這裡';
+    box.appendChild(h);
+    list.forEach(function (p) {
+      var d = document.createElement('div');
+      d.className = 'problem';
+      var t = document.createElement('p');
+      t.className = 'problem-title';
+      t.textContent = p.title;
+      d.appendChild(t);
+      if (p.said) {
+        var s = document.createElement('p');
+        s.className = 'said';
+        s.textContent = '瀏覽器說：' + p.said;
+        d.appendChild(s);
+      }
+      var w = document.createElement('p');
+      w.textContent = '可能的原因：';
+      d.appendChild(w);
+      var ul = document.createElement('ul');
+      p.why.forEach(function (x) { var li = document.createElement('li'); li.textContent = x; ul.appendChild(li); });
+      d.appendChild(ul);
+      var todo = document.createElement('p');
+      todo.textContent = '怎麼辦：' + p.todo;
+      d.appendChild(todo);
+      box.appendChild(d);
+    });
+    box.hidden = false;
+  }
+
+  // ---------- 畫面 ----------
+  // 勾（一樣）或叉（不一樣）：內嵌 SVG，沒有文字，旁邊的「一樣」「不一樣」才是給人讀的
+  // （圖示的樣子寫在頁面底下的 #icons 裡，這裡複製一份來用）
+  function icon(same) {
+    var svg = document.querySelector(same ? '#icon-same' : '#icon-diff').cloneNode(true);
+    svg.removeAttribute('id');
+    return svg;
+  }
+
+  function renderRows(rows) {
+    var tb = $('#results tbody');
+    tb.textContent = '';
+    rows.forEach(function (row) {
+      var tr = document.createElement('tr');
+      tr.setAttribute('data-result', row.same ? 'same' : 'diff');
+      [['c-name', row.name], ['c-expect', row.expect], ['c-actual', row.actual], ['c-same', row.same ? '一樣' : '不一樣']].forEach(function (x) {
+        var td = document.createElement('td');
+        td.className = x[0];
+        td.textContent = x[1];
+        if (x[0] === 'c-same') td.insertBefore(icon(row.same), td.firstChild);
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  function renderSummary(rows) {
+    var n = rows.length;
+    var m = rows.filter(function (r) { return !r.same; }).length;
+    var sm = $('#summary');
+    sm.setAttribute('data-total', String(n));
+    sm.setAttribute('data-diff', String(m));
+    if (n === 0) {
+      sm.setAttribute('data-state', 'empty');
+      sm.textContent = '還沒有測試';
+    } else if (m === 0) {
+      sm.setAttribute('data-state', 'green');
+      sm.textContent = n + ' 條全部一樣（綠燈）';
+    } else {
+      sm.setAttribute('data-state', 'red');
+      sm.textContent = n + ' 條裡有 ' + m + ' 條不一樣（紅燈）';
+    }
+    $('#hint').hidden = n !== 0;
+  }
+
+  function renderImpl() {
+    var ic = $('#impl-current');
+    ic.setAttribute('data-impl', state.impl);
+    ic.textContent = '現在考的是：' + FILE[state.impl] + (state.impl === 'main' ? '（照規則寫的版本）' : '（一句話版）');
+    $('#impl-main').setAttribute('aria-pressed', String(state.impl === 'main'));
+    $('#impl-quick').setAttribute('aria-pressed', String(state.impl === 'quick'));
+  }
+
+  function renderSource() {
+    var src = $('#source');
+    var used = FIELDS.filter(function (k) { return state.pasted[k]; });
+    if (!used.length) {
+      src.setAttribute('data-source', 'files');
+      src.textContent = '現在讀的是資料夾裡的檔案（' + FILE.tests + '、' + FILE[state.impl] + '）。';
+      return;
+    }
+    src.setAttribute('data-source', 'pasted');
+    var names = used.map(function (k) { return FILE[k]; }).join('、');
+    var fromFile = ['tests', state.impl].filter(function (k) { return !state.pasted[k]; }).map(function (k) { return FILE[k]; });
+    var txt = '現在用的是貼上的內容：' + names + '。';
+    if (fromFile.length) txt += '沒貼的 ' + fromFile.join('、') + ' 照舊讀檔案。';
+    if (state.impl === 'main' && state.pasted.quick) txt += '（貼上的 recent7-quick.js 要按「考一句話版」才會用到。）';
+    if (state.impl === 'quick' && state.pasted.main) txt += '（貼上的 recent7.js 要按「考照規則寫的版本」才會用到。）';
+    src.textContent = txt;
+  }
+
+  function itemFor(k) {
+    return state.pasted[k] ? { pasted: true, code: state.pasted[k], name: FILE[k] } : { pasted: false, name: FILE[k] };
+  }
+
+  // 三個輸入框現在的內容：只有空白的當作沒貼
+  function readBoxes() {
+    var out = {};
+    FIELDS.forEach(function (k) {
+      var v = $('#paste-' + k).value;
+      out[k] = v.trim() ? v : '';
+    });
+    return out;
+  }
+  function anyPasted(p) { return !!(p.tests || p.main || p.quick); }
+
+  // 跑完之後：按按鈕跑的，捲回最上面，看得到總結與說明框（第一次打開、重新整理不捲）
+  function finishRun(toTop) {
+    if (toTop) {
+      try { window.scrollTo(0, 0); } catch (e) { /* 沒關係 */ }
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+    document.body.setAttribute('data-ready', '1');
+  }
+
+  // 用貼上的內容出錯時，提醒改好之後要重新貼上、再按一次
+  function withRepaste(p, item, k) {
+    if (item.pasted) p.todo += '改好之後，把新的內容重新貼進' + BOX[k] + '（先把舊的整格刪掉），再按一次「用貼上的內容跑測試」。';
+    return p;
+  }
+
+  // ---------- 跑一次 ----------
+  // 每一次跑都讀輸入框：格子裡有內容就用它，不用先按過「用貼上的內容跑測試」
+  function runAll(toTop) {
+    var token = ++state.run;
+    document.body.removeAttribute('data-ready');
+    state.pasted = readBoxes();
+    $('#summary').textContent = '正在跑測試…';
+    renderImpl();
+    renderSource();
+    $('#sandbox').textContent = '';   // 上一次的小框整個拿掉
+
+    var cases = [];
+    var problems = [];
+    var testsItem = itemFor('tests');
+    var implItem = itemFor(state.impl);
+
+    var tw = newFrame();
+    tw.addCase = function (c) { cases.push(c); };
+
+    return loadInto(tw, testsItem).then(function (tres) {
+      if (token !== state.run) return;
+      if (tres.missing || tres.errors.length || tres.compile) problems.push(withRepaste(problemTests(tres, testsItem, cases.length), testsItem, 'tests'));
+      var iw = newFrame();
+      return loadInto(iw, implItem).then(function (ires) {
+        if (token !== state.run) return;
+        var fn = ires.missing ? null : pickRecent7(iw);
+        var p = problemImpl(ires, implItem, fn, state.impl);
+        if (p) problems.push(withRepaste(p, implItem, state.impl));
+        var rows = cases.map(function (c) { return runCase(c, fn, iw); });
+        showProblems(problems);
+        renderRows(rows);
+        renderSummary(rows);
+        finishRun(toTop);
+      });
+    }).catch(function (e) {
+      if (token !== state.run) return;
+      showProblems([{ title: '測試頁自己出錯了：' + (e && e.message ? e.message : String(e)), why: ['這是測試頁的問題，不是你的檔案的問題'], todo: '重新整理這一頁；還是一樣的話，請告訴老師。' }]);
+      renderRows([]);
+      renderSummary([]);
+      finishRun(toTop);
+    });
+  }
+
+  // ---------- 按鈕 ----------
+  function setImpl(which) {
+    state.impl = which;
+    try {
+      var u = new URL(window.location.href);
+      if (which === 'quick') u.searchParams.set('impl', 'quick'); else u.searchParams.delete('impl');
+      window.history.replaceState(null, '', u.search || window.location.pathname);
+    } catch (e) { /* 網址改不了也沒關係，這一次照樣考 */ }
+    runAll(true);
+  }
+
+  function fillBoxes(p) {
+    $('#paste-tests').value = p.tests;
+    $('#paste-main').value = p.main;
+    $('#paste-quick').value = p.quick;
+  }
+
+  // 輸入框一有變動就存起來（不用等按按鈕），重新整理後填回去
+  function saveBoxes() {
+    var p = readBoxes();
+    if (anyPasted(p)) writeStore(p); else clearStore();
+  }
+  FIELDS.forEach(function (k) { $('#paste-' + k).addEventListener('input', saveBoxes); });
+
+  $('#impl-main').addEventListener('click', function () { setImpl('main'); });
+  $('#impl-quick').addEventListener('click', function () { setImpl('quick'); });
+  $('#paste-run').addEventListener('click', function () {
+    saveBoxes();
+    runAll(true);
+  });
+  $('#paste-clear').addEventListener('click', function () {
+    fillBoxes({ tests: '', main: '', quick: '' });
+    clearStore();
+    runAll(true);
+  });
+
+  // ---------- 開頁 ----------
+  try { state.impl = new URLSearchParams(window.location.search).get('impl') === 'quick' ? 'quick' : 'main'; } catch (e) { state.impl = 'main'; }
+  var saved = readStore();
+  if (saved) fillBoxes(saved);
+  // 網址帶 #paste，或輸入框裡有內容：貼上區塊一打開就是展開的
+  if (window.location.hash === '#paste' || anyPasted(readBoxes())) $('#paste').open = true;
+  window.addEventListener('hashchange', function () { if (window.location.hash === '#paste') $('#paste').open = true; });
+  runAll(false);
+})();
+</script>
+</body>
+</html>

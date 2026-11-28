@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W12 Step 4 · Sampling</title>
+<meta name="description" content="Week 12 AI Intro, step 4 of 5: Sampling, with a toy, core terms, Colab and a self-check.">
+<link rel="stylesheet" href="assets/w12.css">
+</head>
+<body data-step="4">
+<nav class="progress" id="progTop" aria-label="Steps"></nav>
+<main>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">AI Intro · Week 12 · Step 4 of 5</div>
+    <h1>Step 4 · Sampling</h1>
+    <p class="zh">第 4 站 · 取樣</p>
+  </div>
+</header>
+
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">1</span>The question this step answers</h2>
+    <p class="zh">這一站回答的問題</p>
+    <p class="bigq">How does the model pick the next piece?</p>
+    <p class="bigq zh">模型怎麼挑下一塊？</p>
+    <div class="hualien"><h3 style="margin-top:0">Our sentence at this step: “Hualien is famous for” · 同一句走到這一站</h3>
+      <ul>
+      <li>The model gives a raw score (a logit) to every entry in its 262,144-piece vocabulary for what comes after <code>Hualien is famous for</code>; Gemma 4's defaults (from the guide) are temperature 1.0, top_k 64, top_p 0.95. 模型替詞表 262,144 塊裡每一塊打原始分數（logit），猜下一塊；Gemma 4 預設溫度 1.0、top_k 64、top_p 0.95。</li>
+      <li>Order: score ÷ temperature → softmax → Top-K keeps K and rescales to 100% → Top-P keeps from the top until the total first reaches or passes P → rescale to 100% → draw one piece. 順序：分數除以溫度 → softmax → Top-K 留 K 個並重算成 100% → Top-P 由高到低累加到第一次達到或超過 P → 再重算成 100% → 抽一塊。</li>
+      <li>Three kinds of examples here: the numbers in the video and the toy are made up; the Colab numbers come from a real small model. 這一站有三種例子：短片和玩具的數字是編的，Colab 的是小模型實跑。</li>
+    </ul>
+    </div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">2</span>Guess first</h2>
+    <p class="zh">先猜</p>
+    <p>If temperature is very low, will you get the same word every time?</p>
+    <p class="zh">溫度調到很低，每次都會拿到同一個字嗎？</p>
+    <details class="guess"><summary>Write your guess on paper, then open the answer. 先猜再點開</summary><p>At temperature 0 (greedy), yes: always the top choice. Very low but above 0 gives the top choice almost every time, when the top choice is clearly ahead. Try it in toy ④. 溫度 0（greedy）每次都一樣；很低但不是 0 時，首選明顯領先的話幾乎每次一樣。</p></details>
+  </div>
+</section>
+
+<section class="block" id="video" data-key="step4"><div class="wrap"><h2><span class="n">▶</span>Short video</h2><p class="zh">看短片</p><div class="vslot"></div><details class="transcript"><summary>Transcript 逐幕文字（English narration + 中文字幕）</summary><ol><li><p>How does Gemma 4 pick what follows Hualien is famous for? First, it scores all 262,144 tokens and turns scores into percentages.</p><p class="zh">怎麼挑下一個字？先把 262,144 個詞打分轉成機率。</p></li><li><p>Imagine a lucky-draw jar where higher percentages get more tickets. Always picking number one makes answers robotic, so the model draws a ticket.</p><p class="zh">想成抽籤筒：機率越高籤越多，不永遠選第一，而是抽籤。</p></li><li><p>Temperature changes the scores first, before they become percentages. Its default is 1.0: lower sharpens the top choice, higher spreads chances out.</p><p class="zh">溫度先調整分數，再換成機率；預設 1.0，越低越保守，越高越有變化。</p></li><li><p>Next, we toss wild guesses out of the jar. Keeping only a fixed count of top words is called Top-K—64 by default.</p><p class="zh">接著只留前幾名候選叫 Top-K，預設留前 64 個。</p></li><li><p>Then we keep just enough top words to reach a target share of tickets. That flexible cutoff is called Top-P, defaulting to 0.95.</p><p class="zh">Top-P 從機率最高的開始加，達到門檻就停。</p></li><li><p>The surviving tickets reset to 100%, and Gemma 4 draws one winner—say, Taroko. That winner joins the prompt to repeat the loop.</p><p class="zh">留下的籤重算成 100% 後抽出一張，接回原句繼續跑。</p></li><li><p>Same scores, different dials, different chances for each answer. Next, Step Five shows how this token-by-token draw turns into a real chat.</p><p class="zh">同一批分數，調整設定會改變每個答案被抽中的機會；下站看聊天。</p></li></ol></details></div></section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">3</span>On the official guide</h2>
+    <p class="zh">去官方頁做什麼</p>
+    <ol class="steps">
+      <li>In the row of buttons at the very top of the page, press “04 Sampling”. Stay on “Standard (1-Token)”; you can skip “Gemma 4 MTP (4-Token)”. 按頁面最上方的「04 Sampling」，留在「Standard (1-Token)」，MTP 可以跳過。</li>
+      <li>Drag the temperature slider (0–2), then press “🎲 Sample Next” several times. Try a low and a high temperature. “Reset Defaults (T=1.0, K=64, P=0.95)” puts everything back. 拉溫度滑桿，按幾次「🎲 Sample Next」；「Reset Defaults」可以回到預設。</li>
+      <li>Press “>_ Read the details” and read under the heading “Step 4A: The LM Head &amp; Logits”, then “Step 4B: Softmax &amp; Sampling Controls (Temperature, Top-K, Top-P)”. 按「>_ Read the details」，讀這兩個標題底下。</li>
+    </ol>
+    <p class="count">Button names are as seen on 2026-11-23; they may differ after the official page is updated. 按鈕名稱是 2026-11-23 看到的，官方改版後可能不同。</p>
+    <p><a class="btn-official" href="https://gemma.ai/learn/how-llms-work/" target="_blank" rel="noopener">Open the official guide (new tab) ↗</a></p>
+    <p style="font-size:.92rem">Real: default settings and all the sampling math, live. Simulation: the candidate scores are a hand-picked top-6 table. 真的：預設值與取樣數學即時真算；示意：候選分數是挑過的 6 個。</p>
+    <p style="font-size:.92rem">If the official page is slow, keep going with the toy here; the teacher will project the official demo. 官方頁很慢的話，先玩這裡的玩具，老師會投影。</p>
+  </div>
+</section>
+
+<section class="block" id="toy">
+  <div class="wrap">
+    <h2><span class="n">4</span>Play</h2>
+    <p class="zh">玩一下</p>
+    <div class="toy" id="toy4">
+      <h3>④ Temperature, Top-K, Top-P (Stage 4)</h3>
+      <span class="label-ill">Made-up scores (logits) for 8 candidates</span>
+      <p>Prompt: <b>“After class, I'm going to eat …”</b> Each candidate has a fixed made-up <a href="#term-logits">logit</a>. Move the sliders and watch the chances change. Pale blue edge = chance after <a href="#term-softmax">softmax</a> only; solid bar = final chance after the cuts. Crossed-out = cut.</p>
+      <p class="zh">提示：「下課後我要去吃……」。每個候選有一個固定的假分數。拉滑桿看機率怎麼變；淺藍邊＝只經過 softmax 的機率，實心長條是篩選後的抽樣機率，劃掉的候選不參與抽樣。</p>
+      <p style="font-size:.9rem">Order used here: score ÷ temperature → softmax → Top-K keeps K and rescales to 100% → Top-P adds from the top until the running total first reaches or passes P → rescale to 100% → draw. 順序：分數除以溫度 → softmax → Top-K 留 K 個並重新算成 100% → Top-P 由高到低累加到第一次達到或超過 P → 再重新算成 100% → 抽。</p>
+      <div class="slider"><label for="sT">Temperature</label><input type="range" id="sT" min="0" max="2" step="0.05" value="1"><output id="oT"></output></div>
+      <div class="slider"><label for="sK">Top-K</label><input type="range" id="sK" min="1" max="8" step="1" value="8"><output id="oK"></output></div>
+      <div class="slider"><label for="sP">Top-P</label><input type="range" id="sP" min="0.05" max="1" step="0.01" value="0.95"><output id="oP"></output></div>
+      <div class="bars" id="sampBars"></div>
+      <div class="row">
+        <button type="button" class="toybtn" id="sampOnce">Sample once</button>
+        <button type="button" class="toybtn secondary" id="samp10">Sample 10 times</button>
+        <button type="button" class="toybtn secondary" id="sampDefaults">Gemma 4 defaults</button>
+        <button type="button" class="toybtn secondary" id="sampClear">Clear history</button>
+      </div>
+      <p style="margin:.2rem 0" id="histLabel">Last 10 samples (newest first):</p>
+      <div class="hist" id="sampHist" aria-live="polite"></div>
+      <div class="explain" id="sampExplain"></div>
+      <p style="font-size:.9rem">Gemma 4's real defaults (from the guide): temperature 1.0, top_k 64, top_p 0.95. Our toy only has 8 candidates, so K = 8 here already keeps everything, just like 64 would. 我們只有 8 個候選，K = 8 就等於全留。</p>
+    </div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">5</span>Core terms for this step</h2>
+    <p class="zh">這一站的核心名詞</p>
+    <p>Guess each card's answer before you open it. Other words from this stage: <a href="terms.html?stage=4#terms">all Stage 4 terms in the dictionary</a>. 先猜再點開；這一站其他名詞在名詞站。</p>
+    <div id="cores" data-slugs="softmax temperature top-p top-k"></div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">6</span>Run the real model (Colab)</h2>
+    <p class="zh">用真的模型跑（Colab）</p>
+    <div class="colab"><ul><li>This step uses Gemma 3 270M, a much smaller model from the same family: the idea is the same, the numbers are different. 這一段用的是同家族、小很多的 Gemma 3 270M：道理一樣、數字不一樣。 Run <b>Step 4 Sampling</b> in the notebook. 跑筆記本的 Step 4。</li><li>You will see the top 10 next pieces after “Hualien is famous for” with their chances (when we ran it on 11/23, “ its” had 98.56% before any filtering; yours may differ slightly). 會看到下一塊的前 10 名（我們 11/23 那次，篩選之前 “ its” 是 98.56%，你的可能略有不同）。</li><li>Then, at temperature 0.2 and at 1.5, ten continuations of six pieces each (not the same as the food toy's “Sample 10 times”). Changing temperature changes the chances; you may still get the same result. Describe how the two groups differ. 再用 T=0.2 和 T=1.5 每個溫度各生成十段、每段六塊（跟食物玩具的「抽 10 次」不一樣）。換溫度會改變機率，仍可能得到同一個結果；描述兩組差在哪。</li></ul>
+    <div id="colabSlot" data-label="Back to your Colab tab; click here only if it is not open yet ↗"></div><p class="zh">回到你的 Colab 分頁；還沒開才按這裡。</p></div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">7</span>Check yourself</h2>
+    <p class="zh">自我檢測</p>
+    <div id="quizBox" data-q="1 3"></div>
+    <p><a class="next-btn" href="step5.html">Next: Step 5 · Chat, thinking & tools →</a></p>
+  </div>
+</section>
+</main>
+<nav class="progress" id="progBot" aria-label="Steps (bottom)"></nav>
+<footer>
+  <div class="wrap">
+    <p>Source for every Gemma fact: Google's official guide “How LLMs work (with Gemma 4)”, gemma.ai/learn/how-llms-work/ (read 2026-11-22). Explanations, analogies, toys and examples are our own words; toy numbers are made up unless marked “from the guide”. If anything here disagrees with the official page, the official page wins. 所有 Gemma 事實出自官方導覽；解釋、比喻、玩具是我們自己寫的，玩具數字除非標明都是假的。與官方不一致時以官方為準。</p>
+    <p>Dictionary of all 113 terms: <a href="terms.html">terms.html</a>. 全部名詞：名詞站。</p>
+  </div>
+</footer>
+<script src="assets/config.js"></script>
+<script src="assets/terms-data.js"></script>
+<script src="assets/w12.js"></script>
+</body>
+</html>

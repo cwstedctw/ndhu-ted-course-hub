@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>gnuplot：開終端機、字元版、正常版｜資訊科技與應用 W12</title>
+<link rel="stylesheet" href="assets/w12it.css">
+</head>
+<body data-page="step6.html">
+<nav class="progress" id="progTop" aria-label="步驟"></nav>
+<header class="top"><div class="wrap"><div class="kicker">資訊科技與應用 · W12 · 第 6 步／共 7 步</div><h1>gnuplot：開終端機、字元版、正常版</h1></div></header>
+<main class="wrap">
+<div class="part" id="part2">第二部分　gnuplot：同一份資料，兩張圖（約 25 分）<span>需要裝好 gnuplot 的電腦（上週在筆電上請 Antigravity 裝的那個）。沒有的，直接用練習包裡老師畫好的兩張圖做 <a href="step7.html#g4">2-4</a>。還沒下載練習包的回<a href="index.html#pack">開始頁</a>。</span></div><section id="g1"><div class="kicker">2-1 · 約 5 分</div><h2>在練習包資料夾開終端機，先看字元版的圖</h2>
+<ul><li><b>Windows 11：</b>打開練習包資料夾（要看得到 <code>sleep-quiz.dat</code>），在空白處按右鍵 →「在終端機中開啟」。</li><li><b>Mac：</b>打開「終端機」，輸入 <code>cd</code> 加一個空白，把那個資料夾從 Finder 拖進終端機視窗，按 Enter。</li></ul>
+<p>終端機（terminal）是用打字下指令的視窗。複製下面這一行、貼上、按 Enter：</p>
+<div class="cbox"><pre class="copy" data-ps="1">gnuplot -e "set terminal dumb size 70,20; plot 'sleep-quiz.dat' using 1:2 with points pt '*' notitle"</pre></div>
+<p class="see"><b>應該看到</b>終端機裡出現一張用 <code>*</code> 畫的散點圖（scatter plot），點大致往右上走。<b>看一下左邊的 Y 軸：</b>它從 70 左右開始，不是從 0。gnuplot 沒被告知範圍時，會自己把軸縮到剛好包住資料，這一點等一下很重要。</p>
+<p class="small">Windows 說找不到 <code>gnuplot</code>：先把終端機關掉重開。還是找不到，改用完整路徑（上週裝的那版不會自動加進 PATH，PATH 是電腦找程式的路線清單）：</p>
+<div class="cbox"><pre class="copy" data-ps="1">&amp; "C:\Program Files\gnuplot\bin\gnuplot.exe" -e "set terminal dumb size 70,20; plot 'sleep-quiz.dat' using 1:2 with points pt '*' notitle"</pre></div>
+<p class="small">之後每一條 <code>gnuplot</code> 開頭的指令，都把 <code>gnuplot</code> 換成 <code>&amp; "C:\Program Files\gnuplot\bin\gnuplot.exe"</code> 就好。</p>
+<label class="check"><input type="checkbox" data-check="g1"><span>終端機裡出現字元版散點圖，我注意到 Y 軸不是從 0 開始。</span></label></section><section id="g2"><div class="kicker">2-2 · 約 5 分</div><h2>畫正常版：Y 軸從 0 到 100 分</h2>
+<p>先用記事本打開 <code>scatter.gp</code> 看一眼：標題（title）、X 軸名稱（xlabel）、Y 軸名稱（ylabel）都寫了，括號裡是<b>單位</b>（hours、points）。圖上的字用英文，因為中文字型每台電腦不同，先求圖出得來。看完關掉，不用改。</p>
+<div class="cbox"><pre class="copy" data-ps="1">gnuplot scatter.gp</pre></div>
+<p class="see"><b>應該看到</b>資料夾裡的 <code>scatter.png</code> 修改時間變成現在。打開它：20 個點，Y 軸從 0 畫到 100，點都擠在 70 到 82 分之間，看起來<b>差不多平</b>。</p>
+<p class="small">練習包本來就附了 <code>scatter.png</code>，所以「檔案存在」不算數，要看<b>修改時間</b>有沒有變新。不確定的話，先把舊的 <code>scatter.png</code> 刪掉再跑。</p>
+<label class="check"><input type="checkbox" data-check="g2"><span>我自己重畫了 <code>scatter.png</code>（修改時間是現在）。</span></label></section>
+</main>
+<nav class="progress" id="progBot" aria-label="步驟（頁尾）"></nav>
+<div class="wrap"><p class="small storage"><b id="progress">學習記錄 0 / 25</b>　<span id="storage-note">自行勾選，只存在這個瀏覽器；不是成績，也不會上傳。</span></p></div>
+<button type="button" class="theme" id="theme" aria-label="切換深色或淺色">深色／淺色</button>
+<footer><div class="wrap">資訊科技與應用 AA／AB · W12「Zotero 管文獻、gnuplot 畫圖：先用手做一遍」。練習資料 <code>sleep-quiz.dat</code> 為虛構。論文書目以 DOI 登記資料（Crossref）為準。Zotero 選單名稱以 Zotero 10 為準，各網站畫面以當下為準。2026-11-22 版。 <a href="student.html">全部步驟一頁版</a></div></footer>
+<script src="assets/w12it.js"></script>
+</body></html>

@@ -1,0 +1,2267 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>先講清楚、先出考卷、三層驗證：互動概念頁</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font: 100%/1.65 system-ui, "Microsoft JhengHei", "PingFang TC", sans-serif;
+      color: #182b2a;
+      background: #f4f7f4;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-size: 16.5px; }
+    a { color: #075f60; text-underline-offset: .17em; }
+    a:hover { text-decoration-thickness: .16em; }
+    :focus-visible { outline: 3px solid #a35c16; outline-offset: 3px; }
+    [hidden] { display: none !important; }
+    .wrap { width: min(100% - 2rem, 64rem); margin-inline: auto; }
+    .hero { color: #fff; background: #144d4d; padding-block: clamp(1.8rem, 5vw, 3.2rem); }
+    .hero a { color: #fce1a1; }
+    .eyebrow { color: #fce1a1; font-weight: 650; letter-spacing: .07em; margin: 0 0 .4rem; }
+    .subtitle { font-size: clamp(1.1rem, 2.8vw, 1.35rem); font-weight: 650; margin: .4rem 0 .8rem; }
+    h1, h2, h3, h4 { line-height: 1.3; margin: 0 0 .65rem; }
+    h1 { font-size: clamp(1.75rem, 5vw, 2.75rem); }
+    h2 { font-size: clamp(1.3rem, 3.4vw, 1.68rem); color: #144d4d; }
+    h3 { font-size: 1.12rem; margin-top: 1.1rem; color: #144d4d; }
+    p, ol, ul { margin: .45rem 0 .9rem; }
+    .choices, .jump { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0; list-style: none; margin-bottom: 0; }
+    .choices li a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      border: 1px solid #91beb9;
+      padding: .3rem .8rem;
+      border-radius: 1rem;
+      text-decoration: none;
+    }
+    .jump { margin-block: .9rem; }
+    .jump a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: .35rem .7rem;
+      background: #fff;
+      border: 1px solid #d7e1dd;
+      border-radius: .5rem;
+      font-weight: 650;
+      text-decoration: none;
+    }
+    .jump a:hover { background: #e6f2f0; border-color: #0e6260; }
+    main { padding-bottom: 2.5rem; }
+    section.panel {
+      scroll-margin-top: .8rem;
+      margin-block: 1.15rem;
+      background: #fff;
+      border: 1px solid #d7e1dd;
+      border-radius: 1rem;
+      padding: clamp(1rem, 3.2vw, 1.7rem);
+    }
+    .sec-num {
+      display: inline-block;
+      margin-right: .35em;
+      padding: .05em .55em;
+      border-radius: 1em;
+      background: #0e6260;
+      color: #fff;
+      font-size: .82em;
+      vertical-align: .08em;
+      white-space: nowrap;
+    }
+    .why-box {
+      background: #e6f2f0;
+      border-left: 5px solid #0e6260;
+      padding: .55rem .85rem;
+      border-radius: .4rem;
+      margin: .4rem 0 .9rem;
+    }
+    .back-links {
+      margin-top: 1.1rem;
+      padding-top: .7rem;
+      border-top: 1px dashed #c5d6d1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: .45rem .8rem;
+      font-weight: 650;
+    }
+    .back-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: .25rem .65rem;
+      background: #eff5f2;
+      border: 1px solid #b8d0ca;
+      border-radius: .45rem;
+    }
+    .verify {
+      background: #e5f4e9;
+      border: 1px solid #8cc79d;
+      border-left: 5px solid #2d8a4e;
+      padding: .65rem .85rem;
+      border-radius: .4rem;
+      margin: .65rem 0;
+    }
+    .note-box {
+      background: #fdf3e0;
+      border: 1px solid #e2c283;
+      border-left: 5px solid #c8952f;
+      padding: .65rem .85rem;
+      border-radius: .4rem;
+      margin: .65rem 0;
+    }
+    .sub-card {
+      background: #f8fbf9;
+      border: 1px solid #d7e1dd;
+      border-radius: .75rem;
+      padding: .85rem 1rem;
+      margin: .75rem 0;
+    }
+    button, select, input[type="number"], input[type="search"], input[type="text"] {
+      font: inherit;
+      font-size: 16px;
+      min-height: 44px;
+      border-radius: .5rem;
+    }
+    button {
+      background: #fff;
+      color: #0e6260;
+      border: 2px solid #0e6260;
+      padding: .45rem .85rem;
+      cursor: pointer;
+      font-weight: 650;
+    }
+    button:hover { background: #e6f2f0; }
+    button[aria-pressed="true"], button.primary {
+      background: #0e6260;
+      color: #fff;
+    }
+    button.primary:hover { background: #10494a; }
+    select, input[type="number"], input[type="search"], input[type="text"] {
+      border: 2px solid #759994;
+      background: #fff;
+      color: #182b2a;
+      padding: .4rem .65rem;
+      max-width: 100%;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      align-items: center;
+      margin: .55rem 0;
+    }
+    .ctrl-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      gap: .75rem;
+      margin: .75rem 0;
+    }
+    .ctrl-field {
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+    }
+    .ctrl-field label { font-weight: 650; }
+    code, pre {
+      font-family: ui-monospace, Consolas, "Cascadia Mono", monospace;
+      font-variant-ligatures: none;
+    }
+    code {
+      font-size: .93em;
+      background: #eef4f2;
+      padding: .05rem .3rem;
+      border-radius: .25rem;
+      overflow-wrap: anywhere;
+    }
+    pre {
+      margin: .55rem 0;
+      padding: .65rem .85rem;
+      background: #182b2a;
+      color: #f4f7f4;
+      border-radius: .5rem;
+      overflow-x: auto;
+      font-size: .94em;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .table-wrap { overflow-x: auto; max-width: 100%; margin: .55rem 0; }
+    table { border-collapse: collapse; width: 100%; font-size: .95em; background: #fff; }
+    caption { text-align: left; font-weight: 700; padding-bottom: .35rem; }
+    th, td { border: 1px solid #d7e1dd; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+    th { background: #eff5f2; }
+    .state-banner {
+      font-size: 1.12rem;
+      font-weight: 700;
+      border-radius: .65rem;
+      padding: .65rem .9rem;
+      margin: .6rem 0;
+      border: 2px solid #91a9a5;
+      background: #eef3f1;
+    }
+    .state-banner[data-state="green"] { background: #dff3e4; border-color: #2f7d47; color: #14532d; }
+    .state-banner[data-state="red"] { background: #fde2df; border-color: #b6403a; color: #7f1d1d; }
+    tr[data-result="same"] td.c-same { background: #dff3e4; color: #14532d; font-weight: 700; }
+    tr[data-result="diff"] td.c-same { background: #fde2df; color: #7f1d1d; font-weight: 700; }
+    .zero-cell {
+      background: #fde2df;
+      color: #7f1d1d;
+      font-weight: 700;
+      border: 2px solid #b6403a;
+    }
+    svg.diagram {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: .65rem 0;
+      background: #fcfefd;
+      border: 1px solid #d7e1dd;
+      border-radius: .75rem;
+    }
+    svg.diagram .node-box {
+      fill: #fff;
+      stroke: #0e6260;
+      stroke-width: 2.2;
+      cursor: pointer;
+    }
+    svg.diagram .node-group[aria-current="true"] .node-box,
+    svg.diagram .flow-step.active .node-box {
+      fill: #fce1a1;
+      stroke: #a35c16;
+      stroke-width: 3.5;
+    }
+    svg.diagram text {
+      fill: #182b2a;
+      font-family: system-ui, "Microsoft JhengHei", "PingFang TC", sans-serif;
+    }
+    details.fold-card {
+      margin: .55rem 0;
+      border: 1px solid #c9d8d4;
+      border-radius: .55rem;
+      background: #fcfefd;
+    }
+    details.fold-card summary {
+      cursor: pointer;
+      padding: .55rem .85rem;
+      min-height: 44px;
+      font-weight: 650;
+      display: flex;
+      align-items: center;
+    }
+    details.fold-card .fold-body {
+      padding: .2rem .9rem .75rem;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+      gap: .75rem;
+      margin: .7rem 0;
+    }
+    .order-list {
+      list-style: none;
+      padding: 0;
+      margin: .65rem 0;
+      display: grid;
+      gap: .5rem;
+    }
+    .order-item {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: .5rem;
+      padding: .55rem .75rem;
+      border: 1px solid #b8d0ca;
+      border-radius: .55rem;
+      background: #f8fbf9;
+    }
+    footer.page-footer {
+      margin-top: 1.5rem;
+      padding: 1rem 1.25rem;
+      background: #fff;
+      border: 1px solid #d7e1dd;
+      border-radius: .85rem;
+      font-size: .95em;
+      color: #35504d;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">和 AI 一起寫程式｜W12・W13 共用基礎知識</p>
+      <h1>把東西交給別人用之前：互動概念頁</h1>
+      <p class="subtitle">先講清楚、先出考卷，全綠之後再問三個問題：看懂、做對、有用</p>
+      <ul class="choices" aria-label="相關頁面">
+        <li><a href="student.html">W12 學生頁</a></li>
+        <li><a href="cheatsheet.html">W12 兩頁小抄</a></li>
+        <li><a href="../w13/student.html">W13 學生頁</a></li>
+        <li><a href="../w13/cheatsheet.html">W13 兩頁小抄</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <nav aria-label="概念頁目錄">
+      <ol class="jump">
+        <li><a href="#s0">0 整條路的地圖</a></li>
+        <li><a href="#s1">1 一句話有幾種讀法</a></li>
+        <li><a href="#s2">2 規則怎麼寫才夠清楚</a></li>
+        <li><a href="#s3">3 讓 AI 先問</a></li>
+        <li><a href="#s4">4 考卷先出：紅燈與綠燈</a></li>
+        <li><a href="#s5">5 存檔紀錄是證據</a></li>
+        <li><a href="#s6">6 看懂：流程圖與先猜再看</a></li>
+        <li><a href="#s7">7 做對：對帳表與故意弄壞</a></li>
+        <li><a href="#s8">8 有用：做對不等於有用</a></li>
+        <li><a href="#s9">9 改版一圈</a></li>
+        <li><a href="#s10">10 名詞</a></li>
+        <li><a href="#s11">11 想一想</a></li>
+      </ol>
+    </nav>
+
+    <!-- ==================== s0 ==================== -->
+    <section id="s0" class="panel" aria-labelledby="s0-title">
+      <h2 id="s0-title"><span class="sec-num">0</span>整條路的地圖（V 字）</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>先看清楚這兩週從「問題」到「有用」整條路怎麼走，才知道每一步拿什麼來對照、留下什麼證據。</p>
+
+      <p>左邊由上往下三站把話說清楚，底部請 AI 動手，右邊由下往上三站一層一層驗回去。點圖上的每一站（或按下面的按鈕），看那一站在做什麼：</p>
+
+      <div class="btn-row" role="group" aria-label="V 字圖七站選擇">
+        <button type="button" data-vstation="problem" aria-pressed="true">問題</button>
+        <button type="button" data-vstation="rules" aria-pressed="false">規則</button>
+        <button type="button" data-vstation="tests" aria-pressed="false">考卷</button>
+        <button type="button" data-vstation="code" aria-pressed="false">AI 動手</button>
+        <button type="button" data-vstation="understand" aria-pressed="false">看懂</button>
+        <button type="button" data-vstation="verify" aria-pressed="false">做對</button>
+        <button type="button" data-vstation="validate" aria-pressed="false">有用</button>
+      </div>
+
+      <svg id="s0-svg" class="diagram" viewBox="0 0 860 390" role="img" aria-label="V 字圖：左邊問題、規則、考卷，底部 AI 動手，右邊看懂、做對、有用，以及下一版回到問題">
+        <defs>
+          <marker id="arrow-teal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="#0e6260"/>
+          </marker>
+          <marker id="arrow-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="#a35c16"/>
+          </marker>
+        </defs>
+
+        <!-- V 主線 -->
+        <line x1="150" y1="100" x2="185" y2="145" stroke="#0e6260" stroke-width="2.5" marker-end="url(#arrow-teal)"/>
+        <line x1="215" y1="195" x2="250" y2="240" stroke="#0e6260" stroke-width="2.5" marker-end="url(#arrow-teal)"/>
+        <line x1="295" y1="290" x2="365" y2="335" stroke="#0e6260" stroke-width="2.5" marker-end="url(#arrow-teal)"/>
+        <line x1="495" y1="335" x2="565" y2="290" stroke="#0e6260" stroke-width="2.5" marker-end="url(#arrow-teal)"/>
+        <line x1="610" y1="240" x2="645" y2="195" stroke="#0e6260" stroke-width="2.5" marker-end="url(#arrow-teal)"/>
+        <line x1="675" y1="145" x2="710" y2="100" stroke="#0e6260" stroke-width="2.5" marker-end="url(#arrow-teal)"/>
+
+        <!-- 三條對照橫線 -->
+        <line x1="210" y1="75" x2="650" y2="75" stroke="#a35c16" stroke-width="2" stroke-dasharray="6 4" marker-start="url(#arrow-gold)" marker-end="url(#arrow-gold)"/>
+        <text x="430" y="67" text-anchor="middle" font-size="13">對照：有用 ↔ 問題</text>
+
+        <line x1="265" y1="170" x2="595" y2="170" stroke="#a35c16" stroke-width="2" stroke-dasharray="6 4" marker-start="url(#arrow-gold)" marker-end="url(#arrow-gold)"/>
+        <text x="430" y="162" text-anchor="middle" font-size="13">對照：做對 ↔ 規則</text>
+
+        <path d="M 540 265 L 430 265 L 430 315" fill="none" stroke="#a35c16" stroke-width="2" stroke-dasharray="6 4" marker-start="url(#arrow-gold)" marker-end="url(#arrow-gold)"/>
+        <text x="430" y="255" text-anchor="middle" font-size="13">對照：看懂 ↔ AI 動手做出來的程式</text>
+
+        <!-- 下一版弧線：從有用回到問題 -->
+        <path d="M 720 50 Q 430 5 140 50" fill="none" stroke="#2d8a4e" stroke-width="2.5" marker-end="url(#arrow-teal)"/>
+        <text x="430" y="24" text-anchor="middle" font-size="14" font-weight="700">下一版</text>
+
+        <!-- 左三站 -->
+        <g class="node-group" data-vnode="problem" aria-current="true">
+          <rect class="node-box" x="70" y="50" width="140" height="50" rx="10"/>
+          <text x="140" y="81" text-anchor="middle" font-size="16" font-weight="700">問題</text>
+        </g>
+        <g class="node-group" data-vnode="rules" aria-current="false">
+          <rect class="node-box" x="125" y="145" width="140" height="50" rx="10"/>
+          <text x="195" y="176" text-anchor="middle" font-size="16" font-weight="700">規則</text>
+        </g>
+        <g class="node-group" data-vnode="tests" aria-current="false">
+          <rect class="node-box" x="180" y="240" width="140" height="50" rx="10"/>
+          <text x="250" y="271" text-anchor="middle" font-size="16" font-weight="700">考卷</text>
+        </g>
+
+        <!-- 底部 AI 動手 -->
+        <g class="node-group" data-vnode="code" aria-current="false">
+          <rect class="node-box" x="350" y="320" width="160" height="52" rx="10"/>
+          <text x="430" y="352" text-anchor="middle" font-size="16" font-weight="700">AI 動手</text>
+        </g>
+
+        <!-- 右三站 -->
+        <g class="node-group" data-vnode="understand" aria-current="false">
+          <rect class="node-box" x="540" y="240" width="140" height="50" rx="10"/>
+          <text x="610" y="271" text-anchor="middle" font-size="16" font-weight="700">看懂</text>
+        </g>
+        <g class="node-group" data-vnode="verify" aria-current="false">
+          <rect class="node-box" x="595" y="145" width="140" height="50" rx="10"/>
+          <text x="665" y="176" text-anchor="middle" font-size="16" font-weight="700">做對</text>
+        </g>
+        <g class="node-group" data-vnode="validate" aria-current="false">
+          <rect class="node-box" x="650" y="50" width="140" height="50" rx="10"/>
+          <text x="720" y="81" text-anchor="middle" font-size="16" font-weight="700">有用</text>
+        </g>
+      </svg>
+
+      <div id="s0-panel" class="sub-card" aria-live="polite">
+        <h3 id="s0-st-name">目前選擇：問題</h3>
+        <p><strong>這一站在做什麼：</strong><span id="s0-st-what">這一行數字是給誰看的、他想知道什麼。</span></p>
+        <p><strong>誰做：</strong><span id="s0-st-who">你</span></p>
+        <p><strong>留下什麼證據：</strong><span id="s0-st-ev">一句話寫下來</span></p>
+        <p><strong>在學生頁哪一步：</strong><span id="s0-st-step">W13 第 3 節開頭。</span></p>
+        <p><strong>老師的例子：</strong><span id="s0-st-ex">需求 10 條。</span></p>
+      </div>
+
+      <details class="fold-card">
+        <summary>展開七站完整對照表（不點圖也能一次讀完）</summary>
+        <div class="fold-body table-wrap">
+          <table>
+            <thead>
+              <tr><th>站名</th><th>這一站在做什麼</th><th>誰做</th><th>留下什麼證據</th><th>在學生頁哪一步</th><th>老師的例子</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>問題</td><td>這一行數字是給誰看的、他想知道什麼。</td><td>你</td><td>一句話寫下來</td><td>W13 第 3 節開頭。</td><td>需求 10 條。</td></tr>
+              <tr><td>規則</td><td>把你的讀法一條一條寫下來，加上「不做什麼」；請 AI 先問你問題。</td><td>你（AI 只負責問）</td><td><code>rules.md</code>，兩筆存檔</td><td>W12 第 4、5 步。</td><td>規則 44 條；寫測試之前 AI 先問了 6 題，另外指出 5 處對不上。</td></tr>
+              <tr><td>考卷</td><td>功能還沒寫，先請 AI 照規則寫測試，看到全紅。</td><td>出考卷的 AI</td><td>「測試（紅燈）」那一筆存檔</td><td>W12 第 6 步。</td><td>測試 174 條；第一輪 158 條裡 158 條不一樣。</td></tr>
+              <tr><td>AI 動手</td><td>另開一個對話，只准改功能，寫到全綠。</td><td>寫答案的 AI</td><td>「功能（綠燈）」那一筆，只動一個檔</td><td>W12 第 7 步。</td><td>測試那一筆在功能那一筆前面，功能那兩筆各只動 <code>report.js</code> 一個檔。</td></tr>
+              <tr><td>看懂</td><td>你說得出它怎麼走，畫得出來，猜得中它的結果。</td><td>你（AI 只負責用白話講）</td><td>自己畫的流程圖、兩次先猜再看</td><td>W13 第 1 節。</td><td>請 AI 用白話講，圖由自己畫。</td></tr>
+              <tr><td>做對</td><td>每一條規則都有考題，而且考題夠嚴。</td><td>你、另一家 AI</td><td>對帳表、兩次故意弄壞</td><td>W13 第 2 節。</td><td>全綠之後另一家 AI 找出 4 種現有測試抓不到的錯，補了 4 條。</td></tr>
+              <tr><td>有用</td><td>使用者實際用，他的問題解決了嗎。</td><td>使用者（同學）</td><td>試用的紀錄、一句話</td><td>W13 第 3 節。</td><td>颱風取消一場，規則改版，先補測試（174 條裡紅 11 條）再改到綠，改版前的 158 條沒有一條變紅。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <p class="verify">AI 讓『做出來』變得很容易。現在比較缺的是另一種能力：確定做出來的東西，你看得懂、它做對了、而且真的有人用得上。這一頁講的就是這三件事，和它們前面那一段『先把話說清楚』。</p>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="student.html#step-4">W12 第 4 步</a>
+        <a href="student.html#step-6">W12 第 6 步</a>
+        <a href="student.html#step-7">W12 第 7 步</a>
+        <a href="../w13/student.html#s1">W13 第 1 節</a>
+        <a href="../w13/student.html#s2">W13 第 2 節</a>
+        <a href="../w13/student.html#s3">W13 第 3 節</a>
+      </div>
+    </section>
+
+    <!-- ==================== s1 ==================== -->
+    <section id="s1" class="panel" aria-labelledby="s1-title">
+      <h2 id="s1-title"><span class="sec-num">1</span>一句話有幾種讀法</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>同一句『算最近 7 天』，每個人、每個 AI 可能讀成不一樣的範圍；自己轉轉看下面的產生器，就知道為什麼要先寫規則。</p>
+
+      <p>假設今天是 <code>2026-11-23</code>（一），學習紀錄裡有這五筆範例：</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>日期</th><th>學了幾分鐘</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td>11/23</td><td>30</td><td>今天</td></tr>
+            <tr><td>11/17</td><td>20</td><td>往前第 6 天</td></tr>
+            <tr><td>11/23</td><td>沒填</td><td>今天，忘了填分鐘</td></tr>
+            <tr><td>11/16</td><td>99</td><td>往前第 7 天</td></tr>
+            <tr><td>11/24</td><td>50</td><td>明天（比今天晚）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ctrl-grid" aria-label="讀法產生器三個選擇">
+        <div class="ctrl-field">
+          <label for="s1-range">1. 範圍怎麼算</label>
+          <select id="s1-range">
+            <option value="A">甲：今天和往前 6 天（11/17 到 11/23）</option>
+            <option value="B">乙：今天和往前 7 天（11/16 到 11/23）</option>
+            <option value="C">丙：不含今天，往前 7 天（11/16 到 11/22）</option>
+            <option value="D">丁：這個星期，週一到週日（11/23 到 11/29）</option>
+          </select>
+        </div>
+        <div class="ctrl-field">
+          <label for="s1-future">2. 日期比今天晚的紀錄</label>
+          <select id="s1-future">
+            <option value="no">不算</option>
+            <option value="yes">照算（不管上面選的範圍）</option>
+          </select>
+        </div>
+        <div class="ctrl-field">
+          <label for="s1-null">3. 沒填分鐘的那一筆</label>
+          <select id="s1-null">
+            <option value="count">當 0 分鐘，算一筆</option>
+            <option value="skip">整筆不算</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sub-card" aria-live="polite">
+        <p class="state-banner" data-state="green" id="s1-result" data-minutes="50" data-count="3">算出結果：50 分鐘、3 筆</p>
+        <p><strong>算進來的是哪幾筆：</strong><span id="s1-included">11/23（30 分）、11/17（20 分）、11/23（沒填分鐘，當 0 分鐘算 1 筆）</span></p>
+      </div>
+
+      <details class="fold-card">
+        <summary>展開 16 種組合完整答案表（分鐘、筆數）</summary>
+        <div class="fold-body table-wrap">
+          <table id="s1-table">
+            <thead>
+              <tr>
+                <th>範圍</th>
+                <th>未來不算且沒填算一筆</th>
+                <th>未來不算且沒填不算</th>
+                <th>未來照算且沒填算一筆</th>
+                <th>未來照算且沒填不算</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>甲：今天和往前 6 天（11/17 到 11/23）</th>
+                <td>50 分鐘、3 筆</td>
+                <td>50 分鐘、2 筆</td>
+                <td>100 分鐘、4 筆</td>
+                <td>100 分鐘、3 筆</td>
+              </tr>
+              <tr>
+                <th>乙：今天和往前 7 天（11/16 到 11/23）</th>
+                <td>149 分鐘、4 筆</td>
+                <td>149 分鐘、3 筆</td>
+                <td>199 分鐘、5 筆</td>
+                <td>199 分鐘、4 筆</td>
+              </tr>
+              <tr>
+                <th>丙：不含今天，往前 7 天（11/16 到 11/22）</th>
+                <td>119 分鐘、2 筆</td>
+                <td>119 分鐘、2 筆</td>
+                <td>169 分鐘、3 筆</td>
+                <td>169 分鐘、3 筆</td>
+              </tr>
+              <tr>
+                <th>丁：這個星期，週一到週日（11/23 到 11/29）</th>
+                <td>30 分鐘、2 筆</td>
+                <td>30 分鐘、1 筆</td>
+                <td>80 分鐘、3 筆</td>
+                <td>80 分鐘、2 筆</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <p><strong>16 種讀法，算出 14 種不同的答案。</strong></p>
+      <p class="verify">老師的讀法是 50 分鐘、3 筆。這不是標準答案，是老師寫下來的規則。</p>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="student.html#step-1">W12 第 1 步</a>
+      </div>
+    </section>
+
+    <!-- ==================== s2 ==================== -->
+    <section id="s2" class="panel" aria-labelledby="s2-title">
+      <h2 id="s2-title"><span class="sec-num">2</span>規則怎麼寫才夠清楚</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>寫規則不是寫作文，要寫到拿一筆資料來問的時候不用猜；先用下面六句練習分辨。</p>
+
+      <p>寫規則的三個判準：</p>
+      <ul>
+        <li><strong>一條一句。</strong></li>
+        <li><strong>拿一筆資料來問，答得出算或不算。</strong></li>
+        <li><strong>只有你會這樣規定的，一定要寫。</strong></li>
+      </ul>
+
+      <p>小測六題：看看下面每一句是「夠清楚」還是「還要猜」，按一顆鈕看解說：</p>
+      <div id="s2-quiz" class="cards-grid">
+        <div class="sub-card" data-q="1">
+          <p><strong>1. 「算最近的紀錄。」</strong></p>
+          <div class="btn-row">
+            <button type="button" data-s2-ans="clear">夠清楚</button>
+            <button type="button" data-s2-ans="guess">還要猜</button>
+          </div>
+          <p class="s2-feedback" hidden><strong>還要猜：</strong>最近是幾天？</p>
+        </div>
+
+        <div class="sub-card" data-q="2">
+          <p><strong>2. 「只算今天和往前 6 天的紀錄，一共 7 天。」</strong></p>
+          <div class="btn-row">
+            <button type="button" data-s2-ans="clear">夠清楚</button>
+            <button type="button" data-s2-ans="guess">還要猜</button>
+          </div>
+          <p class="s2-feedback" hidden><strong>夠清楚。</strong>今天和往前 6 天講明了範圍。</p>
+        </div>
+
+        <div class="sub-card" data-q="3">
+          <p><strong>3. 「太久以前的不算。」</strong></p>
+          <div class="btn-row">
+            <button type="button" data-s2-ans="clear">夠清楚</button>
+            <button type="button" data-s2-ans="guess">還要猜</button>
+          </div>
+          <p class="s2-feedback" hidden><strong>還要猜：</strong>多久算太久？</p>
+        </div>
+
+        <div class="sub-card" data-q="4">
+          <p><strong>4. 「日期比今天晚的紀錄不算。」</strong></p>
+          <div class="btn-row">
+            <button type="button" data-s2-ans="clear">夠清楚</button>
+            <button type="button" data-s2-ans="guess">還要猜</button>
+          </div>
+          <p class="s2-feedback" hidden><strong>夠清楚。</strong>拿一筆明天的紀錄來問，馬上答得出不算。</p>
+        </div>
+
+        <div class="sub-card" data-q="5">
+          <p><strong>5. 「沒填分鐘的要合理處理。」</strong></p>
+          <div class="btn-row">
+            <button type="button" data-s2-ans="clear">夠清楚</button>
+            <button type="button" data-s2-ans="guess">還要猜</button>
+          </div>
+          <p class="s2-feedback" hidden><strong>還要猜：</strong>怎樣叫合理？</p>
+        </div>
+
+        <div class="sub-card" data-q="6">
+          <p><strong>6. 「沒填分鐘的那一筆當 0 分鐘，但算一筆。」</strong></p>
+          <div class="btn-row">
+            <button type="button" data-s2-ans="clear">夠清楚</button>
+            <button type="button" data-s2-ans="guess">還要猜</button>
+          </div>
+          <p class="s2-feedback" hidden><strong>夠清楚。</strong>分鐘怎麼加、筆數算不算都寫明了。</p>
+        </div>
+      </div>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="student.html#step-4">W12 第 4 步</a>
+      </div>
+    </section>
+
+    <!-- ==================== s3 ==================== -->
+    <section id="s3" class="panel" aria-labelledby="s3-title">
+      <h2 id="s3-title"><span class="sec-num">3</span>讓 AI 先問</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>請 AI 寫測試之前，先請它挑出規則裡講得不夠清楚的地方問你，才不會讓它邊寫邊自己猜。</p>
+
+      <p>老師實測的事實：規則只寫三句的時候，三家 AI 各問了 <strong>19、12、7</strong> 題。</p>
+      <p>下面是老師示範版 <code>rules.md</code> 裡「AI 問我的事」的六張題卡。每一題先按一顆鈕選你的想法，就會看到老師怎麼答、補進哪一條規則或「不做什麼」：</p>
+
+      <div id="s3-cards" class="cards-grid">
+        <div class="sub-card" data-s3-card="1">
+          <h3>題卡 1：最近 7 天包不包含今天</h3>
+          <div class="btn-row">
+            <button type="button" data-s3-choice="decide">我決定是這樣</button>
+            <button type="button" data-s3-choice="skip">這次不管</button>
+            <button type="button" data-s3-choice="think">我沒想過</button>
+          </div>
+          <p class="s3-ans" hidden><strong>老師的回答：</strong>包含，今天加往前 6 天（補進：<strong>規則 1</strong>）</p>
+        </div>
+
+        <div class="sub-card" data-s3-card="2">
+          <h3>題卡 2：未來的日期算不算</h3>
+          <div class="btn-row">
+            <button type="button" data-s3-choice="decide">我決定是這樣</button>
+            <button type="button" data-s3-choice="skip">這次不管</button>
+            <button type="button" data-s3-choice="think">我沒想過</button>
+          </div>
+          <p class="s3-ans" hidden><strong>老師的回答：</strong>不算（補進：<strong>規則 2</strong>）</p>
+        </div>
+
+        <div class="sub-card" data-s3-card="3">
+          <h3>題卡 3：沒填分鐘怎麼辦</h3>
+          <div class="btn-row">
+            <button type="button" data-s3-choice="decide">我決定是這樣</button>
+            <button type="button" data-s3-choice="skip">這次不管</button>
+            <button type="button" data-s3-choice="think">我沒想過</button>
+          </div>
+          <p class="s3-ans" hidden><strong>老師的回答：</strong>當 0 分鐘，但算一筆（補進：<strong>規則 3、4</strong>）</p>
+        </div>
+
+        <div class="sub-card" data-s3-card="4">
+          <h3>題卡 4：空的時候回什麼</h3>
+          <div class="btn-row">
+            <button type="button" data-s3-choice="decide">我決定是這樣</button>
+            <button type="button" data-s3-choice="skip">這次不管</button>
+            <button type="button" data-s3-choice="think">我沒想過</button>
+          </div>
+          <p class="s3-ans" hidden><strong>老師的回答：</strong>0 分鐘、0 筆（補進：<strong>規則 5</strong>）</p>
+        </div>
+
+        <div class="sub-card" data-s3-card="5">
+          <h3>題卡 5：剛好 120 分鐘算不算超過</h3>
+          <div class="btn-row">
+            <button type="button" data-s3-choice="decide">我決定是這樣</button>
+            <button type="button" data-s3-choice="skip">這次不管</button>
+            <button type="button" data-s3-choice="think">我沒想過</button>
+          </div>
+          <p class="s3-ans" hidden><strong>老師的回答：</strong>不算超過，照 120 算（補進：<strong>規則 6</strong>）</p>
+        </div>
+
+        <div class="sub-card" data-s3-card="6">
+          <h3>題卡 6：日期格式錯、負數分鐘</h3>
+          <div class="btn-row">
+            <button type="button" data-s3-choice="decide">我決定是這樣</button>
+            <button type="button" data-s3-choice="skip">這次不管</button>
+            <button type="button" data-s3-choice="think">我沒想過</button>
+          </div>
+          <p class="s3-ans" hidden><strong>老師的回答：</strong>這次不管（補進：<strong>不做什麼</strong>）</p>
+        </div>
+      </div>
+
+      <p class="verify">三種回答都可以。不能做的只有一種：不回答，讓它自己猜。</p>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="student.html#step-5">W12 第 5 步</a>
+      </div>
+    </section>
+
+    <!-- ==================== s4 ==================== -->
+    <section id="s4" class="panel" aria-labelledby="s4-title">
+      <h2 id="s4-title"><span class="sec-num">4</span>考卷先出：紅燈與綠燈（真的在跑）</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>這裡直接把老師示範版的六條測試跟三個版本的程式放進網頁裡真跑一次，讓你看清楚「先紅後綠」與「一句話版錯在哪裡」。</p>
+
+      <div class="btn-row" role="group" aria-label="切換要考的版本">
+        <button type="button" id="s4-btn-empty" data-s4-impl="empty" aria-pressed="true">還沒寫（空殼）</button>
+        <button type="button" id="s4-btn-main" data-s4-impl="main" aria-pressed="false">照規則寫的版本</button>
+        <button type="button" id="s4-btn-quick" data-s4-impl="quick" aria-pressed="false">一句話版</button>
+      </div>
+
+      <p id="s4-summary" class="state-banner" data-state="red" aria-live="polite">6 條裡有 6 條不一樣（紅燈）</p>
+
+      <div class="table-wrap">
+        <table id="s4-table">
+          <thead>
+            <tr><th>名字</th><th>我預期</th><th>實際上</th><th>一樣嗎</th></tr>
+          </thead>
+          <tbody id="s4-tbody">
+            <tr data-result="diff"><td class="c-name">規則 1：今天這一天要算</td><td class="c-expect">minutes: 30, count: 1</td><td class="c-actual">還沒做</td><td class="c-same">不一樣</td></tr>
+            <tr data-result="diff"><td class="c-name">規則 1：往前 7 天（11/16）超出範圍，不算</td><td class="c-expect">minutes: 0, count: 0</td><td class="c-actual">還沒做</td><td class="c-same">不一樣</td></tr>
+            <tr data-result="diff"><td class="c-name">規則 2：明天的紀錄不算</td><td class="c-expect">minutes: 0, count: 0</td><td class="c-actual">還沒做</td><td class="c-same">不一樣</td></tr>
+            <tr data-result="diff"><td class="c-name">規則 3：沒填分鐘（null）的那一筆當 0 分鐘，其他照加</td><td class="c-expect">minutes: 30, count: 2</td><td class="c-actual">還沒做</td><td class="c-same">不一樣</td></tr>
+            <tr data-result="diff"><td class="c-name">規則 5：沒有任何紀錄（空陣列）回 0 分鐘、0 筆</td><td class="c-expect">minutes: 0, count: 0</td><td class="c-actual">還沒做</td><td class="c-same">不一樣</td></tr>
+            <tr data-result="diff"><td class="c-name">規則 6：一筆 600 分鐘（忘了按停）只算 120，筆數 1</td><td class="c-expect">minutes: 120, count: 1</td><td class="c-actual">還沒做</td><td class="c-same">不一樣</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul>
+        <li>功能還沒寫，考卷全紅才對。還沒寫就綠的那一條，等於什麼都沒考。</li>
+        <li>出考卷的和寫答案的要分開。同一個對話又出題又作答，它看漏的地方會一起過關。</li>
+        <li>一句話版只錯一條，錯在老師自己的規矩。別人猜不到的，它也猜不到。</li>
+      </ul>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="student.html#step-6">W12 第 6 步</a>
+        <a href="student.html#step-7">W12 第 7 步</a>
+        <a href="student.html#step-8">W12 第 8 步</a>
+      </div>
+    </section>
+
+    <!-- ==================== s5 ==================== -->
+    <section id="s5" class="panel" aria-labelledby="s5-title">
+      <h2 id="s5-title"><span class="sec-num">5</span>存檔紀錄是證據</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>GitHub 上的存檔紀錄（commit）記著每一次改了哪些檔；學會看這張表，就能確定考卷比答案早、而且寫答案時沒有偷改考卷。</p>
+
+      <p>小遊戲「哪一筆有問題」：下面是一份虛構的存檔紀錄（這是例子），一共六筆。點開每一筆看它動到的檔，找出哪一筆有問題，按那筆裡面的「這一筆有問題」：</p>
+
+      <div id="s5-commits">
+        <details class="fold-card" data-commit="1">
+          <summary>第 1 筆｜起步檔</summary>
+          <div class="fold-body">
+            <p><strong>這一筆動到的檔：</strong>六個檔（<code>README.md</code>、<code>rules.md</code>、<code>recent7.js</code>、<code>recent7-quick.js</code>、<code>tests.js</code>、<code>tests.html</code>）</p>
+            <button type="button" data-s5-pick="1">這一筆有問題</button>
+          </div>
+        </details>
+
+        <details class="fold-card" data-commit="2">
+          <summary>第 2 筆｜一句話版</summary>
+          <div class="fold-body">
+            <p><strong>這一筆動到的檔：</strong><code>recent7-quick.js</code></p>
+            <button type="button" data-s5-pick="2">這一筆有問題</button>
+          </div>
+        </details>
+
+        <details class="fold-card" data-commit="3">
+          <summary>第 3 筆｜規則</summary>
+          <div class="fold-body">
+            <p><strong>這一筆動到的檔：</strong><code>rules.md</code></p>
+            <button type="button" data-s5-pick="3">這一筆有問題</button>
+          </div>
+        </details>
+
+        <details class="fold-card" data-commit="4">
+          <summary>第 4 筆｜規則：補上 AI 問的</summary>
+          <div class="fold-body">
+            <p><strong>這一筆動到的檔：</strong><code>rules.md</code></p>
+            <button type="button" data-s5-pick="4">這一筆有問題</button>
+          </div>
+        </details>
+
+        <details class="fold-card" data-commit="5">
+          <summary>第 5 筆｜測試（紅燈）</summary>
+          <div class="fold-body">
+            <p><strong>這一筆動到的檔：</strong><code>tests.js</code></p>
+            <button type="button" data-s5-pick="5">這一筆有問題</button>
+          </div>
+        </details>
+
+        <details class="fold-card" data-commit="6">
+          <summary>第 6 筆｜功能（綠燈）</summary>
+          <div class="fold-body">
+            <p><strong>這一筆動到的檔：</strong><code>recent7.js</code>、<code>tests.js</code></p>
+            <button type="button" data-s5-pick="6">這一筆有問題</button>
+          </div>
+        </details>
+      </div>
+
+      <div id="s5-feedback" class="sub-card" aria-live="polite">
+        <p id="s5-msg">點開上面任一筆存檔，按「這一筆有問題」看看判斷對不對。（提示：一筆一筆點開，看它動到的檔跟訊息對不對得上。）</p>
+      </div>
+
+      <p class="note-box"><strong>老師的例子：</strong>演講課期中報告檢查示範站一共十三次存檔，裡面測試那一筆在功能那一筆前面，功能那兩筆各只動 <code>report.js</code> 一個檔。</p>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="student.html#step-7">W12 第 7 步</a>
+        <a href="student.html#step-10">W12 第 10 步</a>
+      </div>
+    </section>
+
+    <!-- ==================== s6 ==================== -->
+    <section id="s6" class="panel" aria-labelledby="s6-title">
+      <h2 id="s6-title"><span class="sec-num">6</span>看懂：流程圖與先猜再看</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>練習用圓角框、菱形、方框畫出程式怎麼走，並用「先猜再看」檢驗自己是不是真的看懂。（<code>recent7</code> 的流程圖留給你自己畫，這裡用圖書館逾期罰款當例子。）</p>
+
+      <p>圖書館逾期罰款的三條規則：</p>
+      <ul>
+        <li><strong>規則 1：到期日當天或之前還，不罰。</strong></li>
+        <li><strong>規則 2：逾期每一天罰 5 元。</strong></li>
+        <li><strong>規則 3：最多罰 100 元。</strong></li>
+      </ul>
+
+      <div class="ctrl-grid">
+        <div class="ctrl-field">
+          <label for="s6-case">選擇一個還書情況</label>
+          <select id="s6-case">
+            <option value="0">提早 2 天還</option>
+            <option value="1">到期日當天還</option>
+            <option value="2">逾期 3 天</option>
+            <option value="3">逾期 20 天</option>
+            <option value="4">逾期 30 天</option>
+          </select>
+        </div>
+        <div class="ctrl-field">
+          <span>步進控制</span>
+          <div class="btn-row" style="margin:0;">
+            <button type="button" id="s6-next" class="primary">下一步</button>
+            <button type="button" id="s6-reset">從頭走</button>
+          </div>
+        </div>
+      </div>
+
+      <svg id="s6-svg" class="diagram" viewBox="0 0 860 360" role="img" aria-label="圖書館逾期罰款流程圖：圓角框開始與結束、菱形判斷規則 1 與規則 3、方框計算罰款">
+        <defs>
+          <marker id="s6-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="#0e6260"/>
+          </marker>
+        </defs>
+
+        <!-- 連線 -->
+        <line x1="160" y1="68" x2="160" y2="112" stroke="#0e6260" stroke-width="2.2" marker-end="url(#s6-arrow)"/>
+        <!-- 規則 1 是 -> 罰 0 元 -->
+        <line x1="160" y1="208" x2="160" y2="265" stroke="#0e6260" stroke-width="2.2" marker-end="url(#s6-arrow)"/>
+        <text x="142" y="242" text-anchor="end" font-size="14" font-weight="700">是</text>
+        <!-- 罰 0 元 -> 結束 -->
+        <line x1="250" y1="290" x2="670" y2="290" stroke="#0e6260" stroke-width="2.2" marker-end="url(#s6-arrow)"/>
+
+        <!-- 規則 1 否 -> 天數乘以 5 -->
+        <line x1="295" y1="160" x2="355" y2="160" stroke="#0e6260" stroke-width="2.2" marker-end="url(#s6-arrow)"/>
+        <text x="325" y="150" text-anchor="middle" font-size="14" font-weight="700">否</text>
+
+        <!-- 天數乘以 5 -> 規則 3 -->
+        <line x1="515" y1="160" x2="565" y2="160" stroke="#0e6260" stroke-width="2.2" marker-end="url(#s6-arrow)"/>
+
+        <!-- 規則 3 是 -> 改成 100 元 -->
+        <line x1="685" y1="112" x2="685" y2="68" stroke="#0e6260" stroke-width="2.2" marker-end="url(#s6-arrow)"/>
+        <text x="668" y="95" text-anchor="end" font-size="14" font-weight="700">是</text>
+
+        <!-- 改成 100 元 -> 結束 -->
+        <path d="M 765 42 L 820 42 L 820 290 L 790 290" fill="none" stroke="#0e6260" stroke-width="2.2" marker-end="url(#s6-arrow)"/>
+
+        <!-- 規則 3 否 -> 結束 -->
+        <line x1="685" y1="208" x2="730" y2="265" stroke="#0e6260" stroke-width="2.2" marker-end="url(#s6-arrow)"/>
+        <text x="690" y="242" text-anchor="end" font-size="14" font-weight="700">否</text>
+
+        <!-- 節點 1：開始（圓角框） -->
+        <g class="flow-step active" data-fnode="start">
+          <rect class="node-box" x="45" y="22" width="230" height="46" rx="23"/>
+          <text x="160" y="50" text-anchor="middle" font-size="15" font-weight="700">拿到一本書：逾期幾天</text>
+        </g>
+
+        <!-- 節點 2：菱形 規則 1 -->
+        <g class="flow-step" data-fnode="r1">
+          <polygon class="node-box" points="160,112 295,160 160,208 25,160"/>
+          <text x="160" y="155" text-anchor="middle" font-size="13.5" font-weight="700">逾期天數是 0 或更少嗎？</text>
+          <text x="160" y="175" text-anchor="middle" font-size="13">（規則 1）</text>
+        </g>
+
+        <!-- 節點 3：方框 罰 0 元 -->
+        <g class="flow-step" data-fnode="fine0">
+          <rect class="node-box" x="70" y="265" width="180" height="50" rx="4"/>
+          <text x="160" y="295" text-anchor="middle" font-size="15" font-weight="700">罰 0 元</text>
+        </g>
+
+        <!-- 節點 4：方框 天數乘以 5 -->
+        <g class="flow-step" data-fnode="mul5">
+          <rect class="node-box" x="355" y="135" width="160" height="50" rx="4"/>
+          <text x="435" y="165" text-anchor="middle" font-size="15" font-weight="700">天數乘以 5（規則 2）</text>
+        </g>
+
+        <!-- 節點 5：菱形 規則 3 -->
+        <g class="flow-step" data-fnode="r3">
+          <polygon class="node-box" points="685,112 805,160 685,208 565,160"/>
+          <text x="685" y="155" text-anchor="middle" font-size="14" font-weight="700">超過 100 元嗎？</text>
+          <text x="685" y="175" text-anchor="middle" font-size="13">（規則 3）</text>
+        </g>
+
+        <!-- 節點 6：方框 改成 100 元 -->
+        <g class="flow-step" data-fnode="cap100">
+          <rect class="node-box" x="605" y="18" width="160" height="48" rx="4"/>
+          <text x="685" y="47" text-anchor="middle" font-size="15" font-weight="700">改成 100 元</text>
+        </g>
+
+        <!-- 節點 7：結束（圓角框） -->
+        <g class="flow-step" data-fnode="end">
+          <rect class="node-box" x="670" y="265" width="120" height="50" rx="25"/>
+          <text x="730" y="295" text-anchor="middle" font-size="15" font-weight="700">結束</text>
+        </g>
+      </svg>
+
+      <div class="sub-card" aria-live="polite">
+        <p><strong>目前步進狀態：</strong><span id="s6-step-text">提早 2 天還：拿到一本書：逾期幾天</span></p>
+        <p><strong>最後算出的罰款金額：</strong><strong id="s6-amount">還沒走完</strong></p>
+      </div>
+
+      <div class="sub-card">
+        <h3>先猜再看：逾期 21 天</h3>
+        <p>如果有一本書<strong>逾期 21 天</strong>，沿著上面的圖走一遍，你猜最後要罰幾元？先填數字再按「看答案」：</p>
+        <div class="btn-row">
+          <label for="s6-guess-input"><strong>我猜罰幾元：</strong></label>
+          <input type="number" id="s6-guess-input" placeholder="填數字">
+          <button type="button" id="s6-guess-btn" class="primary">看答案</button>
+        </div>
+        <p id="s6-guess-out" aria-live="polite">先在上面填一個數字，再按「看答案」。</p>
+      </div>
+
+      <p>圖要自己畫。AI 可以回答你『這一筆進來之後發生什麼事』，筆要在你手上。</p>
+      <p class="verify">先猜再看：先看了答案再想，每個人都會覺得自己本來就知道。</p>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="../w13/student.html#p1-2">W13 1-2</a>
+        <a href="../w13/student.html#p1-3">W13 1-3</a>
+      </div>
+    </section>
+
+    <!-- ==================== s7 ==================== -->
+    <section id="s7" class="panel" aria-labelledby="s7-title">
+      <h2 id="s7-title"><span class="sec-num">7</span>做對：對帳表與故意弄壞（真的在跑）</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>測試全綠只代表現有的考題都過了；要確定真的做對，得先數每條規則有幾題在顧（對帳表），再故意把程式弄壞看考卷抓不抓得到。</p>
+
+      <h3>上半：老師示範版的對帳表</h3>
+      <div class="table-wrap">
+        <table id="s7-recon-table">
+          <thead>
+            <tr><th>規則</th><th>內容摘要</th><th>測試條數</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>規則 1</td><td>只算今天和往前 6 天，一共 7 天</td><td>6</td></tr>
+            <tr><td>規則 2</td><td>日期比今天晚的紀錄不算</td><td>3</td></tr>
+            <tr><td>規則 3</td><td>分鐘是把算進來的每一筆加起來，沒填當 0 分鐘</td><td>4</td></tr>
+            <tr><td>規則 4</td><td>筆數是算進來的紀錄有幾筆，沒填也算一筆</td><td>3</td></tr>
+            <tr><td>規則 5</td><td>沒有任何一筆算進來時，回 0 分鐘、0 筆</td><td>3</td></tr>
+            <tr><td>規則 6</td><td>老師自己的規矩：一筆最多算 120 分鐘</td><td>8</td></tr>
+            <tr><th>合計</th><th>全部六條規則都有測試在顧</th><th>27</th></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="verify">哪一條規則是 0 條，那一條就沒有人在顧。</p>
+
+      <h3>下半：故意弄壞（內嵌 27 條測試真跑）</h3>
+      <p>按下面的弄壞鈕之前，先填「你猜會紅幾條」，再按任一顆鈕把老師的 <code>recent7.js</code> 故意改錯一個地方：</p>
+
+      <div class="btn-row">
+        <label for="s7-guess"><strong>你猜會紅幾條：</strong></label>
+        <input type="number" id="s7-guess" min="0" max="27" value="" placeholder="填數字">
+      </div>
+
+      <div class="btn-row" role="group" aria-label="六種故意弄壞的做法">
+        <button type="button" data-mutant="more-day" aria-pressed="false">1. 多算一天（最近 7 天變成 8 天）</button>
+        <button type="button" data-mutant="future" aria-pressed="false">2. 未來的也算</button>
+        <button type="button" data-mutant="null-not-counted" aria-pressed="false">3. 沒填分鐘的那一筆不算一筆</button>
+        <button type="button" data-mutant="no-own-rule" aria-pressed="false">4. 拿掉自己的規矩（一筆最多算 120 分鐘）</button>
+        <button type="button" data-mutant="cap-edge" aria-pressed="false">5. 自己的規矩邊界弄錯（剛好 120 也被改掉）</button>
+        <button type="button" data-mutant="day-only" aria-pressed="false">6. 只看「幾號」，不看月份和年份</button>
+      </div>
+
+      <div class="sub-card" aria-live="polite">
+        <p id="s7-summary" class="state-banner">先填你猜會紅幾條，再按一顆鈕</p>
+        <p id="s7-guess-note">填好你猜會紅幾條之後，按上面任一顆弄壞鈕看考卷抓不抓得到。</p>
+        <p><strong>抓到這個錯的測試（紅燈名單）：</strong></p>
+        <ul id="s7-red-list"></ul>
+      </div>
+
+      <h3>五份 AI 出的考卷：只看「幾號」那一種錯，抓到幾條？</h3>
+      <p>老師在 11/15 請三家 AI 出過五份考卷（五條規則）。另外三種弄壞法（多算一天、未來的也算、沒填的不算一筆）五份都抓得到，最少紅 1 條；但遇到「只看日期是『幾號』、不看月份和年份」這一種錯時：</p>
+      <div class="table-wrap">
+        <table id="s7-ai-table">
+          <thead>
+            <tr><th>AI 考卷</th><th>總條數</th><th>只看「幾號」時紅幾條</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Claude</td><td>23</td><td>3</td></tr>
+            <tr><td>Claude 聊天版</td><td>22</td><td>2</td></tr>
+            <tr><td>Antigravity</td><td>7</td><td>1</td></tr>
+            <tr><td>Codex</td><td>10</td><td class="zero-cell">0（一條都沒紅）</td></tr>
+            <tr><td>Codex 聊天版</td><td>6</td><td class="zero-cell">0（一條都沒紅）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>全綠只代表現有的考題都過了。</strong></p>
+      <p class="verify"><strong>考卷也要被考。</strong></p>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="../w13/student.html#p2-1">W13 2-1</a>
+        <a href="../w13/student.html#p2-2">W13 2-2</a>
+        <a href="../w13/student.html#p2-3">W13 2-3</a>
+      </div>
+    </section>
+
+    <!-- ==================== s8 ==================== -->
+    <section id="s8" class="panel" aria-labelledby="s8-title">
+      <h2 id="s8-title"><span class="sec-num">8</span>有用：做對不等於有用</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>測試全過、規則也都對上了，使用者實際操作時還是可能覺得不對勁或看不懂；這時候要觀察他卡在哪裡，並做出決定。</p>
+
+      <p>下面四個情境都使用老師示範版的規則，今天是 <code>11/23</code>。點選情境，再按底下的三顆決定鈕看看每個決定接下來要做什麼：</p>
+
+      <div class="btn-row" role="group" aria-label="四個試用情境">
+        <button type="button" data-s8-scene="1" aria-pressed="true">情境 1：記 150 分鐘只多 120</button>
+        <button type="button" data-s8-scene="2" aria-pressed="false">情境 2：沒填分鐘筆數卻加 1</button>
+        <button type="button" data-s8-scene="3" aria-pressed="false">情境 3：補記上週一數字沒變</button>
+        <button type="button" data-s8-scene="4" aria-pressed="false">情境 4：看不出有沒有持續在學</button>
+      </div>
+
+      <div class="sub-card" id="s8-scene-box" aria-live="polite">
+        <div class="ctrl-grid">
+          <div class="sub-card" style="margin:0;">
+            <h4>使用者做了什麼</h4>
+            <p id="s8-did">記了一筆今天 150 分鐘。</p>
+          </div>
+          <div class="sub-card" style="margin:0;">
+            <h4>他說會變成多少</h4>
+            <p id="s8-said">他說：「會多 150。」</p>
+          </div>
+          <div class="sub-card" style="margin:0;">
+            <h4>畫面實際上</h4>
+            <p id="s8-actual">畫面多了 120（規則 6）。</p>
+          </div>
+        </div>
+
+        <p><strong>你決定怎麼處理？按一顆決定鈕：</strong></p>
+        <div class="btn-row" role="group" aria-label="三種處理決定">
+          <button type="button" data-s8-decide="rule" aria-pressed="false">改規則</button>
+          <button type="button" data-s8-decide="note" aria-pressed="false">改說明</button>
+          <button type="button" data-s8-decide="keep" aria-pressed="false">不改</button>
+        </div>
+        <p id="s8-decision-out" class="verify">先選一個決定</p>
+      </div>
+
+      <details class="fold-card">
+        <summary>展開四個情境完整一覽表</summary>
+        <div class="fold-body table-wrap">
+          <table>
+            <thead>
+              <tr><th>情境</th><th>使用者做了什麼</th><th>他說會變成多少</th><th>畫面實際上</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>記了一筆今天 150 分鐘。</td><td>他說：「會多 150。」</td><td>畫面多了 120（規則 6）。</td></tr>
+              <tr><td>2</td><td>記了一筆今天、忘了填分鐘。</td><td>他說：「這筆沒填，不會算吧。」</td><td>筆數多了 1（規則 4）。</td></tr>
+              <tr><td>3</td><td>補記一筆 11/16、60 分鐘。</td><td>他說：「上週一的也會加進去。」</td><td>數字沒變（規則 1：11/16 是往前第 7 天）。</td></tr>
+              <tr><td>4</td><td>最近 7 天讀了兩次，各 50 分鐘。</td><td>問他：「看這一行，你知道自己這個星期有沒有持續在學嗎？」他說：「看這一行看不出來，兩筆也可能是同一天讀的。」</td><td>畫面寫「最近 7 天：共 100 分鐘、2 筆」。這一題沒有規則可以對，要回到「問題」那一站：下一版多回報有紀錄的天數 <code>days</code>。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <h3>觀察使用者的三件事</h3>
+      <ul>
+        <li><strong>他在哪裡停下來想。</strong></li>
+        <li><strong>哪一次數字跟他說的不一樣。</strong></li>
+        <li><strong>他說了什麼，照原話記。</strong></li>
+      </ul>
+      <p class="note-box"><strong>那一句話的格式：</strong>我原本以為＿＿，實際看到＿＿，所以下一版要＿＿。</p>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="../w13/student.html#s3">W13 第 3 節</a>
+      </div>
+    </section>
+
+    <!-- ==================== s9 ==================== -->
+    <section id="s9" class="panel" aria-labelledby="s9-title">
+      <h2 id="s9-title"><span class="sec-num">9</span>改版一圈</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>要改功能的時候，最容易偷懶先改程式；自己排排看下面四張卡，弄清楚為什麼順序顛倒會出事。</p>
+
+      <p>排排看：下面四張卡已經被打散了。用「上移」「下移」按鈕排出正確的改版順序，再按「對答案」：</p>
+
+      <ol id="s9-list" class="order-list" aria-label="改版步驟排序清單">
+        <li class="order-item" data-step-id="code">
+          <span class="order-label">改功能：改到全綠</span>
+          <div class="btn-row" style="margin:0;">
+            <button type="button" class="s9-up">上移</button>
+            <button type="button" class="s9-down">下移</button>
+          </div>
+        </li>
+        <li class="order-item" data-step-id="rule">
+          <span class="order-label">改規則</span>
+          <div class="btn-row" style="margin:0;">
+            <button type="button" class="s9-up">上移</button>
+            <button type="button" class="s9-down">下移</button>
+          </div>
+        </li>
+        <li class="order-item" data-step-id="test">
+          <span class="order-label">改測試：新的紅、舊的綠</span>
+          <div class="btn-row" style="margin:0;">
+            <button type="button" class="s9-up">上移</button>
+            <button type="button" class="s9-down">下移</button>
+          </div>
+        </li>
+        <li class="order-item" data-step-id="user">
+          <span class="order-label">請使用者再試一次</span>
+          <div class="btn-row" style="margin:0;">
+            <button type="button" class="s9-up">上移</button>
+            <button type="button" class="s9-down">下移</button>
+          </div>
+        </li>
+      </ol>
+
+      <div class="btn-row">
+        <button type="button" id="s9-check" class="primary">對答案</button>
+        <button type="button" id="s9-solve">排成正確順序</button>
+      </div>
+
+      <div id="s9-feedback" class="sub-card" aria-live="polite">
+        <p>調整順序後按「對答案」，看看第一個放錯的位置在哪裡。</p>
+      </div>
+
+      <p class="note-box"><strong>老師的例子：</strong>演講課期中報告檢查示範站遇到颱風取消一場 → 規則改版 → 先補測試（174 條裡紅 11 條）→ 改到綠，改版前的 158 條沒有一條變紅。</p>
+      <p class="verify">改版之後，舊的考題還在替你守著。</p>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="student.html#step-9">W12 第 9 步</a>
+        <a href="../w13/student.html#s4">W13 第 4 節</a>
+      </div>
+    </section>
+
+    <!-- ==================== s10 ==================== -->
+    <section id="s10" class="panel" aria-labelledby="s10-title">
+      <h2 id="s10-title"><span class="sec-num">10</span>名詞</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>把這兩週親手做過的事對上軟體工程裡的名字，隨時可以回來查。</p>
+
+      <div class="btn-row">
+        <label for="s10-search"><strong>搜尋名詞：</strong></label>
+        <input type="search" id="s10-search" placeholder="輸入中文或英文篩選">
+        <span id="s10-count">共 19 個名詞</span>
+      </div>
+
+      <div class="table-wrap">
+        <table id="s10-table">
+          <thead>
+            <tr><th>詞</th><th>白話</th><th>英文</th><th>在哪一步用到</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>需求</td><td>誰會用它、什麼時候用、想完成什麼事、怎麼知道做到了</td><td>requirement</td><td>W13 頁首、5-3</td></tr>
+            <tr><td>規則（規格）</td><td>你決定的、這個功能該怎麼算，一條一句</td><td>spec</td><td>W12 第 4、5 步</td></tr>
+            <tr><td>測試</td><td>一個情況，加上它應該算出的答案</td><td>—</td><td>W12 第 6 步</td></tr>
+            <tr><td>紅燈與綠燈</td><td>測試頁上有不一樣的是紅燈，全部一樣是綠燈</td><td>—</td><td>W12 第 6、7 步</td></tr>
+            <tr><td>存檔</td><td>在 GitHub 上留一筆紀錄：什麼時候、改了哪些檔、為什麼</td><td>commit</td><td>W12 第 2 到 10 步</td></tr>
+            <tr><td>規格先行</td><td>先把規則寫下來，再動手</td><td>spec-driven development</td><td>W12 第 4、5 步</td></tr>
+            <tr><td>測試先行</td><td>先寫測試、看它紅，再寫功能到綠</td><td>test-driven development（TDD）</td><td>W12 第 6、7 步</td></tr>
+            <tr><td>迴歸測試</td><td>改版之後，舊測試還在替你守著</td><td>regression test</td><td>W12 第 9 步、W13 第 4 節</td></tr>
+            <tr><td>看懂</td><td>說得出程式怎麼走，畫得出來</td><td>understanding</td><td>W13 第 1 節</td></tr>
+            <tr><td>驗證</td><td>拿規則一條一條對，確定做出來的跟寫下來的一樣</td><td>verification</td><td>W13 第 2 節</td></tr>
+            <tr><td>確認</td><td>請使用者實際用，確定他的問題解決了</td><td>validation</td><td>W13 第 3 節</td></tr>
+            <tr><td>變異測試</td><td>故意弄壞，看測試抓不抓得到</td><td>mutation testing</td><td>W13 2-2</td></tr>
+            <tr><td>審查</td><td>請另一個人或另一家 AI 來找問題</td><td>review</td><td>W13 2-4</td></tr>
+            <tr><td>V 字圖</td><td>左邊從問題寫到考卷，右邊從看懂、做對驗回有用</td><td>V-model</td><td>這一頁最上面的地圖</td></tr>
+            <tr><td>流程圖</td><td>用圓角框、菱形、方框畫出資料走的路</td><td>—</td><td>W13 1-2</td></tr>
+            <tr><td>對帳表</td><td>每一條規則有哪幾條測試在顧</td><td>—</td><td>W13 2-1</td></tr>
+            <tr><td>試用頁</td><td>讓人自己輸入資料、看結果的頁面，不判斷對錯</td><td>—</td><td>W13 0-3、第 1、3 節</td></tr>
+            <tr><td>紀錄單</td><td><code>record.md</code>，今天三份證據都寫在這裡</td><td>—</td><td>W13 第 0 到 5 節</td></tr>
+            <tr><td>需求卡</td><td>四行：誰、什麼時候、想完成什麼、怎麼知道做到了</td><td>—</td><td>W13 5-3</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="student.html#terms">W12 名詞小抄</a>
+        <a href="../w13/student.html#terms">W13 名詞小抄</a>
+      </div>
+    </section>
+
+    <!-- ==================== s11 ==================== -->
+    <section id="s11" class="panel" aria-labelledby="s11-title">
+      <h2 id="s11-title"><span class="sec-num">11</span>想一想</h2>
+      <p class="why-box"><strong>為什麼要看這一節：</strong>這十題把兩週最重要的觀念收在一起；先在心裡想好你的答案，再點開看參考說法。</p>
+
+      <div class="btn-row">
+        <button type="button" id="s11-open-all">全部展開</button>
+        <button type="button" id="s11-close-all">全部收起</button>
+      </div>
+
+      <div id="s11-list">
+        <details class="fold-card">
+          <summary>1. 測試頁全綠，可以說「這個功能沒有錯」嗎？</summary>
+          <div class="fold-body"><p>不行。只能說現有的考題都過了。</p></div>
+        </details>
+        <details class="fold-card">
+          <summary>2. 功能還沒寫，有一條測試已經是綠的，代表什麼？</summary>
+          <div class="fold-body"><p>那一條什麼都沒考到，或功能已經被偷偷寫了。</p></div>
+        </details>
+        <details class="fold-card">
+          <summary>3. 為什麼寫功能的那一筆存檔裡不能有 <code>tests.js</code>？</summary>
+          <div class="fold-body"><p>考卷在作答的時候被改過，綠燈就不能信。</p></div>
+        </details>
+        <details class="fold-card">
+          <summary>4. 一句話版 27 條裡只有 4 條不一樣，為什麼還要寫規則？</summary>
+          <div class="fold-body"><p>那 4 條正好是別人猜不到的規矩；而且其他 23 條是考過了才知道它猜中。</p></div>
+        </details>
+        <details class="fold-card">
+          <summary>5. 你請 AI 畫了一張很漂亮的流程圖，算不算看懂？</summary>
+          <div class="fold-body"><p>不算。那是它的理解；你要自己畫得出來、猜得中結果。</p></div>
+        </details>
+        <details class="fold-card">
+          <summary>6. 弄壞之後全部還是綠的，是好消息還是壞消息？</summary>
+          <div class="fold-body"><p>是有用的消息：你知道考卷哪裡有洞，可以補了。</p></div>
+        </details>
+        <details class="fold-card">
+          <summary>7. 程式照規則做對了，使用者卻說看不懂，該改哪裡？</summary>
+          <div class="fold-body"><p>先決定：改規則、改說明，還是不改；三種都要寫理由。</p></div>
+        </details>
+        <details class="fold-card">
+          <summary>8. 為什麼試用的時候不能在旁邊解釋？</summary>
+          <div class="fold-body"><p>你解釋了，就看不到他一個人會卡在哪裡。</p></div>
+        </details>
+        <details class="fold-card">
+          <summary>9. 改版時先改功能、再補測試，會少掉什麼？</summary>
+          <div class="fold-body"><p>少掉「新的考題先紅」那個證明。功能寫好之後才補的考題，如果一跑就是綠的，你分不出它是真的在考，還是什麼都沒考到。</p></div>
+        </details>
+        <details class="fold-card">
+          <summary>10. 這一套做法，哪一步是 AI 不能替你做的？</summary>
+          <div class="fold-body"><p>決定規則、畫你自己的圖、決定使用者說的要不要採納。</p></div>
+        </details>
+      </div>
+
+      <div class="back-links">
+        <span>回到學生頁：</span>
+        <a href="student.html">W12 學生頁</a>
+        <a href="../w13/student.html">W13 學生頁</a>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <p><strong>出處：</strong>數字是老師 2026-11-15 與 11-18 的實測；V 字圖是軟體工程課本裡 V 模型的簡化畫法；「看懂、做對、有用」是老師的整理。</p>
+    </footer>
+  </main>
+
+  <!-- ==================== 逐字內嵌的五份真實來源檔 ==================== -->
+  <script type="text/plain" id="src-demo-recent7">// recent7.js：照 rules.md 寫的版本。
+
+function recent7(records, today) {
+  // 把 'YYYY-MM-DD' 轉成「第幾天」的整數，用 UTC 避免時區與夏令時間影響
+  function dayNumber(dateStr) {
+    var p = String(dateStr).split('-');
+    return Math.floor(Date.UTC(Number(p[0]), Number(p[1]) - 1, Number(p[2])) / 86400000);
+  }
+
+  var todayNum = dayNumber(today);
+  var minutes = 0;
+  var count = 0;
+
+  for (var i = 0; i < records.length; i++) {
+    var d = dayNumber(records[i].log_date);
+    // 規則 1、2：只算今天和往前 6 天，未來不算
+    if (d > todayNum || d < todayNum - 6) continue;
+
+    // 規則 3：沒填分鐘當 0；規則 6：單筆上限 120
+    var m = records[i].minutes == null ? 0 : records[i].minutes;
+    if (m > 120) m = 120;
+
+    minutes += m;
+    count += 1; // 規則 4
+  }
+
+  // 規則 5：沒有任何一筆時 minutes、count 自然都是 0
+  return { minutes: minutes, count: count };
+}
+</script>
+  <script type="text/plain" id="src-demo-quick">// recent7-quick.js：對照用。只用一句話請 AI 寫的版本放這裡。
+// 函式名稱一樣叫 recent7，輸入、輸出的格式跟 recent7.js 一樣（見 README.md）。
+
+function recent7(records, today) {
+  // 把 '年-月-日' 轉成「第幾天」的整數，避免時區與夏令時間的問題
+  function dayNumber(s) {
+    var p = String(s).split('-');
+    return Date.UTC(+p[0], +p[1] - 1, +p[2]) / 86400000;
+  }
+
+  var end = dayNumber(today);
+  var start = end - 6; // 今天往前共 7 天（含今天）
+  var minutes = 0;
+  var count = 0;
+
+  for (var i = 0; i < records.length; i++) {
+    var r = records[i];
+    var d = dayNumber(r.log_date);
+    if (d >= start && d <= end) {
+      count += 1;
+      minutes += r.minutes || 0; // 沒填（null）當 0 分鐘
+    }
+  }
+
+  return { minutes: minutes, count: count };
+}
+</script>
+  <script type="text/plain" id="src-demo-tests">// tests.js：測試都寫在這個檔。一條測試呼叫一次 addCase，格式見 README.md。
+// 名字開頭標對應 rules.md 的第幾條規則。今天一律用傳進來的 today。
+
+// ---------- 規則 1：只算今天和往前 6 天，一共 7 天 ----------
+
+addCase({
+  name: '規則 1：今天這一天要算',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-23', minutes: 30 }
+  ],
+  expect: { minutes: 30, count: 1 }
+});
+
+addCase({
+  name: '規則 1：往前 6 天（11/17）是第 7 天，要算',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-17', minutes: 20 }
+  ],
+  expect: { minutes: 20, count: 1 }
+});
+
+addCase({
+  name: '規則 1：往前 7 天（11/16）超出範圍，不算',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-16', minutes: 20 }
+  ],
+  expect: { minutes: 0, count: 0 }
+});
+
+addCase({
+  name: '規則 1：7 天內的和更早的混在一起，只算 7 天內的',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-10', minutes: 50 },
+    { log_date: '2026-11-16', minutes: 40 },
+    { log_date: '2026-11-17', minutes: 10 },
+    { log_date: '2026-11-20', minutes: 25 },
+    { log_date: '2026-11-23', minutes: 30 }
+  ],
+  expect: { minutes: 65, count: 3 }
+});
+
+addCase({
+  name: '規則 1：跨月時 7 天照樣算對（今天 12/03，算 11/27 到 12/03）',
+  today: '2026-12-03',
+  records: [
+    { log_date: '2026-11-26', minutes: 15 },
+    { log_date: '2026-11-27', minutes: 20 },
+    { log_date: '2026-11-30', minutes: 30 },
+    { log_date: '2026-12-03', minutes: 40 }
+  ],
+  expect: { minutes: 90, count: 3 }
+});
+
+addCase({
+  name: '規則 1：跨年時 7 天照樣算對（今天 01/03，算 12/28 到 01/03）',
+  today: '2027-01-03',
+  records: [
+    { log_date: '2026-12-27', minutes: 15 },
+    { log_date: '2026-12-28', minutes: 20 },
+    { log_date: '2027-01-03', minutes: 40 }
+  ],
+  expect: { minutes: 60, count: 2 }
+});
+
+// ---------- 規則 2：日期比今天晚的不算 ----------
+
+addCase({
+  name: '規則 2：明天的紀錄不算',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-24', minutes: 30 }
+  ],
+  expect: { minutes: 0, count: 0 }
+});
+
+addCase({
+  name: '規則 2：很久以後的紀錄不算',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2027-03-01', minutes: 30 }
+  ],
+  expect: { minutes: 0, count: 0 }
+});
+
+addCase({
+  name: '規則 2：未來的和今天的混在一起，只算今天的',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-23', minutes: 30 },
+    { log_date: '2026-11-24', minutes: 45 },
+    { log_date: '2026-11-30', minutes: 60 }
+  ],
+  expect: { minutes: 30, count: 1 }
+});
+
+// ---------- 規則 3：分鐘加總，沒填的當 0 ----------
+
+addCase({
+  name: '規則 3：多筆分鐘加起來',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-21', minutes: 30 },
+    { log_date: '2026-11-22', minutes: 45 },
+    { log_date: '2026-11-23', minutes: 15 }
+  ],
+  expect: { minutes: 90, count: 3 }
+});
+
+addCase({
+  name: '規則 3：沒填分鐘（null）的那一筆當 0 分鐘，其他照加',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-22', minutes: 30 },
+    { log_date: '2026-11-23', minutes: null }
+  ],
+  expect: { minutes: 30, count: 2 }
+});
+
+addCase({
+  name: '規則 3：只有一筆而且沒填分鐘，分鐘是 0',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-23', minutes: null }
+  ],
+  expect: { minutes: 0, count: 1 }
+});
+
+addCase({
+  name: '規則 3：紀錄有別的欄位（topic）也照常加總',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-22', minutes: 25, topic: '英文' },
+    { log_date: '2026-11-23', minutes: 35, topic: '數學' }
+  ],
+  expect: { minutes: 60, count: 2 }
+});
+
+// ---------- 規則 4：筆數＝算進來的紀錄有幾筆 ----------
+
+addCase({
+  name: '規則 4：沒填分鐘的那一筆也算一筆',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-21', minutes: null },
+    { log_date: '2026-11-22', minutes: null },
+    { log_date: '2026-11-23', minutes: 10 }
+  ],
+  expect: { minutes: 10, count: 3 }
+});
+
+addCase({
+  name: '規則 4：同一天有兩筆就算兩筆',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-23', minutes: 30 },
+    { log_date: '2026-11-23', minutes: 20 }
+  ],
+  expect: { minutes: 50, count: 2 }
+});
+
+addCase({
+  name: '規則 4：範圍外的紀錄不計入筆數',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-10', minutes: 30 },
+    { log_date: '2026-11-23', minutes: 30 },
+    { log_date: '2026-11-25', minutes: 30 }
+  ],
+  expect: { minutes: 30, count: 1 }
+});
+
+// ---------- 規則 5：沒有任何一筆算進來，回 0 分鐘、0 筆 ----------
+
+addCase({
+  name: '規則 5：沒有任何紀錄（空陣列）回 0 分鐘、0 筆',
+  today: '2026-11-23',
+  records: [],
+  expect: { minutes: 0, count: 0 }
+});
+
+addCase({
+  name: '規則 5：紀錄全都太舊，回 0 分鐘、0 筆',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-10-01', minutes: 60 },
+    { log_date: '2026-11-15', minutes: 60 }
+  ],
+  expect: { minutes: 0, count: 0 }
+});
+
+addCase({
+  name: '規則 5：紀錄全都在未來，回 0 分鐘、0 筆',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-24', minutes: 60 },
+    { log_date: '2026-12-01', minutes: 60 }
+  ],
+  expect: { minutes: 0, count: 0 }
+});
+
+// ---------- 規則 6：一筆超過 120 分鐘只算 120，筆數照算一筆 ----------
+
+addCase({
+  name: '規則 6：一筆 121 分鐘（剛好超過）只算 120，筆數 1',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-23', minutes: 121 }
+  ],
+  expect: { minutes: 120, count: 1 }
+});
+
+addCase({
+  name: '規則 6：一筆剛好 120 分鐘不算超過，照 120 算',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-23', minutes: 120 }
+  ],
+  expect: { minutes: 120, count: 1 }
+});
+
+addCase({
+  name: '規則 6：一筆 119 分鐘沒超過，照 119 算',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-23', minutes: 119 }
+  ],
+  expect: { minutes: 119, count: 1 }
+});
+
+addCase({
+  name: '規則 6：一筆 600 分鐘（忘了按停）只算 120，筆數 1',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-22', minutes: 600 }
+  ],
+  expect: { minutes: 120, count: 1 }
+});
+
+addCase({
+  name: '規則 6：上限是每一筆各自算，不是整體；兩筆各 200 分鐘共 240',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-22', minutes: 200 },
+    { log_date: '2026-11-23', minutes: 200 }
+  ],
+  expect: { minutes: 240, count: 2 }
+});
+
+addCase({
+  name: '規則 6：多筆沒超過的加起來可以超過 120（60＋90＝150）',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-22', minutes: 60 },
+    { log_date: '2026-11-23', minutes: 90 }
+  ],
+  expect: { minutes: 150, count: 2 }
+});
+
+addCase({
+  name: '規則 6：超過 120 的那筆和沒填分鐘的那筆混在一起',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-21', minutes: 150 },
+    { log_date: '2026-11-22', minutes: null },
+    { log_date: '2026-11-23', minutes: 30 }
+  ],
+  expect: { minutes: 150, count: 3 }
+});
+
+addCase({
+  name: '規則 6：超過 120 但日期在範圍外的不算進來（規則 1 優先）',
+  today: '2026-11-23',
+  records: [
+    { log_date: '2026-11-10', minutes: 500 },
+    { log_date: '2026-11-23', minutes: 10 }
+  ],
+  expect: { minutes: 10, count: 1 }
+});
+</script>
+  <script type="text/plain" id="src-demo-rules"># 我的規則：最近 7 天（老師示範版）
+
+先寫你自己的規則，再請 AI 寫測試。一條規則一句話，講到別人不會讀錯。
+
+## 一句話：這個功能要做什麼
+
+算出最近 7 天我學了幾分鐘、記了幾筆。
+
+## 規則
+
+規則 1：只算「今天」和往前 6 天的紀錄，一共 7 天。例如今天是 11/23，就算 11/17 到 11/23。
+
+規則 2：日期比今天晚的紀錄不算。
+
+規則 3：分鐘是把算進來的每一筆加起來。沒填分鐘的那一筆當 0 分鐘。
+
+規則 4：筆數是算進來的紀錄有幾筆。沒填分鐘的那一筆也算一筆；同一天有兩筆就算兩筆。
+
+規則 5：沒有任何一筆算進來的時候，回 0 分鐘、0 筆。
+
+規則 6（我自己的規矩）：一筆超過 120 分鐘的，只算 120 分鐘，多半是忘了按停。筆數照算一筆。
+
+## 不做什麼
+
+不檢查日期有沒有打錯、格式對不對。不處理負數、小數、不是數字的分鐘。不去掉重複的紀錄。
+
+## AI 問我的事，我怎麼回答
+
+| AI 問的 | 我的回答 | 補進哪一條規則 |
+|---|---|---|
+| 最近 7 天包不包含今天 | 包含，今天加往前 6 天 | 規則 1 |
+| 未來的日期算不算 | 不算 | 規則 2 |
+| 沒填分鐘怎麼辦 | 當 0 分鐘，但算一筆 | 規則 3、4 |
+| 空的時候回什麼 | 0 分鐘、0 筆 | 規則 5 |
+| 剛好 120 分鐘算不算超過 | 不算超過，照 120 算 | 規則 6 |
+| 日期格式錯、負數分鐘 | 這次不管 | 不做什麼 |
+</script>
+  <script type="text/plain" id="src-starter-recent7">// recent7.js：照 rules.md 寫的版本
+// 輸入：records＝一串紀錄，每筆像 { log_date: '2026-11-23', minutes: 30 }（minutes 可能是 null）
+//       today＝今天的日期，例如 '2026-11-23'
+// 輸出：{ minutes: 總共幾分鐘, count: 幾筆 }
+// 格式說明在 README.md；要怎麼算看 rules.md。
+
+function recent7(records, today) {
+  throw new Error('還沒做');
+}
+</script>
+
+  <script>
+    (function () {
+      /* ---------- s0 V 字圖 ---------- */
+      var STATIONS = {
+        problem: {
+          name: "問題",
+          what: "這一行數字是給誰看的、他想知道什麼。",
+          who: "你",
+          ev: "一句話寫下來",
+          step: "W13 第 3 節開頭。",
+          ex: "需求 10 條。"
+        },
+        rules: {
+          name: "規則",
+          what: "把你的讀法一條一條寫下來，加上「不做什麼」；請 AI 先問你問題。",
+          who: "你（AI 只負責問）",
+          ev: "rules.md，兩筆存檔",
+          step: "W12 第 4、5 步。",
+          ex: "規則 44 條；寫測試之前 AI 先問了 6 題，另外指出 5 處對不上。"
+        },
+        tests: {
+          name: "考卷",
+          what: "功能還沒寫，先請 AI 照規則寫測試，看到全紅。",
+          who: "出考卷的 AI",
+          ev: "「測試（紅燈）」那一筆存檔",
+          step: "W12 第 6 步。",
+          ex: "測試 174 條；第一輪 158 條裡 158 條不一樣。"
+        },
+        code: {
+          name: "AI 動手",
+          what: "另開一個對話，只准改功能，寫到全綠。",
+          who: "寫答案的 AI",
+          ev: "「功能（綠燈）」那一筆，只動一個檔",
+          step: "W12 第 7 步。",
+          ex: "測試那一筆在功能那一筆前面，功能那兩筆各只動 report.js 一個檔。"
+        },
+        understand: {
+          name: "看懂",
+          what: "你說得出它怎麼走，畫得出來，猜得中它的結果。",
+          who: "你（AI 只負責用白話講）",
+          ev: "自己畫的流程圖、兩次先猜再看",
+          step: "W13 第 1 節。",
+          ex: "請 AI 用白話講，圖由自己畫。"
+        },
+        verify: {
+          name: "做對",
+          what: "每一條規則都有考題，而且考題夠嚴。",
+          who: "你、另一家 AI",
+          ev: "對帳表、兩次故意弄壞",
+          step: "W13 第 2 節。",
+          ex: "全綠之後另一家 AI 找出 4 種現有測試抓不到的錯，補了 4 條。"
+        },
+        validate: {
+          name: "有用",
+          what: "使用者實際用，他的問題解決了嗎。",
+          who: "使用者（同學）",
+          ev: "試用的紀錄、一句話",
+          step: "W13 第 3 節。",
+          ex: "颱風取消一場，規則改版，先補測試（174 條裡紅 11 條）再改到綠，改版前的 158 條沒有一條變紅。"
+        }
+      };
+
+      function pickStation(key) {
+        var st = STATIONS[key];
+        if (!st) return;
+        document.getElementById("s0-st-name").textContent = "目前選擇：" + st.name;
+        document.getElementById("s0-st-what").textContent = st.what;
+        document.getElementById("s0-st-who").textContent = st.who;
+        document.getElementById("s0-st-ev").textContent = st.ev;
+        document.getElementById("s0-st-step").textContent = st.step;
+        document.getElementById("s0-st-ex").textContent = st.ex;
+        document.querySelectorAll("[data-vstation]").forEach(function (b) {
+          b.setAttribute("aria-pressed", b.getAttribute("data-vstation") === key ? "true" : "false");
+        });
+        document.querySelectorAll("[data-vnode]").forEach(function (g) {
+          g.setAttribute("aria-current", g.getAttribute("data-vnode") === key ? "true" : "false");
+        });
+      }
+
+      document.querySelectorAll("[data-vstation]").forEach(function (b) {
+        b.addEventListener("click", function () { pickStation(b.getAttribute("data-vstation")); });
+      });
+      document.querySelectorAll("[data-vnode]").forEach(function (g) {
+        g.addEventListener("click", function () { pickStation(g.getAttribute("data-vnode")); });
+      });
+
+      /* ---------- s1 讀法產生器 ---------- */
+      var S1_RECORDS = [
+        { date: "2026-11-23", label: "11/23（30 分）", minutes: 30 },
+        { date: "2026-11-17", label: "11/17（20 分）", minutes: 20 },
+        { date: "2026-11-23", label: "11/23（沒填分鐘）", minutes: null },
+        { date: "2026-11-16", label: "11/16（99 分）", minutes: 99 },
+        { date: "2026-11-24", label: "11/24（50 分）", minutes: 50 }
+      ];
+
+      function updateS1() {
+        var range = document.getElementById("s1-range").value;
+        var future = document.getElementById("s1-future").value;
+        var nullMode = document.getElementById("s1-null").value;
+        var today = "2026-11-23";
+        var mins = 0;
+        var cnt = 0;
+        var picked = [];
+
+        for (var i = 0; i < S1_RECORDS.length; i++) {
+          var r = S1_RECORDS[i];
+          var isFuture = r.date > today;
+          var inRange = false;
+          if (isFuture) {
+            inRange = (future === "yes");
+          } else {
+            if (range === "A") inRange = (r.date >= "2026-11-17" && r.date <= "2026-11-23");
+            else if (range === "B") inRange = (r.date >= "2026-11-16" && r.date <= "2026-11-23");
+            else if (range === "C") inRange = (r.date >= "2026-11-16" && r.date <= "2026-11-22");
+            else if (range === "D") inRange = (r.date >= "2026-11-23" && r.date <= "2026-11-29");
+          }
+          if (!inRange) continue;
+          if (r.minutes === null) {
+            if (nullMode === "count") {
+              cnt += 1;
+              picked.push(r.label);
+            }
+          } else {
+            mins += r.minutes;
+            cnt += 1;
+            picked.push(r.label);
+          }
+        }
+
+        var resEl = document.getElementById("s1-result");
+        resEl.setAttribute("data-minutes", String(mins));
+        resEl.setAttribute("data-count", String(cnt));
+        resEl.textContent = "算出結果：" + mins + " 分鐘、" + cnt + " 筆";
+        document.getElementById("s1-included").textContent = picked.length ? picked.join("、") : "（沒有任何一筆算進來）";
+      }
+
+      ["s1-range", "s1-future", "s1-null"].forEach(function (id) {
+        document.getElementById(id).addEventListener("change", updateS1);
+      });
+      updateS1();
+
+      /* ---------- s2 小測六題 ---------- */
+      document.querySelectorAll("#s2-quiz [data-q]").forEach(function (card) {
+        var btns = card.querySelectorAll("button[data-s2-ans]");
+        var fb = card.querySelector(".s2-feedback");
+        btns.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            btns.forEach(function (b) { b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+            fb.hidden = false;
+          });
+        });
+      });
+
+      /* ---------- s3 讓 AI 先問 ---------- */
+      document.querySelectorAll("#s3-cards [data-s3-card]").forEach(function (card) {
+        var btns = card.querySelectorAll("button[data-s3-choice]");
+        var ans = card.querySelector(".s3-ans");
+        btns.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            btns.forEach(function (b) { b.setAttribute("aria-pressed", b === btn ? "true" : "false"); });
+            ans.hidden = false;
+          });
+        });
+      });
+
+      /* ---------- 共用：載入內嵌測試與實作 ---------- */
+      function parseEmbeddedCases() {
+        var code = document.getElementById("src-demo-tests").textContent;
+        var list = [];
+        var fn = new Function("addCase", code);
+        fn(function (c) { list.push(c); });
+        return list;
+      }
+
+      function compileRecent7(srcCode) {
+        var fn = new Function(srcCode + "\nreturn recent7;");
+        return fn();
+      }
+
+      function formatExpectedOrActual(obj, expectKeys) {
+        return expectKeys.map(function (k) {
+          if (!obj || typeof obj !== "object" || !(k in obj)) return k + ": （沒有）";
+          var v = obj[k];
+          return k + ": " + (typeof v === "string" ? '"' + v + '"' : String(v));
+        }).join(", ");
+      }
+
+      function evalOneCase(c, fn) {
+        var keys = Object.keys(c.expect);
+        var expText = formatExpectedOrActual(c.expect, keys);
+        try {
+          var got = fn(JSON.parse(JSON.stringify(c.records)), c.today);
+          if (!got || typeof got !== "object" || Array.isArray(got)) {
+            return { same: false, expectText: expText, actualText: String(got) + " 不是 { minutes, count } 這種格式" };
+          }
+          var same = keys.every(function (k) { return got[k] === c.expect[k]; });
+          return { same: same, expectText: expText, actualText: formatExpectedOrActual(got, keys) };
+        } catch (err) {
+          var msg = (err && typeof err.message === "string") ? err.message : String(err);
+          return { same: false, expectText: expText, actualText: msg === "還沒做" ? "還沒做" : ("出錯：" + msg) };
+        }
+      }
+
+      var ALL_CASES = parseEmbeddedCases();
+
+      /* ---------- s4 迷你測試頁（真的在跑） ---------- */
+      var S4_NAMES = [
+        "規則 1：今天這一天要算",
+        "規則 1：往前 7 天（11/16）超出範圍，不算",
+        "規則 2：明天的紀錄不算",
+        "規則 3：沒填分鐘（null）的那一筆當 0 分鐘，其他照加",
+        "規則 5：沒有任何紀錄（空陣列）回 0 分鐘、0 筆",
+        "規則 6：一筆 600 分鐘（忘了按停）只算 120，筆數 1"
+      ];
+      var S4_CASES = S4_NAMES.map(function (name) {
+        return ALL_CASES.find(function (c) { return c.name === name; });
+      }).filter(Boolean);
+
+      var S4_SRCS = {
+        empty: document.getElementById("src-starter-recent7").textContent,
+        main: document.getElementById("src-demo-recent7").textContent,
+        quick: document.getElementById("src-demo-quick").textContent
+      };
+
+      function runS4(which) {
+        var fn = compileRecent7(S4_SRCS[which]);
+        var tbody = document.getElementById("s4-tbody");
+        tbody.innerHTML = "";
+        var diffCount = 0;
+
+        S4_CASES.forEach(function (c) {
+          var r = evalOneCase(c, fn);
+          if (!r.same) diffCount += 1;
+          var tr = document.createElement("tr");
+          tr.setAttribute("data-result", r.same ? "same" : "diff");
+
+          var tdName = document.createElement("td");
+          tdName.className = "c-name";
+          tdName.textContent = c.name;
+
+          var tdExp = document.createElement("td");
+          tdExp.className = "c-expect";
+          tdExp.textContent = r.expectText;
+
+          var tdAct = document.createElement("td");
+          tdAct.className = "c-actual";
+          tdAct.textContent = r.actualText;
+
+          var tdSame = document.createElement("td");
+          tdSame.className = "c-same";
+          tdSame.textContent = r.same ? "一樣" : "不一樣";
+
+          tr.appendChild(tdName);
+          tr.appendChild(tdExp);
+          tr.appendChild(tdAct);
+          tr.appendChild(tdSame);
+          tbody.appendChild(tr);
+        });
+
+        var sumEl = document.getElementById("s4-summary");
+        if (diffCount === 0) {
+          sumEl.setAttribute("data-state", "green");
+          sumEl.textContent = S4_CASES.length + " 條全部一樣（綠燈）";
+        } else {
+          sumEl.setAttribute("data-state", "red");
+          sumEl.textContent = S4_CASES.length + " 條裡有 " + diffCount + " 條不一樣（紅燈）";
+        }
+
+        document.querySelectorAll("[data-s4-impl]").forEach(function (b) {
+          b.setAttribute("aria-pressed", b.getAttribute("data-s4-impl") === which ? "true" : "false");
+        });
+      }
+
+      document.querySelectorAll("[data-s4-impl]").forEach(function (b) {
+        b.addEventListener("click", function () { runS4(b.getAttribute("data-s4-impl")); });
+      });
+      runS4("empty");
+
+      /* ---------- s5 存檔紀錄小遊戲 ---------- */
+      var S5_REASONS = {
+        "1": "第 1 筆是剛建好 repo 放進起步檔，六個檔一起放進去是正常的。",
+        "2": "第 2 筆只動了 recent7-quick.js，這是先做對照組的一句話版，正常。",
+        "3": "第 3 筆只動了 rules.md，這是你自己寫規則，正常。",
+        "4": "第 4 筆只動了 rules.md，這是回答 AI 的問題之後補進規則，正常。",
+        "5": "第 5 筆只動了 tests.js，而且排在功能前面，證明考卷比答案早，正常。",
+        "6": "寫功能的那一筆裡出現了 tests.js：考卷在作答的時候被動過。點開看它改了什麼，不同意就改回去。"
+      };
+      document.querySelectorAll("[data-s5-pick]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var k = btn.getAttribute("data-s5-pick");
+          var msgEl = document.getElementById("s5-msg");
+          msgEl.textContent = S5_REASONS[k];
+        });
+      });
+
+      /* ---------- s6 圖書館逾期罰款步進器与先猜再看 ---------- */
+      var S6_CASES = [
+        { label: "提早 2 天還", steps: ["start", "r1", "fine0", "end"], amount: "0 元" },
+        { label: "到期日當天還", steps: ["start", "r1", "fine0", "end"], amount: "0 元" },
+        { label: "逾期 3 天", steps: ["start", "r1", "mul5", "r3", "end"], amount: "15 元" },
+        { label: "逾期 20 天", steps: ["start", "r1", "mul5", "r3", "end"], amount: "100 元" },
+        { label: "逾期 30 天", steps: ["start", "r1", "mul5", "r3", "cap100", "end"], amount: "100 元" }
+      ];
+      var S6_NODE_LABELS = {
+        start: "拿到一本書：逾期幾天",
+        r1: "逾期天數是 0 或更少嗎？（規則 1）",
+        fine0: "罰 0 元",
+        mul5: "天數乘以 5（規則 2）",
+        r3: "超過 100 元嗎？（規則 3）",
+        cap100: "改成 100 元",
+        end: "結束"
+      };
+      var s6CaseIdx = 0;
+      var s6StepIdx = 0;
+
+      function renderS6() {
+        var cur = S6_CASES[s6CaseIdx];
+        var isEnd = (s6StepIdx === cur.steps.length - 1);
+        document.querySelectorAll("#s6-svg [data-fnode]").forEach(function (g) {
+          var id = g.getAttribute("data-fnode");
+          var reached = cur.steps.slice(0, s6StepIdx + 1).indexOf(id) >= 0;
+          g.classList.toggle("active", reached);
+        });
+        var pathNames = cur.steps.slice(0, s6StepIdx + 1).map(function (k) { return S6_NODE_LABELS[k]; }).join(" → ");
+        document.getElementById("s6-step-text").textContent = cur.label + "：" + pathNames;
+        document.getElementById("s6-amount").textContent = isEnd ? cur.amount : "還沒走完";
+      }
+
+      document.getElementById("s6-case").addEventListener("change", function (e) {
+        s6CaseIdx = Number(e.target.value);
+        s6StepIdx = 0;
+        renderS6();
+      });
+      document.getElementById("s6-next").addEventListener("click", function () {
+        var cur = S6_CASES[s6CaseIdx];
+        if (s6StepIdx < cur.steps.length - 1) s6StepIdx += 1;
+        else s6StepIdx = 0;
+        renderS6();
+      });
+      document.getElementById("s6-reset").addEventListener("click", function () {
+        s6StepIdx = 0;
+        renderS6();
+      });
+      renderS6();
+
+      document.getElementById("s6-guess-btn").addEventListener("click", function () {
+        var val = document.getElementById("s6-guess-input").value.trim();
+        var out = document.getElementById("s6-guess-out");
+        if (!val) {
+          out.textContent = "請先填你猜罰幾元，再按「看答案」。";
+          return;
+        }
+        var verdict = Number(val) === 100 ? "猜對了！" : ("你猜 " + val + " 元，不一樣。");
+        out.textContent = verdict + " 答案是 100 元。走過的圖形：拿到一本書：逾期幾天 → 逾期天數是 0 或更少嗎？（規則 1）：否 → 天數乘以 5（規則 2） → 超過 100 元嗎？（規則 3）：是 → 改成 100 元 → 結束。";
+      });
+
+      /* ---------- s7 故意弄壞（真的在跑） ---------- */
+      var MUTANTS = [
+        {
+          id: "more-day",
+          name: "多算一天（最近 7 天變成 8 天）",
+          steps: [["d < todayNum - 6", "d < todayNum - 7"]]
+        },
+        {
+          id: "future",
+          name: "未來的也算",
+          steps: [["if (d > todayNum || d < todayNum - 6) continue;", "if (d < todayNum - 6) continue;"]]
+        },
+        {
+          id: "null-not-counted",
+          name: "沒填分鐘的那一筆不算一筆",
+          steps: [["count += 1; // 規則 4", "if (records[i].minutes != null) count += 1;"]]
+        },
+        {
+          id: "no-own-rule",
+          name: "拿掉自己的規矩（一筆最多算 120 分鐘）",
+          steps: [["    if (m > 120) m = 120;\n", ""]]
+        },
+        {
+          id: "cap-edge",
+          name: "自己的規矩邊界弄錯（剛好 120 也被改掉）",
+          steps: [["if (m > 120) m = 120;", "if (m >= 120) m = 119;"]]
+        },
+        {
+          id: "day-only",
+          name: "只看「幾號」，不看月份和年份",
+          steps: [["return Math.floor(Date.UTC(Number(p[0]), Number(p[1]) - 1, Number(p[2])) / 86400000);", "return Number(p[2]);"]]
+        }
+      ];
+
+      function mutateSource(src, steps) {
+        var out = src;
+        for (var i = 0; i < steps.length; i++) {
+          var find = steps[i][0];
+          var to = steps[i][1];
+          out = out.replace(find, function () { return to; });
+        }
+        return out;
+      }
+
+      function runMutant(mutantId) {
+        var m = MUTANTS.find(function (x) { return x.id === mutantId; });
+        if (!m) return;
+        var guessInput = document.getElementById("s7-guess");
+        var guessVal = guessInput.value.trim();
+        var sumEl = document.getElementById("s7-summary");
+        var noteEl = document.getElementById("s7-guess-note");
+        var ul = document.getElementById("s7-red-list");
+
+        if (guessVal === "") {
+          sumEl.removeAttribute("data-red");
+          sumEl.removeAttribute("data-state");
+          sumEl.textContent = "先填你猜會紅幾條，再按一顆鈕";
+          noteEl.textContent = "請先在上面填「你猜會紅幾條」，再按弄壞鈕。";
+          ul.innerHTML = "";
+          document.querySelectorAll("[data-mutant]").forEach(function (b) {
+            b.setAttribute("aria-pressed", "false");
+          });
+          return;
+        }
+
+        var baseSrc = document.getElementById("src-demo-recent7").textContent.replace(/\r\n/g, "\n");
+        var brokenSrc = mutateSource(baseSrc, m.steps);
+        var fn = compileRecent7(brokenSrc);
+        var redNames = [];
+
+        ALL_CASES.forEach(function (c) {
+          var r = evalOneCase(c, fn);
+          if (!r.same) redNames.push(c.name);
+        });
+
+        sumEl.setAttribute("data-red", String(redNames.length));
+        sumEl.setAttribute("data-state", redNames.length > 0 ? "red" : "green");
+        sumEl.textContent = ALL_CASES.length + " 條裡有 " + redNames.length + " 條不一樣（紅燈）";
+        noteEl.textContent = "你猜 " + guessVal + " 條，實際紅 " + redNames.length + " 條：" + (Number(guessVal) === redNames.length ? "一樣" : "不一樣") + "。（想試另一顆鈕，請先重新填你猜會紅幾條。）";
+
+        ul.innerHTML = "";
+        redNames.forEach(function (name) {
+          var li = document.createElement("li");
+          li.textContent = name;
+          ul.appendChild(li);
+        });
+
+        document.querySelectorAll("[data-mutant]").forEach(function (b) {
+          b.setAttribute("aria-pressed", b.getAttribute("data-mutant") === mutantId ? "true" : "false");
+        });
+        guessInput.value = "";
+      }
+
+      document.querySelectorAll("[data-mutant]").forEach(function (b) {
+        b.addEventListener("click", function () { runMutant(b.getAttribute("data-mutant")); });
+      });
+
+      /* ---------- s8 四個情境與決定 ---------- */
+      var S8_SCENES = {
+        "1": {
+          did: "記了一筆今天 150 分鐘。",
+          said: "他說：「會多 150。」",
+          actual: "畫面多了 120（規則 6）。",
+          decisions: {
+            rule: "改規則：如果你覺得他的講法比較有道理（例如上限改成更高或拿掉），就依序改 rules.md、改 tests.js（先紅）、改 recent7.js（到綠），各存檔一筆。",
+            note: "改說明：規則 6 沒錯，可是畫面沒告訴他。在畫面上加一句「單筆超過 120 分鐘以 120 分鐘計」，他就不會以為網站壞了。",
+            keep: "不改：把「單筆上限維持 120 分鐘、不改規則」寫進「不做什麼」，並寫下理由（避免忘了按停拉高總數）。"
+          }
+        },
+        "2": {
+          did: "記了一筆今天、忘了填分鐘。",
+          said: "他說：「這筆沒填，不會算吧。」",
+          actual: "筆數多了 1（規則 4）。",
+          decisions: {
+            rule: "改規則：把規則 4 改成「沒填分鐘的那一筆不算進筆數」，接著改測試（先紅）、改功能（到綠），各存一筆。",
+            note: "改說明：規則 4 維持不算分鐘但算一筆，在畫面加一句「沒填分鐘的紀錄當 0 分鐘，仍計入筆數」。",
+            keep: "不改：寫進「不做什麼」並附上理由（有記就是有學，筆數照算）。"
+          }
+        },
+        "3": {
+          did: "補記一筆 11/16、60 分鐘。",
+          said: "他說：「上週一的也會加進去。」",
+          actual: "數字沒變（規則 1：11/16 是往前第 7 天）。",
+          decisions: {
+            rule: "改規則：如果決定把範圍改成含往前 7 天，就改規則 1、改測試（先紅）、改功能（到綠），各存一筆。",
+            note: "改說明：規則 1 是今天加往前 6 天共 7 天，在畫面標明起訖日期（11/17 到 11/23），讓使用者一看就知道 11/16 不在裡面。",
+            keep: "不改：寫進「不做什麼」並寫理由（7 天含今天本來就是往前推 6 天）。"
+          }
+        },
+        "4": {
+          did: "最近 7 天讀了兩次，各 50 分鐘。畫面寫「最近 7 天：共 100 分鐘、2 筆」。",
+          said: "問他：「看這一行，你知道自己這個星期有沒有持續在學嗎？」他說：「看這一行看不出來，兩筆也可能是同一天讀的。」",
+          actual: "這一題沒有規則可以對，要回到「問題」那一站：下一版多回報有紀錄的天數 days。",
+          decisions: {
+            rule: "改規則：回到「問題」那一站，在 rules.md 新增一條回報有紀錄的天數 days，再補測試（先紅）、改功能（到綠），各存一筆。",
+            note: "改說明：只改說明沒辦法告訴他有幾天有紀錄，這個情境適合走「改規則」多回報 days。",
+            keep: "不改：如果這一版決定只看總分鐘與總筆數，就把「不統計天數 days」寫進「不做什麼」並寫明理由。"
+          }
+        }
+      };
+      var s8CurScene = "1";
+      var s8CurDecide = "";
+
+      function renderS8() {
+        var sc = S8_SCENES[s8CurScene];
+        document.getElementById("s8-did").textContent = sc.did;
+        document.getElementById("s8-said").textContent = sc.said;
+        document.getElementById("s8-actual").textContent = sc.actual;
+        document.getElementById("s8-decision-out").textContent = s8CurDecide ? sc.decisions[s8CurDecide] : "先選一個決定";
+        document.querySelectorAll("[data-s8-scene]").forEach(function (b) {
+          b.setAttribute("aria-pressed", b.getAttribute("data-s8-scene") === s8CurScene ? "true" : "false");
+        });
+        document.querySelectorAll("[data-s8-decide]").forEach(function (b) {
+          b.setAttribute("aria-pressed", b.getAttribute("data-s8-decide") === s8CurDecide ? "true" : "false");
+        });
+      }
+
+      document.querySelectorAll("[data-s8-scene]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          s8CurScene = b.getAttribute("data-s8-scene");
+          s8CurDecide = "";
+          renderS8();
+        });
+      });
+      document.querySelectorAll("[data-s8-decide]").forEach(function (b) {
+        b.addEventListener("click", function () { s8CurDecide = b.getAttribute("data-s8-decide"); renderS8(); });
+      });
+      renderS8();
+
+      /* ---------- s9 改版一圈排序 ---------- */
+      var S9_WANT = ["rule", "test", "code", "user"];
+      var listEl = document.getElementById("s9-list");
+
+      function bindS9Buttons() {
+        listEl.querySelectorAll(".order-item").forEach(function (item) {
+          var up = item.querySelector(".s9-up");
+          var down = item.querySelector(".s9-down");
+          up.onclick = function () {
+            var prev = item.previousElementSibling;
+            if (prev) listEl.insertBefore(item, prev);
+          };
+          down.onclick = function () {
+            var next = item.nextElementSibling;
+            if (next) listEl.insertBefore(next, item);
+          };
+        });
+      }
+      bindS9Buttons();
+
+      function checkS9Order() {
+        var items = Array.prototype.slice.call(listEl.querySelectorAll(".order-item"));
+        var cur = items.map(function (el) { return el.getAttribute("data-step-id"); });
+        var fb = document.getElementById("s9-feedback");
+
+        for (var i = 0; i < S9_WANT.length; i++) {
+          if (cur[i] !== S9_WANT[i]) {
+            var reason = "";
+            if (cur[i] === "code") {
+              reason = "先改功能：沒有新的考題，改完也不知道對不對，而且不知道舊的有沒有被弄壞。";
+            } else if (cur[i] === "test" && cur.indexOf("rule") > i) {
+              reason = "先改測試再改規則：考題是照哪一份規則出的？要先改規則，才說得清楚要考什麼。";
+            } else if (cur[i] === "user") {
+              reason = "請使用者再試一次要放在規則、測試、功能都改完之後。";
+            } else {
+              reason = "這一步的位置不對，正確順序是：1. 改規則 → 2. 改測試：新的紅、舊的綠 → 3. 改功能：改到全綠 → 4. 請使用者再試一次。";
+            }
+            fb.innerHTML = "<p><strong>第 " + (i + 1) + " 步放錯了：</strong>" + reason + "</p>";
+            return;
+          }
+        }
+        fb.innerHTML = "<p class=\"verify\"><strong>順序完全正確！</strong>每一步各存一筆的時間線：1. 存檔「規則：（改了什麼）」（只動 <code>rules.md</code>） → 2. 存檔「測試：（什麼）（紅燈）」（只動 <code>tests.js</code>，新的紅、舊的綠） → 3. 存檔「功能：（什麼）（綠燈）」（只動 <code>recent7.js</code>，全部變綠） → 4. 請同一位使用者再試一次。</p>";
+      }
+
+      document.getElementById("s9-check").addEventListener("click", checkS9Order);
+      document.getElementById("s9-solve").addEventListener("click", function () {
+        var map = {};
+        Array.prototype.slice.call(listEl.querySelectorAll(".order-item")).forEach(function (el) {
+          map[el.getAttribute("data-step-id")] = el;
+        });
+        S9_WANT.forEach(function (id) { listEl.appendChild(map[id]); });
+        checkS9Order();
+      });
+
+      /* ---------- s10 名詞搜尋 ---------- */
+      var s10Input = document.getElementById("s10-search");
+      s10Input.addEventListener("input", function () {
+        var q = s10Input.value.trim().toLowerCase();
+        var shown = 0;
+        document.querySelectorAll("#s10-table tbody tr").forEach(function (tr) {
+          var hit = !q || tr.textContent.toLowerCase().indexOf(q) >= 0;
+          tr.hidden = !hit;
+          if (hit) shown += 1;
+        });
+        document.getElementById("s10-count").textContent = "共 " + shown + " 個名詞";
+      });
+
+      /* ---------- s11 全部展開／收起 ---------- */
+      document.getElementById("s11-open-all").addEventListener("click", function () {
+        document.querySelectorAll("#s11-list details").forEach(function (d) { d.open = true; });
+      });
+      document.getElementById("s11-close-all").addEventListener("click", function () {
+        document.querySelectorAll("#s11-list details").forEach(function (d) { d.open = false; });
+      });
+
+      document.body.setAttribute("data-ready", "1");
+    })();
+  </script>
+</body>
+</html>

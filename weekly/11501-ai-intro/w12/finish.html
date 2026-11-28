@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W12 Wrap-up</title>
+<meta name="description" content="Week 12 AI Intro wrap-up: the five steps in one sentence each, plus an optional quiz.">
+<link rel="stylesheet" href="assets/w12.css">
+</head>
+<body data-step="finish">
+<nav class="progress" id="progTop" aria-label="Steps"></nav>
+<main>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">AI Intro · Week 12 · Wrap-up</div>
+    <h1>Wrap-up 收尾</h1>
+    <p class="zh">今天走過的五站</p>
+  </div>
+</header>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">1</span>Today's five steps, one sentence each</h2>
+    <p class="zh">今天走過的五站，各一句話</p>
+    <ol class="steps">
+      <li><b><a href="step1.html">Step 1 · Tokenization</a></b><br>Text is cut into pieces (tokens), and each piece gets an ID number from the vocabulary.<br><span class="zh">文字被切成一小塊一小塊（token），每塊拿到詞表裡的一個編號。</span></li>
+      <li><b><a href="step2.html">Step 2 · Embeddings</a></b><br>Each ID looks up a list of numbers (a vector); pieces with related meanings often point in similar directions.<br><span class="zh">每個編號查到一串數字（向量）；意思相近的塊，方向也往往相近。</span></li>
+      <li><b><a href="step3.html">Step 3 · Attention &amp; layers</a></b><br>Each piece looks at itself and the pieces before it, and decides how much each one matters.<br><span class="zh">每一塊看自己和前面的塊，決定每一塊有多重要。</span></li>
+      <li><b><a href="step4.html">Step 4 · Sampling</a></b><br>The model scores every possible next piece; temperature, softmax, Top-K and Top-P shape the chances, then one piece is drawn.<br><span class="zh">模型替每個可能的下一塊打分數；溫度、softmax、Top-K、Top-P 調整機率後抽出一塊。</span></li>
+      <li><b><a href="step5.html">Step 5 · Chat, thinking &amp; tools</a></b><br>The new piece is added to the input and the loop runs again; a chat is the same loop, wrapped in the chat template.<br><span class="zh">新的一塊接回輸入、迴圈再跑；聊天也是同一個迴圈，只是包進了對話範本。</span></li>
+    </ol>
+  </div>
+</section>
+<section class="block" id="quiz">
+  <div class="wrap">
+    <h2><span class="n">2</span>Self-check quiz (questions 1–3 in class, 4–5 optional; nothing to hand in)</h2>
+    <p class="zh">小測驗：第 1–3 題課堂一起做，第 4–5 題自選；不用交</p>
+    <p>Pick an answer to see feedback. 選一個答案看回饋。</p>
+    <div id="quizBox" data-q="0 1 2 3 4"></div>
+    <p class="count" id="quizScore" aria-live="polite"></p>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">3</span>Keep going</h2>
+    <p class="zh">接下來</p>
+    <p><a href="terms.html">Term station (all 113 terms) 名詞站</a> · <a href="https://gemma.ai/learn/how-llms-work/" target="_blank" rel="noopener">Official guide “How LLMs work (with Gemma 4)” ↗ 官方導覽</a></p>
+  </div>
+</section>
+</main>
+<nav class="progress" id="progBot" aria-label="Steps (bottom)"></nav>
+<footer>
+  <div class="wrap">
+    <p>Source for every Gemma fact: Google's official guide “How LLMs work (with Gemma 4)”, gemma.ai/learn/how-llms-work/ (read 2026-11-22). Explanations, analogies, toys and examples are our own words; toy numbers are made up unless marked “from the guide”. If anything here disagrees with the official page, the official page wins. 所有 Gemma 事實出自官方導覽；解釋、比喻、玩具是我們自己寫的，玩具數字除非標明都是假的。與官方不一致時以官方為準。</p>
+    <p>Dictionary of all 113 terms: <a href="terms.html">terms.html</a>. 全部名詞：名詞站。</p>
+  </div>
+</footer>
+<script src="assets/config.js"></script>
+<script src="assets/terms-data.js"></script>
+<script src="assets/w12.js"></script>
+</body>
+</html>

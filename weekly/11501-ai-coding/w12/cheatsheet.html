@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>W12｜兩頁小抄：先講清楚、先出考卷，再請 AI 動手</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font: 100%/1.55 system-ui, "Microsoft JhengHei", "PingFang TC", sans-serif;
+      color: #182b2a;
+      background: #f4f7f4;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-size: 16px; }
+    a { color: #075f60; text-underline-offset: .17em; }
+    :focus-visible { outline: 3px solid #a35c16; outline-offset: 3px; }
+    .wrap { width: min(100% - 1.5rem, 64rem); margin-inline: auto; padding-block: 1rem 2rem; }
+    .top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem 1.2rem;
+      align-items: center;
+      background: #fff;
+      border: 1px solid #d7e1dd;
+      border-radius: .75rem;
+      padding: .5rem .9rem;
+      margin-bottom: 1rem;
+    }
+    .top-nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: .25rem .5rem;
+      font-weight: 650;
+    }
+    .sheet-page {
+      background: #fff;
+      border: 1px solid #d7e1dd;
+      border-radius: .9rem;
+      padding: clamp(1rem, 2.5vw, 1.5rem);
+      margin-bottom: 1.2rem;
+    }
+    .page-header {
+      border-bottom: 2px solid #144d4d;
+      padding-bottom: .45rem;
+      margin-bottom: .75rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: .4rem;
+    }
+    h1 { font-size: clamp(1.3rem, 3.2vw, 1.65rem); line-height: 1.25; margin: 0; color: #144d4d; }
+    h2 { font-size: 1.1rem; line-height: 1.3; margin: .7rem 0 .4rem; color: #144d4d; }
+    .subtitle { margin: 0; font-weight: 650; color: #0e6260; }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .65rem;
+    }
+    .step-card {
+      border: 1px solid #c9d8d4;
+      border-radius: .6rem;
+      padding: .55rem .7rem;
+      background: #fcfefd;
+      break-inside: avoid;
+    }
+    .step-card.wide {
+      grid-column: 1 / -1;
+    }
+    .step-title {
+      font-weight: 700;
+      margin: 0 0 .3rem;
+      color: #144d4d;
+      font-size: 1rem;
+    }
+    .step-num {
+      display: inline-block;
+      padding: .05em .5em;
+      border-radius: .8em;
+      background: #0e6260;
+      color: #fff;
+      font-size: .85em;
+      margin-right: .3rem;
+    }
+    .step-card p { margin: .22rem 0; }
+    .step-card ul, .step-card ol { margin: .22rem 0 .3rem; padding-left: 1.25rem; }
+    .step-card li + li { margin-top: .15rem; }
+    .verify-line {
+      margin-top: .35rem;
+      padding-top: .28rem;
+      border-top: 1px dashed #91beb9;
+      color: #14532d;
+    }
+    code, pre {
+      font-family: ui-monospace, Consolas, "Cascadia Mono", monospace;
+      font-variant-ligatures: none;
+    }
+    code {
+      font-size: .92em;
+      background: #eef4f2;
+      padding: 0 .25rem;
+      border-radius: .25rem;
+      overflow-wrap: anywhere;
+    }
+    pre {
+      margin: .3rem 0;
+      padding: .4rem .6rem;
+      background: #eef4f2;
+      color: #182b2a;
+      border: 1px solid #c9d8d4;
+      border-radius: .4rem;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: .9em;
+      line-height: 1.4;
+    }
+    .table-wrap { overflow-x: auto; max-width: 100%; margin-top: .35rem; }
+    table { border-collapse: collapse; width: 100%; font-size: .92em; }
+    caption { text-align: left; font-weight: 700; padding-bottom: .25rem; }
+    th, td { border: 1px solid #c9d8d4; padding: .3rem .5rem; text-align: left; vertical-align: top; }
+    th { background: #eff5f2; }
+    @media (max-width: 680px) {
+      .steps-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media print {
+      @page { size: A4 portrait; margin: 8mm; }
+      body { background: #fff; color: #000; font-size: 11px; line-height: 1.34; }
+      .wrap { width: 100%; max-width: none; padding: 0; margin: 0; }
+      .top-nav { display: none; }
+      .sheet-page {
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        margin: 0;
+      }
+      #page-1 {
+        break-after: page;
+        page-break-after: always;
+      }
+      .page-header { border-bottom: 1.5px solid #000; padding-bottom: 2mm; margin-bottom: 2.5mm; }
+      h1 { font-size: 15px; color: #000; }
+      h2 { font-size: 12px; color: #000; margin: 2.5mm 0 1.2mm; }
+      .subtitle { color: #000; font-size: 11.5px; }
+      .steps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.2mm; }
+      .step-card { border: 1px solid #000; padding: 2mm 2.5mm; background: #fff; }
+      .step-title { color: #000; font-size: 11.5px; margin-bottom: 1mm; }
+      .step-num { background: #fff; color: #000; border: 1px solid #000; }
+      .verify-line { color: #000; border-top: 1px dashed #000; }
+      code, pre, th { background: #fff; color: #000; border-color: #000; }
+      th, td { border: 1px solid #000; padding: 1.2mm 2mm; font-size: 10.5px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <nav class="top-nav" aria-label="頁面連結">
+      <a href="student.html">回到學生頁（W12 完整步驟）</a>
+      <a href="concept.html">互動概念頁（為什麼要這樣做，會動的圖）</a>
+    </nav>
+
+    <article id="page-1" class="sheet-page" aria-labelledby="p1-title">
+      <header class="page-header">
+        <h1 id="p1-title">W12｜先講清楚、先出考卷，再請 AI 動手</h1>
+        <p class="subtitle">最近 7 天，到底算哪幾天？（第 1 到第 6 步）</p>
+        <p class="purpose">這一張用來對進度。每一步完整的做法（路線 A、路線 B 各怎麼做）在學生頁。</p>
+      </header>
+
+      <div class="steps-grid">
+        <section class="step-card" aria-labelledby="c1-title">
+          <h2 id="c1-title" class="step-title"><span class="step-num">第 1 步</span>先猜：最近 7 天是幾分鐘、幾筆？（不用 AI）</h2>
+          <p><strong>做什麼：</strong>今天是 11/23（一）。學習紀錄裡有這五筆：11/23（今天） 30、11/17 20、11/23（今天） 沒填、11/16 99、11/24 50。網站上那一行「最近 7 天：共幾分鐘、幾筆」，你覺得應該顯示多少？把你的答案寫在紙上。</p>
+          <p class="verify-line"><strong>看到這裡就對了。</strong>你寫下了一組數字。跟旁邊的人對一下，不一樣是正常的。</p>
+        </section>
+
+        <section class="step-card" aria-labelledby="c2-title">
+          <h2 id="c2-title" class="step-title"><span class="step-num">第 2 步</span>拿起步檔，放進一個新的 repo</h2>
+          <p><strong>做什麼：</strong>下載起步檔 <code>starter.zip</code>，對它按右鍵 →「解壓縮全部」。接著把這六個檔放進一個新的 repo，名字用 <code>recent7</code>，選公開：路線 A 請 agent 建；路線 B 在 GitHub 網頁建，把六個檔拖進去，訊息欄寫「起步檔」，按 <code>Commit changes</code>。然後打開測試頁：路線 A 對 <code>tests.html</code> 點兩下；路線 B 從學生頁第 2 步的連結開線上那一頁。</p>
+          <p class="verify-line"><strong>看到這裡就對了。</strong>瀏覽器打開一頁，最上面寫「還沒有測試」。GitHub 上的 <code>recent7</code> 最外層看得到六個檔。</p>
+        </section>
+
+        <section class="step-card wide" aria-labelledby="c3-title">
+          <h2 id="c3-title" class="step-title"><span class="step-num">第 3 步</span>先做一個對照組：一句話版</h2>
+          <p><strong>做什麼：</strong>開一個新的對話，把下面這句話交給 AI。寫好之後存檔（commit）並推上 GitHub，訊息寫「一句話版」。</p>
+          <p><strong>要貼的那一句話：</strong></p>
+          <pre>照 README.md 的格式，幫我寫 recent7：算最近 7 天學了幾分鐘、記了幾筆。寫在 recent7-quick.js。</pre>
+          <p class="verify-line"><strong>看到這裡就對了。</strong>GitHub 上的 <code>recent7-quick.js</code> 不再是「還沒做」那一行，多了一筆「一句話版」。</p>
+        </section>
+
+        <section class="step-card" aria-labelledby="c4-title">
+          <h2 id="c4-title" class="step-title"><span class="step-num">第 4 步</span>寫你的規則（不用 AI）</h2>
+          <p><strong>做什麼：</strong>打開 <code>rules.md</code>。先寫一句話「這個功能要做什麼」，再寫規則，一條一句。再加一條你自己的規矩。「不做什麼」也寫一行：這次不處理的事。存檔一次（commit），訊息寫「規則」。</p>
+          <p class="verify-line"><strong>看到這裡就對了。</strong>五筆資料每一筆算不算，你都能指著某一條規則回答。規則裡有一條是你自己的規矩。</p>
+        </section>
+
+        <section class="step-card" aria-labelledby="c5-title">
+          <h2 id="c5-title" class="step-title"><span class="step-num">第 5 步</span>請 AI 先問你問題</h2>
+          <p><strong>做什麼：</strong>再開一個新的對話，不要用第 3 步那個。請它讀 <code>README.md</code> 和 <code>rules.md</code>，把規則裡講得不夠清楚、它得自己猜的地方，一條一條列成問題問你。把問答記在 <code>rules.md</code> 最下面，一題一行。再存檔一次，訊息寫「規則：補上 AI 問的」。</p>
+          <p class="verify-line"><strong>看到這裡就對了。</strong><code>rules.md</code> 比剛才長，「不做什麼」不是空的。</p>
+        </section>
+
+        <section class="step-card wide" aria-labelledby="c6-title">
+          <h2 id="c6-title" class="step-title"><span class="step-num">第 6 步</span>請它寫測試，只寫測試</h2>
+          <p><strong>做什麼：</strong>在同一個對話裡，請它照補好的規則寫測試。全紅才對：測試頁上每一列都是紅的，「實際上」那一格寫「還沒做」。存檔（commit），訊息寫「測試（紅燈）」。</p>
+          <p><strong>你的話裡要講到這三件事：</strong></p>
+          <ul>
+            <li>照 <code>rules.md</code> 寫 <code>tests.js</code>，每條規則至少一個情況，名字開頭標規則幾。</li>
+            <li>只改 <code>tests.js</code>。功能先不要寫，<code>recent7.js</code> 不要動。</li>
+            <li>寫完告訴我一共幾條，每條規則各幾條。</li>
+          </ul>
+          <p class="verify-line"><strong>看到這裡就對了。</strong>測試頁最上面寫「N 條裡有 N 條不一樣（紅燈）」。GitHub 上多了一筆「測試（紅燈）」。</p>
+        </section>
+      </div>
+    </article>
+
+    <article id="page-2" class="sheet-page" aria-labelledby="p2-title">
+      <header class="page-header">
+        <h2 id="p2-title" style="margin:0;font-size:1.25rem;">W12｜第 7 到第 10 步、存檔紀錄表、卡關時先看這裡</h2>
+        <p class="subtitle">出考卷的和寫答案的要分開</p>
+      </header>
+
+      <div class="steps-grid">
+        <section class="step-card wide" aria-labelledby="c7-title">
+          <h3 id="c7-title" class="step-title"><span class="step-num">第 7 步</span>另開一個新對話，請 AI 寫功能</h3>
+          <p><strong>做什麼：</strong>換一個對話寫功能，寫到測試全部通過。存檔（commit），訊息寫「功能（綠燈）」。</p>
+          <p><strong>你的話裡要講到這三件事：</strong></p>
+          <ul>
+            <li>只看 <code>README.md</code>、<code>rules.md</code>、<code>tests.js</code>。</li>
+            <li>寫 <code>recent7.js</code>，寫到測試全部通過。只改 <code>recent7.js</code>。</li>
+            <li>不准改 <code>tests.js</code>。規則和測試對不上的地方，停下來告訴我。</li>
+          </ul>
+          <p class="verify-line"><strong>看到這裡就對了。</strong>測試頁最上面寫「N 條全部一樣（綠燈）」。這一筆只有 <code>recent7.js</code> 一個檔。<code>tests.js</code> 不在裡面。</p>
+        </section>
+
+        <section class="step-card" aria-labelledby="c8-title">
+          <h3 id="c8-title" class="step-title"><span class="step-num">第 8 步</span>讓一句話版考同一張考卷</h3>
+          <p><strong>做什麼：</strong>在測試頁按「考一句話版」，看它幾條一樣、幾條不一樣。看完按「考照規則寫的版本」切回來。</p>
+          <p class="verify-line"><strong>看到這裡就對了。</strong>你說得出一句話版哪幾條跟你不一樣。全部一樣的話，你知道那是它這次剛好猜中。</p>
+        </section>
+
+        <section class="step-card" aria-labelledby="c9-title">
+          <h3 id="c9-title" class="step-title"><span class="step-num">第 9 步</span>改版一圈（有時間再做）</h3>
+          <p><strong>做什麼：</strong>加一條新規則：多回報一個數字 <code>days</code>，這 7 天裡有幾天有紀錄。順序一樣，每一步各存檔一筆：1. 規則：在 <code>rules.md</code> 加一條。2. 測試：請它只加新規則的測試。3. 功能：請它改到全綠。</p>
+          <p class="verify-line"><strong>看到這裡就對了。</strong>舊的測試一條都沒變紅。改版沒有把原本對的弄壞，這是測試留下來的好處。</p>
+        </section>
+
+        <section class="step-card wide" aria-labelledby="c10-title">
+          <h3 id="c10-title" class="step-title"><span class="step-num">第 10 步</span>交什麼，下課前</h3>
+          <p><strong>做什麼：</strong>老師請你交東西時，交你的 <code>recent7</code> 的 GitHub 網址，和一張測試頁全綠的截圖。截圖之前，先確定測試頁考的是「照規則寫的版本」。教室電腦：登出 GitHub 和 AI 工具，再重新開機。</p>
+          <p class="verify-line"><strong>看到這裡就對了。</strong>GitHub 上的存檔紀錄有第 1 到第 6 筆（做了第 9 步的人，後面會再多三筆）。</p>
+        </section>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>GitHub 上的存檔紀錄，從舊到新應該長這樣（GitHub 的頁面是最新的排在最上面）</caption>
+          <thead><tr><th>第幾筆</th><th>訊息</th><th>這一筆動到的檔</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>起步檔（路線 A 的訊息是 agent 寫的，不一樣沒關係）</td><td>六個檔</td></tr>
+            <tr><td>2</td><td>一句話版</td><td><code>recent7-quick.js</code></td></tr>
+            <tr><td>3</td><td>規則</td><td><code>rules.md</code></td></tr>
+            <tr><td>4</td><td>規則：補上 AI 問的</td><td><code>rules.md</code></td></tr>
+            <tr><td>5</td><td>測試（紅燈）</td><td><code>tests.js</code></td></tr>
+            <tr><td>6</td><td>功能（綠燈）</td><td><code>recent7.js</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption>卡關時先看這裡（前六列）</caption>
+          <thead><tr><th>你看到</th><th>多半是</th><th>怎麼辦</th></tr></thead>
+          <tbody>
+            <tr><td>測試頁寫「還沒有測試」，可是 AI 說寫好了</td><td><code>tests.js</code> 沒存進資料夾，或它沒用 <code>addCase</code></td><td>路線 B 確認貼在第一格、按了「用貼上的內容跑測試」；請它照 <code>README.md</code> 的格式重寫</td></tr>
+            <tr><td>最上面黃色的框：有檔案沒讀好，先看這裡</td><td>用了 <code>export</code>、<code>import</code>，括號沒對上，或函式的名字不是 <code>recent7</code></td><td>貼到「貼上模式」的第二格再跑一次，看那個框裡的詳細錯誤，貼給 AI</td></tr>
+            <tr><td>每一列都寫「出錯：…」</td><td>功能一執行就壞</td><td>把「出錯：」後面那段貼給 AI</td></tr>
+            <tr><td>功能還沒寫就有綠的</td><td>正在考一句話版、第二格有舊內容，或它順手寫了功能</td><td>先按「考照規則寫的版本」；路線 B 清掉第二格；都對了再退回它一次</td></tr>
+            <tr><td>AI 想改 <code>tests.js</code> 讓測試過</td><td>它在改考卷</td><td>不准。先回 <code>rules.md</code> 看誰對；真的要改測試，回寫測試的那個對話改，另外存檔一筆</td></tr>
+            <tr><td>GitHub 上「功能」那一筆裡有 <code>tests.js</code></td><td>寫功能的時候測試被動過</td><td>點開那一筆看它改了什麼，不同意就改回去</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </main>
+</body>
+</html>

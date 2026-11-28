@@ -1,0 +1,2887 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>腳位怎麼講話實驗台</title>
+<meta name="description" content="互動模擬：一支腳位一次只能說 1 或 0，要把一個字送進螢幕、把一個顏色送進燈，就把它拆成一串 1 和 0，再約好怎麼對時。兩條線的 I2C（套件 OLED 小螢幕）、一條線的單線 RGB 燈（WS2812）、四條線的 SPI（Wokwi 8×8 點陣）三種講法並排，看慢動作波形和正在跑的那一行程式。附五個可以貼進 Wokwi 自己跑的專案。創客入門補充教材。">
+</head>
+<body>
+<style>
+  :root {
+    --c-primary: #D13B00;
+    --c-primary-deep: #A32E00;
+    --c-primary-bright: #FF8A5C;
+    --c-primary-tint: #FFE3D6;
+    --c-primary-pale: #FFF1E8;
+    --c-mint: #7FD8BE;
+    --c-mint-deep: #2F8A6F;
+    --c-mint-tint: #DFF5EE;
+    --c-yellow: #FFD66B;
+    --c-yellow-deep: #9A6B00;
+    --c-yellow-tint: #FFF2CE;
+    --c-violet: #B9A7E0;
+    --c-violet-deep: #6B5BA0;
+    --c-violet-tint: #EFEAFA;
+    --c-alert: #B00020;
+    --c-alert-tint: #FDE7EA;
+    --c-bg: #FFF9F2;
+    --c-surface: #FFFFFF;
+    --c-surface-2: #FBF3EA;
+    --c-line: #EAD8C8;
+    --c-line-soft: #F3E4D8;
+    --c-ink: #2D3142;
+    --c-ink-soft: #4A4F63;
+    --c-ink-faint: #8A8FA3;
+    --c-code-bg: #F4F1FB;
+    --c-code-line: #E4DDF5;
+    --c-code-ink: #3B3457;
+    --c-wire: #2D3142;
+    --c-wire-off: #C9BFB8;
+    --c-chip: #FFFDF9;
+    --c-particle: #FF8A5C;
+    --c-particle-core: #D13B00;
+    --c-electron: #7FD8BE;
+    --c-electron-core: #1F6B54;
+    --c-meter-bg: #1E2230;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #8A8FA3;
+    --c-halo: rgba(45, 49, 66, 0.06);
+    --font-zh: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-primary: #FFA57D;
+      --c-primary-deep: #FFC0A0;
+      --c-primary-bright: #C9532A;
+      --c-primary-tint: #4A2A1C;
+      --c-primary-pale: #33211A;
+      --c-mint: #2A7D63;
+      --c-mint-deep: #7FD8BE;
+      --c-mint-tint: #1E3A33;
+      --c-yellow: #8A6B1E;
+      --c-yellow-deep: #FFD66B;
+      --c-yellow-tint: #3A3220;
+      --c-violet: #6B5BA0;
+      --c-violet-deep: #B9A7E0;
+      --c-violet-tint: #2A2440;
+      --c-alert: #FF6B7A;
+      --c-alert-tint: #4A1F26;
+      --c-bg: #1A1614;
+      --c-surface: #241E1B;
+      --c-surface-2: #2C2522;
+      --c-line: #3A302A;
+      --c-line-soft: #332A25;
+      --c-ink: #F2EAE4;
+      --c-ink-soft: #C9BFB8;
+      --c-ink-faint: #8C817A;
+      --c-code-bg: #1F1B2E;
+      --c-code-line: #332C4A;
+      --c-code-ink: #D6CFEA;
+      --c-wire: #F2EAE4;
+      --c-wire-off: #5E534C;
+      --c-chip: #201B18;
+      --c-particle: #FFB38A;
+      --c-particle-core: #FF7A3D;
+      --c-electron: #9FE8D0;
+      --c-electron-core: #2F8A6F;
+      --c-meter-bg: #12151E;
+      --c-meter-ink: #F4ECD8;
+      --c-meter-dim: #7E8398;
+      --c-halo: rgba(242, 234, 228, 0.07);
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-primary: #FFA57D;
+    --c-primary-deep: #FFC0A0;
+    --c-primary-bright: #C9532A;
+    --c-primary-tint: #4A2A1C;
+    --c-primary-pale: #33211A;
+    --c-mint: #2A7D63;
+    --c-mint-deep: #7FD8BE;
+    --c-mint-tint: #1E3A33;
+    --c-yellow: #8A6B1E;
+    --c-yellow-deep: #FFD66B;
+    --c-yellow-tint: #3A3220;
+    --c-violet: #6B5BA0;
+    --c-violet-deep: #B9A7E0;
+    --c-violet-tint: #2A2440;
+    --c-alert: #FF6B7A;
+    --c-alert-tint: #4A1F26;
+    --c-bg: #1A1614;
+    --c-surface: #241E1B;
+    --c-surface-2: #2C2522;
+    --c-line: #3A302A;
+    --c-line-soft: #332A25;
+    --c-ink: #F2EAE4;
+    --c-ink-soft: #C9BFB8;
+    --c-ink-faint: #8C817A;
+    --c-code-bg: #1F1B2E;
+    --c-code-line: #332C4A;
+    --c-code-ink: #D6CFEA;
+    --c-wire: #F2EAE4;
+    --c-wire-off: #5E534C;
+    --c-chip: #201B18;
+    --c-particle: #FFB38A;
+    --c-particle-core: #FF7A3D;
+    --c-electron: #9FE8D0;
+    --c-electron-core: #2F8A6F;
+    --c-meter-bg: #12151E;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #7E8398;
+    --c-halo: rgba(242, 234, 228, 0.07);
+  }
+  /* 這一頁多用的幾個顏色（波形、G／R／B 三色、螢幕與點陣），同樣分亮、暗兩組 */
+  :root {
+    --c-trace: #7FD8BE;
+    --c-trace2: #FF9E6B;
+    --c-avg: #FFD66B;
+    --c-gch: #1E8E4E;
+    --c-rch: #C62828;
+    --c-bch: #1565C0;
+    --c-gtint: #DDF3E6;
+    --c-rtint: #FBE2E2;
+    --c-btint: #DFE9FA;
+    --c-oled-bg: #0B1020;
+    --c-oled-off: #1C2438;
+    --c-oled-on: #BFE8FF;
+    --c-mx-bg: #1B1414;
+    --c-mx-off: #3E2626;
+    --c-mx-on: #FF4A3D;
+    --c-bus-hi: #2F8A6F;
+    --c-bus-lo: #2D3142;
+    --c-pix-body: #F4EFE9;
+    --c-pix-edge: #B8ADA5;
+    --c-pix-dark: #D9D0C8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-trace: #9FE8D0;
+      --c-trace2: #FFB38A;
+      --c-avg: #FFD66B;
+      --c-gch: #6FD99B;
+      --c-rch: #FF7B7B;
+      --c-bch: #8DB4FF;
+      --c-gtint: #1D3A2A;
+      --c-rtint: #46211F;
+      --c-btint: #1E2B47;
+      --c-oled-bg: #070A14;
+      --c-oled-off: #161D2E;
+      --c-oled-on: #BFE8FF;
+      --c-mx-bg: #120D0D;
+      --c-mx-off: #3A2323;
+      --c-mx-on: #FF5A4D;
+      --c-bus-hi: #7FD8BE;
+      --c-bus-lo: #8C817A;
+      --c-pix-body: #3A332F;
+      --c-pix-edge: #6E625A;
+      --c-pix-dark: #51463F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-trace: #9FE8D0;
+    --c-trace2: #FFB38A;
+    --c-avg: #FFD66B;
+    --c-gch: #6FD99B;
+    --c-rch: #FF7B7B;
+    --c-bch: #8DB4FF;
+    --c-gtint: #1D3A2A;
+    --c-rtint: #46211F;
+    --c-btint: #1E2B47;
+    --c-oled-bg: #070A14;
+    --c-oled-off: #161D2E;
+    --c-oled-on: #BFE8FF;
+    --c-mx-bg: #120D0D;
+    --c-mx-off: #3A2323;
+    --c-mx-on: #FF5A4D;
+    --c-bus-hi: #7FD8BE;
+    --c-bus-lo: #8C817A;
+    --c-pix-body: #3A332F;
+    --c-pix-edge: #6E625A;
+    --c-pix-dark: #51463F;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body { margin: 0; background: var(--c-bg); color: var(--c-ink); font-family: var(--font-zh); font-size: 14px; line-height: 1.6; }
+  button, select, input, output { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .55; }
+  :focus-visible { outline: 3px solid var(--c-primary); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  code { font-family: var(--font-mono); font-size: max(12px, .9em); background: var(--c-code-bg); color: var(--c-code-ink); border-radius: 5px; padding: 0 4px; overflow-wrap: anywhere; }
+
+  .wrap { padding: 10px 16px 36px; display: flex; justify-content: center; }
+  .col { width: 100%; max-width: 1400px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--c-primary); white-space: nowrap; }
+  .kicker .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c-primary-bright); }
+  h1 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 800; letter-spacing: .01em; }
+  .appbar { display: flex; align-items: baseline; justify-content: space-between; gap: 2px 16px; flex-wrap: wrap; padding: 2px 4px 0; }
+  .appbar-title { order: 1; display: flex; align-items: baseline; gap: 2px 12px; flex-wrap: wrap; min-width: 0; }
+  .sub1 { font-size: 14px; color: var(--c-ink-soft); font-weight: 600; }
+  .about { order: 2; font-size: 13px; color: var(--c-ink-soft); max-width: 46em; }
+  .about summary { cursor: pointer; font-weight: 700; color: var(--c-primary); list-style: none; }
+  .about summary::-webkit-details-marker { display: none; }
+  .about summary::before { content: "＋ "; }
+  .about[open] summary::before { content: "－ "; }
+  .about p { margin: 6px 0 0; line-height: 1.6; }
+  .oneline { order: 3; flex: 1 1 100%; margin: 2px 0 0; font-size: 13.5px; line-height: 1.65; color: var(--c-ink-soft); }
+  .oneline b { color: var(--c-ink); }
+  h2 { margin: 0; font-size: 18px; font-weight: 800; line-height: 1.3; }
+  h3 { margin: 0; font-size: 14px; font-weight: 800; }
+  p { margin: 0; }
+  .muted { color: var(--c-ink-soft); }
+  .tiny { font-size: 12px; color: var(--c-ink-faint); line-height: 1.5; }
+  a { color: var(--c-primary); }
+  a.ref { font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-decoration: none; border-bottom: 1px dotted currentColor; white-space: nowrap; }
+
+  /* ===== 實驗台 ===== */
+  .bench { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 16px; padding: 8px 12px 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .tabbar { display: flex; align-items: center; gap: 6px 16px; flex-wrap: wrap; padding-bottom: 8px; border-bottom: 2px solid var(--c-line-soft); }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+  .tab { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 10px; padding: 4px 12px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); line-height: 1.3; text-align: left; }
+  .tab small { display: block; font-size: 12px; font-weight: 600; opacity: .85; }
+  .tab[aria-selected="true"] { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary-deep); }
+  .caption { flex: 1 1 240px; min-width: 0; margin: 0; font-size: 16px; font-weight: 800; line-height: 1.4; color: var(--c-primary-deep); }
+  @media (max-width: 560px) {
+    .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+    .tab { padding: 4px 6px; }
+    .caption { font-size: 15px; }
+  }
+
+  .benchgrid { display: grid; grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr); gap: 12px; align-items: start; }
+  @media (max-width: 1020px) {
+    .benchgrid { grid-template-columns: minmax(0, 1fr); }
+  }
+  .codecol { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .codehead { display: flex; justify-content: space-between; align-items: baseline; gap: 2px 10px; flex-wrap: wrap; font-size: 12px; font-weight: 700; color: var(--c-ink-faint); }
+  .codehead .fn { font-family: var(--font-mono); color: var(--c-ink-soft); }
+  .codeview { position: relative; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 6px 0; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: var(--c-code-ink); overflow: auto; height: 330px; }
+  .codeinner { width: max-content; min-width: 100%; }
+  .cl { display: flex; border-left: 3px solid transparent; padding-right: 14px; }
+  .cl .ln { flex: 0 0 2.8em; padding-right: .9em; text-align: right; color: var(--c-ink-faint); user-select: none; -webkit-user-select: none; }
+  .cl .tx { white-space: pre; }
+  .cl.mk .tx { text-decoration: underline wavy var(--c-violet-deep); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .cl.mk .ln { color: var(--c-violet-deep); font-weight: 800; }
+  .cl.t3 { background: color-mix(in srgb, var(--c-yellow-tint) 45%, transparent); }
+  .cl.t2 { background: color-mix(in srgb, var(--c-yellow-tint) 75%, transparent); }
+  .cl.t1 { background: var(--c-yellow-tint); }
+  .cl.on { background: var(--c-primary-tint); border-left-color: var(--c-primary); }
+  .cl.on .ln { color: var(--c-primary); font-weight: 800; }
+  .codenote { font-size: 12.5px; line-height: 1.55; background: var(--c-violet-tint); border: 1.5px solid var(--c-violet); border-radius: 10px; padding: 4px 10px; color: var(--c-ink); min-width: 0; }
+  .codenote p + p { margin-top: 2px; }
+  .codenote b { color: var(--c-violet-deep); }
+  .runbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--c-ink-faint); }
+
+  .labcol { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .btn { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 8px; padding: 4px 10px; font-weight: 700; font-size: 13px; }
+  .btn:hover:not(:disabled) { border-color: var(--c-primary); }
+  .btn.main { border-color: var(--c-primary); color: var(--c-primary-deep); }
+  .btn[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; border-color: var(--c-primary-deep); }
+  .btn code { background: transparent; padding: 0; color: inherit; }
+  .serial { background: var(--c-meter-bg); color: var(--c-meter-ink); border-radius: 10px; padding: 5px 10px 7px; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; min-width: 0; }
+  .serial .sh { font-family: var(--font-zh); font-size: 12px; color: var(--c-meter-dim); margin-bottom: 2px; display: flex; justify-content: space-between; gap: 2px 10px; flex-wrap: wrap; }
+  .serial .sh b { color: var(--c-meter-ink); font-family: var(--font-mono); }
+  .serial .row { display: flex; gap: 8px; min-height: 1.55em; }
+  .serial .msg { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .serial .row.fresh .msg { color: var(--c-avg); }
+  .serial .idle { font-family: var(--font-zh); color: var(--c-meter-dim); }
+
+  .tabpanel { display: flex; flex-direction: column; gap: 7px; font-size: 13px; min-width: 0; }
+  .tabpanel .lead { color: var(--c-ink-soft); line-height: 1.6; }
+  .tabpanel .lead b { color: var(--c-ink); }
+  .ctlrow { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+  .lockrow { display: flex; align-items: center; gap: 4px 8px; flex-wrap: wrap; font-size: 13px; font-weight: 800; min-width: 0; }
+  .seg { display: inline-flex; flex-wrap: wrap; border: 2px solid var(--c-line); border-radius: 10px; overflow: hidden; background: var(--c-surface); min-width: 0; }
+  .seg button { border: 0; background: transparent; padding: 3px 10px; font-weight: 700; font-size: 12.5px; color: var(--c-ink-soft); border-right: 2px solid var(--c-line); line-height: 1.35; }
+  .seg button:last-child { border-right: 0; }
+  .seg button small { font-size: 12px; font-weight: 600; opacity: .8; margin-left: 3px; }
+  .seg button[aria-pressed="true"] { background: var(--c-primary); color: #FFF7F2; }
+  .togs { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; }
+  .tog { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); cursor: pointer; }
+  .tog input { width: 16px; height: 16px; accent-color: var(--c-primary); margin: 0; }
+  .widget { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 6px 10px; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .widget h3 { font-size: 13px; }
+  .ro { font-size: 12.5px; color: var(--c-ink-soft); }
+  .ro b { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--c-ink); }
+  .when { font-size: 12.5px; background: var(--c-mint-tint); border: 1.5px solid var(--c-mint); border-radius: 10px; padding: 5px 10px; }
+  .when b { font-weight: 800; }
+  .note { font-size: 12.5px; line-height: 1.55; padding: 6px 10px; border-radius: 10px; border: 1.5px solid var(--c-line-soft); background: var(--c-surface-2); color: var(--c-ink-soft); }
+  .note.warn { background: var(--c-yellow-tint); border-color: var(--c-yellow); color: var(--c-ink); }
+  .note b { color: var(--c-ink); }
+
+  /* 送一個字 */
+  .charrow { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; }
+  .charrow input { width: 2.6em; text-align: center; font-family: var(--font-mono); font-size: 16px; font-weight: 800; border: 2px solid var(--c-line); border-radius: 8px; background: var(--c-surface); color: var(--c-ink); padding: 1px 4px; }
+  .charrow input.bad { border-color: var(--c-alert); }
+  .hint.bad { color: var(--c-alert); font-weight: 700; }
+
+  /* ===== 圖（SVG，文字都是真文字） ===== */
+  .fig { margin: 0; background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 12px; padding: 4px 6px; min-width: 0; }
+  .sv { min-width: 0; width: 100%; }
+  .sv svg, .fig svg { display: block; width: 100%; height: auto; }
+  .fig text, .scope text { user-select: none; -webkit-user-select: none; }
+  .t12 { font-family: var(--font-zh); font-size: 12px; fill: var(--c-ink-soft); }
+  .t12b { font-family: var(--font-zh); font-size: 12px; font-weight: 800; fill: var(--c-ink); }
+  .t13b { font-family: var(--font-zh); font-size: 13px; font-weight: 800; fill: var(--c-ink); }
+  .tm { font-family: var(--font-mono); font-size: 12px; fill: var(--c-ink-soft); }
+  .tmb { font-family: var(--font-mono); font-size: 12px; font-weight: 800; fill: var(--c-ink); }
+  .tpri { fill: var(--c-primary-deep); }
+  .t-alert { fill: var(--c-alert); }
+  .tfaint { fill: var(--c-ink-faint); }
+  .b-chip { fill: var(--c-chip); stroke: var(--c-ink-soft); stroke-width: 1.6; }
+  .b-dash { stroke-dasharray: 5 4; }
+  .b-hi { stroke: var(--c-bus-hi); stroke-width: 3.2; }
+  .b-lo { stroke: var(--c-bus-lo); stroke-width: 3.2; }
+  .b-off { stroke: var(--c-wire-off); stroke-width: 2.4; stroke-dasharray: 5 4; }
+  .b-wire { stroke: var(--c-wire); stroke-width: 2.2; }
+  .b-hot { stroke: var(--c-primary); stroke-width: 3.6; }
+  .b-ah { fill: var(--c-wire); }
+  .b-ah.hot { fill: var(--c-primary); }
+  .b-res { fill: var(--c-surface); stroke: var(--c-ink-soft); stroke-width: 1.4; }
+  .b-rail { stroke: var(--c-primary); stroke-width: 2.2; }
+  .b-dot { fill: var(--c-wire); }
+  .b-scr { fill: var(--c-oled-bg); }
+  .pix { fill: var(--c-pix-body); stroke: var(--c-pix-edge); stroke-width: 1.4; }
+  .pix-in { fill: var(--c-pix-dark); }
+  .rx-G { fill: var(--c-gch); }
+  .rx-R { fill: var(--c-rch); }
+  .rx-B { fill: var(--c-bch); }
+  .rx-no { fill: var(--c-line); }
+  .oled-bg { fill: var(--c-oled-bg); }
+  .oled-off { fill: var(--c-oled-off); }
+  .oled-on { fill: var(--c-oled-on); }
+  .oled-box { fill: none; stroke: var(--c-avg); stroke-width: 1; stroke-dasharray: 3 2; opacity: .85; }
+  .oled-cur { fill: none; stroke: var(--c-avg); stroke-width: 2; }
+
+  /* 慢動作波形（深色底，兩種主題都一樣） */
+  .scope { margin: 0; background: var(--c-meter-bg); border-radius: 12px; padding: 5px 6px 6px; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .scope figcaption { font-size: 12px; line-height: 1.5; color: var(--c-meter-dim); padding: 0 4px; min-height: 1.5em; }
+  .scope figcaption b { color: var(--c-meter-ink); }
+  .scope figcaption code { background: rgba(244, 236, 216, .12); color: var(--c-meter-ink); }
+  .sc-t { font-family: var(--font-zh); font-size: 12px; fill: var(--c-meter-ink); }
+  .sc-tb { font-family: var(--font-zh); font-size: 12px; font-weight: 800; fill: var(--c-meter-ink); }
+  .sc-m { font-family: var(--font-mono); font-size: 12px; fill: var(--c-meter-dim); }
+  .sc-hi { fill: var(--c-meter-ink); font-weight: 800; }
+  .sc-y { fill: var(--c-avg); }
+  .sc-o { fill: var(--c-trace2); }
+  .sc-g { fill: var(--c-trace); }
+  .sc-r { fill: #FF8A95; }
+  .sc-halo { paint-order: stroke; stroke: var(--c-meter-bg); stroke-width: 4px; stroke-linejoin: round; }
+  .sc-scl { stroke: var(--c-trace2); stroke-width: 2.4; fill: none; stroke-linejoin: round; }
+  .sc-sda { stroke: var(--c-trace); stroke-width: 2.4; fill: none; stroke-linejoin: round; }
+  .sc-cs { stroke: var(--c-avg); stroke-width: 2.4; fill: none; stroke-linejoin: round; }
+  .sc-miso { stroke: var(--c-meter-dim); stroke-width: 1.6; stroke-dasharray: 5 4; fill: none; }
+  .fut { opacity: .28; }
+  .sc-band { fill: rgba(244, 236, 216, .09); }
+  .sc-look { stroke: var(--c-avg); stroke-width: 1.4; stroke-dasharray: 3 3; }
+  .sc-dot2 { fill: var(--c-avg); }
+  .sc-play { stroke: #FFFFFF; stroke-width: 1.2; opacity: .6; }
+  .sc-br { stroke: var(--c-meter-ink); stroke-width: 1.2; fill: none; }
+  .chips2 { display: flex; flex-wrap: wrap; gap: 3px; padding: 1px 4px 0; min-height: 22px; align-items: center; }
+  .bchip { font-family: var(--font-mono); font-size: 12px; line-height: 1.35; color: var(--c-meter-dim); border: 1.5px solid rgba(244, 236, 216, .2); border-radius: 6px; padding: 0 5px; white-space: nowrap; }
+  .bchip .zh { font-family: var(--font-zh); }
+  .bchip.done { color: var(--c-meter-ink); border-color: rgba(244, 236, 216, .38); }
+  .bchip.cur { background: var(--c-avg); color: #1E2230; border-color: var(--c-avg); font-weight: 800; }
+  .bchip.bad { color: #FF8A95; border-color: #FF8A95; }
+  .bchip .ok { color: var(--c-trace); font-weight: 800; }
+  .bchip.cur .ok { color: #1F6B54; }
+  .bchip .no { color: #FF8A95; font-weight: 800; }
+  .stline { font-family: var(--font-zh); font-size: 12px; color: var(--c-meter-ink); padding: 0 2px; }
+  .stline b { color: var(--c-avg); font-family: var(--font-mono); }
+  .pbar { display: flex; flex-wrap: wrap; gap: 5px 10px; align-items: center; padding: 1px 4px 0; }
+  .pbtn { border: 1.5px solid rgba(244, 236, 216, .42); background: transparent; color: var(--c-meter-ink); border-radius: 8px; padding: 1px 10px; font-weight: 700; font-size: 12.5px; line-height: 1.5; }
+  .pbtn:hover { border-color: var(--c-avg); }
+  .pbtn[aria-pressed="true"] { background: var(--c-meter-ink); color: var(--c-meter-bg); }
+  .pspd { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--c-meter-dim); flex: 1 1 190px; min-width: 0; }
+  .pspd input { flex: 1 1 70px; min-width: 60px; accent-color: var(--c-trace2); }
+  .pspd output { font-family: var(--font-zh); color: var(--c-meter-ink); white-space: nowrap; min-width: 5.6em; }
+  .seg.dark { background: transparent; border-color: rgba(244, 236, 216, .32); border-width: 1.5px; }
+  .seg.dark button { color: var(--c-meter-dim); border-right-color: rgba(244, 236, 216, .32); border-right-width: 1.5px; padding: 1px 8px; font-size: 12px; }
+  .seg.dark button[aria-pressed="true"] { background: var(--c-meter-ink); color: var(--c-meter-bg); }
+
+  /* I2C：字、位元組表、螢幕、掃描表 */
+  .i2cgrid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px; align-items: start; }
+  .i2cgrid .oledwrap { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  @media (max-width: 560px) { .i2cgrid { grid-template-columns: minmax(0, 1fr); } }
+  .glyphbox { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .glyph { display: grid; grid-template-columns: 18px repeat(8, 18px); grid-auto-rows: 18px; gap: 2px; align-items: center; justify-items: center; }
+  .glyph .gh { font-family: var(--font-mono); color: var(--c-ink-faint); font-size: 12px; line-height: 1; }
+  .glyph .gh.hot { color: var(--c-primary-deep); font-weight: 800; }
+  .glyph .gc { width: 18px; height: 18px; border-radius: 3px; background: var(--c-line); }
+  .glyph .gc.on { background: var(--c-ink); }
+  .glyph .gc.col { box-shadow: inset 0 0 0 2px var(--c-primary); }
+  .glyph .gc.on.col { background: var(--c-primary-deep); }
+  .glyph .gc.bit { outline: 3px solid var(--c-avg); outline-offset: 0; }
+  .tblbox { overflow-x: auto; min-width: 0; }
+  table.bytes { border-collapse: collapse; font-size: 12.5px; width: 100%; }
+  table.bytes th, table.bytes td { padding: 1px 6px; border-bottom: 1px solid var(--c-line-soft); text-align: left; white-space: nowrap; }
+  table.bytes th { font-size: 12px; color: var(--c-ink-faint); font-weight: 700; }
+  table.bytes td.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  table.bytes td.bits span { display: inline-block; width: 1.15em; text-align: center; font-family: var(--font-mono); color: var(--c-ink-faint); border-radius: 3px; }
+  table.bytes td.bits span.one { color: var(--c-ink); font-weight: 800; }
+  table.bytes td.bits span.cur { background: var(--c-avg); color: #1E2230; font-weight: 800; }
+  table.bytes tr.cur td { background: var(--c-primary-tint); }
+  table.bytes tr.wait td { opacity: .5; }
+  table.bytes tr.skip td { color: var(--c-ink-faint); }
+  table.bytes td.ack { font-weight: 800; }
+  table.bytes td.ack.ok { color: var(--c-mint-deep); }
+  table.bytes td.ack.bad { color: var(--c-alert); }
+  table.bytes td.ack.cur { background: var(--c-avg); color: #1E2230; }
+  .scanwrap { overflow-x: auto; min-width: 0; }
+  table.scan { border-collapse: separate; border-spacing: 2px; font-family: var(--font-mono); font-size: 12px; }
+  table.scan th { color: var(--c-ink-faint); font-weight: 700; padding: 0 3px; text-align: center; }
+  table.scan td { width: 24px; height: 19px; text-align: center; border-radius: 4px; color: var(--c-ink-faint); background: var(--c-surface); border: 1px solid var(--c-line-soft); padding: 0; line-height: 17px; white-space: nowrap; }
+  table.scan td.x { background: transparent; border-color: transparent; }
+  table.scan td.cur { background: var(--c-avg); color: #1E2230; border-color: var(--c-avg); font-weight: 800; }
+  table.scan td.hit { background: var(--c-mint); color: var(--c-ink); border-color: var(--c-mint-deep); font-weight: 800; }
+  @media (max-width: 480px) { table.scan { border-spacing: 1px; } table.scan td { width: 16px; border: 0; } table.scan td.x { background: transparent; } table.scan th { padding: 0 1px; } }
+
+  /* 單線燈 */
+  .ledctl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  @media (max-width: 640px) { .ledctl { grid-template-columns: minmax(0, 1fr); } }
+  .ledgrp { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 3px 8px 4px; display: flex; flex-direction: column; gap: 0; min-width: 0; }
+  .ledgrp.sel { border-color: var(--c-primary); }
+  .lghead { display: flex; align-items: center; gap: 4px 6px; font-size: 12.5px; font-weight: 800; flex-wrap: wrap; }
+  .lghead .sw { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--c-pix-edge); flex: 0 0 auto; background: var(--c-pix-dark); }
+  .lghead .lv { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--c-ink-soft); }
+  .lghead .tag { font-size: 12px; font-weight: 800; color: var(--c-alert); }
+  .lgrow { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--c-ink-soft); min-width: 0; }
+  .lgrow label { flex: 0 0 auto; width: 2.6em; white-space: nowrap; }
+  .lgrow input { flex: 1 1 60px; min-width: 50px; margin: 0; }
+  .lgrow output { font-family: var(--font-mono); flex: 0 0 2.2em; text-align: right; color: var(--c-ink); }
+  .lgrow.r input { accent-color: var(--c-rch); }
+  .lgrow.g input { accent-color: var(--c-gch); }
+  .lgrow.b input { accent-color: var(--c-bch); }
+  .wbits { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .wrow { display: flex; align-items: center; gap: 3px 6px; flex-wrap: wrap; min-width: 0; }
+  .wrow .wl { font-size: 12px; font-weight: 800; flex: 0 0 auto; width: 3.4em; }
+  .wgrp { display: inline-flex; align-items: center; gap: 0; padding: 0 2px; border-radius: 5px; }
+  .wgrp.G { background: var(--c-gtint); }
+  .wgrp.R { background: var(--c-rtint); }
+  .wgrp.B { background: var(--c-btint); }
+  .wgrp .wt { font-family: var(--font-mono); font-size: 12px; font-weight: 800; margin-right: 2px; }
+  .wgrp.G .wt { color: var(--c-gch); }
+  .wgrp.R .wt { color: var(--c-rch); }
+  .wgrp.B .wt { color: var(--c-bch); }
+  .wc { font-family: var(--font-mono); font-size: 12px; width: 10px; text-align: center; color: var(--c-ink-faint); border-radius: 2px; line-height: 1.5; }
+  .wc.one { color: var(--c-ink); font-weight: 800; }
+  .wc.cur { background: var(--c-avg); color: #1E2230; }
+  .wc.wait { opacity: .4; }
+  @media (min-width: 700px) { .wc { width: 13px; } }
+  @media (max-width: 480px) { .wrow .wl { flex-basis: 100%; } .wc { width: 9px; } }
+
+  /* SPI */
+  .spitop { display: flex; gap: 8px 10px; align-items: flex-start; flex-wrap: wrap; }
+  .spileft { flex: 1 1 250px; min-width: 0; display: flex; flex-direction: column; gap: 7px; }
+  .mxwrap { flex: 0 1 auto; max-width: 392px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .mxwrap h3 { font-size: 13px; }
+  .mxbody { display: flex; gap: 8px; align-items: flex-start; }
+  .mxgrid { display: grid; grid-template-columns: repeat(8, 22px); grid-auto-rows: 22px; gap: 3px; background: var(--c-mx-bg); padding: 5px; border-radius: 8px; flex: 0 0 auto; }
+  .mxc { width: 22px; height: 22px; border-radius: 50%; border: 0; padding: 0; background: var(--c-mx-off); }
+  .mxc.on { background: var(--c-mx-on); box-shadow: 0 0 6px var(--c-mx-on); }
+  .mxc.want { box-shadow: inset 0 0 0 2px var(--c-avg); }
+  .mxc.on.want { box-shadow: inset 0 0 0 2px var(--c-avg), 0 0 6px var(--c-mx-on); }
+  .mxinfo { display: grid; grid-auto-rows: 22px; row-gap: 3px; padding-top: 5px; font-family: var(--font-mono); font-size: 12px; color: var(--c-ink-soft); }
+  .mxinfo div { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .mxinfo .rn { font-family: var(--font-zh); color: var(--c-ink-faint); }
+  .mxinfo div.cur { color: var(--c-primary-deep); font-weight: 800; }
+  .mxinfo .rh { display: none; }
+  @media (max-width: 480px) {
+    .mxgrid { grid-template-columns: repeat(8, 20px); grid-auto-rows: 20px; gap: 2px; }
+    .mxc { width: 20px; height: 20px; }
+    .mxinfo { grid-auto-rows: 20px; row-gap: 2px; }
+    .mxinfo .rn, .mxinfo .rb { display: none; }
+    .mxinfo .rh { display: inline; }
+  }
+  .pkt { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; font-size: 12.5px; min-width: 0; padding: 1px 4px 0; color: var(--c-meter-ink); }
+  .pkt .pl { font-weight: 800; font-family: var(--font-mono); }
+  .pkt .pd { font-size: 12px; color: var(--c-meter-dim); }
+  .pkt .pbits { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+  .pkt .pg { display: inline-flex; flex-direction: column; align-items: center; gap: 0; }
+  .pkt .pg .pc { display: inline-flex; gap: 1px; }
+  .pkt .pg .pc span { font-family: var(--font-mono); font-size: 12px; width: 15px; text-align: center; border-radius: 3px; background: rgba(244, 236, 216, .08); color: var(--c-meter-dim); }
+  .pkt .pg .pc span.one { color: var(--c-meter-ink); font-weight: 800; }
+  .pkt .pg .pc span.nu { opacity: .5; }
+  .pkt .pg .pc span.cur { background: var(--c-avg); color: #1E2230; opacity: 1; }
+  .pkt .pg small { font-size: 12px; color: var(--c-meter-dim); }
+
+  /* ===== 觀念卡、折疊區、卡片、表格 ===== */
+  .concepts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 12px; align-items: start; }
+  .ccard { background: var(--c-surface-2); border: 2px solid var(--c-line-soft); border-radius: 16px; padding: 10px 16px; display: block; min-width: 0; }
+  .ccard > summary { cursor: pointer; list-style: none; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .ccard > summary::-webkit-details-marker { display: none; }
+  .ccard > summary h3::after { content: "　＋"; font-size: 12px; font-weight: 600; color: var(--c-ink-faint); }
+  .ccard[open] > summary h3::after { content: "　－"; }
+  .ccard:not(.hot) > summary h3 { color: var(--c-ink-soft); }
+  .ccard.hot { background: var(--c-surface); border-color: var(--c-primary); box-shadow: 0 0 0 3px var(--c-primary-tint); }
+  .ccard .ccbody { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; min-width: 0; }
+  .ccard .tag { font-size: 12px; font-weight: 800; color: #FFF7F2; background: var(--c-primary); border-radius: 8px; padding: 1px 8px; }
+  .ccard h3 { font-size: 15px; line-height: 1.4; }
+  .ccard p, .ccard li { font-size: 13px; color: var(--c-ink-soft); }
+  .ccard b { color: var(--c-ink); }
+  .ccard ol, .ccard ul { margin: 0; padding-left: 1.5em; display: flex; flex-direction: column; gap: 4px; }
+  .en { color: var(--c-ink); }
+
+  .sect { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 14px; padding: 0 16px; min-width: 0; }
+  .sect > summary { cursor: pointer; font-size: 16px; font-weight: 800; padding: 12px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .sect > summary::-webkit-details-marker { display: none; }
+  .sect > summary::after { content: "展開 ＋"; font-size: 12px; font-weight: 600; color: var(--c-ink-faint); white-space: nowrap; }
+  .sect[open] > summary::after { content: "收起 －"; }
+  .sect[open] > summary { border-bottom: 2px solid var(--c-line-soft); margin-bottom: 14px; }
+  .sect > section { padding-bottom: 16px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+  .adv { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 6px 12px; min-width: 0; }
+  .adv > summary { cursor: pointer; font-weight: 800; font-size: 13px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .adv > summary::-webkit-details-marker { display: none; }
+  .adv > summary::after { content: "＋"; color: var(--c-ink-faint); }
+  .adv[open] > summary::after { content: "－"; }
+  .adv .inner { padding-top: 8px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .code { margin: 0; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 10px 12px; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; color: var(--c-code-ink); overflow-x: auto; white-space: pre; max-width: 100%; }
+  .copy { border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 8px; padding: 3px 10px; font-weight: 700; font-size: 12px; white-space: nowrap; }
+  .copy:hover { background: var(--c-primary-tint); }
+  .shared { display: flex; flex-direction: column; gap: 6px; }
+  .shared .codehead { font-size: 12.5px; color: var(--c-ink-soft); font-weight: 600; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: 14px; }
+  .card { background: var(--c-surface); border: 2px solid var(--c-line-soft); border-radius: 16px; padding: 14px 16px 13px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .card h3 { font-size: 15px; line-height: 1.4; }
+  .card p { font-size: 13px; color: var(--c-ink-soft); }
+  .card p b { color: var(--c-ink); }
+  .card .try { margin-top: auto; align-self: flex-start; border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 10px; padding: 5px 12px; font-weight: 700; font-size: 13px; }
+  .card .try:hover { background: var(--c-primary-tint); }
+  .card .btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .steps { margin: 0; padding-left: 1.3em; font-size: 13px; color: var(--c-ink-soft); }
+  .mono1 { font-family: var(--font-mono); font-size: 12px; background: var(--c-code-bg); border-radius: 5px; padding: 1px 5px; color: var(--c-code-ink); overflow-wrap: anywhere; white-space: pre-wrap; }
+  .tablewrap { overflow-x: auto; border: 2px solid var(--c-line); border-radius: 14px; max-width: 100%; }
+  table.facts { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 13px; }
+  table.facts th, table.facts td { text-align: left; padding: 8px 12px; border-bottom: 1.5px solid var(--c-line-soft); vertical-align: top; }
+  table.facts th { font-size: 12px; letter-spacing: .06em; color: var(--c-ink-faint); font-weight: 700; background: var(--c-surface-2); }
+  table.facts tr:last-child td { border-bottom: 0; }
+  table.facts th:first-child { white-space: nowrap; }
+  table.facts td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; }
+  table.facts td.id { font-family: var(--font-mono); font-weight: 800; color: var(--c-primary-deep); white-space: nowrap; }
+  table.facts tr.flash td { background: var(--c-yellow-tint); }
+  table.cmp { min-width: 880px; }
+  .simp { margin: 0; padding-left: 1.3em; font-size: 13px; color: var(--c-ink-soft); display: flex; flex-direction: column; gap: 3px; }
+  .foot { font-size: 12px; color: var(--c-ink-faint); border-top: 2px solid var(--c-line-soft); padding-top: 10px; display: flex; flex-direction: column; gap: 3px; }
+
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap"><div class="col">
+
+  <header class="appbar">
+    <div class="appbar-title">
+      <span class="kicker"><span class="dot"></span><span>創客入門 · 補充教材</span></span>
+      <h1>腳位怎麼講話實驗台</h1>
+      <span class="sub1">把一個字、一個顏色拆成一串 1 和 0——三種約定：I2C、單線燈、SPI</span>
+    </div>
+    <p class="oneline"><b>一支腳位一次只能說 1 或 0。要把「A」送進螢幕，就把它拆成一串 1 和 0，再約好：誰先講、在哪一刻看、一次幾個位元、聽的人怎麼回「收到」。</b>8 個位元排成一組，叫位元組（byte）。I2C 用兩條線：一條送資料，一條打拍子——打拍子的那條叫時脈（clock）；開頭先喊對方的位址（address），像喊門牌。SPI 用四條線，不喊門牌，改用一條晶片選擇（CS，chip select）線點名。單線燈只有一條線，靠高電位多長分 0 和 1，排隊的燈一顆吃掉一份、剩下的往下傳。</p>
+    <details class="about">
+      <summary>這一頁在做什麼</summary>
+      <p>上週學了一支腳位怎麼表達「多少」；這一頁學幾支腳位怎麼「說一句話」給另一顆晶片聽。三個分頁並排三種講法：① 兩條線的 I2C（套件的 OLED 小螢幕）、② 一條線的單線燈（套件的三顆 RGB 燈）、③ 四條線的 SPI（套件沒有，用 Wokwi 的 8×8 點陣對照）。左邊可以動、看慢動作波形，右邊是那一步對應的程式（亮的那一行）和序列埠印出來的字；每個分頁都配一支 Wokwi 程式，在下面的動手卡複製、貼上就能自己跑。</p>
+      <p>姊妹頁：〈<a href="../w05/adc-pwm.html?tab=link">讀旋鈕、調亮度實驗台</a>〉（第三頁「接起來」的旋鈕讀數，這週把它放上螢幕）、〈<a href="../w04/esp32-pin-xray.html?preset=basic">ESP32 腳位透視鏡</a>〉（腳位當輸出、輸入；I2C 兩條線「只拉低、一放手就靠上拉電阻回到 1」，在它的開汲極情境看過）</p>
+    </details>
+  </header>
+
+  <section class="bench" id="bench" aria-label="互動模擬實驗台">
+    <div class="tabbar">
+      <div class="tabs" role="tablist" aria-label="三個分頁：兩條線、一條線、四條線" id="tablist">
+        <button type="button" class="tab" role="tab" id="tb-i2c" data-tab="i2c" aria-selected="true" aria-controls="tp-i2c">① 兩條線<small>I2C・小螢幕</small></button>
+        <button type="button" class="tab" role="tab" id="tb-wire" data-tab="wire" aria-selected="false" aria-controls="tp-wire" tabindex="-1">② 一條線<small>單線 RGB 燈</small></button>
+        <button type="button" class="tab" role="tab" id="tb-spi" data-tab="spi" aria-selected="false" aria-controls="tp-spi" tabindex="-1">③ 四條線<small>SPI・點陣</small></button>
+      </div>
+      <p class="caption" id="caption">先喊位址，對方在第 9 拍回「收到」，才接著送。</p>
+    </div>
+
+    <div class="benchgrid">
+      <div class="labcol">
+
+        <!-- ① 兩條線：I2C -->
+        <div class="tabpanel" id="tp-i2c" role="tabpanel" aria-labelledby="tb-i2c">
+          <p class="lead">SDA 送資料、SCL 打拍子：SDA 只在 SCL 是 0 的時候換，SCL 變成 1 的那一刻，聽的人看一次。每送完一個位元組，被喊到的那顆在第 9 拍把 SDA 拉低，回一聲「收到」，叫確認（ACK）。</p>
+          <figure class="fig"><div class="sv" id="i2cBusBox"><svg id="i2cBus" role="img" aria-label="接線圖：ESP32 的 SDA、SCL 兩條線各接一顆上拉電阻到 3.3 V，再接到 OLED 小螢幕"></svg></div></figure>
+          <div class="ctlrow">
+            <button type="button" class="btn main" id="btnScan">掃描 <code>i2c.scan()</code></button>
+            <span class="charrow"><label for="inChar">送一個字</label><input type="text" id="inChar" maxlength="2" value="A" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="charHint"><button type="button" class="btn main" id="btnSend">送出</button></span>
+          </div>
+          <div class="togs">
+            <label class="tog"><input type="checkbox" id="chkWrong"> 位址打錯（螢幕改成 0x3D）</label>
+            <label class="tog"><input type="checkbox" id="chkOther"> 加一顆別的裝置（0x68，示意）</label>
+          </div>
+          <p class="tiny hint" id="charHint">送一個字：A–Z、0–9（小寫會換成大寫；這一頁只放了這些字的字型）。</p>
+          <figure class="scope">
+            <div class="chips2" id="i2cChips"></div>
+            <div class="sv" id="i2cWaveBox"><svg id="i2cWave" role="img" aria-label="慢動作波形：SCL 打拍子、SDA 送資料"></svg></div>
+            <figcaption id="i2cCap"></figcaption>
+            <div class="pbar" data-tab="i2c">
+              <button type="button" class="pbtn" data-pb="play" aria-pressed="false">暫停</button>
+              <button type="button" class="pbtn" data-pb="step" hidden>走一步</button>
+              <button type="button" class="pbtn" data-pb="skip">跳過慢動作</button>
+              <label class="pspd">慢動作<input type="range" min="1" max="30" step="1" value="5" data-pb="rate" aria-label="慢動作速度：每秒幾拍"><output data-pb="rateTxt">每秒 5 拍</output></label>
+              <div class="seg dark" role="group" aria-label="I2C 速度" id="segKbps"><button type="button" data-k="100" aria-pressed="false">100 kbit/s</button><button type="button" data-k="400" aria-pressed="true">400 kbit/s</button></div>
+            </div>
+          </figure>
+          <div class="widget" id="i2cSendBox">
+            <div class="i2cgrid">
+              <div class="glyphbox"><h3 id="glyphCap">「A」在 ESP32 記憶體裡</h3><div class="glyph" id="glyph" role="img" aria-label="8×8 點陣的字：8 欄，每欄 8 個點＝一個位元組"></div><p class="tiny">左邊＝第幾個位元（bit 0 在最上面，<a class="ref" href="#f-M7">M7</a>）；上面＝第幾欄。</p></div>
+              <div class="tblbox" id="byteTable"></div>
+              <div class="oledwrap"><h3>OLED 小螢幕 128×64：收到一欄，亮一欄</h3><div class="sv" id="oledBox"><svg id="oledSvg" role="img" aria-label="OLED 小螢幕 128×64 個點：收到的位元組一欄一欄亮起來"></svg></div><p class="tiny">虛線框＝左上角那 8 欄（第 0 頁、第 0–7 欄），這一頁把字放在這裡；一個位元組填一整欄 8 個點（<a class="ref" href="#f-P9">P9</a>）。</p></div>
+            </div>
+          </div>
+          <div class="widget" id="i2cScanBox" hidden>
+            <h3>掃描：從 0x08 喊到 0x77，每個位址喊一次（<a class="ref" href="#f-M2">M2</a>）</h3>
+            <div class="scanwrap"><table class="scan" id="scanGrid"></table></div>
+            <p class="tiny" id="scanCap"></p>
+          </div>
+          <p class="note"><b><code>oled.text()</code> 只是在 ESP32 自己的記憶體裡畫；<code>oled.show()</code> 才把整個畫面送過去</b>（<a class="ref" href="#f-M4">M4</a>）。所以程式先畫完、再 <code>show()</code> 一次就好。</p>
+          <p class="when" id="i2cWhen"></p>
+        </div>
+
+        <!-- ② 一條線：單線燈 -->
+        <div class="tabpanel" id="tp-wire" role="tabpanel" aria-labelledby="tb-wire" hidden>
+          <p class="lead">套件那三顆 RGB 燈（<a class="ref" href="#f-K2">K2</a>），每顆都能單獨指定顏色，叫可定址 RGB 燈（WS2812／NeoPixel）。只有一條資料線、沒有拍子：每位元 1.25 µs，高電位短是 0、長是 1。第一顆留下最前面 24 位元，其餘往下一顆傳。</p>
+          <figure class="fig"><div class="sv" id="wireChainBox"><svg id="wireChain" role="img" aria-label="三顆單線 RGB 燈串接：ESP32 的 GPIO26 接第 1 顆，第 1 顆接第 2 顆，第 2 顆接第 3 顆"></svg></div></figure>
+          <div class="ctlrow">
+            <div class="lockrow"><span>快選</span><div class="seg" role="group" aria-label="快選：照 04 的程式送一次" id="segQuick"><button type="button" data-q="same" aria-pressed="false">三顆同色<small>下一色</small></button><button type="button" data-q="rgb" aria-pressed="false">紅綠藍</button><button type="button" data-q="chain" aria-pressed="false">跑馬燈往下一顆</button></div></div>
+            <button type="button" class="btn main" id="btnWrite"><code>np.write()</code> 送出</button>
+            <label class="tog"><input type="checkbox" id="chkNoWrite"> 只改不 write()</label>
+          </div>
+          <div class="ledctl" id="ledCtl"></div>
+          <figure class="scope">
+            <div class="chips2" id="wireChips"></div>
+            <div class="sv" id="wireWaveBox"><svg id="wireWave" role="img" aria-label="慢動作波形：一條資料線，高電位短是 0、長是 1"></svg></div>
+            <figcaption id="wireCap"></figcaption>
+            <div class="pbar" data-tab="wire">
+              <button type="button" class="pbtn" data-pb="play" aria-pressed="false">暫停</button>
+              <button type="button" class="pbtn" data-pb="step" hidden>走一步</button>
+              <button type="button" class="pbtn" data-pb="skip">跳過慢動作</button>
+              <label class="pspd">慢動作<input type="range" min="1" max="30" step="1" value="8" data-pb="rate" aria-label="慢動作速度：每秒幾個位元"><output data-pb="rateTxt">每秒 8 位元</output></label>
+            </div>
+          </figure>
+          <div class="widget">
+            <h3>72 位元：每顆 24 位元，G、R、B 各 8 位元，高位先送（<a class="ref" href="#f-P10">P10</a>）</h3>
+            <div class="wbits" id="wireBits"></div>
+            <p class="tiny">你寫 (r, g, b)，驅動幫你排成 G、R、B 再送（<a class="ref" href="#f-M10">M10</a>）。黃色＝正在送的那一位；淡的＝還沒送到。</p>
+          </div>
+          <p class="note" id="wireNote"><b><code>np[i] = (r, g, b)</code> 只改 ESP32 記憶體裡的數字；<code>np.write()</code> 才把 72 位元送上線</b>（<a class="ref" href="#f-M9">M9</a>）。跟螢幕的 <code>show()</code> 是同一個道理。</p>
+        </div>
+
+        <!-- ③ 四條線：SPI -->
+        <div class="tabpanel" id="tp-spi" role="tabpanel" aria-labelledby="tb-spi" hidden>
+          <p class="lead">SPI 不喊位址：要跟誰講，就把它的 CS 拉低；SCK 打拍子、MOSI 一拍送一個位元。MAX7219 一次聽 16 位元：前 8 位元說「寫到哪一列」（其實只看後 4 位，最前面 4 位不用）、後 8 位元是那一列的 8 個點。<b>套件沒有 SPI 零件，這一頁在 Wokwi 做</b>（<a class="ref" href="#f-K3">K3</a>）。</p>
+          <div class="spitop">
+            <div class="spileft">
+              <figure class="fig"><div class="sv" id="spiBusBox"><svg id="spiBus" role="img" aria-label="接線圖：ESP32 的 SCK、MOSI、MISO、CS 四條線接到 MAX7219 點陣模組；MISO 這顆用不到"></svg></div></figure>
+              <div class="ctlrow">
+                <button type="button" class="btn main" id="btnInit">開機先送五個設定</button>
+                <button type="button" class="btn" id="btnClear">清空</button>
+                <div class="lockrow"><span>送一張圖</span><div class="seg" role="group" aria-label="05 裡的三張圖" id="segPic"></div></div>
+              </div>
+            </div>
+            <div class="mxwrap">
+              <h3>8×8 點陣：點格子開或關</h3>
+              <div class="mxbody"><div class="mxgrid" id="mxGrid"></div><div class="mxinfo" id="mxInfo"></div></div>
+              <p class="tiny">虛線圈＝改了、還沒送到。右邊：那一列的 8 個點 → 封包（列號 &lt;&lt; 8 | 資料）。</p>
+            </div>
+          </div>
+          <figure class="scope">
+            <div class="pkt" id="spiPkt"></div>
+            <div class="sv" id="spiWaveBox"><svg id="spiWave" role="img" aria-label="慢動作波形：CS 拉低、SCK 打 16 拍、MOSI 一拍一個位元、CS 拉高"></svg></div>
+            <figcaption id="spiCap"></figcaption>
+            <div class="pbar" data-tab="spi">
+              <button type="button" class="pbtn" data-pb="play" aria-pressed="false">暫停</button>
+              <button type="button" class="pbtn" data-pb="step" hidden>走一步</button>
+              <button type="button" class="pbtn" data-pb="skip">跳過慢動作</button>
+              <label class="pspd">慢動作<input type="range" min="1" max="30" step="1" value="5" data-pb="rate" aria-label="慢動作速度：每秒幾拍"><output data-pb="rateTxt">每秒 5 拍</output></label>
+            </div>
+          </figure>
+          <p class="when"><b>三種講法怎麼挑對象：</b>I2C 靠位址挑人、SPI 靠 CS 那條線挑人、單線燈靠排隊的位置。</p>
+        </div>
+      </div>
+
+      <div class="codecol">
+        <div class="codehead"><span class="fn" id="codeName">02-oled-hello／main.py</span><span>亮的那一行＝正在跑；淡黃＝剛剛跑過</span></div>
+        <div class="codeview" id="codeView" tabindex="0" role="region" aria-label="程式碼：正在執行的那一行會亮"></div>
+        <div class="codenote" id="codeNote"></div>
+        <div class="runbar" id="runbar"><span id="runTxt"></span></div>
+        <div class="serial" id="serialBox">
+          <div class="sh"><span>序列埠印出來的字（照程式的 print() 印）</span><span>共 <b id="serN">0</b> 行</span></div>
+          <div id="serialRows"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="concepts" aria-label="三個觀念，跟著上面的分頁換">
+    <details class="ccard" id="cc-i2c" open>
+      <summary><span class="tag" hidden>這個分頁在講這個</span><h3>先喊位址，對方回「收到」</h3></summary>
+      <div class="ccbody">
+        <p>兩條線上可以掛好幾顆裝置，每顆有自己的 7 位元位址（套件的螢幕是 0x3C，<a class="ref" href="#f-P7">P7</a>）。開頭先送「位址＋寫」這一個位元組：0x3C 往左移一位、最後補一個 0（寫）＝<b>0x78</b>（<a class="ref" href="#f-P4">P4</a>）。</p>
+        <p>每個位元組 8 位元、最高位先送（<a class="ref" href="#f-P5b">P5b</a>），後面第 9 拍是確認：被喊到的那顆把 SDA 拉低（<a class="ref" href="#f-P5">P5</a>）。沒人拉低，ESP32 就知道沒人在，發「結束」、後面不送了。</p>
+        <details class="adv"><summary><span>想看原理</span></summary><div class="inner">
+          <p><code>i2c.scan()</code> 就是把 0x08 到 0x77 每個位址都喊一次：誰在位址後面把 SDA 拉低，就記進清單（<a class="ref" href="#f-M2">M2</a>）。開始是「SCL 是 1 時 SDA 從 1 掉到 0」、結束是「SCL 是 1 時 SDA 從 0 升回 1」（<a class="ref" href="#f-P3">P3</a>）；兩條線閒著的時候都是 1（<a class="ref" href="#f-P2">P2</a>）。</p>
+          <p>送畫面時，位址後面先跟一個控制位元組 0x40，告訴螢幕「後面是畫面資料」（0x00 則是「後面是指令」，<a class="ref" href="#f-P8">P8</a>）。</p>
+        </div></details>
+      </div>
+    </details>
+    <details class="ccard" id="cc-wire">
+      <summary><span class="tag" hidden>這個分頁在講這個</span><h3>高電位多長就是 0 或 1；排隊吃位元組</h3></summary>
+      <div class="ccbody">
+        <p>沒有拍子線，就約好時間：800 Kbps，每位元約 1.25 µs（<a class="ref" href="#f-P11">P11</a>）。驅動送 0＝高 0.40 µs＋低 0.85 µs、送 1＝高 0.80 µs＋低 0.45 µs（<a class="ref" href="#f-M10">M10</a>）。</p>
+        <p>一顆燈 24 位元，順序 G、R、B，高位先（<a class="ref" href="#f-P10">P10</a>）。三顆串著：第一顆留下最前面 24 位元，其餘整理好從 DOUT 送給下一顆（<a class="ref" href="#f-P12">P12</a>）。所以你寫的順序，就是燈排隊的順序。</p>
+        <details class="adv"><summary><span>想看原理</span></summary><div class="inner">
+          <p>72 位元送完，線上保持低電位 ≥ 50 µs，三顆才一起換成新顏色（<a class="ref" href="#f-P11">P11</a>）。在那之前，燈維持上一次的顏色。</p>
+          <p><code>np[0] = (255, 0, 0)</code> 只改記憶體；<code>np.write()</code> 才送（<a class="ref" href="#f-M9">M9</a>）。你寫 R G B，驅動用 <code>ORDER = (1, 0, 2, 3)</code> 排成 G R B（<a class="ref" href="#f-M10">M10</a>）。</p>
+        </div></details>
+      </div>
+    </details>
+    <details class="ccard" id="cc-spi">
+      <summary><span class="tag" hidden>這個分頁在講這個</span><h3>CS 拉低才聽，拉高才算</h3></summary>
+      <div class="ccbody">
+        <p>SPI 沒有位址：每顆一條 CS，要跟哪一顆講，就把它的 CS 拉低、其他顆放高（<a class="ref" href="#f-P13">P13</a>）。</p>
+        <p>MAX7219 一次收 16 位元、D15 先送：D8–D11 是暫存器位址、D0–D7 是資料；CS 拉高那一刻才把這 16 位元鎖進去（<a class="ref" href="#f-P14">P14</a>）。第 1–8 列的位址就是 0x1–0x8（<a class="ref" href="#f-P15">P15</a>）。</p>
+        <details class="adv"><summary><span>想看原理</span></summary><div class="inner">
+          <p>一上電，MAX7219 是關機、全暗的（<a class="ref" href="#f-P15">P15</a>），所以 05 開機先寫五個設定：關機暫存器寫 1、不解碼、八列都掃、亮度、關掉顯示測試。按實驗台③的「開機先送五個設定」看這五個封包。</p>
+        </div></details>
+      </div>
+    </details>
+  </section>
+
+  <details class="sect">
+  <summary>I2C、單線燈、SPI 對照表</summary>
+  <section aria-label="三種講法對照">
+    <div class="tablewrap">
+      <table class="facts cmp">
+        <thead><tr><th>哪一種</th><th>幾條線</th><th>誰打拍子</th><th>怎麼挑對象</th><th>一次送幾位元</th><th>速度</th><th>套件上誰用</th><th>MicroPython 一行</th><th>Wokwi 能不能做</th></tr></thead>
+        <tbody>
+          <tr><td><b>I2C</b></td><td>2 條：SDA 資料、SCL 時脈（<a class="ref" href="#f-P1">P1</a>）</td><td>ESP32 在 SCL 上打</td><td>開頭先喊 7 位元位址，被喊到的在第 9 拍回「收到」（<a class="ref" href="#f-P4">P4</a>、<a class="ref" href="#f-P5">P5</a>）</td><td>每個位元組 8 位元＋1 拍確認</td><td>標準 100 kbit/s、快速 400 kbit/s（<a class="ref" href="#f-P6">P6</a>）</td><td>OLED 小螢幕 0x3C：SDA 21、SCL 22（<a class="ref" href="#f-K1">K1</a>）</td><td><code>i2c = I2C(0, scl=Pin(22), sda=Pin(21), freq=400000)</code>、<code>i2c.scan()</code></td><td>可以（01–03）；Wokwi 的 ESP32 只能當開口喊人的那一方，不支援 10 位元位址（<a class="ref" href="#f-W5">W5</a>）</td></tr>
+          <tr><td><b>單線燈</b></td><td>1 條資料線（另接電源、接地）</td><td>沒有拍子線：約好每位元 1.25 µs，看高電位多長（<a class="ref" href="#f-P11">P11</a>、<a class="ref" href="#f-M10">M10</a>）</td><td>不挑：排隊。第一顆留前 24 位元，其餘往下傳（<a class="ref" href="#f-P12">P12</a>）</td><td>一顆 24 位元（G R B 各 8），三顆 72 位元（<a class="ref" href="#f-P10">P10</a>）</td><td>800 Kbps（<a class="ref" href="#f-P11">P11</a>）</td><td>三顆 RGB 燈串在 GPIO26（<a class="ref" href="#f-K2">K2</a>）</td><td><code>np = neopixel.NeoPixel(Pin(26), 3)</code>、<code>np[0] = (255, 0, 0)</code>、<code>np.write()</code></td><td>可以（04）；上一顆 DOUT 接下一顆 DIN（<a class="ref" href="#f-W2">W2</a>、<a class="ref" href="#f-W5">W5</a>）</td></tr>
+          <tr><td><b>SPI</b></td><td>4 條：SCK 時脈、MOSI 送出、MISO 收回、CS 晶片選擇（<a class="ref" href="#f-P13">P13</a>）</td><td>ESP32 在 SCK 上打</td><td>沒有位址：每顆一條 CS，拉低的那顆才聽（<a class="ref" href="#f-P13">P13</a>）</td><td>MAX7219 一次 16 位元，CS 拉高那一刻才算（<a class="ref" href="#f-P14">P14</a>）</td><td>MAX7219 時脈最高 10 MHz（<a class="ref" href="#f-P14">P14</a>）；05 用 1 MHz</td><td>套件沒有 SPI 零件（<a class="ref" href="#f-K3">K3</a>）</td><td><code>spi = SPI(1, baudrate=1000000, polarity=0, phase=0, sck=Pin(27), mosi=Pin(4), miso=Pin(32))</code></td><td>可以（05，8×8 點陣，<a class="ref" href="#f-W3">W3</a>、<a class="ref" href="#f-W5">W5</a>）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  </details>
+
+  <details class="sect" id="sectWokwi">
+  <summary>在 Wokwi 上自己跑一次（五個專案）</summary>
+  <section aria-label="Wokwi 動手做">
+    <p class="muted">上面的實驗台是畫給你看的慢動作，真正的手感要自己跑。五個專案用同一張電路圖（模擬版的套件：OLED 小螢幕、三顆 RGB 燈、旋鈕，再加一片套件沒有的 8×8 點陣），只換 <span class="mono1">main.py</span>：</p>
+    <ol class="steps">
+      <li>開新專案：<span class="mono1">wokwi.com/projects/new/micropython-esp32</span></li>
+      <li>點 <span class="mono1">diagram.json</span> 分頁，全選、貼上（覆蓋原本的內容）</li>
+      <li>點 <span class="mono1">main.py</span> 分頁，全選、貼上，按綠色播放鍵，等序列埠開始印字</li>
+    </ol>
+    <p class="note">02、03 要用螢幕驅動：Wokwi 的 MicroPython 沒有內建 ssd1306 模組（<a class="ref" href="#f-M5">M5</a>），所以官方驅動已經整段貼在這兩支 <span class="mono1">main.py</span> 的最上面（MIT 授權，出處寫在程式開頭）。<b>一樣只要貼這兩個檔，不用另外加檔。</b></p>
+    <div class="shared">
+      <div class="codehead"><span>五個專案共用的 diagram.json：OLED 小螢幕 SDA 21（板面 IO18）、SCL 22（IO17），位址 0x3c；三顆單線 RGB 燈串在 GPIO26（IO16）；8×8 點陣 CLK 27、DIN 4、CS 17（套件沒有，<a class="ref" href="#f-K3">K3</a>）；旋鈕 GPIO34（03 用）；紅燈 GPIO16（這週沒用到）</span><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button></div>
+      <details class="adv"><summary><span>看一眼 diagram.json</span></summary><div class="inner">
+        <pre class="code" id="cdj">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "board-ssd1306", "id": "oled", "top": -100, "left": 360, "attrs": { "i2cAddress": "0x3c" } },
+    { "type": "wokwi-led", "id": "led_r", "top": 150, "left": 330, "attrs": { "color": "red", "label": "紅 16" } },
+    { "type": "wokwi-resistor", "id": "r_r", "top": 186, "left": 420, "attrs": { "value": "220" } },
+    { "type": "wokwi-max7219-matrix", "id": "matrix", "top": 250, "left": -20, "attrs": { "chain": "1", "color": "red", "layout": "parola" } },
+    { "type": "wokwi-neopixel", "id": "rgb1", "top": 150, "left": -50, "attrs": {} },
+    { "type": "wokwi-neopixel", "id": "rgb2", "top": 150, "left": -90, "attrs": {} },
+    { "type": "wokwi-neopixel", "id": "rgb3", "top": 150, "left": -130, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot", "top": -40, "left": -170, "attrs": { "value": "512" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:GND.2", "oled:GND", "black", [ "h219.24", "v-138.8", "h78.17" ] ],
+    [ "esp:3V3", "oled:VCC", "red", [ "h-10", "v-162.8", "h413.01" ] ],
+    [ "esp:22", "oled:SCL", "cyan", [ "h399.24", "v-166", "h-82.93" ] ],
+    [ "esp:21", "oled:SDA", "blue", [ "h409.24", "v-202.8", "h-83.1" ] ],
+    [ "esp:16", "led_r:A", "orange", [] ],
+    [ "led_r:C", "r_r:1", "black", [] ],
+    [ "esp:GND.3", "r_r:2", "black", [] ],
+    [ "esp:4", "matrix:DIN", "green", [ "h19.24", "v143.8" ] ],
+    [ "esp:17", "matrix:CS", "gold", [ "h29.24", "v172.6" ] ],
+    [ "esp:GND.1", "matrix:GND", "black", [ "h-16", "v196.4", "h81.39", "v-71.8" ] ],
+    [ "esp:5V", "matrix:V+", "red", [ "h-8", "v30.4", "h94.78" ] ],
+    [ "esp:27", "matrix:CLK", "violet", [ "h75.39", "v182.2" ] ],
+    [ "esp:26", "rgb1:DIN", "magenta", [] ],
+    [ "rgb1:DOUT", "rgb2:DIN", "magenta", [] ],
+    [ "rgb2:DOUT", "rgb3:DIN", "magenta", [] ],
+    [ "esp:GND.1", "rgb1:VSS", "black", [ "h-20", "v10.4" ] ],
+    [ "rgb2:VSS", "rgb1:VSS", "black", [ "v8", "h40" ] ],
+    [ "rgb3:VSS", "rgb2:VSS", "black", [ "v8", "h40" ] ],
+    [ "pot:VCC", "rgb3:VDD", "red", [ "v117" ] ],
+    [ "rgb3:VDD", "rgb2:VDD", "red", [ "v-8", "h40" ] ],
+    [ "rgb2:VDD", "rgb1:VDD", "red", [ "v-8", "h40" ] ],
+    [ "esp:3V3", "pot:VCC", "red", [] ],
+    [ "esp:34", "pot:SIG", "limegreen", [] ],
+    [ "pot:GND", "rgb3:VSS", "black", [ "v143.5", "h32" ] ]
+  ],
+  "dependencies": {}
+}
+</pre>
+      </div></details>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h3>01 掃描：兩條線上有誰</h3>
+        <p><b>要做什麼：</b><span class="mono1">I2C(0, scl=Pin(22), sda=Pin(21), freq=400000)</span>，每 2 秒 <span class="mono1">scan()</span> 一次，印出找到幾顆、每顆的位址。</p>
+        <p><b>跑起來會看到：</b>序列埠先印一行標題 <span class="mono1">I2C 掃描：SCL=GPIO22／SDA=GPIO21，每 2 秒掃一次</span>，接著每 2 秒一次 <span class="mono1">第 N 次掃描，找到 1 顆裝置</span>＋<span class="mono1">  位址 hex 0x3c = dec 60</span>（實跑，<a class="ref" href="#f-W6">W6</a>）。0x3c 和 60 是同一個數，一個是十六進位、一個是十進位。</p>
+        <p><b>試著改：</b>diagram.json 裡螢幕的 <span class="mono1">"i2cAddress": "0x3c"</span> 改成 <span class="mono1">"0x3d"</span> 再跑，印出來的位址變成什麼？（實驗台①勾「位址打錯」，按掃描看看。）</p>
+        <div class="btns"><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button type="button" class="copy" data-copy="c01m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c01m">
+# 01 I2C 掃描：兩條線上有誰？
+# I2C 只用兩條線（SCL 時脈、SDA 資料），一條線上可以掛很多顆裝置，
+# 每顆裝置有自己的位址（7 位元，像門牌號碼）。ESP32 講話時先喊門牌，被喊到的那顆才回應。
+# scan() 就是把 0x08 到 0x77 每個門牌都喊一遍，有人回「在」就記下來——螢幕都還沒畫，先確認它聽得到。
+from machine import Pin, I2C
+import time
+
+# ESP32 的 I2C 可以指定任何一對腳位；套件 OLED 接 SCL=GPIO22（板面 IO17）、SDA=GPIO21（板面 IO18）
+i2c = I2C(0, scl=Pin(22), sda=Pin(21), freq=400000)   # 400 kHz＝「快速模式」，OLED 吃得下
+
+n = 0
+print('I2C 掃描：SCL=GPIO22／SDA=GPIO21，每 2 秒掃一次')
+while True:
+    n = n + 1
+    found = i2c.scan()                 # 回一串整數位址，沒人回應就是空的
+    print('第', n, '次掃描，找到', len(found), '顆裝置')
+    for addr in found:
+        # 同一個位址印兩種寫法：資料手冊都寫十六進位 hex（0x3c），程式裡比大小用十進位 dec（60）
+        # ⚠️ print 字串故意用英文 hex／dec：Wokwi 序列埠會把「進」「值」「、」這些字靜靜吃掉
+        print('  位址 hex', hex(addr), '= dec', addr)
+    time.sleep(2)
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>02 OLED 說哈囉</h3>
+        <p><b>要做什麼：</b>畫三行字、一個外框、一條線，還有一個每秒加 1 的計數；全部畫完才 <span class="mono1">oled.show()</span> 一次送出去。</p>
+        <p><b>跑起來會看到：</b>螢幕上三行字 <span class="mono1">Hello, NDHU</span>、<span class="mono1">Maker Intro W6</span>、<span class="mono1">count:</span>（每秒加 1），外面一個框、底下一條線；序列埠先印一行標題，接著每秒一行 <span class="mono1">畫面更新第 1 次</span>、<span class="mono1">畫面更新第 2 次</span>……（實跑，<a class="ref" href="#f-W6">W6</a>）</p>
+        <p><b>試著改：</b>把 <span class="mono1">oled.show()</span> 那一行前面加 <span class="mono1">#</span>（變成註解）再跑：序列埠照樣每秒印一行，螢幕還會變嗎？</p>
+        <div class="btns"><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button type="button" class="copy" data-copy="c02m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c02m">
+# ===== 以下整段是 MicroPython 官方 ssd1306 驅動（micropython-lib，MIT 授權），原封不動貼進來 =====
+# 來源：https://github.com/micropython/micropython-lib/blob/master/micropython/drivers/display/ssd1306/ssd1306.py
+# 為什麼要貼：Wokwi 的 ESP32 MicroPython 韌體（v1.28.0，2026-09-26 探針實測）沒有內建 ssd1306 模組（import 會 ImportError），
+# 學生只貼 main.py 與 diagram.json 兩份檔，所以驅動直接放在程式最上面。真板要用也是同一份。
+# 授權：The MIT License (MIT). Copyright (c) 2013-2024 Damien P. George and contributors.
+#   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+#   associated documentation files, to deal in the Software without restriction (see micropython-lib LICENSE).
+
+# MicroPython SSD1306 OLED driver, I2C and SPI interfaces
+
+from micropython import const
+import framebuf
+
+
+# register definitions
+SET_CONTRAST = const(0x81)
+SET_ENTIRE_ON = const(0xA4)
+SET_NORM_INV = const(0xA6)
+SET_DISP = const(0xAE)
+SET_MEM_ADDR = const(0x20)
+SET_COL_ADDR = const(0x21)
+SET_PAGE_ADDR = const(0x22)
+SET_DISP_START_LINE = const(0x40)
+SET_SEG_REMAP = const(0xA0)
+SET_MUX_RATIO = const(0xA8)
+SET_IREF_SELECT = const(0xAD)
+SET_COM_OUT_DIR = const(0xC0)
+SET_DISP_OFFSET = const(0xD3)
+SET_COM_PIN_CFG = const(0xDA)
+SET_DISP_CLK_DIV = const(0xD5)
+SET_PRECHARGE = const(0xD9)
+SET_VCOM_DESEL = const(0xDB)
+SET_CHARGE_PUMP = const(0x8D)
+
+
+# Subclassing FrameBuffer provides support for graphics primitives
+# http://docs.micropython.org/en/latest/pyboard/library/framebuf.html
+class SSD1306(framebuf.FrameBuffer):
+    def __init__(self, width, height, external_vcc):
+        self.width = width
+        self.height = height
+        self.external_vcc = external_vcc
+        self.pages = self.height // 8
+        self.buffer = bytearray(self.pages * self.width)
+        super().__init__(self.buffer, self.width, self.height, framebuf.MONO_VLSB)
+        self.init_display()
+
+    def init_display(self):
+        for cmd in (
+            SET_DISP,  # display off
+            # address setting
+            SET_MEM_ADDR,
+            0x00,  # horizontal
+            # resolution and layout
+            SET_DISP_START_LINE,  # start at line 0
+            SET_SEG_REMAP | 0x01,  # column addr 127 mapped to SEG0
+            SET_MUX_RATIO,
+            self.height - 1,
+            SET_COM_OUT_DIR | 0x08,  # scan from COM[N] to COM0
+            SET_DISP_OFFSET,
+            0x00,
+            SET_COM_PIN_CFG,
+            0x02 if self.width &gt; 2 * self.height else 0x12,
+            # timing and driving scheme
+            SET_DISP_CLK_DIV,
+            0x80,
+            SET_PRECHARGE,
+            0x22 if self.external_vcc else 0xF1,
+            SET_VCOM_DESEL,
+            0x30,  # 0.83*Vcc
+            # display
+            SET_CONTRAST,
+            0xFF,  # maximum
+            SET_ENTIRE_ON,  # output follows RAM contents
+            SET_NORM_INV,  # not inverted
+            SET_IREF_SELECT,
+            0x30,  # enable internal IREF during display on
+            # charge pump
+            SET_CHARGE_PUMP,
+            0x10 if self.external_vcc else 0x14,
+            SET_DISP | 0x01,  # display on
+        ):  # on
+            self.write_cmd(cmd)
+        self.fill(0)
+        self.show()
+
+    def poweroff(self):
+        self.write_cmd(SET_DISP)
+
+    def poweron(self):
+        self.write_cmd(SET_DISP | 0x01)
+
+    def contrast(self, contrast):
+        self.write_cmd(SET_CONTRAST)
+        self.write_cmd(contrast)
+
+    def invert(self, invert):
+        self.write_cmd(SET_NORM_INV | (invert &amp; 1))
+
+    def rotate(self, rotate):
+        self.write_cmd(SET_COM_OUT_DIR | ((rotate &amp; 1) &lt;&lt; 3))
+        self.write_cmd(SET_SEG_REMAP | (rotate &amp; 1))
+
+    def show(self):
+        x0 = 0
+        x1 = self.width - 1
+        if self.width != 128:
+            # narrow displays use centred columns
+            col_offset = (128 - self.width) // 2
+            x0 += col_offset
+            x1 += col_offset
+        self.write_cmd(SET_COL_ADDR)
+        self.write_cmd(x0)
+        self.write_cmd(x1)
+        self.write_cmd(SET_PAGE_ADDR)
+        self.write_cmd(0)
+        self.write_cmd(self.pages - 1)
+        self.write_data(self.buffer)
+
+
+class SSD1306_I2C(SSD1306):
+    def __init__(self, width, height, i2c, addr=0x3C, external_vcc=False):
+        self.i2c = i2c
+        self.addr = addr
+        self.temp = bytearray(2)
+        self.write_list = [b"\x40", None]  # Co=0, D/C#=1
+        super().__init__(width, height, external_vcc)
+
+    def write_cmd(self, cmd):
+        self.temp[0] = 0x80  # Co=1, D/C#=0
+        self.temp[1] = cmd
+        self.i2c.writeto(self.addr, self.temp)
+
+    def write_data(self, buf):
+        self.write_list[1] = buf
+        self.i2c.writevto(self.addr, self.write_list)
+
+
+class SSD1306_SPI(SSD1306):
+    def __init__(self, width, height, spi, dc, res, cs, external_vcc=False):
+        self.rate = 10 * 1024 * 1024
+        dc.init(dc.OUT, value=0)
+        res.init(res.OUT, value=0)
+        cs.init(cs.OUT, value=1)
+        self.spi = spi
+        self.dc = dc
+        self.res = res
+        self.cs = cs
+        import time
+
+        self.res(1)
+        time.sleep_ms(1)
+        self.res(0)
+        time.sleep_ms(10)
+        self.res(1)
+        super().__init__(width, height, external_vcc)
+
+    def write_cmd(self, cmd):
+        self.spi.init(baudrate=self.rate, polarity=0, phase=0)
+        self.cs(1)
+        self.dc(0)
+        self.cs(0)
+        self.spi.write(bytearray([cmd]))
+        self.cs(1)
+
+    def write_data(self, buf):
+        self.spi.init(baudrate=self.rate, polarity=0, phase=0)
+        self.cs(1)
+        self.dc(1)
+        self.cs(0)
+        self.spi.write(buf)
+        self.cs(1)
+
+# ---------- 以上是驅動，以下才是本週的程式 ----------
+# 02 OLED 說哈囉：三行字、一個外框、一條線、一個每秒 +1 的計數
+# 螢幕其實是一塊 128×64 的「記憶體畫布」（framebuf）：fill／text／rect／line 都只是改記憶體，
+# 要到 show() 那一刻，驅動才把 1024 個位元組透過 I2C 一次送進螢幕。所以「先畫完、再 show」一次就好。
+from machine import Pin, I2C
+import time
+
+i2c = I2C(0, scl=Pin(22), sda=Pin(21), freq=400000)   # 套件 OLED：SCL=GPIO22（IO17）、SDA=GPIO21（IO18）
+oled = SSD1306_I2C(128, 64, i2c)                       # 位址預設 0x3c，跟 01 掃到的一樣
+
+n = 0
+print('OLED 開始畫：三行字＋外框＋一條線，每秒更新')
+while True:
+    n = n + 1
+    oled.fill(0)                          # 先把畫布清成全黑（0＝滅、1＝亮）
+    oled.rect(0, 0, 128, 64, 1)           # 外框：從 (0,0) 起、寬 128 高 64 的矩形，只畫邊
+    oled.text('Hello, NDHU', 8, 8)        # 內建字型固定 8×8，一行最多 16 個字元
+    oled.text('Maker Intro W6', 8, 22)
+    oled.text('count: ' + str(n), 8, 36)  # 數字要先轉成字串才能畫
+    oled.line(8, 52, 119, 52, 1)          # 一條橫線，當底線
+    oled.show()                           # 到這一刻才真的送進螢幕
+    print('畫面更新第', n, '次')
+    time.sleep(1)
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>03 旋鈕上螢幕</h3>
+        <p><b>要做什麼：</b>讀旋鈕（GPIO34），螢幕上顯示讀數，再畫一條跟著讀數變長的橫條：<span class="mono1">rect()</span> 最後多給一個 <span class="mono1">True</span> 就塗滿（<a class="ref" href="#f-M6">M6</a>）。</p>
+        <p><b>跑起來會看到：</b>螢幕上 <span class="mono1">ADC GPIO34</span>、<span class="mono1">raw: …</span> 兩行字，下面一個框、框裡一條橫條；序列埠每秒一行，旋鈕在中間（預設）時是 <span class="mono1">ADC 讀數 2050 ｜橫條長度 60 點</span>。實跑五個位置：旋鈕 0／256／512／768／1023 → raw 0／1025／2050／3074／4095 → 橫條 0／30／60／90／120 點（<a class="ref" href="#f-W6">W6</a>）。</p>
+        <p><b>試著改：</b><span class="mono1">BAR_W = 120</span> 改成 <span class="mono1">60</span>，旋鈕轉到底，橫條停在哪裡？</p>
+        <div class="btns"><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button type="button" class="copy" data-copy="c03m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c03m">
+# ===== 以下整段是 MicroPython 官方 ssd1306 驅動（micropython-lib，MIT 授權），原封不動貼進來 =====
+# 來源：https://github.com/micropython/micropython-lib/blob/master/micropython/drivers/display/ssd1306/ssd1306.py
+# 為什麼要貼：Wokwi 的 ESP32 MicroPython 韌體（v1.28.0，2026-09-26 探針實測）沒有內建 ssd1306 模組（import 會 ImportError），
+# 學生只貼 main.py 與 diagram.json 兩份檔，所以驅動直接放在程式最上面。真板要用也是同一份。
+# 授權：The MIT License (MIT). Copyright (c) 2013-2024 Damien P. George and contributors.
+#   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+#   associated documentation files, to deal in the Software without restriction (see micropython-lib LICENSE).
+
+# MicroPython SSD1306 OLED driver, I2C and SPI interfaces
+
+from micropython import const
+import framebuf
+
+
+# register definitions
+SET_CONTRAST = const(0x81)
+SET_ENTIRE_ON = const(0xA4)
+SET_NORM_INV = const(0xA6)
+SET_DISP = const(0xAE)
+SET_MEM_ADDR = const(0x20)
+SET_COL_ADDR = const(0x21)
+SET_PAGE_ADDR = const(0x22)
+SET_DISP_START_LINE = const(0x40)
+SET_SEG_REMAP = const(0xA0)
+SET_MUX_RATIO = const(0xA8)
+SET_IREF_SELECT = const(0xAD)
+SET_COM_OUT_DIR = const(0xC0)
+SET_DISP_OFFSET = const(0xD3)
+SET_COM_PIN_CFG = const(0xDA)
+SET_DISP_CLK_DIV = const(0xD5)
+SET_PRECHARGE = const(0xD9)
+SET_VCOM_DESEL = const(0xDB)
+SET_CHARGE_PUMP = const(0x8D)
+
+
+# Subclassing FrameBuffer provides support for graphics primitives
+# http://docs.micropython.org/en/latest/pyboard/library/framebuf.html
+class SSD1306(framebuf.FrameBuffer):
+    def __init__(self, width, height, external_vcc):
+        self.width = width
+        self.height = height
+        self.external_vcc = external_vcc
+        self.pages = self.height // 8
+        self.buffer = bytearray(self.pages * self.width)
+        super().__init__(self.buffer, self.width, self.height, framebuf.MONO_VLSB)
+        self.init_display()
+
+    def init_display(self):
+        for cmd in (
+            SET_DISP,  # display off
+            # address setting
+            SET_MEM_ADDR,
+            0x00,  # horizontal
+            # resolution and layout
+            SET_DISP_START_LINE,  # start at line 0
+            SET_SEG_REMAP | 0x01,  # column addr 127 mapped to SEG0
+            SET_MUX_RATIO,
+            self.height - 1,
+            SET_COM_OUT_DIR | 0x08,  # scan from COM[N] to COM0
+            SET_DISP_OFFSET,
+            0x00,
+            SET_COM_PIN_CFG,
+            0x02 if self.width &gt; 2 * self.height else 0x12,
+            # timing and driving scheme
+            SET_DISP_CLK_DIV,
+            0x80,
+            SET_PRECHARGE,
+            0x22 if self.external_vcc else 0xF1,
+            SET_VCOM_DESEL,
+            0x30,  # 0.83*Vcc
+            # display
+            SET_CONTRAST,
+            0xFF,  # maximum
+            SET_ENTIRE_ON,  # output follows RAM contents
+            SET_NORM_INV,  # not inverted
+            SET_IREF_SELECT,
+            0x30,  # enable internal IREF during display on
+            # charge pump
+            SET_CHARGE_PUMP,
+            0x10 if self.external_vcc else 0x14,
+            SET_DISP | 0x01,  # display on
+        ):  # on
+            self.write_cmd(cmd)
+        self.fill(0)
+        self.show()
+
+    def poweroff(self):
+        self.write_cmd(SET_DISP)
+
+    def poweron(self):
+        self.write_cmd(SET_DISP | 0x01)
+
+    def contrast(self, contrast):
+        self.write_cmd(SET_CONTRAST)
+        self.write_cmd(contrast)
+
+    def invert(self, invert):
+        self.write_cmd(SET_NORM_INV | (invert &amp; 1))
+
+    def rotate(self, rotate):
+        self.write_cmd(SET_COM_OUT_DIR | ((rotate &amp; 1) &lt;&lt; 3))
+        self.write_cmd(SET_SEG_REMAP | (rotate &amp; 1))
+
+    def show(self):
+        x0 = 0
+        x1 = self.width - 1
+        if self.width != 128:
+            # narrow displays use centred columns
+            col_offset = (128 - self.width) // 2
+            x0 += col_offset
+            x1 += col_offset
+        self.write_cmd(SET_COL_ADDR)
+        self.write_cmd(x0)
+        self.write_cmd(x1)
+        self.write_cmd(SET_PAGE_ADDR)
+        self.write_cmd(0)
+        self.write_cmd(self.pages - 1)
+        self.write_data(self.buffer)
+
+
+class SSD1306_I2C(SSD1306):
+    def __init__(self, width, height, i2c, addr=0x3C, external_vcc=False):
+        self.i2c = i2c
+        self.addr = addr
+        self.temp = bytearray(2)
+        self.write_list = [b"\x40", None]  # Co=0, D/C#=1
+        super().__init__(width, height, external_vcc)
+
+    def write_cmd(self, cmd):
+        self.temp[0] = 0x80  # Co=1, D/C#=0
+        self.temp[1] = cmd
+        self.i2c.writeto(self.addr, self.temp)
+
+    def write_data(self, buf):
+        self.write_list[1] = buf
+        self.i2c.writevto(self.addr, self.write_list)
+
+
+class SSD1306_SPI(SSD1306):
+    def __init__(self, width, height, spi, dc, res, cs, external_vcc=False):
+        self.rate = 10 * 1024 * 1024
+        dc.init(dc.OUT, value=0)
+        res.init(res.OUT, value=0)
+        cs.init(cs.OUT, value=1)
+        self.spi = spi
+        self.dc = dc
+        self.res = res
+        self.cs = cs
+        import time
+
+        self.res(1)
+        time.sleep_ms(1)
+        self.res(0)
+        time.sleep_ms(10)
+        self.res(1)
+        super().__init__(width, height, external_vcc)
+
+    def write_cmd(self, cmd):
+        self.spi.init(baudrate=self.rate, polarity=0, phase=0)
+        self.cs(1)
+        self.dc(0)
+        self.cs(0)
+        self.spi.write(bytearray([cmd]))
+        self.cs(1)
+
+    def write_data(self, buf):
+        self.spi.init(baudrate=self.rate, polarity=0, phase=0)
+        self.cs(1)
+        self.dc(1)
+        self.cs(0)
+        self.spi.write(buf)
+        self.cs(1)
+
+# ---------- 以上是驅動，以下才是本週的程式 ----------
+# 03 旋鈕上螢幕：讀 GPIO34 的 ADC，螢幕顯示原值＋一條長度跟著值變的橫條
+# W5 只能在序列埠看數字；本週把數字畫成「量表」，眼睛一掃就知道旋鈕轉到哪。
+# 橫條長度＝讀數 × 最大寬度 ÷ 4095（整數除法 // 才不會出現小數）；
+# rect() 最後多給一個 True 就是「填滿的矩形」（官方 framebuf 文件：rect(x, y, w, h, c[, f])）。
+from machine import Pin, I2C, ADC
+import time
+
+i2c = I2C(0, scl=Pin(22), sda=Pin(21), freq=400000)   # 套件 OLED：SCL=GPIO22（IO17）、SDA=GPIO21（IO18）
+oled = SSD1306_I2C(128, 64, i2c)
+knob = ADC(Pin(34), atten=ADC.ATTN_11DB)               # 套件可變電阻 GPIO34（IO2）；11 dB 才量得到整段 0–3.3 V
+
+BAR_X = 4                                              # 橫條左上角
+BAR_Y = 40
+BAR_W = 120                                            # 橫條最長 120 點（外框內側）
+BAR_H = 14
+
+n = 0
+last_print = time.ticks_ms()
+print('旋鈕上螢幕：ADC GPIO34，每 0.2 秒更新畫面／每秒印一行讀數')
+while True:
+    n = n + 1
+    raw = knob.read()                                  # 12 位元：0–4095
+    bar = raw * BAR_W // 4095                          # 換算成橫條長度 0–120
+    oled.fill(0)
+    oled.text('ADC GPIO34', 0, 0)
+    oled.text('raw: ' + str(raw), 0, 16)
+    oled.rect(BAR_X - 1, BAR_Y - 1, BAR_W + 2, BAR_H + 2, 1)   # 量表的外框（空心）
+    oled.rect(BAR_X, BAR_Y, bar, BAR_H, 1, True)               # 量表本體（實心），長度跟著 raw 變
+    oled.show()
+    now = time.ticks_ms()
+    if time.ticks_diff(now, last_print) &gt;= 1000:       # 畫面每 0.2 秒一張，序列埠一秒才印一行，不然洗版
+        last_print = now
+        print('ADC 讀數', raw, '｜橫條長度', bar, '點')   # 不寫「原值」：Wokwi 序列埠會吃掉「值」
+    time.sleep_ms(200)
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>04 三顆 RGB 燈</h3>
+        <p><b>要做什麼：</b><span class="mono1">neopixel.NeoPixel(Pin(26), 3)</span>：先三顆同色輪六種顏色，再紅、綠、藍各一顆，最後跑馬燈；每次都是先改 <span class="mono1">np[i]</span>，再 <span class="mono1">np.write()</span>。</p>
+        <p><b>跑起來會看到：</b>三顆先同色輪六種顏色（紅、綠、藍、黃、白、暗），再 <span class="mono1">各色 紅/綠/藍 (128, 0, 0) (0, 128, 0) (0, 0, 128)</span>——三顆各自不同色，最後跑馬燈：紅色一顆一顆往下移（實跑，<a class="ref" href="#f-W6">W6</a>）。每一步序列埠印一行：顏色名，加上三顆各是什麼 (r, g, b)。</p>
+        <p><b>試著改：</b><span class="mono1">def show</span> 裡的 <span class="mono1">np.write()</span> 前面加 <span class="mono1">#</span>：序列埠照樣印三顆的顏色，燈會變嗎？（實驗台②的「只改不 write()」就是這件事。）</p>
+        <div class="btns"><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button type="button" class="copy" data-copy="c04m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c04m">
+# 04 三顆 RGB 燈串在一條線上（WS2812／NeoPixel 那種「單線可定址燈」）
+# 套件的 RGB 燈其實是三顆 WS2812 串在一起接 GPIO26：第一顆吃完自己的 24 位元，把後面的資料轉給第二顆，再轉給第三顆。
+# 每顆燈裡有一顆小晶片，聽的是「一顆燈 24 位元」：綠 8 位元、紅 8 位元、藍 8 位元，順序是 G R B（不是 R G B）。
+# 只有一條資料線，怎麼分 0 和 1？靠脈衝的寬窄：高電位「短」再拉低＝0、高電位「長」再拉低＝1，
+# 一個位元只有 1.25 微秒——太快、時間太準，所以交給 neopixel 模組（它用 ESP32 裡專門發精準脈衝的硬體來送），
+# 程式只要說「第 0 顆＝(r, g, b)」再 write()，順序轉換和脈衝都由它做。
+from machine import Pin
+import neopixel
+import time
+
+NUM = 3                                   # 套件上串了三顆
+np = neopixel.NeoPixel(Pin(26), NUM)      # 套件 RGB 燈 GPIO26（板面 IO16）
+
+# (r, g, b)：每色 0–255；這裡用 128（最大值 255 的一半）；真板多亮、要不要再調低，W10 領到板子再看
+RED = (128, 0, 0)
+GREEN = (0, 128, 0)
+BLUE = (0, 0, 128)
+YELLOW = (128, 128, 0)      # 紅＋綠＝黃
+WHITE = (128, 128, 128)     # 三色等量＝白
+OFF = (0, 0, 0)             # 全 0 就是暗
+palette = [('紅', RED), ('綠', GREEN), ('藍', BLUE), ('黃', YELLOW), ('白', WHITE), ('暗', OFF)]
+
+
+def show(label):
+    np.write()                            # 到這一刻才把 3 × 24 位元用脈衝送出去
+    print(label, np[0], np[1], np[2])     # 三顆現在各是什麼 (r, g, b)
+
+
+print('三顆 RGB 燈：先同色輪一遍，再各自不同色，最後跑馬燈一輪')
+while True:
+    # 第一段：三顆同色，六種顏色輪一遍，每色 0.5 秒
+    for name, rgb in palette:
+        for i in range(NUM):
+            np[i] = rgb                   # 只是先記在記憶體，燈還沒變
+        show('同色 ' + name)
+        time.sleep(0.5)
+
+    # 第二段：三顆各自不同色——同一條線送出去 72 位元，每顆只拿走自己那 24 位元
+    np[0] = RED
+    np[1] = GREEN
+    np[2] = BLUE
+    show('各色 紅/綠/藍')
+    time.sleep(1.0)
+
+    # 第三段：跑馬燈——一顆亮紅、其餘暗，紅色往下一顆移，走完一輪
+    for k in range(NUM):
+        for i in range(NUM):
+            np[i] = RED if i == k else OFF
+        show('跑馬 第' + str(k) + '顆亮')
+        time.sleep(0.5)
+    for i in range(NUM):
+        np[i] = OFF
+    show('跑馬 全暗')
+    time.sleep(0.5)
+</pre>
+        </div></details>
+      </div>
+      <div class="card">
+        <h3>05 SPI 點陣（對照用）</h3>
+        <p><b>要做什麼：</b><span class="mono1">SPI(1, baudrate=1000000, …, sck=Pin(27), mosi=Pin(4), …)</span>、CS 接 17；開機先寫五個設定，再把三張圖一列一列送進點陣。套件沒有這顆（<a class="ref" href="#f-K3">K3</a>），只在 Wokwi 看。</p>
+        <p><b>跑起來會看到：</b>序列埠先印 <span class="mono1">SPI 點陣：三張圖輪播，每 0.7 秒換一張</span>，接著 <span class="mono1">點陣顯示 笑臉</span>、<span class="mono1">點陣顯示 心形</span>、<span class="mono1">點陣顯示 箭頭</span> 一直輪；Wokwi 的點陣畫出來，跟程式裡用 <span class="mono1">#</span> 畫的圖逐點相同、不旋轉（實跑，<a class="ref" href="#f-W6">W6</a>）。</p>
+        <p><b>試著改：</b>照 <span class="mono1">pictures</span> 的格式加第四張圖（8 個字串、每個 8 個字元，<span class="mono1">#</span> 亮、<span class="mono1">.</span> 暗），序列埠會多印哪一行？</p>
+        <div class="btns"><button type="button" class="copy" data-copy="cdj" data-label="複製 diagram.json">複製 diagram.json</button><button type="button" class="copy" data-copy="c05m" data-label="複製 main.py">複製 main.py</button></div>
+        <details class="adv"><summary><span>看一眼 main.py</span></summary><div class="inner">
+          <pre class="code" id="c05m">
+# 05 SPI 點陣：MAX7219 帶一片 8×8 燈
+# I2C 靠「位址」找人；SPI 不用位址，靠一條 CS（晶片選擇）線：CS 拉低＝「我在跟你講」、拉高＝講完。
+# 三條線：SCK 時脈、MOSI 主機送出去、MISO 主機收回來（MAX7219 不會回話，MISO 隨便接個空腳）。
+# ESP32 的 SPI 可以指定任意腳位，這裡用套件沒用到的 GPIO27／4／17；真板套件沒有這顆，本案只在 Wokwi 示範。
+# MAX7219 聽的是一次 16 位元：D15–D12 不用、D11–D8＝暫存器位址、D7–D0＝資料（所以寫成「位址 &lt;&lt; 8 | 資料」）。位址 1–8 就是第 1–8 列。
+from machine import Pin, SPI
+import framebuf
+import time
+
+spi = SPI(1, baudrate=1000000, polarity=0, phase=0,
+          sck=Pin(27), mosi=Pin(4), miso=Pin(32))       # SCK=GPIO27（IO14）、MOSI=GPIO4（IO12）
+cs = Pin(17, Pin.OUT, value=1)                          # CS=GPIO17（IO10），平常放高（沒在講話）
+
+
+def write_reg(addr, data):
+    # 一次講 16 位元：CS 拉低 → 送位址、送資料 → CS 拉高（MAX7219 在 CS 拉高那一刻才把資料鎖進去）
+    cs.value(0)
+    spi.write(bytes([addr, data]))
+    cs.value(1)
+
+
+# 開機要設五個暫存器，晶片才會照我們想的方式亮：
+write_reg(0x0C, 0x01)   # SHUTDOWN：1＝正常運作（出廠預設是 0，也就是關機、全暗）
+write_reg(0x09, 0x00)   # DECODE MODE：0＝不解碼（它本來是給七段顯示器用的，會把資料當數字解碼；點陣要關掉）
+write_reg(0x0B, 0x07)   # SCAN LIMIT：7＝八列都掃（0 就只掃第 1 列）
+write_reg(0x0A, 0x03)   # INTENSITY：亮度 0–15，3 就夠看
+write_reg(0x0F, 0x00)   # DISPLAY TEST：0＝關掉全亮測試（開著會蓋過所有畫面）
+
+# 8×8 的畫布：8 個位元組、每列一個位元組（MONO_HLSB＝一個位元組橫著放 8 點、最高位元在最左）
+buf = bytearray(8)
+canvas = framebuf.FrameBuffer(buf, 8, 8, framebuf.MONO_HLSB)
+
+
+def show():
+    # 把畫布的 8 列送進第 1–8 列暫存器；一列 16 位元，八列就是八次
+    for row in range(8):
+        write_reg(row + 1, buf[row])
+
+
+# 三張圖：每張 8 個字串，'#' 亮、'.' 暗——用字元畫比寫十六進位好讀
+pictures = [
+    ('笑臉', ['........',
+              '.##..##.',
+              '.##..##.',
+              '........',
+              '#......#',
+              '.#....#.',
+              '..####..',
+              '........']),
+    ('心形', ['........',
+              '.##..##.',
+              '########',
+              '########',
+              '.######.',
+              '..####..',
+              '...##...',
+              '........']),
+    ('箭頭', ['...##...',
+              '..####..',
+              '.######.',
+              '###..###',
+              '...##...',
+              '...##...',
+              '...##...',
+              '...##...']),
+]
+
+
+def draw(rows):
+    canvas.fill(0)
+    for y in range(8):
+        for x in range(8):
+            if rows[y][x] == '#':
+                canvas.pixel(x, y, 1)
+
+
+print('SPI 點陣：三張圖輪播，每 0.7 秒換一張')
+while True:
+    for name, rows in pictures:
+        draw(rows)
+        show()
+        print('點陣顯示', name)
+        time.sleep(0.7)
+</pre>
+        </div></details>
+      </div>
+    </div>
+    <p class="tiny">「跑起來會看到」是 2026-09-26 在 Wokwi 實跑的結果（<a class="ref" href="#f-W6">W6</a>）。自己改電路時注意：點陣的電源腳叫 <span class="mono1">V+</span>、attrs 要有 <span class="mono1">"chain": "1"</span>，少了它整片不亮、也不報錯（<a class="ref" href="#f-W3">W3</a>）。</p>
+  </section>
+  </details>
+
+  <details class="sect">
+  <summary>試試看：五個問題</summary>
+  <section aria-label="試試看">
+    <div class="cards">
+      <div class="card">
+        <h3>① 螢幕的位址改成 0x3D，會怎樣？</h3>
+        <p><b>螢幕什麼都收不到。</b>程式還在喊 0x3C：位址位元組送完，第 9 拍沒人把 SDA 拉低（<a class="ref" href="#f-P5">P5</a>），ESP32 就發「結束」、後面不送了。改法有兩個：程式寫 <span class="mono1">SSD1306_I2C(128, 64, i2c, addr=0x3D)</span>，或把螢幕改回 0x3C（<a class="ref" href="#f-P7">P7</a>）。</p>
+        <button type="button" class="try" data-try="wrongaddr">試試看：位址打錯</button>
+      </div>
+      <div class="card">
+        <h3>② 「B」這個字，第二欄是哪個位元組？</h3>
+        <p><b>0x7F＝127。</b>字型裡的「B」是 0x00、0x7F、0x7F、0x49、0x49、0x7F、0x36、0x00；第二欄 0x7F＝0111 1111，bit 0 在最上面（<a class="ref" href="#f-M7">M7</a>），所以那一欄上面 7 個點都亮、最下面一個暗。</p>
+        <button type="button" class="try" data-try="charB">試試看：送「B」</button>
+      </div>
+      <div class="card">
+        <h3>③ 三顆燈只寫 np[0]、不寫 write()，燈會變嗎？</h3>
+        <p><b>不會。</b><span class="mono1">np[0] = …</span> 只改 ESP32 記憶體裡那 3 個數字；<span class="mono1">np.write()</span> 才把 72 位元送上線（<a class="ref" href="#f-M9">M9</a>）。跟 <span class="mono1">oled.show()</span> 同一個道理：先改記憶體，再一次送出去。</p>
+        <button type="button" class="try" data-try="nowrite">試試看：只改不 write()</button>
+      </div>
+      <div class="card">
+        <h3>④ 想讓第三顆亮紅，72 位元裡哪 8 格要是 1？</h3>
+        <p><b>第 57–64 格。</b>第三顆吃最後 24 位元，也就是第 49–72 格（<a class="ref" href="#f-P12">P12</a>）；順序 G、R、B（<a class="ref" href="#f-P10">P10</a>）：G 在 49–56、R 在 57–64、B 在 65–72。紅＝(255, 0, 0)，所以 R 那 8 格全是 1，其餘都是 0。</p>
+        <button type="button" class="try" data-try="third">試試看：第三顆亮紅</button>
+      </div>
+      <div class="card">
+        <h3>⑤ 點陣只想亮最上面一列，要送哪一個 16 位元封包？</h3>
+        <p><b>0x01FF。</b>前 8 位元 0x01＝第 1 列（後 4 位 0001 是列號；<a class="ref" href="#f-P15">P15</a>），後 8 位元 0xFF＝8 個點全亮：0000 0001 1111 1111，CS 拉高那一刻才算（<a class="ref" href="#f-P14">P14</a>）。其他七列要是原本有亮，也得各送一個資料是 0x00 的封包。</p>
+        <button type="button" class="try" data-try="toprow">試試看：只亮最上面一列</button>
+      </div>
+    </div>
+  </section>
+  </details>
+
+  <details class="sect">
+  <summary>想看更深：五個小問題</summary>
+  <section aria-label="想看更深">
+    <div class="cards">
+      <div class="card">
+        <h3>兩條線，怎麼讓很多顆共用？</h3>
+        <p>I2C 上的每一顆都只會做兩件事：把線拉到 0，或放手。放手的時候，上拉電阻把線拉回 1，所以 SDA、SCL 兩條都要接上拉電阻，模組板上常常已經有了（<a class="ref" href="#f-M3">M3</a>）。沒人講話時兩條線都是 1（<a class="ref" href="#f-P2">P2</a>）；誰拉低，大家都看得到——第 9 拍回「收到」，就是被喊到的那顆把 SDA 拉低。這種「只拉低、不推高」的接法，在〈<a href="../w04/esp32-pin-xray.html?preset=basic">ESP32 腳位透視鏡</a>〉的開汲極情境看過。</p>
+      </div>
+      <div class="card">
+        <h3>老師選用：用邏輯分析儀看真的波形</h3>
+        <p>Wokwi 有一個 8 通道的邏輯分析儀零件 <span class="mono1">wokwi-logic-analyzer</span>（D0–D7、1 GHz）。把 SDA、SCL（或單線燈的資料線）接到它的通道，跑一下再停止模擬，瀏覽器會下載一個 <span class="mono1">wokwi-logic.vcd</span>；用 PulseView 打開，能直接把 I2C、WS2812 的位元解出來（<a class="ref" href="#f-W4">W4</a>）。這一頁的慢動作波形，就是它看到的東西放慢。</p>
+      </div>
+      <div class="card">
+        <h3>SPI 還要約好什麼？</h3>
+        <p>除了 CS，SPI 還要約好兩件事：時脈閒著的時候是 0 還是 1、在時脈的哪一個邊看資料——就是 05 裡的 <span class="mono1">polarity=0, phase=0</span>，有些文件叫 CPOL／CPHA。兩邊約定不一樣，收到的位元就會錯開一格。</p>
+      </div>
+      <div class="card">
+        <h3>MOSI、MISO 的新名字</h3>
+        <p>有些新的文件把 MOSI 改叫 PICO、MISO 改叫 POCI（<a class="ref" href="#f-P13">P13</a>）；MicroPython 的 SPI 參數還是寫 <span class="mono1">mosi=</span>、<span class="mono1">miso=</span>，05 就是這樣寫。MAX7219 不回話，所以 05 的 MISO 隨便接一支空腳 32。</p>
+      </div>
+      <div class="card">
+        <h3>ESP32 有幾組 I2C、SPI？</h3>
+        <p>硬體 I2C 有兩組，編號 0 和 1，能輸出的腳都能當 SCL、SDA（<a class="ref" href="#f-M1">M1</a>）。能用的硬體 SPI 也是兩組：HSPI＝1、VSPI＝2（<a class="ref" href="#f-P16">P16</a>）；也能改接別的腳，只是不在預設腳時最高 40 MHz（<a class="ref" href="#f-M8">M8</a>）。單線燈一位元只有 1.25 µs，程式一行一行開關腳位來不及，所以 neopixel 模組交給 ESP32 裡專門發脈衝的硬體去送（<a class="ref" href="#f-M9">M9</a>）。</p>
+      </div>
+    </div>
+  </section>
+  </details>
+
+  <details class="sect" id="facts">
+  <summary>數字從哪裡來</summary>
+  <section aria-label="數字出處">
+    <p class="muted">頁面上每個數字都有出處，編號跟頁面裡的小標籤一樣（點小標籤會跳到這裡）。官方英文照原文引，旁邊是白話；只寫章節、沒引原文的，是只核對過數字。標 ⚠️ 的是還沒定案。下面另列這一頁為了畫圖做的簡化。</p>
+    <div class="tablewrap">
+      <table class="facts">
+        <thead><tr><th>編號</th><th>事</th><th>值</th><th>出處與白話</th></tr></thead>
+        <tbody>
+          <tr id="f-K1"><td class="id">K1</td><td>套件的 OLED 小螢幕</td><td class="num">128×64、ssd1306 驅動；SDA＝GPIO21（板面 IO18）、SCL＝GPIO22（IO17）</td><td>原廠 EZ Start Kit+ 腳位對照圖；課程真板程式庫 esp32_ai 的 <code>esp32/lib/ezkit.py</code>（上學期在真板跑過）：<code>i2c = SoftI2C(sda=Pin(21), scl=Pin(22))</code>、<code>oled = ssd1306.SSD1306_I2C(128, 64, i2c)</code>。</td></tr>
+          <tr id="f-K2"><td class="id">K2</td><td>套件的 RGB 燈</td><td class="num">三顆 WS2812 串在一起，接 GPIO26（板面 IO16）</td><td>原廠對照圖（RGB 燈只佔一支腳）；<code>ezkit.py</code>：<code>NUM_PIXELS = 3</code>、<code>np = neopixel.NeoPixel(Pin(26), NUM_PIXELS)</code>；範例 <code>d2_rgb.py</code> 三顆各亮不同色。</td></tr>
+          <tr id="f-K3"><td class="id">K3</td><td>套件沒有 SPI 零件</td><td class="num">SPI 點陣只在 Wokwi 做；用空腳 GPIO27／4／17（板面 IO14／IO12／IO10）接 SCK／MOSI／CS</td><td>原廠對照圖（空腳 GPIO27、4、32、17、35）。05 的 MISO 接空腳 32。</td></tr>
+          <tr id="f-M1"><td class="id">M1</td><td>ESP32 的硬體 I2C</td><td class="num">兩組（0、1）；能輸出的腳都能當 SCL／SDA</td><td>MicroPython ESP32 quickref：「<span class="en" lang="en">There are two hardware I2C peripherals with identifiers 0 and 1. Any available output-capable pins can be used for SCL and SDA but the defaults are given below.</span>」（有兩組硬體 I2C，編號 0 和 1；能輸出的腳都能當 SCL、SDA，文件另列了預設腳。）</td></tr>
+          <tr id="f-M2"><td class="id">M2</td><td><code>I2C.scan()</code></td><td class="num">掃 0x08–0x77，回傳有回應的位址清單</td><td>machine.I2C：「<span class="en" lang="en">Scan all I2C addresses between 0x08 and 0x77 inclusive and return a list of those that respond. A device responds if it pulls the SDA line low after its address (including a write bit) is sent on the bus.</span>」（把 0x08 到 0x77 每個位址都掃一次，回傳有回應的清單；位址（含寫入位元）送出後把 SDA 拉低的，就算有回應。）</td></tr>
+          <tr id="f-M3"><td class="id">M3</td><td>I2C 要上拉電阻</td><td class="num">SDA、SCL 都要；模組板常已內建</td><td>machine.I2C：「<span class="en" lang="en">The I2C bus requires pull-up circuitry on both SDA and SCL for it's operation. Usually these are resistors in the range of 1 - 10 kOhm…</span>」（SDA、SCL 兩條線都要接上拉電路，通常是 1–10 kΩ 的電阻。）</td></tr>
+          <tr id="f-M4"><td class="id">M4</td><td>ssd1306 驅動</td><td class="num"><code>SSD1306_I2C(width, height, i2c, addr=0x3C)</code>；畫在記憶體裡、<code>show()</code> 才送出；畫面緩衝 <code>bytearray(pages * width)</code>（128×64＝8 頁 × 128＝1024 位元組），格式 MONO_VLSB；送畫面前加 <code>b"\x40"</code></td><td>micropython-lib <code>ssd1306.py</code>（MIT）：<code>class SSD1306_I2C(SSD1306): def __init__(self, width, height, i2c, addr=0x3C, external_vcc=False)</code>、<code>self.write_list = [b"\x40", None]  # Co=0, D/C#=1</code>。</td></tr>
+          <tr id="f-M5"><td class="id">M5</td><td>韌體沒內建 ssd1306</td><td class="num">ESP32 官方韌體沒凍 ssd1306；Wokwi 實跑（MicroPython v1.28.0）：<code>no module named 'ssd1306'</code>；neopixel、framebuf 內建。所以 02／03 把官方驅動貼在 main.py 最上面，學生仍只貼兩份檔</td><td><code>ports/esp32/boards/manifest.py</code>；<code>wokwi-i2c-spi/_qa/out/module-probe-serial.txt</code>（2026-09-26 在 Wokwi 實跑的模組探針）。</td></tr>
+          <tr id="f-M6"><td class="id">M6</td><td>framebuf 畫圖</td><td class="num"><code>fill(c)</code>、<code>pixel(x, y[, c])</code>、<code>hline</code>、<code>vline</code>、<code>line</code>、<code>rect(x, y, w, h, c[, f])</code>（f＝True 塗滿）、<code>text(s, x, y[, c])</code>；字固定 8×8</td><td>framebuf 文件：「<span class="en" lang="en">All characters have dimensions of 8x8 pixels and there is currently no way to change the font.</span>」「<span class="en" lang="en">The optional f parameter can be set to True to fill the rectangle.</span>」（每個字都是 8×8 點，目前不能換字型；f 設成 True 就把矩形塗滿。）</td></tr>
+          <tr id="f-M7"><td class="id">M7</td><td>MONO_VLSB</td><td class="num">一個位元組＝直的 8 個點、bit 0 在最上面</td><td>framebuf 文件 MONO_VLSB：「<span class="en" lang="en">Monochrome (1-bit) color format This defines a mapping where the bits in a byte are vertically mapped with bit 0 being nearest the top of the screen. Consequently each byte occupies 8 vertical pixels. Subsequent bytes appear at successive horizontal locations until the rightmost edge is reached. Further bytes are rendered at locations starting at the leftmost edge, 8 pixels lower.</span>」（一個位元組直著放、bit 0 最靠近螢幕上緣，所以一個位元組佔直的 8 個點；下一個位元組放在右邊一格，排到最右邊再從最左邊、往下 8 點接著排。）這一頁的 8×8 字型取自 MicroPython <code>extmod/font_petme128_8x8.h</code>（MIT License, Copyright (c) 2013, 2014 Damien P. George），只嵌 A–Z、0–9、空白與幾個標點。</td></tr>
+          <tr id="f-M8"><td class="id">M8</td><td>ESP32 的硬體 SPI</td><td class="num">HSPI＝id 1（預設 sck 14、mosi 13、miso 12）、VSPI＝id 2（18、23、19）；可用任意腳，不在預設腳時上限 40 MHz</td><td>quickref：「<span class="en" lang="en">Hardware SPI channels are limited to 40MHz when used on pins other than the default ones listed below.</span>」（硬體 SPI 用在預設以外的腳時，最高 40 MHz。）05 用 <code>SPI(1, …)</code> 接 27／4／32，速度 1 MHz。</td></tr>
+          <tr id="f-M9"><td class="id">M9</td><td>neopixel 模組</td><td class="num"><code>NeoPixel(pin, n, *, bpp=3, timing=1)</code>；<code>np[i] = (r, g, b)</code>；<code>write()</code> 才真的送出；ESP32 內建</td><td>neopixel 文件：「<span class="en" lang="en">timing is 0 for 400KHz, and 1 for 800kHz LEDs (most are 800kHz).</span>」「<span class="en" lang="en">Writes the current pixel data to the strip.</span>」「<span class="en" lang="en">This module is only included by default on the ESP8266, ESP32 and RP2 ports.</span>」；quickref：「<span class="en" lang="en">This low-level driver uses an RMT channel by default.</span>」（timing 0 是 400 kHz、1 是 800 kHz，大多數是 800 kHz；write() 把目前的顏色送到燈上；ESP8266、ESP32、RP2 預設內建；底層預設用 ESP32 的 RMT 通道送脈衝。）</td></tr>
+          <tr id="f-M10"><td class="id">M10</td><td>你寫 RGB、它送 GRB</td><td class="num"><code>ORDER = (1, 0, 2, 3)</code> 把 (r, g, b) 排成 G、R、B；800 kHz 的脈衝寬度＝(400, 850, 800, 450) 奈秒（0 的高、0 的低、1 的高、1 的低）</td><td>micropython-lib <code>neopixel.py</code>（MIT）：<code># G R B W</code>、<code>ORDER = (1, 0, 2, 3)</code>、<code>((400, 850, 800, 450) if timing else (800, 1700, 1600, 900))</code>。</td></tr>
+          <tr id="f-P1"><td class="id">P1</td><td>I2C 兩條線</td><td class="num">SDA 資料、SCL 時脈</td><td>NXP UM10204 Rev 7：「<span class="en" lang="en">Only two bus lines are required; a serial data line (SDA) and a serial clock line (SCL).</span>」（只要兩條線：一條資料線 SDA、一條時脈線 SCL。）</td></tr>
+          <tr id="f-P2"><td class="id">P2</td><td>閒著都是 1；只拉低、放手</td><td class="num">沒人講話時，SDA、SCL 都是 1</td><td>UM10204 §3.1.1：「<span class="en" lang="en">When the bus is free, both lines are HIGH. The output stages of devices connected to the bus must have an open-drain or open-collector to perform the wired-AND function.</span>」（沒人講話時兩條線都是高；接在線上的每一顆只能把線拉低或放手，誰拉低，整條線就是低。）</td></tr>
+          <tr id="f-P3"><td class="id">P3</td><td>開始、結束</td><td class="num">SCL 是 1 時，SDA 由 1 變 0＝開始；由 0 變 1＝結束</td><td>UM10204 Rev 7 §3.1.4：「<span class="en" lang="en">A HIGH to LOW transition on the SDA line while SCL is HIGH defines a START condition. A LOW to HIGH transition on the SDA line while SCL is HIGH defines a STOP condition.</span>」（SCL 是高的時候，SDA 由高變低＝開始；由低變高＝結束。）</td></tr>
+          <tr id="f-P4"><td class="id">P4</td><td>位址＋讀寫位元</td><td class="num">7 位元位址＋第 8 位元（0 寫、1 讀）；0x3C＋寫＝0x78</td><td>UM10204 Rev 7 §3.1.10：「<span class="en" lang="en">After the START condition (S), a target address is sent. This address is seven bits long followed by an eighth bit which is a data direction bit (R/W) … a ‘zero’ indicates a transmission (WRITE), a ‘one’ indicates a request for data (READ)</span>」（開始之後先送 7 位元位址，第 8 位元是方向：0 寫、1 讀。）0x3C＝011 1100，往左移一位、補寫入位元 0＝0111 1000＝0x78。</td></tr>
+          <tr id="f-P5"><td class="id">P5</td><td>每個位元組後面一拍「收到」</td><td class="num">每個位元組 8 位元＋第 9 拍確認（收的人把 SDA 拉低）</td><td>UM10204：「<span class="en" lang="en">The acknowledge takes place after every byte.</span>」「<span class="en" lang="en">Every byte put on the SDA line must be eight bits long.</span>」（每個位元組後面都有一次確認；放上 SDA 的每個位元組都必須是 8 位元。）</td></tr>
+          <tr id="f-P5b"><td class="id">P5b</td><td>高位元先送</td><td class="num">每個位元組從最高位元開始送</td><td>UM10204 Rev 7 §3.1.5：「<span class="en" lang="en">Data is transferred with the Most Significant Bit (MSB) first</span>」（資料從最高位元開始送。）</td></tr>
+          <tr id="f-P6"><td class="id">P6</td><td>I2C 速度</td><td class="num">標準 100 kbit/s、快速 400 kbit/s</td><td>UM10204 Rev 7：「<span class="en" lang="en">Serial, 8-bit oriented, bidirectional data transfers can be made at up to 100 kbit/s in the Standard-mode, up to 400 kbit/s in the Fast-mode</span>」（標準模式最高 100 kbit/s、快速模式 400 kbit/s。）01、02 寫 <code>freq=400000</code>＝快速模式。</td></tr>
+          <tr id="f-P7"><td class="id">P7</td><td>SSD1306 的位址</td><td class="num">0x3C 或 0x3D（SA0 腳選）</td><td>SSD1306 Rev 1.1 §8.1.5：「<span class="en" lang="en">Either "0111100" or "0111101", can be selected as the slave address of SSD1306.</span>」（0111100 或 0111101 都可以選來當 SSD1306 的位址，也就是 0x3C 或 0x3D。）</td></tr>
+          <tr id="f-P8"><td class="id">P8</td><td>SSD1306 控制位元組</td><td class="num">0x00＝後面是指令、0x40＝後面是畫面資料</td><td>SSD1306 Rev 1.1 §8.1.5 第 5 點：「<span class="en" lang="en">If the D/C# bit is set to logic “0”, it defines the following data byte as a command. If the D/C# bit is set to logic “1”, it defines the following data byte as a data which will be stored at the GDDRAM.</span>」（控制位元組裡那一位是 0，後面是指令；是 1，後面是要存進畫面記憶體的資料。）</td></tr>
+          <tr id="f-P9"><td class="id">P9</td><td>SSD1306 畫面記憶體</td><td class="num">128×64 位元、分 8 頁；一個位元組填一整欄 8 個點，D0 在上、D7 在下</td><td>SSD1306 Rev 1.1 §8.7：「<span class="en" lang="en">When one data byte is written into GDDRAM, all the rows image data of the same page of the current column are filled … Data bit D0 is written into the top row, while data bit D7 is written into bottom row</span>」（寫進一個位元組，就填滿目前這一欄的 8 個點；D0 在最上、D7 在最下。）</td></tr>
+          <tr id="f-P10"><td class="id">P10</td><td>WS2812B 一顆 24 位元</td><td class="num">順序 G、R、B，高位元先送</td><td>WS2812B 資料表：「<span class="en" lang="en">Follow the order of GRB to sent data and the high bit sent at first.</span>」（照 G R B 的順序送，高位先送。）</td></tr>
+          <tr id="f-P11"><td class="id">P11</td><td>WS2812B 速度與時序</td><td class="num">800 Kbps；一位元約 1.25 µs；最後低電位 ≥ 50 µs 才鎖存</td><td>WS2812B：「<span class="en" lang="en">Send data at speeds of 800Kbps.</span>」「<span class="en" lang="en">reset code &gt;=50us</span>」（每秒送 800 K 位元；重設碼是 50 µs 以上的低電位。）脈衝寬度用 M10（驅動實際送的數字）。</td></tr>
+          <tr id="f-P12"><td class="id">P12</td><td>串接：第一顆吃 24 位元</td><td class="num">第一顆留下前 24 位元，其餘整形後從 DOUT 送給下一顆</td><td>WS2812B：「<span class="en" lang="en">…the first pixel collect initial 24bit data then sent to the internal data latch, the other data which reshaping by the internal signal reshaping amplification circuit sent to the next cascade pixel through the DO port.</span>」（第一顆收下最前面 24 位元、放進自己裡面；其餘資料經內部整形放大，從 DO 腳送給下一顆。）</td></tr>
+          <tr id="f-P13"><td class="id">P13</td><td>SPI 四條線、CS 挑人</td><td class="num">SCK、MOSI（新名 PICO）、MISO（POCI）、CS；每顆一條 CS，要跟誰講就把它的 CS 拉低；沒有位址</td><td>SparkFun SPI：「<span class="en" lang="en">In general, each peripheral will need a separate CS line. To talk to a particular peripheral, you'll make that peripheral's CS line low and keep the rest of them high.</span>」（一般來說每顆都要自己一條 CS；要跟哪一顆講，就把它的 CS 拉低，其他的保持高。）</td></tr>
+          <tr id="f-P14"><td class="id">P14</td><td>MAX7219 的封包</td><td class="num">一次 16 位元、D15 先送；D8–D11 暫存器位址、D0–D7 資料；CS（LOAD）上升那一刻鎖存；時脈最高 10 MHz</td><td>MAX7219 資料表 Rev 4：「<span class="en" lang="en">D8–D11 contain the register address. D0–D7 contain the data, and D12–D15 are “don’t care” bits. The first received is D15, the most significant bit (MSB).</span>」「<span class="en" lang="en">The last 16 bits of serial data are latched on LOAD’s rising edge.</span>」「<span class="en" lang="en">10MHz maximum rate.</span>」（D8–D11 是暫存器位址、D0–D7 是資料，D15 最先到；最後 16 位元在 LOAD 升起那一刻鎖存；時脈最高 10 MHz。）⚠️ 讀的是 Rev 4，現行版次沒核對；暫存器位址不會變。</td></tr>
+          <tr id="f-P15"><td class="id">P15</td><td>MAX7219 的暫存器</td><td class="num">第 1–8 列（Digit 0–7）＝0x1–0x8、解碼 0x9、亮度 0xA、掃描列數 0xB、關機 0xC、顯示測試 0xF；上電是關機狀態</td><td>MAX7219 Table 3／4／7／8／10；「<span class="en" lang="en">On initial power-up, all control registers are reset, the display is blanked, and the MAX7219/MAX7221 enter shutdown mode.</span>」（一上電，所有控制暫存器歸零、畫面全暗，晶片進入關機狀態。）</td></tr>
+          <tr id="f-P16"><td class="id">P16</td><td>ESP32 的周邊數量</td><td class="num">4 組 SPI（能用的是 SPI2＝HSPI、SPI3＝VSPI）、2 組 I2C</td><td>Espressif ESP32 Datasheet v5.3 §4.8：「<span class="en" lang="en">Four SPI interfaces / Two I2S interfaces / Two I2C interfaces</span>」「<span class="en" lang="en">SPI1, SPI2, and SPI3 use signal buses prefixed with SPI, HSPI, and VSPI, respectively.</span>」（四組 SPI、兩組 I2C；SPI2、SPI3 就是 HSPI、VSPI。）同一節也列了 8 個 RMT 通道（單線燈的脈衝就是它送的，M9）。</td></tr>
+          <tr id="f-W1"><td class="id">W1</td><td>Wokwi 的 OLED 零件</td><td class="num">用 <code>board-ssd1306</code>（四腳 GND／VCC／SCL／SDA，預設 0x3c）；<code>wokwi-ssd1306</code> 已淘汰</td><td>docs.wokwi.com：「<span class="en" lang="en">Note: this part has been deprecated. Please use board-ssd1306 instead.</span>」（這個零件已淘汰，請改用 board-ssd1306。）</td></tr>
+          <tr id="f-W2"><td class="id">W2</td><td>Wokwi 的單線燈</td><td class="num"><code>wokwi-neopixel</code>（VDD／DOUT／VSS／DIN），上一顆 DOUT 接下一顆 DIN</td><td>docs.wokwi.com wokwi-neopixel：「<span class="en" lang="en">You can chain multiple NeoPixels by connecting the DOUT pin of one to the DIN pin of the next.</span>」（把一顆的 DOUT 接到下一顆的 DIN，就能串好幾顆。）</td></tr>
+          <tr id="f-W3"><td class="id">W3</td><td>Wokwi 的點陣</td><td class="num"><code>wokwi-max7219-matrix</code>：電源腳叫 <code>V+</code>（文件頁寫的 VCC 是錯的：寫 VCC 不報錯、少畫一條線、點陣全暗）；attrs 一定要寫 <code>"chain": "1"</code>，不寫整片不亮也不報錯；輸入排針在模組右側</td><td>wokwi-cli diagram-lint 登錄檔；<code>wokwi-i2c-spi/_qa/out/05-vcc-result.json</code>、<code>spi-probe2-*</code>（2026-09-26 實跑）。</td></tr>
+          <tr id="f-W4"><td class="id">W4</td><td>Wokwi 的邏輯分析儀（老師選用）</td><td class="num"><code>wokwi-logic-analyzer</code> 8 通道 D0–D7、1 GHz；停止模擬就下載 <code>wokwi-logic.vcd</code>，PulseView 能解 I2C、WS2812</td><td>docs.wokwi.com logic-analyzer：「<span class="en" lang="en">The Wokwi Logic Analyzer has 8 digital channels, called D0 to D7. It has a sample rate of 1GHz</span>」「<span class="en" lang="en">In the web version, the file is downloaded to your computer as "wokwi-logic.vcd" by default</span>」（8 個通道、每秒取 10 億點；網頁版停止模擬就下載 wokwi-logic.vcd。）</td></tr>
+          <tr id="f-W5"><td class="id">W5</td><td>Wokwi 的 ESP32 支援哪些</td><td class="num">I2C 可以（ESP32 只能當開口喊人的那一方、不支援 10 位元位址）；SPI 可以；單線燈用的脈衝周邊部分支援（只能送出，用來驅動 WS2812）</td><td>docs.wokwi.com/guides/esp32 周邊表（單線燈那一列叫 RMT）。</td></tr>
+          <tr id="f-W6"><td class="id">W6</td><td>五支 Wokwi 專案的結果（2026-09-26 實跑）</td><td class="num">01：每 2 秒一次「第 N 次掃描，找到 1 顆裝置」＋「位址 hex 0x3c = dec 60」；02：三行字＋框＋線、「畫面更新第 N 次」；03：旋鈕 0／256／512／768／1023 → raw 0／1025／2050／3074／4095 → 橫條 0／30／60／90／120 點；04：同色六輪 →「各色 紅/綠/藍 (128, 0, 0) (0, 128, 0) (0, 0, 128)」三顆各自不同色 → 跑馬燈；05：笑臉／心形／箭頭每 0.7 秒輪播，Wokwi 顯示跟程式裡的圖逐點相同、不旋轉</td><td><code>wokwi-i2c-spi/README.md</code>、<code>_qa/out/0[1-5]-serial.txt</code>。</td></tr>
+          <tr id="f-W7"><td class="id">W7</td><td>位址打錯（2026-09-26 實跑）</td><td class="num">OLED 改 0x3d：01 掃到「位址 hex 0x3d = dec 61」；02 程式仍用 0x3C → 開機就停在 <code>OSError: [Errno 19] ENODEV</code>（驅動初始化送第一個指令就沒人回 ACK）</td><td><code>wokwi-i2c-spi/_qa/out/01-addr3d-serial.txt</code>、<code>02-addr3d-serial.txt</code>（變體 <code>_qa/variants/diagram-oled-3d.json</code>）。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>這一頁的簡化</h3>
+    <ul class="simp">
+      <li>簡化：波形畫成慢動作。真實速度下，I2C 一拍 2.5 µs（400 kbit/s）、單線燈一位元 1.25 µs、05 的 SPI 一拍 1 µs（1 MHz），眼睛看不到；這一頁一拍放慢到零點幾秒（拉桿可以調）。</li>
+      <li>簡化：I2C 一次只示範送一個字：位址、控制各 1 個位元組，加上 8 欄，共 10 個位元組。真的 <code>oled.show()</code> 會先送幾個設定指令，再一口氣送整個畫面 1024 個位元組（<a class="ref" href="#f-M4">M4</a>）。</li>
+      <li>簡化：字畫在螢幕左上角第 0–7 欄；真的 <code>oled.text()</code> 可以畫在任何位置、一次畫好幾個字。</li>
+      <li>簡化：單線燈的脈衝寬度用驅動實際送的數字 0.40／0.85／0.80／0.45 µs（<a class="ref" href="#f-M10">M10</a>）；資料表允許每一段差 ±150 ns。</li>
+      <li>簡化：SPI 點陣在套件上沒有，只在 Wokwi 做（<a class="ref" href="#f-K3">K3</a>）。這一頁照 05 的畫布畫：第 1 列在最上面、最高位元在最左；Wokwi 實跑畫出來跟程式裡的圖逐點相同、不旋轉（<a class="ref" href="#f-W6">W6</a>）。</li>
+      <li>簡化：「別的裝置 0x68」是示意，套件上沒有。</li>
+      <li>簡化：波形只畫 0 和 1 兩種電壓、直角轉換；真的線有上升時間，上拉電阻愈大、升得愈慢。I2C 的 SDA 也只畫一條線，不分是誰在拉低。</li>
+      <li>簡化：程式每一行都當成一瞬間做完；序列埠只印程式 <code>print()</code> 的那幾行，而且只在按了對應的鈕才印（自己拉的顏色、自己點的格子，程式裡沒有那一行 print，就不印）。</li>
+      <li>簡化：MAX7219 的亮度（05 設 3）這一頁不畫明暗；關機、顯示測試、掃描列數有畫。</li>
+    </ul>
+  </section>
+  </details>
+
+  <footer class="foot">
+    <span>資料來源：MicroPython 官方文件（ESP32 quickref、machine.I2C、framebuf、neopixel）與 micropython-lib（ssd1306.py、neopixel.py）、MicroPython 8×8 字型 font_petme128_8x8（MIT）；NXP UM10204 Rev 7；SSD1306 資料表 Rev 1.1；WS2812B 資料表；MAX7219 資料表 Rev 4；Espressif ESP32 Datasheet v5.3；SparkFun SPI 教學；Wokwi 官方零件說明（docs.wokwi.com）；原廠 EZ Start Kit+ 腳位對照圖；課程真板程式庫 esp32_ai。</span>
+    <span>國立東華大學通識課《創客入門—智慧生活裝置實作》補充教材（W6，I2C 小螢幕與單線 RGB 燈）。姊妹頁：〈<a href="../w05/adc-pwm.html?tab=link">讀旋鈕、調亮度實驗台</a>〉、〈<a href="../w04/esp32-pin-xray.html?preset=basic">ESP32 腳位透視鏡</a>〉。</span>
+    <span>版本 2026-09-26。</span>
+  </footer>
+
+</div></div>
+
+<script>
+(function () {
+'use strict';
+var $ = function (id) { return document.getElementById(id); };
+
+/* ===== 數字（畫面上出現的，全部來自「數字從哪裡來」那張表；其餘是畫圖用的設定） ===== */
+var PROG_ADDR = 0x3C;                 /* 程式喊的位址：SSD1306_I2C 預設 0x3C（M4、P7） */
+var ALT_ADDR = 0x3D;                  /* 螢幕另一個可選的位址（P7） */
+var OTHER_ADDR = 0x68;                /* 「別的裝置」：示意 */
+var SCAN_LO = 0x08, SCAN_HI = 0x77;   /* scan() 掃的範圍（M2） */
+var CTRL_DATA = 0x40;                 /* 控制位元組：後面是畫面資料（P8、M4） */
+var ENODEV = 'OSError: [Errno 19] ENODEV';   /* 位址打錯時 02 序列埠最後一行（W7 實跑原文） */
+var FRAME_BYTES = 1024;               /* 128×64＝8 頁 × 128 欄，一欄 8 點一個位元組（M4、P9） */
+var PULSE_NS = [400, 850, 800, 450];  /* 單線燈：0 的高、0 的低、1 的高、1 的低（M10） */
+var BIT_NS = 1250;                    /* 一位元 1.25 µs（P11；400＋850＝800＋450） */
+var NUM = 3;                          /* 套件三顆（K2） */
+/* 8×8 字型：MicroPython extmod/font_petme128_8x8.h（MIT License, Copyright (c) 2013, 2014 Damien P. George）。
+   只嵌這一頁用得到的字：A–Z、0–9、空白與幾個標點；每欄一個位元組、bit 0 在最上面（M7） */
+var FONT = {' ':[0,0,0,0,0,0,0,0],'0':[0,62,127,73,69,127,62,0],'1':[0,64,68,127,127,64,64,0],'2':[0,98,115,81,73,79,70,0],'3':[0,34,99,73,73,127,54,0],'4':[0,24,24,20,22,127,127,16],'5':[0,39,103,69,69,125,57,0],'6':[0,62,127,73,73,123,50,0],'7':[0,3,3,121,125,7,3,0],'8':[0,54,127,73,73,127,54,0],'9':[0,38,111,73,73,127,62,0],'A':[0,124,126,11,11,126,124,0],'B':[0,127,127,73,73,127,54,0],'C':[0,62,127,65,65,99,34,0],'D':[0,127,127,65,99,62,28,0],'E':[0,127,127,73,73,65,65,0],'F':[0,127,127,9,9,1,1,0],'G':[0,62,127,65,73,123,58,0],'H':[0,127,127,8,8,127,127,0],'I':[0,0,65,127,127,65,0,0],'J':[0,32,96,65,127,63,1,0],'K':[0,127,127,28,54,99,65,0],'L':[0,127,127,64,64,64,64,0],'M':[0,127,127,6,12,6,127,127],'N':[0,127,127,14,28,127,127,0],'O':[0,62,127,65,65,127,62,0],'P':[0,127,127,9,9,15,6,0],'Q':[0,30,63,33,97,127,94,0],'R':[0,127,127,25,57,111,70,0],'S':[0,38,111,73,73,123,50,0],'T':[0,1,1,127,127,1,1,0],'U':[0,63,127,64,64,127,63,0],'V':[0,31,63,96,96,63,31,0],'W':[0,127,127,48,24,48,127,127],'X':[0,99,119,28,28,119,99,0],'Y':[0,7,15,120,120,15,7,0],'Z':[0,97,113,89,77,71,67,0],'!':[0,0,0,79,79,0,0,0],',':[0,0,128,224,96,0,0,0],'-':[0,8,8,8,8,8,8,0],'.':[0,0,0,96,96,0,0,0],':':[0,0,0,36,36,0,0,0],'?':[0,2,3,81,89,15,6,0]};
+var CODE_MS = 420;                    /* 一行程式在畫面上亮多久（簡化） */
+var FAST_MS = 3.5;                    /* 掃描快轉：沒人回的位址，每拍 3.5 ms */
+var WAIT_MS = 1100;                   /* 跑馬燈每一步之間停多久（畫面時間） */
+var TABS = ['i2c', 'wire', 'spi'];
+var CARD = { i2c: 'cc-i2c', wire: 'cc-wire', spi: 'cc-spi' };
+var PRE = { p01: 'c01m', p02: 'c02m', p04: 'c04m', p05: 'c05m' };
+var FILE = { p01: '01-i2c-scan／main.py', p02: '02-oled-hello／main.py', p04: '04-neopixel-rgb／main.py', p05: '05-spi-matrix／main.py' };
+var CHN = ['G', 'R', 'B'], CHZ = { G: '綠', R: '紅', B: '藍' };
+var URL_PRESETS = ['scan', 'hello', 'wrongaddr', 'rgb', 'chain', 'nowrite', 'smile', 'init'];
+var RATE_UNIT = { i2c: '拍', wire: '位元', spi: '拍' };
+
+/* 04、05 裡的顏色、圖、開機設定：開頁時從程式本身讀；下面是讀不到時的備用值（跟 2026-09-26 的程式一樣） */
+var RED = [128, 0, 0], GREEN = [0, 128, 0], BLUE = [0, 0, 128], OFF = [0, 0, 0];
+var PALETTE = [['紅', RED], ['綠', GREEN], ['藍', BLUE], ['黃', [128, 128, 0]], ['白', [128, 128, 128]], ['暗', OFF]];
+var PICS = [
+  { name: '笑臉', bytes: [0x00, 0x66, 0x66, 0x00, 0x81, 0x42, 0x3C, 0x00] },
+  { name: '心形', bytes: [0x00, 0x66, 0xFF, 0xFF, 0x7E, 0x3C, 0x18, 0x00] },
+  { name: '箭頭', bytes: [0x18, 0x3C, 0x7E, 0xE7, 0x18, 0x18, 0x18, 0x18] }
+];
+var INIT = [{ reg: 0x0C, val: 0x01, line: 0 }, { reg: 0x09, val: 0x00, line: 0 }, { reg: 0x0B, val: 0x07, line: 0 }, { reg: 0x0A, val: 0x03, line: 0 }, { reg: 0x0F, val: 0x00, line: 0 }];
+var REGZH = { 12: '關機', 9: '解碼', 11: '掃描列數', 10: '亮度', 15: '顯示測試' };   /* P15 */
+var LBL = { same: '同色 ', each: '各色 紅/綠/藍', run: ['跑馬 第', '顆亮'], off: '跑馬 全暗' };
+
+var reduced = false;
+try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+
+/* ===== 小工具 ===== */
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function f(n) { return Math.round(n * 10) / 10; }
+function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+function hx(n, w) { var s = (n >>> 0).toString(16).toUpperCase(); while (s.length < (w || 2)) s = '0' + s; return '0x' + s; }
+function bin(n, w) { var s = (n >>> 0).toString(2); while (s.length < w) s = '0' + s; return s; }
+function numS(n) { return Math.abs(n - Math.round(n)) < 1e-9 ? String(Math.round(n)) : String(Math.round(n * 100) / 100); }
+function tw(s, size) { var w = 0; for (var i = 0; i < s.length; i++) { var c = s.charCodeAt(i); w += c > 0x2E7F ? size : (c === 32 ? size * 0.32 : size * 0.62); } return w; }
+function T(x, y, s, cls, anchor, extra) { return '<text x="' + f(x) + '" y="' + f(y) + '" class="' + cls + '"' + (anchor ? ' text-anchor="' + anchor + '"' : '') + (extra || '') + '>' + esc(s) + '</text>'; }
+function Rc(x, y, w, h, cls, extra) { return '<rect x="' + f(x) + '" y="' + f(y) + '" width="' + f(Math.max(0, w)) + '" height="' + f(Math.max(0, h)) + '" class="' + cls + '"' + (extra || '') + '/>'; }
+function Ln(x1, y1, x2, y2, cls, extra) { return '<line x1="' + f(x1) + '" y1="' + f(y1) + '" x2="' + f(x2) + '" y2="' + f(y2) + '" class="' + cls + '"' + (extra || '') + '/>'; }
+function setText(id, v) { var e = $(id); if (e && e.textContent !== String(v)) e.textContent = v; }
+function setHtml(id, v) { var e = $(id); if (e && e.innerHTML !== v) e.innerHTML = v; }
+function setSvg(id, W, H, o) { var s = $(id); if (!s) return; s.setAttribute('viewBox', '0 0 ' + W + ' ' + H); s.setAttribute('width', W); s.setAttribute('height', H); s.innerHTML = o.join(''); }
+function ref(id) { return '<a class="ref" href="#f-' + id + '">' + id + '</a>'; }
+function load(k) { try { return window.localStorage.getItem('pin-talk-lab-' + k); } catch (e) { return null; } }
+function save(k, v) { try { window.localStorage.setItem('pin-talk-lab-' + k, String(v)); } catch (e) {} }
+function copy3(c) { return [c[0], c[1], c[2]]; }
+function same3(a, b) { return a[0] === b[0] && a[1] === b[1] && a[2] === b[2]; }
+function tup(c) { return '(' + c[0] + ', ' + c[1] + ', ' + c[2] + ')'; }
+function isOff(c) { return !c[0] && !c[1] && !c[2]; }
+function disp(c) { return 'rgb(' + c.map(function (v) { return v ? Math.round(80 + 175 * v / 255) : 0; }).join(',') + ')'; }
+
+/* ===== 程式正本：從頁面裡的 <pre> 讀（sync_pintalk.py 保證逐字＝wokwi-i2c-spi/） ===== */
+var SRC = {}, LN = {};
+function fd(k, needle, after) { var a = SRC[k] || []; for (var i = after || 0; i < a.length; i++) if (a[i].indexOf(needle) >= 0) return i + 1; return 0; }
+function fdt(k, exact, after) { var a = SRC[k] || []; for (var i = after || 0; i < a.length; i++) if (a[i].trim() === exact) return i + 1; return 0; }
+function loadSources() {
+  Object.keys(PRE).forEach(function (k) { var e = $(PRE[k]); SRC[k] = e ? e.textContent.replace(/\n$/, '').split('\n') : []; });
+  var m2 = fd('p02', '以下才是本週的程式');
+  LN.p01 = { i2c: fd('p01', 'i2c = I2C('), hdr: fd('p01', "print('I2C"), loop: fd('p01', 'while True'), inc: fd('p01', 'n = n + 1'), scan: fd('p01', 'i2c.scan()'),
+    p1: fd('p01', "print('第'"), forA: fd('p01', 'for addr in found'), p2: fd('p01', "print('  位址"), sleep: fd('p01', 'time.sleep(') };
+  LN.p02 = { wl: fd('p02', 'self.write_list = ['), wv: fd('p02', 'self.i2c.writevto('), wc: fd('p02', 'self.i2c.writeto(self.addr, self.temp)'), i2c: fd('p02', 'i2c = I2C(', m2), oled: fd('p02', 'oled = SSD1306_I2C(', m2),
+    loop: fd('p02', 'while True', m2), fill: fd('p02', 'oled.fill(', m2), text: fd('p02', 'oled.text(', m2), show: fd('p02', 'oled.show()', m2), print: fd('p02', "print('畫面", m2) };
+  LN.p04 = { np: fd('p04', 'np = neopixel.NeoPixel('), hdr: fd('p04', "print('三顆"), loop: fd('p04', 'while True'), npi: fd('p04', 'np[i] = rgb'), same: fd('p04', "show('同色"),
+    np0: fd('p04', 'np[0] = RED'), np1: fd('p04', 'np[1] = GREEN'), np2: fd('p04', 'np[2] = BLUE'), each: fd('p04', "show('各色"), runi: fd('p04', 'np[i] = RED if'),
+    run: fd('p04', "show('跑馬 第"), offi: fd('p04', 'np[i] = OFF'), off: fd('p04', "show('跑馬 全暗"), write: fd('p04', 'np.write()'), print: fd('p04', 'print(label') };
+  LN.p04.wait = LN.p04.run ? fd('p04', 'time.sleep(', LN.p04.run) : 0;
+  LN.p05 = { spi: fd('p05', 'spi = SPI('), cs: fd('p05', 'cs = Pin('), low: fd('p05', 'cs.value(0)'), wr: fd('p05', 'spi.write('), high: fd('p05', 'cs.value(1)'),
+    row: fd('p05', 'write_reg(row + 1'), loop: fd('p05', 'while True'), draw: fdt('p05', 'draw(rows)'), showc: fdt('p05', 'show()'), print: fd('p05', "print('點陣"), hdr: fd('p05', "print('SPI") };
+}
+function parsePrograms() {
+  /* 04：顏色常數、palette、show() 的標籤 */
+  var consts = {}, pal = [], a4 = SRC.p04 || [];
+  a4.forEach(function (l) {
+    var m = /^([A-Z]+) = \((\d+), (\d+), (\d+)\)/.exec(l);
+    if (m) consts[m[1]] = [+m[2], +m[3], +m[4]];
+    if (/^palette = \[/.test(l)) { var re = /\('([^']+)', ([A-Z]+)\)/g, mm; while ((mm = re.exec(l))) if (consts[mm[2]]) pal.push([mm[1], consts[mm[2]]]); }
+  });
+  if (consts.RED) RED = consts.RED; if (consts.GREEN) GREEN = consts.GREEN; if (consts.BLUE) BLUE = consts.BLUE; if (consts.OFF) OFF = consts.OFF;
+  if (pal.length) PALETTE = pal;
+  var N = LN.p04, m1;
+  if (N.same && (m1 = /show\('([^']*)' \+ name\)/.exec(a4[N.same - 1]))) LBL.same = m1[1];
+  if (N.each && (m1 = /show\('([^']*)'\)/.exec(a4[N.each - 1]))) LBL.each = m1[1];
+  if (N.run && (m1 = /show\('([^']*)' \+ str\(k\) \+ '([^']*)'\)/.exec(a4[N.run - 1]))) LBL.run = [m1[1], m1[2]];
+  if (N.off && (m1 = /show\('([^']*)'\)/.exec(a4[N.off - 1]))) LBL.off = m1[1];
+  /* 05：三張圖、開機的五個設定 */
+  var pics = [], cur = null, a5 = SRC.p05 || [], init = [];
+  a5.forEach(function (l, i) {
+    var m = /\('([^']+)', \['([.#]{8})'/.exec(l);
+    if (m) { cur = { name: m[1], rows: [m[2]] }; pics.push(cur); }
+    else if (cur && cur.rows.length < 8) { var r = /'([.#]{8})'/.exec(l); if (r) cur.rows.push(r[1]); }
+    var w = /^write_reg\((0x[0-9A-Fa-f]+), (0x[0-9A-Fa-f]+)\)/.exec(l);
+    if (w) init.push({ reg: parseInt(w[1], 16), val: parseInt(w[2], 16), line: i + 1 });
+  });
+  pics = pics.filter(function (p) { return p.rows.length === 8; });
+  if (pics.length) PICS = pics.map(function (p) { return { name: p.name, bytes: p.rows.map(rowToByte) }; });
+  if (init.length) INIT = init;
+}
+function rowToByte(s) { var b = 0; for (var x = 0; x < 8; x++) if (s.charAt(x) === '#') b |= 0x80 >> x; return b; }
+
+/* 照程式那一行 print() 的寫法組出序列埠的字（Python 的 print 用空白隔開每一項） */
+function printArgs(line) {
+  var at = line.indexOf('print('); if (at < 0) return null;
+  var s = line.slice(at + 6), depth = 0, cur = '', args = [], q = null;
+  for (var i = 0; i < s.length; i++) {
+    var ch = s.charAt(i);
+    if (q) { cur += ch; if (ch === q) q = null; continue; }
+    if (ch === "'" || ch === '"') { q = ch; cur += ch; continue; }
+    if (ch === '(' || ch === '[') { depth++; cur += ch; continue; }
+    if (ch === ')' || ch === ']') { if (!depth) { if (cur.trim()) args.push(cur.trim()); return args; } depth--; cur += ch; continue; }
+    if (ch === ',' && !depth) { args.push(cur.trim()); cur = ''; continue; }
+    cur += ch;
+  }
+  return args;
+}
+function pyOut(k, lineNo, env) {
+  var src = (SRC[k] || [])[lineNo - 1] || '', args = printArgs(src);
+  if (!args) return '';
+  return args.map(function (a) {
+    var lit = /^'([^']*)'$/.exec(a) || /^"([^"]*)"$/.exec(a);
+    if (lit) return lit[1];
+    if (Object.prototype.hasOwnProperty.call(env, a)) return String(env[a]);
+    return a;
+  }).join(' ');
+}
+
+/* ===== 狀態 ===== */
+var S = {
+  tab: 'i2c', preset: null, paused: reduced,
+  rate: { i2c: 5, wire: 8, spi: 5 },
+  oledAddr: PROG_ADDR, other: false, kbps: 400, char: 'A', glyph: FONT.A.slice(), i2cMode: 'send',
+  i2c: { bytes: [], acks: [] }, found: [], scanN: 0, sendN: 0, oled: [],
+  pending: [], leds: [], shown: [], bits: '', nowrite: false, wireAuto: false, chainK: 0, sameK: 0, sel: 0,
+  matrix: [0, 0, 0, 0, 0, 0, 0, 0], packets: [],
+  ser: { p01: { rows: [], n: 0 }, p02: { rows: [], n: 0 }, p04: { rows: [], n: 0 }, p05: { rows: [], n: 0 } }, started: {}
+};
+var MX = { on: true, test: 0, scan: 7, decode: 0, inten: 3, rows: [0, 0, 0, 0, 0, 0, 0, 0] };   /* MAX7219 此刻顯示的樣子 */
+var PL = { i2c: null, wire: null, spi: null }, SPIQ = [], PID = 0;
+var REST = { i2c: 0, wire: 0, spi: 0 };
+var realNow = 0, lastFrame = 0;
+var RK = {};
+var LAY = { b1: 520, w1: 600, oled: 600, ch: 600, w2: 600, sb: 300, w3: 600 };
+
+/* ===== 慢動作播放器：一格一格走（一格＝一拍、一個位元，或一行程式） ===== */
+function code(line, on) { return { k: 'code', line: line || 0, ms: CODE_MS, gi: -1, on: on || null }; }
+function newPlayer(tab, slots) {
+  var pl = { tab: tab, slots: slots, idx: 0, frac: 0, done: !slots.length, groups: [], gmap: {}, id: ++PID };
+  for (var i = 0; i < slots.length; i++) {
+    var g = slots[i].gi;
+    if (g === undefined || g < 0) continue;
+    if (!pl.gmap[g]) { pl.gmap[g] = { a: i, b: i }; pl.groups.push(pl.gmap[g]); } else pl.gmap[g].b = i;
+  }
+  PL[tab] = pl;
+  lastFrame = 0;
+  return pl;
+}
+function slotDur(tab, s) { if (s.ms) return s.ms; if (s.fast) return FAST_MS; return (s.mul || 1) * 1000 / S.rate[tab]; }
+function stepSlot(tab) {
+  var pl = PL[tab]; if (!pl || pl.done) return;
+  var s = pl.slots[pl.idx]; pl.frac = 0; pl.idx += 1;
+  if (pl.idx >= pl.slots.length) pl.done = true;
+  if (s.on) s.on();
+  if (pl.done && pl.end) pl.end();
+}
+function advance(tab, dt) {
+  var g = 0;
+  while (dt > 0 && g++ < 400000) {
+    var pl = PL[tab]; if (!pl || pl.done) return;
+    var s = pl.slots[pl.idx], d = slotDur(tab, s), rem = (1 - pl.frac) * d;
+    if (dt >= rem) { dt -= rem; stepSlot(tab); } else { pl.frac += dt / d; return; }
+  }
+}
+function skipAll(tab) {
+  var pl = PL[tab], g = 0;
+  if (tab === 'spi') { while (PL.spi && !PL.spi.done && g++ < 20000) stepSlot('spi'); return; }
+  while (pl && PL[tab] === pl && !pl.done && g++ < 20000) stepSlot(tab);
+}
+function stepOnce() {
+  var tab = S.tab, pl = PL[tab]; if (!pl || pl.done) return;
+  var s = pl.slots[pl.idx];
+  if (s.fast) { var gi = s.gi, g = 0; while (PL[tab] === pl && !pl.done && pl.slots[pl.idx].gi === gi && g++ < 50) stepSlot(tab); }
+  else stepSlot(tab);
+}
+function busy(tab) { var pl = PL[tab]; return !!(pl && !pl.done); }
+function winOf(pl) {
+  if (!pl || !pl.groups.length) return null;
+  var i = pl.done ? pl.slots.length : pl.idx, s = pl.done ? null : pl.slots[i], G = null;
+  if (s && s.gi >= 0) G = pl.gmap[s.gi];
+  else { G = pl.groups[0]; for (var k = pl.groups.length - 1; k >= 0; k--) if (pl.groups[k].a < i) { G = pl.groups[k]; break; } }
+  var n = G.b - G.a + 1, pos;
+  if (i < G.a) pos = -1; else if (i > G.b) pos = n; else pos = i - G.a + pl.frac;
+  return { a: G.a, b: G.b, n: n, pos: pos, cur: (s && i >= G.a && i <= G.b) ? i : -1 };
+}
+
+/* ===== 序列埠 ===== */
+function out(k, s) { var L = S.ser[k]; L.rows.push({ s: s, at: realNow }); L.n += 1; if (L.rows.length > 40) L.rows.shift(); }
+function noteLine(k, s) { var L = S.ser[k]; L.rows.push({ s: s, at: realNow, note: true }); if (L.rows.length > 40) L.rows.shift(); }
+
+/* ===== ① I2C ===== */
+function devices() { var d = [S.oledAddr]; if (S.other) d.push(OTHER_ADDR); return d.sort(function (a, b) { return a - b; }); }
+function normChar(c) { c = String(c === undefined || c === null ? '' : c).trim().slice(0, 1).toUpperCase(); if (c === '' && String(c) !== '') c = ' '; return Object.prototype.hasOwnProperty.call(FONT, c) ? c : null; }
+function sdaEndOf(s, prev) { if (!s) return prev; if (s.k === 'S') return 0; if (s.k === 'P') return 1; if (s.k === 'bit' || s.k === 'ack') return s.v; return prev; }
+function i2cLv(s, fr, prev) {
+  if (s.k === 'S') return [1, fr < 0.5 ? 1 : 0];
+  if (s.k === 'P') return [fr < 0.3 ? 0 : 1, fr < 0.12 ? prev : (fr < 0.65 ? 0 : 1)];
+  return [fr < 0.5 ? 0 : 1, fr < 0.12 ? prev : s.v];
+}
+function pushXfer(sl, bytes, acks, line, gi0, fast, probe) {
+  var info = { ack: [], s: sl.length, p: 0 }, last = gi0;
+  sl.push({ k: 'S', line: line, gi: gi0, fast: fast, probe: probe });
+  for (var b = 0; b < bytes.length; b++) {
+    var gi = gi0 + b; last = gi;
+    for (var j = 7; j >= 0; j--) sl.push({ k: 'bit', b: b, j: j, v: (bytes[b] >> j) & 1, line: line, gi: gi, fast: fast, probe: probe });
+    info.ack.push(sl.length);
+    sl.push({ k: 'ack', b: b, v: acks[b] ? 0 : 1, line: line, gi: gi, fast: fast, probe: probe });
+    if (!acks[b]) break;
+  }
+  info.p = sl.length;
+  sl.push({ k: 'P', line: line, gi: last, fast: fast, probe: probe });
+  return info;
+}
+function i2cSend(c) {
+  c = normChar(c); if (!c) return false;
+  var g = FONT[c].slice(), ok = devices().indexOf(PROG_ADDR) >= 0, bytes = [(PROG_ADDR << 1) | 0], acks = [ok];
+  if (ok) { bytes.push(CTRL_DATA); acks.push(true); g.forEach(function (v) { bytes.push(v); acks.push(true); }); }
+  S.char = c; S.glyph = g; S.i2cMode = 'send'; S.i2c = { bytes: bytes, acks: acks };
+  var N = LN.p02, sl = [], line;
+  if (ok) {
+    if (!S.started.p02) { S.started.p02 = true; sl.push(code(N.i2c)); sl.push(code(N.oled)); }
+    sl.push(code(N.fill)); sl.push(code(N.text)); sl.push(code(N.show));
+    line = N.wv || N.show;
+  } else {
+    /* 位址打錯：02 在建 oled 那一行，驅動 write_cmd 送第一個指令就沒人回（W7）；位址位元組一樣是 0x78，波形跟送字的開頭一模一樣 */
+    S.started.p02 = false; sl.push(code(N.i2c)); sl.push(code(N.oled));
+    line = N.wc || N.oled;
+  }
+  var info = pushXfer(sl, bytes, acks, line, 0, false, null);
+  info.ack.forEach(function (idx, b) { if (b >= 2) { var col = b - 2, val = bytes[b]; sl[idx].on = function () { S.oled[col] = val; }; } });
+  if (ok) sl.push(code(N.print, function () { S.sendN += 1; out('p02', pyOut('p02', N.print, { n: S.sendN })); }));
+  else sl.push(code(line, function () { out('p02', ENODEV); noteLine('p02', '（喊 ' + hx(PROG_ADDR) + ' 沒人回「收到」：驅動一開始送指令就失敗，程式停在這裡）'); }));
+  var pl = newPlayer('i2c', sl); pl.kind = 'send'; pl.info = info; pl.ok = ok;
+  REST.i2c = ok ? N.print : line;
+  var inp = $('inChar'); if (inp && inp.value !== c && document.activeElement !== inp) inp.value = c;
+  return true;
+}
+function i2cScan() {
+  var found = devices().filter(function (a) { return a >= SCAN_LO && a <= SCAN_HI; });
+  S.found = found.slice(); S.scanN += 1; S.i2cMode = 'scan';
+  var N = LN.p01, sl = [], n = S.scanN, cnt = found.length, probeAck = {};
+  if (!S.started.p01) { S.started.p01 = true; sl.push(code(N.i2c)); sl.push(code(N.hdr, function () { out('p01', pyOut('p01', N.hdr, {})); })); }
+  sl.push(code(N.inc)); sl.push(code(N.scan));
+  for (var a = SCAN_LO; a <= SCAN_HI; a++) {
+    var hit = found.indexOf(a) >= 0, inf = pushXfer(sl, [(a << 1) | 0], [hit], N.scan, 1000 + a, !hit, a);
+    probeAck[a] = inf.ack[0];
+  }
+  sl.push(code(N.p1, function () { out('p01', pyOut('p01', N.p1, { n: n, 'len(found)': cnt })); }));
+  found.forEach(function (ad) {
+    sl.push(code(N.forA));
+    sl.push(code(N.p2, function () { out('p01', pyOut('p01', N.p2, { 'hex(addr)': '0x' + ad.toString(16), addr: ad })); }));
+  });
+  sl.push(code(N.sleep));
+  var pl = newPlayer('i2c', sl); pl.kind = 'scan'; pl.probeAck = probeAck; pl.found = found.slice();
+  REST.i2c = N.sleep;
+  return found.slice();
+}
+function setAddr(a) { a = +a; if (!(a >= 0 && a <= 0x7F)) a = PROG_ADDR; S.oledAddr = a | 0; var cb = $('chkWrong'); if (cb) cb.checked = S.oledAddr !== PROG_ADDR; }
+function setOther(on) { S.other = !!on; var cb = $('chkOther'); if (cb) cb.checked = S.other; }
+function rerunI2C() { if (S.i2cMode === 'scan') i2cScan(); else i2cSend(S.char); }
+
+/* ===== ② 單線燈 ===== */
+function grb(c) { return bin(c[1], 8) + bin(c[0], 8) + bin(c[2], 8); }
+function grbBits(cols) { return cols.map(grb).join(''); }
+function setPending(i, c) {
+  i = clamp(Math.round(+i) || 0, 0, NUM - 1);
+  S.pending[i] = [0, 1, 2].map(function (k) { return clamp(Math.round(+c[k] || 0), 0, 255); });
+  S.sel = i; REST.wire = LN.p04['np' + i] || LN.p04.npi;
+}
+function wireWrite(label, pre, waitAfter) {
+  var cols = S.pending.map(copy3), bits = grbBits(cols), N = LN.p04;
+  S.leds = cols.map(copy3); S.bits = bits;
+  var sl = (pre || []).slice(), w0 = sl.length;
+  for (var i = 0; i < 72; i++) sl.push({ k: 'wbit', i: i, v: +bits.charAt(i), line: N.write, gi: Math.floor(i / 8) });
+  var li = sl.length;
+  sl.push({ k: 'latch', line: N.write, gi: 8, mul: 3, on: function () { S.shown = cols.map(copy3); } });
+  if (label !== null && label !== undefined) sl.push(code(N.print, function () { out('p04', pyOut('p04', N.print, { label: label, 'np[0]': tup(cols[0]), 'np[1]': tup(cols[1]), 'np[2]': tup(cols[2]) })); }));
+  if (waitAfter) sl.push({ k: 'code', line: N.wait, ms: WAIT_MS, gi: -1, on: function () { if (S.wireAuto) chainStep(); } });
+  var pl = newPlayer('wire', sl); pl.w0 = w0; pl.li = li; pl.bits = bits; pl.cols = cols; pl.label = label;
+  REST.wire = label !== null && label !== undefined ? N.print : N.write;
+}
+function startProg04(pre) {
+  var N = LN.p04;
+  if (!S.started.p04) { S.started.p04 = true; pre.push(code(N.np)); pre.push(code(N.hdr, function () { out('p04', pyOut('p04', N.hdr, {})); })); }
+}
+function quick(kind) {
+  S.wireAuto = false;
+  var N = LN.p04, pre = [], label, i;
+  startProg04(pre);
+  if (kind === 'same') {
+    var p = PALETTE[S.sameK % PALETTE.length]; S.sameK += 1;
+    for (i = 0; i < NUM; i++) S.pending[i] = copy3(p[1]);
+    pre.push(code(N.npi)); pre.push(code(N.same)); label = LBL.same + p[0];
+  } else {
+    S.pending = [copy3(RED), copy3(GREEN), copy3(BLUE)];
+    pre.push(code(N.np0)); pre.push(code(N.np1)); pre.push(code(N.np2)); pre.push(code(N.each)); label = LBL.each;
+  }
+  wireWrite(label, pre, false);
+}
+function startChain() { S.wireAuto = true; S.chainK = 0; chainStep(); }
+function chainStep() {
+  var N = LN.p04, pre = [], k = S.chainK, label, i;
+  startProg04(pre);
+  if (k < NUM) { for (i = 0; i < NUM; i++) S.pending[i] = copy3(i === k ? RED : OFF); pre.push(code(N.runi)); pre.push(code(N.run)); label = LBL.run[0] + k + LBL.run[1]; }
+  else { for (i = 0; i < NUM; i++) S.pending[i] = copy3(OFF); pre.push(code(N.offi)); pre.push(code(N.off)); label = LBL.off; }
+  S.chainK = (k + 1) % (NUM + 1);
+  wireWrite(label, pre, true);
+}
+function latchNow(cols) {
+  S.pending = cols.map(copy3); S.leds = cols.map(copy3); S.shown = cols.map(copy3); S.bits = grbBits(cols);
+  PL.wire = null;
+}
+function setNoWrite(on) { S.nowrite = !!on; var cb = $('chkNoWrite'); if (cb) cb.checked = S.nowrite; }
+
+/* ===== ③ SPI（MAX7219） ===== */
+function latchMx(reg, data) {
+  if (reg >= 1 && reg <= 8) MX.rows[reg - 1] = data;
+  else if (reg === 0x0C) MX.on = !!(data & 1);
+  else if (reg === 0x0F) MX.test = data & 1;
+  else if (reg === 0x0B) MX.scan = data & 7;
+  else if (reg === 0x0A) MX.inten = data & 15;
+  else if (reg === 0x09) MX.decode = data;
+}
+function mxLit(r, c) { if (MX.test) return true; if (!MX.on) return false; if (r > MX.scan) return false; return !!(MX.rows[r] & (0x80 >> c)); }
+function logPacket(reg, data) { S.packets.push([reg, data]); if (S.packets.length > 48) S.packets.shift(); }
+function spiPacket(reg, data, pre, post, plain) { return { reg: reg, data: data & 0xFF, pre: pre || [], post: post || [], plain: !!plain }; }
+function spiSend(pk) {
+  if (pk.plain) for (var i = 0; i < SPIQ.length; i++) if (SPIQ[i].plain && SPIQ[i].reg === pk.reg) { SPIQ[i].data = pk.data; return; }
+  SPIQ.push(pk);
+  if (!PL.spi || PL.spi.done) spiNext();
+}
+function spiNext() {
+  var pk = SPIQ.shift(); if (!pk) return;
+  var N = LN.p05, sl = pk.pre.slice(), a = sl.length, w = (pk.reg << 8) | pk.data;
+  sl.push({ k: 'csl', line: N.low, gi: 0 });
+  for (var j = 15; j >= 0; j--) sl.push({ k: 'sbit', j: j, v: (w >> j) & 1, line: N.wr, gi: 0 });
+  sl.push({ k: 'csh', line: N.high, gi: 0, on: function () { latchMx(pk.reg, pk.data); } });
+  pk.post.forEach(function (c) { sl.push(c); });
+  var pl = newPlayer('spi', sl); pl.pk = pk; pl.a = a;
+  pl.end = function () { spiNext(); };
+  REST.spi = pk.post.length ? pk.post[pk.post.length - 1].line : N.high;
+}
+function spiSetRow(r, byte) {
+  r = clamp(Math.round(+r) || 0, 0, 7); byte = (Math.round(+byte) || 0) & 0xFF;
+  S.matrix[r] = byte; logPacket(r + 1, byte);
+  spiSend(spiPacket(r + 1, byte, [code(LN.p05.row)], [], true));
+}
+function spiPicture(p) {
+  var N = LN.p05;
+  for (var r = 0; r < 8; r++) {
+    S.matrix[r] = p.bytes[r]; logPacket(r + 1, p.bytes[r]);
+    var pre = [];
+    if (r === 0) {
+      if (!S.started.p05) { S.started.p05 = true; pre.push(code(N.hdr, function () { out('p05', pyOut('p05', N.hdr, {})); })); }
+      pre.push(code(N.draw)); pre.push(code(N.showc));
+    }
+    pre.push(code(N.row));
+    var post = r === 7 ? [code(N.print, function () { out('p05', pyOut('p05', N.print, { name: p.name })); })] : [];
+    spiSend(spiPacket(r + 1, p.bytes[r], pre, post, false));
+  }
+}
+function spiReset() {   /* 回到剛上電：關機、畫面全暗、控制暫存器歸零（P15） */
+  SPIQ = []; PL.spi = null;
+  MX.on = false; MX.test = 0; MX.scan = 0; MX.decode = 0; MX.inten = 0;
+  for (var r = 0; r < 8; r++) { MX.rows[r] = 0; S.matrix[r] = 0; }
+}
+function spiInit() {
+  spiReset();
+  INIT.forEach(function (it) { logPacket(it.reg, it.val); spiSend(spiPacket(it.reg, it.val, [code(it.line)], [], false)); });
+}
+function spiBlankNow() {
+  SPIQ = []; PL.spi = null;
+  MX.on = true; MX.test = 0; MX.scan = 7;
+  for (var r = 0; r < 8; r++) { MX.rows[r] = 0; S.matrix[r] = 0; }
+}
+function spiClear() { for (var r = 0; r < 8; r++) if (S.matrix[r]) spiSetRow(r, 0); }
+
+/* ===== 畫：① I2C ===== */
+function i2cLevels() {
+  var pl = PL.i2c; if (!pl || pl.done) return [1, 1];
+  var s = pl.slots[pl.idx]; if (!s || s.k === 'code') return [1, 1];
+  var p = pl.idx > 0 ? sdaEndOf(pl.slots[pl.idx - 1], 1) : 1;
+  return i2cLv(s, pl.frac, p);
+}
+function renderI2CBus() {
+  var W = LAY.b1, narrow = W < 480, lv = i2cLevels(), wrong = S.oledAddr !== PROG_ADDR;
+  var key = [W, lv.join(''), S.oledAddr, S.other].join('|'); if (key === RK.b1) return; RK.b1 = key;
+  var ew = narrow ? 60 : 92, yA = 46, yC = 74, H = 110, o = [];
+  var xO = ew + (narrow ? 80 : 128), ow = narrow ? 72 : 104, xD = xO + ow + (narrow ? 10 : 34), dw = narrow ? 70 : 96, xEnd = S.other ? xD : xO;
+  var xa = ew + (narrow ? 18 : 30), xc = ew + (narrow ? 40 : 56);
+  /* 3.3 V 與上拉電阻：SDA 往上接、SCL 往下接 */
+  o.push(Ln(xa - 12, 8, xa + 12, 8, 'b-rail')); o.push(T(xa + 16, 12, '3.3 V', 'tm'));
+  o.push(Rc(xa - 4, 12, 8, 18, 'b-res', ' rx="2"')); o.push(Ln(xa, 30, xa, yA, 'b-wire'));
+  o.push(Ln(xc, yC, xc, yC + 8, 'b-wire')); o.push(Rc(xc - 4, yC + 8, 8, 18, 'b-res', ' rx="2"'));
+  o.push(Ln(xc - 12, yC + 30, xc + 12, yC + 30, 'b-rail')); o.push(T(xc + 16, yC + 34, '3.3 V', 'tm'));
+  /* 兩條線 */
+  o.push(Ln(ew + 2, yA, xEnd, yA, lv[1] ? 'b-hi' : 'b-lo'));
+  o.push(Ln(ew + 2, yC, xEnd, yC, lv[0] ? 'b-hi' : 'b-lo'));
+  o.push('<circle class="b-dot" cx="' + xa + '" cy="' + yA + '" r="3.2"/><circle class="b-dot" cx="' + xc + '" cy="' + yC + '" r="3.2"/>');
+  if (narrow) { o.push(T(xO - 4, yA - 6, 'SDA', 'tmb', 'end')); o.push(T(xO - 4, yC + 16, 'SCL', 'tmb', 'end')); }
+  else { o.push(T(xO - 6, yA - 6, 'SDA 資料', 't12b', 'end')); o.push(T(xO - 6, yC + 16, 'SCL 時脈', 't12b', 'end')); }
+  o.push(T(ew + 8, yA - 6, lv[1] ? '1' : '0', 'tmb tpri')); o.push(T(ew + 8, yC + 16, lv[0] ? '1' : '0', 'tmb tpri'));
+  /* ESP32 */
+  o.push(Rc(2, 20, ew, 80, 'b-chip', ' rx="8"'));
+  o.push(T(2 + ew / 2, 36, 'ESP32', 't13b', 'middle'));
+  o.push(T(ew - 4, yA + 4, 'SDA 21', 'tm', 'end')); o.push(T(ew - 4, yC + 4, 'SCL 22', 'tm', 'end'));
+  /* OLED */
+  o.push(Rc(xO, 20, ow, 80, 'b-chip', ' rx="8"'));
+  o.push(Rc(xO + 8, 27, ow - 16, 26, 'b-scr', ' rx="3"'));
+  o.push(T(xO + ow / 2, 72, 'OLED', 't12b', 'middle'));
+  o.push(T(xO + ow / 2, 90, '位址 ' + hx(S.oledAddr), 'tmb' + (wrong ? ' t-alert' : ''), 'middle'));
+  if (S.other) {
+    o.push(Rc(xD, 20, dw, 80, 'b-chip b-dash', ' rx="8"'));
+    o.push(T(xD + dw / 2, 44, '別的裝置', 't12b', 'middle'));
+    o.push(T(xD + dw / 2, 64, hx(OTHER_ADDR), 'tmb', 'middle'));
+    o.push(T(xD + dw / 2, 84, '（示意）', 't12', 'middle'));
+  }
+  setSvg('i2cBus', W, H, o);
+}
+function scanPos(pl) {
+  var probed = 0, hits = [], cur = -1, s = pl && !pl.done ? pl.slots[pl.idx] : null;
+  if (!pl || pl.kind !== 'scan') return { probed: 0, hits: [], cur: -1 };
+  for (var a = SCAN_LO; a <= SCAN_HI; a++) { if (pl.done || pl.idx > pl.probeAck[a]) { probed += 1; if (pl.found.indexOf(a) >= 0) hits.push(a); } }
+  if (s && s.probe !== undefined && s.probe !== null) cur = s.probe;
+  return { probed: probed, hits: hits, cur: cur };
+}
+function byteDone(pl, b) {
+  if (!pl || pl.kind !== 'send') return 'done';
+  var ai = pl.info.ack[b]; if (ai === undefined) return 'skip';
+  if (pl.done || pl.idx > ai) return 'done';
+  var s = pl.slots[pl.idx];
+  if ((s.k === 'bit' || s.k === 'ack') && s.b === b) return 'cur';
+  return 'wait';
+}
+function renderI2CChips() {
+  var pl = PL.i2c, h = [], key = pl ? pl.id + ':' + pl.idx + ':' + pl.done : 'none';
+  if (key === RK.ic) return; RK.ic = key;
+  if (pl && pl.kind === 'scan') {
+    var st = scanPos(pl), tot = SCAN_HI - SCAN_LO + 1;
+    h.push('<span class="stline">' + (st.cur >= 0 ? '正在喊 <b>' + hx(st.cur) + '</b>（位址＋寫＝' + hx(st.cur << 1) + '）　' : '') + '已經喊了 <b>' + st.probed + '</b>／' + tot + ' 個位址，找到 <b>' + st.hits.length + '</b> 顆' + (st.hits.length ? '：' + st.hits.map(function (a) { return hx(a); }).join('、') : '') + '</span>');
+  } else if (pl) {
+    var by = S.i2c.bytes, ac = S.i2c.acks, s0 = pl.done ? null : pl.slots[pl.idx];
+    var sCls = pl.done || pl.idx > pl.info.s ? 'done' : (pl.idx === pl.info.s ? 'cur' : '');
+    h.push('<span class="bchip ' + sCls + '"><span class="zh">開始</span></span>');
+    for (var b = 0; b < by.length; b++) {
+      var st2 = byteDone(pl, b), tag = b === 0 ? ' <span class="zh">位址</span>' : (b === 1 ? ' <span class="zh">控制</span>' : '');
+      var mark = st2 === 'done' ? (ac[b] ? ' <span class="ok">✓</span>' : ' <span class="no">✗</span>') : '';
+      h.push('<span class="bchip ' + (st2 === 'done' && !ac[b] ? 'bad' : st2) + '">' + hx(by[b]) + tag + mark + '</span>');
+    }
+    if (by.length === 1) h.push('<span class="bchip"><span class="zh">後面都沒送</span></span>');
+    var pCls = pl.done || pl.idx > pl.info.p ? 'done' : (s0 && s0.k === 'P' ? 'cur' : '');
+    h.push('<span class="bchip ' + pCls + '"><span class="zh">結束</span></span>');
+  }
+  setHtml('i2cChips', h.join(''));
+}
+function stepPath(pts, yHi, yLo) {
+  var d = '';
+  for (var i = 0; i < pts.length; i++) {
+    var x = f(pts[i][0]), y = pts[i][1] ? yHi : yLo;
+    if (!i) { d = 'M' + x + ',' + y; continue; }
+    d += ' H' + x;
+    if (pts[i][1] !== pts[i - 1][1]) d += ' V' + y;
+  }
+  return d;
+}
+function trace(d, cls, clip) { return '<path class="' + cls + ' fut" d="' + d + '"/><path class="' + cls + '" d="' + d + '" clip-path="url(#' + clip + ')"/>'; }
+function renderI2CWave() {
+  var pl = PL.i2c, W = LAY.w1, H = 140, L = 40, R = 8, yC = [30, 52], yD = [76, 98], yTop = 15, yVal = 124;
+  var key = W + '|' + (pl ? pl.id + ':' + pl.idx + ':' + Math.round(pl.frac * 60) + ':' + pl.done : 'none');
+  if (key === RK.iw) return; RK.iw = key;
+  var o = [], win = winOf(pl);
+  if (!win) {
+    o.push(T(4, 45, 'SCL', 'sc-tb sc-o')); o.push(T(4, 91, 'SDA', 'sc-tb sc-g'));
+    o.push(Ln(L, yC[0], W - R, yC[0], 'sc-scl')); o.push(Ln(L, yD[0], W - R, yD[0], 'sc-sda'));
+    o.push(T(L + 4, yVal, '兩條線閒著都是 1', 'sc-t'));
+    setSvg('i2cWave', W, H, o); return;
+  }
+  var sl = pl.slots, a = win.a, n = win.n, hasS = sl[a].k === 'S', hasP = sl[win.b].k === 'P';
+  var mL = hasS ? 0.7 : 0, mR = hasP ? 0.7 : 0, sw = (W - L - R) / (n + mL + mR);
+  var X = function (u) { return L + (u + mL) * sw; };
+  var prev = a > 0 ? sdaEndOf(sl[a - 1], 1) : 1, pc = [[L, 1]], pd = [[L, hasS ? 1 : prev]], i, s;
+  for (i = 0; i < n; i++) {
+    s = sl[a + i]; var x0 = X(i);
+    if (s.k === 'S') { pc.push([x0, 1]); pd.push([x0, 1]); pd.push([x0 + 0.5 * sw, 0]); }
+    else if (s.k === 'P') { pc.push([x0, 0]); pc.push([x0 + 0.3 * sw, 1]); pd.push([x0, prev]); pd.push([x0 + 0.12 * sw, 0]); pd.push([x0 + 0.65 * sw, 1]); }
+    else { pc.push([x0, 0]); pc.push([x0 + 0.5 * sw, 1]); pd.push([x0, prev]); pd.push([x0 + 0.12 * sw, s.v]); }
+    prev = sdaEndOf(s, prev);
+  }
+  pc.push([W - R, pc[pc.length - 1][1]]); pd.push([W - R, prev]);
+  var px = win.pos < 0 ? L + mL * sw * 0.45 : (win.pos >= n ? Math.min(W - R, X(n) + mR * sw * 0.5) : X(win.pos));
+  o.push('<defs><clipPath id="i2cClip"><rect x="0" y="0" width="' + f(px) + '" height="' + H + '"/></clipPath></defs>');
+  if (win.cur >= 0) o.push(Rc(X(win.cur - a), 20, sw, 88, 'sc-band'));
+  o.push(trace(stepPath(pc, yC[0], yC[1]), 'sc-scl', 'i2cClip'));
+  o.push(trace(stepPath(pd, yD[0], yD[1]), 'sc-sda', 'i2cClip'));
+  o.push(T(4, 45, 'SCL', 'sc-tb sc-o')); o.push(T(4, 91, 'SDA', 'sc-tb sc-g')); o.push(T(4, yTop, '位元', 'sc-m'));
+  for (i = 0; i < n; i++) {
+    s = sl[a + i]; var xc = X(i + 0.5), top = '', bot = '', bcls = 'sc-m';
+    if (s.k === 'S') top = '開始';
+    else if (s.k === 'P') top = '結束';
+    else if (s.k === 'bit') { top = String(s.j); bot = String(s.v); bcls = s.v ? 'sc-m sc-hi' : 'sc-m'; }
+    else { top = 'ACK'; bot = s.v ? (sw >= 38 ? '沒人回' : '✗') : (sw >= 27 ? '收到' : '✓'); bcls = 'sc-tb ' + (s.v ? 'sc-r' : 'sc-g'); }
+    if (top) o.push(T(xc, yTop, top, s.k === 'bit' ? 'sc-m' : 'sc-tb', 'middle'));
+    if (bot) o.push(T(xc, yVal, bot, bcls, 'middle'));
+  }
+  if (hasS && mL * sw > 30) o.push(T(L + 2, yVal, '閒著', 'sc-m'));
+  if (win.cur >= 0) {
+    var cs = sl[win.cur];
+    if (cs.k === 'bit' || cs.k === 'ack') {
+      var xm = X(win.cur - a + 0.75), lab = '在這一刻看', lw = tw(lab, 12), lx = xm + 6 + lw > W - R ? xm - 6 - lw : xm + 6;
+      o.push(Ln(xm, 24, xm, 104, 'sc-look'));
+      o.push('<circle class="sc-dot2" cx="' + f(xm) + '" cy="' + (cs.v ? yD[0] : yD[1]) + '" r="4"/>');
+      o.push(T(lx, 68, lab, 'sc-tb sc-y sc-halo'));
+    }
+  }
+  o.push(Ln(px, 20, px, 108, 'sc-play'));
+  setSvg('i2cWave', W, H, o);
+}
+function i2cCur() {
+  var pl = PL.i2c; if (!pl || pl.done || pl.kind !== 'send') return null;
+  var s = pl.slots[pl.idx]; if (s.k !== 'bit' && s.k !== 'ack') return null;
+  return { b: s.b, j: s.k === 'bit' ? s.j : -1 };
+}
+function byteWhat(b) {
+  if (b === 0) return '位址 ' + hx(PROG_ADDR) + '＋寫';
+  if (b === 1) return '控制：後面是畫面';
+  return '第 ' + (b - 2) + ' 欄';
+}
+function shortWhat(b) { return b === 0 ? '位址＋寫' : (b === 1 ? '控制' : '第 ' + (b - 2) + ' 欄'); }
+function renderByteTable() {
+  var pl = PL.i2c, cur = i2cCur(), by = S.i2c.bytes, ac = S.i2c.acks;
+  var key = [pl ? pl.id : 0, pl ? pl.idx : -1, pl && pl.done, cur ? cur.b + ':' + cur.j : ''].join('|');
+  if (key === RK.bt) return; RK.bt = key;
+  var h = ['<table class="bytes"><thead><tr><th>第幾個</th><th>十六進位</th><th>8 個位元（先送左邊）</th><th>收到</th></tr></thead><tbody>'];
+  for (var b = 0; b < by.length; b++) {
+    var st = byteDone(pl, b), bits = '', onAck = cur && cur.b === b && cur.j === -1;
+    for (var j = 7; j >= 0; j--) { var v = (by[b] >> j) & 1; bits += '<span class="' + (v ? 'one' : '') + (cur && cur.b === b && cur.j === j ? ' cur' : '') + '">' + v + '</span>'; }
+    var ackTxt = (st === 'done' || onAck) ? (ac[b] ? '✓' : '✗ 沒人') : '';
+    h.push('<tr class="' + st + '"><td>' + (b + 1) + ' ' + shortWhat(b) + '</td><td class="mono">' + hx(by[b]) + '</td><td class="bits">' + bits + '</td><td class="ack ' + (ac[b] ? 'ok' : 'bad') + (onAck ? ' cur' : '') + '">' + ackTxt + '</td></tr>');
+  }
+  if (by.length === 1) h.push('<tr class="skip"><td colspan="4">後面的控制位元組和 8 欄畫面，都沒送</td></tr>');
+  h.push('</tbody></table>');
+  $('byteTable').innerHTML = h.join('');
+}
+function renderGlyph() {
+  var g = S.glyph, cur = i2cCur(), col = cur && cur.b >= 2 ? cur.b - 2 : -1, bit = cur && cur.b >= 2 ? cur.j : -2;
+  var key = S.char + '|' + col + '|' + bit; if (key === RK.gl) return; RK.gl = key;
+  var h = ['<span class="gh"></span>'], c, j;
+  for (c = 0; c < 8; c++) h.push('<span class="gh' + (c === col ? ' hot' : '') + '">' + c + '</span>');
+  for (j = 0; j < 8; j++) {
+    h.push('<span class="gh">' + j + '</span>');
+    for (c = 0; c < 8; c++) { var on = (g[c] >> j) & 1; h.push('<span class="gc' + (on ? ' on' : '') + (c === col ? ' col' : '') + (c === col && j === bit ? ' bit' : '') + '"></span>'); }
+  }
+  $('glyph').innerHTML = h.join('');
+  setText('glyphCap', '「' + (S.char === ' ' ? '空白' : S.char) + '」在 ESP32 記憶體裡：8 欄，每欄 8 點＝一個位元組');
+}
+function renderOled() {
+  var W = LAY.oled, dot = clamp(Math.floor((W - 8) / 128 * 2) / 2, 1.5, 3), sw = 128 * dot, sh = 64 * dot;
+  var x0 = Math.max(4, Math.floor((W - sw) / 2)), y0 = 4, H = sh + 8, cur = i2cCur(), col = cur && cur.b >= 2 ? cur.b - 2 : -1;
+  var key = W + '|' + S.oled.slice(0, 8).join(',') + '|' + col; if (key === RK.ol) return; RK.ol = key;
+  var d = '', q = dot * 0.8, m = dot * 0.1, c, p, j;
+  for (c = 0; c < 128; c++) for (p = 0; p < 8; p++) {
+    var by = S.oled[p * 128 + c]; if (!by) continue;
+    for (j = 0; j < 8; j++) if ((by >> j) & 1) d += 'M' + f(x0 + c * dot + m) + ',' + f(y0 + (p * 8 + j) * dot + m) + 'h' + f(q) + 'v' + f(q) + 'h' + f(-q) + 'z';
+  }
+  var o = ['<defs><pattern id="oledDots" patternUnits="userSpaceOnUse" x="' + x0 + '" y="' + y0 + '" width="' + dot + '" height="' + dot + '"><rect class="oled-off" x="' + f(m) + '" y="' + f(m) + '" width="' + f(q) + '" height="' + f(q) + '"/></pattern></defs>'];
+  o.push(Rc(x0 - 4, y0 - 4, sw + 8, sh + 8, 'oled-bg', ' rx="4"'));
+  o.push('<rect x="' + x0 + '" y="' + y0 + '" width="' + sw + '" height="' + sh + '" fill="url(#oledDots)"/>');
+  if (d) o.push('<path class="oled-on" d="' + d + '"/>');
+  o.push(Rc(x0 - 1, y0 - 1, 8 * dot + 2, 8 * dot + 2, 'oled-box'));
+  if (col >= 0) o.push(Rc(x0 + col * dot - 1, y0 - 1, dot + 2, 8 * dot + 2, 'oled-cur'));
+  setSvg('oledSvg', W, H, o);
+}
+function buildScanGrid() {
+  var h = ['<thead><tr><th></th>'], c, r;
+  for (c = 0; c < 16; c++) h.push('<th>' + c.toString(16) + '</th>');
+  h.push('</tr></thead><tbody>');
+  for (r = 0; r < 8; r++) {
+    h.push('<tr><th>' + ('0' + (r * 16).toString(16)).slice(-2) + '</th>');
+    for (c = 0; c < 16; c++) h.push('<td id="sg' + (r * 16 + c) + '"></td>');
+    h.push('</tr>');
+  }
+  h.push('</tbody>');
+  $('scanGrid').innerHTML = h.join('');
+}
+function renderScanGrid() {
+  var pl = PL.i2c, key = pl ? pl.id + ':' + pl.idx + ':' + pl.done : 'none'; if (key === RK.sg) return; RK.sg = key;
+  var scan = !!(pl && pl.kind === 'scan'), st = scanPos(pl);
+  for (var a = 0; a < 128; a++) {
+    var td = $('sg' + a), cls = '', tx = '';
+    if (!td) continue;
+    if (a < SCAN_LO || a > SCAN_HI) cls = 'x';
+    else if (scan) {
+      var hit = pl.found.indexOf(a) >= 0;
+      if (pl.done || pl.idx > pl.probeAck[a]) { cls = hit ? 'hit' : ''; tx = hit ? a.toString(16) : '--'; }
+      else if (a === st.cur) { cls = 'cur'; tx = a.toString(16); }
+    }
+    if (td.className !== cls) td.className = cls;
+    if (td.textContent !== tx) td.textContent = tx;
+  }
+  setText('scanCap', '上面那排是個位、左邊那排是十位（十六進位）：3c 在「30」那一列、「c」那一行。「--」＝喊了沒人回；綠色＝有人回「收到」。已經喊了 ' + st.probed + '／' + (SCAN_HI - SCAN_LO + 1) + ' 個位址。');
+}
+function i2cCapText() {
+  var pl = PL.i2c; if (!pl) return '';
+  if (pl.done) {
+    if (pl.kind === 'scan') return '掃完了：' + (pl.found.length ? '找到 ' + pl.found.map(function (a) { return hx(a) + '（' + a + '）'; }).join('、') : '一顆都沒找到') + '。scan() 回傳的清單就是這幾個數。';
+    return pl.ok ? '送完了：10 個位元組，每一個後面都有「收到」。' : '位址後面沒人回「收到」，ESP32 發「結束」，後面就不送了；02 印出 <code>' + ENODEV + '</code> 停下（' + ref('W7') + '）。';
+  }
+  var s = pl.slots[pl.idx];
+  if (s.k === 'code') return '程式跑到第 ' + s.line + ' 行（程式區亮的那一行）；兩條線還閒著，都是 1。';
+  if (pl.kind === 'scan' && s.fast) return '快轉：喊 ' + hx(s.probe) + '，第 9 拍沒人拉低，換下一個。';
+  var who = pl.kind === 'scan' ? '位址位元組 ' + hx(s.probe << 1) + '（喊 ' + hx(s.probe) + '＋寫）' : '第 ' + (s.b + 1) + ' 個位元組 ' + hx(S.i2c.bytes[s.b]) + '（' + byteWhat(s.b) + '）';
+  if (s.k === 'S') return '開始：SCL 是 1 的時候，SDA 從 1 掉到 0，大家知道「要開始了」（' + ref('P3') + '）。';
+  if (s.k === 'P') return '結束：SCL 是 1 的時候，SDA 從 0 升回 1（' + ref('P3') + '）。';
+  if (s.k === 'bit') return who + '的第 ' + (8 - s.j) + ' 個位元＝<b>' + s.v + '</b>。SDA 趁 SCL 是 0 的時候換好，SCL 變 1 的那一刻對方看。';
+  if (s.v) return '第 9 拍：SDA 還是 1——沒人回「收到」（' + ref('P5') + '）。';
+  return '第 9 拍：' + (pl.kind === 'scan' ? hx(s.probe) + ' 那一顆' : '螢幕') + '把 SDA 拉低＝「收到」（' + ref('P5') + '）。';
+}
+function i2cWhen() {
+  var per = 1000 / S.kbps, one = 90 * per, full = (FRAME_BYTES + 2) * 9 * per / 1000;
+  return '<b>真實速度（' + S.kbps + ' kbit/s）：</b>一拍 ' + numS(per) + ' µs。這一個字 10 個位元組 × 9 拍＝90 拍，約 ' + Math.round(one) + ' µs；<code>show()</code> 一次送整個畫面 1024 個位元組，連位址、控制共 1026 個 × 9 拍，約 ' + Math.round(full) + ' ms（估算：不算開始、結束和前面的設定指令，' + ref('P6') + '）。';
+}
+function renderI2C() {
+  renderI2CBus(); renderI2CChips(); renderI2CWave();
+  var scan = S.i2cMode === 'scan';
+  $('i2cSendBox').hidden = scan; $('i2cScanBox').hidden = !scan;
+  if (scan) renderScanGrid(); else { renderGlyph(); renderByteTable(); renderOled(); }
+  setHtml('i2cCap', i2cCapText());
+  setHtml('i2cWhen', i2cWhen());
+}
+
+/* ===== 畫：② 單線燈 ===== */
+function wireProg(pl) {
+  if (!pl || pl.done) return { sent: 72, latched: true, i: -1, latch: false };
+  var s = pl.slots[pl.idx];
+  if (pl.idx < pl.w0) return { sent: 0, latched: false, i: -1, latch: false };
+  if (s.k === 'wbit') return { sent: s.i + pl.frac, latched: false, i: s.i, latch: false };
+  if (s.k === 'latch') return { sent: 72, latched: false, i: -1, latch: true };
+  return { sent: 72, latched: true, i: -1, latch: false };
+}
+function renderChain() {
+  var W = LAY.ch, pl = PL.wire, st = wireProg(pl), narrow = W < 460;
+  var key = [W, pl ? pl.id : 0, Math.floor(st.sent), st.latched, st.latch, st.i, S.shown.map(tup).join(''), S.sel].join('|');
+  if (key === RK.ch) return; RK.ch = key;
+  var bw = narrow ? 60 : 92, H = 112, o = [], ly = 26, led = narrow ? 34 : 42, slotW = (W - bw - 6) / 3, wy = ly + led / 2;
+  o.push(Rc(2, ly - 2, bw, led + 4, 'b-chip', ' rx="8"'));
+  o.push(T(2 + bw / 2, ly + 14, 'ESP32', 't13b', 'middle'));
+  o.push(T(2 + bw / 2, ly + 32, 'GPIO26', 'tm', 'middle'));
+  for (var k = 0; k < 3; k++) {
+    var cx = bw + 6 + slotW * (k + 0.5), x = cx - led / 2, xs = k === 0 ? bw + 2 : cx - slotW + led / 2;
+    var hot = st.i >= 24 * k;
+    o.push(Ln(xs, wy, x - 5, wy, hot ? 'b-hot' : 'b-wire'));
+    o.push('<path class="b-ah' + (hot ? ' hot' : '') + '" d="M' + f(x - 1) + ',' + f(wy) + ' l-7,-4.5 v9 z"/>');
+    var cnt = [72, 48, 24][k], lab = narrow ? String(cnt) : (k ? '剩 ' + cnt + ' 位元' : cnt + ' 位元');
+    if (tw(lab, 12) < x - xs - 8) o.push(T((xs + x) / 2, wy - 8, lab, 'tm', 'middle'));
+    var c = S.shown[k] || OFF, on = !isOff(c);
+    if (on) o.push('<circle cx="' + f(cx) + '" cy="' + f(wy) + '" r="' + f(led * 0.66) + '" style="fill:' + disp(c) + '" opacity=".32"/>');
+    o.push(Rc(x, ly, led, led, 'pix', ' rx="6"' + (k === S.sel ? ' style="stroke:var(--c-primary);stroke-width:2.4"' : '')));
+    o.push('<circle cx="' + f(cx) + '" cy="' + f(wy) + '" r="' + f(led * 0.3) + '" class="pix-in"' + (on ? ' style="fill:' + disp(c) + '"' : '') + '/>');
+    o.push(T(cx, ly - 8, 'np[' + k + ']', 'tm', 'middle'));
+    o.push(T(cx, ly + led + 16, '第 ' + (k + 1) + ' 顆', 't12b', 'middle'));
+    var got = st.latched || st.latch ? 24 : clamp(Math.floor(st.sent) - 24 * k, 0, 24), tick = Math.max(1.4, Math.min(3, (slotW - 14) / 24 - 0.6)), bx0 = cx - 12 * (tick + 0.6);
+    for (var t = 0; t < 24; t++) o.push(Rc(bx0 + t * (tick + 0.6), ly + led + 24, tick, 9, t < got ? 'rx-' + CHN[Math.floor(t / 8)] : 'rx-no'));
+  }
+  setSvg('wireChain', W, H, o);
+}
+function renderLedCtl() {
+  var key = S.pending.map(tup).join('') + '|' + S.leds.map(tup).join('') + '|' + S.sel;
+  if (key === RK.lc) return; RK.lc = key;
+  for (var i = 0; i < NUM; i++) {
+    var c = S.pending[i];
+    ['r', 'g', 'b'].forEach(function (ch, k) {
+      var e = $('rg' + i + ch); if (e && document.activeElement !== e && +e.value !== c[k]) e.value = String(c[k]);
+      setText('ro' + i + ch, c[k]);
+      if (e) e.setAttribute('aria-valuetext', ['紅', '綠', '藍'][k] + ' ' + c[k]);
+    });
+    var sw = $('sw' + i); if (sw) sw.style.background = isOff(c) ? '' : disp(c);
+    setText('lv' + i, tup(c));
+    setText('lt' + i, same3(c, S.leds[i]) ? '' : '記憶體改了、還沒送');
+    var g = $('lg' + i); if (g) g.classList.toggle('sel', i === S.sel);
+  }
+}
+function buildLedCtl() {
+  var h = [];
+  for (var i = 0; i < NUM; i++) {
+    h.push('<div class="ledgrp" id="lg' + i + '"><div class="lghead"><span class="sw" id="sw' + i + '"></span><span>第 ' + (i + 1) + ' 顆</span><code>np[' + i + ']</code><span class="lv" id="lv' + i + '"></span><span class="tag" id="lt' + i + '"></span></div>');
+    [['r', 'R 紅', 0], ['g', 'G 綠', 1], ['b', 'B 藍', 2]].forEach(function (q) {
+      h.push('<div class="lgrow ' + q[0] + '"><label for="rg' + i + q[0] + '">' + q[1] + '</label><input type="range" id="rg' + i + q[0] + '" min="0" max="255" step="1" value="0" data-i="' + i + '" data-ch="' + q[2] + '"><output id="ro' + i + q[0] + '" for="rg' + i + q[0] + '">0</output></div>');
+    });
+    h.push('</div>');
+  }
+  $('ledCtl').innerHTML = h.join('');
+}
+function buildWireBits() {
+  var h = [];
+  for (var k = 0; k < 3; k++) {
+    h.push('<div class="wrow"><span class="wl">第 ' + (k + 1) + ' 顆</span>');
+    for (var c = 0; c < 3; c++) {
+      h.push('<span class="wgrp ' + CHN[c] + '"><span class="wt">' + CHN[c] + '</span>');
+      for (var t = 0; t < 8; t++) h.push('<span class="wc" id="wb' + (k * 24 + c * 8 + t) + '"></span>');
+      h.push('</span>');
+    }
+    h.push('</div>');
+  }
+  $('wireBits').innerHTML = h.join('');
+}
+function renderWireBits() {
+  var pl = PL.wire, st = wireProg(pl), bits = pl ? pl.bits : S.bits;
+  var key = bits + '|' + (pl ? pl.id : 0) + '|' + st.i + '|' + st.latched + '|' + Math.floor(st.sent); if (key === RK.wb) return; RK.wb = key;
+  for (var i = 0; i < 72; i++) {
+    var e = $('wb' + i); if (!e) continue;
+    var v = bits.charAt(i), wait = !st.latched && !st.latch && i !== st.i && i >= st.sent;
+    e.textContent = v;
+    e.className = 'wc' + (v === '1' ? ' one' : '') + (i === st.i ? ' cur' : '') + (wait ? ' wait' : '');
+  }
+}
+function renderWireWave() {
+  var pl = PL.wire, W = LAY.w2, H = 134, L = 40, R = 8, yH = 36, yL = 74, st = wireProg(pl);
+  var bits = pl ? pl.bits : S.bits, g, pos;
+  if (!pl) { g = 0; pos = -1; }
+  else if (pl.done) { g = 8; pos = 99; }
+  else {
+    var s = pl.slots[pl.idx];
+    if (s.k === 'wbit') { g = Math.floor(s.i / 8); pos = s.i % 8 + pl.frac; }
+    else if (s.k === 'latch') { g = 8; pos = 8 + pl.frac * 2; }
+    else if (pl.idx < pl.w0) { g = 0; pos = -1; }
+    else { g = 8; pos = 99; }
+  }
+  var key = [W, bits, pl ? pl.id : 0, g, Math.round(pos * 40)].join('|'); if (key === RK.ww) return; RK.ww = key;
+  var hasL = g === 8, nU = 8 + (hasL ? 2 : 0) + 0.4, sw = (W - L - R) / nU;
+  var X = function (u) { return L + 0.2 * sw + u * sw; };
+  var pts = [[L, 0]], i, o = [];
+  for (i = 0; i < 8; i++) { var v = +bits.charAt(g * 8 + i), x0 = X(i); pts.push([x0, 1]); pts.push([x0 + (v ? 0.64 : 0.32) * sw, 0]); }
+  pts.push([W - R, 0]);
+  var px = pos < 0 ? L + 0.1 * sw : (pos >= 99 ? W - R - 2 : X(pos));
+  o.push('<defs><clipPath id="wireClip"><rect x="0" y="0" width="' + f(px) + '" height="' + H + '"/></clipPath></defs>');
+  if (st.i >= 0 && Math.floor(st.i / 8) === g) o.push(Rc(X(st.i % 8), 22, sw, 60, 'sc-band'));
+  if (hasL) o.push(Rc(X(8), 22, 2 * sw, 60, 'sc-band', st.latch ? '' : ' opacity=".5"'));
+  o.push(trace(stepPath(pts, yH, yL), 'sc-sda', 'wireClip'));
+  o.push(T(4, 60, 'DIN', 'sc-tb sc-g'));
+  var k = Math.floor(g / 3), ch = CHN[g % 3], narrow = W < 460;
+  var head = hasL && pos >= 8 ? '72 位元送完：保持低電位' : ('第 ' + (k + 1) + ' 顆・' + ch + '（' + CHZ[ch] + '）' + (narrow ? '' : '・第 ' + (g * 8 + 1) + '–' + (g * 8 + 8) + ' 位元'));
+  o.push(T(L, 15, head, 'sc-tb'));
+  var sentTxt = '已送 ' + Math.min(72, Math.floor(st.sent)) + '／72';
+  o.push(T(W - R, 15, sentTxt, 'sc-m', 'end'));
+  for (i = 0; i < 8; i++) {
+    var vv = +bits.charAt(g * 8 + i), xc = X(i + 0.5);
+    o.push(T(xc, 96, String(vv), vv ? 'sc-m sc-hi' : 'sc-m', 'middle'));
+    if (sw >= 44) o.push(T(X(i) + (vv ? 0.32 : 0.16) * sw, 112, vv ? '0.80' : '0.40', vv ? 'sc-m sc-y' : 'sc-m', 'middle'));
+  }
+  if (sw >= 44) o.push(T(4, 112, 'µs', 'sc-m'));
+  o.push('<path class="sc-br" d="M' + f(X(0)) + ',120 v6 M' + f(X(0)) + ',123 H' + f(X(1)) + ' M' + f(X(1)) + ',120 v6"/>');
+  var axis = '1.25 µs＝一位元；72 位元＝90 µs；最後低 ≥ 50 µs 才亮';
+  if (X(1) + 4 + tw(axis, 12) > W - R) axis = '1.25 µs＝一位元';
+  o.push(T(X(1) + 4, 128, axis, 'sc-m'));
+  if (hasL) {
+    o.push(T(X(9), 66, '低 ≥ 50 µs', 'sc-tb sc-y', 'middle'));
+    o.push(T(X(9), 96, '→ 鎖存', 'sc-tb sc-y', 'middle'));
+  }
+  if (st.i >= 0 && Math.floor(st.i / 8) === g) {
+    var xm = X(st.i % 8), lab = st.i % 8 === 0 ? '' : '';
+    o.push(Ln(xm, 26, xm, 80, 'sc-look'));
+  }
+  o.push(Ln(px, 22, px, 84, 'sc-play'));
+  setSvg('wireWave', W, H, o);
+}
+function wireCapText() {
+  var pl = PL.wire;
+  if (!pl) return '上一次送出的 72 位元（最前面是第 1 顆的 G）。改顏色、按 <code>np.write()</code>，看它一位一位送出去。';
+  if (pl.done) return '送完：72 位元 × 1.25 µs＝90 µs，再保持低電位 ≥ 50 µs，三顆一起換顏色（' + ref('P11') + '）。';
+  var s = pl.slots[pl.idx];
+  if (s.k === 'code') {
+    if (pl.idx < pl.w0) return '程式跑到第 ' + s.line + ' 行：先改記憶體，燈還沒變。';
+    if (s.line === LN.p04.wait) return '停一下，再換下一顆亮。';
+    return '程式跑到第 ' + s.line + ' 行：印出三顆現在的顏色。';
+  }
+  if (s.k === 'latch') return '72 位元送完，線上保持低電位 ≥ 50 µs：三顆一起換顏色（' + ref('P11') + '）。';
+  var k = Math.floor(s.i / 24), ch = CHN[Math.floor((s.i % 24) / 8)], b = s.i % 8;
+  var tail = k === 0 ? '第 1 顆自己留下。' : '第 ' + (k === 1 ? '1' : '1、2') + ' 顆已經收滿 24 位元，這一位從 DOUT 往下傳，第 ' + (k + 1) + ' 顆留下（' + ref('P12') + '）。';
+  return '第 ' + (s.i + 1) + ' 位元（第 ' + (k + 1) + ' 顆的 ' + ch + '，第 ' + (b + 1) + ' 位）＝<b>' + s.v + '</b>：高 ' + (s.v ? '0.80' : '0.40') + ' µs、低 ' + (s.v ? '0.45' : '0.85') + ' µs。' + tail;
+}
+function renderWireChips() {
+  var pl = PL.wire, key = (pl ? pl.id + ':' + pl.idx + ':' + pl.done : 'none') + '|' + S.leds.map(tup).join(''); if (key === RK.wc) return; RK.wc = key;
+  var cols = pl ? pl.cols : S.leds, st = wireProg(pl), h = [];
+  for (var k = 0; k < 3; k++) {
+    var c = cols[k], cls = st.latched || st.latch ? 'done' : (st.i >= 24 * k && st.i < 24 * (k + 1) ? 'cur' : (st.sent >= 24 * (k + 1) ? 'done' : ''));
+    h.push('<span class="bchip ' + cls + '"><span class="zh">第 ' + (k + 1) + ' 顆</span> G' + c[1] + ' R' + c[0] + ' B' + c[2] + '</span>');
+  }
+  h.push('<span class="bchip ' + (st.latch ? 'cur' : (st.latched ? 'done' : '')) + '"><span class="zh">低 ≥ 50 µs</span></span>');
+  setHtml('wireChips', h.join(''));
+}
+function renderWire() {
+  renderChain(); renderLedCtl(); renderWireChips(); renderWireWave(); renderWireBits();
+  setHtml('wireCap', wireCapText());
+  segPressQ();
+}
+function segPressQ() {
+  var q = S.wireAuto ? 'chain' : '';
+  Array.prototype.forEach.call(document.querySelectorAll('#segQuick button'), function (b) { var p = b.getAttribute('data-q') === q ? 'true' : 'false'; if (b.getAttribute('aria-pressed') !== p) b.setAttribute('aria-pressed', p); });
+}
+
+/* ===== 畫：③ SPI ===== */
+function spiLevels() {
+  var pl = PL.spi; if (!pl || pl.done) return [1, 0, 0];
+  var s = pl.slots[pl.idx], fr = pl.frac;
+  if (s.k === 'csl') return [fr < 0.4 ? 1 : 0, 0, 0];
+  if (s.k === 'sbit') return [0, fr < 0.5 ? 0 : 1, s.v];
+  if (s.k === 'csh') return [fr < 0.5 ? 0 : 1, 0, 0];
+  return [1, 0, 0];
+}
+function renderSpiBus() {
+  var W = LAY.sb, lv = spiLevels(), key = W + '|' + lv.join(''); if (key === RK.sb) return; RK.sb = key;
+  var H = 156, ew = W < 280 ? 70 : 84, mw = W < 280 ? 62 : 74, xm = W - mw - 2, o = [];
+  var ys = [48, 76, 104, 132], nm = [['SCK', '27', 'CLK'], ['MOSI', '4', 'DIN'], ['MISO', '32', ''], ['CS', '17', 'CS']], zh = ['時脈', '送出', '收回（用不到）', '晶片選擇'];
+  var cls = [lv[1] ? 'b-hi' : 'b-lo', lv[2] ? 'b-hi' : 'b-lo', 'b-off', lv[0] ? 'b-hi' : 'b-lo'];
+  for (var i = 0; i < 4; i++) {
+    o.push(Ln(ew + 2, ys[i], xm, ys[i], cls[i]));
+    o.push(T((ew + xm) / 2, ys[i] - 6, zh[i], 't12', 'middle'));
+    if (i !== 2) o.push(T(ew + 8, ys[i] + 16, [lv[1], lv[2], 0, lv[0]][i] ? '1' : '0', 'tmb tpri'));
+  }
+  o.push(Rc(2, 16, ew, 132, 'b-chip', ' rx="8"'));
+  o.push(T(2 + ew / 2, 32, 'ESP32', 't13b', 'middle'));
+  o.push(Rc(xm, 16, mw, 132, 'b-chip', ' rx="8"'));
+  o.push(T(xm + mw / 2, 32, 'MAX7219', 'tmb', 'middle'));
+  for (i = 0; i < 4; i++) {
+    o.push(T(ew - 4, ys[i] + 4, nm[i][0] + ' ' + nm[i][1], 'tm', 'end'));
+    if (nm[i][2]) o.push(T(xm + 6, ys[i] + 4, nm[i][2], 'tm'));
+  }
+  o.push(T(xm + mw / 2, ys[2] + 4, '8×8 點陣', 't12', 'middle'));
+  setSvg('spiBus', W, H, o);
+}
+function buildMx() {
+  var g = [], info = [];
+  for (var r = 0; r < 8; r++) {
+    for (var c = 0; c < 8; c++) g.push('<button type="button" class="mxc" id="mc' + (r * 8 + c) + '" data-r="' + r + '" data-c="' + c + '" aria-pressed="false" aria-label="第 ' + (r + 1) + ' 列、左邊數來第 ' + (c + 1) + ' 點"></button>');
+    info.push('<div id="mi' + r + '"></div>');
+  }
+  $('mxGrid').innerHTML = g.join(''); $('mxInfo').innerHTML = info.join('');
+}
+function renderMx() {
+  var pl = PL.spi, sending = pl && !pl.done ? pl.pk.reg : 0;
+  var key = [MX.on, MX.test, MX.scan, MX.rows.join(','), S.matrix.join(','), sending].join('|'); if (key === RK.mx) return; RK.mx = key;
+  for (var r = 0; r < 8; r++) {
+    for (var c = 0; c < 8; c++) {
+      var b = $('mc' + (r * 8 + c)); if (!b) continue;
+      var lit = mxLit(r, c), want = !!(S.matrix[r] & (0x80 >> c)), wantDiff = want !== !!(MX.rows[r] & (0x80 >> c));
+      var cls = 'mxc' + (lit ? ' on' : '') + (wantDiff ? ' want' : '');
+      if (b.className !== cls) b.className = cls;
+      var ap = want ? 'true' : 'false'; if (b.getAttribute('aria-pressed') !== ap) b.setAttribute('aria-pressed', ap);
+    }
+    var pk = ((r + 1) << 8) | S.matrix[r], mi = $('mi' + r);
+    setHtml('mi' + r, '<span class="rn">第 ' + (r + 1) + ' 列</span><span class="rb">' + bin(S.matrix[r], 8) + '</span><span class="rh">' + hx(S.matrix[r]) + '</span><span>→ ' + hx(pk, 4) + '</span>');
+    if (mi) mi.className = sending === r + 1 ? 'cur' : '';
+  }
+}
+function renderPkt() {
+  var pl = PL.spi, pk = pl ? pl.pk : null, s = pl && !pl.done ? pl.slots[pl.idx] : null;
+  var curJ = s && s.k === 'sbit' ? s.j : -1, key = (pk ? pk.reg + ':' + pk.data : 'none') + '|' + curJ + '|' + (pl ? pl.id + ':' + pl.done : '') + '|' + SPIQ.length;
+  if (key === RK.pk) return; RK.pk = key;
+  if (!pk) { setHtml('spiPkt', '<span class="pl">封包</span><span class="pd">點上面的格子：那一列的 16 位元封包會出現在這裡（列號 &lt;&lt; 8 | 資料）。</span>'); return; }
+  var w = (pk.reg << 8) | pk.data, what = pk.reg >= 1 && pk.reg <= 8 ? '第 ' + pk.reg + ' 列' : (REGZH[pk.reg] || '暫存器') + ' ' + hx(pk.reg, 1);
+  var h = ['<span class="pl">封包 ' + hx(w, 4) + '</span><span class="pd">＝寫到 ' + what + '、資料 ' + hx(pk.data) + (SPIQ.length ? '（後面還有 ' + SPIQ.length + ' 個排隊）' : '') + '</span><span class="pbits">'];
+  [[15, 8, 'D15–D8：寫到哪裡'], [7, 0, 'D7–D0：資料']].forEach(function (gp) {
+    h.push('<span class="pg"><span class="pc">');
+    for (var j = gp[0]; j >= gp[1]; j--) { var v = (w >> j) & 1; h.push('<span class="' + (v ? 'one' : '') + (j >= 12 ? ' nu' : '') + (j === curJ ? ' cur' : '') + '">' + v + '</span>'); }
+    h.push('</span><small>' + gp[2] + '</small></span>');
+  });
+  h.push('</span>');
+  setHtml('spiPkt', h.join(''));
+}
+function renderSpiWave() {
+  var pl = PL.spi, W = LAY.w3, H = 150, L = 46, R = 8, ys = { cs: [28, 44], sck: [58, 74], mosi: [88, 104] }, yVal = 121, yMiso = 142;
+  var key = W + '|' + (pl ? pl.id + ':' + pl.idx + ':' + Math.round(pl.frac * 60) + ':' + pl.done : 'none'); if (key === RK.sw) return; RK.sw = key;
+  var o = [], n = 18, sw = (W - L - R) / (n + 0.4), X = function (u) { return L + 0.2 * sw + u * sw; };
+  var labels = function () {
+    o.push(T(4, 40, 'CS', 'sc-tb sc-y')); o.push(T(4, 70, 'SCK', 'sc-tb sc-o')); o.push(T(4, 100, 'MOSI', 'sc-tb sc-g')); o.push(T(4, yMiso + 4, 'MISO', 'sc-m'));
+    o.push(Ln(L, yMiso, W - R, yMiso, 'sc-miso'));
+    o.push(T(W - R, yMiso - 5, '這顆不回話', 'sc-m', 'end'));
+  };
+  if (!pl) {
+    o.push(Ln(L, ys.cs[0], W - R, ys.cs[0], 'sc-cs')); o.push(Ln(L, ys.sck[1], W - R, ys.sck[1], 'sc-scl')); o.push(Ln(L, ys.mosi[1], W - R, ys.mosi[1], 'sc-sda'));
+    labels(); o.push(T(L + 4, yVal, 'CS 放高＝沒在講話', 'sc-t'));
+    setSvg('spiWave', W, H, o); return;
+  }
+  var pk = pl.pk, w = (pk.reg << 8) | pk.data, a = pl.a, pos, s = pl.done ? null : pl.slots[pl.idx];
+  if (pl.done) pos = n; else if (pl.idx < a) pos = -1; else if (pl.idx > a + 17) pos = n; else pos = pl.idx - a + pl.frac;
+  var bit = function (j) { return (w >> j) & 1; };
+  var pcs = [[L, 1], [X(0) + 0.4 * sw, 0], [X(17) + 0.5 * sw, 1], [W - R, 1]];
+  var pck = [[L, 0]], pmo = [[L, 0], [X(0) + 0.7 * sw, bit(15)]], u;
+  for (u = 1; u <= 16; u++) { pck.push([X(u) + 0.5 * sw, 1]); pck.push([X(u + 1), 0]); if (u >= 2) pmo.push([X(u) + 0.06 * sw, bit(16 - u)]); }
+  pck.push([W - R, 0]); pmo.push([W - R, bit(0)]);
+  var px = pos < 0 ? L + 0.1 * sw : (pos >= n ? W - R - 2 : X(pos));
+  o.push('<defs><clipPath id="spiClip"><rect x="0" y="0" width="' + f(px) + '" height="' + H + '"/></clipPath></defs>');
+  if (s && pl.idx >= a && pl.idx <= a + 17) o.push(Rc(X(pl.idx - a), 20, sw, 90, 'sc-band'));
+  o.push(trace(stepPath(pcs, ys.cs[0], ys.cs[1]), 'sc-cs', 'spiClip'));
+  o.push(trace(stepPath(pck, ys.sck[0], ys.sck[1]), 'sc-scl', 'spiClip'));
+  o.push(trace(stepPath(pmo, ys.mosi[0], ys.mosi[1]), 'sc-sda', 'spiClip'));
+  labels();
+  var lab1 = '寫到 ' + (pk.reg >= 1 && pk.reg <= 8 ? '第 ' + pk.reg + ' 列' : (REGZH[pk.reg] || '暫存器')) + '（' + hx(pk.reg) + '）', lab2 = '資料 ' + hx(pk.data);
+  if (tw(lab1, 12) > 8 * sw - 4) lab1 = hx(pk.reg);
+  o.push(T(X(5), 14, lab1, 'sc-tb', 'middle'));
+  o.push(T(X(13), 14, lab2, 'sc-tb', 'middle'));
+  o.push(Ln(X(9), 20, X(9), 108, 'sc-br', ' stroke-dasharray="2 3" opacity=".5"'));
+  for (u = 1; u <= 16; u++) { var v = bit(16 - u); o.push(T(X(u + 0.5), yVal, String(v), v ? 'sc-m sc-hi' : 'sc-m', 'middle')); }
+  if (sw >= 26) { o.push(T(X(0.5), yVal, '拉低', 'sc-tb sc-y', 'middle')); o.push(T(X(17.5), yVal, '拉高', 'sc-tb sc-y', 'middle')); }
+  if (s && s.k === 'csh') { var xl = X(17) + 0.5 * sw; o.push(Ln(xl, 22, xl, 108, 'sc-look')); var lt = '這一刻算數', lw = tw(lt, 12); o.push(T(xl - 6 - lw > L ? xl - 6 - lw : xl + 6, 54, lt, 'sc-tb sc-y sc-halo')); }
+  o.push(Ln(px, 20, px, 110, 'sc-play'));
+  setSvg('spiWave', W, H, o);
+}
+function spiCapText() {
+  var pl = PL.spi, q = SPIQ.length ? '（後面還有 ' + SPIQ.length + ' 個封包排隊）' : '';
+  if (!pl) return '05 開機跑過一次：五個設定＋笑臉。點上面的格子改圖，ESP32 就送出那一列的封包。';
+  if (pl.done) return '送完了：CS 拉回高的那一刻，這 16 位元才鎖進去（' + ref('P14') + '）。';
+  var s = pl.slots[pl.idx], pk = pl.pk;
+  if (s.k === 'code') return '程式跑到第 ' + s.line + ' 行。' + q;
+  if (s.k === 'csl') return 'CS 拉低：MAX7219，換你聽了（' + ref('P13') + '）。' + q;
+  if (s.k === 'csh') return 'CS 拉高：就在這一刻，16 位元鎖進去——' + (pk.reg >= 1 && pk.reg <= 8 ? '第 ' + pk.reg + ' 列換成新的樣子' : (REGZH[pk.reg] || '這個') + '設定生效') + '（' + ref('P14') + '）。' + q;
+  return 'D' + s.j + '＝<b>' + s.v + '</b>：SCK 打一拍，MAX7219 收一個位元，D15 先送。' + (s.j >= 12 ? 'D15–D12 不用（送 0 就好）。' : s.j >= 8 ? 'D11–D8 說「寫到哪一列」。' : 'D7–D0 是那一列的 8 個點。') + q;
+}
+function renderSPI() {
+  renderSpiBus(); renderMx(); renderPkt(); renderSpiWave();
+  setHtml('spiCap', spiCapText());
+}
+
+/* ===== 程式碼區 ===== */
+var CV = { key: null, rows: [null], trail: [''], cur: 0, mk: '', last: {} };
+function codeKey() { if (S.tab === 'i2c') return S.i2cMode === 'scan' ? 'p01' : 'p02'; if (S.tab === 'wire') return 'p04'; return 'p05'; }
+function buildCode() {
+  var k = codeKey(), box = $('codeView');
+  if (k === CV.key) return;
+  CV.key = k;
+  var lines = SRC[k] || [], h = ['<div class="codeinner">'];
+  for (var i = 0; i < lines.length; i++) h.push('<div class="cl" data-line="' + (i + 1) + '"><span class="ln">' + (i + 1) + '</span><span class="tx">' + esc(lines[i]) + '</span></div>');
+  h.push('</div>');
+  box.innerHTML = h.join('');
+  CV.rows = [null]; CV.trail = [''];
+  Array.prototype.forEach.call(box.querySelectorAll('.cl'), function (r) { CV.rows.push(r); CV.trail.push(''); });
+  CV.cur = 0; CV.mk = ''; CV.last = {};
+  setText('codeName', FILE[k]);
+  var N = LN[k] || {}, start = k === 'p02' ? N.i2c : (k === 'p04' ? N.np : 1), top = CV.rows[Math.max(1, (start || 1) - 3)];
+  box.scrollTop = top ? Math.max(0, top.offsetTop - 6) : 0;
+}
+function keepVisible(row) {
+  var box = $('codeView'), top = row.offsetTop, h = row.offsetHeight, st = box.scrollTop, bh = box.clientHeight;
+  if (top < st + 6) box.scrollTop = Math.max(0, top - 30);
+  else if (top + h > st + bh - 6) box.scrollTop = top + h - bh + 30;
+}
+function activeLine() { var pl = PL[S.tab]; if (pl && !pl.done) { var s = pl.slots[pl.idx]; if (s && s.line) return s.line; } return REST[S.tab] || 0; }
+function markLines() { var k = CV.key, N = LN[k] || {}; return S.tab === 'i2c' && S.kbps !== 400 && N.i2c ? [N.i2c] : []; }
+function syncCode() {
+  buildCode();
+  var l = activeLine();
+  if (l !== CV.cur) {
+    if (CV.rows[CV.cur]) { CV.rows[CV.cur].classList.remove('on'); CV.last[CV.cur] = realNow; }
+    CV.cur = l;
+    if (CV.rows[l]) { CV.rows[l].classList.add('on'); keepVisible(CV.rows[l]); }
+  }
+  for (var i = 1; i < CV.rows.length; i++) {
+    var le = CV.last[i], cls = '';
+    if (le !== undefined && i !== CV.cur) { var age = realNow - le; cls = age < 260 ? 't1' : age < 600 ? 't2' : age < 1000 ? 't3' : ''; }
+    if (CV.trail[i] !== cls) { if (CV.trail[i]) CV.rows[i].classList.remove(CV.trail[i]); if (cls) CV.rows[i].classList.add(cls); CV.trail[i] = cls; }
+  }
+  var mk = markLines(), key = mk.join(',');
+  if (key !== CV.mk) { CV.mk = key; for (var j = 1; j < CV.rows.length; j++) CV.rows[j].classList.toggle('mk', mk.indexOf(j) >= 0); }
+}
+function noteHtml() {
+  var o = [], k = CV.key, N = LN[k] || {}, pl = PL[S.tab];
+  if (S.tab === 'i2c') {
+    if (S.i2cMode === 'scan') o.push('第 ' + N.scan + ' 行 <code>i2c.scan()</code> 把 0x08 到 0x77 每個位址都喊一次「位址＋寫」；誰在第 9 拍把 SDA 拉低，就記進清單（' + ref('M2') + '）。沒人回的位址快轉，有人回的放慢。');
+    else if (pl && pl.kind === 'send' && !pl.ok) o.push('螢幕的位址是 ' + hx(S.oledAddr) + '，程式還在喊 ' + hx(PROG_ADDR) + '：第 9 拍沒人拉低，ESP32 發「結束」。02 在第 ' + N.oled + ' 行建 <code>oled</code> 時，驅動第 ' + N.wc + ' 行 <code>write_cmd</code> 送第一個設定指令就沒人回，序列埠印 <code>' + ENODEV + '</code> 停下（' + ref('W7') + '）。改法：<code>SSD1306_I2C(128, 64, i2c, addr=0x3D)</code>。');
+    else {
+      o.push('你的字等於 <code>oled.text(\'' + esc(S.char) + '\', 0, 0)</code>：只畫進 ESP32 自己的記憶體。第 ' + N.show + ' 行 <code>oled.show()</code> 才送出去，真正送的是驅動第 ' + N.wv + ' 行的 <code>writevto</code>。');
+      o.push('先送位址位元組 ' + hx(PROG_ADDR << 1) + '（' + hx(PROG_ADDR) + ' 往左移一位、最後補 0＝寫），再送 0x40（驅動第 ' + N.wl + ' 行的 <code>b"\\x40"</code>：後面是畫面資料），然後才是這個字的 8 欄。真的 <code>show()</code> 送整個畫面 1024 個位元組（' + ref('M4') + '）。');
+    }
+    if (S.kbps !== 400) o.push('速度切到 100 kbit/s＝把第 ' + N.i2c + ' 行的 <code>freq=400000</code> 換成 <b>100000</b>（' + ref('P6') + '）。');
+  } else if (S.tab === 'wire') {
+    var i = S.sel, ln = N['np' + i];
+    if (S.wireAuto) o.push('跑馬燈照 04 的第三段：第 ' + N.runi + ' 行把紅色放到第 k 顆、其餘暗，再 <code>show()</code>（裡面第 ' + N.write + ' 行 <code>np.write()</code> 才送）。你一動拉桿，就停下來換你自己調。');
+    else o.push('你的拉桿等於 <code>np[' + i + '] = ' + tup(S.pending[i]) + '</code>' + (ln ? '（程式第 ' + ln + ' 行寫的是 <code>' + esc((SRC.p04[ln - 1] || '').trim()) + '</code>）' : '') + '：只改記憶體。第 ' + N.write + ' 行 <code>np.write()</code> 才把 3 × 24＝72 位元送出去（' + ref('M9') + '）。');
+    if (S.nowrite) o.push('<b>「只改不 write()」開著：</b>拉桿只改記憶體（左邊的色塊和數字），燈不變；按 <code>np.write()</code> 才送。');
+  } else {
+    o.push('一列一個封包：第 ' + N.low + ' 行 <code>cs.value(0)</code> → 第 ' + N.wr + ' 行 <code>spi.write(bytes([addr, data]))</code> 送 16 位元 → 第 ' + N.high + ' 行 <code>cs.value(1)</code>，點陣在這一刻才換（' + ref('P14') + '）。');
+    if (pl && !pl.done && !(pl.pk.reg >= 1 && pl.pk.reg <= 8)) o.push('開機的五個設定（' + ref('P15') + '）：' + INIT.map(function (it) { return (REGZH[it.reg] || hx(it.reg)) + ' ' + hx(it.reg, 1) + '＝' + it.val; }).join('、') + '。');
+  }
+  return o.map(function (s) { return '<p>' + s + '</p>'; }).join('');
+}
+function renderNote() { var h = noteHtml(), e = $('codeNote'); if (e.innerHTML === h) return false; e.innerHTML = h; return true; }
+
+/* ===== 序列埠 ===== */
+var NROWS = 6;
+var IDLE = {
+  p01: '還沒印字：按「掃描」，程式跑到 print() 那一行才會印。',
+  p02: '還沒印字：送完一個字，02 才印「畫面更新第 N 次」。',
+  p04: '還沒印字：按「快選」才照 04 的 print() 印；自己拉的顏色，程式裡沒有那一行 print。',
+  p05: '還沒印字：按「送一張圖」才照 05 的 print() 印；自己點的格子不印。'
+};
+function renderSerial() {
+  var k = CV.key || 'p02', L = S.ser[k] || S.ser.p02, rows = L.rows.slice(-NROWS), last = rows.length ? rows[rows.length - 1] : null, fresh = !!(last && realNow - last.at < 700);
+  var key = k + '|' + L.rows.length + '|' + L.n + '|' + (last ? last.s : '') + '|' + fresh; if (key === RK.se) return; RK.se = key;
+  var h = [];
+  if (!rows.length) h.push('<div class="row"><span class="msg idle">' + IDLE[k] + '</span></div>');
+  for (var i = 0; i < rows.length; i++) { var r = rows[i]; h.push('<div class="row' + (i === rows.length - 1 && fresh && !r.note ? ' fresh' : '') + '"><span class="msg' + (r.note ? ' idle' : '') + '">' + esc(r.s) + '</span></div>'); }
+  for (var j = Math.max(rows.length, 1); j < NROWS; j++) h.push('<div class="row"></div>');
+  $('serialRows').innerHTML = h.join('');
+  setText('serN', L.n);
+}
+
+/* ===== 播放列 ===== */
+function renderBars() {
+  var tab = S.tab, pl = PL[tab], key = [tab, S.paused, busy(tab), S.rate[tab], reduced].join('|'); if (key === RK.pb) return; RK.pb = key;
+  Array.prototype.forEach.call(document.querySelectorAll('.pbar'), function (bar) {
+    var t = bar.getAttribute('data-tab'), play = bar.querySelector('[data-pb="play"]'), step = bar.querySelector('[data-pb="step"]'), rng = bar.querySelector('[data-pb="rate"]'), out2 = bar.querySelector('[data-pb="rateTxt"]');
+    play.textContent = S.paused ? '播放' : '暫停'; play.setAttribute('aria-pressed', S.paused ? 'true' : 'false');
+    step.hidden = !S.paused;
+    if (+rng.value !== S.rate[t]) rng.value = String(S.rate[t]);
+    out2.textContent = '每秒 ' + S.rate[t] + ' ' + RATE_UNIT[t];
+  });
+  var txt;
+  if (S.paused) txt = '暫停中：按「走一步」一拍一拍看，或按「播放」。';
+  else if (busy(tab)) txt = '慢動作播放中：波形下面的鈕可以暫停、調速度、跳過。';
+  else txt = '送完了。換一個字、一個顏色或一個格子，就再送一次。';
+  if (reduced) txt += '（系統設定了減少動態，所以預設暫停。）';
+  setText('runTxt', txt);
+  if (!pl) return;
+}
+function caption() {
+  if (S.tab === 'i2c') { var pl = PL.i2c; if (S.i2cMode === 'scan') return '把每個位址都喊一次，誰回「收到」就記下來。'; if (pl && pl.kind === 'send' && !pl.ok) return '沒人回「收到」，後面就不送了。'; return '先喊位址，對方在第 9 拍回「收到」，才接著送。'; }
+  if (S.tab === 'wire') { for (var i = 0; i < NUM; i++) if (!same3(S.pending[i], S.leds[i])) return 'np[i] = … 只改記憶體，write() 才送。'; return '高電位短＝0、長＝1；第一顆吃 24 位元，剩下的往下傳。'; }
+  return 'CS 拉低才聽，拉高那一刻才算。';
+}
+
+/* ===== 各區更新 ===== */
+function draw() {
+  if (S.tab === 'i2c') renderI2C(); else if (S.tab === 'wire') renderWire(); else renderSPI();
+  setText('caption', caption());
+  syncCode(); renderSerial(); renderBars();
+  if (renderNote()) fitCode();
+}
+
+/* ===== 操作 ===== */
+function setTab(k) {
+  if (TABS.indexOf(k) < 0) k = 'i2c';
+  S.tab = k;
+  TABS.forEach(function (t) {
+    var on = t === k, b = $('tb-' + t);
+    b.setAttribute('aria-selected', on ? 'true' : 'false'); b.tabIndex = on ? 0 : -1;
+    $('tp-' + t).hidden = !on;
+  });
+  Object.keys(CARD).forEach(function (t) { var card = $(CARD[t]), hot = t === k; card.classList.toggle('hot', hot); card.querySelector('.tag').hidden = !hot; card.open = hot; });
+  save('tab', k);
+  layoutAll();
+  lastFrame = 0;
+}
+function sendFromInput() {
+  var inp = $('inChar'), c = normChar(inp.value);
+  if (!c) { inp.classList.add('bad'); $('charHint').classList.add('bad'); setText('charHint', '這一頁只放了 A–Z、0–9 的字型（和空白、! , - . : ?）：換一個字試試。'); return; }
+  inp.classList.remove('bad'); $('charHint').classList.remove('bad'); setText('charHint', '送一個字：A–Z、0–9（小寫會換成大寫；這一頁只放了這些字的字型）。');
+  inp.value = c; S.preset = null;
+  i2cSend(c);
+}
+function applyPreset(k, fromUrl) {
+  S.wireAuto = false;
+  if (k === 'scan') { setTab('i2c'); setOther(false); setAddr(PROG_ADDR); i2cScan(); }
+  else if (k === 'hello') { setTab('i2c'); setAddr(PROG_ADDR); i2cSend('A'); }
+  else if (k === 'wrongaddr') { setTab('i2c'); setAddr(ALT_ADDR); i2cSend('A'); }
+  else if (k === 'charB') { setTab('i2c'); setAddr(PROG_ADDR); i2cSend('B'); }
+  else if (k === 'rgb') { setTab('wire'); setNoWrite(false); quick('rgb'); }
+  else if (k === 'chain') { setTab('wire'); setNoWrite(false); startChain(); }
+  else if (k === 'nowrite') { setTab('wire'); latchNow([RED, GREEN, BLUE]); setNoWrite(true); setPending(0, BLUE); }
+  else if (k === 'third') { setTab('wire'); setNoWrite(false); S.pending = [copy3(OFF), copy3(OFF), [255, 0, 0]]; S.sel = 2; wireWrite(null, [code(LN.p04.np2)], false); }
+  else if (k === 'smile') { setTab('spi'); spiBlankNow(); spiPicture(PICS[0]); }
+  else if (k === 'init') { setTab('spi'); spiInit(); }
+  else if (k === 'toprow') { setTab('spi'); spiBlankNow(); spiSetRow(0, 0xFF); }
+  else return false;
+  S.preset = fromUrl ? k : k;
+  return true;
+}
+
+/* ① */
+$('btnScan').addEventListener('click', function () { S.preset = null; i2cScan(); });
+$('btnSend').addEventListener('click', sendFromInput);
+$('inChar').addEventListener('keydown', function (e) { if (e.key === 'Enter') { sendFromInput(); e.preventDefault(); } });
+$('inChar').addEventListener('input', function (e) {
+  var v = e.target.value, last = v.slice(-1), c = normChar(last);
+  if (c && v !== c) e.target.value = c;
+  e.target.classList.toggle('bad', !!v && !c);
+});
+$('chkWrong').addEventListener('change', function (e) { setAddr(e.target.checked ? ALT_ADDR : PROG_ADDR); S.preset = null; rerunI2C(); });
+$('chkOther').addEventListener('change', function (e) { setOther(e.target.checked); S.preset = null; if (S.i2cMode === 'scan') i2cScan(); else RK.b1 = ''; });
+Array.prototype.forEach.call(document.querySelectorAll('#segKbps button'), function (b) {
+  b.addEventListener('click', function () {
+    S.kbps = +b.getAttribute('data-k') === 100 ? 100 : 400;
+    Array.prototype.forEach.call(document.querySelectorAll('#segKbps button'), function (x) { x.setAttribute('aria-pressed', +x.getAttribute('data-k') === S.kbps ? 'true' : 'false'); });
+  });
+});
+/* ② */
+Array.prototype.forEach.call(document.querySelectorAll('#segQuick button'), function (b) {
+  b.addEventListener('click', function () {
+    var q = b.getAttribute('data-q'); S.preset = null; setNoWrite(false);
+    if (q === 'chain') { if (S.wireAuto) { S.wireAuto = false; } else startChain(); } else quick(q);
+  });
+});
+$('btnWrite').addEventListener('click', function () { S.wireAuto = false; S.preset = null; wireWrite(null, [], false); });
+$('chkNoWrite').addEventListener('change', function (e) { setNoWrite(e.target.checked); S.wireAuto = false; });
+$('ledCtl').addEventListener('input', function (e) {
+  var t = e.target; if (!t || t.type !== 'range') return;
+  var i = +t.getAttribute('data-i'), ch = +t.getAttribute('data-ch'), c = copy3(S.pending[i]);
+  c[ch] = +t.value; S.wireAuto = false; setPending(i, c);
+});
+$('ledCtl').addEventListener('change', function (e) {
+  var t = e.target; if (!t || t.type !== 'range') return;
+  if (!S.nowrite) { S.preset = null; wireWrite(null, [], false); }
+});
+/* ③ */
+$('mxGrid').addEventListener('click', function (e) {
+  var b = e.target && e.target.closest ? e.target.closest('.mxc') : null; if (!b) return;
+  var r = +b.getAttribute('data-r'), c = +b.getAttribute('data-c');
+  S.preset = null; spiSetRow(r, S.matrix[r] ^ (0x80 >> c));
+});
+$('btnInit').addEventListener('click', function () { S.preset = null; spiInit(); });
+$('btnClear').addEventListener('click', function () { S.preset = null; spiClear(); });
+/* 播放列 */
+Array.prototype.forEach.call(document.querySelectorAll('.pbar'), function (bar) {
+  var t = bar.getAttribute('data-tab');
+  bar.querySelector('[data-pb="play"]').addEventListener('click', function () { S.paused = !S.paused; lastFrame = 0; });
+  bar.querySelector('[data-pb="step"]').addEventListener('click', function () { stepOnce(); });
+  bar.querySelector('[data-pb="skip"]').addEventListener('click', function () { skipAll(t); });
+  bar.querySelector('[data-pb="rate"]').addEventListener('input', function (e) { S.rate[t] = clamp(Math.round(+e.target.value) || 1, 1, 30); });
+});
+TABS.forEach(function (k) { $('tb-' + k).addEventListener('click', function () { setTab(k); }); });
+$('tablist').addEventListener('keydown', function (e) {
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+  var i = (TABS.indexOf(S.tab) + (e.key === 'ArrowRight' ? 1 : -1) + TABS.length) % TABS.length;
+  setTab(TABS[i]); $('tb-' + TABS[i]).focus(); e.preventDefault();
+});
+
+/* 試試看 */
+Array.prototype.forEach.call(document.querySelectorAll('.try'), function (b) {
+  b.addEventListener('click', function () {
+    applyPreset(b.getAttribute('data-try'), false);
+    var top = $('bench');
+    if (top && top.scrollIntoView) top.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  });
+});
+
+/* 小標籤：打開「數字從哪裡來」，跳到那一列 */
+document.addEventListener('click', function (e) {
+  var a = e.target && e.target.closest ? e.target.closest('a.ref') : null;
+  if (!a) return;
+  var id = (a.getAttribute('href') || '').slice(1), row = $(id);
+  if (!row) return;
+  e.preventDefault();
+  $('facts').open = true;
+  row.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+  row.classList.add('flash'); setTimeout(function () { row.classList.remove('flash'); }, 1600);
+});
+
+/* 複製按鈕 */
+function selectText(pre) {
+  try { var r = document.createRange(); r.selectNodeContents(pre); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); return true; } catch (e) { return false; }
+}
+Array.prototype.forEach.call(document.querySelectorAll('.copy'), function (b) {
+  b.addEventListener('click', function () {
+    var pre = $(b.getAttribute('data-copy')), label = b.getAttribute('data-label');
+    var box = pre.closest('details');
+    var ok = function () { b.textContent = '已複製'; setTimeout(function () { b.textContent = label; }, 1800); };
+    var no = function () {
+      if (box && !box.open) box.open = true;
+      var outer = box && box.parentElement ? box.parentElement.closest('details') : null;
+      if (outer && !outer.open) outer.open = true;
+      var picked = selectText(pre);
+      if (pre.scrollIntoView) pre.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+      b.textContent = picked ? '已選取，按 Ctrl+C 複製' : '請自己選取程式碼';
+      setTimeout(function () { b.textContent = label; }, 3500);
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(pre.textContent.replace(/^\n+/, '')).then(ok, no);
+      else no();
+    } catch (err) { no(); }
+  });
+});
+
+/* ===== 版面：寬螢幕時程式碼區從它的上緣算到畫面底 ===== */
+function wOf(id, fb) { var e = $(id), w = e ? Math.floor(e.clientWidth) : 0; return w > 60 ? w : fb; }
+function layoutAll() {
+  LAY.b1 = wOf('i2cBusBox', LAY.b1); LAY.w1 = wOf('i2cWaveBox', LAY.w1); LAY.oled = wOf('oledBox', LAY.oled);
+  LAY.ch = wOf('wireChainBox', LAY.ch); LAY.w2 = wOf('wireWaveBox', LAY.w2);
+  LAY.sb = wOf('spiBusBox', LAY.sb); LAY.w3 = wOf('spiWaveBox', LAY.w3);
+  RK = {};
+}
+function fitCode() {
+  var box = $('codeView');
+  if (window.innerWidth <= 1020) { box.style.height = '300px'; return; }
+  var top = box.getBoundingClientRect().top + (window.scrollY || 0);
+  var below = $('codeNote').offsetHeight + $('serialBox').offsetHeight + $('runbar').offsetHeight + 24;
+  box.style.height = Math.round(Math.max(220, Math.min(560, window.innerHeight - top - below))) + 'px';
+  if (CV.rows[CV.cur]) keepVisible(CV.rows[CV.cur]);
+}
+var rt = 0;
+window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { layoutAll(); fitCode(); draw(); }, 120); });
+document.querySelector('.about').addEventListener('toggle', function () { fitCode(); });
+document.addEventListener('visibilitychange', function () { lastFrame = 0; });
+
+/* ===== 開跑 ===== */
+function frame(ts) {
+  requestAnimationFrame(frame);
+  realNow = ts;
+  if (document.hidden) { lastFrame = 0; return; }
+  var dt = lastFrame ? Math.min(100, ts - lastFrame) : 0; lastFrame = ts;
+  if (!S.paused && dt > 0) advance(S.tab, dt);
+  draw();
+}
+
+loadSources(); parsePrograms();
+realNow = performance.now();
+for (var z = 0; z < FRAME_BYTES; z++) S.oled.push(0);
+latchNow([RED, GREEN, BLUE]);
+S.matrix = PICS[0].bytes.slice(); MX.rows = PICS[0].bytes.slice();
+buildScanGrid(); buildLedCtl(); buildMx(); buildWireBits();
+(function () {
+  var box = $('segPic');
+  PICS.forEach(function (p) { var b = document.createElement('button'); b.type = 'button'; b.textContent = p.name; b.setAttribute('aria-pressed', 'false'); b.addEventListener('click', function () { S.preset = null; spiPicture(p); }); box.appendChild(b); });
+})();
+var t0 = load('tab');
+setTab(TABS.indexOf(t0) >= 0 ? t0 : 'i2c');
+i2cSend('A');                                          /* 開頁先送一個「A」（減少動態時停在開頭，一步一步走） */
+try {
+  var qs = new URLSearchParams(location.search), pr0 = qs.get('preset'), tb0 = qs.get('tab');
+  if (pr0 && URL_PRESETS.indexOf(pr0) >= 0) applyPreset(pr0, true);
+  else if (tb0 && TABS.indexOf(tb0) >= 0) setTab(tb0);
+} catch (e) {}
+layoutAll(); draw(); fitCode(); draw();
+requestAnimationFrame(frame);
+
+/* ===== 給驗收腳本用的掛鉤（名字與欄位照規格）：每個呼叫回來時，數字就是最終值；慢動作另外播 ===== */
+function state() {
+  return {
+    tab: S.tab, preset: S.preset,
+    found: S.found.slice(), addr: S.oledAddr, char: S.char, glyph: S.glyph.slice(),
+    i2cBytes: S.i2c.bytes.slice(), acks: S.i2c.acks.slice(),
+    leds: S.leds.map(copy3), pending: S.pending.map(copy3), bits: S.bits, pulseNs: PULSE_NS.slice(),
+    matrix: S.matrix.slice(), packets: S.packets.map(function (p) { return [p[0], p[1]]; }),
+    mode: S.i2cMode, other: S.other, kbps: S.kbps, nowrite: S.nowrite, paused: S.paused,
+    shown: S.shown.map(copy3), mxShown: MX.rows.slice(), mxOn: MX.on,
+    busy: { i2c: busy('i2c'), wire: busy('wire'), spi: busy('spi') },
+    serial: (S.ser[codeKey()] || { rows: [] }).rows.map(function (r) { return r.s; }), bitNs: BIT_NS
+  };
+}
+function after() { draw(); }
+window.__busLab = {
+  state: state,
+  tab: function (k) { setTab(k); after(); return state(); },
+  scan: function () { var f0 = i2cScan(); after(); return f0; },
+  setAddr: function (a) { setAddr(a); rerunI2C(); after(); return state(); },   /* 2026-09-26 秀姑巒：跟勾選「位址打錯」一樣要重送 */
+  setChar: function (c) { i2cSend(c); after(); return state(); },
+  setLed: function (i, r, g, b) { S.wireAuto = false; setPending(i, [r, g, b]); after(); return state(); },
+  write: function () { S.wireAuto = false; wireWrite(null, [], false); after(); return state(); },
+  setRow: function (r, b) { spiSetRow(r, b); after(); return state(); },
+  run: function (ms) { ms = Math.max(0, +ms || 0); TABS.forEach(function (t) { advance(t, ms); }); after(); return state(); }
+};
+})();
+/* 投影片深連結 #wokwi（或任何折疊區的 id）：打開那一區再捲過去 */
+(function () {
+  function openHash() {
+    var h = decodeURIComponent(location.hash.slice(1));
+    if (!h) return;
+    var el = document.getElementById(h === 'wokwi' ? 'sectWokwi' : h);
+    if (!el) return;
+    if (el.tagName === 'DETAILS') el.open = true;
+    setTimeout(function () { el.scrollIntoView({ block: 'start' }); }, 30);
+  }
+  window.addEventListener('hashchange', openHash);
+  openHash();
+})();
+</script>
+
+</body>
+</html>

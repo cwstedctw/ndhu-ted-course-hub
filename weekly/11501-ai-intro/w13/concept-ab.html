@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>從一條規則到一個模型</title>
+<meta name="description" content="人工智慧概論第 13 週的互動背景知識頁（接 W11 加碼）：Spaceship Titanic 從一條人寫的規則，到電腦自己找規則、留考題、整理欄位、很多棵樹接力，最後交上 Kaggle 排行榜。">
+<style>
+:root{
+  --bg:#FAF8F2; --surface:#FFFFFF; --surface-2:#F1F5F4; --ink:#132525; --ink-soft:#3E5656; --mist:#5A7272;
+  --line:#D6E2E1; --teal:#0E7C7B; --teal-tint:#E2F0EF; --gold:#B7832A; --gold-deep:#7A5510; --gold-tint:#FBF0D9;
+  --dark:#062524; --red:#B0503A; --red-tint:#F7E4DE; --violet:#5B4B9A; --violet-tint:#ECE8F7;
+  --code-bg:#F3F6F5; --code-ink:#1B3433;
+  --zh:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Noto Sans CJK TC","Heiti TC",system-ui,sans-serif;
+  --mono:Consolas,"Cascadia Mono","SF Mono",Menlo,"DejaVu Sans Mono","Ubuntu Mono","Liberation Mono",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#93ADAC;
+    --line:#2A4544; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+    --dark:#041716; --red:#EC9580; --red-tint:#3D2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+    --code-bg:#0D1F1F; --code-ink:#D5E6E5;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A1A; --surface:#112424; --surface-2:#173030; --ink:#E6F2F2; --ink-soft:#BBD0CF; --mist:#93ADAC;
+  --line:#2A4544; --teal:#5CC8C6; --teal-tint:#123A39; --gold:#E8B85A; --gold-deep:#F3D08A; --gold-tint:#3A2F18;
+  --dark:#041716; --red:#EC9580; --red-tint:#3D2019; --violet:#B7A8EE; --violet-tint:#2A2445;
+  --code-bg:#0D1F1F; --code-ink:#D5E6E5;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--zh);font-size:16.5px;line-height:1.8;overflow-x:hidden}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+a{color:var(--teal);text-underline-offset:3px}
+code,pre{font-family:var(--mono);font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+code{font-size:.92em;background:var(--code-bg);color:var(--code-ink);border-radius:5px;padding:0 4px;overflow-wrap:anywhere}
+pre{margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--code-bg);color:var(--code-ink);font-size:14px;line-height:1.6;white-space:pre;overflow-x:auto;max-width:100%}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+header.hero{background:var(--dark);color:#E6F2F2;padding:28px 0 22px}
+.hero .kicker{font-weight:800;font-size:13px;letter-spacing:.16em;color:#E8B85A}
+.hero h1{font-size:clamp(27px,5vw,42px);line-height:1.25;margin:6px 0 10px;font-weight:900}
+.hero p{margin:6px 0;color:#BFD6D5}
+.hero code{background:rgba(230,242,242,.12);color:#F3D08A}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-top:10px;font-size:14px;color:#BFD6D5}
+.tag{display:inline-block;padding:0 7px;margin:0 2px;border-radius:7px;background:var(--teal-tint);color:var(--teal);font-size:12.5px;font-weight:800;line-height:1.7;white-space:nowrap;vertical-align:1px;font-family:var(--zh);cursor:help}
+.hero .tag{background:rgba(92,200,198,.18);color:#8FE0C9}
+.wn{color:var(--red);font-weight:800}
+.hero .wn{color:#F2A58F}
+nav.toc{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 20px;margin:20px 0}
+nav.toc h2{font-size:18px;margin:0 0 6px}
+nav.toc ol{margin:0;padding-left:0;list-style:none;columns:2 260px}
+nav.toc li{margin:2px 0}
+nav.toc .n{display:inline-block;width:26px;font-weight:900;color:var(--gold-deep)}
+.toc-tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:5px 12px;font-size:14.5px;line-height:1.4;flex:0 0 auto;max-width:100%}
+.btn:hover{border-color:var(--teal)}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#062524}
+.btn[aria-pressed="true"]{background:var(--gold-tint);border-color:var(--gold);color:var(--gold-deep);font-weight:800}
+.btn:disabled{opacity:.45;cursor:default}
+section.sec{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:20px 0;scroll-margin-top:16px;min-width:0}
+section.sec h2{font-size:clamp(21px,3.4vw,26px);line-height:1.4;margin:0 0 6px}
+section.sec h2 .n{color:var(--gold-deep);margin-right:8px}
+h3{font-size:18px;margin:18px 0 4px}
+.lead{margin:2px 0 10px;color:var(--ink-soft)}
+.small{font-size:14.5px;color:var(--mist)}
+.note{padding:10px 14px;border-left:4px solid var(--gold);background:var(--gold-tint);border-radius:0 10px 10px 0;margin:10px 0}
+.panel{border:1px solid var(--line);border-radius:14px;background:var(--surface-2);padding:12px 16px;margin:10px 0;min-width:0;overflow-wrap:anywhere}
+.panel h4{margin:0 0 4px;font-size:16.5px}
+.panel p{margin:4px 0}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.ctrl label{font-size:15px;flex:0 0 auto}
+.txt{flex:1 1 180px;min-width:0;max-width:100%;width:100%;padding:5px 9px;border:2px solid var(--teal);border-radius:10px;background:var(--surface);font-family:var(--mono);font-size:15px}
+input[type="range"]{width:100%;accent-color:var(--teal)}
+details.deep{border:1px solid var(--line);border-radius:12px;margin:12px 0;background:var(--surface)}
+details.deep > summary{cursor:pointer;font-weight:800;padding:8px 14px}
+details.deep > summary::before{content:"深入一層：";color:var(--violet)}
+details.deep > .in{padding:2px 16px 14px}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px;margin:10px 0;max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:15px}
+.tw table{min-width:520px}
+th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--surface-2);white-space:nowrap}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+tr.hl td{background:var(--gold-tint)}
+svg.fig{display:block;width:100%;height:auto;margin:8px 0;font-family:var(--zh)}
+svg.fig text{fill:var(--ink)}
+svg.fig .mono{font-family:var(--mono)}
+svg.fig .soft{fill:var(--mist)}
+svg.fig .box{fill:var(--surface);stroke:var(--line);stroke-width:2}
+svg.fig .box.colab{fill:var(--teal-tint);stroke:var(--teal)}
+svg.fig .box.kg{fill:var(--violet-tint);stroke:var(--violet)}
+svg.fig .box.yes{fill:var(--teal-tint);stroke:var(--teal)}
+svg.fig .box.no{fill:var(--red-tint);stroke:var(--red)}
+svg.fig .box.q{fill:var(--gold-tint);stroke:var(--gold)}
+svg.fig .wire{stroke:var(--mist);stroke-width:2.5;fill:none}
+svg.fig .arrow{fill:var(--mist)}
+svg.fig .grid{stroke:var(--line);stroke-width:1}
+svg.fig .ln-train{stroke:var(--gold);stroke-width:3.5;fill:none}
+svg.fig .ln-val{stroke:var(--teal);stroke-width:3.5;fill:none}
+svg.fig .ln-rule{stroke:var(--red);stroke-width:2.5;fill:none;stroke-dasharray:8 6}
+svg.fig .dot-train{fill:var(--gold)}
+svg.fig .dot-val{fill:var(--teal)}
+svg.fig .selline{stroke:var(--violet);stroke-width:2;stroke-dasharray:4 4}
+svg.fig .bar{fill:var(--teal)}
+svg.fig .bar.alt{fill:var(--gold)}
+svg.fig .bar.red{fill:var(--red)}
+svg.fig .bar.dim{fill:var(--line)}
+svg.fig .bar.vio{fill:var(--violet)}
+svg.fig .barbg{fill:var(--surface-2);stroke:var(--line)}
+svg.fig [role="button"]{cursor:pointer}
+svg.fig [role="button"]:focus{outline:none}
+svg.fig [role="button"]:focus .box,svg.fig .sel .box{stroke:var(--gold);stroke-width:4}
+svg.fig .sel .bar{stroke:var(--gold-deep);stroke-width:3}
+svg.fig [role="button"]:focus-visible .bar{stroke:var(--gold-deep);stroke-width:3}
+.node-grid{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+pre.term{background:var(--dark);color:#D5E6E5;border:1px solid #244443}
+pre.term .cmdline{color:#F3D08A;font-weight:700}
+.guess{border:1px dashed var(--gold);border-radius:14px;padding:10px 14px;margin:12px 0;background:var(--surface)}
+.guess .gq{margin:0 0 6px;font-weight:800}
+.guess .gq::before{content:"先猜：";color:var(--gold-deep)}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:6px 12px;font-size:15px}
+.opt[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-tint)}
+.opt.right{border-color:var(--teal);background:var(--teal-tint)}
+.opt.wrong{border-color:var(--red);background:var(--red-tint)}
+.ans{margin-top:8px;padding:8px 12px;border-radius:10px;background:var(--teal-tint)}
+.qq{border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:12px 0;background:var(--surface)}
+.qq h3{margin:0 0 6px;font-size:16.5px}
+.qbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.qbar .yours{font-size:14px;color:var(--mist)}
+.big{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0}
+.kv div{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--surface);min-width:0}
+.kv .k{font-size:13.5px;color:var(--mist)}
+.kv .v{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums}
+.sw{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.sw label{display:flex;gap:8px;align-items:flex-start}
+.sw input{width:20px;height:20px;margin-top:4px;accent-color:var(--teal);flex:0 0 auto}
+.cm{width:100%;min-width:0;border-collapse:separate;border-spacing:6px}
+.cm th{background:none;white-space:normal;font-size:14px;text-align:center}
+.cm td{padding:0;border:0}
+.cm button{width:100%;min-height:74px;border-radius:12px;border:2px solid var(--line);background:var(--surface);font-size:20px;font-weight:900}
+.cm button.ok{border-color:var(--teal);background:var(--teal-tint)}
+.cm button.bad{border-color:var(--red);background:var(--red-tint)}
+.cm button[aria-pressed="true"]{outline:4px solid var(--gold);outline-offset:1px}
+.cm button small{display:block;font-size:13px;font-weight:400;color:var(--mist)}
+.fake{font-size:13px;font-weight:800;color:var(--red);border:1px solid var(--red);border-radius:8px;padding:0 8px;display:inline-block;margin:4px 0}
+#fakeTbl th button{border:0;background:none;padding:0;font:inherit;font-weight:800;color:var(--teal);text-decoration:underline dotted;font-family:var(--mono);font-size:13.5px}
+#fakeTbl th button[aria-pressed="true"]{color:var(--gold-deep)}
+#fakeTbl td{font-family:var(--mono);font-size:13.5px;white-space:nowrap}
+#fakeTbl td.miss{color:var(--mist);font-family:var(--zh)}
+#fakeTbl td.colsel{background:var(--gold-tint)}
+details.tool{border:1px solid var(--line);border-radius:12px;margin:8px 0;background:var(--surface)}
+details.tool > summary{cursor:pointer;padding:8px 14px;font-weight:800}
+details.tool > .in{padding:0 16px 12px}
+details.tool dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 12px;margin:4px 0}
+details.tool dt{font-weight:800;color:var(--ink-soft);white-space:nowrap}
+details.tool dd{margin:0;min-width:0}
+@media (max-width:560px){details.tool dl{grid-template-columns:1fr}details.tool dt{margin-top:4px}}
+.gloss td:first-child{font-weight:800;white-space:nowrap}
+@media (max-width:640px){
+  .tw::before{content:"← 表格可以左右滑 →";display:block;font-size:13px;color:var(--gold-deep);font-weight:800;text-align:center;padding:3px 0;border-bottom:1px dashed var(--line)}
+  th{white-space:normal}
+}
+.hidden{display:none!important}
+.gatehint{border:1px dashed var(--line);border-radius:10px;padding:8px 12px;text-align:center}
+.tw.fade{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 56px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 56px),transparent)}
+.tw.fade.at-end{-webkit-mask-image:none;mask-image:none}
+.swipe{margin:6px 0 0;font-weight:800;color:var(--gold-deep)}
+svg.fig .vlabel{paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
+footer.sec{color:var(--ink-soft);font-size:14.5px}
+footer.sec h2{font-size:20px;color:var(--ink)}
+footer.sec li{margin:4px 0;overflow-wrap:anywhere}
+@media (max-width:560px){
+  section.sec,footer.sec{padding:16px 13px}
+  body{font-size:15.5px}
+  .panel{padding:10px 12px}
+}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+@media print{.toc-tools,.ctrl{display:none}details.deep > .in{display:block}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">人工智慧概論 · 第 13 週 · W11 加碼續篇 · 互動背景知識頁</div>
+    <h1>從一條規則到一個模型</h1>
+    <p>上次我們交了一條人寫的規則「冬眠的人猜被傳送」，Kaggle 給 0.72550 <span class="tag">§〇 J</span>。這次讓電腦自己從資料裡找規則，交上去拿 0.80126 <span class="tag">§〇 J</span>。中間到底發生了什麼事？這一頁把每一步拆開講。每節第一層用白話講完；想往下挖，點「深入一層」。最下面有工具百科、名詞表和十題想一想。</p>
+    <div class="legend" aria-label="數字的出處">
+      <span>數字後面的小標籤（例如 §〇 A）是出處代號，上課不用管它。⚠️ 是提醒：這一句還沒實測，或只是一般說法。滑鼠停在標籤上看全名：</span>
+      <span><span class="tag">§〇 A</span>比賽與資料</span>
+      <span><span class="tag">§〇 B</span>人寫的規則</span>
+      <span><span class="tag">§〇 C</span>一棵決策樹</span>
+      <span><span class="tag">§〇 D</span>留考題</span>
+      <span><span class="tag">§〇 E</span>整理欄位</span>
+      <span><span class="tag">§〇 F</span>很多棵樹接力</span>
+      <span><span class="tag">§〇 G</span>資料多寡</span>
+      <span><span class="tag">§〇 H</span>模型看重哪幾欄</span>
+      <span><span class="tag">§〇 I</span>猜對猜錯四格</span>
+      <span><span class="tag">§〇 J</span>Kaggle 分數與排行榜</span>
+      <span><span class="tag">§〇 K</span>整趟怎麼跑的</span>
+      <span><span class="tag">§〇 L</span>名詞</span>
+      <span><span class="tag">§〇 M</span>比賽規則</span>
+      <span><span class="wn">⚠️</span>沒驗、一般說法或推論，照實標</span>
+    </div>
+    <p class="small" style="color:#9FBDBC">這些數字是 2026-11-24 在 Colab 的免費機器（只有一般處理器 CPU、沒有顯示卡）上實跑的（Python 3.13.18、pandas 2.2.3、scikit-learn 1.6.1）<span class="tag">§〇 K</span>。之後 Colab 換版本，數字可能差一點 <span class="tag">§〇 ⚠️5</span>。</p>
+  </div>
+</header>
+
+<main class="wrap">
+<nav class="toc" aria-label="目錄">
+  <h2>目錄</h2>
+  <ol>
+    <li><a href="#s0"><span class="n">0</span>全路徑地圖</a></li>
+    <li><a href="#s1"><span class="n">1</span>這場比賽在猜什麼</a></li>
+    <li><a href="#s2"><span class="n">2</span>人寫的一條規則能走多遠</a></li>
+    <li><a href="#s3"><span class="n">3</span>訓練＝讓電腦自己找規則</a></li>
+    <li><a href="#s4"><span class="n">4</span>背答案與學會的差別</a></li>
+    <li><a href="#s5"><span class="n">5</span>所以要留考題：切五份、輪流當考題</a></li>
+    <li><a href="#s6"><span class="n">6</span>整理欄位：把字變成數字</a></li>
+    <li><a href="#s7"><span class="n">7</span>一棵不夠：很多棵樹接力</a></li>
+    <li><a href="#s8"><span class="n">8</span>資料多一點有用嗎</a></li>
+    <li><a href="#s9"><span class="n">9</span>模型到底看重哪幾欄</a></li>
+    <li><a href="#s10"><span class="n">10</span>猜對猜錯四格</a></li>
+    <li><a href="#s11"><span class="n">11</span>三個分數，哪一個算數</a></li>
+    <li><a href="#s12"><span class="n">12</span>老師這次是怎麼跑的</a></li>
+    <li><a href="#s13"><span class="n">13</span>工具百科（可搜尋）</a></li>
+    <li><a href="#s14"><span class="n">14</span>名詞表（可搜尋）</a></li>
+    <li><a href="#s15"><span class="n">15</span>想一想（十題）</a></li>
+    <li><a href="#refs"><span class="n">※</span>出處</a></li>
+  </ol>
+  <div class="toc-tools">
+    <button type="button" class="btn" id="openAll">「深入一層」全部展開</button>
+    <button type="button" class="btn" id="closeAll">全部收合</button>
+    <button type="button" class="btn" id="themeBtn">切換深色／淺色</button>
+  </div>
+</nav>
+
+<!-- ============================== §0 ============================== -->
+<section class="sec" id="s0">
+  <h2><span class="n">0</span>全路徑地圖：從比賽資料到榜上的分數</h2>
+  <p class="lead">這一頁跟著資料走完全程，一共八格。資料從 Kaggle（比賽網站）來；中間五格在 Colab（Google 的免費雲端電腦）上跑；答案檔帶回來交給 Kaggle 評分，分數上排行榜。點任何一格，看它在做什麼、對到這頁第幾節 <span class="tag">§〇 K</span>。</p>
+  <svg class="fig" id="mapSvg" viewBox="0 0 900 330" role="group" aria-label="八格全路徑地圖" data-src="§〇 A／K／J">
+    <rect x="232" y="14" width="660" height="128" rx="16" fill="none" stroke="var(--teal)" stroke-width="2" stroke-dasharray="6 5"/>
+    <rect x="232" y="176" width="660" height="128" rx="16" fill="none" stroke="var(--teal)" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="246" y="36" font-size="14" font-weight="900" fill="var(--teal)">在 Colab 跑</text>
+    <text x="16" y="36" font-size="14" font-weight="900" fill="var(--violet)">在 Kaggle</text>
+    <text x="246" y="296" font-size="13" class="soft">（答案檔在 Colab 寫出來）</text>
+    <g role="button" tabindex="0" data-node="data" aria-label="比賽資料"><rect class="box kg" x="16" y="46" width="200" height="86" rx="12"/><text x="116" y="80" text-anchor="middle" font-size="17" font-weight="800">① 比賽資料</text><text x="116" y="106" text-anchor="middle" font-size="13" class="mono">train.csv・test.csv</text></g>
+    <g role="button" tabindex="0" data-node="prep" aria-label="整理欄位"><rect class="box colab" x="246" y="46" width="200" height="86" rx="12"/><text x="346" y="80" text-anchor="middle" font-size="17" font-weight="800">② 整理欄位</text><text x="346" y="106" text-anchor="middle" font-size="13" class="soft">14 欄變 15 欄</text></g>
+    <g role="button" tabindex="0" data-node="train" aria-label="訓練"><rect class="box colab" x="466" y="46" width="200" height="86" rx="12"/><text x="566" y="80" text-anchor="middle" font-size="17" font-weight="800">③ 訓練</text><text x="566" y="106" text-anchor="middle" font-size="13" class="soft">電腦自己找猜法</text></g>
+    <g role="button" tabindex="0" data-node="cv" aria-label="自己先考一次"><rect class="box colab" x="686" y="46" width="196" height="86" rx="12"/><text x="784" y="80" text-anchor="middle" font-size="17" font-weight="800">④ 自己先考一次</text><text x="784" y="106" text-anchor="middle" font-size="13" class="soft">切五份、輪流當考題</text></g>
+    <g role="button" tabindex="0" data-node="pred" aria-label="猜 test.csv 的 4,277 人"><rect class="box colab" x="686" y="208" width="196" height="86" rx="12"/><text x="784" y="242" text-anchor="middle" font-size="16" font-weight="800">⑤ 猜 test.csv 的人</text><text x="784" y="268" text-anchor="middle" font-size="13" class="soft">4,277 人，沒有答案</text></g>
+    <g role="button" tabindex="0" data-node="sub" aria-label="答案檔"><rect class="box colab" x="246" y="186" width="186" height="86" rx="12"/><text x="339" y="220" text-anchor="middle" font-size="17" font-weight="800">⑥ 答案檔</text><text x="339" y="246" text-anchor="middle" font-size="13" class="mono">submission.csv</text></g>
+    <g role="button" tabindex="0" data-node="score" aria-label="Kaggle 評分"><rect class="box kg" x="16" y="186" width="200" height="56" rx="12"/><text x="116" y="220" text-anchor="middle" font-size="16" font-weight="800">⑦ Kaggle 評分</text></g>
+    <g role="button" tabindex="0" data-node="lb" aria-label="排行榜"><rect class="box kg" x="16" y="256" width="200" height="56" rx="12"/><text x="116" y="290" text-anchor="middle" font-size="16" font-weight="800">⑧ 排行榜</text></g>
+    <path class="wire" d="M216 89 H240"/><polygon class="arrow" points="238,83 246,89 238,95"/>
+    <path class="wire" d="M446 89 H460"/><polygon class="arrow" points="458,83 466,89 458,95"/>
+    <path class="wire" d="M666 89 H680"/><polygon class="arrow" points="678,83 686,89 678,95"/>
+    <path class="wire" d="M784 132 V202"/><polygon class="arrow" points="778,200 784,208 790,200"/>
+    <path class="wire" d="M686 251 H560 V229 H438"/><polygon class="arrow" points="440,223 432,229 440,235"/>
+    <path class="wire" d="M246 214 H222"/><polygon class="arrow" points="224,208 216,214 224,220"/>
+    <path class="wire" d="M116 242 V250"/><polygon class="arrow" points="110,248 116,256 122,248"/>
+  </svg>
+  <div class="node-grid" role="group" aria-label="選一格看說明">
+    <button type="button" class="btn" data-node="data">① 比賽資料</button>
+    <button type="button" class="btn" data-node="prep">② 整理欄位</button>
+    <button type="button" class="btn" data-node="train">③ 訓練</button>
+    <button type="button" class="btn" data-node="cv">④ 自己先考一次</button>
+    <button type="button" class="btn" data-node="pred">⑤ 猜 test.csv 的人</button>
+    <button type="button" class="btn" data-node="sub">⑥ 答案檔</button>
+    <button type="button" class="btn" data-node="score">⑦ Kaggle 評分</button>
+    <button type="button" class="btn" data-node="lb">⑧ 排行榜</button>
+  </div>
+  <div class="panel" id="mapPanel" aria-live="polite"><h4>點一格看說明</h4><p>（載入中）</p></div>
+  <div class="guess">
+    <p class="gq">哪一格用到的資料，答案根本不在我們手上？</p>
+    <div class="opts">
+      <button type="button" class="opt">④ 自己先考一次：留下來的那份我們沒看答案</button>
+      <button type="button" class="opt" data-ok="1">⑦ Kaggle 評分：test.csv 的答案只有 Kaggle 有</button>
+      <button type="button" class="opt">③ 訓練：電腦自己學，我們不看</button>
+    </div>
+    <div class="ans" hidden>是 ⑦。test.csv 本來就沒有答案欄，答案只在 Kaggle 那邊 <span class="tag">§〇 A</span>。④ 留下來的那份，答案其實就在 train.csv 裡，只是訓練時故意不給模型看——所以 ④ 的分數是「自己估的」，⑦ 才是別人打的（第 11 節）。</div>
+  </div>
+  <details class="deep"><summary>比賽本身與三個檔</summary><div class="in">
+    <p>Spaceship Titanic 是 Kaggle 的入門賽（Getting Started），長期開放。故事是：太空船撞上時空異常，一部分乘客被傳送到另一個次元；任務是猜每位乘客有沒有被傳送 <span class="tag">§〇 A</span>。</p>
+    <p>比賽給三個檔：<code>train.csv</code>（8,693 列、14 欄，有答案）、<code>test.csv</code>（4,277 列、13 欄，沒答案）、<code>sample_submission.csv</code>（答案檔的格式範例，兩欄 <code>PassengerId</code>、<code>Transported</code>）<span class="tag">§〇 A</span>。Data 頁寫 train 大約是全部乘客的三分之二 <span class="tag">§〇 A</span>。</p>
+    <p>⑤ 到 ⑥：模型猜完 test.csv 的 4,277 人，預測「被傳送」的佔 50.22% <span class="tag">§〇 J</span>，寫成 <code>submission.csv</code>（4,277 列、2 欄）<span class="tag">§〇 K</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §1 ============================== -->
+<section class="sec" id="s1">
+  <h2><span class="n">1</span>這場比賽在猜什麼</h2>
+  <p class="lead">比賽給的表格叫 <code>train.csv</code>：8,693 列，一列一位乘客，14 欄，最後一欄 <code>Transported</code> 就是答案，有沒有被傳送 <span class="tag">§〇 A</span>。另一份 <code>test.csv</code> 有 4,277 列，少了答案欄；要猜的就是這 4,277 人 <span class="tag">§〇 A</span>。下面是自編的 6 位乘客，點欄名看每一欄的意思。</p>
+  <p><span class="fake">自編示意，不是比賽資料</span> <span class="small">比賽規則不准把資料轉給沒參賽的人，所以這張表的 6 位乘客、每一格數值都是老師自己編的，只學它的長相 <span class="tag">§〇 M</span>。「（空）」是故意留的缺格。</span></p>
+  <p class="small swipe">往右滑看全部 14 欄（最後一欄是 Transported）→</p>
+  <div class="tw fade" id="fakeWrap"><table id="fakeTbl" aria-label="自編示意乘客表（不是比賽資料）">
+    <thead><tr>
+      <th><button type="button" data-col="PassengerId">PassengerId</button></th>
+      <th><button type="button" data-col="HomePlanet">HomePlanet</button></th>
+      <th><button type="button" data-col="CryoSleep">CryoSleep</button></th>
+      <th><button type="button" data-col="Cabin">Cabin</button></th>
+      <th><button type="button" data-col="Destination">Destination</button></th>
+      <th><button type="button" data-col="Age">Age</button></th>
+      <th><button type="button" data-col="VIP">VIP</button></th>
+      <th><button type="button" data-col="RoomService">RoomService</button></th>
+      <th><button type="button" data-col="FoodCourt">FoodCourt</button></th>
+      <th><button type="button" data-col="ShoppingMall">ShoppingMall</button></th>
+      <th><button type="button" data-col="Spa">Spa</button></th>
+      <th><button type="button" data-col="VRDeck">VRDeck</button></th>
+      <th><button type="button" data-col="Name">Name</button></th>
+      <th><button type="button" data-col="Transported">Transported</button></th>
+    </tr></thead>
+    <tbody>
+      <tr><td>9901_01</td><td>Earth</td><td>False</td><td>F/12/S</td><td>TRAPPIST-1e</td><td>31</td><td>False</td><td>0</td><td>420</td><td>15</td><td>0</td><td>88</td><td>示意一號</td><td>False</td></tr>
+      <tr><td>9901_02</td><td>Earth</td><td class="miss">（空）</td><td>F/12/S</td><td>TRAPPIST-1e</td><td>29</td><td>False</td><td>120</td><td>0</td><td>0</td><td>610</td><td>0</td><td>示意二號</td><td>False</td></tr>
+      <tr><td>9902_01</td><td>Europa</td><td>True</td><td>B/3/P</td><td>55 Cancri e</td><td>45</td><td>False</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>示意三號</td><td>True</td></tr>
+      <tr><td>9903_01</td><td>Mars</td><td>False</td><td class="miss">（空）</td><td>TRAPPIST-1e</td><td class="miss">（空）</td><td>False</td><td>700</td><td>0</td><td>40</td><td>0</td><td>0</td><td>示意四號</td><td>False</td></tr>
+      <tr><td>9904_01</td><td>Earth</td><td>True</td><td>G/77/S</td><td>PSO J318.5-22</td><td>8</td><td>False</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="miss">（空）</td><td>True</td></tr>
+      <tr><td>9905_01</td><td>Europa</td><td>False</td><td>C/5/S</td><td>55 Cancri e</td><td>52</td><td class="miss">（空）</td><td>0</td><td>950</td><td>0</td><td>300</td><td>260</td><td>示意六號</td><td>True</td></tr>
+    </tbody>
+  </table></div>
+  <div class="panel" id="colPanel" aria-live="polite"><h4>點上面的欄名</h4><p>（載入中）</p></div>
+  <div class="guess">
+    <p class="gq">什麼都不想，8,693 人全部猜「被傳送」，會猜對多少比例？<span class="tag">§〇 A</span></p>
+    <div class="opts">
+      <button type="button" class="opt">大約 0.30：大部分人沒被傳送</button>
+      <button type="button" class="opt" data-ok="1">大約 0.50：被傳送的剛好一半多一點</button>
+      <button type="button" class="opt">大約 0.80：大部分人被傳送</button>
+    </div>
+    <div class="ans" hidden>0.5036。被傳送 4,378 人、沒被傳送 4,315 人，答案幾乎一半一半 <span class="tag">§〇 A</span>；全部猜「被傳送」就剛好猜對那 4,378 人：4,378 ÷ 8,693 ＝ 0.5036 <span class="tag">§〇 B</span>。這個數字是下一節的起點。</div>
+  </div>
+  <details class="deep"><summary>14 欄各缺幾格、還有幾個整體數字</summary><div class="in">
+    <div class="tw"><table data-src="§〇 A">
+      <tr><th>欄名</th><th>是什麼</th><th class="r">train.csv 缺幾格</th></tr>
+      <tbody id="colTable"></tbody>
+    </table></div>
+    <p>至少缺一格的乘客有 2,087 列，8,693 列裡約 24% <span class="tag">§〇 A</span>。<code>train.csv</code> 裡有 6,217 個不同的團 <span class="tag">§〇 A</span>。年齡 0 到 79 歲，中位數 27 <span class="tag">§〇 A</span>。</p>
+    <p>授權：Data 頁寫 Attribution 4.0 International（CC BY 4.0）；規則頁 7.B 又寫資料不能轉給沒參賽的人，兩邊說法不一樣 <span class="wn">⚠️</span>，這一頁照比較嚴的那一邊做，所以只放彙總數字、不放任何一列真資料，也不放排行榜上的隊名 <span class="tag">§〇 M</span>。規則 7.A 寫資料可以拿來教學 <span class="tag">§〇 M</span>。</p>
+    <p>參賽規則還有：一人一個帳號；一天最多交 10 筆；參賽者要滿 18 歲或當地成年年齡（取較大的）<span class="tag">§〇 M</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §2 ============================== -->
+<section class="sec" id="s2">
+  <h2><span class="n">2</span>人寫的一條規則能走多遠</h2>
+  <p class="lead">還沒讓電腦學之前，先用人想的規則猜。猜對的人占全部的比例，叫準確率（accuracy），下面講的「分數」都是它。最簡單的做法是全部猜「被傳送」，這叫基準（baseline），是拿來比較的起點。另外兩條是 W11 那條「冬眠的人猜被傳送」，和「沒花錢的人猜被傳送」<span class="tag">§〇 B</span>。先猜，再選一條規則看分數。</p>
+  <p>這兩條規則都會替每個人作答：符合條件的猜「被傳送」，其餘的猜「沒被傳送」。</p>
+  <div class="guess">
+    <p class="gq">「冬眠的人猜被傳送」跟「完全沒花錢的人猜被傳送」，哪一條比較準？</p>
+    <div class="opts">
+      <button type="button" class="opt">冬眠那條</button>
+      <button type="button" class="opt" data-ok="1">沒花錢那條</button>
+      <button type="button" class="opt">一樣準</button>
+    </div>
+    <div class="ans" hidden>沒花錢那條：猜對 6,408 人、0.7371；冬眠那條猜對 6,244 人、0.7183 <span class="tag">§〇 B</span>。用下面的按鈕切換，看兩條規則把人分成哪幾群。</div>
+  </div>
+  <div class="ctrl" role="group" aria-label="選一條規則">
+    <button type="button" class="btn" data-rule="all">全部猜被傳送</button>
+    <button type="button" class="btn" data-rule="cryo">冬眠的猜被傳送</button>
+    <button type="button" class="btn" data-rule="spend">沒花錢的猜被傳送</button>
+  </div>
+  <svg class="fig hidden" id="ruleSvg" viewBox="0 0 900 230" role="img" aria-label="規則把乘客分群，每群被傳送的人數"></svg>
+  <div class="panel" id="rulePanel" aria-live="polite"><h4>還沒選規則</h4><p>先猜上面那一題，再按一條規則，看它把人分成哪幾群、拿幾分。</p></div>
+  <p class="small">長條的長度＝那一群有幾個人；深色那一段＝那一群裡被傳送的人。人數都是 train.csv 8,693 人的真實計數 <span class="tag">§〇 B</span>。</p>
+  <details class="deep"><summary>為什麼要先有基準？規則交上 Kaggle 拿幾分？</summary><div class="in">
+    <p>基準是什麼都不看也能拿到的分數。這場答案一半一半，所以基準大約 0.50；一個做法的準確率如果沒有比 0.5036 高，就是沒有贏過「全部猜同一個答案」<span class="tag">§〇 B</span>。</p>
+    <p>上面這些分數，都是在 train.csv 自己身上對答案。冬眠那條規則 11/16 交上 Kaggle，猜的是 test.csv 的人，公開分數 0.72550 <span class="tag">§〇 J</span>。這條規則在兩批不同的人身上分數很接近（0.7183 與 0.72550）<span class="tag">§〇 B</span> <span class="tag">§〇 J</span>。規則只有一句話、沒有記任何一位乘客，這可能是它換一批人還站得住的原因 <span class="wn">⚠️ 推論</span>。</p>
+    <p>冬眠欄有 217 人是空的，其中 106 人被傳送 <span class="tag">§〇 B</span>。冬眠那條規則遇到空格，也猜沒被傳送。</p>
+    <p>花錢那條是把五種消費加起來，缺的那格當沒有；加起來是 0 的叫「沒花錢」<span class="tag">§〇 B</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §3 ============================== -->
+<section class="sec" id="s3">
+  <h2><span class="n">3</span>訓練＝讓電腦自己找規則</h2>
+  <p class="lead">訓練（training）就是讓電腦拿有答案的資料，自己整理出一套猜法，這套猜法叫模型（model）。決策樹（decision tree）是一連串是非題：電腦把每一欄可能的分界都試一遍，挑最能把「被傳送」和「沒被傳送」分到兩邊的那一題；下一題只看走到那一邊的人 <span class="tag">§〇 C</span>。下面先猜：它第一題會不會挑「有沒有冬眠」？</p>
+<div class="guess">
+    <p class="gq">電腦可以挑任何一欄當第一題。你覺得它會挑「有沒有冬眠」嗎？</p>
+    <div class="opts">
+      <button type="button" class="opt">會，冬眠那條是我們上次交的</button>
+      <button type="button" class="opt" data-ok="1">不會，它挑「有沒有花錢」</button>
+      <button type="button" class="opt">它挑「年齡」</button>
+    </div>
+    <div class="ans" hidden>它挑「總消費 ≤ 0.5」，也就是有沒有花錢 <span class="tag">§〇 C</span>。這跟第 2 節第三條規則是同一條，在 train.csv 上一樣是 0.7371 <span class="tag">§〇 C</span>。電腦不知道「冬眠」是什麼意思，它只是照「哪一題把兩種人分得最開」去挑。順帶一提，這一題的準確率也比冬眠那條的 0.7183 高 <span class="tag">§〇 B</span>，但那不是它挑這一題的原因。</div>
+  </div>
+  <p class="small gatehint" id="gh3">先回答上面那一題，樹圖才會出現。</p>
+  <div class="gate" hidden>
+  <div class="ctrl">
+    <button type="button" class="btn primary" id="treeMore">再問一題</button>
+    <button type="button" class="btn" id="treeLess">少問一題</button>
+    <span id="treeAcc" class="big" aria-live="polite"></span>
+  </div>
+  <p class="small">按「再問一題」讓樹多問一層，看葉子與分數怎麼變。</p>
+  <p class="small">每片葉子裡的兩個數字是落在那裡的人數：「沒被傳送｜被傳送」。葉子猜人數多的那一邊。左邊的線＝「是」，右邊＝「否」<span class="tag">§〇 C</span>。</p>
+  <svg class="fig" id="treeSvg" viewBox="0 0 900 360" role="img" aria-label="決策樹"></svg>
+  <div class="panel" id="treePanel" aria-live="polite"><h4>（載入中）</h4></div>
+  </div>
+  
+  <details class="deep"><summary>這三棵樹是怎麼量的；跟第 4 節的分數差在哪</summary><div class="in">
+    <p>樹是 scikit-learn 的 <code>DecisionTreeClassifier</code>，餵第 6 節整理好的 15 欄 <span class="tag">§〇 C</span>。這一節的三棵樹都用全部 8,693 人訓練，再拿同樣這 8,693 人對答案：問一題 0.7371、兩題 0.7386、三題 0.7584 <span class="tag">§〇 C</span>。</p>
+    <p>第 4 節表格裡的「練習題」是另一種量法：切五份，拿訓練用的那四份自己對答案、五輪取平均，所以問兩題寫 0.7389、問三題寫 0.7592 <span class="tag">§〇 C</span>，跟這裡差一點點。兩個都是「看過答案」的分數。</p>
+    <p><code>HomePlanet</code> 在整理時換成代號，照字母順序 Earth 0、Europa 1、Mars 2 <span class="tag">§〇 E</span>；所以「HomePlanet ≤ 0.5」在有填的人裡就是 Earth，「&gt; 0.5」是 Europa 或 Mars。這一欄沒填的 201 人 <span class="tag">§〇 A</span>，被樹歸到哪一邊，這次沒查 <span class="tag">§〇 ⚠️7</span>。</p>
+    <p>空格的人怎麼分邊：scikit-learn 在訓練時，每個可能的分界都試兩種走法（空格的人全部走左邊，或全部走右邊），留下分得比較好的那一種（scikit-learn 1.6 官方說明）<span class="tag">§〇 ⚠️3</span>。這三棵樹裡空格的人實際走了哪邊，這次沒查 <span class="tag">§〇 ⚠️7</span>。</p>
+    <p>電腦怎麼評「分得多開」：用的演算法叫吉尼不純度（Gini impurity），白話是「這一堆人裡兩種答案混得多亂」；它挑讓兩邊合起來最不混的那一題（人多的那一邊算得比較重），不是直接比準確率 <span class="tag">§〇 C</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §4 ============================== -->
+<section class="sec" id="s4">
+  <h2><span class="n">4</span>背答案與學會的差別</h2>
+  <p class="lead">樹可以一直問下去。問越多題，練習題的分數越高；可是拿沒看過的題去考，分數大致先升後降，問 6 題時最高 <span class="tag">§〇 C</span>。這叫過度擬合（overfitting）：把練習題背起來，換一批題目就不行。拖滑桿，看兩條線怎麼分開。</p>
+  <div class="ctrl"><label for="tdSlider">最多問幾題：</label><input type="range" id="tdSlider" min="0" max="14" step="1" value="5" aria-describedby="tdOut"></div>
+  <div class="kv" id="tdOut" aria-live="polite"></div>
+  <svg class="fig" id="tdSvg" viewBox="0 0 900 340" role="img" aria-label="樹的深度與兩種分數"></svg>
+  <p class="small">金色＝練習題（看過答案）、青色＝沒看過的題。橫軸每一格是一個實際量過的設定，畫面上間距一樣，數量差距不一樣 <span class="tag">§〇 C</span>。</p>
+  <div class="guess">
+    <p class="gq">樹不設上限，長到 1,451 片葉子 <span class="tag">§〇 C</span>。沒看過的題會變好還是變差？</p>
+    <div class="opts">
+      <button type="button" class="opt">變好，問越多越準</button>
+      <button type="button" class="opt" data-ok="1">變差，比問 6 題還低</button>
+      <button type="button" class="opt">不變</button>
+    </div>
+    <div class="ans" hidden>變差。練習題爬到 0.9984，沒看過的題只剩 0.7424；沒看過的題在問 6 題時最高（0.7820），之後大致往下掉 <span class="tag">§〇 C</span>。1,451 片葉子分 8,693 人，平均一片葉子只有 6 個人 <span class="tag">§〇 C</span>。葉子切得這麼細，很可能把這幾個人碰巧的樣子也學了進去，不是下一批人也適用的規律 <span class="wn">⚠️ 一般說法</span>。</div>
+  </div>
+  <details class="deep"><summary>15 種深度的完整表</summary><div class="in">
+    <div class="tw"><table data-src="§〇 C">
+      <tr><th class="r">最多問幾題</th><th class="r">練習題</th><th class="r">沒看過的題</th><th class="r">葉子</th></tr>
+      <tbody id="tdTable"></tbody>
+    </table></div>
+    <p>「練習題」＝拿訓練用的那四份自己對答案；「沒看過的題」＝留下來的那一份；切五份輪流、取平均（做法見第 5 節）。「葉子」＝用全部 8,693 人訓練時長出幾片 <span class="tag">§〇 C</span>。不設上限時實際長到 25 層 <span class="tag">§〇 C</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §5 ============================== -->
+<section class="sec" id="s5">
+  <h2><span class="n">5</span>所以要留考題：切五份、輪流當考題</h2>
+  <p class="lead">練習題的分數看過答案，不能拿來估換一批人會考幾分。所以把 8,693 人切成五份，每輪拿四份訓練、留一份當考題，輪五次再平均，這叫五折交叉驗證（5-fold cross-validation）<span class="tag">§〇 D</span>。每個人剛好當一次考題，也看得出分數會晃多少。點第幾輪看看。</p>
+  <p>每一輪都從頭訓練一個新的模型，這一輪當考題的人完全不參加這一輪的訓練。</p>
+  <div class="ctrl" role="group" aria-label="選第幾輪" id="foldBtns">
+    <button type="button" class="btn" data-fold="0">第 1 輪</button>
+    <button type="button" class="btn" data-fold="1">第 2 輪</button>
+    <button type="button" class="btn" data-fold="2">第 3 輪</button>
+    <button type="button" class="btn" data-fold="3">第 4 輪</button>
+    <button type="button" class="btn" data-fold="4">第 5 輪</button>
+  </div>
+  <svg class="fig" id="foldSvg" viewBox="0 0 900 150" role="img" aria-label="原本的切法（亂數種子 0）：五份資料，哪一份當考題"></svg>
+  <div class="panel" id="foldPanel" aria-live="polite"><h4>（載入中）</h4></div>
+  <div class="ctrl"><button type="button" class="btn" id="reshuffleBtn">換一種切法</button><span class="small" id="seedNote"></span></div>
+  <p class="small" id="foldNote">上面五個方塊固定是同一種切法（亂數種子 0）；「換一種切法」只換這裡顯示的五輪平均。亂數種子是決定怎麼打散的編號，同一個編號每次打散的結果都一樣 <span class="tag">§〇 D</span>。</p>
+  <div class="panel" id="seedPanel" aria-live="polite"><h4>（載入中）</h4></div>
+  <div class="guess">
+    <p class="gq">回想第 4 節：如果直接拿練習題算分，不設上限的那棵樹會拿幾分？</p>
+    <div class="opts">
+      <button type="button" class="opt">0.74 左右</button>
+      <button type="button" class="opt" data-ok="1">接近 1，幾乎全對</button>
+      <button type="button" class="opt">0.50 左右</button>
+    </div>
+    <div class="ans" hidden>練習題 0.9984，幾乎全對；但留考題考出來只有 0.7424 <span class="tag">§〇 C</span>。只看練習題，你會以為它幾乎全對。這就是為什麼一定要留考題。</div>
+  </div>
+  <details class="deep"><summary>怎麼切、為什麼要「讓比例差不多」</summary><div class="in">
+    <p>五份的人數是 1,739、1,739、1,739、1,738、1,738；每一輪拿四份訓練（6,954 或 6,955 人）<span class="tag">§〇 D</span>。</p>
+    <p>切的時候讓每一份裡被傳送與沒被傳送的比例差不多（<code>StratifiedKFold</code>，先打散、亂數種子 0）<span class="tag">§〇 D</span>。不然可能某一份剛好被傳送的特別多，各輪之間就不好比 <span class="wn">⚠️ 一般說法</span>。</p>
+    <p>換一種切法（亂數種子 0、1、2、3、4）重做五次，平均分別是 0.8119、0.8133、0.8103、0.8104、0.8095 <span class="tag">§〇 D</span>。同一個模型、同一份資料，光是切法不同就差到 0.004 左右 <span class="tag">§〇 D</span>。所以兩個做法如果只差 0.002，這個差距比換切法造成的晃動（0.004 左右）還小，只憑這張表分不出誰比較好（第 7 節會用到）。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §6 ============================== -->
+<section class="sec" id="s6">
+  <h2><span class="n">6</span>整理欄位：把字變成數字</h2>
+  <p class="lead">我們用的工具要每一欄都是數字（或空格）。餵給模型的每一欄叫特徵（feature）。我們把艙房 <code>B/0/P</code> 這種字串拆成甲板、房號、舷三欄，把五種消費加總，再算同一團有幾個人（這一步叫特徵工程，feature engineering）<span class="tag">§〇 E</span>。train.csv 的 14 欄裡有一欄是答案；整理之後，餵給模型的是 15 欄。</p>
+  <h3>小工具一：拆艙房 <span class="fake">自編示意</span></h3>
+  <div class="ctrl"><label for="cabinIn">艙房：</label><input id="cabinIn" class="txt" type="text" value="B/0/P" autocomplete="off" spellcheck="false" style="max-width:220px"></div>
+  <div class="panel" id="cabinOut" aria-live="polite"><h4>（載入中）</h4></div>
+  <h3>小工具二：乘客編號是哪一團第幾位 <span class="fake">自編示意</span></h3>
+  <div class="ctrl"><label for="pidIn">乘客編號：</label><input id="pidIn" class="txt" type="text" value="9901_02" autocomplete="off" spellcheck="false" style="max-width:220px"></div>
+  <div class="panel" id="pidOut" aria-live="polite"><h4>（載入中）</h4></div>
+  <h3>小工具三：一層一層疊上去，分數怎麼變</h3>
+  <p>不是每個新欄都有用，要量了才知道。</p>
+<div class="guess">
+    <p class="gq">「總消費」把五種消費加起來，看起來很有用。加了它，分數會變好嗎？</p>
+    <div class="opts">
+      <button type="button" class="opt">會，明顯變好</button>
+      <button type="button" class="opt" data-ok="1">沒有變好，還低了一點點</button>
+    </div>
+    <div class="ans" hidden>0.7921 → 0.7912，沒有變好；這個差距比換切法造成的晃動（0.004 左右）還小，看不出差別 <span class="tag">§〇 E</span>。這次加分最多的是把艙房拆開：0.7912 → 0.8095，多了約 0.018 <span class="tag">§〇 E</span>。總消費是從原本五欄算出來的，沒有帶進新資訊，這可能是它沒幫上忙的原因 <span class="wn">⚠️ 推論，沒另外驗</span>。</div>
+  </div>
+  <p class="small gatehint" id="gh6">先回答上面那一題，開關與分數才會出現。</p>
+  <div class="gate" hidden>
+  <p class="small">這四組是一層一層疊上去量的，所以開關只能照順序疊：開後面的會順便開前面的，關前面的會順便關後面的。分數都是同一個模型、同樣切五份輪流當考題 <span class="tag">§〇 E</span>。</p>
+  <div class="sw" id="fsSw">
+    <label><input type="checkbox" data-lv="1" checked> 原本的 10 欄（年齡、五種消費、冬眠、VIP、出發星球、目的地）</label>
+    <label><input type="checkbox" data-lv="2" checked> ＋總消費（1 欄）</label>
+    <label><input type="checkbox" data-lv="3" checked> ＋艙房拆出來的三欄</label>
+    <label><input type="checkbox" data-lv="4" checked> ＋同團人數（1 欄）</label>
+  </div>
+  <div class="panel" id="fsOut" aria-live="polite"><h4>（載入中）</h4></div>
+  </div>
+  
+  <details class="deep"><summary>15 欄各是怎麼來的</summary><div class="in">
+    <div class="tw"><table data-src="§〇 E">
+      <tr><th>餵給模型的欄</th><th>怎麼來的</th></tr>
+      <tr><td><code>Age</code>、<code>RoomService</code>、<code>FoodCourt</code>、<code>ShoppingMall</code>、<code>Spa</code>、<code>VRDeck</code></td><td>原樣（6 欄）</td></tr>
+      <tr><td><code>TotalSpend</code></td><td>五種消費有填的加起來、空格當 0；五欄全空的人留空</td></tr>
+      <tr><td><code>CryoSleep</code>、<code>VIP</code></td><td>True 變 1、False 變 0</td></tr>
+      <tr><td><code>Deck</code>、<code>CabinNum</code>、<code>Side</code></td><td>把 <code>Cabin</code> 的「甲板/房號/舷」拆成三欄；甲板與舷換成代號</td></tr>
+      <tr><td><code>HomePlanet</code>、<code>Destination</code></td><td>文字換成代號（照字母順序：Earth 0、Europa 1、Mars 2）</td></tr>
+      <tr><td><code>GroupSize</code></td><td>同一團有幾個人：<code>PassengerId</code> 前四碼相同的算一團</td></tr>
+    </table></div>
+    <p>沒用的欄：<code>Name</code> 沒餵；<code>PassengerId</code> 本身只拿來算同團人數 <span class="tag">§〇 E</span>。</p>
+    <p>缺值沒有補，直接留空；我們用的模型（scikit-learn 的 <code>HistGradientBoostingClassifier</code>）本來就接受空格 <span class="tag">§〇 E</span>。五種消費欄的空格照樣留著；只有算總消費時把空格當 0 來加，五欄全空的人總消費也留空；這份資料裡沒有人五欄全空 <span class="tag">§〇 E</span>。</p>
+    <p>算同團人數與文字代號時，把 train.csv 與 test.csv 的乘客放在一起算（12,970 人），沒有用到答案欄 <span class="tag">§〇 E</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §7 ============================== -->
+<section class="sec" id="s7">
+  <h2><span class="n">7</span>一棵不夠：很多棵樹接力</h2>
+  <p class="lead">一棵樹在沒看過的題上最高是 0.7820（問 6 題那棵）<span class="tag">§〇 F</span>。梯度提升（gradient boosting）是讓很多棵小樹接力：先給每個人同一個起始猜測，算出這個猜測離答案還差多少，第一棵樹學著把差距補一點回來；下一棵再補剩下的，一棵接一棵 <span class="tag">§〇 ⚠️4</span>。我們交出去的是 300 棵 <span class="tag">§〇 F</span>。接力越多不一定越好，拖滑桿看看。</p>
+  <div class="ctrl"><label for="brSlider">接力幾棵：</label><input type="range" id="brSlider" min="0" max="6" step="1" value="5" aria-describedby="brOut"></div>
+  <div class="kv" id="brOut" aria-live="polite"></div>
+  <svg class="fig" id="brSvg" viewBox="0 0 900 340" role="img" aria-label="接力棵數與兩種分數"></svg>
+  <p class="small">金色＝練習題、青色＝沒看過的題（切五份輪流當考題）。橫軸每一格是一個實際量過的設定，畫面上間距一樣，數量差距不一樣 <span class="tag">§〇 F</span>。</p>
+  <div class="guess">
+    <p class="gq">接力 1,000 棵，會比 300 棵好嗎？<span class="tag">§〇 F</span></p>
+    <div class="opts">
+      <button type="button" class="opt">會，越多越好</button>
+      <button type="button" class="opt" data-ok="1">不會，反而變差</button>
+    </div>
+    <div class="ans" hidden>變差。1,000 棵的練習題衝到 0.9825，沒看過的題掉到 0.8003 <span class="tag">§〇 F</span>，跟第 4 節一樣是過度擬合。</div>
+  </div>
+  <details class="deep"><summary>完整的表、learning_rate、100 棵比 300 棵高算不算贏</summary><div class="in">
+    <div class="tw"><table data-src="§〇 F">
+      <tr><th class="r">接力幾棵</th><th class="r">練習題</th><th class="r">沒看過的題</th><th class="r">五輪一共幾秒</th></tr>
+      <tbody id="brTable"></tbody>
+    </table></div>
+    <p>模型是 <code>HistGradientBoostingClassifier(max_iter=棵數, learning_rate=0.05, random_state=0)</code> <span class="tag">§〇 F</span>。<code>learning_rate=0.05</code> 的白話是每一棵只補一小步 <span class="tag">§〇 ⚠️4</span>（這句與上面「先有起始猜測、再一棵一棵把差距補回來」都是一般說法，不是這次量的）。</p>
+    <p>照這張表，100 棵（0.8139）比 300 棵（0.8119）還高 0.002；這個差距比換切法造成的晃動（0.004 左右，第 5 節）還小，只憑這張表分不出誰比較好 <span class="tag">§〇 F</span> <span class="tag">§〇 D</span>。我們交 300 棵，是因為程式一開始就這樣設，交出去之後才量這張表 <span class="tag">§〇 F</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §8 ============================== -->
+<section class="sec" id="s8">
+  <h2><span class="n">8</span>資料多一點有用嗎</h2>
+  <p class="lead">同一個模型、同一批考題，只換訓練的人數。這次量的六個人數裡，人數越多分數越高，但後面漲得慢：用 1,000 人訓練就到 0.7829，再多將近 6,000 人只到 0.8119 <span class="tag">§〇 G</span>。先猜下面那一題，再拖滑桿對照紅色參考線。</p>
+<div class="guess">
+    <p class="gq">只看 50 個人的模型，分數會比冬眠那條規則的 0.7183 高嗎？<span class="tag">§〇 B</span></p>
+    <div class="opts">
+      <button type="button" class="opt">會，模型一定比人寫的規則強</button>
+      <button type="button" class="opt" data-ok="1">不會，比較低</button>
+    </div>
+    <div class="ans" hidden>比較低，0.6827 對 0.7183 <span class="tag">§〇 G</span> <span class="tag">§〇 B</span>。100 人時幾乎一樣（0.7184）；300 人時高出一截（0.7434）<span class="tag">§〇 G</span>。兩個分數量法不完全一樣：規則在整份 train.csv 對答案，模型在沒看過的題上考；規則不用訓練，所以拿來當參考線 <span class="tag">§〇 G</span>。50 個人的例子太少，模型還抓不到穩定的規律 <span class="wn">⚠️ 推論</span>。</div>
+  </div>
+  <p class="small gatehint" id="gh8">先回答上面那一題，滑桿與圖才會出現。</p>
+  <div class="gate" hidden>
+  <div class="ctrl"><label for="lcSlider">拿幾個人訓練：</label><input type="range" id="lcSlider" min="0" max="5" step="1" value="0" aria-describedby="lcOut"></div>
+  <div class="kv" id="lcOut" aria-live="polite"></div>
+  <svg class="fig" id="lcSvg" viewBox="0 0 900 340" role="img" aria-label="訓練人數與沒看過的題的分數"></svg>
+  <p class="small">青色＝模型在沒看過的題上的分數；紅色虛線＝參考線：冬眠規則在整份 train.csv 上的 0.7183 <span class="tag">§〇 B</span>。橫軸每一格是一個實際量過的人數，畫面上間距一樣，人數差距不一樣 <span class="tag">§〇 G</span>。兩個分數量法不一樣：規則是在整份 train.csv 上對答案，模型是在沒看過的題上考；這條線只拿來對照 <span class="tag">§〇 G</span>。</p>
+  </div>
+  
+  <details class="deep"><summary>完整的表</summary><div class="in">
+    <div class="tw"><table data-src="§〇 G">
+      <tr><th class="r">拿幾個人訓練</th><th class="r">沒看過的題</th></tr>
+      <tbody id="lcTable"></tbody>
+    </table></div>
+    <p>做法：每一輪的四份裡隨機抽出這麼多人訓練（亂數種子 0），考題那份不變，五輪取平均 <span class="tag">§〇 G</span>。最後一格是四份全用（各輪 6,954 或 6,955 人），表上寫第一輪的 6,954 <span class="tag">§〇 G</span>。人數越多分數越高，最後兩段（1,000→3,000→6,954）漲得比前面少 <span class="tag">§〇 G</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §9 ============================== -->
+<section class="sec" id="s9">
+  <h2><span class="n">9</span>模型到底看重哪幾欄</h2>
+  <p class="lead">想知道模型靠哪幾欄，可以把考題裡某一欄的值在乘客之間打亂、其他欄不動，看分數掉多少：掉越多，表示模型越靠它 <span class="tag">§〇 H</span>。要記得：模型看重，不等於那一欄是被傳送的原因 <span class="tag">§〇 ⚠️4</span>。</p>
+  <div class="ctrl" role="group" aria-label="排序">
+    <button type="button" class="btn" data-sort="drop">照掉幾分排</button>
+    <button type="button" class="btn" data-sort="name">照欄名排</button>
+    <button type="button" class="btn" id="spendHl" aria-pressed="false">標出跟花錢有關的六欄</button>
+  </div>
+  <svg class="fig" id="piSvg" viewBox="0 0 900 520" role="img" aria-label="打亂每一欄，分數掉多少"></svg>
+  <div class="panel" id="piPanel" aria-live="polite"><h4>（載入中）</h4></div>
+  <div class="guess">
+    <p class="gq">VIP（付費買 VIP 服務）重不重要？</p>
+    <div class="opts">
+      <button type="button" class="opt">很重要，有錢人待遇不同</button>
+      <button type="button" class="opt" data-ok="1">把它打亂，分數幾乎沒變</button>
+    </div>
+    <div class="ans" hidden>VIP 打亂後分數只掉 0.0006，15 欄裡最少 <span class="tag">§〇 H</span>。在這個模型、這一輪考題上，打亂 VIP 幾乎不影響分數；不代表 VIP 跟被傳送沒有關係 <span class="tag">§〇 H</span>。</div>
+  </div>
+  <details class="deep"><summary>怎麼量的、為什麼單看一欄可能低估</summary><div class="in">
+    <p>用第 1 輪：6,954 人訓練、1,739 人當考題，原本 0.8148；每一欄打亂 10 次取平均 <span class="tag">§〇 H</span>。這種做法叫排列重要性（permutation importance）。</p>
+    <p>幾欄講同一件事的時候（例如這份資料裡，冬眠的 3,037 人五種消費加總都是 0 <span class="tag">§〇 H</span>），打亂其中一欄，模型可能還能從別欄補回來 <span class="wn">⚠️ 一般說法</span>。五種消費與總消費這六欄講的都是「花了多少錢」，所以單看其中一欄掉多少，可能低估「花錢」這件事；要把六欄一起打亂才知道，這次沒做 <span class="tag">§〇 ⚠️8</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §10 ============================== -->
+<section class="sec" id="s10">
+  <h2><span class="n">10</span>猜對猜錯四格</h2>
+  <p class="lead">準確率就是猜對的比例（第 2 節）。把五輪留下來的預測合起來，8,693 人每人剛好被考一次，可以排成四格：兩格猜對、兩格猜錯 <span class="tag">§〇 I</span>。點格子把它選進「猜對」，選對兩格就會算出準確率。</p>
+  <table class="cm" aria-label="猜對猜錯四格">
+    <tr><th></th><th>模型猜沒被傳送</th><th>模型猜被傳送</th></tr>
+    <tr><th>實際沒被傳送</th><td><button type="button" class="ok" data-cell="tn" aria-pressed="false"></button></td><td><button type="button" class="bad" data-cell="fp" aria-pressed="false"></button></td></tr>
+    <tr><th>實際被傳送</th><td><button type="button" class="bad" data-cell="fn" aria-pressed="false"></button></td><td><button type="button" class="ok" data-cell="tp" aria-pressed="false"></button></td></tr>
+  </table>
+  <div class="ctrl"><button type="button" class="btn" id="cmClear">清掉重選</button></div>
+  <div class="panel" id="cmPanel" aria-live="polite"><h4>（載入中）</h4></div>
+  <div class="guess">
+    <p class="gq">模型犯的兩種錯，人數差很多嗎？</p>
+    <div class="opts">
+      <button type="button" class="opt">差很多，「沒被傳送卻被猜成被傳送」多很多</button>
+      <button type="button" class="opt">差很多，「被傳送卻被猜成沒被傳送」多很多</button>
+      <button type="button" class="opt" data-ok="1">差不多</button>
+    </div>
+    <div class="ans" hidden>差不多：803 人與 832 人 <span class="tag">§〇 I</span>，兩種錯的人數接近。</div>
+  </div>
+  <details class="deep"><summary>這張表的名字、跟 0.8119 的關係</summary><div class="in">
+    <p>這種四格表叫混淆矩陣（confusion matrix）。猜對的是左上與右下：3,512＋3,546＝7,058 人，7,058 ÷ 8,693＝0.8119 <span class="tag">§〇 I</span>，跟五輪平均的 0.8119 取到小數第四位一樣 <span class="tag">§〇 D</span>（一個是把五輪的人合起來算，一個是五輪各算再平均）。</p>
+    <p>每一列各自加起來，就是那一類的實際人數：沒被傳送 4,315、被傳送 4,378 <span class="tag">§〇 I</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §11 ============================== -->
+<section class="sec" id="s11">
+  <h2><span class="n">11</span>三個分數，哪一個算數</h2>
+  <p class="lead">同一套做法有三個分數。練習題 0.9252、自己留考題 0.8119 是切五份時量的；Kaggle 的 0.80126 是用全部 8,693 人再訓練一次、猜 test.csv，由 Kaggle 評分，答案我們沒有 <span class="tag">§〇 J</span>。這次自己估的高約 0.011。排行榜（leaderboard）上 2,142 隊，大多擠在 0.79 到 0.81 <span class="tag">§〇 J</span>。</p>
+  <svg class="fig" id="threeSvg" viewBox="0 0 900 250" role="img" aria-label="三個分數加一條規則"></svg>
+  <p class="small">橫軸從 0.70 開始，不是從 0；長條差距看起來會比實際大。</p>
+  <p>三個分數各回答一件事：0.9252 看模型把練習題學得多熟；0.8119 估換一批人會猜得多準；0.80126 是這次在 Kaggle 公開榜上的成績 <span class="tag">§〇 J</span>。</p>
+  <h3>榜上的分數帶</h3>
+  <div class="ctrl"><button type="button" class="btn" id="lbMark" aria-pressed="true">標出我們兩次提交</button></div>
+  <svg class="fig" id="lbSvg" viewBox="0 0 900 330" role="group" aria-label="排行榜分數帶與隊數"></svg>
+  <div class="panel" id="lbPanel" aria-live="polite"><h4>（載入中）</h4></div>
+  <div class="guess">
+    <p class="gq">0.80126 在 2,142 隊裡算前面還是後面？<span class="tag">§〇 J</span></p>
+    <div class="opts">
+      <button type="button" class="opt">前十分之一</button>
+      <button type="button" class="opt">前四分之一</button>
+      <button type="button" class="opt" data-ok="1">中間偏後一點</button>
+    </div>
+    <div class="ans" hidden>第 1,215 名（同分 16 隊）。榜上中位數是 0.80289，我們比中位數低一點 <span class="tag">§〇 J</span>。可是從 0.72550（第 2,040 名）到這裡，已經往前 825 名 <span class="tag">§〇 J</span>。</div>
+  </div>
+  <details class="deep"><summary>榜上的幾個門檻、沒查的事</summary><div class="in">
+    <p>公開榜快照：2026-11-24 15:16 下載，2,142 隊，只取分數、不取隊名 <span class="tag">§〇 J</span>。前五名 0.96539、0.93196、0.83937、0.83867、0.83680 <span class="tag">§〇 J</span>。前 10% 的門檻 0.81038、前 25% 0.80757、中位數 0.80289、後 25% 0.79471 <span class="tag">§〇 J</span>。</p>
+    <p>2,142 隊裡有 1,505 隊擠在 0.79 到 0.81 之間；這份快照裡，從 0.80 到 0.81 要追過 1,102 隊 <span class="tag">§〇 J</span>。</p>
+    <p>練習題 0.9252 和自己留考題 0.8119 是切五份時量的，每輪用四份訓練；Kaggle 的 0.80126 是用全部 8,693 人再訓練一次的模型 <span class="tag">§〇 J</span>。這次自己估的比榜上高約 0.011 <span class="tag">§〇 J</span>。兩個分數考的是不同的人，差一點很正常；會不會每次都偏高，只看這一次看不出來 <span class="wn">⚠️ 推論</span>。</p>
+    <p>公開分數是用 test.csv 全部 4,277 人算的（比賽的 Leaderboard 頁寫明用全部測試資料）<span class="tag">§〇 J</span>；前兩名怎麼拿到 0.93 以上，這次沒查 <span class="tag">§〇 ⚠️2</span>。規則頁寫提交超過兩個月會從榜上消失，所以榜上隊數會變 <span class="tag">§〇 J</span>。一天最多交 10 筆；這次交完 CLI 印 <code>9 submissions remaining today.</code> <span class="tag">§〇 J</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §12 ============================== -->
+<section class="sec" id="s12">
+  <h2><span class="n">12</span>老師這次是怎麼跑的</h2>
+  <p class="lead">這是老師這次的跑法，不是給同學照做的步驟；用瀏覽器開 Colab 那條路還沒走過 <span class="tag">§〇 ⚠️1</span>。老師用命令列開一台免費的 Colab CPU 機器，整趟 51 秒 <span class="tag">§〇 K</span>。先猜下面那一題，再按「下一步」逐行看八行指令在做什麼。</p>
+<div class="guess">
+    <p class="gq">整趟 51 秒，程式本身（讀資料、訓練、寫出答案檔）跑了幾秒？</p>
+    <div class="opts">
+      <button type="button" class="opt">40 秒以上</button>
+      <button type="button" class="opt" data-ok="1">10 秒以內</button>
+    </div>
+    <div class="ans" hidden>9.4 秒 <span class="tag">§〇 K</span>。這 9.4 秒裡一共訓練六次：前五輪各拿四份訓練、留一份當考題（程式開始後 7.9 秒印出五輪分數），接著用全部 8,693 人再訓練一次、猜 test.csv、寫出答案檔 <span class="tag">§〇 K</span>。其他時間花在開機器、上傳、下載、關機器。</div>
+  </div>
+  <p class="small gatehint" id="gh12">先回答上面那一題，指令與執行紀錄才會出現。</p>
+  <div class="gate" hidden>
+  <div class="ctrl">
+    <button type="button" class="btn" id="kPrev">上一步</button>
+    <button type="button" class="btn primary" id="kNext">下一步</button>
+    <span class="small" id="kPos"></span>
+  </div>
+  <pre class="term" id="kTerm" data-src="§〇 K"></pre>
+  <div class="panel" id="kPanel" aria-live="polite"><h4>（載入中）</h4></div>
+  <div id="jobLogBox" hidden>
+    <p class="small">下面是 <code>job.log</code> 全文，程式印的字原字照印。裡面的「折」就是第 5 節說的「輪」；標著「平均」的那一行是五輪分數的平均。每行前面的秒數是程式開始後經過幾秒 <span class="tag">§〇 K</span>。</p>
+<pre class="term" id="jobLog" data-src="§〇 K">[   0.0s] python 3.13.18 pandas 2.2.3 sklearn 1.6.1
+[   0.1s] train (8693, 14) test (4277, 13)
+[   0.2s] 一條規則（冬眠的人猜被傳送）在 train 上：0.7183
+[   7.9s] 第 1 折 accuracy 0.8148
+[   7.9s] 第 2 折 accuracy 0.8074
+[   7.9s] 第 3 折 accuracy 0.8194
+[   7.9s] 第 4 折 accuracy 0.8078
+[   7.9s] 第 5 折 accuracy 0.8101
+[   7.9s] 五折平均 0.8119（標準差 0.0046）
+[   9.4s] 寫出 submission.csv (4277, 2) 預測為 True 的比例 0.5022
+[   9.4s] DONE</pre>
+  </div>
+  </div>
+  
+  <details class="deep"><summary>交上 Kaggle 那一步、補量數字的那一趟</summary><div class="in">
+    <p>拿回 <code>submission.csv</code> 之後，用 Kaggle 命令列交上去：</p>
+    <pre data-src="§〇 K">kaggle competitions submit spaceship-titanic -f submission.csv -m "…"</pre>
+    <p>印 <code>Successfully submitted to Spaceship Titanic</code> <span class="tag">§〇 K</span>；公開分數 0.80126，交的時間 2026-11-24 15:16 <span class="tag">§〇 J</span>。</p>
+    <p>這一頁第 2 到 10 節的數字，是另外用 <code>explore.py</code> 跑一趟量的，那一趟 138.8 秒 <span class="tag">§〇 K</span>。</p>
+    <p>學生用瀏覽器開 Colab 的那條路（資料怎麼放進去、要按哪裡）老師還沒走過，這裡不寫成步驟 <span class="tag">§〇 ⚠️1</span>。</p>
+  </div></details>
+</section>
+
+<!-- ============================== §13 工具百科 ============================== -->
+<section class="sec" id="s13">
+  <h2><span class="n">13</span>工具百科</h2>
+  <p class="lead">這次用到的工具，各一兩句白話，加上這次用在哪。打字可以篩選（例如打 <code>樹</code>、<code>Colab</code>、<code>csv</code>）。</p>
+  <div class="ctrl"><label for="toolQ">搜尋：</label><input id="toolQ" class="txt" type="search" autocomplete="off" spellcheck="false" style="max-width:260px"><button type="button" class="btn" id="toolOpen">全部展開</button><button type="button" class="btn" id="toolClose">全部收合</button><span class="small" id="toolN"></span></div>
+  <div id="toolList">
+    <details class="tool"><summary>CSV</summary><div class="in"><dl>
+      <dt>是什麼</dt><dd>一種純文字的表格檔：一行一列，欄位之間用逗號隔開。Excel、Google 試算表都打得開。</dd>
+      <dt>這次用在哪</dt><dd>比賽給的 <code>train.csv</code>、<code>test.csv</code>、<code>sample_submission.csv</code> 都是 CSV <span class="tag">§〇 A</span>。</dd></dl></div></details>
+    <details class="tool"><summary>submission.csv</summary><div class="in"><dl>
+      <dt>是什麼</dt><dd>交給 Kaggle 的答案檔，格式照 <code>sample_submission.csv</code>：兩欄 <code>PassengerId</code>、<code>Transported</code>（<code>True</code>／<code>False</code>）<span class="tag">§〇 A</span>。</dd>
+      <dt>這次用在哪</dt><dd>模型猜完 test.csv 的 4,277 人寫出來（4,277 列、2 欄），預測「被傳送」的比例 0.5022 <span class="tag">§〇 K</span>。</dd></dl></div></details>
+    <details class="tool"><summary>pandas</summary><div class="in"><dl>
+      <dt>是什麼</dt><dd>Python 用來讀表格、整理欄位的套件（別人寫好、可以直接拿來用的一組工具）。這次的版本是 2.2.3 <span class="tag">§〇 K</span>。</dd>
+      <dt>這次用在哪</dt><dd><code>train.py</code> 用它讀兩個 CSV、拆艙房、加總消費、算同團人數（第 6 節）<span class="tag">§〇 E</span>。</dd></dl></div></details>
+    <details class="tool"><summary>scikit-learn</summary><div class="in"><dl>
+      <dt>是什麼</dt><dd>Python 的機器學習套件，裡面有各種現成的模型與評分工具。這次的版本是 1.6.1 <span class="tag">§〇 K</span>；換版本數字可能差一點 <span class="tag">§〇 ⚠️5</span>。</dd>
+      <dt>這次用在哪</dt><dd>下面三個工具都在它裡面。程式裡寫成 <code>sklearn</code>。</dd></dl></div></details>
+    <details class="tool"><summary>DecisionTreeClassifier（一棵決策樹）</summary><div class="in"><dl>
+      <dt>是什麼</dt><dd>scikit-learn 的決策樹：自己找出一連串是非題。<code>max_depth</code> 設一個人從第一題走到葉子，最多被問幾題 <span class="tag">§〇 C</span>。</dd>
+      <dt>這次用在哪</dt><dd>第 3、4 節：問 1 到 3 題的樹，與從 1 題到不設上限的 15 種深度 <span class="tag">§〇 C</span>。</dd></dl></div></details>
+    <details class="tool"><summary>HistGradientBoostingClassifier（很多棵樹接力）</summary><div class="in"><dl>
+      <dt>是什麼</dt><dd>scikit-learn 的梯度提升模型：先有一個起始猜測，再讓很多棵小樹接力，每一棵把還差的補一點回來 <span class="tag">§〇 ⚠️4</span>；本來就接受空格 <span class="tag">§〇 E</span>。</dd>
+      <dt>這次用在哪</dt><dd>我們交出去的模型：<code>max_iter=300, learning_rate=0.05, random_state=0</code> <span class="tag">§〇 F</span>（第 7 節）。</dd></dl></div></details>
+    <details class="tool"><summary>StratifiedKFold（切五份）</summary><div class="in"><dl>
+      <dt>是什麼</dt><dd>scikit-learn 的切資料工具：切成幾份，並讓每一份裡兩種答案的比例差不多 <span class="tag">§〇 D</span>。</dd>
+      <dt>這次用在哪</dt><dd>第 5 節：<code>n_splits=5, shuffle=True, random_state=0</code>，切成 1,739、1,739、1,739、1,738、1,738 人 <span class="tag">§〇 D</span>。</dd></dl></div></details>
+    <details class="tool"><summary>Colab</summary><div class="in"><dl>
+      <dt>是什麼</dt><dd>Google 的雲端電腦，免費帳號可以用 CPU 機器跑 Python，內建 pandas 與 scikit-learn。</dd>
+      <dt>這次用在哪</dt><dd>老師用命令列 <code>colab</code> 開一台機器跑 <code>train.py</code>，整趟 51 秒 <span class="tag">§〇 K</span>（第 12 節）。瀏覽器版的路還沒走過 <span class="tag">§〇 ⚠️1</span>。</dd></dl></div></details>
+    <details class="tool"><summary>Kaggle 命令列</summary><div class="in"><dl>
+      <dt>是什麼</dt><dd>在終端機裡交答案、看提交紀錄、下載排行榜的工具（W11 加碼用過）。</dd>
+      <dt>這次用在哪</dt><dd><code>kaggle competitions submit spaceship-titanic -f submission.csv -m "…"</code> 交答案 <span class="tag">§〇 K</span>；<code>kaggle competitions submissions</code> 看分數 <span class="tag">§〇 J</span>。</dd></dl></div></details>
+  </div>
+  <p class="small" id="toolNone" hidden>沒有符合的工具，換個字試試。</p>
+</section>
+
+<!-- ============================== §14 名詞表 ============================== -->
+<section class="sec" id="s14">
+  <h2><span class="n">14</span>名詞表</h2>
+  <p class="lead">16 個名詞，打中文或英文都能篩選；最右欄是這頁講得最清楚的那一節 <span class="tag">§〇 L</span>。</p>
+  <div class="ctrl"><label for="termQ">搜尋：</label><input id="termQ" class="txt" type="search" autocomplete="off" spellcheck="false" style="max-width:260px"><span class="small" id="termN"></span></div>
+  <div class="tw"><table class="gloss" id="termTable">
+    <tr><th>名詞</th><th>英文</th><th>白話</th><th>看哪節</th></tr>
+    <tr><td>模型</td><td>model</td><td>一套「看到這些欄、就這樣猜」的做法，是電腦從資料裡整理出來的</td><td><a href="#s3">§3</a></td></tr>
+    <tr><td>訓練</td><td>training</td><td>讓電腦拿有答案的資料自己找出那套做法</td><td><a href="#s3">§3</a></td></tr>
+    <tr><td>特徵</td><td>feature</td><td>餵給模型的每一欄</td><td><a href="#s6">§6</a></td></tr>
+    <tr><td>準確率</td><td>accuracy</td><td>猜對的人占全部的比例</td><td><a href="#s2">§2</a></td></tr>
+    <tr><td>基準</td><td>baseline</td><td>什麼都不看的最簡單做法，拿來當比較的起點</td><td><a href="#s2">§2</a></td></tr>
+    <tr><td>決策樹</td><td>decision tree</td><td>一連串是非題，問到底給一個答案</td><td><a href="#s3">§3</a></td></tr>
+    <tr><td>過度擬合</td><td>overfitting</td><td>把練習題背起來，換一批題目就不行</td><td><a href="#s4">§4</a></td></tr>
+    <tr><td>交叉驗證</td><td>cross-validation</td><td>切幾份、輪流留一份當考題（切五份就叫五折交叉驗證）</td><td><a href="#s5">§5</a></td></tr>
+    <tr><td>梯度提升</td><td>gradient boosting</td><td>先有一個起始猜測，再讓很多棵小樹接力，每一棵把還差的補一點回來</td><td><a href="#s7">§7</a></td></tr>
+    <tr><td>排行榜</td><td>leaderboard</td><td>大家的分數排在一起</td><td><a href="#s11">§11</a></td></tr>
+    <tr><td>答案欄</td><td>target</td><td>要猜的那一欄；這場是 <code>Transported</code></td><td><a href="#s1">§1</a></td></tr>
+    <tr><td>訓練資料／測試資料</td><td>training set／test set</td><td>有答案、拿來學的那份（train.csv）／沒答案、要猜的那份（test.csv）</td><td><a href="#s1">§1</a></td></tr>
+    <tr><td>缺值</td><td>missing value</td><td>表格裡空著的格子；這次沒有補，直接留空</td><td><a href="#s1">§1</a>、<a href="#s6">§6</a></td></tr>
+    <tr><td>混淆矩陣</td><td>confusion matrix</td><td>猜對猜錯排成的四格表</td><td><a href="#s10">§10</a></td></tr>
+    <tr><td>提交</td><td>submission</td><td>把答案檔交給 Kaggle 評分；一天最多 10 筆 <span class="tag">§〇 M</span></td><td><a href="#s12">§12</a></td></tr>
+    <tr><td>公開分數</td><td>public score</td><td>Kaggle 打完分、顯示在公開榜上的那個分數</td><td><a href="#s11">§11</a></td></tr>
+  </table></div>
+  <p class="small" id="termNone" hidden>沒有符合的名詞，換個字試試。</p>
+</section>
+
+<!-- ============================== §15 想一想 ============================== -->
+<section class="sec" id="s15">
+  <h2><span class="n">15</span>想一想（十題，先猜再揭曉）</h2>
+  <p class="lead">十題的答案都在這頁的數字裡。先選一個，再按「揭曉」看對錯（也可以直接按「揭曉」看解答）；選項每次重新整理會換順序。</p>
+  <div class="ctrl"><button type="button" class="btn" id="qsReset">全部重來</button></div>
+  <div id="qs"></div>
+</section>
+
+<footer class="sec" id="refs">
+  <h2>出處</h2>
+  <ul>
+    <li>本頁唯一的數字來源：同資料夾 <code>內容規格.md</code>（v4，2026-11-24 全員複驗後修訂）§〇。標籤「§〇 A」到「§〇 M」就是那一格。</li>
+    <li>§〇 A：Kaggle Spaceship Titanic 的 Data 頁（11/24 讀）與 <code>runs/explore.json</code> 的 <code>shape</code>。</li>
+    <li>§〇 B–I：<code>runs/explore.json</code>（<code>rules</code>、<code>tree_text</code>、<code>tree_depth</code>、<code>reshuffle</code>、<code>feature_sets</code>、<code>boost_rounds</code>、<code>learning</code>、<code>perm_importance</code>、<code>confusion</code>），由 <code>explore.py</code> 2026-11-24 在 Colab 免費 CPU 機器上跑出來，那一趟 138.8 秒。</li>
+    <li>§〇 D、K：<code>runs/train-job.log</code> 與 <code>runs/train-metrics.json</code>，由 <code>train.py</code> 同一天跑出來。</li>
+    <li>§〇 J：老師的帳號 <code>kaggle competitions submissions</code>，與公開榜快照彙總 <code>runs/leaderboard_summary.json</code>（2026-11-24 15:16 下載，只取分數、不取隊名）。</li>
+    <li>版本：Python 3.13.18、pandas 2.2.3、scikit-learn 1.6.1 <span class="tag">§〇 K</span>。</li>
+    <li>比賽規則（§〇 M，規則頁 11/24 讀全文）：資料可以拿來教學（7.A）；資料不能轉給沒參賽的人（7.B），所以這頁不放任何一列真的比賽資料、不放隊名，第 1 節的 6 位乘客是自編的；一人一個帳號、一天最多 10 筆提交、參賽者要滿 18 歲或當地成年年齡（取較大的）。Data 頁授權寫 CC BY 4.0，跟 7.B 說法不一樣 <span class="wn">⚠️</span>，這頁照比較嚴的那一邊做。</li>
+  </ul>
+  <h3>沒驗的八件（頁面上的「§〇 ⚠️n」就是這裡的第 n 件）</h3>
+  <ol>
+    <li>學生用瀏覽器開 Colab 的路沒走過；第 12 節只是老師這次的跑法 <span class="tag">§〇 ⚠️1</span>。</li>
+    <li>前兩名怎麼拿到 0.93 以上，沒查 <span class="tag">§〇 ⚠️2</span>。</li>
+    <li>空格分邊的規則是照 scikit-learn 1.6 官方說明寫的，我們沒有另外做實驗確認 <span class="tag">§〇 ⚠️3</span>。</li>
+    <li>梯度提升的白話是一般說法；「模型看重」不等於因果 <span class="tag">§〇 ⚠️4</span>。</li>
+    <li>這些數字是 scikit-learn 1.6.1 的結果；Colab 之後換版本，數字可能差一點 <span class="tag">§〇 ⚠️5</span>。</li>
+    <li>這一頁排在第 13 週用；配套的學生動手頁還沒做 <span class="tag">§〇 ⚠️6</span>。</li>
+    <li>HomePlanet 沒填的 201 人，在這幾棵樹裡實際被歸到哪一邊，沒查 <span class="tag">§〇 ⚠️7</span>。</li>
+    <li>六個消費相關欄（五種消費＋總消費）一起打亂，分數會掉多少，沒做 <span class="tag">§〇 ⚠️8</span>。</li>
+  </ol>
+  <p>這一頁沒有連任何外部資源、不收集任何資料，離線打得開。標「⚠️ 一般說法」「⚠️ 推論」的句子不是這次量出來的。</p>
+</footer>
+</main>
+
+<script>
+"use strict";
+/* DATA-BEGIN：這一段是嚴格 JSON（鍵名跟 runs/explore.json、runs/leaderboard_summary.json 對得上），check_concept.py 會逐值比對 */
+const D = {
+ "shape": {"train_rows": 8693, "train_cols": 14, "test_rows": 4277, "test_cols": 13,
+  "transported_true": 4378, "transported_true_ratio": 0.5036,
+  "missing_train": {"PassengerId": 0, "HomePlanet": 201, "CryoSleep": 217, "Cabin": 199, "Destination": 182, "Age": 179, "VIP": 203, "RoomService": 181, "FoodCourt": 183, "ShoppingMall": 208, "Spa": 183, "VRDeck": 188, "Name": 200, "Transported": 0},
+  "rows_with_any_missing": 2087, "n_groups_train": 6217, "age_min": 0, "age_max": 79, "age_median": 27,
+  "homeplanet_values": ["Earth", "Europa", "Mars"],
+  "destination_values": ["55 Cancri e", "PSO J318.5-22", "TRAPPIST-1e"],
+  "deck_values": ["A", "B", "C", "D", "E", "F", "G", "T"],
+  "side_values": ["P", "S"],
+  "features": ["Age", "RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck", "TotalSpend", "CryoSleep", "VIP", "CabinNum", "HomePlanet", "Destination", "Deck", "Side", "GroupSize"]},
+ "rules": {"all_true_acc": 0.5036, "cryo_rule_right": 6244, "cryo_rule_acc": 0.7183,
+  "cryo_true_n": 3037, "cryo_true_transported": 2483, "cryo_false_n": 5439, "cryo_false_transported": 1789,
+  "cryo_missing_n": 217, "cryo_missing_transported": 106,
+  "spend_zero_n": 3653, "spend_zero_transported": 2873, "spend_pos_n": 5040, "spend_pos_transported": 1505,
+  "spend_zero_rule_acc": 0.7371, "spend_zero_rule_right": 6408},
+ "tree_text": {
+  "1": {"train_acc": 0.7371, "leaves": [[780, 2873, 1], [3535, 1505, 0]]},
+  "2": {"train_acc": 0.7386, "leaves": [[636, 1095, 1], [144, 1778, 1], [2935, 892, 0], [600, 613, 1]]},
+  "3": {"train_acc": 0.7584, "leaves": [[301, 352, 1], [335, 743, 1], [60, 156, 1], [84, 1622, 1], [2490, 471, 0], [445, 421, 0], [399, 584, 1], [201, 29, 0]]}},
+ "tree_depth": [
+  {"max_depth": 1, "train": 0.7371, "val": 0.7369, "leaves_full_fit": 2, "depth_full_fit": 1},
+  {"max_depth": 2, "train": 0.7389, "val": 0.7314, "leaves_full_fit": 4, "depth_full_fit": 2},
+  {"max_depth": 3, "train": 0.7592, "val": 0.7537, "leaves_full_fit": 8, "depth_full_fit": 3},
+  {"max_depth": 4, "train": 0.7823, "val": 0.7731, "leaves_full_fit": 16, "depth_full_fit": 4},
+  {"max_depth": 5, "train": 0.7942, "val": 0.7810, "leaves_full_fit": 32, "depth_full_fit": 5},
+  {"max_depth": 6, "train": 0.8082, "val": 0.7820, "leaves_full_fit": 63, "depth_full_fit": 6},
+  {"max_depth": 7, "train": 0.8245, "val": 0.7797, "leaves_full_fit": 114, "depth_full_fit": 7},
+  {"max_depth": 8, "train": 0.8409, "val": 0.7782, "leaves_full_fit": 185, "depth_full_fit": 8},
+  {"max_depth": 9, "train": 0.8584, "val": 0.7743, "leaves_full_fit": 284, "depth_full_fit": 9},
+  {"max_depth": 10, "train": 0.8765, "val": 0.7688, "leaves_full_fit": 406, "depth_full_fit": 10},
+  {"max_depth": 11, "train": 0.8968, "val": 0.7605, "leaves_full_fit": 540, "depth_full_fit": 11},
+  {"max_depth": 12, "train": 0.9167, "val": 0.7566, "leaves_full_fit": 682, "depth_full_fit": 12},
+  {"max_depth": 16, "train": 0.9732, "val": 0.7514, "leaves_full_fit": 1160, "depth_full_fit": 16},
+  {"max_depth": 20, "train": 0.9945, "val": 0.7392, "leaves_full_fit": 1372, "depth_full_fit": 20},
+  {"max_depth": null, "train": 0.9984, "val": 0.7424, "leaves_full_fit": 1451, "depth_full_fit": 25}],
+ "boost_rounds": [
+  {"max_iter": 1, "train": 0.7999, "val": 0.7837, "seconds": 0.1},
+  {"max_iter": 3, "train": 0.8038, "val": 0.7896, "seconds": 0.2},
+  {"max_iter": 10, "train": 0.8081, "val": 0.7919, "seconds": 0.4},
+  {"max_iter": 30, "train": 0.8221, "val": 0.8011, "seconds": 0.9},
+  {"max_iter": 100, "train": 0.8645, "val": 0.8139, "seconds": 2.7},
+  {"max_iter": 300, "train": 0.9252, "val": 0.8119, "seconds": 7.9},
+  {"max_iter": 1000, "train": 0.9825, "val": 0.8003, "seconds": 22.6}],
+ "feature_sets": [
+  {"name": "raw10", "n": 10, "val": 0.7921},
+  {"name": "plus_total", "n": 11, "val": 0.7912},
+  {"name": "plus_cabin", "n": 14, "val": 0.8095},
+  {"name": "all15", "n": 15, "val": 0.8119}],
+ "perm_importance": {"fold1_val_acc": 0.8148, "n_val": 1739, "n_train": 6954, "items": [
+  {"feature": "VRDeck", "drop": 0.0397}, {"feature": "FoodCourt", "drop": 0.0367}, {"feature": "Spa", "drop": 0.0361},
+  {"feature": "CryoSleep", "drop": 0.0338}, {"feature": "RoomService", "drop": 0.0254}, {"feature": "TotalSpend", "drop": 0.0244},
+  {"feature": "Deck", "drop": 0.0239}, {"feature": "CabinNum", "drop": 0.0230}, {"feature": "Side", "drop": 0.0148},
+  {"feature": "ShoppingMall", "drop": 0.0087}, {"feature": "Age", "drop": 0.0071}, {"feature": "Destination", "drop": 0.0053},
+  {"feature": "HomePlanet", "drop": 0.0032}, {"feature": "GroupSize", "drop": 0.0016}, {"feature": "VIP", "drop": 0.0006}]},
+ "confusion": {"tn": 3512, "fp": 803, "fn": 832, "tp": 3546, "pooled_acc": 0.8119, "fold_sizes": [1739, 1739, 1739, 1738, 1738]},
+ "learning": [
+  {"n_train": 50, "val": 0.6827}, {"n_train": 100, "val": 0.7184}, {"n_train": 300, "val": 0.7434},
+  {"n_train": 1000, "val": 0.7829}, {"n_train": 3000, "val": 0.7993}, {"n_train": 6954, "val": 0.8119}],
+ "reshuffle": [{"seed": 0, "val": 0.8119}, {"seed": 1, "val": 0.8133}, {"seed": 2, "val": 0.8103}, {"seed": 3, "val": 0.8104}, {"seed": 4, "val": 0.8095}],
+ "train_metrics": {"rule_train_acc": 0.7183, "cv_scores": [0.8148, 0.8074, 0.8194, 0.8078, 0.8101], "cv_mean": 0.8119, "cv_std": 0.0046, "n_train": 8693, "n_test": 4277, "seconds": 9.4},
+ "kaggle": {"rule_public": "0.72550", "model_public": "0.80126", "pred_true_ratio": "50.22%", "run_seconds": 51},
+ "leaderboard": {"teams": 2142, "top5": ["0.96539", "0.93196", "0.83937", "0.83867", "0.83680"],
+  "p10": "0.81038", "p25": "0.80757", "median": "0.80289", "p75": "0.79471",
+  "ranks": {"0.80126": 1215, "0.7255": 2040}, "ties_080126": 16, "ties_072550": 29,
+  "bins": [
+   {"from": 0.0, "to": 0.70, "teams": 53, "label": "低於 0.70"}, {"from": 0.70, "to": 0.72, "teams": 17, "label": "0.70–0.72"},
+   {"from": 0.72, "to": 0.74, "teams": 49, "label": "0.72–0.74"}, {"from": 0.74, "to": 0.76, "teams": 58, "label": "0.74–0.76"},
+   {"from": 0.76, "to": 0.78, "teams": 54, "label": "0.76–0.78"}, {"from": 0.78, "to": 0.79, "teams": 160, "label": "0.78–0.79"},
+   {"from": 0.79, "to": 0.795, "teams": 163, "label": "0.79–0.795"}, {"from": 0.795, "to": 0.80, "teams": 240, "label": "0.795–0.80"},
+   {"from": 0.80, "to": 0.805, "teams": 465, "label": "0.80–0.805"}, {"from": 0.805, "to": 0.81, "teams": 637, "label": "0.805–0.81"},
+   {"from": 0.81, "to": 0.82, "teams": 146, "label": "0.81–0.82"}, {"from": 0.82, "to": 0.83, "teams": 86, "label": "0.82–0.83"},
+   {"from": 0.83, "to": 1.0, "teams": 14, "label": "0.83 以上"}]}
+};
+/* DATA-END */
+
+/* LOGIC-BEGIN：純邏輯，不碰畫面；test_concept_logic.js 會把這一段拿出來測 */
+const fmtInt = n => Number(n).toLocaleString("en-US");
+const fmt4 = x => Number(x).toFixed(4);
+const pick = (arr, i) => arr[Math.max(0, Math.min(arr.length - 1, Math.round(Number(i)) || 0))];
+const clampIdx = (arr, i) => Math.max(0, Math.min(arr.length - 1, Math.round(Number(i)) || 0));
+const depthLabel = r => (r.max_depth === null ? "不設上限" : String(r.max_depth));
+const TREE_Q = [
+  { q: "總消費 ≤ 0.5？", yes: "沒花錢", no: "有花錢" },
+  { q: "HomePlanet 是 Earth？", yes: "Earth", no: "HomePlanet 不是 Earth" },
+  { q: "FoodCourt ≤ 668.5？", yes: "FoodCourt ≤ 668.5", no: "FoodCourt > 668.5" },
+  { q: "房號 ≤ 532.5？", yes: "房號 ≤ 532.5", no: "房號 > 532.5" },
+  { q: "CryoSleep ≤ 0.5（沒冬眠）？", yes: "沒冬眠", no: "冬眠" },
+  { q: "ShoppingMall ≤ 541？", yes: "ShoppingMall ≤ 541", no: "ShoppingMall > 541" },
+  { q: "Spa ≤ 1,372.5？", yes: "Spa ≤ 1,372.5", no: "Spa > 1,372.5" }  // §〇 C
+];
+function leafPath(d, j) {
+  const parts = [];
+  for (let l = 0; l < d; l++) {
+    const idx = Math.pow(2, l) - 1 + (j >> (d - l));
+    const bit = (j >> (d - 1 - l)) & 1;
+    parts.push(bit === 0 ? TREE_Q[idx].yes : TREE_Q[idx].no);
+  }
+  return parts;
+}
+function treeLeafSum(d) {
+  return D.tree_text[String(d)].leaves.reduce((s, w) => s + w[0] + w[1], 0);
+}
+function treeRight(d) {
+  return D.tree_text[String(d)].leaves.reduce((s, w) => s + (w[2] === 1 ? w[1] : w[0]), 0);
+}
+function rules() {
+  const r = D.rules, N = D.shape.train_rows;
+  return {
+    all: { name: "全部猜「被傳送」", right: D.shape.transported_true, acc: r.all_true_acc,
+      groups: [{ label: "全部乘客", n: N, t: D.shape.transported_true, guess: 1, pct: "50.36%" }] },  // §〇 A
+    cryo: { name: "冬眠的人猜被傳送，其他猜沒有", right: r.cryo_rule_right, acc: r.cryo_rule_acc,
+      groups: [{ label: "冬眠", n: r.cryo_true_n, t: r.cryo_true_transported, guess: 1, pct: "81.8%" },  // §〇 B
+        { label: "沒冬眠", n: r.cryo_false_n, t: r.cryo_false_transported, guess: 0, pct: "32.9%" },  // §〇 B
+        { label: "冬眠欄是空的", n: r.cryo_missing_n, t: r.cryo_missing_transported, guess: 0, pct: "" }] },
+    spend: { name: "完全沒花錢的人猜被傳送，其他猜沒有", right: r.spend_zero_rule_right, acc: r.spend_zero_rule_acc,
+      groups: [{ label: "沒花錢", n: r.spend_zero_n, t: r.spend_zero_transported, guess: 1, pct: "78.6%" },  // §〇 B
+        { label: "有花錢", n: r.spend_pos_n, t: r.spend_pos_transported, guess: 0, pct: "29.9%" }] }  // §〇 B
+  };
+}
+function ruleRight(rule) {
+  return rule.groups.reduce((s, g) => s + (g.guess === 1 ? g.t : g.n - g.t), 0);
+}
+function parseCabin(s) {
+  const t = String(s).trim();
+  if (!t) return { empty: true };
+  const p = t.split("/");
+  if (p.length !== 3) return { err: "艙房要長得像「甲板/房號/舷」，用兩條斜線隔成三段。" };
+  const deck = p[0].trim().toUpperCase(), num = p[1].trim(), side = p[2].trim().toUpperCase();
+  const deckCode = D.shape.deck_values.indexOf(deck), sideCode = D.shape.side_values.indexOf(side);
+  if (deckCode < 0) return { err: "甲板只有 " + D.shape.deck_values.join("、") + " 八種。" };
+  if (!/^\d{1,4}$/.test(num)) return { err: "格式不對：房號要是 1 到 4 位數字。" };
+  if (sideCode < 0) return { err: "舷只有 P 或 S 兩種。" };
+  return { deck, deckCode, num, numVal: Number(num), side, sideCode };
+}
+function parsePid(s) {
+  const m = /^(\d{4})_(\d{2})$/.exec(String(s).trim());
+  if (!m) return { err: "乘客編號長得像 gggg_pp：四碼團號、底線、兩碼序號。" };
+  if (m[2] === "00") return { err: "序號 00 無效：團裡第幾位從 01 開始。" };
+  return { group: m[1], idx: Number(m[2]) };
+}
+const FAKE_IDS = ["9901_01", "9901_02", "9902_01", "9903_01", "9904_01", "9905_01"];
+function pidLookup(s) {
+  const r = parsePid(s);
+  if (r.err) return r;
+  const id = String(s).trim();
+  if (!FAKE_IDS.includes(id)) return { inTable: false };
+  return { inTable: true, group: r.group, idx: r.idx, groupSize: FAKE_IDS.filter(x => x.slice(0, 4) === r.group).length };
+}
+function vsRule(v, rule) {
+  const d = Math.round(Number(v) * 1e4) - Math.round(Number(rule) * 1e4);
+  if (Math.abs(d) < 10) return "跟參考線幾乎一樣";
+  return d < 0 ? "比參考線低" : "比參考線高";
+}
+function nextLevel(level, k, checked) {
+  return checked ? Math.max(level, k) : Math.min(level, k - 1);
+}
+function accFromCells(sel) {
+  const c = D.confusion, set = new Set(sel);
+  const wrong = ["fp", "fn"].filter(k => set.has(k));
+  if (wrong.length) return { ok: false, wrong };
+  if (set.has("tn") && set.has("tp")) {
+    const right = c.tn + c.tp, total = c.tn + c.fp + c.fn + c.tp;
+    return { ok: true, right, total, acc: fmt4(right / total) };
+  }
+  return { ok: false, wrong: [] };
+}
+function foldInfo(k) {
+  const sizes = D.confusion.fold_sizes, i = clampIdx(sizes, k);
+  const total = sizes.reduce((a, b) => a + b, 0);
+  return { round: i + 1, test: sizes[i], train: total - sizes[i], score: D.train_metrics.cv_scores[i] };
+}
+function binIndexOf(score) {
+  const b = D.leaderboard.bins, s = Number(score);
+  for (let i = 0; i < b.length; i++) if (s >= b[i].from && (s < b[i].to || (i === b.length - 1 && s <= b[i].to))) return i;
+  return -1;
+}
+/* LOGIC-END */
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const CELLS = { A: "比賽與資料", B: "人寫的規則拿幾分", C: "電腦自己找規則：一棵決策樹", D: "留考題與五折交叉驗證", E: "整理欄位",
+  F: "很多棵樹接力", G: "資料多寡", H: "模型看重哪幾欄", I: "猜對猜錯四格", J: "交上 Kaggle 的分數", K: "整趟怎麼跑的", L: "名詞", M: "比賽規則裡跟教材有關的" };
+const WARNS = { 1: "學生用瀏覽器 Colab 的路沒走過", 2: "前兩名怎麼拿到 0.93 以上，沒查", 3: "空格分邊的規則是照 scikit-learn 1.6 官方說明寫的，我們沒有另外做實驗確認",
+  4: "梯度提升的白話是一般說法；模型看重不等於因果", 5: "這些數字是 scikit-learn 1.6.1 的結果，換版本可能差一點", 6: "這一頁排在第 13 週用；配套的學生動手頁還沒做",
+  7: "HomePlanet 沒填的 201 人，在這幾棵樹裡實際被歸到哪一邊，沒查", 8: "六個消費相關欄一起打亂會掉多少，沒做" };
+function tagTitle(text) {
+  const m = /^§〇 (?:⚠️(\d)|([A-M]))$/.exec(text);
+  if (!m) return "內容規格 " + text;
+  return m[1] ? "內容規格 §〇 ⚠️ 沒驗的 第 " + m[1] + " 件：" + WARNS[m[1]] : "內容規格 §〇 " + m[2] + "．" + CELLS[m[2]];
+}
+const tg = cell => `<span class="tag" title="${esc(tagTitle(cell))}">${esc(cell)}</span>`;
+function titleTags() { $$(".tag").forEach(t => { if (!t.title) t.title = tagTitle(t.textContent.trim()); }); }
+
+/* ================= 工具列 ================= */
+$("#openAll").addEventListener("click", () => $$("details.deep").forEach(d => { d.open = true; }));
+$("#closeAll").addEventListener("click", () => $$("details.deep").forEach(d => { d.open = false; }));
+$("#themeBtn").addEventListener("click", () => {
+  const root = document.documentElement;
+  const dark = root.getAttribute("data-theme") ? root.getAttribute("data-theme") === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.setAttribute("data-theme", dark ? "light" : "dark");
+});
+
+/* ================= 先猜再揭曉（每節） ================= */
+$$(".guess").forEach(g => {
+  const opts = Array.from(g.querySelectorAll(".opt"));
+  opts.forEach(b => b.addEventListener("click", () => {
+    opts.forEach(x => {
+      x.setAttribute("aria-pressed", x === b ? "true" : "false");
+      x.classList.toggle("right", x.hasAttribute("data-ok"));
+      x.classList.toggle("wrong", x === b && !x.hasAttribute("data-ok"));
+    });
+    g.querySelector(".ans").hidden = false;
+    const sec = g.closest("section");
+    if (sec) { sec.querySelectorAll(".gate").forEach(x => { x.hidden = false; }); sec.querySelectorAll(".gatehint").forEach(x => { x.hidden = true; }); }
+  }));
+});
+(() => {
+  const w = $("#fakeWrap");
+  const f = () => w.classList.toggle("at-end", w.scrollLeft + w.clientWidth >= w.scrollWidth - 2);
+  w.addEventListener("scroll", f); window.addEventListener("resize", f); f();
+})();
+
+/* ================= §0 全路徑地圖 ================= */
+const MAP = {
+  data: ["① 比賽資料（Kaggle）", `從 Kaggle 下載 <code>train.csv</code>（8,693 列、14 欄，有答案）與 <code>test.csv</code>（4,277 列、13 欄，沒答案）${tg("§〇 A")}，再上傳到 Colab 那台機器 ${tg("§〇 K")}。看第 1 節。`],
+  prep: ["② 整理欄位（Colab）", `我們用的工具要每一欄都是數字（沒填的可以留空）：艙房拆三欄、五種消費加總、算同團人數，14 欄整理成 15 欄 ${tg("§〇 E")}。看第 6 節。`],
+  train: ["③ 訓練（Colab）", `讓電腦拿有答案的資料自己找猜法。我們用的是很多棵樹接力的模型，300 棵 ${tg("§〇 F")}。這一步前後做了六次：④ 的五輪各一次，最後再用全部 8,693 人一次。看第 3、7 節。`],
+  cv: ["④ 自己先考一次（Colab）", `切五份，每一輪拿四份訓練、留一份當考題，五輪平均 0.8119 ${tg("§〇 D")}。這是交出去之前，自己估的分數。看第 5 節。`],
+  pred: ["⑤ 猜 test 的 4,277 人（Colab）", `五輪考完之後，用全部 8,693 人重新訓練一次，拿這個模型去猜 test.csv 的 4,277 人；預測「被傳送」的佔 50.22% ${tg("§〇 J")}。`],
+  sub: ["⑥ 答案檔（Colab 寫出、帶回來）", `這個答案檔（裡面是我們猜的答案，不是正確答案）寫成 <code>submission.csv</code>（4,277 列、2 欄）${tg("§〇 K")}，從 Colab 下載回來，再用 Kaggle 命令列交上去 ${tg("§〇 K")}。看第 12 節。`],
+  score: ["⑦ Kaggle 評分", `只有 Kaggle 有 test.csv 的答案。這次的公開分數 0.80126；上次那條規則 0.72550 ${tg("§〇 J")}。看第 11 節。`],
+  lb: ["⑧ 排行榜", `公開榜 2,142 隊；0.80126 排第 1,215 名 ${tg("§〇 J")}。看第 11 節。`]
+};
+function showMap(k) {
+  const m = MAP[k]; if (!m) return;
+  $("#mapPanel").innerHTML = `<h4>${esc(m[0])}</h4><p>${m[1]}</p>`;
+  $$("#mapSvg [data-node]").forEach(g => g.classList.toggle("sel", g.getAttribute("data-node") === k));
+  $$("#s0 .node-grid .btn").forEach(b => b.setAttribute("aria-pressed", b.getAttribute("data-node") === k ? "true" : "false"));
+}
+$$("#s0 [data-node]").forEach(el => {
+  el.addEventListener("click", () => showMap(el.getAttribute("data-node")));
+  el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); showMap(el.getAttribute("data-node")); } });
+});
+showMap("data");
+
+/* ================= §1 欄位 ================= */
+const COLS = {
+  PassengerId: "乘客編號，長得像 gggg_pp：前四碼是同一團（一起上船的人）的編號，後兩碼是團裡第幾位。同團常是家人，但不一定。",
+  HomePlanet: "出發的星球。三種：Earth、Europa、Mars。",
+  CryoSleep: "航程中有沒有選擇冬眠。冬眠的人待在自己艙房裡。",
+  Cabin: "艙房，長得像「甲板/房號/左右舷」，舷是 P（左舷）或 S（右舷）。甲板有 A、B、C、D、E、F、G、T 八種。",
+  Destination: "要去的星球。三種：55 Cancri e、PSO J318.5-22、TRAPPIST-1e。",
+  Age: "年齡。0 到 79 歲，中位數 27。",
+  VIP: "有沒有付費買 VIP 服務。",
+  RoomService: "五種消費之一：客房服務花了多少錢（欄名直譯）。缺的那格，加總時當 0。",
+  FoodCourt: "五種消費之一：美食街花了多少錢（欄名直譯）。",
+  ShoppingMall: "五種消費之一：購物中心花了多少錢（欄名直譯）。",
+  Spa: "五種消費之一：水療花了多少錢（欄名直譯）。",
+  VRDeck: "五種消費之一：虛擬實境甲板花了多少錢（欄名直譯）。",
+  Name: "姓名。",
+  Transported: "答案欄：有沒有被傳送。只有 train.csv 有，test.csv 沒有。"
+};
+function showCol(c) {
+  const miss = D.shape.missing_train[c];
+  $("#colPanel").innerHTML = `<h4><code>${esc(c)}</code></h4><p>${esc(COLS[c])} ${tg("§〇 A")}</p><p>真的 train.csv 裡，這一欄缺 ${fmtInt(miss)} 格（共 ${fmtInt(D.shape.train_rows)} 列）${tg("§〇 A")}。</p>`;
+  $$("#fakeTbl th button").forEach(b => b.setAttribute("aria-pressed", b.getAttribute("data-col") === c ? "true" : "false"));
+  const ci = Object.keys(COLS).indexOf(c);
+  $$("#fakeTbl tbody tr").forEach(tr => Array.from(tr.children).forEach((td, i) => td.classList.toggle("colsel", i === ci)));
+}
+$$("#fakeTbl th button").forEach(b => b.addEventListener("click", () => showCol(b.getAttribute("data-col"))));
+showCol("Transported");
+$("#colTable").innerHTML = Object.keys(COLS).map(c => `<tr><td><code>${esc(c)}</code></td><td>${esc(COLS[c])}</td><td class="r">${fmtInt(D.shape.missing_train[c])}</td></tr>`).join("");
+
+/* ================= §2 規則 ================= */
+const RULES = rules();
+function showRule(k) {
+  const r = RULES[k], N = D.shape.train_rows;
+  const W = 900, L = 170, R = 20, rowH = 62, barW = W - L - R;
+  let s = "";
+  r.groups.forEach((g, i) => {
+    const y = 16 + i * rowH, w = barW * g.n / N, wt = barW * g.t / N;
+    s += `<text x="${L - 10}" y="${y + 20}" text-anchor="end" font-size="15" font-weight="800">${esc(g.label)}</text>`;
+    s += `<text x="${L - 10}" y="${y + 40}" text-anchor="end" font-size="13" class="soft">猜${g.guess ? "被傳送" : "沒被傳送"}</text>`;
+    s += `<rect class="barbg" x="${L}" y="${y}" width="${w.toFixed(1)}" height="34" rx="6"/>`;
+    s += `<rect class="bar" x="${L}" y="${y}" width="${wt.toFixed(1)}" height="34" rx="6"/>`;
+    s += `<text x="${L + 6}" y="${y + 52}" font-size="13">${fmtInt(g.n)} 人裡 ${fmtInt(g.t)} 人被傳送${g.pct ? "（" + g.pct + "）" : ""}</text>`;
+  });
+  const h = 16 + r.groups.length * rowH + 4;
+  const svg = $("#ruleSvg"); svg.setAttribute("viewBox", `0 0 900 ${h}`); svg.innerHTML = s; svg.classList.remove("hidden");
+  const groupsTxt = r.groups.map(g => `${esc(g.label)} ${fmtInt(g.n)} 人裡 ${fmtInt(g.t)} 人被傳送${g.pct ? "（" + g.pct + "）" : ""}，這群猜「${g.guess ? "被傳送" : "沒被傳送"}」`).join("；");
+  $("#rulePanel").innerHTML = `<h4>${esc(r.name)}</h4><p>${groupsTxt} ${tg("§〇 B")}。</p><p>猜對 ${fmtInt(r.right)} 人 ÷ ${fmtInt(N)} 人 ＝ <b>${fmt4(r.acc)}</b> ${tg("§〇 B")}</p>`;
+  $$("#s2 [data-rule]").forEach(b => b.setAttribute("aria-pressed", b.getAttribute("data-rule") === k ? "true" : "false"));
+}
+$$("#s2 [data-rule]").forEach(b => b.addEventListener("click", () => showRule(b.getAttribute("data-rule"))));
+
+/* ================= §3 樹 ================= */
+let treeD = 1;
+function drawTree(d) {
+  const t = D.tree_text[String(d)], W = 900, lvH = 88, top = 14, leafH = 62;
+  const H = top + d * lvH + leafH + 12;
+  const nx = (l, j) => (j + 0.5) * W / Math.pow(2, l);
+  let s = "";
+  for (let l = 0; l < d; l++) {
+    const n = Math.pow(2, l), bw = Math.min(260, W / n - 16), y = top + l * lvH;
+    for (let j = 0; j < n; j++) {
+      const x = nx(l, j), q = TREE_Q[n - 1 + j];
+      const yc = top + (l + 1) * lvH;
+      [0, 1].forEach(b => {
+        const cx = nx(l + 1, 2 * j + b);
+        s += `<path class="wire" d="M${x} ${y + 40} L${cx} ${yc}"/>`;
+        s += `<text x="${(x + cx) / 2 + (b ? 8 : -8)}" y="${(y + 40 + yc) / 2}" text-anchor="${b ? "start" : "end"}" font-size="13" class="soft">${b ? "否" : "是"}</text>`;
+      });
+      s += `<rect class="box q" x="${x - bw / 2}" y="${y}" width="${bw}" height="40" rx="10"/>`;
+      s += `<text x="${x}" y="${y + 26}" text-anchor="middle" font-size="${d === 3 && l === 2 ? 13 : 15}" font-weight="800">${esc(q.q)}</text>`;
+    }
+  }
+  const n = Math.pow(2, d), lw = W / n - 10, y = top + d * lvH;
+  t.leaves.forEach((w, j) => {
+    const x = nx(d, j);
+    s += `<rect class="box ${w[2] ? "yes" : "no"}" x="${x - lw / 2}" y="${y}" width="${lw}" height="${leafH}" rx="10"/>`;
+    s += `<text x="${x}" y="${y + 25}" text-anchor="middle" font-size="14" font-weight="800">${fmtInt(w[0])}｜${fmtInt(w[1])}</text>`;
+    s += `<text x="${x}" y="${y + 47}" text-anchor="middle" font-size="13">猜${w[2] ? "被傳送" : "沒被傳送"}</text>`;
+  });
+  const svg = $("#treeSvg"); svg.setAttribute("viewBox", `0 0 900 ${H}`); svg.innerHTML = s;
+  $("#treeAcc").innerHTML = `問 ${d} 題：自己對答案 ${fmt4(t.train_acc)} ${tg("§〇 C")}`;
+  $("#treePanel").innerHTML = `<h4>問 ${d} 題，${n} 片葉子（用全部 ${fmtInt(D.shape.train_rows)} 人訓練）</h4><ul>` +
+    t.leaves.map((w, j) => `<li>${esc(leafPath(d, j).join("、"))} → 沒被傳送 ${fmtInt(w[0])}｜被傳送 ${fmtInt(w[1])}，猜${w[2] ? "被傳送" : "沒被傳送"}</li>`).join("") +
+    `</ul><p>${tg("§〇 C")} ${d === 1 ? "這跟第 2 節「沒花錢的猜被傳送」是同一條規則，分數也一樣。" : d === 2 ? "第二題左右兩邊問的不一樣：沒花錢的再問出發星球，有花錢的再問美食街花多少。" : "八片葉子。有些葉子裡兩種人差不多（例如 445｜421），猜哪邊都會錯很多人。"}</p>` +
+    (d >= 2 ? `<p>分支上寫的欄位值（例如「HomePlanet 是 Earth」「沒冬眠」）說的是有填的人；那一欄空白的人也會走其中一邊，走哪邊這次沒查。HomePlanet 沒填的有 ${fmtInt(D.shape.missing_train.HomePlanet)} 人 ${tg("§〇 A")}，被樹歸到哪一邊，這次沒查 ${tg("§〇 ⚠️7")}。</p>` : "");
+  $("#treeMore").disabled = d >= 3; $("#treeLess").disabled = d <= 1;
+}
+$("#treeMore").addEventListener("click", () => { treeD = Math.min(3, treeD + 1); drawTree(treeD); });
+$("#treeLess").addEventListener("click", () => { treeD = Math.max(1, treeD - 1); drawTree(treeD); });
+drawTree(treeD);
+
+/* ================= 共用折線圖 ================= */
+function lineChart(svg, o) {
+  const W = 900, H = 340, L = 64, R = 24, T = 18, B = 54, n = o.labels.length;
+  const x = i => L + (n === 1 ? 0 : i * (W - L - R) / (n - 1));
+  const y = v => T + (o.hi - v) / (o.hi - o.lo) * (H - T - B);
+  let s = "";
+  o.ticks.forEach(v => { s += `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L - 8}" y="${y(v) + 5}" text-anchor="end" font-size="13" class="soft">${v.toFixed(2)}</text>`; });
+  o.labels.forEach((lb, i) => { s += `<text x="${x(i)}" y="${H - B + 22}" text-anchor="middle" font-size="${n > 10 ? 12 : 14}" class="soft">${esc(lb)}</text>`; });
+  if (o.xTitle) s += `<text x="${(L + W - R) / 2}" y="${H - 8}" text-anchor="middle" font-size="14" class="soft">${esc(o.xTitle)}</text>`;
+  if (o.hline) s += `<line class="ln-rule" x1="${L}" x2="${W - R}" y1="${y(o.hline.v)}" y2="${y(o.hline.v)}"/><text x="${W - R}" y="${y(o.hline.v) - 8}" text-anchor="end" font-size="13" fill="var(--red)">${esc(o.hline.label)}</text>`;
+  if (o.legend) o.legend.forEach((lg, k) => { s += `<line x1="${L + 14}" x2="${L + 40}" y1="${T + 14 + k * 20}" y2="${T + 14 + k * 20}" class="${lg[0]}"/><text x="${L + 48}" y="${T + 19 + k * 20}" font-size="13">${esc(lg[1])}</text>`; });
+  s += `<line class="selline" x1="${x(o.sel)}" x2="${x(o.sel)}" y1="${T}" y2="${H - B}"/>`;
+  o.series.forEach(se => {
+    s += `<polyline class="${se.cls}" points="${se.vals.map((v, i) => `${x(i)},${y(v)}`).join(" ")}"/>`;
+    se.vals.forEach((v, i) => { s += `<circle class="${se.dot}" cx="${x(i)}" cy="${y(v)}" r="${i === o.sel ? 8 : 4.5}"/>`; });
+    const v = se.vals[o.sel];
+    s += `<text x="${x(o.sel) + (o.sel > n * 0.7 ? -12 : 12)}" y="${Math.max(T + 14, y(v) + (se.above ? -12 : 22))}" text-anchor="${o.sel > n * 0.7 ? "end" : "start"}" font-size="15" font-weight="900" class="vlabel">${fmt4(v)}</text>`;
+  });
+  svg.innerHTML = s;
+}
+function kv(items) { return items.map(([k, v]) => `<div><div class="k">${k}</div><div class="v">${v}</div></div>`).join(""); }
+
+/* ================= §4 樹深度 ================= */
+function showDepth(i) {
+  const rows = D.tree_depth, idx = clampIdx(rows, i), r = rows[idx];
+  lineChart($("#tdSvg"), { labels: rows.map(depthLabel), sel: idx, lo: 0.70, hi: 1.0, ticks: [0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.0], xTitle: "最多問幾題", legend: [["ln-train", "練習題"], ["ln-val", "沒看過的題"]],
+    series: [{ vals: rows.map(x => x.train), cls: "ln-train", dot: "dot-train", above: true }, { vals: rows.map(x => x.val), cls: "ln-val", dot: "dot-val" }] });
+  $("#tdOut").innerHTML = kv([["最多問幾題", esc(depthLabel(r))], ["練習題 " + tg("§〇 C"), fmt4(r.train)], ["沒看過的題 " + tg("§〇 C"), fmt4(r.val)], ["葉子 " + tg("§〇 C"), fmtInt(r.leaves_full_fit)]]);
+}
+$("#tdSlider").addEventListener("input", e => showDepth(e.target.value));
+showDepth($("#tdSlider").value);
+$("#tdTable").innerHTML = D.tree_depth.map(r => `<tr${r.max_depth === 6 ? ' class="hl"' : ""}><td class="r">${r.max_depth === null ? "不設上限（實際長到 " + r.depth_full_fit + " 層）" : r.max_depth}</td><td class="r">${fmt4(r.train)}</td><td class="r">${fmt4(r.val)}</td><td class="r">${fmtInt(r.leaves_full_fit)}</td></tr>`).join("");
+
+/* ================= §5 切五份 ================= */
+let foldK = 0, seedI = 0;
+function showFold(k) {
+  foldK = clampIdx(D.confusion.fold_sizes, k);
+  const f = foldInfo(foldK), W = 900, bw = 168, gap = 13;
+  let s = "";
+  D.confusion.fold_sizes.forEach((n, i) => {
+    const x = 6 + i * (bw + gap), test = i === foldK;
+    s += `<g><rect class="box ${test ? "q" : "colab"}" x="${x}" y="14" width="${bw}" height="78" rx="12"/>`;
+    s += `<text x="${x + bw / 2}" y="44" text-anchor="middle" font-size="16" font-weight="800">第 ${i + 1} 份</text>`;
+    s += `<text x="${x + bw / 2}" y="70" text-anchor="middle" font-size="14">${fmtInt(n)} 人</text></g>`;
+    s += `<text x="${x + bw / 2}" y="120" text-anchor="middle" font-size="15" font-weight="800" fill="${test ? "var(--gold-deep)" : "var(--teal)"}">${test ? "當考題" : "拿來訓練"}</text>`;
+  });
+  $("#foldSvg").innerHTML = s;
+  $("#foldPanel").innerHTML = `<h4>第 ${f.round} 輪</h4><p>四份 ${fmtInt(f.train)} 人訓練，留第 ${f.round} 份 ${fmtInt(f.test)} 人當考題 ${tg("§〇 D")}；這一輪考 ${fmt4(f.score)} ${tg("§〇 D")}。</p><p>五輪分別是 ${D.train_metrics.cv_scores.map(fmt4).join("、")}；平均 ${fmt4(D.train_metrics.cv_mean)}，標準差（五輪分數散得多開）${fmt4(D.train_metrics.cv_std)} ${tg("§〇 D")}。</p>`;
+  $$("#foldBtns [data-fold]").forEach(b => b.setAttribute("aria-pressed", Number(b.getAttribute("data-fold")) === foldK ? "true" : "false"));
+}
+$$("#foldBtns [data-fold]").forEach(b => b.addEventListener("click", () => showFold(b.getAttribute("data-fold"))));
+showFold(0);
+function showSeed(i) {
+  seedI = clampIdx(D.reshuffle, i);
+  const r = D.reshuffle[seedI];
+  $("#seedNote").textContent = `現在是亂數種子 ${r.seed}（共 ${D.reshuffle.length} 種切法）`;
+  $("#seedPanel").innerHTML = `<h4>切法 ${seedI + 1}：五輪平均 ${fmt4(r.val)}</h4><p>五種切法各自的平均：${D.reshuffle.map((x, j) => j === seedI ? "<b>" + fmt4(x.val) + "</b>" : fmt4(x.val)).join("、")} ${tg("§〇 D")}。同一個模型、同一份資料，光是切法不同就差到 0.004 左右 ${tg("§〇 D")}。${seedI === 0 ? "上面五個方塊的每輪分數就是這一種切法。" : "上面五個方塊仍是原本的切法（亂數種子 0）；這一種切法每一輪的分數，這頁沒有列，只列平均。"}</p>`;
+}
+$("#reshuffleBtn").addEventListener("click", () => showSeed((seedI + 1) % D.reshuffle.length));
+showSeed(0);
+
+/* ================= §6 整理欄位 ================= */
+function showCabin() {
+  const r = parseCabin($("#cabinIn").value);
+  let h;
+  if (r.empty) h = `<h4>空的</h4><p>艙房是空格的乘客，拆出來的三欄也都留空；模型接受空格，所以不用補 ${tg("§〇 E")}。真的 train.csv 裡 <code>Cabin</code> 缺 ${fmtInt(D.shape.missing_train.Cabin)} 格 ${tg("§〇 A")}。</p>`;
+  else if (r.err) h = `<h4>拆不開</h4><p>${esc(r.err)} ${tg("§〇 A")}</p>`;
+  else h = `<h4>拆成三欄</h4><div class="tw"><table><tr><th>欄</th><th>值</th><th>餵給模型的數字</th></tr>
+    <tr><td><code>Deck</code>（甲板）</td><td>${esc(r.deck)}</td><td>${r.deckCode}（照字母順序 A 0、B 1……T 7）</td></tr>
+    <tr><td><code>CabinNum</code>（房號）</td><td>${esc(r.num)}</td><td>${r.numVal}（原本就是數字）</td></tr>
+    <tr><td><code>Side</code>（舷）</td><td>${esc(r.side)}（${r.side === "P" ? "左舷" : "右舷"}）</td><td>${r.sideCode}（P 0、S 1）</td></tr></table></div><p>甲板與舷是文字，換成代號；房號本來就是數字 ${tg("§〇 E")}。</p>`;
+  $("#cabinOut").innerHTML = h;
+}
+function showPid() {
+  const r = pidLookup($("#pidIn").value);
+  if (r.err) { $("#pidOut").innerHTML = `<h4>看不懂</h4><p>${esc(r.err)} ${tg("§〇 A")}</p>`; return; }
+  if (!r.inTable) { $("#pidOut").innerHTML = `<h4>這筆不在自編表</h4><p>格式拆得開：前四碼是團號、後兩碼是團裡的序號 ${tg("§〇 A")}。可是第 1 節那張自編表裡沒有這一筆，查不到同團人數。試試表裡的編號，例如 <code>9901_01</code>。</p>`; return; }
+  $("#pidOut").innerHTML = `<h4>第 ${esc(r.group)} 團的第 ${r.idx} 位</h4><p>同一團＝前四碼相同 ${tg("§〇 E")}。在第 1 節那張自編表裡，第 ${esc(r.group)} 團有 ${r.groupSize} 人，所以 <code>GroupSize</code> 會是 ${r.groupSize}（自編示意）。真的計算是把 train.csv 與 test.csv 的 12,970 人放在一起數 ${tg("§〇 E")}。</p>`;
+}
+$("#cabinIn").addEventListener("input", showCabin); showCabin();
+$("#pidIn").addEventListener("input", showPid); showPid();
+let fsLevel = 4;
+const FS_NAME = ["", "原本的 10 欄", "＋總消費", "＋艙房三欄", "＋同團人數（＝我們交出去的版本）"];
+function showFs() {
+  $$("#fsSw input").forEach(i => { i.checked = Number(i.getAttribute("data-lv")) <= fsLevel; });
+  if (fsLevel === 0) { $("#fsOut").innerHTML = `<h4>一欄都沒有</h4><p>模型沒東西可看，就沒有分數。打開第一顆開關。</p>`; return; }
+  const fs = D.feature_sets[fsLevel - 1], prev = fsLevel > 1 ? D.feature_sets[fsLevel - 2] : null;
+  $("#fsOut").innerHTML = `<h4>${esc(FS_NAME[fsLevel])}：${fs.n} 欄</h4><p class="big">沒看過的題 ${fmt4(fs.val)} ${tg("§〇 E")}</p>` +
+    (prev ? `<p>上一層是 ${fmt4(prev.val)}。${fsLevel === 2 ? "加了總消費，沒有變好。" : fsLevel === 3 ? "把艙房拆開，這一步加分最多（多約 0.018）。" : "再加同團人數，又高了一點。"}</p>` : `<p>這是起點：只用原本就是數字（或換成代號）的欄，不拆艙房、不加總。</p>`) +
+    `<p class="small">四層：${D.feature_sets.map((x, j) => (j === fsLevel - 1 ? "<b>" : "") + x.n + " 欄 " + fmt4(x.val) + (j === fsLevel - 1 ? "</b>" : "")).join(" → ")} ${tg("§〇 E")}</p>`;
+}
+$$("#fsSw input").forEach(i => i.addEventListener("change", () => { fsLevel = nextLevel(fsLevel, Number(i.getAttribute("data-lv")), i.checked); showFs(); }));
+showFs();
+
+/* ================= §7 接力 ================= */
+function showBoost(i) {
+  const rows = D.boost_rounds, idx = clampIdx(rows, i), r = rows[idx];
+  lineChart($("#brSvg"), { labels: rows.map(x => fmtInt(x.max_iter)), sel: idx, lo: 0.78, hi: 1.0, ticks: [0.78, 0.82, 0.86, 0.90, 0.94, 0.98], xTitle: "接力幾棵", legend: [["ln-train", "練習題"], ["ln-val", "沒看過的題"]],
+    series: [{ vals: rows.map(x => x.train), cls: "ln-train", dot: "dot-train", above: true }, { vals: rows.map(x => x.val), cls: "ln-val", dot: "dot-val" }] });
+  $("#brOut").innerHTML = kv([["接力幾棵", fmtInt(r.max_iter) + (r.max_iter === 300 ? "（交出去的）" : "")], ["練習題 " + tg("§〇 F"), fmt4(r.train)], ["沒看過的題 " + tg("§〇 F"), fmt4(r.val)], ["五輪一共 " + tg("§〇 F"), r.seconds + " 秒"]]);
+}
+$("#brSlider").addEventListener("input", e => showBoost(e.target.value));
+showBoost($("#brSlider").value);
+$("#brTable").innerHTML = D.boost_rounds.map(r => `<tr${r.max_iter === 300 ? ' class="hl"' : ""}><td class="r">${fmtInt(r.max_iter)}</td><td class="r">${fmt4(r.train)}</td><td class="r">${fmt4(r.val)}</td><td class="r">${r.seconds}</td></tr>`).join("");
+
+/* ================= §8 資料多寡 ================= */
+function showLearn(i) {
+  const rows = D.learning, idx = clampIdx(rows, i), r = rows[idx], rule = D.rules.cryo_rule_acc;
+  lineChart($("#lcSvg"), { labels: rows.map(x => fmtInt(x.n_train)), sel: idx, lo: 0.66, hi: 0.84, ticks: [0.66, 0.70, 0.74, 0.78, 0.82], xTitle: "拿幾個人訓練",
+    hline: { v: rule, label: "參考線：冬眠規則在整份 train.csv 上的 " + fmt4(rule) }, series: [{ vals: rows.map(x => x.val), cls: "ln-val", dot: "dot-val", above: true }] });
+  const cmp = vsRule(r.val, rule);
+  $("#lcOut").innerHTML = kv([["訓練人數", fmtInt(r.n_train) + (idx === rows.length - 1 ? "（四份全用）" : "")], ["沒看過的題 " + tg("§〇 G"), fmt4(r.val)], ["跟參考線 " + fmt4(rule) + " 比 " + tg("§〇 B"), cmp]]);
+}
+$("#lcSlider").addEventListener("input", e => showLearn(e.target.value));
+showLearn($("#lcSlider").value);
+$("#lcTable").innerHTML = D.learning.map(r => `<tr><td class="r">${fmtInt(r.n_train)}</td><td class="r">${fmt4(r.val)}</td></tr>`).join("");
+
+/* ================= §9 看重哪幾欄 ================= */
+const SPEND6 = ["RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck", "TotalSpend"];
+let piSort = "drop", piHl = false, piSel = "VRDeck";
+function drawPi(focusKey) {
+  const items = D.perm_importance.items.slice();
+  if (piSort === "name") items.sort((a, b) => a.feature.localeCompare(b.feature));
+  const W = 900, L = 150, R = 90, rowH = 33, max = 0.04;
+  let s = "";
+  [0, 0.01, 0.02, 0.03, 0.04].forEach(v => { const x = L + v / max * (W - L - R); s += `<line class="grid" x1="${x}" x2="${x}" y1="6" y2="${10 + items.length * rowH}"/><text x="${x}" y="${28 + items.length * rowH}" text-anchor="middle" font-size="13" class="soft">${v.toFixed(2)}</text>`; });
+  items.forEach((it, i) => {
+    const y = 10 + i * rowH, w = it.drop / max * (W - L - R), sp = SPEND6.includes(it.feature);
+    s += `<g role="button" tabindex="0" data-pi="${esc(it.feature)}" class="${it.feature === piSel ? "sel" : ""}"><text x="${L - 10}" y="${y + 19}" text-anchor="end" font-size="14" class="mono">${esc(it.feature)}</text>`;
+    s += `<rect class="bar ${piHl ? (sp ? "alt" : "dim") : ""}" x="${L}" y="${y + 4}" width="${Math.max(2, w).toFixed(1)}" height="22" rx="4"/>`;
+    s += `<text x="${L + Math.max(2, w) + 8}" y="${y + 20}" font-size="13">${fmt4(it.drop)}</text></g>`;
+  });
+  s += `<text x="${(L + W - R) / 2}" y="${50 + items.length * rowH}" text-anchor="middle" font-size="14" class="soft">打亂這一欄，分數掉多少</text>`;
+  const svg = $("#piSvg"); svg.setAttribute("viewBox", `0 0 900 ${60 + items.length * rowH}`); svg.innerHTML = s;
+  svg.querySelectorAll("[data-pi]").forEach(g => {
+    g.addEventListener("click", () => { piSel = g.getAttribute("data-pi"); drawPi(piSel); });
+    g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); piSel = g.getAttribute("data-pi"); drawPi(piSel); } });
+  });
+  if (focusKey) { const fg = svg.querySelector(`[data-pi="${focusKey}"]`); if (fg) fg.focus(); }
+  const it = D.perm_importance.items.find(x => x.feature === piSel), rank = D.perm_importance.items.indexOf(it) + 1;
+  $("#piPanel").innerHTML = `<h4><code>${esc(it.feature)}</code>：掉 ${fmt4(it.drop)}</h4><p>15 欄裡排第 ${rank}（照這次平均降分由大到小排）。原本第 1 輪考 ${fmt4(D.perm_importance.fold1_val_acc)}，把這一欄在 ${fmtInt(D.perm_importance.n_val)} 位考題乘客之間打亂 ${tg("§〇 H")}。${SPEND6.includes(it.feature) ? "這是跟花錢有關的六欄之一。" : ""}點長條看別欄。</p>`;
+  $$("#s9 [data-sort]").forEach(b => b.setAttribute("aria-pressed", b.getAttribute("data-sort") === piSort ? "true" : "false"));
+  $("#spendHl").setAttribute("aria-pressed", piHl ? "true" : "false");
+}
+$$("#s9 [data-sort]").forEach(b => b.addEventListener("click", () => { piSort = b.getAttribute("data-sort"); drawPi(); }));
+$("#spendHl").addEventListener("click", () => { piHl = !piHl; drawPi(); });
+drawPi();
+
+/* ================= §10 四格 ================= */
+const CM_TXT = {
+  tn: ["實際沒被傳送、模型也猜沒被傳送", "猜對"], fp: ["實際沒被傳送、模型卻猜被傳送", "猜錯"],
+  fn: ["實際被傳送、模型卻猜沒被傳送", "猜錯"], tp: ["實際被傳送、模型也猜被傳送", "猜對"]
+};
+let cmSel = [], cmLast = "tn";
+function showCm() {
+  $$(".cm [data-cell]").forEach(b => {
+    const k = b.getAttribute("data-cell");
+    b.innerHTML = `${fmtInt(D.confusion[k])}<small>${CM_TXT[k][1]}</small>`;
+    b.setAttribute("aria-pressed", cmSel.includes(k) ? "true" : "false");
+  });
+  const r = accFromCells(cmSel), c = D.confusion;
+  let h = `<h4>${esc(CM_TXT[cmLast][0])}：${fmtInt(c[cmLast])} 人 ${tg("§〇 I")}</h4>`;
+  if (r.ok) h += `<p class="big">${fmtInt(c.tn)}＋${fmtInt(c.tp)}＝${fmtInt(r.right)}；${fmtInt(r.right)} ÷ ${fmtInt(r.total)}＝${r.acc} ${tg("§〇 I")}</p><p>跟五輪平均的 ${fmt4(D.train_metrics.cv_mean)} 取到小數第四位一樣 ${tg("§〇 D")}（一個是把五輪的人合起來算，一個是五輪各算再平均）。</p>`;
+  else if (r.wrong.length) h += `<p>你選進了猜錯的格子（${r.wrong.map(k => fmtInt(c[k])).join("、")} 人）。準確率只算猜對的人，把它點掉再試。</p>`;
+  else h += `<p>已選 ${cmSel.length} 格。準確率＝猜對的人 ÷ 全部 ${fmtInt(c.tn + c.fp + c.fn + c.tp)} 人 ${tg("§〇 I")}；把兩格猜對的都點起來。</p>`;
+  $("#cmPanel").innerHTML = h;
+}
+$$(".cm [data-cell]").forEach(b => b.addEventListener("click", () => {
+  const k = b.getAttribute("data-cell"); cmLast = k;
+  cmSel = cmSel.includes(k) ? cmSel.filter(x => x !== k) : cmSel.concat(k);
+  showCm();
+}));
+$("#cmClear").addEventListener("click", () => { cmSel = []; showCm(); });
+showCm();
+
+/* ================= §11 三個分數與排行榜 ================= */
+function drawThree() {
+  const rows = [
+    ["練習題（300 棵，看過答案）", D.boost_rounds[5].train, D.boost_rounds[5].train.toFixed(4), "alt"],
+    ["自己留考題（切五份輪流）", D.train_metrics.cv_mean, D.train_metrics.cv_mean.toFixed(4), ""],
+    ["Kaggle 公開榜（這次的模型）", Number(D.kaggle.model_public), D.kaggle.model_public, "vio"],
+    ["Kaggle 公開榜（冬眠那條規則）", Number(D.kaggle.rule_public), D.kaggle.rule_public, "red"]];
+  const W = 900, L = 260, R = 90, lo = 0.70, hi = 1.0, rowH = 52;
+  let s = "";
+  rows.forEach((r, i) => {
+    const y = 10 + i * rowH, w = (r[1] - lo) / (hi - lo) * (W - L - R);
+    s += `<text x="${L - 10}" y="${y + 24}" text-anchor="end" font-size="14">${esc(r[0])}</text>`;
+    s += `<rect class="bar ${r[3]}" x="${L}" y="${y + 6}" width="${w.toFixed(1)}" height="28" rx="5"/>`;
+    s += `<text x="${L + w + 8}" y="${y + 26}" font-size="15" font-weight="900">${esc(r[2])}</text>`;
+  });
+  [0.70, 0.80, 0.90, 1.0].forEach(v => { const x = L + (v - lo) / (hi - lo) * (W - L - R); s += `<text x="${x}" y="${18 + rows.length * rowH}" text-anchor="middle" font-size="13" class="soft">${v.toFixed(2)}</text>`; });
+  $("#threeSvg").innerHTML = s;
+}
+drawThree();
+let lbMark = true, lbSel = binIndexOf(D.kaggle.model_public);
+function drawLb(focusBin) {
+  const b = D.leaderboard.bins, W = 900, L = 40, R = 10, T = 30, Hb = 230, max = 700, bw = (W - L - R) / b.length;
+  const mi = binIndexOf(D.kaggle.model_public), ri = binIndexOf(D.kaggle.rule_public);
+  let s = "";
+  b.forEach((x, i) => {
+    const h = x.teams / max * Hb, X = L + i * bw, cls = lbMark && i === mi ? "vio" : lbMark && i === ri ? "red" : "";
+    s += `<g role="button" tabindex="0" data-bin="${i}" class="${i === lbSel ? "sel" : ""}" aria-label="${esc(x.label)}">`;
+    s += `<rect class="bar ${cls}" x="${X + 3}" y="${T + Hb - h}" width="${bw - 6}" height="${Math.max(1, h)}" rx="3"/>`;
+    s += `<text x="${X + bw / 2}" y="${T + Hb - h - 6}" text-anchor="middle" font-size="12.5" font-weight="800">${x.teams}</text>`;
+    const lab = x.label.replace("–", "–\n").split("\n");
+    lab.forEach((t, k) => { s += `<text x="${X + bw / 2}" y="${T + Hb + 18 + k * 15}" text-anchor="middle" font-size="11.5" class="soft">${esc(t)}</text>`; });
+    s += `</g>`;
+  });
+  if (lbMark) {
+    s += `<text x="${L + mi * bw + bw / 2}" y="16" text-anchor="middle" font-size="13" font-weight="900" fill="var(--violet)">模型 ${esc(D.kaggle.model_public)}</text>`;
+    s += `<text x="${L + ri * bw + bw / 2}" y="${T + Hb - b[ri].teams / max * Hb - 24}" text-anchor="middle" font-size="13" font-weight="900" fill="var(--red)">規則 ${esc(D.kaggle.rule_public)}</text>`;
+  }
+  const svg = $("#lbSvg"); svg.innerHTML = s;
+  svg.querySelectorAll("[data-bin]").forEach(g => {
+    const go = () => { lbSel = Number(g.getAttribute("data-bin")); drawLb(lbSel); };
+    g.addEventListener("click", go);
+    g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+  });
+  if (focusBin !== undefined) { const fg = svg.querySelector(`[data-bin="${focusBin}"]`); if (fg) fg.focus(); }
+  const x = b[lbSel], lb = D.leaderboard;
+  let note = "";
+  if (lbSel === mi) note = `這次的模型 ${esc(D.kaggle.model_public)} 在這一帶：第 ${fmtInt(lb.ranks["0.80126"])} 名（同分 ${lb.ties_080126} 隊）${tg("§〇 J")}。`;
+  else if (lbSel === ri) note = `冬眠那條規則 ${esc(D.kaggle.rule_public)} 在這一帶：第 ${fmtInt(lb.ranks["0.7255"])} 名（同分 ${lb.ties_072550} 隊）${tg("§〇 J")}。`;
+  $("#lbPanel").innerHTML = `<h4>${esc(x.label)}：${fmtInt(x.teams)} 隊 ${tg("§〇 J")}</h4><p>${note}全榜 ${fmtInt(lb.teams)} 隊；中位數 ${esc(lb.median)} ${tg("§〇 J")}。點別的長條看那一帶有幾隊。</p>`;
+  $("#lbMark").setAttribute("aria-pressed", lbMark ? "true" : "false");
+}
+$("#lbMark").addEventListener("click", () => { lbMark = !lbMark; drawLb(); });
+drawLb();
+
+/* ================= §12 老師這次的跑法 ================= */
+const KSTEPS = [
+  { cmd: "colab new -s kst1", why: "開一台免費的 Colab CPU 機器，名字叫 kst1；後面每一行都用 <code>-s kst1</code> 指到這一台。" },
+  { cmd: "colab upload -s kst1 train.csv /content/train.csv", why: "把有答案的 train.csv 傳到那台機器的 <code>/content/</code> 資料夾。" },
+  { cmd: "colab upload -s kst1 test.csv  /content/test.csv", why: "把要猜的 test.csv 也傳上去。" },
+  { cmd: "colab upload -s kst1 train.py  /content/train.py", why: `把老師寫好的程式 <code>train.py</code> 傳上去：它會整理欄位、做五折交叉驗證、用全部 8,693 人訓練、猜 test.csv、寫出答案檔 ${tg("§〇 E")}。` },
+  { cmd: 'colab exec -s kst1 --timeout 0 --env JOB_CMD="python -u /content/train.py" -f launch_job.py', why: "在機器上跑 <code>launch_job.py</code>：它把 <code>python -u /content/train.py</code> 丟到背景去跑，印出來的字寫進 <code>/content/runs/job.log</code>；這一行馬上回來，訓練在背景繼續（<code>launch_job.py</code> 的說明）。" },
+  { cmd: "colab download -s kst1 /content/runs/job.log job.log", why: "把 <code>job.log</code> 拿回來看跑完了沒、分數多少。全文在下面。" },
+  { cmd: "colab download -s kst1 /content/runs/submission.csv submission.csv", why: `把答案檔 <code>submission.csv</code>（4,277 列、2 欄）拿回來，準備交給 Kaggle ${tg("§〇 K")}。` },
+  { cmd: "colab stop -s kst1", why: "用完把機器關掉。整趟 51 秒，程式本身只跑 9.4 秒。" }
+];
+let kI = 0;
+function showK(i) {
+  kI = clampIdx(KSTEPS, i);
+  $("#kTerm").innerHTML = KSTEPS.map((s, j) => j <= kI ? `<span class="${j === kI ? "cmdline" : ""}">$ ${esc(s.cmd)}</span>` : "").filter(Boolean).join("\n");
+  $("#kPanel").innerHTML = `<h4>第 ${kI + 1} 行（共 ${KSTEPS.length} 行）</h4><p>${KSTEPS[kI].why} ${tg("§〇 K")}</p>`;
+  $("#kPos").textContent = `${kI + 1} / ${KSTEPS.length}`;
+  $("#jobLogBox").hidden = kI !== KSTEPS.length - 1;
+  $("#kPrev").disabled = kI === 0; $("#kNext").disabled = kI === KSTEPS.length - 1;
+}
+$("#kPrev").addEventListener("click", () => showK(kI - 1));
+$("#kNext").addEventListener("click", () => showK(kI + 1));
+showK(0);
+
+/* ================= §15 想一想 ================= */
+const QS = [
+  { q: "全部猜「被傳送」拿 0.5036，為什麼剛好在 0.5 附近？", o: ["因為電腦隨便亂猜", "因為答案幾乎一半一半：被傳送 4,378 人、沒被傳送 4,315 人", "因為 Kaggle 規定基準是 0.5", "因為有一半的人資料缺格"], a: 1,
+    e: `全部猜同一邊，猜對的就是那一邊的人數：4,378 ÷ 8,693＝0.5036 ${tg("§〇 A")} ${tg("§〇 B")}。如果答案是七三分，全部猜多的那邊就有 0.7。` },
+  { q: "決策樹第一題為什麼挑「有沒有花錢」，不是我們上次用的「有沒有冬眠」？", o: ["它知道冬眠比較不重要", "它在每一欄上把可能的分界都試過，這一題把兩種人分得最開", "因為冬眠欄是文字，它看不懂", "隨機挑的"], a: 1,
+    e: `電腦不懂欄名的意思，它照「哪一題把兩種人分得最開」去挑；評「分得多開」用的是吉尼不純度，白話是「兩種答案混得多亂」，不是直接比準確率 ${tg("§〇 C")}。` },
+  { q: "樹不設上限，長到 1,451 片葉子，沒看過的題反而只有 0.7424。為什麼？", o: ["電腦算錯了", "葉子太多，平均一片只有 6 個人，很可能把這幾個人碰巧的樣子也學了進去", "資料不夠乾淨", "葉子越多一定越準，這是例外"], a: 1,
+    e: `練習題一路升到 0.9984，沒看過的題從 0.7820（問 6 題）掉到 0.7424 ${tg("§〇 C")}。這就是過度擬合。` },
+  { q: "為什麼不能拿練習題的分數，當成模型遇到新乘客時的成績？", o: ["因為練習題太少", "因為練習題模型看過答案；300 棵的練習題 0.9252，交上去只有 0.80126", "因為 Kaggle 不准", "其實可以比"], a: 1,
+    e: `練習題 0.9252 ${tg("§〇 F")}，自己留考題 0.8119 ${tg("§〇 D")}，Kaggle 0.80126 ${tg("§〇 J")}。這張表每一個設定都是練習題比較高 ${tg("§〇 F")}。` },
+  { q: "同一個模型換切法，平均就差到 0.004 左右。那 100 棵（0.8139）比 300 棵（0.8119）高 0.002，算不算 100 棵贏？", o: ["算，0.8139 比較大", "不算，這個差距比換切法造成的晃動還小，只憑這張表分不出誰比較好", "算，而且贏很多", "不算，因為 300 棵比較慢"], a: 1,
+    e: `0.002 比 0.004 小，只憑這張表分不出誰比較好 ${tg("§〇 D")} ${tg("§〇 F")}。` },
+  { q: "加了「總消費」這一欄，分數從 0.7921 變 0.7912。可能的原因是？", o: ["總消費算錯了", "總消費是從原本五欄算出來的，沒有帶進新資訊", "欄位越多分數一定越低", "總消費全部是缺值"], a: 1,
+    e: `0.7921 → 0.7912，這個差距比換切法造成的晃動還小 ${tg("§〇 E")}。「沒有帶進新資訊所以沒幫上忙」是推論，這次沒有另外驗 <span class="wn">⚠️ 推論</span>。` },
+  { q: "模型只看 50、100、300 人訓練時，哪一次的分數最接近冬眠那條規則的 0.7183？", o: ["50 人（0.6827）", "100 人（0.7184）", "300 人（0.7434）", "三次都差很多"], a: 1,
+    e: `100 人 0.7184，跟規則的 0.7183 幾乎一樣 ${tg("§〇 G")} ${tg("§〇 B")}。在這次量過的六個人數裡，100 人最接近參考線。兩個分數量法不完全一樣（規則在整份 train.csv 對答案、模型在沒看過的題上考），只當參考 ${tg("§〇 G")}。` },
+  { q: "VIP 打亂後分數只掉 0.0006。這代表什麼？", o: ["VIP 跟被傳送完全無關", "只能說：在這個模型、這一輪考題上，把 VIP 打亂幾乎不影響分數", "VIP 資料是假的", "VIP 是最重要的一欄"], a: 1,
+    e: `0.0006 是 15 欄裡最少的 ${tg("§〇 H")}。這只說在這個模型、這一輪考題上打亂 VIP 幾乎不影響分數，不說誰造成被傳送，也不代表 VIP 跟被傳送沒有關係 ${tg("§〇 ⚠️4")}。` },
+  { q: "榜上 0.80126，比自己估的 0.8119 低約 0.011。差在哪？", o: ["Kaggle 算錯", "Kaggle 用的是 test.csv，答案我們手上沒有；自己估的是 train.csv 五輪各留下來的那一份", "交錯檔案了", "兩個其實一樣"], a: 1,
+    e: `自己估的比榜上高約 0.011 ${tg("§〇 J")}。兩個分數考的是不同的人，差一點很正常；會不會每次都偏高，只看這一次看不出來 <span class="wn">⚠️ 推論</span>。公開分數是用 test.csv 全部 4,277 人算的（比賽的 Leaderboard 頁寫明用全部測試資料）${tg("§〇 J")}。` },
+  { q: "從 0.80 往上再爬 0.01 到 0.81，大約要追過多少隊？", o: ["幾十隊", "一千隊以上：0.80–0.805 有 465 隊、0.805–0.81 有 637 隊", "兩三百隊", "不用追，0.80 已經是前面"], a: 1,
+    e: `465 與 637 兩帶加起來超過一千隊 ${tg("§〇 J")}。2,142 隊裡有 1,505 隊擠在 0.79 到 0.81 ${tg("§〇 J")}；在 0.80 到 0.81 這一段，每一點點都很擠。` }
+];
+function initQs() {
+  const box = $("#qs");
+  const shuffled = n => { const a = Array.from({ length: n }, (_, i) => i); for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  box.innerHTML = QS.map((q, i) => `<div class="qq" data-q="${i}"><h3>${i + 1}. ${esc(q.q)}</h3><div class="opts">${shuffled(q.o.length).map(k => `<button type="button" class="opt" data-k="${k}" aria-pressed="false">${esc(q.o[k])}</button>`).join("")}</div><div class="qbar"><button type="button" class="btn primary rv">揭曉</button><span class="yours"></span></div><div class="ans" hidden></div></div>`).join("");
+  $$("#qs .qq").forEach(div => {
+    const q = QS[Number(div.getAttribute("data-q"))];
+    let pk = -1;
+    div.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => {
+      pk = Number(b.getAttribute("data-k"));
+      div.querySelectorAll(".opt").forEach(x => { x.setAttribute("aria-pressed", x === b ? "true" : "false"); x.classList.remove("right", "wrong"); });
+      const ans = div.querySelector(".ans"); ans.hidden = true; ans.innerHTML = "";
+      div.querySelector(".yours").textContent = "選好了，按「揭曉」看答案。";
+    }));
+    div.querySelector(".rv").addEventListener("click", () => {
+      div.querySelectorAll(".opt").forEach(x => {
+        const k = Number(x.getAttribute("data-k"));
+        x.classList.toggle("right", k === q.a);
+        x.classList.toggle("wrong", k === pk && k !== q.a);
+      });
+      div.querySelector(".yours").textContent = pk < 0 ? "沒選也可以看答案。" : (pk === q.a ? "這個選項對。" : "再對照下面的解釋。");
+      const ans = div.querySelector(".ans"); ans.hidden = false; ans.innerHTML = q.e;
+    });
+  });
+}
+$("#qsReset").addEventListener("click", initQs);
+initQs();
+
+/* ================= 工具百科、名詞表：搜尋 ================= */
+function filterTools() {
+  const q = $("#toolQ").value.trim().toLowerCase();
+  let n = 0;
+  $$("#toolList details.tool").forEach(d => {
+    const hit = !q || d.textContent.toLowerCase().includes(q);
+    d.classList.toggle("hidden", !hit);
+    if (hit) n++;
+    if (q && hit) d.open = true;
+  });
+  $("#toolN").textContent = `${n} 個工具`;
+  $("#toolNone").hidden = n > 0;
+}
+$("#toolQ").addEventListener("input", filterTools);
+$("#toolOpen").addEventListener("click", () => $$("#toolList details.tool").forEach(d => { d.open = true; }));
+$("#toolClose").addEventListener("click", () => $$("#toolList details.tool").forEach(d => { d.open = false; }));
+filterTools();
+function filterTerms() {
+  const q = $("#termQ").value.trim().toLowerCase();
+  let n = 0;
+  $$("#termTable tr").forEach((tr, i) => {
+    if (i === 0) return;
+    const hit = !q || tr.textContent.toLowerCase().includes(q);
+    tr.classList.toggle("hidden", !hit);
+    if (hit) n++;
+  });
+  $("#termN").textContent = `${n} 個名詞`;
+  $("#termNone").hidden = n > 0;
+}
+$("#termQ").addEventListener("input", filterTerms);
+filterTerms();
+titleTags();
+</script>
+</body>
+</html>

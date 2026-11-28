@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>W10 觀念頁｜一票怎麼進試算表、怎麼部署成網站、做完怎麼改一行</title>
+<style>
+:root{
+  --bg:#f4f6ed;--fg:#153d36;--muted:#51695f;--line:#bbc9bf;--card:#fff;
+  --accent:#1f6153;--accent2:#09695b;--tagbg:#e0ece2;--tagfg:#0b4a3e;
+  --note-bg:#fff9e8;--note-line:#c9963b;
+  --pre-bg:#133e34;--pre-fg:#f4f6ed;--code-bg:#e6ece5;
+  --see-bg:#eef3fb;--see-line:#4b6cb7;
+  --test-bg:#eef7ee;--test-line:#3b8b4a;
+  --stuck-bg:#fbf1f1;--stuck-line:#b85c5c;
+  --btn-bg:#1f6153;--btn-fg:#fff;
+  font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  color:var(--fg);background:var(--bg);line-height:1.8
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#121917;--fg:#e4ebe6;--muted:#a8b8ae;--line:#3a4a42;--card:#1b2420;
+    --accent:#6fc3b0;--accent2:#8fd3c3;--tagbg:#243a33;--tagfg:#cfe9df;
+    --note-bg:#2a2414;--note-line:#d7a548;
+    --pre-bg:#0b1b17;--pre-fg:#e8f0ea;--code-bg:#243a33;
+    --see-bg:#17213a;--see-line:#7f9ce6;
+    --test-bg:#162a1b;--test-line:#6cc27a;
+    --stuck-bg:#2e1b1b;--stuck-line:#e08a8a;
+    --btn-bg:#6fc3b0;--btn-fg:#0b1b17
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg)}
+main{max-width:900px;margin:auto;padding:28px 20px 90px}
+a{color:var(--accent2);text-underline-offset:4px}
+header{padding:28px 0 22px;border-bottom:2px solid var(--accent)}
+h1{font-size:clamp(26px,5vw,42px);line-height:1.3;margin:.3em 0;max-width:760px}
+h2{font-size:25px;line-height:1.4;margin:52px 0 6px;padding-top:10px;border-top:2px solid var(--accent)}
+h3{font-size:19px;margin:22px 0 6px}
+h4{font-size:16.5px;margin:6px 0 4px;color:var(--accent2)}
+.eyebrow{letter-spacing:.09em;font-weight:700;color:var(--muted)}
+.lead{font-size:18px}
+section{scroll-margin-top:16px}
+p{margin:8px 0}
+.note{padding:12px 18px;border-left:4px solid var(--note-line);background:var(--note-bg);margin:12px 0}
+.small{font-size:14px;color:var(--muted)}
+.tag{display:inline-block;padding:0 7px;margin:0 2px;border-radius:7px;background:var(--tagbg);color:var(--tagfg);font-size:12.5px;font-weight:800;line-height:1.7;white-space:nowrap;vertical-align:1px}
+.tag code{background:transparent;padding:0;color:inherit;font-size:12px}
+table{width:100%;border-collapse:collapse;background:var(--card);table-layout:fixed;margin:10px 0}
+th,td{border:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top;overflow-wrap:anywhere;word-break:break-word}
+th{background:var(--tagbg)}
+pre{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;background:var(--pre-bg);color:var(--pre-fg);padding:14px 16px;border-radius:8px;margin:8px 0;font:14.5px/1.75 ui-monospace,Consolas,"Microsoft JhengHei",monospace;max-width:100%}
+code{background:var(--code-bg);border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;word-break:break-word;font:15px ui-monospace,Consolas,"Microsoft JhengHei",monospace}
+pre code{background:transparent;padding:0;font:inherit}
+kbd{font:14px ui-monospace,Consolas,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--card)}
+ol,ul{padding-left:1.3em}
+li{margin:6px 0}
+button{font:inherit;font-size:15px;cursor:pointer;border:0;border-radius:6px;padding:6px 14px;background:var(--btn-bg);color:var(--btn-fg);max-width:100%;overflow-wrap:anywhere}
+button.ghost{background:transparent;color:var(--accent2);border:1px solid var(--accent2)}
+button code{background:transparent;color:inherit;padding:0 2px;font-size:.95em}
+button[disabled]{opacity:.45;cursor:not-allowed}
+button:active:not([disabled]){transform:translateY(1px)}
+:focus-visible{outline:3px solid var(--note-line);outline-offset:3px}
+input[type=search]{font:inherit;padding:6px 10px;border:2px solid var(--accent);border-radius:8px;background:var(--card);color:var(--fg);width:min(100%,280px)}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 18px;margin:18px 0}
+.toc ol{margin:6px 0;columns:2 300px}
+.toc li{break-inside:avoid}
+.legend{margin:10px 0 0;font-size:14px;color:var(--muted)}
+.top{position:fixed;right:10px;bottom:10px;background:var(--btn-bg);color:var(--btn-fg);border-radius:50%;width:36px;height:36px;opacity:.85;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+/* 每節：一句白話 → 一個實驗台 → 所以在操作頁 */
+.lab{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0}
+.lab > :first-child{margin-top:0}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.tabs button{background:transparent;color:var(--accent2);border:1px solid var(--accent2);font-weight:700}
+.tabs button.on{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg)}
+.status{min-height:1.8em;font-weight:700;margin:10px 0 0;padding:6px 12px;border-radius:0 6px 6px 0;background:var(--see-bg);border-left:4px solid var(--see-line)}
+.status.ok{background:var(--test-bg);border-color:var(--test-line)}
+.status.bad{background:var(--stuck-bg);border-color:var(--stuck-line)}
+.pop{margin:10px 0 0;padding:8px 14px;border-left:4px solid var(--note-line);background:var(--note-bg);border-radius:0 6px 6px 0;min-height:2.6em}
+.so{margin:12px 0 0;padding:8px 14px;border-left:4px solid var(--see-line);background:var(--see-bg);border-radius:0 6px 6px 0;font-weight:700}
+.sim{display:inline-block;font-size:13px;font-weight:800;color:var(--note-line);border:1px dashed var(--note-line);border-radius:6px;padding:0 8px;margin:0 0 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.two > div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:0}
+.two h4{margin-top:0}
+.hidden{display:none!important}
+/* 四站 */
+.map{display:flex;gap:6px;align-items:stretch}
+.station{flex:1 1 0;min-width:0;background:var(--card);color:var(--fg);border:2px solid var(--line);border-radius:10px;padding:8px 8px 10px;text-align:center;line-height:1.5}
+.station .ico{display:block;font-size:26px;line-height:1.2}
+.station b{display:block;font-size:16.5px;margin-top:2px}
+.station .small{display:block;line-height:1.45;margin-top:2px}
+.station[aria-pressed=true],.station.lit{border-color:var(--accent);background:var(--tagbg)}
+.station.now{border-color:var(--test-line);background:var(--test-bg);box-shadow:0 0 0 3px var(--test-line)}
+.arrow{flex:0 0 auto;align-self:center;color:var(--muted);font-weight:900;font-size:20px}
+.arrow::before{content:"→"}
+/* 步進器 */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.chips button{background:transparent;color:var(--accent2);border:1px solid var(--accent2);border-radius:999px;padding:3px 12px}
+.chips button[aria-current=step]{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg);font-weight:800}
+.stepbox{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--bg);margin:10px 0}
+.stepbox h4{margin:0 0 4px;font-size:17px}
+/* 三台裝置 */
+.devs{display:grid;grid-template-columns:1fr 1fr 1fr 1.1fr;gap:10px;align-items:stretch}
+.dev,.sheet{border:2px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--card);min-width:0;text-align:center}
+.dev b,.sheet b{display:block;font-size:16px}
+.dev .n{font-size:28px;font-weight:900;line-height:1.2;margin:4px 0}
+.dev .small,.sheet .small{display:block;line-height:1.45}
+.sheet{border-style:dashed;text-align:left}
+.sheet.on{border-style:solid;border-color:var(--accent);background:var(--tagbg)}
+.sheet table{margin:6px 0;font-size:14px}
+.sheet td,.sheet th{padding:4px 6px}
+/* 部署模擬器 */
+.kv{display:grid;grid-template-columns:minmax(0,11em) minmax(0,1fr);gap:6px 10px;margin:10px 0;align-items:start}
+.kv .k{font-weight:700;color:var(--muted)}
+.kv .v{min-width:0}
+.phone{border:3px solid var(--line);border-radius:18px;padding:10px 12px;background:var(--card);max-width:320px}
+.phone .bar{font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line);margin-bottom:6px;padding-bottom:3px;overflow-wrap:anywhere}
+.phone .ttl{font-weight:800;font-size:17px;line-height:1.4}
+.phone.new{border-color:var(--test-line)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.card{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--bg);min-width:0}
+.card h4{margin-top:0}
+/* 授權畫面 */
+.consent{border:2px solid var(--line);border-radius:14px;padding:12px 16px;background:var(--card);max-width:520px}
+.consent .ttl{font-weight:800;font-size:17px}
+.consent label{display:flex;gap:10px;align-items:flex-start;margin:8px 0;cursor:pointer}
+.consent input{margin-top:8px;flex:0 0 auto;width:18px;height:18px;accent-color:var(--accent)}
+.radios label{display:flex;gap:10px;align-items:flex-start;margin:6px 0;cursor:pointer;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--card)}
+.radios input{margin-top:9px;flex:0 0 auto;accent-color:var(--accent)}
+.path{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;padding:0;list-style:none}
+.path li{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:14px;margin:0}
+.path li.key{border-color:var(--accent);background:var(--tagbg);font-weight:800}
+/* 兩條路 */
+.route{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:8px;margin:8px 0}
+#rtA .route{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.rc{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg);min-width:0;font-size:15px;line-height:1.6}
+.rc b{display:block;color:var(--accent2)}
+.rc pre{font-size:12.5px;padding:8px 10px;line-height:1.5}
+pre.term{min-height:8em}
+pre.term .cmd{color:#ffd58a;font-weight:700}
+pre.term .did{color:#9ad7a6}
+pre.term .bad{color:#ff9f9f}
+pre.term .dim{color:#b9c9e8}
+.side{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:8px;margin:8px 0 0}
+.side div{border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--bg);min-width:0}
+.side .k{display:block;font-size:13px;color:var(--muted)}
+.side .v{font-weight:800}
+.side .v.new{color:var(--test-line)}
+/* 症狀 */
+select{font:inherit;padding:6px 10px;border:2px solid var(--accent);border-radius:8px;background:var(--card);color:var(--fg);max-width:100%}
+/* 名詞表 */
+dl.gl{margin:10px 0}
+.gi{padding:6px 0;border-bottom:1px dashed var(--line)}
+.gi dt{font-weight:800}
+.gi dd{margin:0}
+.gi .where{font-size:14px;color:var(--muted)}
+/* 想一想 */
+.qq{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:12px 0;background:var(--card)}
+.qq h3{margin:0 0 6px;font-size:16.5px}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:6px 12px;font-size:15px}
+.opt[aria-pressed=true]{border-color:var(--note-line);background:var(--note-bg)}
+.opt.right{border-color:var(--test-line);background:var(--test-bg)}
+.opt.wrong{border-color:var(--stuck-line);background:var(--stuck-bg)}
+.qbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.qbar .yours{font-size:14px;color:var(--muted)}
+.ans{margin-top:8px;padding:8px 12px;border-radius:0 8px 8px 0;border-left:4px solid var(--see-line);background:var(--see-bg)}
+.ans.ok{border-color:var(--test-line);background:var(--test-bg)}
+.ans.no{border-color:var(--stuck-line);background:var(--stuck-bg)}
+@media (max-width:640px){
+  main{padding:20px 16px 80px}
+  th,td{padding:7px 5px;font-size:14px}
+  pre{font-size:13px;padding:12px}
+  code{font-size:13.5px}
+  h2{font-size:22px}
+  .lead{font-size:16.5px}
+  .map{flex-direction:column;gap:4px}
+  .arrow::before{content:"↓"}
+  .two,.cards{grid-template-columns:1fr}
+  .devs{grid-template-columns:1fr 1fr}
+  .devs .sheet{grid-column:1/-1}
+  .kv{grid-template-columns:1fr}
+  .kv .k{margin-top:4px}
+  .route,#rtA .route{grid-template-columns:1fr}
+}
+@media print{.top{display:none}main{max-width:none;padding:0}}
+</style>
+</head>
+<body><main id="top">
+
+<header>
+<p class="eyebrow">和 AI 一起寫程式：創意生活應用　第 10 週　2026-11-09（一）　觀念頁</p>
+<h1>一票怎麼進試算表、怎麼部署成網站、做完怎麼改一行</h1>
+<p class="lead">這頁是觀念，<a href="student.html">動手步驟在操作頁</a>。每一節都是一句白話、一個可以按的東西、一行「所以在操作頁的第幾步」。全部在你的瀏覽器裡假裝，<b>不連網、不碰你的試算表</b>。看不懂的詞，第 8 節名詞表可以搜。</p>
+<div class="toc"><b>十一節</b>
+<ol start="0">
+<li value="0"><a href="#c0">這週做的東西，一張圖</a></li>
+<li><a href="#c1">一票的旅程</a>——六步，每步你看到什麼、背後在做什麼</li>
+<li><a href="#c2">試算表是機器的記憶體</a>——本機預覽與雲端差在哪</li>
+<li><a href="#c3">存檔不等於上線</a>——三顆按鈕按按看</li>
+<li><a href="#c4">授權畫面在問什麼</a>——全勾、少勾會怎樣</li>
+<li><a href="#c5">誰可以存取：門開給誰</a></li>
+<li><a href="#c6">做完改一行：兩條路</a>——模擬終端機</li>
+<li><a href="#c7">卡住了先看哪裡</a>——選症狀</li>
+<li><a href="#c8">名詞表</a>——可以搜</li>
+<li><a href="#c9">想一想</a>——十題，揭曉看解釋</li>
+<li><a href="#c10">出處</a></li>
+</ol>
+<p class="legend">小標籤＝這句話從哪裡抄來的：<span class="tag">規格 §〇·…</span>本週內容規格的硬事實表那一列；<span class="tag">操作頁 第 N 步</span>操作頁那一步；<span class="tag">Google 官方·…</span>頁尾那三條官方說明。</p>
+</div>
+</header>
+
+<!-- ======================= 0 一張圖 ======================= -->
+<section id="c0"><h2>0　這週做的東西，一張圖</h2>
+<p class="lead">你會做一個手機投票網站，而且是你自己部署上線的。</p>
+<p>題目是「哪一關想看老師再做一次？」，三個選項：找不到部署按鈕／送出後試算表沒新增一筆／同學的手機打不開。同學在手機按一下，你的試算表 <code>Votes</code> 就多一列；電腦按「更新票數」看計數。<span class="tag" title="內容規格 §〇 這週做什麼">規格 §〇·這週做什麼</span><span class="tag" title="內容規格 §〇 三個選項（逐字）">規格 §〇·三個選項</span></p>
+<div class="lab">
+<p class="small" style="margin-top:0">點一站，看它做什麼、住在哪台電腦。</p>
+<div class="map" id="mapStage">
+<button type="button" class="station" data-st="ui" aria-pressed="true"><span class="ico">📱</span><b>畫面</b><span class="small">前端（front end）<br>住在：同學的手機</span></button>
+<span class="arrow" aria-hidden="true"></span>
+<button type="button" class="station" data-st="be" aria-pressed="false"><span class="ico">🏢</span><b>後端</b><span class="small">Google 機房的 <code>Code.gs</code></span></button>
+<span class="arrow" aria-hidden="true"></span>
+<button type="button" class="station" data-st="db" aria-pressed="false"><span class="ico">📒</span><b>試算表</b><span class="small"><code>Votes</code> 一票一列</span></button>
+<span class="arrow" aria-hidden="true"></span>
+<button type="button" class="station" data-st="rf" aria-pressed="false"><span class="ico">🔄</span><b>更新票數</b><span class="small">再問一次後端</span></button>
+</div>
+<div class="pop" id="mapPop" aria-live="polite"></div>
+<p class="small">三層＝前端（手機看得到的畫面）／後端（跑在 Google 機房的 <code>Code.gs</code>）／資料儲存（試算表 <code>Votes</code>，不同裝置看同一張表）。<span class="tag" title="內容規格 §〇 三層">規格 §〇·三層</span></p>
+</div>
+<p class="so">所以在操作頁：開頭〈按下去，那一票去了哪裡？〉那三格，就是這四站的前三站。<a href="student.html#layers-title">去看那三格</a></p>
+</section>
+
+<!-- ======================= 1 一票的旅程 ======================= -->
+<section id="c1"><h2>1　一票的旅程</h2>
+<p class="lead">按下「送出一票」之後，一票要走六步；畫面只負責轉述，帳記在試算表。</p>
+<p>比喻只用這一次：畫面是餐廳的菜單和點餐單，後端是櫃台，試算表是帳本。<span class="tag" title="內容規格 §四 白話與比喻">規格 §四·比喻</span></p>
+<div class="lab">
+<div class="ctl"><button type="button" class="ghost" id="jPrev">← 上一步</button><button type="button" id="jNext">下一步 →</button></div>
+<div class="chips" id="jChips" role="group" aria-label="六步"></div>
+<div class="map" id="jTrack" aria-hidden="true">
+<span class="station" data-st="ui"><span class="ico">📱</span><b>畫面</b></span><span class="arrow"></span>
+<span class="station" data-st="be"><span class="ico">🏢</span><b>後端</b></span><span class="arrow"></span>
+<span class="station" data-st="db"><span class="ico">📒</span><b>試算表</b></span><span class="arrow"></span>
+<span class="station" data-st="rf"><span class="ico">🔄</span><b>更新票數</b></span>
+</div>
+<div class="stepbox" id="jBox" aria-live="polite">
+<h4 id="jTitle"></h4>
+<div class="two"><div><h4>你看到什麼</h4><p id="jSee"></p></div><div><h4>背後在做什麼</h4><p id="jWhy"></p></div></div>
+<p class="small" id="jTag"></p>
+</div>
+<div class="note"><b>畫面說「已送出」，去哪裡確認真的有收到？</b>　<button type="button" class="ghost" id="jReveal">揭曉</button>
+<p id="jAnswer" class="hidden" style="margin:6px 0 0">答：去試算表看 <code>Votes</code> 那一列。畫面只是轉述後端的話，帳在試算表。本週的三件驗收：手機能投票、試算表多一列、電腦按「更新票數」看得到新票數。<span class="tag" title="內容規格 §〇 三件驗收（逐字）">規格 §〇·三件驗收</span></p></div>
+</div>
+<p class="so">所以在操作頁：第 4 步〈手機送一票，電腦回來看〉，就是親手走這六步。<a href="student.html#step-4">去第 4 步</a></p>
+</section>
+
+<!-- ======================= 2 記憶體 ======================= -->
+<section id="c2"><h2>2　試算表是機器的記憶體</h2>
+<p class="lead">記憶體＝機器記東西的地方。這週是試算表；下週 Python 會來讀它。</p>
+<p>直接用瀏覽器開 <code>Index.html</code>＝本機預覽，票只存在那個瀏覽器，別人看不到。正式投票只認 <code>/exec</code>，那時每一票都寫進同一張 <code>Votes</code> 表。<span class="tag" title="內容規格 §〇 前端">規格 §〇·前端</span><span class="tag" title="操作頁開頭「可跳過：開啟本機預覽」">操作頁·本機預覽</span></p>
+<div class="lab">
+<span class="sim">模擬：票數是假的，不會寫進任何表</span>
+<div class="ctl tabs" role="group" aria-label="模式"><button type="button" data-mode="preview" class="on">本機預覽</button><button type="button" data-mode="cloud">雲端 <code>/exec</code></button></div>
+<div class="devs" id="devs">
+<div class="dev" data-dev="me"><b>你的手機</b><span class="n">0</span><span class="small">票</span><button type="button" class="devVote">用這台投一票</button></div>
+<div class="dev" data-dev="mate"><b>同學的手機</b><span class="n">0</span><span class="small">票</span><button type="button" class="devVote">用這台投一票</button></div>
+<div class="dev" data-dev="pc"><b>電腦</b><span class="n">0</span><span class="small">票</span><button type="button" class="devVote">用這台投一票</button></div>
+<div class="sheet" id="memSheet"><b>試算表 <code>Votes</code></b><span class="small" id="memSheetNote"></span><table><tr><th>場次</th><th>選項</th></tr></table></div>
+</div>
+<p class="status" id="memStatus" aria-live="polite"></p>
+<p class="small">下週（W11）用 Python 讀你這張表：到時候 Python 是機器的大腦，試算表是記憶體。這週不講 Python 怎麼寫。<span class="tag" title="內容規格 §〇 W11 接點">規格 §〇·W11 接點</span></p>
+</div>
+<p class="so">所以在操作頁：第 4 步用手機開 <code>/exec</code> 投一票，回電腦看 <code>Votes</code> 多一列。<a href="student.html#step-4">去第 4 步</a></p>
+</section>
+
+<!-- ======================= 3 存檔不等於上線 ======================= -->
+<section id="c3"><h2>3　存檔不等於上線</h2>
+<p class="lead">部署（deploy）＝把程式變成一個別人打得開的網址。版本（version）＝部署當時那份程式的快照。</p>
+<p>開店掛招牌是部署；菜單改版重印、招牌不換，是出新版本。改了程式只按「儲存」，<code>/exec</code> 不會變；要「部署 → 管理部署作業 → 選原本的 → 編輯 → 版本：新版本 → 部署」，網址不變、內容更新。按成「新增部署作業」會多一條新網址，發出去的舊網址不會更新。<span class="tag" title="內容規格 §〇 存檔≠上線">規格 §〇·存檔≠上線</span><span class="tag" title="Google 官方版本更新說明（頁尾連結）">Google 官方·版本更新</span></p>
+<div class="lab">
+<span class="sim">模擬：假的編輯器、假的手機</span>
+<p style="margin-top:0">情境：你剛在編輯器把標題改成「下一段想看老師重做哪一關？」。按一顆按鈕，看手機會看到什麼。</p>
+<div class="ctl"><button type="button" id="dpSave">儲存</button><button type="button" id="dpNew">管理部署作業 → 新版本</button><button type="button" id="dpAdd">新增部署作業</button><button type="button" class="ghost" id="dpReset">重來</button></div>
+<div class="kv">
+<div class="k">同學手上的原網址</div><div class="v"><div class="phone" id="dpPhone"><div class="bar">尾巴 <code>/exec</code>　版本 <span id="dpVer">1</span></div><div class="ttl" id="dpPhoneTitle">哪一關想看老師再做一次？</div></div></div>
+<div class="k">網址有沒有變</div><div class="v" id="dpUrl">沒變，還是原本那一條</div>
+<div class="k">發出去的 QR 還能不能用</div><div class="v" id="dpQr">能用，掃到的是舊標題</div>
+<div class="k"><code>/dev</code> 試吃口看到的</div><div class="v" id="dpDev">舊標題（你還沒儲存）</div>
+</div>
+<p class="status" id="dpStatus" aria-live="polite">先按一顆按鈕。</p>
+<div class="cards">
+<div class="card"><h4><code>/dev</code>＝試吃口</h4><p>測試部署作業的網址。只有專案編輯者打得開，永遠跑最新存檔。拿來驗收會誤判。</p></div>
+<div class="card"><h4><code>/exec</code>＝正門</h4><p>正式網址。跑「部署當時那個版本」，給同學用的是這條。認尾巴就好。</p></div>
+</div>
+<p class="small"><span class="tag" title="內容規格 §〇 /dev 與 /exec">規格 §〇·<code>/dev</code> 與 <code>/exec</code></span><span class="tag" title="Google 官方部署說明（頁尾連結）">Google 官方·部署說明</span></p>
+</div>
+<p class="so">所以在操作頁：第 4 步「認尾巴就好，這次要的是 <code>/exec</code>」；改完程式照〈卡關時〉「我存了新程式，想更新同一個網址」做。<a href="student.html#help">去卡關時</a></p>
+</section>
+
+<!-- ======================= 4 授權畫面 ======================= -->
+<section id="c4"><h2>4　授權畫面在問什麼</h2>
+<p class="lead">授權＝你簽名同意這支程式替你動試算表。Google 問一次，少勾一項它就做不到。</p>
+<p>「Google 尚未驗證這個應用程式」＝Google 不認識這支程式，因為它是你自己剛貼的；不是壞掉。開試算表、授權、路線 A 登入，三次都用 W5 做 bot 的那個個人 Gmail（學校帳號的 Apps Script 可能被關掉）。<span class="tag" title="操作頁第 1 步「用 W5 做 bot 的那個個人 Gmail」">操作頁 第 1 步</span></p>
+<p>這張授權書的路：<span class="tag" title="內容規格 §〇 授權畫面">規格 §〇·授權畫面</span><span class="tag" title="操作頁第 3 步">操作頁 第 3 步</span></p>
+<ol class="path"><li>需要授權</li><li>審查權限</li><li>選開試算表的那個個人 Gmail</li><li>尚未驗證（正常）</li><li>進階</li><li>前往 …（不安全）</li><li class="key">有勾選框就每一項都勾</li><li>繼續</li></ol>
+<div class="lab">
+<span class="sim">模擬：假的同意畫面，字樣以你畫面為準</span>
+<div class="consent" id="consent">
+<div class="ttl">這個應用程式想要：</div>
+<label><input type="checkbox" id="auChk1"> <span>查看你的 Google 試算表</span></label>
+<label><input type="checkbox" id="auChk2"> <span>編輯你的 Google 試算表（新增分頁、寫入列）</span></label>
+<div class="ctl" style="margin:10px 0 0"><button type="button" id="auGo">繼續，執行 <code>setupHelpBoard</code></button></div>
+</div>
+<div id="auResult" class="hidden">
+<div class="two"><div><h4>執行記錄</h4><p id="auLog"></p></div><div><h4>試算表</h4><p id="auSheet"></p></div></div>
+<p class="status" id="auStatus" aria-live="polite"></p>
+<div id="auRescue" class="note hidden"><b>救法三步</b>
+<ol>
+<li>到 Google 帳戶的「第三方應用程式與服務」找到這個專案。</li>
+<li>按「刪除所有連結」（按鈕名以畫面為準）。</li>
+<li>回編輯器重跑 <code>setupHelpBoard</code>，這次每一項都勾。</li>
+</ol>
+<button type="button" class="ghost" id="auFix">照救法重來（回到授權畫面）</button>
+<p class="small" style="margin-bottom:0"><span class="tag" title="內容規格 §〇 授權少勾會怎樣">規格 §〇·授權少勾會怎樣</span></p></div>
+</div>
+<p class="small">看到什麼算過：試算表多出 <code>Votes</code> 分頁，第一列「場次」「選項」。執行記錄說完成不算。<span class="tag" title="內容規格 §〇 看到什麼算過（第 3 步）">規格 §〇·看到什麼算過</span></p>
+</div>
+<p class="so">所以在操作頁：第 3 步「權限清單有勾選框就每一項都勾」。<a href="student.html#step-3">去第 3 步</a></p>
+</section>
+
+<!-- ======================= 5 誰可以存取 ======================= -->
+<section id="c5"><h2>5　誰可以存取：門開給誰</h2>
+<p class="lead">誰可以存取＝店門開給誰：只有我／要登入 Google 的人／所有人。</p>
+<p>部署時還有一格「執行身分」選「我」：程式用你的權限寫你的表，同學只需要能開網站。<span class="tag" title="內容規格 §〇 部署設定">規格 §〇·部署設定</span></p>
+<div class="lab">
+<span class="sim">模擬：假的手機</span>
+<div class="radios" role="radiogroup" aria-label="誰可以存取">
+<label><input type="radio" name="acc" value="me"> <span>只有我自己</span></label>
+<label><input type="radio" name="acc" value="google"> <span>任何擁有 Google 帳戶的使用者</span></label>
+<label><input type="radio" name="acc" value="anyone"> <span>所有人</span></label>
+</div>
+<div class="kv" style="margin-top:12px">
+<div class="k">同學的手機看到什麼</div><div class="v"><div class="phone" id="accPhoneBox"><div class="bar">同學的手機　沒登入 Google</div><div class="ttl" id="accPhone">先選一個。</div></div></div>
+</div>
+<p class="status" id="accStatus" aria-live="polite">三種門禁，選一個看看。</p>
+<p>這週為什麼可以選「所有人」：表裡只有場次和選項、沒有任何個人資料，同學的手機不用登入就能投。以後的表如果會記名字或成績，就要縮小到「任何擁有 Google 帳戶的使用者」或更小。<span class="tag" title="內容規格 §〇 誰可以存取三種">規格 §〇·誰可以存取三種</span><span class="tag" title="操作頁第 4 步">操作頁 第 4 步</span></p>
+</div>
+<p class="so">所以在操作頁：第 4 步「執行身分選『我』」「『誰可以存取』選『所有人』」。<a href="student.html#step-4">去第 4 步</a></p>
+</section>
+
+<!-- ======================= 6 兩條路 ======================= -->
+<section id="c6"><h2>6　做完改一行：兩條路</h2>
+<p class="lead">目標一樣：把投票板的標題改成「下一段想看老師重做哪一關？」，手機重新整理後看到新標題。兩條路同分。</p>
+<p>路線 B＝瀏覽器問 AI，自己貼回編輯器，再出新版本。路線 A＝agent 加 clasp：agent 是會替你動手的 AI，改檔、下指令，但每一步你看計畫、你同意；clasp 是 Google 出的 Apps Script 命令列工具，讓 agent 把改好的程式直接推上你的專案、更新同一個網址。跟 W3 的 <code>gh</code>、W6 的 <code>gws</code> 同一套：它下指令、你同意。有自己的筆電、W6 或 W7 裝過 Node.js 的人走 A，其他人走 B。W6 的 <code>gws</code> 登入還在的人，做完還能叫同一個 agent 用 <code>gws</code> 讀 <code>Votes</code> 分頁數票（只准讀），操作頁路線 A 底下的〈延伸〉有寫。<span class="tag" title="內容規格 §〇 做完改一行：兩條路同分">規格 §〇·兩條路</span><span class="tag" title="內容規格 §〇 clasp 是什麼">規格 §〇·clasp 是什麼</span></p>
+<div class="lab">
+<div class="ctl tabs" role="group" aria-label="路線"><button type="button" data-route="b" class="on">路線 B：瀏覽器問 AI</button><button type="button" data-route="a">路線 A：agent 加 clasp</button></div>
+<div id="rtB">
+<div class="route">
+<div class="rc"><b>① 問 AI</b>貼上 <code>Code.gs</code>，請它找出 <code>BOARD_TITLE</code>，改成新標題，列出原本和改完的那一行。</div>
+<div class="rc"><b>② 自己貼回</b>確認 AI 指的是畫面上看得到的那一行，貼回編輯器，儲存。</div>
+<div class="rc"><b>③ 新版本</b>部署 → 管理部署作業 → 選原本的 → 編輯 → 版本：新版本 → 部署。</div>
+<div class="rc"><b>④ 手機重整</b>原本的 <code>/exec</code> 重新整理，看到新標題。</div>
+</div>
+<p class="small"><span class="tag" title="操作頁〈做完再請 AI 改一行〉路線 B">操作頁·路線 B</span></p>
+</div>
+<div id="rtA" class="hidden">
+<div class="route">
+<div class="rc"><b>① 裝 clasp（只做一次）</b>開 PowerShell 貼三行：<pre>winget install --id OpenJS.NodeJS.LTS -e --accept-package-agreements --accept-source-agreements --silent
+$env:PATH += ";$env:ProgramFiles\nodejs;$env:APPDATA\npm"
+npm install -g @google/clasp</pre>裝過 Node.js 的只要最後一行。</div>
+<div class="rc"><b>② 登入、開開關</b>打 <code>clasp login</code>，瀏覽器跳出來，選同一個個人 Gmail。再到設定頁把 <code>Google Apps Script API</code> 切成開啟。</div>
+<div class="rc"><b>③ 把專案抓下來</b>專案設定裡複製 <code>指令碼ID</code>，在空資料夾打 <code>clasp clone-script 貼上指令碼ID</code>。會多出 <code>Code.js</code>、<code>Index.html</code>、<code>appsscript.json</code>；<code>.gs</code> 變 <code>.js</code> 是正常的。</div>
+<div class="rc"><b>④ 交給 agent</b>用 Antigravity 或 Codex 開這個資料夾，講目標：改 <code>BOARD_TITLE</code>，先列計畫等你同意，改完 <code>clasp push -f</code>。先看計畫、再看改了哪幾行、不對就退回。</div>
+<div class="rc"><b>⑤ 更新同一個部署</b>打 <code>clasp list-deployments</code>，找有版本號的那個 <code>部署ID</code>，再打 <code>clasp create-deployment -i 貼上部署ID -d v2</code>。手機重新整理看到新標題。</div>
+<div class="rc"><b>⑥ 收尾</b>教室機下課前打 <code>clasp logout</code>，登入檔等於鑰匙。<code>.clasp.json</code> 不要放進 <code>git</code>。</div>
+</div>
+<p class="small"><span class="tag" title="內容規格 §〇 路線 A 六步">規格 §〇·路線 A 六步</span><span class="tag" title="內容規格 §五 逐字區（裝機三行、三個指令）">規格 §五·逐字區</span><span class="tag" title="Google 官方 clasp 說明（頁尾連結）">Google 官方·clasp</span></p>
+</div>
+<h3>模擬終端機：三個指令各做了什麼</h3>
+<span class="sim">模擬：不是真的終端機，按了不會動你的專案</span>
+<div class="ctl"><button type="button" class="tm" data-c="push"><code>clasp push -f</code></button><button type="button" class="tm" data-c="list"><code>clasp list-deployments</code></button><button type="button" class="tm" data-c="deploy"><code>clasp create-deployment -i 貼上部署ID -d v2</code></button><button type="button" class="ghost" id="tmReset">重來</button></div>
+<pre class="term" id="term" aria-live="polite">（按上面的指令，這裡會印出它做了什麼。）</pre>
+<div class="side">
+<div><span class="k">雲端專案裡的程式</span><span class="v" id="tmCloud">舊標題</span></div>
+<div><span class="k">給同學那條部署的版本</span><span class="v" id="tmVer">@1</span></div>
+<div><span class="k">手機重新整理看到</span><span class="v" id="tmPhone">舊標題</span></div>
+</div>
+<p class="note" style="margin-bottom:0"><b>只 <code>push</code> 不更新部署，手機看到的永遠是舊版。</b><span class="tag" title="內容規格 §〇 路線 A 最常錯">規格 §〇·路線 A 最常錯</span></p>
+</div>
+<p class="so">所以在操作頁：〈做完再請 AI 改一行：兩條路同分〉。<a href="student.html#route-a">去兩條路</a></p>
+</section>
+
+<!-- ======================= 7 卡住了 ======================= -->
+<section id="c7"><h2>7　卡住了先看哪裡</h2>
+<p class="lead">卡住先查三件：網址是不是 <code>/exec</code>、「誰可以存取」是不是「所有人」、改了程式有沒有出「新版本」。</p>
+<p class="small"><span class="tag" title="內容規格 §〇 手機打不開先查兩件（逐字）＋§五 卡住先查三件">規格 §〇·手機打不開先查兩件</span><span class="tag" title="教師手記 11:10 那列">手記·11:10</span></p>
+<div class="lab">
+<div class="ctl"><label for="sym">症狀：</label><select id="sym">
+<option value="">選一個症狀</option>
+<option value="phone">同學的手機打不開（存取遭拒、要登入）</option>
+<option value="novotes">執行記錄說完成，試算表沒長出投票分頁</option>
+<option value="nochange">改了程式，手機沒變</option>
+<option value="index">網頁寫找不到畫面檔（檔名不對）</option>
+<option value="pushed">路線 A：推上去了，手機還是舊的</option>
+<option value="nofunc">下拉選單找不到要執行的函式</option>
+<option value="newdep">不小心按了「新增部署作業」</option>
+</select></div>
+<div id="symPanel" class="hidden">
+<div class="two"><div><h4>多半是</h4><p id="symWhy"></p></div><div><h4>先查什麼</h4><p id="symCheck"></p></div></div>
+<p class="status" id="symLink"></p>
+</div>
+<p class="status hidden" id="symEmpty">先選一個症狀。</p>
+</div>
+<p class="so">所以在操作頁：〈卡關時先看這裡〉每一條都對得上。<a href="student.html#help">去卡關時</a></p>
+</section>
+
+<!-- ======================= 8 名詞表 ======================= -->
+<section id="c8"><h2>8　名詞表</h2>
+<p class="lead">只放這週用到的詞，每個一句白話，加上「這週在哪一步碰到」。</p>
+<div class="lab">
+<div class="ctl"><label for="glQ">搜尋：</label><input id="glQ" type="search" autocomplete="off" spellcheck="false" placeholder="打中文或英文"><span class="small" id="glN"></span></div>
+<dl class="gl" id="glList">
+<div class="gi"><dt>前端（front end）</dt><dd>手機看得到、按得到的畫面。<span class="where">這週：<code>Index.html</code>，第 2 步貼進去。</span></dd></div>
+<div class="gi"><dt>後端（back end）</dt><dd>跑在 Google 機房的那支程式，收單、檢查、記帳。<span class="where">這週：<code>Code.gs</code>，第 2 步貼進去。</span></dd></div>
+<div class="gi"><dt>資料儲存</dt><dd>試算表 <code>Votes</code>，一票一列；誰開都是同一張。<span class="where">這週：第 3 步執行後長出來。</span></dd></div>
+<div class="gi"><dt>記憶體</dt><dd>機器記東西的地方；這週是試算表，下週 Python 來讀它。<span class="where">這週：第 2 節。</span></dd></div>
+<div class="gi"><dt>部署（deploy）</dt><dd>把程式變成一個別人打得開的網址。<span class="where">這週：第 4 步。</span></dd></div>
+<div class="gi"><dt>版本（version）</dt><dd>部署當時那份程式的快照；改了程式要出新版本，網址才會更新。<span class="where">這週：〈卡關時〉「想更新同一個網址」。</span></dd></div>
+<div class="gi"><dt>新增部署作業</dt><dd>再開一條新網址；舊網址不會跟著更新。<span class="where">這週：別按錯，第 3 節。</span></dd></div>
+<div class="gi"><dt><code>/dev</code>、<code>/exec</code></dt><dd>試吃口（只有編輯者、永遠最新存檔）／正門（給同學、跑部署版本）。<span class="where">這週：第 4 步認尾巴。</span></dd></div>
+<div class="gi"><dt>授權</dt><dd>你簽名同意這支程式替你動試算表；Google 問一次，少勾一項它就做不到。<span class="where">這週：第 3 步。</span></dd></div>
+<div class="gi"><dt>尚未驗證</dt><dd>Google 不認識這支程式，因為它是你自己剛貼的；不是壞掉。<span class="where">這週：第 3 步授權畫面。</span></dd></div>
+<div class="gi"><dt>誰可以存取</dt><dd>店門開給誰：只有我／要登入 Google 的人／所有人。<span class="where">這週：第 4 步選「所有人」。</span></dd></div>
+<div class="gi"><dt>更新票數</dt><dd>再問一次後端「現在幾票」。<span class="where">這週：第 4 步最後一下。</span></dd></div>
+<div class="gi"><dt>agent</dt><dd>會替你動手的 AI：改檔、下指令，但每一步你看計畫、你同意。<span class="where">這週：路線 A 第 ④ 步。</span></dd></div>
+<div class="gi"><dt>clasp</dt><dd>Google 的 Apps Script 命令列工具；讓 agent 把程式推上你的專案、更新同一個網址。像跑腿送菜單到店裡。<span class="where">這週：路線 A。</span></dd></div>
+<div class="gi"><dt>命令列（終端機）</dt><dd>用打字下指令的那個黑視窗（PowerShell）。<span class="where">這週：路線 A 第 ① 步。</span></dd></div>
+<div class="gi"><dt><code>指令碼ID</code>／<code>部署ID</code></dt><dd>專案的門牌號／那條網址的門牌號；抓專案用前者、更新網址用後者。不要貼進作業或公開頁面。<span class="where">這週：路線 A 第 ③、⑤ 步。</span></dd></div>
+</dl>
+<p class="small hidden" id="glNone">沒有符合的名詞，換個字試試。</p>
+<p class="small"><span class="tag" title="內容規格 §四 白話與比喻">規格 §四·白話與比喻</span></p>
+</div>
+</section>
+
+<!-- ======================= 9 想一想 ======================= -->
+<section id="c9"><h2>9　想一想：十題，先猜再揭曉</h2>
+<p class="lead">答案都在上面九節裡。先選再按「揭曉」；選項每次重新整理會換順序。分數只存在這台瀏覽器。</p>
+<div class="ctl"><span class="status" id="quizScore" style="margin:0">答對 0／10</span><button type="button" class="ghost" id="qsReset">全部重來</button></div>
+<div id="qs"></div>
+</section>
+
+<!-- ======================= 10 出處 ======================= -->
+<section id="c10"><h2>10　出處</h2>
+<ul>
+<li>操作頁 <code>student.html</code>：四步、〈做完再請 AI 改一行〉路線 A／B、〈卡關時〉總表。本頁標籤寫「操作頁 第 N 步」的，就是那一步。</li>
+<li>教師手記 <code>teacher-notes.md</code>：〈上課安排〉11:10 那列「手機打不開先查兩件」、〈卡點與救援〉、〈路線 A 的設計與實測〉。</li>
+<li>本週內容規格 <code>內容規格.md</code> §〇 硬事實表：本頁標籤寫「規格 §〇·…」的，就是那一列；白話與比喻抄 §四，指令抄 §五。</li>
+<li>Google 官方三頁（跟操作頁頁尾同三條）：<a href="https://developers.google.com/apps-script/guides/web?hl=zh-tw#deploying_a_script_as_a_web_app">部署說明</a>（網頁應用程式、測試部署作業的 <code>/dev</code>）、<a href="https://developers.google.com/apps-script/concepts/deployments?hl=zh-tw#edit-versioned">版本更新說明</a>（管理部署作業 → 新版本）、<a href="https://developers.google.com/apps-script/guides/clasp?hl=zh-tw">clasp 說明</a>。</li>
+</ul>
+<p>這一頁沒有接 AI、不收集任何資料，離線打得開。每個模擬都是在你的瀏覽器裡假裝，不會動你的試算表或專案。</p>
+<p class="small">看完了？<a href="student.html">回操作頁做步驟</a>　｜　<a href="#top">回到頂端</a></p>
+</section>
+
+</main>
+<a class="top" href="#top" aria-label="回到頂端" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑</a>
+<script>
+(function(){
+'use strict';
+function $(s,r){return (r||document).querySelector(s);}
+function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function tg(cell,title){return '<span class="tag" title="'+esc(title||('內容規格 '+cell))+'">'+esc(cell)+'</span>';}
+function setStatus(el,html,cls){el.innerHTML=html;el.className='status'+(cls?' '+cls:'');}
+var OLD='哪一關想看老師再做一次？',NEW='下一段想看老師重做哪一關？';
+
+// ===== 0. 一張圖：四站 =====
+(function(){var stage=$('#mapStage');if(!stage)return;
+  var pop=$('#mapPop');
+  var ST={
+    ui:{name:'畫面＝前端（front end）',what:'手機看得到、按得到的畫面。它把你選的選項交給後端，也顯示票數；自己不記票。',where:'同學的手機或你的電腦：用瀏覽器打開 <code>/exec</code> 那條網址就長出來。',like:'餐廳的菜單和點餐單。',tag:'規格 §〇·三層'},
+    be:{name:'後端＝跑在 Google 機房的 <code>Code.gs</code>',what:'收單、檢查、記帳：驗場次和選項、上鎖排隊、在 <code>Votes</code> 加一列、回「已送出」。',where:'Google 機房。不在任何人的手機或電腦裡，所以你的電腦關了它照常跑。',like:'櫃台。',tag:'規格 §〇·後端做的四件事'},
+    db:{name:'試算表 <code>Votes</code>＝資料儲存',what:'一票一列，只記場次、選項。誰開都是同一張，所以不同裝置看到同一個票數。',where:'你那個個人 Gmail 的 Google 雲端硬碟裡。',like:'帳本。',tag:'規格 §〇·三層'},
+    rf:{name:'更新票數',what:'再問一次後端「現在幾票」。後端去 <code>Votes</code> 把這一場的每一列數一遍，回給畫面。',where:'按鈕在畫面上；數的動作在 Google 機房做。',like:'（這個不用比喻。）',tag:'規格 §〇·這週做什麼'}};
+  function show(id){var s=ST[id];
+    $$('.station',stage).forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-st')===id?'true':'false');});
+    pop.innerHTML='<b>'+s.name+'</b><br>做什麼：'+s.what+'<br>住在哪台電腦：'+s.where+'<br>比喻：'+s.like+' '+tg(s.tag);
+    stage.setAttribute('data-picked',id);}
+  $$('.station',stage).forEach(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-st'));});});
+  show('ui');
+})();
+
+// ===== 1. 一票的旅程：步進器 =====
+(function(){var chips=$('#jChips');if(!chips)return;
+  var track=$('#jTrack'),title=$('#jTitle'),see=$('#jSee'),why=$('#jWhy'),tagEl=$('#jTag'),prev=$('#jPrev'),next=$('#jNext'),box=$('#jBox');
+  var STEPS=[
+    {t:'① 畫面把「場次＋選項」交給後端',see:'畫面寫「正在送出。」，按鈕暫時按不了。',why:'前端把場次 <code>W10-1</code> 和你選的那一項交給 Google 機房的後端。畫面自己不記票。',tag:'規格 §〇·前端',where:['ui','be']},
+    {t:'② 後端先檢查：場次對不對、選項是不是三個之一',see:'（畫面還沒變。）',why:'場次不是現在這一場，回「場次已更換」；選項不是三個之一，回「請選擇畫面上的其中一個選項」。亂送的東西進不了表。',tag:'規格 §〇·後端做的四件事',where:['be']},
+    {t:'③ 上鎖排隊',see:'（畫面還沒變；人多時會等一下。）',why:'同時很多人送，後端一次只讓一個人寫，其他人排隊，兩票才不會撞在一起。等太久就回「目前送出的人較多」，請你再送一次。',tag:'規格 §〇·後端做的四件事',where:['be']},
+    {t:'④ <code>Votes</code> 加一列',see:'試算表底下多一列：場次、選項。',why:'後端在 <code>Votes</code> 最後面加一列、存檔。這一列就是你那一票，只記場次和選項。',tag:'規格 §〇·後端做的四件事',where:['db']},
+    {t:'⑤ 回「已送出一票。」',see:'畫面寫「已送出一票。」',why:'後端回「好了」，鎖打開，換下一個人寫。畫面只是轉述後端的話。',tag:'規格 §〇·後端做的四件事',where:['be','ui']},
+    {t:'⑥ 你按「更新票數」，後端再數一次',see:'你選的那一項多 1 票。',why:'「更新票數」＝再問一次後端「現在幾票」。後端把 <code>Votes</code> 這一場的每一列數一遍，回給畫面。',tag:'規格 §〇·後端做的四件事',where:['rf','be','db']}];
+  var i=0;
+  STEPS.forEach(function(s,k){var b=document.createElement('button');b.type='button';b.textContent='第 '+(k+1)+' 步';b.setAttribute('data-i',String(k));b.addEventListener('click',function(){go(k);});chips.appendChild(b);});
+  function go(k){i=Math.max(0,Math.min(STEPS.length-1,k));var s=STEPS[i];
+    $$('button',chips).forEach(function(b,k2){if(k2===i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+    $$('.station',track).forEach(function(st){st.classList.toggle('now',s.where.indexOf(st.getAttribute('data-st'))>=0);});
+    title.innerHTML=s.t;see.innerHTML=s.see;why.innerHTML=s.why;tagEl.innerHTML=tg(s.tag);
+    prev.disabled=i===0;next.disabled=i===STEPS.length-1;box.setAttribute('data-step',String(i+1));}
+  prev.addEventListener('click',function(){go(i-1);});next.addEventListener('click',function(){go(i+1);});
+  $('#jReveal').addEventListener('click',function(){$('#jAnswer').classList.remove('hidden');this.disabled=true;});
+  go(0);
+})();
+
+// ===== 2. 記憶體：本機預覽／雲端 =====
+(function(){var devs=$('#devs');if(!devs)return;
+  var mode='preview',local={me:0,mate:0,pc:0},cloud=0,sheet=$('#memSheet'),note=$('#memSheetNote'),status=$('#memStatus'),tabs=$$('#c2 .tabs button');
+  var ROUND='W10-1',OPT='找不到部署按鈕';
+  function render(){
+    tabs.forEach(function(b){b.classList.toggle('on',b.getAttribute('data-mode')===mode);});
+    $$('.dev',devs).forEach(function(d){var id=d.getAttribute('data-dev');var n=mode==='preview'?local[id]:cloud;$('.n',d).textContent=String(n);
+      $('.small',d).textContent=mode==='preview'?'票（只在這台）':'票（同一張表）';});
+    sheet.classList.toggle('on',mode==='cloud');
+    var rows='';for(var k=0;k<cloud;k++)rows+='<tr><td>'+ROUND+'</td><td>'+OPT+'</td></tr>';
+    $('table',sheet).innerHTML='<tr><th>場次</th><th>選項</th></tr>'+(mode==='cloud'?rows:'');
+    note.textContent=mode==='preview'?'本機預覽：什麼都沒寫進來':'雲端：每一票都寫進這裡';
+    devs.setAttribute('data-mode',mode);
+    if(mode==='preview')setStatus(status,'本機預覽：這台投的票只存在這台的瀏覽器，換一台看不到；試算表沒有任何一列。','bad');
+    else setStatus(status,'雲端 <code>/exec</code>：不管哪一台投，都寫進同一張 <code>Votes</code> 表，三台看到的票數一樣。','ok');}
+  tabs.forEach(function(b){b.addEventListener('click',function(){mode=b.getAttribute('data-mode');render();});});
+  $$('.devVote',devs).forEach(function(b){b.addEventListener('click',function(){var id=b.parentNode.getAttribute('data-dev');
+    if(mode==='preview')local[id]++;else cloud++;render();
+    if(mode==='preview')setStatus(status,'這一票記在「'+$('b',b.parentNode).textContent+'」的瀏覽器裡。其他兩台還是原來的數字，試算表也沒有這一列。','bad');
+    else setStatus(status,'這一票寫進 <code>Votes</code> 第 '+(cloud+1)+' 列。三台按「更新票數」都會看到 '+cloud+' 票。','ok');});});
+  render();
+})();
+
+// ===== 3. 存檔不等於上線：模擬器 =====
+(function(){var bSave=$('#dpSave');if(!bSave)return;
+  var bNew=$('#dpNew'),bAdd=$('#dpAdd'),bReset=$('#dpReset'),phone=$('#dpPhone'),ttl=$('#dpPhoneTitle'),ver=$('#dpVer'),url=$('#dpUrl'),qr=$('#dpQr'),dev=$('#dpDev'),status=$('#dpStatus');
+  var saved=false,v=1,oldUrlTitle=OLD,newUrl=false;
+  function render(){ttl.textContent=oldUrlTitle;ver.textContent=String(v);phone.classList.toggle('new',oldUrlTitle===NEW);
+    url.innerHTML=newUrl?'多了一條新網址（新網址看到：新標題）':'沒變，還是原本那一條';
+    qr.innerHTML='能用，掃到的是'+(oldUrlTitle===NEW?'新標題':'舊標題')+(newUrl&&oldUrlTitle!==NEW?'（它指著原網址，不是新那條）':'');
+    dev.innerHTML=saved?'新標題（永遠最新存檔，只有你打得開）':'舊標題（你還沒儲存）';
+    phone.setAttribute('data-title',oldUrlTitle===NEW?'new':'old');phone.setAttribute('data-newurl',newUrl?'yes':'no');}
+  bSave.addEventListener('click',function(){saved=true;render();
+    setStatus(status,'存了。但 <code>/exec</code> 不會變：手機重新整理還是舊標題。<code>/dev</code> 試吃口已經是新的了。','bad');});
+  bNew.addEventListener('click',function(){if(!saved){setStatus(status,'先按「儲存」：改的那一行要先存進專案，這個模擬才讓你出版本。','bad');return;}
+    v++;oldUrlTitle=NEW;render();
+    setStatus(status,'版本 '+(v-1)+' → '+v+'：同一條網址、內容更新。手機重新整理看到新標題，發出去的 QR 照樣能用。','ok');});
+  bAdd.addEventListener('click',function(){if(!saved){setStatus(status,'先按「儲存」：改的那一行要先存進專案，這個模擬才讓你出版本。','bad');return;}
+    newUrl=true;render();
+    if(oldUrlTitle===NEW)setStatus(status,'多了一條新網址，兩條都是新標題。可是同學手上只有原網址，多出來的那條沒人用；回「管理部署作業」用原本那一個，多的可以封存。','bad');
+    else setStatus(status,'多了一條新網址，新網址是新標題。原網址（同學手上的 QR）還是版本 '+v+'＝舊標題。要讓原網址更新，還是得「管理部署作業 → 新版本」。','bad');});
+  bReset.addEventListener('click',function(){saved=false;v=1;oldUrlTitle=OLD;newUrl=false;render();setStatus(status,'重來：你剛改了標題，還沒儲存。');});
+  render();
+})();
+
+// ===== 4. 授權畫面 =====
+(function(){var go=$('#auGo');if(!go)return;
+  var c1=$('#auChk1'),c2=$('#auChk2'),res=$('#auResult'),log=$('#auLog'),sheet=$('#auSheet'),status=$('#auStatus'),rescue=$('#auRescue'),fix=$('#auFix'),consent=$('#consent');
+  go.addEventListener('click',function(){var all=c1.checked&&c2.checked;res.classList.remove('hidden');
+    log.innerHTML='完成 ✔（兩種情況都這樣寫）';
+    if(all){sheet.innerHTML='多出 <code>Votes</code> 分頁，第一列「場次」「選項」 ✓';setStatus(status,'全勾：程式拿到它要的權限，試算表長出 <code>Votes</code>。看到兩欄才算過。','ok');rescue.classList.add('hidden');}
+    else{sheet.innerHTML='沒有 <code>Votes</code> ✗';setStatus(status,'少勾一項：執行記錄照樣說完成，但程式動不了試算表，<code>Votes</code> 沒長出來。這是本週最會卡的一關。','bad');rescue.classList.remove('hidden');}
+    consent.setAttribute('data-result',all?'ok':'missing');});
+  fix.addEventListener('click',function(){c1.checked=false;c2.checked=false;res.classList.add('hidden');rescue.classList.add('hidden');consent.removeAttribute('data-result');c1.focus();});
+})();
+
+// ===== 5. 誰可以存取 =====
+(function(){var radios=$$('input[name="acc"]');if(!radios.length)return;
+  var phone=$('#accPhone'),box=$('#accPhoneBox'),status=$('#accStatus');
+  var SEE={me:{p:'存取遭拒。',s:'只有部署的你自己、登入後才打得開。同學全部被擋在門外。',cls:'bad'},
+    google:{p:'請先登入 Google。',s:'同學要先登入 Google 帳戶才看得到投票板；沒登入、或手機沒有 Google 帳號的人進不來。',cls:'bad'},
+    anyone:{p:OLD+'　→ 直接投票',s:'不用登入，直接看到投票板、按一下就投。這週選這個。',cls:'ok'}};
+  radios.forEach(function(r){r.addEventListener('change',function(){var s=SEE[r.value];phone.textContent=s.p;box.setAttribute('data-acc',r.value);setStatus(status,s.s,s.cls);});});
+})();
+
+// ===== 6. 兩條路＋模擬終端機 =====
+(function(){var term=$('#term');if(!term)return;
+  var tabs=$$('#c6 .tabs button'),pB=$('#rtB'),pA=$('#rtA');
+  tabs.forEach(function(b){b.addEventListener('click',function(){var r=b.getAttribute('data-route');tabs.forEach(function(x){x.classList.toggle('on',x===b);});
+    pB.classList.toggle('hidden',r!=='b');pA.classList.toggle('hidden',r!=='a');});});
+  var pushed=false,v=1,lines=[],cloud=$('#tmCloud'),verEl=$('#tmVer'),phone=$('#tmPhone');
+  function line(cls,t){return '<span class="'+cls+'">'+esc(t)+'</span>';}
+  function side(){cloud.textContent=pushed?'新標題':'舊標題';cloud.className='v'+(pushed?' new':'');verEl.textContent='@'+v;
+    var p=pushed&&v>1;phone.textContent=p?'新標題':'舊標題';phone.className='v'+(p?' new':'');term.setAttribute('data-phone',p?'new':'old');}
+  function show(){term.innerHTML=lines.join('\n');}
+  var CMD={
+    push:function(){pushed=true;lines.push(line('cmd','$ clasp push -f'),line('did','  模擬：把電腦上的 Code.js、Index.html、appsscript.json 整份推上雲端專案，覆蓋雲端那一份。'),line('bad','  手機看到的：還是舊標題。網址跑的是部署當時的版本 @'+v+'，程式換了、版本沒換。'));},
+    list:function(){lines.push(line('cmd','$ clasp list-deployments'),line('did','  模擬：印出這個專案的部署'),line('dim','  部署ID  @HEAD   （沒版本號＝測試用，不是這條）'),line('dim','  部署ID  @'+v+'  - v'+v+'   （有版本號＝給同學的那條，用這個）'));},
+    deploy:function(){v++;lines.push(line('cmd','$ clasp create-deployment -i 貼上部署ID -d v'+v),line('did','  模擬：同一個部署ID，版本 @'+(v-1)+' → @'+v+'，網址不變。'));
+      if(pushed)lines.push(line('did','  手機重新整理：看到新標題 ✓'));
+      else lines.push(line('bad','  可是雲端的程式還沒改（你還沒 push），這個新版本跟舊的一樣：手機還是舊標題。先 push，再更新部署。'));}};
+  $$('.tm').forEach(function(b){b.addEventListener('click',function(){CMD[b.getAttribute('data-c')]();show();side();term.setAttribute('data-last',b.getAttribute('data-c'));});});
+  $('#tmReset').addEventListener('click',function(){pushed=false;v=1;lines=[];term.innerHTML='（按上面的指令，這裡會印出它做了什麼。）';side();term.removeAttribute('data-last');});
+  side();
+})();
+
+// ===== 7. 症狀 =====
+(function(){var sel=$('#sym');if(!sel)return;
+  var panel=$('#symPanel'),why=$('#symWhy'),chk=$('#symCheck'),link=$('#symLink'),empty=$('#symEmpty');
+  var S={
+    phone:{why:'網址貼成 <code>/dev</code>，或「誰可以存取」選成「任何擁有 Google 帳戶的使用者」、更小。',chk:'先查兩件：網址是不是 <code>/exec</code>、「部署 → 管理部署作業」的「誰可以存取」是不是「所有人」。改了要選「新版本」再部署；用無痕視窗驗。',to:'help',txt:'操作頁〈卡關時〉「手機說沒有權限，或網站開不出來」',tag:'規格 §〇·手機打不開先查兩件'},
+    novotes:{why:'授權畫面少勾了一項；少勾不報錯，執行記錄照樣說完成。',chk:'先確認看的是第 1 步建的練習表、重新整理一次。還是沒有：Google 帳戶「第三方應用程式與服務」找到這個專案 →「刪除所有連結」→ 重跑 <code>setupHelpBoard</code>、這次每一項都勾。看到 <code>Votes</code> 兩欄才算。',to:'help',txt:'操作頁〈卡關時〉「執行顯示完成，卻沒有 <code>Votes</code> 分頁」',tag:'規格 §〇·授權少勾會怎樣'},
+    nochange:{why:'只存檔、沒出新版本。<code>/exec</code> 跑的是部署當時那個版本。',chk:'部署 → 管理部署作業 → 選原本的 → 編輯 → 版本：新版本 → 部署。不要按「新增部署作業」，那會換網址。',to:'help',txt:'操作頁〈卡關時〉「我存了新程式，想更新同一個網址」',tag:'規格 §〇·存檔≠上線'},
+    index:{why:'第 2 步的畫面檔名不是一字不差的 <code>Index</code>（大寫 I）。後端照這個名字找畫面。',chk:'回編輯器看檔名；改好之後「管理部署作業 → 新版本」。',to:'step-2',txt:'操作頁第 2 步「畫面放在 <code>Index</code>」',tag:'規格 §〇·四步'},
+    pushed:{why:'只推了程式、沒更新部署。網址跑的還是舊版本。',chk:'<code>clasp list-deployments</code> 找有版本號的那個部署，<code>clasp create-deployment -i 貼上部署ID -d v2</code>（版本號往上加）。更新完用無痕視窗開一次，確認「誰可以存取」還是「所有人」。',to:'help',txt:'操作頁〈卡關時〉「路線 A：<code>push</code> 成功了，手機還是舊的」',tag:'規格 §〇·路線 A 最常錯'},
+    nofunc:{why:'<code>Code.gs</code> 的內容沒貼進左側的指令碼檔，或貼了沒存。',chk:'點左側指令碼檔（通常叫 <code>程式碼.gs</code>，檔名不用改），確認是 <code>Code.gs</code> 的內容；按儲存，等一下再看選單。',to:'help',txt:'操作頁〈卡關時〉「下拉選單找不到 <code>setupHelpBoard</code>」',tag:'操作頁 第 2 步'},
+    newdep:{why:'多出一條新的 <code>/exec</code> 網址，同學手上那條不會跟著更新。',chk:'回「部署 → 管理部署作業」用原本那一個出新版本；多出來的可以封存。',to:'help',txt:'操作頁〈卡關時〉「改程式後不小心又按了『新增部署作業』」',tag:'規格 §〇·存檔≠上線'}};
+  function render(){var k=sel.value;if(!k||!S[k]){panel.classList.add('hidden');empty.classList.remove('hidden');panel.removeAttribute('data-sym');return;}
+    var s=S[k];empty.classList.add('hidden');panel.classList.remove('hidden');why.innerHTML=s.why;chk.innerHTML=s.chk+' '+tg(s.tag);
+    link.innerHTML='對應：<a href="student.html#'+s.to+'">'+s.txt+'</a>';panel.setAttribute('data-sym',k);}
+  sel.addEventListener('change',render);render();
+})();
+
+// ===== 8. 名詞表搜尋 =====
+(function(){var q=$('#glQ');if(!q)return;
+  var items=$$('#glList .gi'),n=$('#glN'),none=$('#glNone');
+  function filter(){var s=q.value.trim().toLowerCase(),k=0;
+    items.forEach(function(it){var hit=!s||it.textContent.toLowerCase().indexOf(s)>=0;it.classList.toggle('hidden',!hit);if(hit)k++;});
+    n.textContent=k+' 個名詞';none.classList.toggle('hidden',k>0);}
+  q.addEventListener('input',filter);filter();
+})();
+
+// ===== 9. 想一想 =====
+(function(){var box=$('#qs');if(!box)return;
+  var KEY='w10-concepts-quiz',scoreEl=$('#quizScore');
+  var QS=[
+    {q:'網頁跳出「已送出一票。」，要去哪裡確認真的有收到？',o:['畫面已經說了，一定有','試算表 <code>Votes</code> 多了一列','看執行記錄有沒有寫完成','再按一次送出'],a:1,
+      e:'畫面只是轉述後端的話；帳在試算表。三件驗收：手機能投票、試算表多一列、電腦按「更新票數」看得到新票數。'+tg('規格 §〇·三件驗收')},
+    {q:'同一票進來，誰在檢查「選項是不是三個之一」？',o:['手機上的畫面','試算表自己','跑在 Google 機房的後端','老師'],a:2,
+      e:'後端收單、檢查、記帳：驗場次和選項、上鎖排隊、加一列、回「已送出」。畫面只負責把你選的交出去。'+tg('規格 §〇·後端做的四件事')},
+    {q:'改了程式、按了儲存，手機重新整理還是舊的。為什麼？',o:['手機要清快取','要重新建一份試算表','<code>/exec</code> 跑的是部署當時那個版本，要出新版本','儲存要等十分鐘才生效'],a:2,
+      e:'存檔不等於上線：部署 → 管理部署作業 → 選原本的 → 編輯 → 版本：新版本 → 部署，網址不變、內容更新。'+tg('規格 §〇·存檔≠上線')},
+    {q:'「管理部署作業 → 新版本」和「新增部署作業」差在哪？',o:['一樣，都是更新網站','前者網址不變、內容更新；後者多一條新網址，舊網址不更新','前者比較慢','後者才會更新手機'],a:1,
+      e:'新增部署作業＝再開一條新網址，發出去的舊網址（和 QR）不會跟著更新；要用原本那一條就走管理部署作業。'+tg('規格 §〇·存檔≠上線')},
+    {q:'授權畫面少勾一項會怎樣？',o:['馬上跳錯誤，程式不讓你執行','執行記錄照樣說完成，但試算表不會長出 <code>Votes</code>','只會慢一點','Google 會寄信提醒你'],a:1,
+      e:'少勾不報錯。救法：Google 帳戶「第三方應用程式與服務」找到專案 → 刪除所有連結 → 重跑 <code>setupHelpBoard</code> 全勾。看到兩欄才算。'+tg('規格 §〇·授權少勾會怎樣')},
+    {q:'「Google 尚未驗證這個應用程式」是什麼意思？',o:['程式壞了，重貼一次','程式是你自己剛貼的，Google 不認識它；正常，按進階往下走','你的帳號被停用','要先付費'],a:1,
+      e:'這支程式是你自己剛貼進去的，Google 當然沒驗證過它；左下「進階」→「前往 …（不安全）」→ 每一項都勾。'+tg('規格 §〇·授權畫面')},
+    {q:'這週「誰可以存取」為什麼可以選「所有人」？',o:['因為老師說的','表裡只有場次和選項、沒個資，同學手機不用登入就能投','選所有人比較快','Apps Script 只有這個選項'],a:1,
+      e:'表裡沒有任何個人資料。以後的表若會記名字或成績，就要縮小到「任何擁有 Google 帳戶的使用者」或更小。'+tg('規格 §〇·誰可以存取三種')},
+    {q:'本機預覽（直接用瀏覽器開 <code>Index.html</code>）投的票，同學看得到嗎？',o:['看得到，跟雲端一樣','看不到，票只存在那個瀏覽器','老師看得到，同學看不到','重新整理後看得到'],a:1,
+      e:'預覽的票只在那個瀏覽器裡，別人看不到；正式投票只認 <code>/exec</code>，每一票寫進同一張 <code>Votes</code>。'+tg('規格 §〇·前端')},
+    {q:'路線 A：agent 改完、<code>clasp push -f</code> 成功了，手機還是舊版。少了哪一步？',o:['再 <code>push</code> 一次','<code>clasp create-deployment -i 貼上部署ID -d v2</code> 更新同一個部署','重新 <code>clasp login</code>','重新建試算表'],a:1,
+      e:'只 <code>push</code> 不更新部署，手機看到的永遠是舊版。<code>clasp list-deployments</code> 找有版本號的那個部署，再 <code>clasp create-deployment</code> 出新版本。'+tg('規格 §〇·路線 A 最常錯')},
+    {q:'<code>/dev</code> 和 <code>/exec</code>，哪一條給同學？',o:['<code>/dev</code>，因為永遠最新','<code>/exec</code>；<code>/dev</code> 只有編輯者打得開、跑最新存檔','兩條都可以','看老師心情'],a:1,
+      e:'<code>/dev</code>＝試吃口（測試部署作業，只有專案編輯者打得開、永遠跑最新存檔）；<code>/exec</code>＝正門（跑部署當時那個版本），給同學的是這條。<span class="tag" title="內容規格 §〇 /dev 與 /exec">規格 §〇·<code>/dev</code> 與 <code>/exec</code></span>'}];
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return {};}}
+  function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+  var state=load();
+  function shuffled(n){var a=[];for(var i=0;i<n;i++)a.push(i);for(var j=n-1;j>0;j--){var r=Math.floor(Math.random()*(j+1));var t=a[j];a[j]=a[r];a[r]=t;}return a;}
+  function score(){var n=0,m=0;QS.forEach(function(q,i){var s=state[i];if(s&&s.r){m++;if(s.p===q.a)n++;}});
+    scoreEl.textContent='答對 '+n+'／'+QS.length+(m>0&&m<QS.length?'（揭曉了 '+m+' 題）':'');scoreEl.className='status'+(m===QS.length?(n===QS.length?' ok':''):'');}
+  function paint(div,q,i){var s=state[i]||{},pick=typeof s.p==='number'?s.p:-1;
+    $$('.opt',div).forEach(function(x){var k=Number(x.getAttribute('data-k'));x.setAttribute('aria-pressed',k===pick?'true':'false');
+      x.classList.toggle('right',!!s.r&&k===q.a);x.classList.toggle('wrong',!!s.r&&k===pick&&k!==q.a);});
+    var ans=$('.ans',div),yours=$('.yours',div);
+    if(s.r){ans.classList.remove('hidden');ans.className='ans '+(pick===q.a?'ok':'no');ans.innerHTML=(pick===q.a?'✅ 對。':(pick<0?'沒選也可以看答案。':'❌ 不對。'))+q.e;
+      yours.textContent=pick===q.a?'答對了！':'再想想看上面的解釋。';}
+    else{ans.classList.add('hidden');ans.className='ans hidden';ans.innerHTML='';yours.textContent=pick<0?'':'你選了一個答案，按「揭曉」看對不對。';}
+    div.setAttribute('data-revealed',s.r?'1':'0');}
+  // 題目與選項是本頁自己寫死的字串（可含 <code>），不是使用者輸入，所以不經 esc()
+  function build(){box.innerHTML=QS.map(function(q,i){return '<div class="qq" data-q="'+i+'"><h3>'+(i+1)+'. '+q.q+'</h3><div class="opts">'+
+      shuffled(q.o.length).map(function(k){return '<button type="button" class="opt" data-k="'+k+'" aria-pressed="false">'+q.o[k]+'</button>';}).join('')+
+      '</div><div class="qbar"><button type="button" class="rv">揭曉</button><span class="yours"></span></div><div class="ans hidden"></div></div>';}).join('');
+    $$('.qq',box).forEach(function(div){var i=Number(div.getAttribute('data-q')),q=QS[i];
+      $$('.opt',div).forEach(function(b){b.addEventListener('click',function(){var s=state[i]||{};if(s.r)return;s.p=Number(b.getAttribute('data-k'));state[i]=s;save(state);paint(div,q,i);});});
+      $('.rv',div).addEventListener('click',function(){var s=state[i]||{};s.r=true;state[i]=s;save(state);paint(div,q,i);score();});
+      paint(div,q,i);});
+    score();}
+  $('#qsReset').addEventListener('click',function(){state={};save(state);build();});
+  build();
+})();
+})();
+</script>
+</body></html>

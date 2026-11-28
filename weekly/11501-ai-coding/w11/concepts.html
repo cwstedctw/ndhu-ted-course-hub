@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>W11 觀念頁｜四個帳號怎麼接、門禁怎麼擋人</title>
+<style>
+:root{
+  --bg:#f4f6ed;--fg:#153d36;--muted:#51695f;--line:#bbc9bf;--card:#fff;
+  --accent:#1f6153;--accent2:#09695b;--tagbg:#e0ece2;--tagfg:#0b4a3e;
+  --note-bg:#fff9e8;--note-line:#c9963b;
+  --pre-bg:#133e34;--pre-fg:#f4f6ed;--code-bg:#e6ece5;
+  --see-bg:#eef3fb;--see-line:#4b6cb7;
+  --test-bg:#eef7ee;--test-line:#3b8b4a;
+  --stuck-bg:#fbf1f1;--stuck-line:#b85c5c;
+  --btn-bg:#1f6153;--btn-fg:#fff;
+  font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  color:var(--fg);background:var(--bg);line-height:1.8
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#121917;--fg:#e4ebe6;--muted:#a8b8ae;--line:#3a4a42;--card:#1b2420;
+    --accent:#6fc3b0;--accent2:#8fd3c3;--tagbg:#243a33;--tagfg:#cfe9df;
+    --note-bg:#2a2414;--note-line:#d7a548;
+    --pre-bg:#0b1b17;--pre-fg:#e8f0ea;--code-bg:#243a33;
+    --see-bg:#17213a;--see-line:#7f9ce6;
+    --test-bg:#162a1b;--test-line:#6cc27a;
+    --stuck-bg:#2e1b1b;--stuck-line:#e08a8a;
+    --btn-bg:#6fc3b0;--btn-fg:#0b1b17
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg)}
+main{max-width:900px;margin:auto;padding:28px 20px 90px}
+a{color:var(--accent2);text-underline-offset:4px}
+header{padding:28px 0 22px;border-bottom:2px solid var(--accent)}
+h1{font-size:clamp(26px,5vw,42px);line-height:1.3;margin:.3em 0;max-width:760px}
+h2{font-size:25px;line-height:1.4;margin:52px 0 6px;padding-top:10px;border-top:2px solid var(--accent)}
+h3{font-size:19px;margin:22px 0 6px}
+h4{font-size:16.5px;margin:6px 0 4px;color:var(--accent2)}
+.eyebrow{letter-spacing:.09em;font-weight:700;color:var(--muted)}
+.lead{font-size:18px}
+section{scroll-margin-top:16px}
+p{margin:8px 0}
+.note{padding:12px 18px;border-left:4px solid var(--note-line);background:var(--note-bg);margin:12px 0}
+.small{font-size:14px;color:var(--muted)}
+.tag{display:inline-block;padding:0 7px;margin:0 2px;border-radius:7px;background:var(--tagbg);color:var(--tagfg);font-size:12.5px;font-weight:800;line-height:1.7;white-space:nowrap;vertical-align:1px}
+.tag code{background:transparent;padding:0;color:inherit;font-size:12px}
+table{width:100%;border-collapse:collapse;background:var(--card);table-layout:fixed;margin:10px 0}
+th,td{border:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top;overflow-wrap:anywhere;word-break:break-word}
+th{background:var(--tagbg)}
+pre{white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;background:var(--pre-bg);color:var(--pre-fg);padding:14px 16px;border-radius:8px;margin:8px 0;font:14.5px/1.75 ui-monospace,Consolas,"Microsoft JhengHei",monospace;max-width:100%}
+code{background:var(--code-bg);border-radius:4px;padding:1px 5px;overflow-wrap:anywhere;word-break:break-word;font:15px ui-monospace,Consolas,"Microsoft JhengHei",monospace}
+pre code{background:transparent;padding:0;font:inherit}
+kbd{font:14px ui-monospace,Consolas,monospace;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--card)}
+/* 起步檔真的會印在網頁上的原句 */
+samp.real{font:inherit;display:block;margin:6px 0 0;padding:6px 10px;border-radius:6px;background:var(--card);border:1px dashed var(--muted);overflow-wrap:anywhere}
+samp.real::before{content:"網頁上的原句：";display:block;font-size:12.5px;font-weight:800;color:var(--muted)}
+samp.real.red{border:2px solid var(--stuck-line);background:var(--stuck-bg)}
+samp.real.red::before{content:"網頁上的紅框原句：";color:var(--stuck-line)}
+ol,ul{padding-left:1.3em}
+li{margin:6px 0}
+button{font:inherit;font-size:15px;cursor:pointer;border:0;border-radius:6px;padding:6px 14px;background:var(--btn-bg);color:var(--btn-fg);max-width:100%;overflow-wrap:anywhere}
+button.ghost{background:transparent;color:var(--accent2);border:1px solid var(--accent2)}
+button code{background:transparent;color:inherit;padding:0 2px;font-size:.95em}
+button[disabled]{opacity:.45;cursor:not-allowed}
+button:active:not([disabled]){transform:translateY(1px)}
+:focus-visible{outline:3px solid var(--note-line);outline-offset:3px}
+input[type=search]{font:inherit;padding:6px 10px;border:2px solid var(--accent);border-radius:8px;background:var(--card);color:var(--fg);width:min(100%,280px)}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 18px;margin:18px 0}
+.toc ol{margin:6px 0;columns:2 300px}
+.toc li{break-inside:avoid}
+.legend{margin:10px 0 0;font-size:14px;color:var(--muted)}
+.top{position:fixed;right:10px;bottom:10px;background:var(--btn-bg);color:var(--btn-fg);border-radius:50%;width:36px;height:36px;opacity:.85;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+/* 每節：一句白話 → 一個實驗台 → 所以在操作頁 */
+.lab{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0}
+.lab > :first-child{margin-top:0}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.tabs button{background:transparent;color:var(--accent2);border:1px solid var(--accent2);font-weight:700}
+.tabs button.on{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg)}
+.status{min-height:1.8em;font-weight:700;margin:10px 0 0;padding:6px 12px;border-radius:0 6px 6px 0;background:var(--see-bg);border-left:4px solid var(--see-line)}
+.status.ok{background:var(--test-bg);border-color:var(--test-line)}
+.status.bad{background:var(--stuck-bg);border-color:var(--stuck-line)}
+.pop{margin:0;padding:8px 14px;border-left:4px solid var(--note-line);background:var(--note-bg);border-radius:0 6px 6px 0;min-height:2.6em}
+.so{margin:12px 0 0;padding:8px 14px;border-left:4px solid var(--see-line);background:var(--see-bg);border-radius:0 6px 6px 0;font-weight:700}
+.sim{display:inline-block;font-size:13px;font-weight:800;color:var(--note-line);border:1px dashed var(--note-line);border-radius:6px;padding:0 8px;margin:0 0 8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.two > div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 12px;min-width:0}
+.two h4{margin-top:0}
+.hidden{display:none!important}
+/* 站（地圖、旅程、時間軸共用） */
+.map{display:flex;gap:6px;align-items:stretch}
+.station{flex:1 1 0;min-width:0;background:var(--card);color:var(--fg);border:2px solid var(--line);border-radius:10px;padding:8px 8px 10px;text-align:center;line-height:1.5}
+.station .ico{display:block;font-size:26px;line-height:1.2}
+.station b{display:block;font-size:16.5px;margin-top:2px}
+.station .small{display:block;line-height:1.45;margin-top:2px}
+.station[aria-pressed=true],.station.lit{border-color:var(--accent);background:var(--tagbg)}
+.station.now{border-color:var(--test-line);background:var(--test-bg);box-shadow:0 0 0 3px var(--test-line)}
+.arrow{flex:0 0 auto;align-self:center;color:var(--muted);font-weight:900;font-size:20px}
+.arrow::before{content:"→"}
+/* 0 四站地圖：左邊地圖、右邊說明 */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:14px;align-items:start}
+.vmap{display:flex;flex-direction:column;gap:4px}
+.vmap .station{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:8px;align-items:center;text-align:left;padding:8px 10px}
+.vmap .station .ico{grid-row:1/3}
+.vmap .station b{margin:0}
+.vmap .arrow{align-self:flex-start;margin-left:20px;font-size:18px;line-height:1.1}
+.vmap .arrow::before{content:"↓"}
+.path{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;padding:0;list-style:none}
+.path li{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:14px;margin:0}
+.path li.to{border:0;background:none;padding:0 2px;color:var(--muted);font-weight:900}
+/* 1 步進器 */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.chips button{background:transparent;color:var(--accent2);border:1px solid var(--accent2);border-radius:999px;padding:3px 12px}
+.chips button[aria-current=step]{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg);font-weight:800}
+.stepbox{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--bg);margin:10px 0}
+.stepbox h4{margin:0 0 4px;font-size:17px}
+/* 2 鑰匙卡 */
+.keys{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0}
+.kc{border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);min-width:0}
+.kc h4{margin:0 0 2px;font-size:17px;color:var(--fg)}
+.kc .looks{font-size:14px;color:var(--muted);margin:0 0 8px}
+.kc .ask{display:flex;flex-wrap:wrap;gap:6px}
+.kc .ask button{background:transparent;color:var(--accent2);border:1px solid var(--accent2)}
+.kc .ask button[aria-pressed=true]{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg)}
+.kc[data-verdict=right]{border-color:var(--test-line)}
+.kc[data-verdict=wrong]{border-color:var(--stuck-line)}
+.kres{margin:8px 0 0;padding:6px 10px;border-radius:0 6px 6px 0;border-left:4px solid var(--see-line);background:var(--see-bg)}
+.kres.ok{border-color:var(--test-line);background:var(--test-bg)}
+.kres.no{border-color:var(--stuck-line);background:var(--stuck-bg)}
+/* 3 門禁模擬器 */
+.sw{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 10px}
+.sw > div{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--bg);min-width:0}
+.sw .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.sql{margin:4px 0 0;font-size:13.5px;overflow-wrap:anywhere}
+.sql code{font-size:13.5px}
+.sql.off code{text-decoration:line-through;opacity:.65}
+.sql .st{display:block;font-size:13px;font-weight:800}
+.gate{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
+.screen{border:3px solid var(--line);border-radius:16px;padding:8px 12px;background:var(--card);min-width:0}
+.screen .bar{font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line);margin-bottom:6px;padding-bottom:3px}
+.screen .ttl{font-weight:800}
+.screen.admin{border-style:dashed}
+.rows{list-style:none;padding:0;margin:4px 0}
+.rows li{border:1px solid var(--line);border-radius:8px;padding:3px 8px;margin:4px 0;background:var(--bg);font-size:14.5px}
+.rows li.mine{border-color:var(--test-line)}
+.rows li.theirs{border-color:var(--stuck-line);background:var(--stuck-bg)}
+.rows .empty{border:0;background:none;color:var(--muted);padding:0}
+/* 4 時間軸 */
+.tl{display:flex;gap:6px;align-items:stretch}
+.tl .station{padding:6px 6px 8px}
+.tl .station b{font-size:15.5px}
+.tl .station.skip{border-style:dashed;border-color:var(--stuck-line);background:var(--stuck-bg)}
+.tl .station.after{opacity:.5}
+.tl .station.goal{cursor:default}
+.phone{border:3px solid var(--line);border-radius:18px;padding:10px 12px;background:var(--card);max-width:340px}
+.phone .bar{font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line);margin-bottom:6px;padding-bottom:3px;overflow-wrap:anywhere}
+.phone .ttl{font-weight:800;font-size:16.5px;line-height:1.45}
+.phone[data-state=new]{border-color:var(--test-line)}
+.phone[data-state=error]{border-color:var(--stuck-line)}
+.kv{display:grid;grid-template-columns:minmax(0,11em) minmax(0,1fr);gap:6px 10px;margin:10px 0;align-items:start}
+.kv .k{font-weight:700;color:var(--muted)}
+.kv .v{min-width:0}
+/* 5 模擬 PR 畫面 */
+.pr{border:2px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden}
+.pr .head{padding:8px 12px;border-bottom:1px solid var(--line)}
+.pr .head b{display:block;font-size:16.5px}
+.pr .badge{display:inline-block;font-size:13px;font-weight:800;border-radius:999px;padding:0 10px;background:var(--test-bg);border:1px solid var(--test-line)}
+.pr .badge.merged{background:var(--tagbg);border-color:var(--accent)}
+.pr .tabs{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px 0}
+.pr .body{padding:8px 12px 12px}
+.files{list-style:none;padding:0;margin:6px 0}
+.files li{border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:6px 0;background:var(--bg)}
+.files li b{display:block}
+.files li b::before{content:"＋ ";color:var(--test-line)}
+.repo2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0}
+.repo2 > div{border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--bg);min-width:0}
+.repo2 .n{font-size:24px;font-weight:900;line-height:1.2}
+.repo2 .fl{font-size:13.5px;line-height:1.6;overflow-wrap:anywhere;margin:2px 0 0}
+.repo2 .fl code{font-size:12.5px}
+.repo2 .fl .add{color:var(--test-line);font-weight:800}
+/* 6 症狀 */
+select{font:inherit;padding:6px 10px;border:2px solid var(--accent);border-radius:8px;background:var(--card);color:var(--fg);max-width:100%}
+.mini{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px;padding:0;list-style:none}
+.mini li{margin:0;border:2px solid var(--line);border-radius:999px;padding:1px 12px;font-size:14px;background:var(--card)}
+.mini li.lit{border-color:var(--stuck-line);background:var(--stuck-bg);font-weight:800}
+/* 7 名詞表 */
+dl.gl{margin:10px 0}
+.gi{padding:6px 0;border-bottom:1px dashed var(--line)}
+.gi dt{font-weight:800}
+.gi dd{margin:0}
+.gi .like,.gi .where{display:block;font-size:14px;color:var(--muted)}
+/* 8 想一想 */
+.qq{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:12px 0;background:var(--card)}
+.qq h3{margin:0 0 6px;font-size:16.5px}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:10px;padding:6px 12px;font-size:15px}
+.opt[aria-pressed=true]{border-color:var(--note-line);background:var(--note-bg)}
+.opt.right{border-color:var(--test-line);background:var(--test-bg)}
+.opt.wrong{border-color:var(--stuck-line);background:var(--stuck-bg)}
+.qbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.qbar .yours{font-size:14px;color:var(--muted)}
+.ans{margin-top:8px;padding:8px 12px;border-radius:0 8px 8px 0;border-left:4px solid var(--see-line);background:var(--see-bg)}
+.ans.ok{border-color:var(--test-line);background:var(--test-bg)}
+.ans.no{border-color:var(--stuck-line);background:var(--stuck-bg)}
+@media (max-width:760px){
+  .split,.gate,.sw{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  main{padding:20px 16px 80px}
+  th,td{padding:7px 5px;font-size:14px}
+  pre{font-size:13px;padding:12px}
+  code{font-size:13.5px}
+  h2{font-size:22px}
+  .lead{font-size:16.5px}
+  .map,.tl{flex-direction:column;gap:4px}
+  .map .arrow::before,.tl .arrow::before{content:"↓"}
+  .two,.keys,.repo2{grid-template-columns:1fr}
+  .kv{grid-template-columns:1fr}
+  .kv .k{margin-top:4px}
+}
+@media print{.top{display:none}main{max-width:none;padding:0}}
+</style>
+</head>
+<body><main id="top">
+
+<header>
+<p class="eyebrow">和 AI 一起寫程式：創意生活應用　第 11 週　2026-11-16（一）　觀念頁</p>
+<h1>我的學習紀錄：完整走一輪</h1>
+<p class="lead">這頁講「為什麼」，<a href="student.html">動手步驟在操作頁</a>。每一節都是一句白話、一個可以按的東西、一行「所以在操作頁的第幾步」。全部在你的瀏覽器裡模擬，<b>不連網、不碰你的 Supabase 或 GitHub</b>。看不懂的詞，第 7 節名詞表可以搜。</p>
+<div class="toc"><b>十節</b>
+<ol start="0">
+<li value="0"><a href="#c0">四個帳號，一張圖</a></li>
+<li><a href="#c1">一筆紀錄的旅程</a>：按下「存起來」之後的六步</li>
+<li><a href="#c2">兩把鑰匙</a>：哪些能放進 <code>config.js</code></li>
+<li><a href="#c3">門禁模擬器</a>：兩個開關、兩個帳號</li>
+<li><a href="#c4">推上去就上線</a>：漏掉一步會怎樣</li>
+<li><a href="#c5">Cloudflare 有時會發 PR 給你</a></li>
+<li><a href="#c6">卡住了先看哪裡</a>：選症狀</li>
+<li><a href="#c7">名詞表</a>：可以搜</li>
+<li><a href="#c8">想一想</a>：十題，揭曉看解釋</li>
+<li><a href="#c9">出處</a></li>
+</ol>
+<p class="legend">小標籤＝這句話從哪裡抄來的：<span class="tag">規格 §〇·…</span>本週內容規格的硬事實表那一列；<span class="tag">操作頁 第 N 步</span>操作頁那一步；<span class="tag">起步檔 <code>app.js</code></span>起步檔真的會印在網頁上的原句；<span class="tag">手記·…</span>老師的教師手記。</p>
+</div>
+</header>
+
+<!-- ======================= 0 四個帳號 ======================= -->
+<section id="c0"><h2>0　四個帳號，一張圖</h2>
+<p class="lead">四個帳號，各管一件事：你說需求、AI 寫；GitHub 存；Cloudflare 放上網路；Supabase 管登入和資料。</p>
+<p>上週的投票板不用登入、票存在試算表；這週要登入，而且每個人只看得到自己的紀錄。四個帳號不是四套要學的軟體，是四個分工的角色。<span class="tag" title="內容規格 §〇 四個帳號四個角色">規格 §〇·四個角色</span><span class="tag" title="內容規格 §〇 W10→W11 對照">規格 §〇·W10→W11 對照</span></p>
+<div class="lab">
+<p class="small" style="margin-top:0">點一站，右邊講它管什麼、在哪一步出場。</p>
+<div class="split">
+<div class="vmap" id="mapStage">
+<button type="button" class="station" data-st="ai" aria-pressed="true"><span class="ico">🤖</span><b>AI 寫程式</b><span class="small">Codex 或 Claude</span></button>
+<span class="arrow" aria-hidden="true"></span>
+<button type="button" class="station" data-st="gh" aria-pressed="false"><span class="ico">📦</span><b>GitHub：存每一版</b><span class="small">放網站檔案的 repo</span></button>
+<span class="arrow" aria-hidden="true"></span>
+<button type="button" class="station" data-st="cf" aria-pressed="false"><span class="ico">🌐</span><b>Cloudflare：放上網路</b><span class="small">給它一個網址</span></button>
+<span class="arrow" aria-hidden="true"></span>
+<button type="button" class="station" data-st="sb" aria-pressed="false"><span class="ico">🗄️</span><b>Supabase：登入＋資料庫</b><span class="small">認人、存紀錄、門禁</span></button>
+</div>
+<div class="pop" id="mapPop" aria-live="polite"></div>
+</div>
+<p class="small" style="margin:12px 0 0">從一句話到上線的路線：</p>
+<ol class="path" aria-label="從一句話到上線的路線"><li>你的一句話</li><li class="to" aria-hidden="true">→</li><li>AI 寫成檔案</li><li class="to" aria-hidden="true">→</li><li>GitHub 存起來</li><li class="to" aria-hidden="true">→</li><li>Cloudflare 變成網址</li><li class="to" aria-hidden="true">→</li><li>同學用手機打開，登入、存紀錄都找 Supabase</li></ol>
+<p class="small">你只講第一站，其餘是工具接力；你的工作是每一站驗一次。<span class="tag" title="內容規格 §二 第 3 頁老師一句">規格 §二·第 3 頁</span></p>
+</div>
+<p class="so">所以在操作頁：第 0 步先把 GitHub、Supabase、Cloudflare 都登入（GitHub 一個帳號帶另外兩個）。<a href="student.html#step-0">去第 0 步</a></p>
+</section>
+
+<!-- ======================= 1 一筆紀錄的旅程 ======================= -->
+<section id="c1"><h2>1　一筆紀錄的旅程</h2>
+<p class="lead">按下「存起來」之後，一筆紀錄要走六步；擋住別人的是資料庫，不是網頁。</p>
+<p>比喻沿用置物櫃那一套：資料表＝一整排置物櫃，一格放一筆；登入＝刷學生證，Supabase 認出你是誰，發你一張通行證。<span class="tag" title="內容規格 §四 白話與比喻">規格 §四·比喻</span></p>
+<div class="lab">
+<div class="ctl"><button type="button" class="ghost" id="jPrev">← 上一步</button><button type="button" id="jNext">下一步 →</button></div>
+<div class="chips" id="jChips" role="group" aria-label="六步"></div>
+<div class="map" id="jTrack" aria-hidden="true">
+<span class="station" data-st="web"><span class="ico">📱</span><b>網頁</b></span><span class="arrow"></span>
+<span class="station" data-st="key"><span class="ico">🔑</span><b>公開鑰匙</b></span><span class="arrow"></span>
+<span class="station" data-st="pass"><span class="ico">🎫</span><b>認通行證</b></span><span class="arrow"></span>
+<span class="station" data-st="rls"><span class="ico">🚪</span><b>門禁</b></span><span class="arrow"></span>
+<span class="station" data-st="tbl"><span class="ico">🗄️</span><b>資料表</b></span>
+</div>
+<div class="stepbox" id="jBox" aria-live="polite">
+<h4 id="jTitle"></h4>
+<div class="two"><div><h4>你看到什麼</h4><div id="jSee"></div></div><div><h4>背後在做什麼</h4><p id="jWhy"></p></div></div>
+<p class="small" id="jTag"></p>
+</div>
+<div class="note"><b>網頁說「存好了。」，去哪裡確認真的存進去了？</b>　<button type="button" class="ghost" id="jReveal">揭曉</button>
+<p id="jAnswer" class="hidden" style="margin:6px 0 0">答：Supabase 的 <code>Table Editor</code> → <code>learning_logs</code> 多了一列，<code>user_id</code> 欄有一串編號。可是後台是管理者的畫面，兩個帳號的紀錄都看得到；門禁有沒有擋，要從網頁用兩個帳號試（第 3 節）。<span class="tag" title="操作頁第 3 步 3-4「看到這裡就對了」">操作頁 第 3 步</span><span class="tag" title="內容規格 §〇 後台看得到全部">規格 §〇·後台看得到全部</span></p></div>
+</div>
+<p class="so">所以在操作頁：第 3 步 3-4（路線 A）在自己電腦存一筆、回 <code>Table Editor</code> 看那一列，就是親手走這六步。<a href="student.html#step-3">去第 3 步</a></p>
+</section>
+
+<!-- ======================= 2 兩把鑰匙 ======================= -->
+<section id="c2"><h2>2　兩把鑰匙</h2>
+<p class="lead"><code>config.js</code> 會跟著網頁送到每個人的瀏覽器，所以裡面只放本來就可以公開的東西。</p>
+<p>Supabase 有兩把鑰匙。publishable key 是公開鑰匙：讓網頁找得到你的 Supabase，放網頁、可以公開。secret key 是萬能鑰匙：能讀改所有人的資料，只能放在伺服器，瀏覽器裡用不了。真正擋住別人看你資料的是門禁，不是把鑰匙藏起來。<span class="tag" title="內容規格 §〇 兩把鑰匙">規格 §〇·兩把鑰匙</span><span class="tag" title="起步檔 config.js 開頭的註解">起步檔 <code>config.js</code></span></p>
+<p class="note" style="margin-bottom:0"><b>🚨 只拿 publishable key。</b>secret key 不進 <code>config.js</code>、不進 GitHub、不貼給 AI。<span class="tag" title="操作頁第 3 步 3-2 紅框">操作頁 第 3 步</span></p>
+<div class="lab">
+<span class="sim">模擬：每張卡選一次，看起步檔會怎麼說</span>
+<p style="margin-top:0">這四樣東西，哪幾樣能放進 <code>config.js</code>？</p>
+<div class="keys" id="keys">
+<div class="kc" data-card="url"><h4><code>Project URL</code></h4><p class="looks">長得像 <code>https://一串字.supabase.co</code>；在 <code>Project Settings</code> → <code>Data API</code> 最上面</p><div class="ask"><button type="button" data-put="yes" aria-pressed="false">放進 <code>config.js</code></button><button type="button" data-put="no" aria-pressed="false">不放</button></div><div class="kres hidden"></div></div>
+<div class="kc" data-card="pub"><h4>publishable key</h4><p class="looks"><code>sb_publishable_</code> 開頭；在 <code>Project Settings</code> → <code>API Keys</code>（首頁上方 <code>Connect</code> 視窗也找得到）</p><div class="ask"><button type="button" data-put="yes" aria-pressed="false">放進 <code>config.js</code></button><button type="button" data-put="no" aria-pressed="false">不放</button></div><div class="kres hidden"></div></div>
+<div class="kc" data-card="secret"><h4>secret key</h4><p class="looks"><code>sb_secret_</code> 開頭；跟公開鑰匙在同一頁</p><div class="ask"><button type="button" data-put="yes" aria-pressed="false">放進 <code>config.js</code></button><button type="button" data-put="no" aria-pressed="false">不放</button></div><div class="kres hidden"></div></div>
+<div class="kc" data-card="dbpw"><h4>資料庫密碼</h4><p class="looks">第 1 步建專案時按 <code>Generate a password</code> 產生、存進你手機備忘錄或密碼管理器的那一串</p><div class="ask"><button type="button" data-put="yes" aria-pressed="false">放進 <code>config.js</code></button><button type="button" data-put="no" aria-pressed="false">不放</button></div><div class="kres hidden"></div></div>
+</div>
+<p class="status" id="keyScore" aria-live="polite">四張卡，每張選一次。</p>
+<div class="ctl" style="margin:10px 0 0"><button type="button" class="ghost" id="keyReset">全部重來</button></div>
+</div>
+<p class="so">所以在操作頁：第 3 步 3-2 只拿 <code>Project URL</code> 和 publishable key 這兩個值。<a href="student.html#step-3">去第 3 步</a></p>
+</section>
+
+<!-- ======================= 3 門禁模擬器 ======================= -->
+<section id="c3"><h2>3　門禁模擬器</h2>
+<p class="lead">兩道關：這排櫃子有沒有開放給登入的人（grant），每一格是不是只認自己的學生證（RLS）。</p>
+<p>RLS（資料列門禁）＝資料庫自己檢查「這一列是不是你的」，不是你的就當作不存在。grant（開放權限）＝這張表開放給「登入的人」用；沒開放，刷卡也進不去。<span class="tag" title="內容規格 §四 白話與比喻">規格 §四·白話與比喻</span></p>
+<p>這兩件事 Supabase 都不會替你做：在 <code>SQL Editor</code> 建的表，RLS 預設沒開；2026 年起新建的表也不再自動開放，沒有 grant 就用不了。所以 <code>schema.sql</code> 裡一定要有下面這兩行。<span class="tag" title="內容規格 §〇 RLS 預設">規格 §〇·RLS 預設</span><span class="tag" title="內容規格 §〇 2026 新規則（changelog 45329）">規格 §〇·2026 新規則</span></p>
+<div class="lab">
+<span class="sim">模擬：表裡已經有甲一筆、乙一筆；網頁上的字照起步檔</span>
+<div class="sw">
+<div><b>門禁（RLS）</b><div class="tabs" role="group" aria-label="門禁開或關"><button type="button" data-rls="on">開</button><button type="button" data-rls="off">關</button></div><p class="sql" id="sqlRls"><span class="st"></span><code>alter table public.learning_logs enable row level security;</code></p></div>
+<div><b>開放權限（grant）</b><div class="tabs" role="group" aria-label="開放權限有或沒有"><button type="button" data-grant="yes">有</button><button type="button" data-grant="no">沒有</button></div><p class="sql" id="sqlGrant"><span class="st"></span><code>grant select, insert, update, delete on table public.learning_logs to authenticated;</code></p></div>
+</div>
+<label class="small" style="display:flex;gap:8px;align-items:flex-start;margin:0 0 10px;cursor:pointer"><input type="checkbox" id="gWide" style="margin-top:6px;flex:0 0 auto"> <span>進階：表裡還留著一條以前 AI 寫的、太寬的舊規則（誰都能看）</span></label>
+<div class="gate" id="gate">
+<div class="screen" id="gA"><div class="bar">電腦　甲登入</div><div class="ttl">我的紀錄 <span class="cnt"></span></div><ul class="rows"></ul><div class="err"></div></div>
+<div class="screen" id="gB"><div class="bar">手機　乙登入</div><div class="ttl">我的紀錄 <span class="cnt"></span></div><ul class="rows"></ul><div class="err"></div></div>
+<div class="screen admin" id="gAdmin"><div class="bar">Supabase 後台　<code>Table Editor</code></div><div class="ttl"><code>learning_logs</code>（2 列）</div><ul class="rows"><li>甲：把網站接上 Supabase 登入</li><li>乙：讓 Cloudflare 接上 GitHub</li></ul><p class="small" style="margin:0">後台是管理者的畫面，會略過門禁，兩筆都看得到是正常的。</p></div>
+</div>
+<p class="status" id="gStatus" aria-live="polite"></p>
+<p class="small" id="gWhen"></p>
+<div class="ctl" style="margin:10px 0 0"><button type="button" id="gFix">照修法：重跑起步檔的 <code>schema.sql</code></button></div>
+<p class="small" style="margin-bottom:0"><span class="tag" title="內容規格 §〇 ✅ 實測 G 項：關掉 RLS 時兩帳號互測抓得到、少了 grant 提示對">規格 §〇·✅ 實測</span><span class="tag" title="內容規格 §〇 後台看得到全部">規格 §〇·後台看得到全部</span><span class="tag" title="內容規格 §〇 起步檔防呆：schema.sql 重跑先清掉所有舊規則">規格 §〇·起步檔防呆</span></p>
+</div>
+<p>兩個帳號互測驗的是「看」。新增、修改、刪除也只准本人，靠的是每條規則都拿 <code>auth.uid()</code> 比對 <code>user_id</code>。<span class="tag" title="操作頁第 6 步">操作頁 第 6 步</span></p>
+<p class="so">所以在操作頁：第 6 步〈兩個帳號驗收：彼此看不到，才算門禁有開〉。這樣才算過：電腦只看得到電腦存的那一筆，手機只看得到手機存的那一筆。<a href="student.html#step-6">去第 6 步</a></p>
+</section>
+
+<!-- ======================= 4 推上去就上線 ======================= -->
+<section id="c4"><h2>4　推上去就上線</h2>
+<p class="lead">接上 GitHub 之後，推上去就會部署：不必再按任何部署鈕，Cloudflare 自己建置、換新版。</p>
+<p>deploy（部署）＝把檔案放到一個大家打得開的網址。像把作品貼到校門口的公告欄；倉庫換新版，公告欄自動換。<span class="tag" title="內容規格 §四 deploy">規格 §四·deploy</span><span class="tag" title="內容規格 §〇 沒有設定檔時：合併後每次 push 自動部署">規格 §〇·沒有設定檔時</span></p>
+<div class="lab">
+<span class="sim">模擬：點一站＝假裝漏掉那一步</span>
+<div class="tl" id="tl">
+<button type="button" class="station" data-step="save"><span class="ico">💾</span><b>存檔</b><span class="small">你的電腦</span></button><span class="arrow" aria-hidden="true"></span>
+<button type="button" class="station" data-step="commit"><span class="ico">📌</span><b>存一版</b><span class="small"><code>commit</code></span></button><span class="arrow" aria-hidden="true"></span>
+<button type="button" class="station" data-step="push"><span class="ico">⬆️</span><b>推上 GitHub</b><span class="small"><code>push</code></span></button><span class="arrow" aria-hidden="true"></span>
+<button type="button" class="station" data-step="build"><span class="ico">⚙️</span><b>Cloudflare 建置</b><span class="small">約一分鐘</span></button><span class="arrow" aria-hidden="true"></span>
+<span class="station goal" data-step="live"><span class="ico">🌐</span><b>上線</b><span class="small">網址換新</span></span>
+</div>
+<div class="ctl" style="margin:10px 0 0"><button type="button" class="ghost" id="tlAll">全部做到</button></div>
+<div class="kv">
+<div class="k">同學的手機重新整理</div><div class="v"><div class="phone" id="tlPhone"><div class="bar"><code>learning-log.你的子網域.workers.dev</code></div><div class="ttl" id="tlPhoneTxt"></div></div></div>
+</div>
+<p class="status" id="tlStatus" aria-live="polite"></p>
+<p class="small">路線 B 在 GitHub 網頁上按 <code>Commit changes</code>，存一版和推上去一次做完。<span class="tag" title="操作頁第 4 步路線 B">操作頁 第 4 步</span><span class="tag" title="內容規格 §〇 網址：剛建好第一分鐘可能是錯誤頁">規格 §〇·網址</span></p>
+</div>
+<p class="note"><b>做到這裡就完成：</b>一個網址；兩個帳號互相看不到對方的紀錄；改版推上去之後，手機重新整理看得到「最近 7 天」那一行。<span class="tag" title="操作頁第 7 步「做到這裡就完成」">操作頁 第 7 步</span></p>
+<p class="so">所以在操作頁：第 7 步改版一圈，推上去之後到 Cloudflare 的 <code>Deployments</code> 看最新那次成功，再用手機重新整理。<a href="student.html#step-7">去第 7 步</a></p>
+</section>
+
+<!-- ======================= 5 Cloudflare 有時會發 PR ======================= -->
+<section id="c5"><h2>5　Cloudflare 有時會發 PR 給你</h2>
+<p class="lead">repo 是你的。連 Cloudflare 想加檔案，也要遞一張修改單給你，你看過、簽了才算數。</p>
+<p>pull request（PR）＝「我想改你的東西」的申請，看過再合併。你的 repo 一開始沒有 Cloudflare 的設定檔，它的第一次建置會自己跑自動設定、直接上線（老師 11/13 實測：約一分鐘綠勾，沒出現 PR）。有些帳號它還會另外開一個 PR，想把那三個設定檔存進你的 repo：合併了，之後每次建置就不必重跑自動設定；不合併網站也照樣能用。<span class="tag" title="內容規格 §四 pull request">規格 §四·pull request</span><span class="tag" title="內容規格 §〇 沒有設定檔時">規格 §〇·沒有設定檔時</span></p>
+<p>你在 Cloudflare 按的是這幾下：<span class="tag" title="內容規格 §〇 Cloudflare 匯入流程">規格 §〇·匯入流程</span></p>
+<ol class="path"><li><code>Create an app</code></li><li><code>Connect GitHub</code></li><li>授權 <code>Cloudflare Workers and Pages</code></li><li>選 <code>Only select repositories</code>、只勾 <code>learning-log</code></li><li><code>Select a repository</code> → <code>Next</code></li><li><code>Deploy</code> → 綠勾上線</li><li>（有時）Cloudflare 開 PR 給你</li></ol>
+<div class="lab">
+<span class="sim">模擬：假的 GitHub 畫面，字樣以你的畫面為準</span>
+<div class="pr" id="pr">
+<div class="head"><b>如果 Cloudflare 開了 PR：加三個設定檔</b><span class="badge" id="prBadge">還沒合併</span></div>
+<div class="tabs" role="group" aria-label="PR 分頁"><button type="button" data-tab="conv" class="on">說明</button><button type="button" data-tab="files"><code>Files changed</code>（3）</button></div>
+<div class="body">
+<div id="prConv"><p style="margin-top:0">Cloudflare 發現這個 repo 裡沒有它的設定檔，想幫你加三個。先看 <code>Files changed</code>，確認只加了這三個檔，再合併。</p></div>
+<div id="prFiles" class="hidden"><ul class="files">
+<li><b><code>wrangler.jsonc</code></b>Cloudflare 的設定檔：網站叫什麼名字（＝專案名）、要放上網的檔在哪（<code>"."</code>＝repo 最外層）。</li>
+<li><b><code>.gitignore</code></b>一張「這些檔不用存進 GitHub」的清單。</li>
+<li><b><code>.assetsignore</code></b>一張「這些檔不要放上網」的清單：擋掉 <code>.git</code>、<code>.env*</code>、<code>node_modules</code> 這類東西。</li>
+</ul></div>
+<div class="ctl" style="margin:10px 0 0"><button type="button" id="prMerge" disabled><code>Merge pull request</code></button><button type="button" class="hidden" id="prConfirm"><code>Confirm merge</code></button><button type="button" class="ghost" id="prReset">重來</button></div>
+<p class="small" id="prHint" style="margin-bottom:0">先看 <code>Files changed</code> 才能合併：W5 讀 <code>diff</code> 的規矩。</p>
+</div></div>
+<div class="repo2">
+<div id="prGh"><b>GitHub 上的 <code>learning-log</code></b><span class="n">6</span> 個檔<p class="fl"></p></div>
+<div id="prPc"><b>你電腦裡的 <code>learning-log</code></b><span class="n">6</span> 個檔<p class="fl"></p></div>
+</div>
+<p class="status" id="prStatus" aria-live="polite"></p>
+<div class="ctl" style="margin:10px 0 0"><button type="button" class="hidden" id="prPull">路線 A：叫 agent 先拉下來（<code>pull</code>）</button></div>
+<p class="small" style="margin-bottom:0"><span class="tag" title="內容規格 §〇 PR 加哪三檔（✅ 本機 wrangler 實跑）">規格 §〇·PR 加哪三檔</span><span class="tag" title="操作頁第 5 步最後一段">操作頁 第 5 步</span></p>
+</div>
+<p class="so">所以在操作頁：第 5 步按 <code>Deploy</code>、等綠勾就上線；如果 GitHub 上出現 Cloudflare 開的 PR，先看 <code>Files changed</code>，再按 <code>Merge pull request</code> → <code>Confirm merge</code>。<a href="student.html#step-5">去第 5 步</a></p>
+</section>
+
+<!-- ======================= 6 卡住了 ======================= -->
+<section id="c6"><h2>6　卡住了先看哪裡</h2>
+<p class="lead">先讀網頁最下面那一行：起步檔會把常見的錯誤翻成白話。再想它是四站裡哪一站的事。</p>
+<p class="small"><span class="tag" title="操作頁〈卡關時先看這裡〉總表">操作頁·卡關時</span><span class="tag" title="起步檔 app.js 的 explain()、signUp()、configProblem()">起步檔 <code>app.js</code></span><span class="tag" title="教師手記〈卡點與救援〉">手記·卡點與救援</span></p>
+<div class="lab">
+<div class="ctl"><label for="sym">症狀：</label><select id="sym">
+<option value="">選一個症狀</option>
+<option value="config">網頁寫「設定還沒完成」</option>
+<option value="notable">網頁說「找不到資料表」</option>
+<option value="nogrant">網頁說「還沒開放給登入的人用」</option>
+<option value="columns">網頁說「欄位跟這份程式對不上」</option>
+<option value="confirm">註冊後說要先按確認信</option>
+<option value="leak">兩個帳號看得到彼此的紀錄</option>
+<option value="errpage">Cloudflare 網址打開是錯誤頁</option>
+<option value="stale">推上去了，網站還是舊的</option>
+<option value="rejected">agent 推不上去，說遠端有新的東西</option>
+</select></div>
+<div id="symPanel" class="hidden">
+<p class="small" style="margin:0 0 4px">是哪一站的事：</p>
+<ul class="mini" id="symMini" aria-label="是哪一站的事"><li data-st="ai">AI</li><li data-st="gh">GitHub</li><li data-st="cf">Cloudflare</li><li data-st="sb">Supabase</li></ul>
+<div class="two"><div><h4>你看到</h4><div id="symSee"></div></div><div><h4>多半是</h4><p id="symWhy"></p><h4>先查什麼</h4><p id="symCheck"></p></div></div>
+<p class="status" id="symLink"></p>
+</div>
+<p class="status hidden" id="symEmpty">先選一個症狀。</p>
+</div>
+<p class="so">所以在操作頁：〈卡關時先看這裡〉每一條都對得上。<a href="student.html#help">去卡關時</a></p>
+</section>
+
+<!-- ======================= 7 名詞表 ======================= -->
+<section id="c7"><h2>7　名詞表</h2>
+<p class="lead">只放這週的十個詞：每個一句白話、一個置物櫃那一套的比喻，加上這週在哪一步碰到。</p>
+<div class="lab">
+<div class="ctl"><label for="glQ">搜尋：</label><input id="glQ" type="search" autocomplete="off" spellcheck="false" placeholder="打中文或英文"><span class="small" id="glN"></span></div>
+<dl class="gl" id="glList">
+<div class="gi"><dt>資料表</dt><dd>一張表，一列＝一筆紀錄。<span class="like">比喻：一整排置物櫃，一格放一筆。</span><span class="where">這週：<code>learning_logs</code>，<a href="student.html#step-3">第 3 步</a>用 <code>schema.sql</code> 建。</span></dd></div>
+<div class="gi"><dt>登入</dt><dd>Supabase 認出你是誰，發你一張通行證。<span class="like">比喻：刷學生證。</span><span class="where">這週：<a href="student.html#step-6">第 6 步</a>兩個帳號各登入一次。</span></dd></div>
+<div class="gi"><dt>RLS（資料列門禁）</dt><dd>資料庫自己檢查「這一列是不是你的」，不是你的就當作不存在。<span class="like">比喻：每格只認自己的學生證，別人的櫃子刷不開，連看都看不到。</span><span class="where">這週：<a href="student.html#step-3">第 3 步</a>打開、<a href="student.html#step-6">第 6 步</a>驗收。</span></dd></div>
+<div class="gi"><dt>grant（開放權限）</dt><dd>這張表開放給「登入的人」用。<span class="like">比喻：這排櫃子有沒有開放給學生；沒開放，刷卡也進不去。</span><span class="where">這週：<code>schema.sql</code> 最後那一段，<a href="student.html#step-3">第 3 步</a>跑。</span></dd></div>
+<div class="gi"><dt>publishable key</dt><dd>公開鑰匙：讓網頁找得到你的 Supabase，本來就看得到。<span class="like">比喻：置物櫃區的地址和開放時間，大家都知道。</span><span class="where">這週：<a href="student.html#step-3">第 3 步</a>貼進 <code>config.js</code>。</span></dd></div>
+<div class="gi"><dt>secret key</dt><dd>萬能鑰匙：能讀改所有人的資料，只能放在伺服器。<span class="like">比喻：管理員的萬能鑰匙，絕不能掛在門口。</span><span class="where">這週：<a href="student.html#step-3">第 3 步</a>的紅框，不拿它。</span></dd></div>
+<div class="gi"><dt>repo</dt><dd>GitHub 上放這個網站所有檔案的地方，每一版都留著。<span class="like">比喻：作品的檔案櫃。</span><span class="where">這週：<a href="student.html#step-4">第 4 步</a>建 <code>learning-log</code>。</span></dd></div>
+<div class="gi"><dt>deploy（部署）</dt><dd>把檔案放到一個大家打得開的網址。<span class="like">比喻：把作品貼到校門口的公告欄；倉庫換新版，公告欄自動換。</span><span class="where">這週：<a href="student.html#step-5">第 5 步</a>接上 Cloudflare、<a href="student.html#step-7">第 7 步</a>改版。</span></dd></div>
+<div class="gi"><dt>pull request（PR）</dt><dd>「我想改你的東西」的申請，看過再合併。<span class="like">比喻：別人遞給你的修改單，簽了才算數。</span><span class="where">這週：<a href="student.html#step-5">第 5 步</a>合併 Cloudflare 開的那一個。</span></dd></div>
+<div class="gi"><dt>agent</dt><dd>會自己寫檔、下指令的 AI。<span class="like">比喻：你請來的工讀生，你說清楚、它動手、你驗收。</span><span class="where">這週：路線 A 在<a href="student.html#step-2">第 2 步</a>把需求卡交給它。</span></dd></div>
+</dl>
+<p class="small hidden" id="glNone">沒有符合的名詞，換個字試試。</p>
+<p class="small"><span class="tag" title="內容規格 §四 白話與比喻（置物櫃那一套）">規格 §四·白話與比喻</span></p>
+</div>
+<p class="so">所以在操作頁：每個詞後面的「第 N 步」點下去，就到操作頁那一步。<a href="student.html#step-0">從第 0 步開始</a></p>
+</section>
+
+<!-- ======================= 8 想一想 ======================= -->
+<section id="c8"><h2>8　想一想：十題，先猜再揭曉</h2>
+<p class="lead">答案都在上面幾節裡。先選再按「揭曉」；選項每次重新整理會換順序。分數只存在這台瀏覽器。</p>
+<div class="ctl"><span class="status" id="quizScore" style="margin:0">答對 0／10</span><button type="button" class="ghost" id="qsReset">全部重來</button></div>
+<div id="qs"></div>
+<p class="so">所以在操作頁：第 6 步兩個帳號驗收，是這十題的總複習。<a href="student.html#step-6">去第 6 步</a></p>
+</section>
+
+<!-- ======================= 9 出處 ======================= -->
+<section id="c9"><h2>9　出處</h2>
+<ul>
+<li>操作頁 <code>student.html</code>：第 0–7 步、〈下課前〉、〈卡關時先看這裡〉。本頁標籤寫「操作頁 第 N 步」的，就是那一步。</li>
+<li>起步檔 <code>starter/</code>：第 1、2、3、6 節框起來的「網頁上的原句」，都從 <code>app.js</code> 一字不改抄來（「設定還沒完成」那句標題在 <code>index.html</code>）；<code>schema.sql</code>、<code>config.js</code> 的註解也是出處。</li>
+<li>教師手記 <code>teacher-notes.md</code>：〈卡點與救援〉、〈實測紀錄〉、〈為什麼這樣設計〉、〈課前要按的〉。</li>
+<li>本週內容規格 <code>內容規格.md</code> §〇 硬事實表：本頁標籤寫「規格 §〇·…」的就是那一列；白話與比喻抄 §四，逐字句抄 §五。</li>
+<li>官方說明（查證日 2026-11-13，規格 §〇 右欄列了每一條的出處）：Supabase 的兩把鑰匙說明、資料表預設門禁的說明、更新紀錄第 45329 則（2026-04-28，新表不再自動開放）、登入與寄信的速率限制說明；Cloudflare 的自動設定說明、從 GitHub 建置的說明；OpenAI 的 Codex 方案說明。</li>
+</ul>
+<p>⚠️ 本頁提到的 Supabase、Cloudflare 畫面字樣，有幾項還沒在真的服務上走過（例如 <code>Connect</code> 視窗、<code>Data API</code> 頁、<code>Confirm email</code> 開關的確切字樣）。老師課前會用自己的帳號走一次；跟你的畫面不一樣時，以畫面和操作頁為準。<span class="tag" title="內容規格 §〇 ⚠️ 沒在真服務走過">規格 §〇·⚠️ 沒在真服務走過</span><span class="tag" title="教師手記〈課前要按的〉第 1 條">手記·課前要按的</span></p>
+<p>這一頁沒有接 AI、不收集任何資料，離線打得開。每個模擬都在你的瀏覽器裡假裝，不會動你的 Supabase、GitHub 或 Cloudflare。</p>
+<p class="small">看完了？<a href="student.html">回操作頁做步驟</a>　｜　<a href="#top">回到頂端</a></p>
+</section>
+
+</main>
+<a class="top" href="#top" aria-label="回到頂端" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑</a>
+<script>
+(function(){
+'use strict';
+function $(s,r){return (r||document).querySelector(s);}
+function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+// 標籤：cell 是本頁自己寫死的字（可含 <code>），title 會跳脫
+function tg(cell,title){return '<span class="tag" title="'+esc(title||('內容規格 '+cell.replace(/<[^>]+>/g,'')))+'">'+cell+'</span>';}
+function setStatus(el,html,cls){el.innerHTML=html;el.className='status'+(cls?' '+cls:'');}
+// 起步檔真的會印在網頁上的原句：一字不改抄自 starter/app.js（cfgTitle 在 starter/index.html）。
+// build_concepts.py 會逐句回查，改了起步檔就要跟著改這裡。
+var REAL={
+  saving:'存檔中…',
+  saved:'存好了。',
+  cfgTitle:'設定還沒完成',
+  urlPh:'SUPABASE_URL 還是「貼上…」，還沒換成你的 Project URL。',
+  urlDash:'SUPABASE_URL 貼到的是後台網址。要的是 Project URL，長得像 https://一串字.supabase.co。',
+  keyPh:'SUPABASE_KEY 還是「貼上…」，還沒換成你的 publishable key。',
+  secret:'🚨 config.js 裡貼的是 secret（萬能）鑰匙，網頁已停止連線。請馬上：①到 Supabase 換成 publishable key；②在 Supabase 的 API Keys 頁把這把 secret key 作廢；③如果已經推上 GitHub，一定要作廢，只刪檔不算數（GitHub 的歷史裡還找得到）。',
+  noTable:'找不到資料表 learning_logs：schema.sql 還沒在這個 Supabase 專案的 SQL Editor 跑過。',
+  noGrant:'資料表還沒開放給登入的人用：schema.sql 最後的 grant 那一段沒跑到，整份再跑一次。',
+  columns:'資料表的欄位跟這份程式對不上：這個專案以前用別的版本建過 learning_logs。照學生頁卡關表「欄位對不上」那一列，先刪舊表再跑這份 schema.sql。',
+  confirm:'帳號建好了，但這個 Supabase 專案要求先按確認信才能登入。練習時可以到 Supabase 把 Confirm email 關掉，再回來按「登入」。'
+};
+function real(k,red){return '<samp class="real'+(red?' red':'')+'" data-real="'+k+'">'+esc(REAL[k])+'</samp>';}
+
+// ===== 0. 四個帳號：四站地圖 =====
+(function(){var stage=$('#mapStage');if(!stage)return;
+  var pop=$('#mapPop');
+  var ST={
+    ai:{name:'AI 寫程式',what:'你用一句話講需求，它寫檔、改檔、下指令；你負責看它的計畫、驗它的成果。',when:'路線 A：第 2 步照需求卡做網站、第 4 步推上 GitHub、第 7 步改版。路線 B：瀏覽器裡的聊天 AI 幫你改。',like:'你請來的工讀生，你說清楚、它動手、你驗收。',note:'Codex 在 ChatGPT 桌面版裡，免費帳號也有（額度有限）；Claude Code 要付費方案，而且要滿 18 歲。這門課不需要你付錢。',tag:'規格 §〇·誰免費'},
+    gh:{name:'GitHub：存每一版',what:'程式的倉庫。每次存進去都留一版，改壞了找得回來。',when:'第 4 步建 repo、推上去（路線 B 用網頁上傳）；第 5 步如果 Cloudflare 開了 PR，看過再合併。',like:'作品的檔案櫃。',note:'repo 裡每個檔大家都看得到（<code>config.js</code> 也是），所以秘密永遠不進 repo。',tag:'規格 §〇·公開的東西'},
+    cf:{name:'Cloudflare：放上網路',what:'把 GitHub 上的檔變成大家打得開的網址；你一推新版，它自己更新。',when:'第 5 步接上 repo、按 Deploy、拿到網址（有 PR 就看過再合併）；第 7 步改版後它自己換新。',like:'把作品貼到校門口的公告欄；倉庫換新版，公告欄自動換。',note:'網址長得像 <code>learning-log.你的子網域.workers.dev</code>。',tag:'規格 §〇·網址'},
+    sb:{name:'Supabase：登入＋資料庫',what:'認得誰是誰（登入）、幫你存紀錄（資料庫），還有門禁（RLS）：每個人只拿得到自己的那幾列。',when:'第 1 步開專案；第 3 步建資料表和門禁、拿兩個值、關確認信；第 6 步兩個帳號驗收。',like:'一整排置物櫃，刷學生證才開得了，每格只認自己的證。',note:'免費專案一個星期沒人用會自動暫停，回 Supabase 按恢復就好，資料還在。',tag:'規格 §〇·Supabase 免費方案'}};
+  function show(id){var s=ST[id];
+    $$('.station',stage).forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-st')===id?'true':'false');});
+    pop.innerHTML='<b>'+s.name+'</b><br>管什麼：'+s.what+'<br>在哪一步出場：'+s.when+'<br>比喻：'+s.like+'<br>注意：'+s.note+' '+tg(s.tag);
+    stage.setAttribute('data-picked',id);}
+  $$('.station',stage).forEach(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-st'));});});
+  show('ai');
+})();
+
+// ===== 1. 一筆紀錄的旅程：步進器 =====
+(function(){var chips=$('#jChips');if(!chips)return;
+  var track=$('#jTrack'),title=$('#jTitle'),see=$('#jSee'),why=$('#jWhy'),tagEl=$('#jTag'),prev=$('#jPrev'),next=$('#jNext'),box=$('#jBox');
+  var STEPS=[
+    {t:'① 網頁帶著登入時拿到的通行證',see:'「存起來」按鈕暫時按不了，網頁最下面寫：'+real('saving'),
+      why:'你登入時，Supabase 發了一張通行證，存在這台電腦的瀏覽器裡（所以教室電腦下課前，要先在自己的網站按登出）。網頁把日期、學了什麼、幾分鐘、卡在哪裡，連同通行證一起送出去，不用自己寫「這筆是誰的」。',
+      tag:tg('起步檔 <code>app.js</code>','起步檔 app.js 的 addLog()')+tg('操作頁·下課前','操作頁〈下課前〉教室電腦那一條'),where:['web']},
+    {t:'② 用公開鑰匙找到你的 Supabase',see:'（畫面還沒變。）',
+      why:'網頁照 <code>config.js</code> 的 <code>Project URL</code> 找到你的 Supabase，出示 publishable key。公開鑰匙只讓你走到櫃台前；開不開得了櫃子，看的是登入和門禁。',
+      tag:tg('規格 §〇·兩把鑰匙')+tg('規格 §二·第 8 頁','內容規格 §二 第 8 頁老師一句'),where:['web','key']},
+    {t:'③ Supabase 認出通行證是誰',see:'（畫面還沒變。）',
+      why:'Supabase 看通行證，認出你是誰：一串編號。沒登入的人沒有通行證，起步檔的 <code>schema.sql</code> 什麼都不給他（最後一行 <code>revoke</code> … <code>anon</code>）。',
+      tag:tg('起步檔 <code>schema.sql</code>','起步檔 schema.sql 第 5 段'),where:['pass']},
+    {t:'④ 門禁比對這一列的 <code>user_id</code>',see:'（畫面還沒變。）',
+      why:'資料庫自動把你的編號填進這一列的 <code>user_id</code>，網頁不用給。門禁（RLS）再比對：通行證上的編號＝這一列的 <code>user_id</code>，才准放進去。在這之前，這排櫃子也要先開放給登入的人（grant），刷卡才進得去。',
+      tag:tg('規格 §〇·起步檔'),where:['rls']},
+    {t:'⑤ 寫進資料表',see:'（網頁還沒變；後台 <code>Table Editor</code> 已經多了一列。）',
+      why:'這一列寫進 <code>learning_logs</code>：日期、學了什麼、幾分鐘、卡在哪裡，加上 <code>user_id</code>。',
+      tag:tg('操作頁 第 3 步','操作頁第 3 步 3-4「看到這裡就對了」'),where:['tbl']},
+    {t:'⑥ 回到清單',see:'網頁最下面寫：'+real('saved')+'清單重抓一次，新的在最上面。',
+      why:'網頁重抓清單時，沒有說「只要我的」：起步檔故意不寫這句。是門禁只交出 <code>user_id</code> 是你的那幾列，所以兩個帳號互測才驗得出門禁有沒有開。',
+      tag:tg('起步檔 <code>app.js</code>','起步檔 app.js 的 loadLogs() 註解')+tg('手記·為什麼這樣設計','教師手記〈為什麼這樣設計〉第 4 條'),where:['tbl','rls','web']}];
+  var i=0;
+  STEPS.forEach(function(s,k){var b=document.createElement('button');b.type='button';b.textContent='第 '+(k+1)+' 步';b.setAttribute('data-i',String(k));b.addEventListener('click',function(){go(k);});chips.appendChild(b);});
+  function go(k){i=Math.max(0,Math.min(STEPS.length-1,k));var s=STEPS[i];
+    $$('button',chips).forEach(function(b,k2){if(k2===i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+    $$('.station',track).forEach(function(st){st.classList.toggle('now',s.where.indexOf(st.getAttribute('data-st'))>=0);});
+    title.innerHTML=s.t;see.innerHTML='<p style="margin:0">'+s.see+'</p>';why.innerHTML=s.why;tagEl.innerHTML=s.tag;
+    prev.disabled=i===0;next.disabled=i===STEPS.length-1;box.setAttribute('data-step',String(i+1));}
+  prev.addEventListener('click',function(){go(i-1);});next.addEventListener('click',function(){go(i+1);});
+  $('#jReveal').addEventListener('click',function(){$('#jAnswer').classList.remove('hidden');this.disabled=true;});
+  go(0);
+})();
+
+// ===== 2. 兩把鑰匙：四張卡 =====
+(function(){var keys=$('#keys');if(!keys)return;
+  var score=$('#keyScore');
+  var CARDS={
+    url:{right:'yes',
+      yes:'✅ 對，要放。它只是你的 Supabase 在哪裡，像置物櫃區的地址，大家本來就看得到。常見放錯：貼成後台網址，起步檔會說：'+real('urlDash'),
+      no:'❌ 要放。少了它，網頁不知道你的 Supabase 在哪裡，起步檔停在「'+REAL.cfgTitle+'」：'+real('urlPh')},
+    pub:{right:'yes',
+      yes:'✅ 對，要放。公開鑰匙讓網頁找得到你的 Supabase，本來就看得到；擋人的是登入和門禁。',
+      no:'❌ 要放。少了它，起步檔會說：'+real('keyPh')},
+    secret:{right:'no',
+      yes:'❌ 不能放！萬能鑰匙能讀改所有人的資料。起步檔看到 <code>sb_secret_</code> 開頭（或舊式 <code>service_role</code>）就停止連線，跳出紅框：'+real('secret',true),
+      no:'✅ 對，不放。它是管理員的萬能鑰匙，絕不能掛在門口；而且它在瀏覽器裡本來就用不了。'},
+    dbpw:{right:'no',
+      yes:'❌ 不放。它是資料庫本身的密碼，今天用不到。起步檔只認得 <code>sb_secret_</code> 和 <code>service_role</code>，認不出資料庫密碼，所以不會跳紅框；貼進去、推上 GitHub，就等於公開了。這一張只能靠你自己不貼。',
+      no:'✅ 對，不放。第 1 步存在你的手機或密碼管理器就好，不要留在教室電腦；今天用不到，以後管資料庫才會用到。'}};
+  var picks={};
+  function paint(){var n=0,m=0;
+    $$('.kc',keys).forEach(function(card){var id=card.getAttribute('data-card'),c=CARDS[id],p=picks[id],res=$('.kres',card);
+      $$('.ask button',card).forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-put')===p?'true':'false');});
+      if(!p){res.className='kres hidden';res.innerHTML='';card.removeAttribute('data-verdict');return;}
+      m++;var ok=p===c.right;if(ok)n++;
+      res.className='kres '+(ok?'ok':'no');res.innerHTML=c[p];card.setAttribute('data-verdict',ok?'right':'wrong');});
+    if(m<4)setStatus(score,'答對 '+n+'／4，還有 '+(4-m)+' 張沒選。');
+    else if(n===4)setStatus(score,'答對 4／4：<code>config.js</code> 只放 <code>Project URL</code> 和 publishable key。','ok');
+    else setStatus(score,'答對 '+n+'／4：看紅色那幾張的說明，再選一次。','bad');}
+  $$('.kc',keys).forEach(function(card){$$('.ask button',card).forEach(function(b){b.addEventListener('click',function(){picks[card.getAttribute('data-card')]=b.getAttribute('data-put');paint();});});});
+  $('#keyReset').addEventListener('click',function(){picks={};paint();});
+  paint();
+})();
+
+// ===== 3. 門禁模擬器 =====
+(function(){var gate=$('#gate');if(!gate)return;
+  var rls='off',grant='no',wide=false,fixed=false;  // 一開始＝只跑了建表那一段（SQL Editor 預設）
+  var wideBox=$('#gWide'),status=$('#gStatus'),when=$('#gWhen');
+  var ROW={A:'甲：把網站接上 Supabase 登入',B:'乙：讓 Cloudflare 接上 GitHub'};
+  function screen(id,me,other,open,leak){var el=$(id),ul=$('.rows',el),err=$('.err',el),cnt=$('.cnt',el),html='';
+    if(open){html='<li class="mine">'+esc(ROW[me])+'</li>';if(leak)html+='<li class="theirs">'+esc(ROW[other])+'（別人的！）</li>';}
+    ul.innerHTML=html;cnt.textContent=open?'（'+(leak?2:1)+' 筆）':'';err.innerHTML=open?'':real('noGrant');
+    el.setAttribute('data-rows',String(open?(leak?2:1):0));}
+  function render(){var open=grant==='yes',leak=open&&(rls==='off'||wide),combo=rls+'-'+grant+(wide?'-wide':'');
+    $$('#c3 [data-rls]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-rls')===rls);b.setAttribute('aria-pressed',b.getAttribute('data-rls')===rls?'true':'false');});
+    $$('#c3 [data-grant]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-grant')===grant);b.setAttribute('aria-pressed',b.getAttribute('data-grant')===grant?'true':'false');});
+    wideBox.checked=wide;
+    $('#sqlRls').className='sql'+(rls==='on'?'':' off');$('#sqlRls .st').textContent=rls==='on'?'✅ 有跑這一行':'✗ 沒有這一行（或沒跑到）';
+    $('#sqlGrant').className='sql'+(open?'':' off');$('#sqlGrant .st').textContent=open?'✅ 有跑這一行':'✗ 沒有這一行（或沒跑到）';
+    screen('#gA','A','B',open,leak);screen('#gB','B','A',open,leak);
+    gate.setAttribute('data-combo',combo);
+    if(!open){setStatus(status,'❌ 甲、乙都讀不到，網頁最下面出現上面那句。這排櫃子還沒開放給登入的人，刷卡也進不去。','bad');gate.setAttribute('data-result','nogrant');}
+    else if(leak&&rls==='off'){setStatus(status,'❌ 互相看得到，而且網頁沒有任何錯誤訊息，看起來一切正常：只有兩個帳號互測抓得到。Supabase 的 <code>Security Advisor</code> 也會把沒開 RLS 的表標成錯誤（<code>Table publicly accessible</code>）。','bad');gate.setAttribute('data-result','leak');}
+    else if(leak){setStatus(status,'❌ 互相看得到：同一個動作只要有一條規則放行，就會放行。舊的太寬規則不清掉，新規則再對也擋不住。','bad');gate.setAttribute('data-result','leak');}
+    else if(fixed){setStatus(status,'✅ 修好了，各看各的。重跑起步檔的 <code>schema.sql</code>：它先清掉這張表所有舊規則（包括 AI 留下、名字不一樣的），再建四條只認本人的規則，最後 grant 給登入的人；表裡的紀錄不會動（前提是表有 <code>user_id</code> 這一欄）。修完一定再用兩個帳號驗一次。','ok');gate.setAttribute('data-result','own');}
+    else{setStatus(status,'✅ 各看各的：甲只看到甲的，乙只看到乙的。門禁有開，這樣才算過。','ok');gate.setAttribute('data-result','own');}
+    var W={'on-yes':'起步檔的 <code>schema.sql</code> 整份跑完，就是這個狀態。','off-yes':'AI 寫的 <code>schema.sql</code> 少了 <code>enable row level security</code> 那一行，或那一行沒跑到。',
+      'on-no':'AI 寫的版本少了 grant（2026 起新表預設不開放）。','off-no':'只跑了建表那一段（<code>SQL Editor</code> 建的表 RLS 預設沒開，2026 起也不自動開放）。'};
+    when.innerHTML='這個組合在真實世界：'+(wide&&open&&rls==='on'?'RLS 開了、四條規則也對，可是表裡還留著一條以前的太寬規則。':W[rls+'-'+grant]);}
+  $$('#c3 [data-rls]').forEach(function(b){b.addEventListener('click',function(){rls=b.getAttribute('data-rls');fixed=false;render();});});
+  $$('#c3 [data-grant]').forEach(function(b){b.addEventListener('click',function(){grant=b.getAttribute('data-grant');fixed=false;render();});});
+  wideBox.addEventListener('change',function(){wide=wideBox.checked;fixed=false;render();});
+  $('#gFix').addEventListener('click',function(){rls='on';grant='yes';wide=false;fixed=true;render();});
+  render();
+})();
+
+// ===== 4. 推上去就上線：時間軸 =====
+(function(){var tl=$('#tl');if(!tl)return;
+  var phone=$('#tlPhone'),ptxt=$('#tlPhoneTxt'),status=$('#tlStatus'),ORDER=['save','commit','push','build','live'];
+  var OLD='舊版：還沒有「最近 7 天」那一行';
+  var R={
+    none:{ph:'新版：紀錄清單上方多了「最近 7 天」那一行',st:'new',cls:'ok',msg:'全部做到：推上去之後不必再按任何部署鈕，Cloudflare 自己建置、換新版。手機重新整理，看得到「最近 7 天」那一行。'},
+    save:{ph:OLD,st:'old',cls:'bad',msg:'漏掉存檔：改的東西還停在編輯器的畫面上，存一版也帶不走它。網站沒變。'},
+    commit:{ph:OLD,st:'old',cls:'bad',msg:'漏掉存一版：GitHub 認的是一版一版的紀錄；沒有新的一版，推上去也沒有東西可推。網站沒變。'},
+    push:{ph:OLD,st:'old',cls:'bad',msg:'只存沒推：新的一版只在你的電腦裡。GitHub 上還是舊的，Cloudflare 不知道你改了。網站沒變。'},
+    build:{ph:'舊版：建置還在跑',st:'old',cls:'bad',msg:'建置還沒跑完：網址還是上一版。到 Cloudflare 的 <code>Deployments</code> 看最新那次變成功再重新整理；紅色的就點進去看最後幾行。'}};
+  var skip='none';
+  function render(){var r=R[skip],k=ORDER.indexOf(skip);
+    $$('.station',tl).forEach(function(b){var s=b.getAttribute('data-step'),idx=ORDER.indexOf(s);
+      b.classList.toggle('skip',s===skip);b.classList.toggle('after',skip!=='none'&&idx>k);b.classList.toggle('now',skip==='none'&&s==='live');
+      if(b.tagName==='BUTTON')b.setAttribute('aria-pressed',s===skip?'true':'false');});
+    ptxt.textContent=r.ph;phone.setAttribute('data-state',r.st);setStatus(status,r.msg,r.cls);tl.setAttribute('data-skip',skip);}
+  $$('button.station',tl).forEach(function(b){b.addEventListener('click',function(){var s=b.getAttribute('data-step');skip=(skip===s)?'none':s;render();});});
+  $('#tlAll').addEventListener('click',function(){skip='none';render();});
+  render();
+})();
+
+// ===== 5. Cloudflare 的 PR =====
+(function(){var pr=$('#pr');if(!pr)return;
+  var BASE=['index.html','style.css','app.js','config.js','schema.sql','README.md'],ADD=['wrangler.jsonc','.gitignore','.assetsignore'];
+  var seen=false,merged=false,pulled=false,confirming=false;
+  var tabs=$$('#pr .tabs button'),conv=$('#prConv'),files=$('#prFiles'),merge=$('#prMerge'),confirm=$('#prConfirm'),hint=$('#prHint'),badge=$('#prBadge'),status=$('#prStatus'),pull=$('#prPull');
+  function list(el,extra){var all=BASE.concat(extra);$('.n',el).textContent=String(all.length);
+    $('.fl',el).innerHTML=all.map(function(f){return (ADD.indexOf(f)>=0?'<span class="add">＋</span>':'')+'<code>'+esc(f)+'</code>';}).join('、');}
+  function render(){list($('#prGh'),merged?ADD:[]);list($('#prPc'),pulled?ADD:[]);
+    merge.disabled=!seen;merge.classList.toggle('hidden',merged||confirming);confirm.classList.toggle('hidden',!confirming||merged);
+    badge.textContent=merged?'已合併':'還沒合併';badge.classList.toggle('merged',merged);
+    hint.innerHTML=merged?'合併之後，Cloudflare 會自己再建置一次；三個設定檔從此留在 repo 裡。':(seen?'三個檔都看過了，可以合併。':'先看 <code>Files changed</code> 才能合併：W5 讀 <code>diff</code> 的規矩。');
+    pull.classList.toggle('hidden',!merged||pulled);
+    if(!merged)setStatus(status,confirming?'再按一次 <code>Confirm merge</code> 才算數。':'還沒合併：GitHub 和你的電腦一樣，都是 6 個檔。');
+    else if(!pulled)setStatus(status,'GitHub 比你電腦多三個檔 → 下次先 <code>pull</code>。路線 A 叫 agent 改之前先拉下來，不然推不上去，它會說遠端有新的東西。路線 B 全在 GitHub 網頁上改，不用拉。','bad');
+    else setStatus(status,'一樣了：兩邊都是 9 個檔。之後 agent 改完再推，就推得上去。','ok');
+    pr.setAttribute('data-state',merged?(pulled?'pulled':'merged'):(confirming?'confirming':(seen?'seen':'open')));}
+  tabs.forEach(function(b){b.addEventListener('click',function(){var t=b.getAttribute('data-tab');tabs.forEach(function(x){x.classList.toggle('on',x===b);});
+    conv.classList.toggle('hidden',t!=='conv');files.classList.toggle('hidden',t!=='files');if(t==='files')seen=true;render();});});
+  merge.addEventListener('click',function(){confirming=true;render();});
+  confirm.addEventListener('click',function(){merged=true;confirming=false;render();});
+  pull.addEventListener('click',function(){pulled=true;render();});
+  $('#prReset').addEventListener('click',function(){seen=false;merged=false;pulled=false;confirming=false;tabs[0].click();});
+  render();
+})();
+
+// ===== 6. 症狀 =====
+(function(){var sel=$('#sym');if(!sel)return;
+  var panel=$('#symPanel'),see=$('#symSee'),why=$('#symWhy'),chk=$('#symCheck'),link=$('#symLink'),empty=$('#symEmpty'),mini=$$('#symMini li');
+  function p(t){return '<p style="margin:0">'+t+'</p>';}
+  var S={
+    config:{st:'gh',see:p('網頁出現「'+esc(REAL.cfgTitle)+'」，底下一句說哪一格沒填好，例如：')+real('urlPh'),
+      why:'<code>config.js</code> 還是「貼上…」，或在電腦改了、沒推上 GitHub。',
+      chk:'兩個值貼進去、存檔、推上去；等 Cloudflare 建置成功再重新整理。路線 B 在 GitHub 網頁改 <code>config.js</code>，小視窗裡那一次 <code>Commit changes</code> 也要按。',to:'help',txt:'〈卡關時〉「網頁寫『設定還沒完成』」'},
+    notable:{st:'sb',see:real('noTable'),why:'<code>schema.sql</code> 沒跑，或跑到別的專案。',
+      chk:'到「這個」專案的 <code>SQL Editor</code> 再跑一次，可以重跑。',to:'step-3',txt:'第 3 步 3-1〈建資料表和門禁〉'},
+    nogrant:{st:'sb',see:real('noGrant'),why:'<code>schema.sql</code> 最後的 grant 沒跑到。2026 起 Supabase 新建的表預設不開放，AI 寫的版本少了這一段就會這樣。',
+      chk:'起步檔的 <code>schema.sql</code> 可以整份重跑；AI 寫的版本少了 grant 就請它補，重跑報錯就把錯誤訊息貼給它，請它改成可以重跑。',to:'help',txt:'〈卡關時〉「資料表還沒開放給登入的人用」'},
+    columns:{st:'sb',see:real('columns'),why:'這個專案以前用別的版本建過 <code>learning_logs</code>（例如路線 A 換成起步檔）。',
+      chk:'<code>SQL Editor</code> 先跑 <code>drop table if exists public.learning_logs;</code>（表裡的紀錄會一起刪掉），再跑起步檔的 <code>schema.sql</code>。',to:'help',txt:'〈卡關時〉「資料表的欄位跟這份程式對不上」'},
+    confirm:{st:'sb',see:real('confirm'),why:'<code>Confirm email</code> 還開著。Supabase 內建的寄信只寄給專案成員、一小時只寄 2 封，全班一起註冊一定卡住。',
+      chk:'<code>Authentication</code> → <code>Sign In / Providers</code>，<code>User Signups</code> 那一區的 <code>Confirm email</code> 開關關掉、按 <code>Save changes</code>，再回網站按「登入」。',to:'step-3',txt:'第 3 步 3-3〈練習時關掉確認信〉'},
+    leak:{st:'sb',see:p('沒有任何錯誤訊息：清單裡就是多了別人的紀錄。這才是最危險的地方。'),why:'門禁（RLS）沒開、規則沒比對 <code>user_id</code>，或表裡還留著一條太寬的舊規則。',
+      chk:'先別再存東西。到 <code>SQL Editor</code> 把起步檔的 <code>schema.sql</code> 整份跑一次：它先清掉這張表所有舊規則，再建四條只認本人的規則。只叫 agent 再加一條對的規則不夠：同一個動作只要有一條規則放行，就會放行。修完再用兩個帳號驗一次（第 3 節可以先模擬）。',to:'step-6',txt:'第 6 步最後一段〈如果看得到對方的紀錄〉'},
+    errpage:{st:'cf',see:p('打開 Cloudflare 給的網址，是錯誤頁，不是登入畫面。'),why:'建置還沒跑完，或剛上線還在生效：第一分鐘可能是錯誤頁。',
+      chk:'到 Cloudflare 這個專案的 <code>Deployments</code> 看最新那次有沒有綠勾；等一分鐘再重新整理。建置失敗、紀錄寫 <code>Missing entry-point</code>，別一直按 <code>Deploy</code>，照第 5 步最後那段摺疊說明處理，或請老師來看。',to:'step-5',txt:'第 5 步〈Cloudflare：接上 GitHub、拿到網址〉'},
+    stale:{st:'cf',see:p('推上去了，手機打開還是舊的，沒有「最近 7 天」那一行。'),why:'建置還沒跑完，或手機拿的是舊檔。',
+      chk:'Cloudflare 這個專案的 <code>Deployments</code>，最新那次變成功再重新整理；手機可以關掉分頁重開。',to:'step-7',txt:'第 7 步〈改版一圈〉'},
+    rejected:{st:'gh',see:p('agent 說推不上去，遠端有新的東西。'),why:'GitHub 上有你電腦還沒有的改動（例如合併過 Cloudflare 的 PR、或在網頁上改過檔）。',
+      chk:'跟 agent 說「先 <code>pull</code> 再推」。第 7 步需求卡的第一句就是叫它先拉下來。',to:'help',txt:'〈卡關時〉「agent 推不上去」'}};
+  function render(){var k=sel.value;if(!k||!S[k]){panel.classList.add('hidden');empty.classList.remove('hidden');panel.removeAttribute('data-sym');return;}
+    var s=S[k];empty.classList.add('hidden');panel.classList.remove('hidden');
+    mini.forEach(function(li){li.classList.toggle('lit',li.getAttribute('data-st')===s.st);});
+    see.innerHTML=s.see;why.innerHTML=s.why;chk.innerHTML=s.chk;
+    link.innerHTML='對應操作頁：<a href="student.html#'+s.to+'">'+s.txt+'</a>';panel.setAttribute('data-sym',k);}
+  sel.addEventListener('change',render);render();
+})();
+
+// ===== 7. 名詞表搜尋 =====
+(function(){var q=$('#glQ');if(!q)return;
+  var items=$$('#glList .gi'),n=$('#glN'),none=$('#glNone');
+  function filter(){var s=q.value.trim().toLowerCase(),k=0;
+    items.forEach(function(it){var hit=!s||it.textContent.toLowerCase().indexOf(s)>=0;it.classList.toggle('hidden',!hit);if(hit)k++;});
+    n.textContent=k+' 個名詞';none.classList.toggle('hidden',k>0);}
+  q.addEventListener('input',filter);filter();
+})();
+
+// ===== 8. 想一想 =====
+(function(){var box=$('#qs');if(!box)return;
+  var KEY='w11-concepts-quiz',scoreEl=$('#quizScore');
+  var QS=[
+    {q:'<code>config.js</code> 裡該放哪兩個值？',o:['<code>Project URL</code> 和 publishable key','publishable key 和 secret key','<code>Project URL</code> 和資料庫密碼','secret key 和資料庫密碼'],a:0,
+      e:'<code>config.js</code> 會跟著網頁送到每個人的瀏覽器，只放本來就可以公開的兩個值。'+tg('規格 §〇·兩把鑰匙')+tg('操作頁 第 3 步','操作頁第 3 步 3-2')},
+    {q:'secret key 不小心推上 GitHub 了，怎麼辦？',o:['把檔案刪掉就好','到 Supabase 的 <code>API Keys</code> 頁把那把作廢，再換成 publishable key','把 repo 改個名字','不用管，沒人會看'],a:1,
+      e:'只刪檔不算數：GitHub 的歷史裡還找得到，一定要到 Supabase 把那把作廢。'+tg('起步檔 <code>app.js</code>','起步檔 app.js 的紅框三步')},
+    {q:'兩個帳號都只看得到自己的紀錄，是誰擋住別人的？',o:['網頁程式只抓自己的','資料庫的門禁（RLS）','Cloudflare','GitHub'],a:1,
+      e:'起步檔故意不在網頁寫「只抓我的」，擋住別人的只有 RLS，所以兩個帳號互測驗得出門禁有沒有開。'+tg('手記·為什麼這樣設計','教師手記〈為什麼這樣設計〉第 4 條')},
+    {q:'網頁說「資料表還沒開放給登入的人用」，少了什麼？',o:['RLS','grant','publishable key','網路'],a:1,
+      e:'2026 年起 Supabase 新建的表預設不開放；<code>schema.sql</code> 少了 grant 那一段就會這樣，整份再跑一次。'+tg('規格 §〇·2026 新規則')},
+    {q:'Supabase 後台的 <code>Table Editor</code> 看得到兩個帳號的紀錄，門禁壞了嗎？',o:['壞了，要重建專案','沒壞：後台是管理者的畫面，會略過門禁；要驗門禁，得從網頁用兩個帳號試','壞了，要把 RLS 關掉','看不出來'],a:1,
+      e:'後台用的是擁有者身分，會略過 RLS，兩筆都看得到是正常的。'+tg('規格 §〇·後台看得到全部')},
+    {q:'在 <code>SQL Editor</code> 建的新表，門禁（RLS）預設是？',o:['自動開著','沒開，要自己 <code>enable row level security</code>','要付費才能開','只有老師能開'],a:1,
+      e:'<code>SQL Editor</code> 建的表 RLS 預設沒開，所以 <code>schema.sql</code> 裡要有那一行。'+tg('規格 §〇·RLS 預設')},
+    {q:'兩個帳號看得到彼此的紀錄，叫 agent「再加一條只認本人的規則」，夠嗎？',o:['夠，新規則會蓋掉舊的','不夠：同一個動作只要有一條規則放行就會放行，要先清掉所有舊規則（重跑起步檔的 <code>schema.sql</code>）','夠，重新整理就好','不夠，要換一個 Supabase 帳號'],a:1,
+      e:'舊的太寬規則不清掉，新規則再對也擋不住。起步檔的 <code>schema.sql</code> 會先清掉這張表所有舊規則，再建四條。'+tg('規格 §〇·起步檔防呆')+tg('操作頁 第 6 步')},
+    {q:'改版推上 GitHub 之後，還要按部署鈕嗎？',o:['要，每次都要','不用：Cloudflare 自己建置、換新版','要等老師幫你按','要重新匯入一次'],a:1,
+      e:'接上 GitHub 之後，每次推上去自動部署；到 <code>Deployments</code> 看最新那次成功，再重新整理。'+tg('規格 §〇·沒有設定檔時')+tg('操作頁 第 7 步')},
+    {q:'Cloudflare 第一次建置跑完、出現綠勾之後，你的網址怎麼樣？',o:['已經上線，打得開登入畫面','要等老師核准才上線','一定要先合併 PR 才打得開','要等一天才生效'],a:0,
+      e:'老師 11/13 實測：第一次建置約一分鐘綠勾、直接上線，沒出現 PR。有 PR 的話看過再合併，合併了之後的建置就不必重跑自動設定。'+tg('規格 §〇·Cloudflare 真畫面')+tg('操作頁 第 5 步')},
+    {q:'練習時為什麼要關掉 <code>Confirm email</code>？',o:['這樣比較安全','內建寄信只寄給專案成員、一小時只寄 2 封，全班一起註冊一定卡住','不關就不能登出','關掉才看得到資料表'],a:1,
+      e:'真的要給大家用的網站，要換成自己的寄信服務，再把它打開。'+tg('規格 §〇·內建寄信')+tg('操作頁 第 3 步','操作頁第 3 步 3-3')}];
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return {};}}
+  function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+  var state=load();
+  function shuffled(n){var a=[];for(var i=0;i<n;i++)a.push(i);for(var j=n-1;j>0;j--){var r=Math.floor(Math.random()*(j+1));var t=a[j];a[j]=a[r];a[r]=t;}return a;}
+  function score(){var n=0,m=0;QS.forEach(function(q,i){var s=state[i];if(s&&s.r){m++;if(s.p===q.a)n++;}});
+    scoreEl.textContent='答對 '+n+'／'+QS.length+(m>0&&m<QS.length?'（揭曉了 '+m+' 題）':'');scoreEl.className='status'+(m===QS.length?(n===QS.length?' ok':''):'');}
+  function paint(div,q,i){var s=state[i]||{},pick=typeof s.p==='number'?s.p:-1;
+    $$('.opt',div).forEach(function(x){var k=Number(x.getAttribute('data-k'));x.setAttribute('aria-pressed',k===pick?'true':'false');
+      x.classList.toggle('right',!!s.r&&k===q.a);x.classList.toggle('wrong',!!s.r&&k===pick&&k!==q.a);});
+    var ans=$('.ans',div),yours=$('.yours',div);
+    if(s.r){ans.className='ans '+(pick===q.a?'ok':'no');ans.innerHTML=(pick===q.a?'✅ 對。':(pick<0?'沒選也可以看答案。':'❌ 不對。'))+q.e;
+      yours.textContent=pick===q.a?'答對了！':'再想想看上面的解釋。';}
+    else{ans.className='ans hidden';ans.innerHTML='';yours.textContent=pick<0?'':'你選了一個答案，按「揭曉」看對不對。';}
+    div.setAttribute('data-revealed',s.r?'1':'0');}
+  // 題目與選項是本頁自己寫死的字串（可含 <code>），不是使用者輸入，所以不經 esc()
+  function build(){box.innerHTML=QS.map(function(q,i){return '<div class="qq" data-q="'+i+'"><h3>'+(i+1)+'. '+q.q+'</h3><div class="opts">'+
+      shuffled(q.o.length).map(function(k){return '<button type="button" class="opt" data-k="'+k+'" aria-pressed="false">'+q.o[k]+'</button>';}).join('')+
+      '</div><div class="qbar"><button type="button" class="rv">揭曉</button><span class="yours"></span></div><div class="ans hidden"></div></div>';}).join('');
+    $$('.qq',box).forEach(function(div){var i=Number(div.getAttribute('data-q')),q=QS[i];
+      $$('.opt',div).forEach(function(b){b.addEventListener('click',function(){var s=state[i]||{};if(s.r)return;s.p=Number(b.getAttribute('data-k'));state[i]=s;save(state);paint(div,q,i);});});
+      $('.rv',div).addEventListener('click',function(){var s=state[i]||{};s.r=true;state[i]=s;save(state);paint(div,q,i);score();});
+      paint(div,q,i);});
+    score();}
+  $('#qsReset').addEventListener('click',function(){state={};save(state);build();});
+  build();
+})();
+})();
+</script>
+</body></html>
+

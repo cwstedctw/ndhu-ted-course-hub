@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RS 閂鎖工作台</title>
+<meta name="description" content="互動模擬：兩顆 NAND 閘交叉接成閂鎖，為什麼記得住「第一次碰到」、不怕開關抖；三腳撥動開關為什麼擋得住彈跳、兩腳按鈕為什麼擋不住，以及按鈕的三條解法。創客入門補充教材。">
+</head>
+<body>
+<style>
+  :root {
+    --c-primary: #D13B00;
+    --c-primary-deep: #A32E00;
+    --c-primary-bright: #FF8A5C;
+    --c-primary-tint: #FFE3D6;
+    --c-primary-pale: #FFF1E8;
+    --c-mint: #7FD8BE;
+    --c-mint-deep: #2F8A6F;
+    --c-mint-tint: #DFF5EE;
+    --c-yellow: #FFD66B;
+    --c-yellow-deep: #9A6B00;
+    --c-yellow-tint: #FFF2CE;
+    --c-violet: #B9A7E0;
+    --c-violet-deep: #6B5BA0;
+    --c-violet-tint: #EFEAFA;
+    --c-alert: #B00020;
+    --c-alert-tint: #FDE7EA;
+    --c-bg: #FFF9F2;
+    --c-surface: #FFFFFF;
+    --c-surface-2: #FBF3EA;
+    --c-line: #EAD8C8;
+    --c-line-soft: #F3E4D8;
+    --c-ink: #2D3142;
+    --c-ink-soft: #4A4F63;
+    --c-ink-faint: #8A8FA3;
+    --c-code-bg: #F4F1FB;
+    --c-code-line: #E4DDF5;
+    --c-code-ink: #3B3457;
+    --c-wire: #2D3142;
+    --c-wire-off: #C9BFB8;
+    --c-chip: #FFFDF9;
+    --c-particle: #FF8A5C;
+    --c-particle-core: #D13B00;
+    --c-electron: #7FD8BE;
+    --c-electron-core: #1F6B54;
+    --c-meter-bg: #1E2230;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #8A8FA3;
+    --c-halo: rgba(45, 49, 66, 0.06);
+    --c-on-primary: #FFF7F2;
+    --font-zh: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --c-primary: #FFA57D;
+      --c-primary-deep: #FFC0A0;
+      --c-primary-bright: #C9532A;
+      --c-primary-tint: #4A2A1C;
+      --c-primary-pale: #33211A;
+      --c-mint: #2A7D63;
+      --c-mint-deep: #7FD8BE;
+      --c-mint-tint: #1E3A33;
+      --c-yellow: #8A6B1E;
+      --c-yellow-deep: #FFD66B;
+      --c-yellow-tint: #3A3220;
+      --c-violet: #6B5BA0;
+      --c-violet-deep: #B9A7E0;
+      --c-violet-tint: #2A2440;
+      --c-alert: #FF6B7A;
+      --c-alert-tint: #4A1F26;
+      --c-bg: #1A1614;
+      --c-surface: #241E1B;
+      --c-surface-2: #2C2522;
+      --c-line: #3A302A;
+      --c-line-soft: #332A25;
+      --c-ink: #F2EAE4;
+      --c-ink-soft: #C9BFB8;
+      --c-ink-faint: #8C817A;
+      --c-code-bg: #1F1B2E;
+      --c-code-line: #332C4A;
+      --c-code-ink: #D6CFEA;
+      --c-wire: #F2EAE4;
+      --c-wire-off: #5E534C;
+      --c-chip: #201B18;
+      --c-particle: #FFB38A;
+      --c-particle-core: #FF7A3D;
+      --c-electron: #9FE8D0;
+      --c-electron-core: #2F8A6F;
+      --c-meter-bg: #12151E;
+      --c-meter-ink: #F4ECD8;
+      --c-meter-dim: #7E8398;
+      --c-halo: rgba(242, 234, 228, 0.07);
+      --c-on-primary: #1A1614;
+    }
+  }
+  :root[data-theme="dark"] {
+    --c-primary: #FFA57D;
+    --c-primary-deep: #FFC0A0;
+    --c-primary-bright: #C9532A;
+    --c-primary-tint: #4A2A1C;
+    --c-primary-pale: #33211A;
+    --c-mint: #2A7D63;
+    --c-mint-deep: #7FD8BE;
+    --c-mint-tint: #1E3A33;
+    --c-yellow: #8A6B1E;
+    --c-yellow-deep: #FFD66B;
+    --c-yellow-tint: #3A3220;
+    --c-violet: #6B5BA0;
+    --c-violet-deep: #B9A7E0;
+    --c-violet-tint: #2A2440;
+    --c-alert: #FF6B7A;
+    --c-alert-tint: #4A1F26;
+    --c-bg: #1A1614;
+    --c-surface: #241E1B;
+    --c-surface-2: #2C2522;
+    --c-line: #3A302A;
+    --c-line-soft: #332A25;
+    --c-ink: #F2EAE4;
+    --c-ink-soft: #C9BFB8;
+    --c-ink-faint: #8C817A;
+    --c-code-bg: #1F1B2E;
+    --c-code-line: #332C4A;
+    --c-code-ink: #D6CFEA;
+    --c-wire: #F2EAE4;
+    --c-wire-off: #5E534C;
+    --c-chip: #201B18;
+    --c-particle: #FFB38A;
+    --c-particle-core: #FF7A3D;
+    --c-electron: #9FE8D0;
+    --c-electron-core: #2F8A6F;
+    --c-meter-bg: #12151E;
+    --c-meter-ink: #F4ECD8;
+    --c-meter-dim: #7E8398;
+    --c-halo: rgba(242, 234, 228, 0.07);
+    --c-on-primary: #1A1614;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--c-bg); color: var(--c-ink); font-family: var(--font-zh); font-size: 14px; line-height: 1.6; }
+  button, select, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .45; }
+  :focus-visible { outline: 3px solid var(--c-primary); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+
+  .wrap { padding: 10px 16px 36px; display: flex; justify-content: center; }
+  .col { width: 100%; max-width: 1400px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--c-primary); white-space: nowrap; }
+  .kicker .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c-primary-bright); }
+  h1 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 800; letter-spacing: .01em; }
+  .appbar { display: flex; align-items: center; justify-content: space-between; gap: 6px 16px; flex-wrap: wrap; padding: 2px 4px 0; }
+  .appbar-title { display: flex; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; min-width: 0; }
+  .sub1 { font-size: 14px; color: var(--c-ink-soft); font-weight: 600; }
+  .about { font-size: 13px; color: var(--c-ink-soft); max-width: 46em; }
+  .about summary { cursor: pointer; font-weight: 700; color: var(--c-primary); list-style: none; }
+  .about summary::-webkit-details-marker { display: none; }
+  .about summary::before { content: "＋ "; }
+  .about[open] summary::before { content: "－ "; }
+  .about p { margin: 6px 0 0; line-height: 1.6; }
+  .about b { color: var(--c-ink); }
+  h2 { margin: 0; font-size: 18px; font-weight: 800; line-height: 1.3; }
+  h3 { margin: 0; font-size: 14px; font-weight: 800; }
+  p { margin: 0; }
+  .muted { color: var(--c-ink-soft); }
+  .tiny { font-size: 13px; color: var(--c-ink-faint); }
+  a { color: var(--c-primary); }
+
+  .sect { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 14px; padding: 0 16px; }
+  .sect > summary { cursor: pointer; font-size: 16px; font-weight: 800; padding: 12px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .sect > summary::-webkit-details-marker { display: none; }
+  .sect > summary::after { content: "展開 ＋"; font-size: 12px; font-weight: 600; color: var(--c-ink-faint); white-space: nowrap; }
+  .sect[open] > summary::after { content: "收起 －"; }
+  .sect[open] > summary { border-bottom: 2px solid var(--c-line-soft); margin-bottom: 14px; }
+  .sect > section { padding-bottom: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .block { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 14px; padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .block > header { display: flex; flex-direction: column; gap: 4px; }
+
+  /* ===== 工作台 ===== */
+  .bench { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 12px; align-items: start; }
+  @media (max-width: 980px) { .bench { grid-template-columns: minmax(0, 1fr); } }
+  .stage { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 16px; padding: 8px 12px 12px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tab { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 10px; padding: 4px 10px; font-size: 13px; font-weight: 700; color: var(--c-ink-soft); line-height: 1.3; text-align: left; }
+  .tab small { display: block; font-size: 11px; font-weight: 600; opacity: .8; }
+  .tab[aria-selected="true"] { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary-deep); }
+  .statehint { margin: 0; font-size: 13px; line-height: 1.5; color: var(--c-ink); border-top: 2px solid var(--c-line-soft); padding-top: 6px; }
+  .statehint b { color: var(--c-primary); }
+  .ckwrap { display: flex; justify-content: center; min-width: 0; }
+  #ckt { width: 100%; height: min(52vh, 420px); display: block; }
+  .bench-live #ckt { height: min(38vh, 320px); }
+  @media (max-width: 720px) { #ckt, .bench-live #ckt { height: auto; } }
+  .caption { font-size: 14px; line-height: 1.55; background: var(--c-yellow-tint); border: 1.5px solid var(--c-yellow); border-radius: 10px; padding: 6px 12px; min-height: 2.9em; }
+  .caption b { color: var(--c-primary-deep); }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 0; padding: 0; list-style: none; font-size: 12px; }
+  .crumbs li { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 8px; padding: 1px 8px; color: var(--c-ink-soft); }
+  .crumbs li.now { background: var(--c-primary-tint); border-color: var(--c-primary); color: var(--c-ink); font-weight: 700; }
+  .crumbs li + li::before { content: "→ "; color: var(--c-ink-faint); }
+  .scopewrap { margin: 0; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .scopewrap svg { width: 100%; height: auto; display: block; }
+  figcaption { font-size: 12px; line-height: 1.5; color: var(--c-ink-soft); }
+  figcaption b { color: var(--c-ink); }
+  .leadbox { display: flex; flex-direction: column; gap: 8px; }
+  .lead { color: var(--c-ink-soft); line-height: 1.65; max-width: 62em; font-size: 14px; }
+  .lead b { color: var(--c-ink); }
+  .key { font-size: 14px; background: var(--c-mint-tint); border: 1.5px solid var(--c-mint); border-radius: 10px; padding: 6px 12px; }
+  .key b { font-weight: 800; }
+  .lat { font-family: "Segoe UI", Arial, "Helvetica Neue", Helvetica, sans-serif; }
+
+  /* ===== 控制板 ===== */
+  .panel { display: flex; flex-direction: column; gap: 8px; position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; padding-right: 2px; min-width: 0; }
+  @media (max-width: 980px) { .panel { position: static; max-height: none; overflow: visible; } }
+  .group { background: var(--c-surface); border: 2px solid var(--c-line); border-radius: 12px; padding: 8px 12px 10px; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .group h3 { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .group h3 .hint { font-size: 12px; font-weight: 600; color: var(--c-ink-faint); }
+  .btn { border: 2px solid var(--c-line); background: var(--c-surface-2); border-radius: 8px; padding: 5px 10px; font-weight: 700; font-size: 13px; line-height: 1.3; }
+  .btn:hover:not(:disabled) { border-color: var(--c-primary); }
+  .btn[aria-pressed="true"] { background: var(--c-ink); color: var(--c-bg); border-color: var(--c-ink); }
+  .btn.main { border-color: var(--c-primary); background: var(--c-primary-pale); color: var(--c-primary-deep); font-size: 14px; padding: 8px 10px; }
+  .btn.main[aria-pressed="true"] { background: var(--c-primary); color: var(--c-on-primary); border-color: var(--c-primary-deep); }
+  .btn small { display: block; font-size: 11px; font-weight: 600; opacity: .8; }
+  .btn.pulse { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(209, 59, 0, .45); } 50% { box-shadow: 0 0 0 6px rgba(209, 59, 0, 0); } }
+  .rowbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 2px solid var(--c-line); border-radius: 12px; overflow: hidden; background: var(--c-surface-2); }
+  .seg button { border: 0; background: transparent; padding: 5px 4px; font-weight: 700; font-size: 13px; line-height: 1.25; color: var(--c-ink-soft); border-right: 2px solid var(--c-line); }
+  .seg button:last-child { border-right: 0; }
+  .seg button[aria-pressed="true"] { background: var(--c-primary); color: var(--c-on-primary); }
+  .seg button small { display: block; font-size: 10px; font-weight: 600; opacity: .85; }
+  .meters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .meter { background: var(--c-meter-bg); color: var(--c-meter-ink); border-radius: 10px; padding: 5px 8px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .meter .lbl { font-size: 11px; color: var(--c-meter-dim); line-height: 1.3; min-height: 28px; }
+  .meter .val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 700; line-height: 1.1; }
+  .meter.hot .val { color: #FF6B7A; }
+  .meter.good .val { color: #7FD8BE; }
+  .speedrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+  .speedrow input { width: 100%; min-width: 0; accent-color: var(--c-primary); }
+  .speedrow .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 800; font-size: 13px; min-width: 3.4em; text-align: right; }
+  .note { font-size: 13px; line-height: 1.5; padding: 7px 11px; border-radius: 10px; border: 1.5px solid var(--c-line-soft); background: var(--c-surface-2); color: var(--c-ink-soft); }
+  .note.warn { background: var(--c-yellow-tint); border-color: var(--c-yellow); color: var(--c-ink); }
+  .note b { color: var(--c-ink); }
+  .field { display: flex; flex-direction: column; gap: 3px; font-size: 13px; font-weight: 600; color: var(--c-ink-soft); }
+  table.states { border-collapse: collapse; width: 100%; font-size: 13px; }
+  table.states th, table.states td { border-bottom: 1.5px solid var(--c-line-soft); padding: 3px 4px; text-align: center; }
+  table.states th { font-size: 11px; color: var(--c-ink-faint); font-weight: 700; }
+  table.states td.n { font-family: var(--font-mono); font-weight: 800; }
+  table.states tr.on td { background: var(--c-primary-tint); }
+  table.states tr.bad td.nm button { color: var(--c-alert); }
+  table.states td.nm button { border: 0; background: transparent; font-weight: 800; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; padding: 2px 4px; color: var(--c-ink); }
+  .tally { font-size: 12px; color: var(--c-ink-soft); }
+
+  /* ===== 卡片與表格 ===== */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 14px; }
+  .card { background: var(--c-surface); border: 2px solid var(--c-line-soft); border-radius: 16px; padding: 14px 16px 13px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .card h3 { font-size: 15px; line-height: 1.4; }
+  .card p { font-size: 13px; color: var(--c-ink-soft); }
+  .card p b { color: var(--c-ink); }
+  .card .try { margin-top: auto; align-self: flex-start; border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 10px; padding: 5px 12px; font-weight: 700; font-size: 13px; }
+  .card .try:hover { background: var(--c-primary-tint); }
+  .card .btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .06em; color: var(--c-primary); }
+  dl.facts2 { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 10px; font-size: 13px; }
+  dl.facts2 dt { font-weight: 800; color: var(--c-ink); white-space: nowrap; }
+  dl.facts2 dd { margin: 0; color: var(--c-ink-soft); }
+  .steps { margin: 0; padding-left: 1.3em; font-size: 13px; color: var(--c-ink-soft); }
+  .mono1 { font-family: var(--font-mono); font-size: 12px; background: var(--c-code-bg); border-radius: 5px; padding: 1px 5px; color: var(--c-code-ink); overflow-wrap: anywhere; }
+  .adv { background: var(--c-surface-2); border: 1.5px solid var(--c-line-soft); border-radius: 10px; padding: 6px 12px; min-width: 0; }
+  .adv > summary { cursor: pointer; font-weight: 800; font-size: 13px; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .adv > summary::-webkit-details-marker { display: none; }
+  .adv > summary::after { content: "＋"; color: var(--c-ink-faint); }
+  .adv[open] > summary::after { content: "－"; }
+  .adv .inner { padding-top: 8px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .codehead { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 12px; color: var(--c-ink-faint); font-weight: 700; }
+  .code { margin: 0; background: var(--c-code-bg); border: 1.5px solid var(--c-code-line); border-radius: 10px; padding: 10px 12px; font-family: var(--font-mono); font-size: 12px; line-height: 1.55; color: var(--c-code-ink); overflow-x: auto; white-space: pre; max-width: 100%; }
+  .copy { border: 2px solid var(--c-primary); color: var(--c-primary); background: transparent; border-radius: 8px; padding: 3px 10px; font-weight: 700; font-size: 12px; white-space: nowrap; }
+  .copy:hover { background: var(--c-primary-tint); }
+  .tablewrap { overflow-x: auto; border: 2px solid var(--c-line); border-radius: 14px; max-width: 100%; }
+  table.facts { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 13px; }
+  table.facts th, table.facts td { text-align: left; padding: 8px 12px; border-bottom: 1.5px solid var(--c-line-soft); vertical-align: top; }
+  table.facts th { font-size: 12px; letter-spacing: .06em; color: var(--c-ink-faint); font-weight: 700; background: var(--c-surface-2); }
+  table.facts tr:last-child td { border-bottom: 0; }
+  table.facts td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 700; }
+  .closing { font-size: 15px; font-weight: 800; color: var(--c-ink); background: var(--c-primary-pale); border: 2px solid var(--c-primary-tint); border-radius: 12px; padding: 10px 14px; }
+  .deriv p, .deriv li { font-size: 13px; color: var(--c-ink-soft); line-height: 1.65; }
+  .deriv ul { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 4px; }
+  .deriv b { color: var(--c-ink); }
+  .truth { border-collapse: collapse; font-size: 13px; }
+  .truth th, .truth td { border: 1.5px solid var(--c-line); padding: 3px 12px; text-align: center; font-family: var(--font-mono); font-weight: 700; }
+  .truth th { background: var(--c-surface-2); font-family: var(--font-zh); font-size: 12px; color: var(--c-ink-faint); }
+  .foot { font-size: 12px; color: var(--c-ink-faint); border-top: 2px solid var(--c-line-soft); padding-top: 10px; display: flex; flex-direction: column; gap: 3px; }
+
+  /* ===== 電路圖 SVG ===== */
+  .wire { stroke: var(--c-wire); stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .wire.hi { stroke: var(--c-primary); stroke-width: 3; }
+  .wire.lo { stroke: var(--c-wire-off); stroke-width: 3; }
+  .rail { stroke: var(--c-primary); stroke-width: 3; fill: none; }
+  .gnd { stroke: var(--c-ink); stroke-width: 2.4; fill: none; }
+  .node { fill: var(--c-wire); }
+  .node.hi { fill: var(--c-primary); }
+  .node.lo { fill: var(--c-wire-off); }
+  .res { stroke: var(--c-wire); stroke-width: 2.2; fill: none; stroke-linejoin: round; }
+  .box { fill: var(--c-surface-2); stroke: var(--c-line); stroke-width: 2; }
+  .gate { fill: var(--c-surface-2); stroke: var(--c-wire); stroke-width: 2.4; stroke-linejoin: round; transition: fill .2s; }
+  .gate.on { fill: var(--c-primary-tint); stroke: var(--c-primary); stroke-width: 3.6; }
+  .gate.wait { stroke-dasharray: 5 4; stroke: var(--c-primary); }
+  .plate { stroke: var(--c-wire); stroke-width: 3.4; fill: none; stroke-linecap: round; }
+  .cap { fill: var(--c-primary-tint); stroke: var(--c-primary); stroke-width: 2; }
+  .contact { fill: var(--c-surface); stroke: var(--c-wire); stroke-width: 2; }
+  .lbl { font-family: var(--font-zh); font-size: 13px; fill: var(--c-ink-soft); }
+  .lbl-b { font-family: var(--font-zh); font-size: 14px; font-weight: 700; fill: var(--c-ink); }
+  .lbl-s { font-family: var(--font-zh); font-size: 12px; fill: var(--c-ink-faint); }
+  .lbl-g { font-family: var(--font-zh); font-size: 12px; font-weight: 700; fill: var(--c-ink); }
+  .nm { font-family: var(--font-zh); font-size: 17px; font-weight: 800; fill: var(--c-ink); }
+  .dg { font-family: var(--font-mono); font-size: 17px; font-weight: 800; }
+  .dg.s { font-size: 13px; }
+  .dg.hi { fill: var(--c-primary); }
+  .dg.lo { fill: var(--c-ink-faint); }
+  .badge { fill: var(--c-surface); stroke: var(--c-line); stroke-width: 2; }
+  .badge.hi { fill: var(--c-primary-tint); stroke: var(--c-primary); }
+  .hit { fill: transparent; cursor: pointer; }
+  .hit:focus { outline: none; }
+  .hit:focus-visible { stroke: var(--c-primary); stroke-width: 3; stroke-dasharray: 6 4; }
+  @media (max-width: 520px) {
+    #ckt .lbl { font-size: 15px; }
+    #ckt .lbl-b { font-size: 16px; }
+    #ckt .lbl-s { font-size: 14px; }
+    #ckt .lbl-g { font-size: 13px; }
+    #ckt .nm, #ckt .dg { font-size: 19px; }
+    #ckt .dg.s { font-size: 14px; }
+  }
+  .flash { animation: flash .6s ease-out 1; }
+  @keyframes flash { 0% { stroke-width: 7; } 100% { stroke-width: 3; } }
+
+  /* ===== 示波器 ===== */
+  .lanebg { fill: var(--c-surface-2); }
+  .lax { stroke: var(--c-line); stroke-width: 1.2; }
+  .ln { font-family: var(--font-zh); font-size: 13px; font-weight: 700; fill: var(--c-ink); }
+  .ln2 { font-family: var(--font-zh); font-size: 11px; fill: var(--c-ink-faint); }
+  .lnum { font-family: var(--font-mono); font-size: 11px; fill: var(--c-ink-faint); }
+  .seglbl { font-family: var(--font-zh); font-size: 12px; font-weight: 700; fill: var(--c-ink-soft); }
+  .segsep { stroke: var(--c-ink-faint); stroke-width: 1; stroke-dasharray: 4 3; }
+  .cmpband { fill: var(--c-ink-faint); opacity: .12; }
+  .airband { fill: var(--c-mint); opacity: .22; }
+  .trace { fill: none; stroke: var(--c-primary); stroke-width: 2.2; stroke-linejoin: round; }
+  .trace.b { stroke: var(--c-violet-deep); }
+  .trace.q { stroke: var(--c-mint-deep); stroke-width: 2.6; }
+  .nowline { stroke: var(--c-primary-bright); stroke-width: 1.6; }
+  .pollmk { stroke: var(--c-yellow-deep); stroke-width: 1.4; }
+  .qmk { fill: var(--c-alert); }
+  .note-s { font-family: var(--font-zh); font-size: 11px; font-weight: 700; fill: var(--c-alert); }
+  .note-m { font-family: var(--font-zh); font-size: 11px; font-weight: 700; fill: var(--c-mint-deep); }
+  .sbar { stroke: var(--c-ink-soft); stroke-width: 2; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gate { transition: none; }
+    .flash, .btn.pulse { animation: none; }
+  }
+</style>
+
+<div class="wrap"><div class="col">
+
+  <header class="appbar">
+    <div class="appbar-title">
+      <span class="kicker"><span class="dot"></span><span>創客入門 · W4 補充教材</span></span>
+      <h1>一顆開關，怎麼記住「第一次碰到」</h1>
+      <span class="sub1">接對兩個訊號時，閂鎖為什麼擋得住彈跳；兩腳按鈕為什麼要補一腳</span>
+    </div>
+    <details class="about">
+      <summary>這一頁在做什麼</summary>
+      <p>兩顆 NAND 閘（兩個輸入都是 1 才輸出 0）交叉接起來，就變成一個會記住狀態的電路，叫<b>閂鎖</b>（latch）；它記住的是「第一次碰到」某一邊，也就是第一次把那個輸入拉成 0，所以開關碰上時金屬片彈好幾下（<b>彈跳</b>，bounce），它也不怕。工作台一先用理想的按鍵看它怎麼記住，工作台二換成三腳的撥動開關看它為什麼擋得住彈跳，工作台三換成兩腳的按鈕看它為什麼擋不住。最後一段給按鈕三條解法：ESP32 補一腳、純程式等一下、交給晶片的硬體幫忙記。</p>
+      <p>姊妹頁：<a href="../w05/button-bounce.html">按鈕彈跳實驗台</a>（四種治法總覽）、<a href="esp32-pin-xray.html?io=in">ESP32 腳位透視鏡</a>（腳位怎麼把電壓讀成 1／0）、<a href="timer-interrupt.html">程式在睡的時候，按鈕怎麼辦</a>（sleep 卡住整支程式的問題）。</p>
+    </details>
+  </header>
+
+  <section class="bench" id="bench" aria-label="互動工作台">
+    <div class="stage" id="stage" data-idle="1">
+      <div class="tabs" role="tablist" aria-label="三個工作台">
+        <button class="tab" role="tab" id="tb-ideal" data-b="ideal" aria-selected="true" aria-controls="tp-main">工作台一<small>閂鎖本體（理想按鍵）</small></button>
+        <button class="tab" role="tab" id="tb-slide" data-b="slide" aria-selected="false" aria-controls="tp-main">工作台二<small>三腳撥動開關</small></button>
+        <button class="tab" role="tab" id="tb-button" data-b="button" aria-selected="false" aria-controls="tp-main">工作台三<small>兩腳按鈕：為什麼不行</small></button>
+      </div>
+      <div id="tp-main" role="tabpanel" aria-labelledby="tb-ideal" style="display:flex;flex-direction:column;gap:8px;min-width:0">
+        <p class="statehint" id="stateLine" aria-live="polite">現在：<b>兩個都放開＝保持</b></p>
+        <div class="seg" id="segWire" role="group" aria-label="三種接法" hidden>
+          <button data-w="1" aria-pressed="true">接法①<small>只接 <span class="lat">S̄</span></small></button>
+          <button data-w="2" aria-pressed="false">接法②<small>多一顆 NOT 閘（把 1 變 0、0 變 1）</small></button>
+          <button data-w="3" aria-pressed="false">接法③<small>ESP32 補 <span class="lat">R̄</span></small></button>
+        </div>
+        <div class="ckwrap">
+          <svg id="ckt" viewBox="0 0 600 330" role="img" aria-label="電路圖：兩顆 NAND 閘交叉接成閂鎖。NAND 1 的輸出 Q 接到 NAND 2 的一個輸入，NAND 2 的輸出 Q̄ 接回 NAND 1 的一個輸入；左邊是輸入 S̄ 與 R̄，右邊是輸出">
+            <!-- 上拉：S̄ 那一側（三個工作台都有） -->
+            <g id="pullS">
+              <path class="rail" d="M175 14 H205"/>
+              <text class="lbl-b" x="170" y="19" text-anchor="end">3.3 V</text>
+              <path class="wire" d="M190 14 V24"/>
+              <path class="res" d="M190 24 L182 29 L198 36 L182 43 L198 50 L190 55"/>
+              <path class="wire" d="M190 55 V77"/>
+              <text class="lbl-s" x="178" y="36" text-anchor="end">上拉</text>
+              <text class="lbl-s" x="178" y="52" text-anchor="end">10 kΩ</text>
+            </g>
+            <!-- 上拉：R̄ 那一側（工作台一、二、接法①） -->
+            <g id="pullR">
+              <path class="rail" d="M175 190 H205"/>
+              <text class="lbl-b" x="170" y="195" text-anchor="end">3.3 V</text>
+              <path class="wire" d="M190 190 V200"/>
+              <path class="res" d="M190 200 L182 205 L198 212 L182 219 L198 226 L190 231"/>
+              <path class="wire" d="M190 231 V253"/>
+              <text class="lbl-s" x="178" y="212" text-anchor="end">上拉</text>
+              <text class="lbl-s" x="178" y="228" text-anchor="end">10 kΩ</text>
+            </g>
+
+            <!-- S̄ 這條線（依工作台換起點） -->
+            <path class="wire hi" id="wS1" d="M140 77 H268"/>
+            <path class="wire hi" id="wS2" d="M135 77 H268"/>
+            <path class="wire hi" id="wSg" d="M215 77 V36 H440"/>
+            <path class="wire hi" id="wSn" d="M230 77 V150"/>
+            <circle class="node hi" id="nS" cx="190" cy="77" r="3.6"/>
+            <circle class="node hi" id="nSg" cx="215" cy="77" r="3.6"/>
+            <circle class="node hi" id="nSn" cx="230" cy="77" r="3.6"/>
+            <!-- R̄ 這條線 -->
+            <path class="wire hi" id="wR1" d="M140 253 H268"/>
+            <path class="wire hi" id="wR2" d="M135 253 H268"/>
+            <path class="wire hi" id="wR3a" d="M190 253 H268"/>
+            <path class="wire hi" id="wR3b" d="M230 189 V253 H268"/>
+            <path class="wire hi" id="wR3c" d="M440 300 H230 V253 H268"/>
+            <circle class="node hi" id="nR" cx="190" cy="253" r="3.6"/>
+
+            <!-- 閂鎖本體：兩顆 NAND 交叉接 -->
+            <path class="wire lo" id="wQ" d="M331 92 H440 M350 92 V130 L250 190 V223 H268"/>
+            <path class="wire hi" id="wQB" d="M331 238 H410 M350 238 V200 L250 140 V107 H268"/>
+            <path class="wire hi" id="wQB2" d="M410 238 H440"/>
+            <circle class="node lo" id="nJ1" cx="350" cy="92" r="3.6"/>
+            <circle class="node hi" id="nJ2" cx="350" cy="238" r="3.6"/>
+            <path class="gate" id="g1" d="M268 62 H290 A30 30 0 0 1 290 122 H268 Z"/>
+            <circle class="gate" id="g1b" cx="325.5" cy="92" r="5.5"/>
+            <text class="lbl-g" x="291" y="96" text-anchor="middle">NAND 1</text>
+            <path class="gate" id="g2" d="M268 208 H290 A30 30 0 0 1 290 268 H268 Z"/>
+            <circle class="gate" id="g2b" cx="325.5" cy="238" r="5.5"/>
+            <text class="lbl-g" x="291" y="242" text-anchor="middle">NAND 2</text>
+            <text class="nm" x="236" y="70"><tspan class="lat">S̄</tspan></text><text class="dg hi" id="dS" x="254" y="70">1</text>
+            <text class="nm" x="240" y="246"><tspan class="lat">R̄</tspan></text><text class="dg hi" id="dR" x="258" y="246">1</text>
+            <text class="dg s lo" id="dN2A" x="259" y="217" text-anchor="middle">0</text>
+            <text class="dg s hi" id="dN1B" x="259" y="101" text-anchor="middle">1</text>
+            <text class="nm" x="366" y="84">Q</text><text class="dg lo" id="dQ" x="386" y="84">0</text>
+            <text class="nm" x="366" y="230"><tspan class="lat">Q̄</tspan></text><text class="dg hi" id="dQB" x="386" y="230">1</text>
+
+            <!-- 工作台一：兩顆理想接地鍵 -->
+            <g id="keysIdeal">
+              <path class="wire" d="M104 77 V95"/>
+              <path class="gnd" d="M92 95 H116 M96 100 H112 M100 105 H108"/>
+              <circle class="contact" cx="104" cy="77" r="3.6"/>
+              <circle class="contact" cx="140" cy="77" r="3.6"/>
+              <g id="kSbar"><path class="plate" d="M96 68 H148"/><path class="wire" d="M122 68 V60"/><rect class="cap" x="110" y="50" width="24" height="10" rx="4"/></g>
+              <text class="lbl-b" x="122" y="126" text-anchor="middle"><tspan class="lat">S̄</tspan> 接地鍵</text>
+              <text class="lbl-s" id="kSst" x="122" y="142" text-anchor="middle">放開＝1</text>
+              <rect class="hit" id="hitS" x="84" y="42" width="74" height="106" rx="10" role="button" tabindex="0" aria-label="S̄ 接地鍵：按一下＝按住（S̄ 變 0），再按一下＝放開"/>
+              <path class="wire" d="M104 253 V271"/>
+              <path class="gnd" d="M92 271 H116 M96 276 H112 M100 281 H108"/>
+              <circle class="contact" cx="104" cy="253" r="3.6"/>
+              <circle class="contact" cx="140" cy="253" r="3.6"/>
+              <g id="kRbar"><path class="plate" d="M96 244 H148"/><path class="wire" d="M122 244 V236"/><rect class="cap" x="110" y="226" width="24" height="10" rx="4"/></g>
+              <text class="lbl-b" x="122" y="302" text-anchor="middle"><tspan class="lat">R̄</tspan> 接地鍵</text>
+              <text class="lbl-s" id="kRst" x="122" y="318" text-anchor="middle">放開＝1</text>
+              <rect class="hit" id="hitR" x="84" y="218" width="74" height="106" rx="10" role="button" tabindex="0" aria-label="R̄ 接地鍵：按一下＝按住（R̄ 變 0），再按一下＝放開"/>
+              <rect class="badge" id="bQ" x="440" y="70" width="96" height="44" rx="10"/>
+              <text class="nm" x="456" y="99">Q</text><text class="dg lo" id="bQd" x="512" y="99" text-anchor="middle">0</text>
+              <rect class="badge hi" id="bQB" x="440" y="216" width="96" height="44" rx="10"/>
+              <text class="nm" x="456" y="245"><tspan class="lat">Q̄</tspan></text><text class="dg hi" id="bQBd" x="512" y="245" text-anchor="middle">1</text>
+              <text class="lbl-s" x="488" y="134" text-anchor="middle">輸出</text>
+            </g>
+
+            <!-- 工作台二：三腳撥動開關 -->
+            <g id="swSlide" hidden>
+              <path class="wire" d="M70 165 V290"/>
+              <path class="gnd" d="M58 290 H82 M62 295 H78 M66 300 H74"/>
+              <text class="lbl-s" x="70" y="318" text-anchor="middle">接地</text>
+              <circle class="contact" cx="135" cy="77" r="4.2"/>
+              <circle class="contact" cx="135" cy="253" r="4.2"/>
+              <line class="plate" id="wiper" x1="70" y1="165" x2="135" y2="77"/>
+              <circle class="node" cx="70" cy="165" r="5"/>
+              <text class="lbl-b" x="104" y="64" text-anchor="middle">A 側</text>
+              <text class="lbl-b" x="104" y="278" text-anchor="middle">B 側</text>
+              <text class="lbl" x="58" y="152" text-anchor="end">動片</text>
+              <text class="lbl-s" x="58" y="186" text-anchor="end">公共腳</text>
+              <rect class="hit" id="hitSw" x="28" y="56" width="124" height="214" rx="12" role="button" tabindex="0" aria-label="撥動開關：按一下，撥到另一邊"/>
+            </g>
+
+            <!-- 工作台三：兩腳按鈕 -->
+            <g id="btnTwo" hidden>
+              <path class="wire" d="M104 77 V95"/>
+              <path class="gnd" d="M92 95 H116 M96 100 H112 M100 105 H108"/>
+              <circle class="contact" cx="104" cy="77" r="3.6"/>
+              <circle class="contact" cx="140" cy="77" r="3.6"/>
+              <g id="bBar"><path class="plate" d="M96 68 H148"/><path class="wire" d="M122 68 V60"/><rect class="cap" x="110" y="50" width="24" height="10" rx="4"/></g>
+              <text class="lbl-b" x="122" y="126" text-anchor="middle">兩腳按鈕</text>
+              <text class="lbl-s" id="bSt" x="122" y="142" text-anchor="middle">放開</text>
+              <rect class="hit" id="hitBtn" x="84" y="42" width="74" height="106" rx="10" role="button" tabindex="0" aria-label="兩腳按鈕：按一下"/>
+              <g id="noteOnlyS">
+                <text class="lbl" x="18" y="246"><tspan class="lat">R̄</tspan> 沒有接開關：</text>
+                <text class="lbl" x="18" y="264">只靠上拉，一直是 1</text>
+              </g>
+              <g id="notGate">
+                <path class="gate" d="M215 150 H245 L230 178 Z"/>
+                <circle class="gate" cx="230" cy="183.5" r="5.5"/>
+                <text class="lbl-g" x="210" y="166" text-anchor="end">NOT</text>
+                <text class="lbl-s" x="210" y="182" text-anchor="end">把 1 變 0、0 變 1</text>
+              </g>
+              <text class="lbl-s" id="lblG25" x="335" y="293" text-anchor="middle">GPIO25 → <tspan class="lat">R̄</tspan>（平常給 1）</text>
+            </g>
+
+            <!-- 工作台二、三：ESP32 -->
+            <g id="esp" hidden>
+              <rect class="box" id="espBox" x="440" y="22" width="152" height="128" rx="10"/>
+              <circle class="node" cx="440" cy="36" r="3.4"/>
+              <circle class="node" cx="440" cy="92" r="3.4"/>
+              <circle class="node" id="p3dot" cx="440" cy="300" r="3.4"/>
+              <text class="lbl-b" id="p1a" x="450" y="41">GPIO4</text>
+              <text class="lbl-s" id="p1b" x="450" y="57">直接接開關</text>
+              <text class="lbl-b" id="p2a" x="450" y="97">GPIO5</text>
+              <text class="lbl-s" id="p2b" x="450" y="113">接閂鎖輸出 Q</text>
+              <text class="lbl-b" id="p3a" x="450" y="305">GPIO25</text>
+              <text class="lbl-s" id="p3b" x="450" y="289">給 <tspan class="lat">R̄</tspan></text>
+              <text class="lbl-b" id="espT" x="560" y="140" text-anchor="middle">ESP32</text>
+              <text class="lbl-s" id="qbNote" x="414" y="256" text-anchor="middle">沒接</text>
+            </g>
+          </svg>
+        </div>
+
+        <div id="view1" style="display:flex;flex-direction:column;gap:6px">
+          <p class="caption" id="cap1" aria-live="polite">按左邊的 <b><span class="lat">S̄</span> 接地鍵</b> 或 <b><span class="lat">R̄</span> 接地鍵</b>，訊號會一級一級走給你看。</p>
+          <ol class="crumbs" id="crumbs" aria-label="這一次訊號走過的路"></ol>
+        </div>
+
+        <figure class="scopewrap" id="scopeFig" hidden>
+          <svg id="scope" viewBox="0 0 680 190" role="img" aria-label="慢動作波形圖（示波器）：把三條線的 1 與 0 隨時間畫出來，每一次動作從左邊重新畫"></svg>
+          <figcaption id="scopeCap"></figcaption>
+        </figure>
+
+        <div class="leadbox" data-for="ideal" style="display:flex;flex-direction:column;gap:8px">
+          <p class="lead">兩顆 NAND 閘交叉接起來，就是一個會記住的電路：閂鎖。NAND 閘只看一件事：<b>兩個輸入都是 1，才輸出 0；其餘都輸出 1</b>。兩顆交叉接的意思是：NAND 1 的輸出 Q 接到 NAND 2 的上面那個輸入，NAND 2 的輸出 <span class="lat">Q̄</span> 再接回 NAND 1 的下面那個輸入（圖中間兩條線交叉的地方沒有圓點，表示沒接在一起）。左邊兩顆接地鍵，平常被一顆電阻拉到 3.3 V，讀起來是 1（上拉，pull-up）；按住才接地，變成 0。</p>
+          <p class="lead"><span class="lat">S̄</span>、<span class="lat">R̄</span> 上面那條橫線的意思是「給 0 才算數」（低電位有效，active-low）：按住 <span class="lat">S̄</span>，Q 變 1，叫設定；按住 <span class="lat">R̄</span>，Q 變 0，叫重設（Set／Reset）。兩個都放開時什麼都不改，Q <b>保持</b>原來的值。閂鎖記住的「第一次碰到」，就是第一次把某一邊的輸入拉成 0；同一邊之後再來幾個 0，都只是把同一件事再說一次。想自己控制節奏，按「暫停」再按「單步」。</p>
+        </div>
+        <div class="leadbox" data-for="slide" hidden style="flex-direction:column;gap:8px">
+          <p class="lead">換成三隻腳的撥動開關：公共腳（圖左邊、轉軸那一腳）接地，開關裡會動的那片金屬（動片）一次只碰得到上面或下面。開關碰上的那一瞬間，金屬片會彈好幾下，一下接上、一下分開，這就是彈跳。開關裡真正碰在一起的金屬點叫接點（contact）；三隻腳的開關有<b>兩個接點</b>，上面的接 <span class="lat">S̄</span>（A 側）、下面的接 <span class="lat">R̄</span>（B 側），各有一顆 10 kΩ 上拉。ESP32 用兩支腳位（GPIO）來數：GPIO4 直接接在 A 側，GPIO5 接閂鎖的輸出 Q，跟 03 那支程式一樣，計數器數兩邊各變了幾次。</p>
+          <p class="key"><b>彈跳只發生在動片正碰上、或正要離開的那一邊；另一邊在空中不動；閂鎖只認第一次碰到。</b></p>
+          <p class="lead">一撥的過程：離開 A（在 A 抖幾下）→ 空中（兩邊都是 1＝保持，Q 不動）→ 碰到 B（在 B 抖幾下）。在 A 抖的時候 <span class="lat">R̄</span> 一直是 1，Q 本來就是 1，再設定一次也不變；第一次碰到 B，<span class="lat">R̄</span> 變 0，Q 翻成 0；之後 B 再怎麼彈回 1，<span class="lat">S̄</span>、<span class="lat">R̄</span> 都是 1，只是保持。Wokwi 實跑撥 6 下：幾乎每一撥都印「直接接的腳位變了 3 次；經過閂鎖只變了 1 次」，只有一撥直接接的也只變 1 次。</p>
+        </div>
+        <div class="leadbox" data-for="w1" hidden style="flex-direction:column;gap:8px">
+          <p class="lead">接法①：按鈕那一點接 <span class="lat">S̄</span>，<span class="lat">R̄</span> 沒有接開關，只靠上拉一直是 1。按第一下，Q＝1；放開，<span class="lat">S̄</span>、<span class="lat">R̄</span> 都是 1＝保持，Q 不回 0；第二下再按，Q 本來就是 1，看不出有按。不管按幾下，Q 一共只變 1 次。</p>
+          <p class="key"><b>沒有人重設。</b>兩腳的按鈕只有一個接點（按下時碰在一起的那一對金屬片），只夠接 <span class="lat">S̄</span>；閂鎖的另一個輸入沒人管。</p>
+        </div>
+        <div class="leadbox" data-for="w2" hidden style="flex-direction:column;gap:8px">
+          <p class="lead">接法②（最直覺的補法，04 那個專案）：按鈕那一點接 <span class="lat">S̄</span>，再經一顆 NOT 閘（把 1 變 0、0 變 1）接 <span class="lat">R̄</span>。在這張簡化圖裡，<span class="lat">S̄</span>、<span class="lat">R̄</span> 當成同時相反；實體閘還有很短的延遲。問題是兩邊都來自<b>同一個接點</b>：按鈕一抖，<span class="lat">S̄</span> 跟 <span class="lat">R̄</span> 一起抖，閂鎖一下被設定、一下被重設，Q 就跟著抖。Wokwi 實跑按 8 下：直接接的每按變 4／6／6／4／6／4／4／4 次，閂鎖 4／6／4／6／4／4／4／6 次，一樣抖。</p>
+          <p class="key"><b>閂鎖要的是「兩個接點各抖各的」，NOT 閘做不出第二個接點。</b></p>
+        </div>
+        <div class="leadbox" data-for="w3" hidden style="flex-direction:column;gap:8px">
+          <p class="lead">接法③：按鈕那一點接 <span class="lat">S̄</span>，<span class="lat">R̄</span> 改由 ESP32 的 GPIO25 給，平常給 1。按下去的第一個接觸，閂鎖自己就記住了（Q＝1），不用等程式；之後的彈跳只是再設定一次，Q 不動。程式看到 Q 變 1 就開始計時，等按鈕放開、而且安靜 20 ms，才讓 GPIO25 給 0 一下，把 Q 清回 0，準備下一次。</p>
+          <p class="key">把控制板上「程式多久看一次按鈕」拉到 200 ms：Q 回 0 變晚了，可是按下的那一刻 Q 馬上變 1。<b>程式晚一點處理也不會漏掉這次；但重設完成前不能接下一次</b>：下一下如果在清掉之前就按，會跟上一下併成一次。</p>
+          <p class="lead">Wokwi 實跑：直接接每按 4～6 次、Q 每按 2 次（按 8 下，八次都是 Q 變 2 次），跟離線模型算的一致；模型也算出 <span class="lat">S̄</span>、<span class="lat">R̄</span> 同時是 0 的時間＝0。</p>
+        </div>
+      </div>
+    </div>
+
+    <aside class="panel" aria-label="控制板">
+      <div class="group" data-for="ideal">
+        <h3>兩顆接地鍵<span class="hint">按一下＝按住，再按一下＝放開</span></h3>
+        <div class="rowbtns">
+          <button class="btn main" id="kS" aria-pressed="false"><span class="lat">S̄</span> 接地鍵<small id="kSs">放開＝1</small></button>
+          <button class="btn main" id="kR" aria-pressed="false"><span class="lat">R̄</span> 接地鍵<small id="kRs">放開＝1</small></button>
+        </div>
+        <div class="rowbtns">
+          <button class="btn" id="btnBoth" disabled>同時放開</button>
+          <button class="btn" id="btnReset1">重來</button>
+        </div>
+        <p class="tally" id="tally">「同時放開」要先把兩顆都按住。</p>
+        <p class="tally">教學模擬：用隨機代表實際上由哪一邊比較慢決定。</p>
+      </div>
+      <div class="group" data-for="ideal">
+        <h3>四種組合<span class="hint">點名字就換成那一組</span></h3>
+        <table class="states" id="tblStates">
+          <thead><tr><th><span class="lat">S̄</span></th><th><span class="lat">R̄</span></th><th>叫做</th><th>Q 會怎樣</th></tr></thead>
+          <tbody>
+            <tr data-s="1" data-r="1"><td class="n">1</td><td class="n">1</td><td class="nm"><button data-set="11">保持</button></td><td>維持原本的值</td></tr>
+            <tr data-s="0" data-r="1"><td class="n">0</td><td class="n">1</td><td class="nm"><button data-set="01">設定</button></td><td>Q＝1</td></tr>
+            <tr data-s="1" data-r="0"><td class="n">1</td><td class="n">0</td><td class="nm"><button data-set="10">重設</button></td><td>Q＝0</td></tr>
+            <tr data-s="0" data-r="0" class="bad"><td class="n">0</td><td class="n">0</td><td class="nm"><button data-set="00">兩個都按著</button></td><td>Q＝<span class="lat">Q̄</span>＝1（不該用）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="group" data-for="slide" hidden>
+        <h3>撥動開關<span class="hint">也可以直接點圖上的開關</span></h3>
+        <button class="btn main" id="btnFlip">撥到另一邊</button>
+        <div class="rowbtns">
+          <button class="btn" id="btnFlip6">自動撥 6 下</button>
+          <button class="btn" id="btnReset2">重來</button>
+        </div>
+        <div class="meters">
+          <div class="meter"><span class="lbl">撥了</span><span class="val" id="m2a">0</span></div>
+          <div class="meter hot"><span class="lbl">直接接（GPIO4）變了</span><span class="val" id="m2b">0</span></div>
+          <div class="meter good"><span class="lbl">經閂鎖（GPIO5）變了</span><span class="val" id="m2c">0</span></div>
+        </div>
+      </div>
+
+      <div class="group" data-for="button" hidden>
+        <h3>按鈕<span class="hint">也可以直接點圖上的按鈕</span></h3>
+        <div class="rowbtns">
+          <button class="btn main" id="btnPress">按一下</button>
+          <button class="btn main" id="btnHold" aria-pressed="false">按住不放</button>
+        </div>
+        <div class="rowbtns">
+          <button class="btn" id="btnPress5">自動按 5 下</button>
+          <button class="btn" id="btnReset3">重來</button>
+        </div>
+        <div class="meters">
+          <div class="meter"><span class="lbl">按了</span><span class="val" id="m3a">0</span></div>
+          <div class="meter hot"><span class="lbl" id="m3bl">按鈕那一點（GPIO4）變了</span><span class="val" id="m3b">0</span></div>
+          <div class="meter good"><span class="lbl" id="m3cl">閂鎖 Q（GPIO5）變了</span><span class="val" id="m3c">0</span></div>
+        </div>
+        <p class="tally" id="perPress"></p>
+      </div>
+      <div class="group" data-for="w3" hidden>
+        <h3>ESP32 的程式（接法③）</h3>
+        <label class="field" for="rngPoll">程式多久看一次按鈕：<b id="pollTxt">1 ms</b></label>
+        <input type="range" id="rngPoll" min="0" max="2" step="1" value="0" style="accent-color:var(--c-primary)">
+        <div class="field" id="lblQuiet">放開後要安靜多久才重設</div>
+        <div class="seg" id="segQuiet" role="group" aria-labelledby="lblQuiet">
+          <button data-q="20" aria-pressed="true">20 ms<small>05 的設定</small></button>
+          <button data-q="0" aria-pressed="false">0 ms<small>完全不等</small></button>
+        </div>
+        <p class="tally" id="bothZero"></p>
+        <p class="tally">改這兩個設定，計數會從頭算。</p>
+      </div>
+
+      <div class="group">
+        <h3>時間<span class="hint">數字越小越慢</span></h3>
+        <div class="speedrow">
+          <input id="rngSpeed" type="range" min="0.25" max="2" step="0.25" value="0.5" aria-label="播放速度（慢動作倍率）">
+          <span class="v" id="spdTxt">0.5×</span>
+        </div>
+        <p class="tally" id="rateTxt"></p>
+        <div class="rowbtns">
+          <button class="btn" id="btnPause" aria-pressed="false">暫停</button>
+          <button class="btn" id="btnStep">單步</button>
+        </div>
+      </div>
+      <p class="note" id="sideNote"><b>Q 之所以能「記住」，是因為它的值繞一圈又回到自己的輸入。</b></p>
+      <p class="note warn" id="rmNote" hidden>你的系統設定了「減少動態效果」：工作台一改成按「單步」一級一級走（也可以按「繼續」自動播放）；工作台二、三的慢動作波形圖（示波器）直接畫出整段。</p>
+    </aside>
+  </section>
+
+  <section class="block" id="solutions" aria-labelledby="solH">
+    <header>
+      <h2 id="solH">按鈕要怎麼配閂鎖：三條解法</h2>
+      <p class="muted">兩腳按鈕少的是「第二個訊號」。有人替它補上，閂鎖就能用；不想加零件，也可以整個交給程式。</p>
+    </header>
+    <div class="cards">
+      <div class="card" id="sol1">
+        <span class="tag">解法一</span>
+        <h3>ESP32 補第三腳（硬體閂鎖＋一點程式）</h3>
+        <p><b>一句話：</b>按鈕接 <span class="lat">S̄</span>，<span class="lat">R̄</span> 交給 ESP32 的 GPIO25；按下的第一個接觸由閂鎖記住，放開而且安靜 20 ms 之後，程式才把它清回 0。</p>
+        <dl class="facts2">
+          <dt>什麼時候用</dt><dd>只能用一顆兩腳按鈕，又想用閂鎖擋彈跳。</dd>
+          <dt>好處</dt><dd>第一次碰到就記住；程式在忙，這一下也不會漏。</dd>
+          <dt>代價</dt><dd>兩顆 NAND、三支腳位（GPIO25、26、27）。</dd>
+        </dl>
+        <div class="btns"><button class="btn" data-go="esp32">到工作台三看它跑（接法③）</button></div>
+        <details class="adv" id="sol1wokwi"><summary><span>Wokwi 動手做（diagram.json、main.py 兩份檔）</span></summary><div class="inner">
+        <ol class="steps">
+          <li>開新專案：<span class="mono1">wokwi.com/projects/new/micropython-esp32</span></li>
+          <li>點 <span class="mono1">diagram.json</span> 分頁，全選、貼上（蓋掉原本的內容）</li>
+          <li>點 <span class="mono1">main.py</span> 分頁，全選、貼上，按綠色播放鍵</li>
+        </ol>
+        <p><b>看什麼：</b>每按一下，右下角印一行「第 N 次按：直接接的腳位變了幾次；閂鎖 Q 變了幾次」。Wokwi 實跑：直接接每按 4～6 次、Q 每按 2 次（變 1 一次、清回 0 一次）。</p>
+        <div class="btns">
+          <button class="copy" data-copy="c05d" data-label="複製 diagram.json">複製 diagram.json</button>
+          <button class="copy" data-copy="c05m" data-label="複製 main.py">複製 main.py</button>
+        </div>
+        <details class="adv"><summary><span>看一眼 main.py（05-pushbutton-esp32-reset）</span></summary><div class="inner">
+          <pre class="code" id="c05m">
+# 05 兩腳按鈕 + 兩顆 NAND 閂鎖 + ESP32 補上「重設」。
+# 閂鎖要兩個輸入：S（設定）和 R（重設）。三腳開關有兩個接點，一邊接 S、一邊接 R；
+# 兩腳按鈕只有一個接點，只夠接 S。少掉的那一腳，由 ESP32 來當：
+#   按下去 → 第一次碰到就讓 Q 變 1（閂鎖自己做，不用等程式）；之後的彈跳只是重複「設定」，Q 不動。
+#   放開後 → ESP32 等按鈕安靜 20 ms，才給 R 一個 0，把 Q 清回 0，準備下一次。
+# 接法：按鈕那點（10k 上拉）→ NAND1 的 A，也接 GPIO27；Q（NAND1 輸出）→ GPIO26；GPIO25 → NAND2 的 B（R）。
+from machine import Pin
+import time
+
+raw = Pin(27, Pin.IN)               # 按鈕那一點：沒按＝1、按下＝0，會抖；只用來判斷「放開夠久了沒」
+q = Pin(26, Pin.IN)                 # 閂鎖輸出 Q：按下＝1，要等 ESP32 重設才回 0
+r = Pin(25, Pin.OUT, value=1)       # 接閂鎖的 R（低電位有效）：平常給 1；給 0 一下＝重設
+
+QUIET_MS = 20                       # 放開後要安靜多久才重設：跟 02 一樣用 20 ms
+
+
+def reset_latch():
+    r.value(0)                      # 放開那一腳「接通」一下
+    time.sleep_us(10)
+    r.value(1)
+
+
+reset_latch()                       # 開機先清一次，Q 從 0 開始
+
+presses = 0
+n_raw = 0                           # 按鈕那一點變了幾次（統計用）
+n_q = 0                             # 閂鎖輸出 Q 變了幾次（統計用）
+p_raw = raw.value()
+p_q = q.value()
+last_low = time.ticks_ms()          # 最後一次看到「還按著」的時間
+latched = False                     # 閂鎖正記著一次按下、還沒清
+last = time.ticks_ms()
+dirty = False
+
+print('按一下按鈕，看兩邊各數到幾次變化')
+while True:
+    now = time.ticks_ms()
+    a = raw.value()
+    if a == 0:
+        last_low = now              # 還按著，或還在彈
+
+    # ESP32 當「另一腳」：按鈕放開、而且安靜 QUIET_MS → 重設
+    if q.value() == 1:
+        if not latched:
+            # Q 剛變 1：從現在起算安靜。按下那一瞬間的彈跳很短，程式可能根本沒讀到 0，
+            # 只看 a 會把「彈開的那一下」誤當成已經放開很久，當場就清掉。
+            latched = True
+            last_low = now
+        elif a == 1 and time.ticks_diff(now, last_low) &gt;= QUIET_MS:
+            reset_latch()
+            latched = False
+    b = q.value()
+
+    # 以下只是統計，跟去彈跳無關
+    if a != p_raw:
+        n_raw = n_raw + 1
+        p_raw = a
+        last = now
+        dirty = True
+    if b != p_q:
+        n_q = n_q + 1
+        if b == 1:
+            presses = presses + 1
+        p_q = b
+        last = now
+        dirty = True
+    # 安靜超過 300 ms 才報告：只是用來把每次按的統計分開
+    if dirty and time.ticks_diff(now, last) &gt; 300:
+        print('第', presses, '次按：直接接的腳位變了', n_raw, '次；閂鎖 Q 變了', n_q, '次')
+        n_raw = 0
+        n_q = 0
+        dirty = False
+</pre>
+        </div></details>
+        <details class="adv"><summary><span>看一眼 diagram.json</span></summary><div class="inner">
+          <pre class="code" id="c05d">
+{
+  "version": 1,
+  "author": "東華通識陳文盛",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": { "env": "micropython-20260406-v1.28.0" } },
+    { "type": "wokwi-resistor", "id": "r1", "top": -60, "left": -330, "rotate": 90, "attrs": { "value": "10000" } },
+    { "type": "wokwi-pushbutton", "id": "btn", "top": 60, "left": -420, "attrs": { "color": "green" } },
+    { "type": "wokwi-gate-nand-2", "id": "nand1", "top": 40, "left": -200, "attrs": {} },
+    { "type": "wokwi-gate-nand-2", "id": "nand2", "top": 150, "left": -200, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "r1:2", "esp:3V3", "red", [] ],
+    [ "r1:1", "btn:1.r", "green", [] ],
+    [ "btn:2.r", "esp:GND.1", "black", [] ],
+    [ "btn:1.r", "nand1:A", "green", [] ],
+    [ "btn:1.r", "esp:27", "green", [] ],
+    [ "nand1:OUT", "nand2:A", "purple", [] ],
+    [ "nand2:OUT", "nand1:B", "purple", [] ],
+    [ "nand1:OUT", "esp:26", "orange", [] ],
+    [ "esp:25", "nand2:B", "blue", [] ]
+  ],
+  "dependencies": {}
+}
+</pre>
+        </div></details>
+        </div></details>
+      </div>
+
+      <div class="card" id="sol2">
+        <span class="tag">解法二</span>
+        <h3>純程式等一下（不加零件）</h3>
+        <p><b>一句話：</b>按鈕一腳接 GPIO5、一腳接地，開內建上拉（約 45 kΩ）；程式讀到變化先等 20 ms，再讀一次還是變了才算數。</p>
+        <details class="adv" id="sol2more"><summary><span>看片段、什麼時候用、代價</span></summary><div class="inner">
+        <p>另一種寫法是每 5 ms 讀一次，連續 4 次一樣才算。</p>
+        <div class="codehead"><span>02 那支程式的核心（片段）</span></div>
+        <pre class="code" id="s2">wait_ms = 20                        # 等幾毫秒再讀一次
+while True:
+    now = btn.value()
+    if now != prev:                 # 讀到變化
+        time.sleep_ms(wait_ms)      # 等彈跳過去
+        now = btn.value()           # 再讀一次，這次才算數
+        if prev == 1 and now == 0:  # 真的從 1 變 0
+            count = count + 1
+        prev = now</pre>
+        <dl class="facts2">
+          <dt>什麼時候用</dt><dd>手邊沒有多的零件，程式也不忙。</dd>
+          <dt>好處</dt><dd>不用加零件。</dd>
+          <dt>代價</dt><dd>程式在 sleep 或忙別的事的時候，沒有人看按鈕，一樣會漏。</dd>
+        </dl>
+        <p>完整程式和動手卡在彈跳實驗台：<a href="../w05/button-bounce.html?tab=soft1">等一下再讀</a>、<a href="../w05/button-bounce.html?tab=soft2">連續 4 次一樣才算</a>。「程式在 sleep 時會漏」接著看<a href="timer-interrupt.html">程式在睡的時候，按鈕怎麼辦</a>。</p>
+        </div></details>
+      </div>
+
+      <div class="card" id="sol3">
+        <span class="tag">解法三</span>
+        <h3>中斷＋一次性計時器確認（不加零件）</h3>
+        <p><b>一句話：</b>腳位一從 1 變 0，晶片的硬體就把你寫的一小段處理函式叫起來，主程式正在 sleep 也一樣（中斷，interrupt）。這個處理函式只管一個只響一次的碼表（一次性計時器）：<b>硬體一叫就重啟 20 ms 碼表、碼表到了再確認</b>，按鈕還是 0 才算按了一下；按下與放開的彈跳都吃掉。</p>
+        <details class="adv" id="sol3more"><summary><span>看片段、什麼時候用、代價</span></summary><div class="inner">
+        <p>處理函式只收一個參數，就是那支腳位。</p>
+        <div class="codehead"><span>09 那支程式裡去彈跳的那幾段（片段）</span></div>
+        <pre class="code" id="s3">
+deb = Timer(1)                      # 去彈跳用的一次性計時器（硬體計時器 1）
+
+
+def confirm(t):
+    # 最後一個邊緣之後 20 ms 才會跑到：按鈕還是 0 ＝ 真的按著，算一次
+    global presses
+    if btn.value() == 0:
+        presses = presses + 1
+
+
+def on_edge(pin):
+    # 硬體叫的：每個 1→0 邊緣都會進來（包括彈跳）。只做一件事：重新啟動 20 ms 的一次性計時器
+    global edges
+    edges = edges + 1
+    deb.init(period=20, mode=Timer.ONE_SHOT, callback=confirm)
+
+
+btn.irq(trigger=Pin.IRQ_FALLING, handler=on_edge)   # 按鈕 1→0 就叫 on_edge
+</pre>
+        <dl class="facts2">
+          <dt>什麼時候用</dt><dd>主程式要 sleep 或要做很久的事，按鈕又不能漏。</dd>
+          <dt>好處</dt><dd>主程式在 sleep 也接得到。</dd>
+          <dt>代價</dt><dd>處理函式要短：不能 print、不能建新東西（例如往清單裡加資料）。deb 在主程式開頭就建好，on_edge 只是重啟它。</dd>
+        </dl>
+        <p>Wokwi 實跑：按 8 下，確認 8 次；中斷被叫了 170 次，多出來的都是彈跳。完整程式、時間軸和動手卡在<a href="timer-interrupt.html?tab=irq">程式在睡的時候，按鈕怎麼辦（第④個分頁）</a>。</p>
+        </div></details>
+      </div>
+    </div>
+
+    <div class="tablewrap">
+      <table class="facts" id="cmpTable">
+        <thead><tr><th>做法</th><th>要不要多零件</th><th>程式改多少</th><th>程式在忙時會不會漏</th><th>Wokwi 做不做得到</th></tr></thead>
+        <tbody>
+          <tr><td>三腳撥動開關＋閂鎖（工作台二）</td><td>要：撥動開關、兩顆 NAND、兩顆 10 kΩ</td><td>不用防彈跳，只讀 Q</td><td>不會：開關撥到哪一邊，閂鎖就一直記著</td><td>做得到（03）</td></tr>
+          <tr><td>兩腳按鈕＋ESP32 補腳（解法一）</td><td>要：兩顆 NAND、一顆 10 kΩ</td><td>加一段「放開又安靜 20 ms 才重設」</td><td>第一下不會漏（閂鎖記著）；程式太久沒來清，下一下會併進上一下</td><td>做得到（05）；Wokwi 實跑：直接接每按 4～6 次、Q 每按 2 次</td></tr>
+          <tr><td>純程式等一下（解法二）</td><td>不用</td><td>讀按鈕那一段改寫</td><td>會：程式在 sleep 時沒人看按鈕</td><td>做得到（02）</td></tr>
+          <tr><td>中斷＋一次性計時器確認（解法三）</td><td>不用</td><td>開頭建一個一次性計時器，寫兩個小函式，再用 Pin.irq 掛上去</td><td>不會：主程式在 sleep 也接得到</td><td>做得到（09）；Wokwi 實跑按 8 下確認 8 次</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="closing">作業要你用一顆按鈕做，正解不是硬把兩腳按鈕接進閂鎖，是替它補上第二個訊號。</p>
+  </section>
+
+  <details class="sect" id="tryit">
+  <summary>試試看：先猜，再按（課後練習，五題）</summary>
+  <section aria-label="試試看">
+    <p class="muted">每張卡先想一下答案，再按按鈕，上面的工作台會跳到那個狀態。</p>
+    <div class="cards">
+      <div class="card">
+        <h3>① 兩個都按著，再同時放開，Q 會是多少？</h3>
+        <details class="adv"><summary><span>對答案</span></summary><div class="inner"><p>說不準。兩顆閘都想把輸出變成 0，慢的那一顆來不及變，輸出就留在 1。多按幾次「同時放開」，Q 有時是 1、有時是 0，結果事先不知道，所以這個組合不該用。</p></div></details>
+        <button class="try" data-preset="both0">跳到「兩個都按著」</button>
+      </div>
+      <div class="card">
+        <h3>② 撥動開關碰上 B 側時抖了 10 下，Q 變幾次？</h3>
+        <details class="adv"><summary><span>對答案</span></summary><div class="inner"><p>1 次。第一次碰到 B，<span class="lat">R̄</span> 變 0，Q 翻成 0；後面那幾下只是 <span class="lat">R̄</span> 在 0 和 1 之間跳，<span class="lat">S̄</span> 一直是 1，閂鎖不是重設就是保持，Q 不會再變。</p></div></details>
+        <button class="try" data-preset="bounce">跳過去：撥一下，B 側抖 10 下</button>
+      </div>
+      <div class="card">
+        <h3>③ 接法②把 NOT 拿掉，會變成哪一種接法？</h3>
+        <details class="adv"><summary><span>對答案</span></summary><div class="inner"><p>變成接法①：<span class="lat">R̄</span> 沒人管，只能靠上拉一直是 1。按了之後沒有人重設，Q 只變一次。</p></div></details>
+        <button class="try" data-preset="onlys">跳過去：接法①按兩下</button>
+      </div>
+      <div class="card">
+        <h3>④ 接法③把「安靜多久」改成 0 ms，會怎樣？</h3>
+        <details class="adv"><summary><span>對答案</span></summary><div class="inner"><p>按下那一瞬間，接點彈開的那一下就被程式當成「已經放開」，當場把 Q 清掉；接點再碰上，Q 又變 1。一次按下，Q 變的次數比 2 多，閂鎖白記了。</p></div></details>
+        <button class="try" data-preset="quiet0">跳過去：安靜 0 ms，按兩下</button>
+      </div>
+      <div class="card">
+        <h3>⑤ 按住按鈕不放，Q 是多少、什麼時候回 0？</h3>
+        <details class="adv"><summary><span>對答案</span></summary><div class="inner"><p>接法③：按住的時候 Q 一直是 1，程式看到按鈕還是 0，不會重設；放開、安靜 20 ms 之後，程式才讓 <span class="lat">R̄</span> 給 0 一下，Q 回 0。接法①放開也不回 0；接法②放開就跟著回 0，還會抖。</p></div></details>
+        <button class="try" data-preset="holdbtn">跳過去：接法③按住不放</button>
+      </div>
+    </div>
+  </section>
+  </details>
+
+  <details class="sect" id="deriv">
+  <summary>想看邏輯推導</summary>
+  <section class="deriv" aria-label="邏輯推導">
+    <table class="truth">
+      <caption style="caption-side:top;text-align:left;font-size:13px;font-weight:700;padding-bottom:4px">NAND 閘：兩個輸入都是 1 才輸出 0</caption>
+      <thead><tr><th>輸入</th><th>輸入</th><th>輸出</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>1</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <h3>閂鎖的四種組合，一格一格推</h3>
+    <ul>
+      <li><b><span class="lat">S̄</span>＝0、<span class="lat">R̄</span>＝1（設定）</b>：NAND 1 有一個輸入是 0，不管另一個是什麼都輸出 1，所以 Q＝1。NAND 2 的兩個輸入是 Q＝1、<span class="lat">R̄</span>＝1，都是 1，輸出 0，所以 <span class="lat">Q̄</span>＝0。</li>
+      <li><b><span class="lat">S̄</span>＝1、<span class="lat">R̄</span>＝0（重設）</b>：NAND 2 有 <span class="lat">R̄</span>＝0，輸出 1，所以 <span class="lat">Q̄</span>＝1。NAND 1 的兩個輸入是 <span class="lat">S̄</span>＝1、<span class="lat">Q̄</span>＝1，輸出 0，所以 Q＝0。</li>
+      <li><b><span class="lat">S̄</span>＝1、<span class="lat">R̄</span>＝1（保持）</b>：兩顆閘都得看對方。原本 Q＝1、<span class="lat">Q̄</span>＝0 的話，NAND 1 看到 <span class="lat">Q̄</span>＝0，輸出 1，Q 還是 1；NAND 2 看到 Q＝1、<span class="lat">R̄</span>＝1，輸出 0，<span class="lat">Q̄</span> 還是 0。兩邊互相撐著，停在原本的值。原本 Q＝0 也一樣推得出來。</li>
+      <li><b><span class="lat">S̄</span>＝0、<span class="lat">R̄</span>＝0（兩個都按著）</b>：兩顆閘都有一個 0，都輸出 1，Q 跟 <span class="lat">Q̄</span> 都是 1，不再相反。放開時兩顆都想變 0，慢的那一顆輸出留在 1，結果看誰慢。</li>
+    </ul>
+    <h3>為什麼叫 SR</h3>
+    <p>S 是 Set（設定：讓 Q 變 1），R 是 Reset（重設：讓 Q 變 0）。有人寫 RS、有人寫 SR，講的是同一種電路。</p>
+    <h3>為什麼寫 <span class="lat">S̄</span>、<span class="lat">R̄</span></h3>
+    <p>上面那條橫線表示低電位有效：這兩個輸入平常是 1，給 0 才算數。用 NAND 接的閂鎖剛好就是這樣，所以開關、按鈕都是接到地，碰上時給 0。</p>
+    <h3>為什麼閂鎖自己不會抖</h3>
+    <p>Q 的值繞一圈回來撐住自己：Q＝1 讓 NAND 2 輸出 0，這個 0 回到 NAND 1，又讓 NAND 1 輸出 1，也就是 Q。輸出回頭撐住自己的輸入，叫正回授（positive feedback）。外面沒有新的 0 進來，它就一直停在原本那一邊；被推過去之後，也會自己撐在另一邊站穩。所以同一邊再來幾個 0，只是再說一次「設定」，Q 不會再變。</p>
+  </section>
+  </details>
+
+  <details class="sect" id="facts">
+  <summary>數字從哪裡來</summary>
+  <section aria-label="數字出處">
+    <p class="muted">頁面上的數字都有出處；為了畫得出來而簡化的地方，列在表格下面。</p>
+    <div class="tablewrap">
+      <table class="facts">
+        <thead><tr><th>事</th><th>值</th><th>出處與備註</th></tr></thead>
+        <tbody>
+          <tr><td>NAND 閘</td><td class="num">兩個輸入都是 1 才輸出 0，其餘輸出 1</td><td>基本邏輯。</td></tr>
+          <tr><td>兩顆 NAND 交叉接的閂鎖（<span class="lat">S̄</span>、<span class="lat">R̄</span> 低電位有效）</td><td class="num"><span class="lat">S̄</span>＝0、<span class="lat">R̄</span>＝1 → Q＝1；<span class="lat">S̄</span>＝1、<span class="lat">R̄</span>＝0 → Q＝0；都是 1 → 保持；都是 0 → Q＝<span class="lat">Q̄</span>＝1（不該用，同時放開時看誰慢）</td><td>基本邏輯；推導在「想看邏輯推導」。</td></tr>
+          <tr><td>一顆開關彈跳多久</td><td class="num">閉合平均約 1.6 ms；去掉極端值後最長 6.2 ms；最壞一顆 157 ms</td><td>Jack Ganssle《A Guide to Debouncing》，18 顆開關實測；放開通常比閉合短。</td></tr>
+          <tr><td>Wokwi 的按鈕與撥動開關會不會彈跳</td><td class="num">會，預設開著：約 1 ms 內來回 10～100 次</td><td>docs.wokwi.com 的 wokwi-pushbutton、wokwi-slide-switch 說明；零件屬性 bounce 設成 "0" 才關。</td></tr>
+          <tr><td>Wokwi 零件</td><td class="num">wokwi-pushbutton（1.l／2.l／1.r／2.r）、wokwi-slide-switch（1／2／3）、wokwi-gate-nand-2（A／B／OUT）、wokwi-gate-not、wokwi-resistor</td><td>Wokwi 零件登錄檔（2026-09-21、09-22 查）。按鈕按下去把 1 和 2 接通：兩腳、一個接點。撥動開關的 2 是公共腳，撥左接 1、撥右接 3（這是 Wokwi 零件本身的左右；這一頁的圖把 A、B 畫成上下）：三腳、兩個接點。Wokwi 沒有三腳按鈕、沒有電容。</td></tr>
+          <tr><td>ESP32 把電壓讀成 1／0 的門檻</td><td class="num">≥ 2.475 V 讀 1；≤ 0.825 V 讀 0（3.3 V 供電）</td><td>Espressif《ESP32 Series Datasheet》v5.3 表 5-3。</td></tr>
+          <tr><td>內建上拉</td><td class="num">約 45 kΩ；GPIO34–39 沒有內建上拉、下拉，只能當輸入</td><td>同上；MicroPython ESP32 quickref。</td></tr>
+          <tr><td>套件腳位</td><td class="num">按鍵 A＝GPIO5（板面 IO11）；紅燈 GPIO16（IO4）、黃燈 GPIO12（IO5）、綠燈 GPIO13（IO6）</td><td>原廠 EZ Start Kit+ 腳位對照圖。</td></tr>
+          <tr><td>03 撥動開關＋閂鎖（Wokwi 實跑）</td><td class="num">撥 6 下：大多是「直接接的腳位變了 3 次；經過閂鎖只變了 1 次」，有一撥直接接的只變 1 次</td><td>2026-09-21 無頭 Chromium 實跑（w05 的 wokwi-bounce／_qa）。</td></tr>
+          <tr><td>04 兩腳按鈕＋NOT＋閂鎖（Wokwi 實跑，反例）</td><td class="num">按 8 下：直接接 4／6／6／4／6／4／4／4 次；閂鎖 4／6／4／6／4／4／4／6 次，一樣抖</td><td>同上，2026-09-21。</td></tr>
+          <tr><td>05 兩腳按鈕＋閂鎖＋ESP32 補 <span class="lat">R̄</span>（Wokwi 實跑）</td><td class="num">按 8 下（各按 150 ms、間隔 600 ms）：直接接每按 4～6 次（4／6／4／4／4／6／6／6），Q 每按 2 次；離線模型（1 µs 一格、每次接觸 1 ms 內亂跳 10–100 次）也算出每按 2 次、<span class="lat">S̄</span>、<span class="lat">R̄</span> 同時為 0 的時間＝0</td><td>實跑：w05/wokwi-bounce/_qa/run05-0925.log（2026-09-25 無頭 Chromium）；模型：w05 README 狀態節。</td></tr>
+          <tr><td>09 中斷＋一次性計時器確認（Wokwi 實跑）</td><td class="num">按 8 下（各按 150 ms、間隔 600 ms）：確認 8 次；中斷被叫 170 次，多出來的都是彈跳</td><td>w04/wokwi-timing/_qa/run09-v2.log（2026-09-25 無頭 Chromium）。</td></tr>
+          <tr><td>彈跳次數</td><td class="num">每次不一樣</td><td>Wokwi 是隨機模型，所以頁面只寫「常常」「大約」。</td></tr>
+          <tr><td>MicroPython 用到的</td><td class="num">Pin(5, Pin.IN, Pin.PULL_UP)、Pin(25, Pin.OUT, value=1)、time.ticks_ms()、time.ticks_diff()、time.sleep_us()、Pin.irq(trigger=Pin.IRQ_FALLING, handler=f)、Timer(1)、Timer.ONE_SHOT</td><td>MicroPython 官方文件 machine.Pin、machine.Timer、time。腳位的處理函式只收一個參數，就是那支腳位；計時器叫的函式收到的是那個計時器。</td></tr>
+          <tr><td>程式與電路裡的設定值</td><td class="num">上拉電阻 10 kΩ；安靜 20 ms；<span class="lat">R̄</span> 給 0 的時間 10 µs；等 20 ms；每 5 ms 讀、連續 4 次；一次性計時器 20 ms</td><td>03／05 的 diagram.json（電阻 10000）、05 的 main.py（QUIET_MS、sleep_us(10)）、02 的 main.py、09 的 main.py（period=20）。這些是程式的選擇，不是量測值。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tiny">簡化：① 閘的延遲畫成看得見的一小步（真的只有奈秒級）。② 彈跳畫成幾下方波（真的是幾十次亂跳）：撥動開關離開時抖 1 到 3 下、碰上時抖 3 到 6 下；按鈕那一點每按一下變 4 或 6 次，跟 04、05 實跑的數字對齊。③ 上拉電阻當成「平常給 1」。④ 動片從一邊走到另一邊的時間畫得很短。⑤ 示波器「按住」那一段壓縮畫；「按一下」在電路時間裡算按住 150 ms、自動按的間隔 600 ms，跟 Wokwi 實跑腳本同一組參數。⑥ <span class="lat">R̄</span> 那一下 0 只有 10 µs，畫寬一點才看得到。⑦ 連按時，這一頁會等上一下畫完才開始下一下，所以不會出現「兩下併成一下」。⑧ 計數器數的是模型裡的每一次變化；Wokwi 的開關在 1 ms 內來回 10～100 次，程式讀不到每一次，所以實跑數到的次數常常比這一頁少（例如 03 每撥大多只數到 3 次）。⑨ 接法②的 NOT 閘：圖上把 <span class="lat">S̄</span>、<span class="lat">R̄</span> 當成同時相反，實體閘還有很短的延遲。</p>
+  </section>
+  </details>
+
+  <footer class="foot">
+    <span>資料來源：Jack Ganssle《A Guide to Debouncing》；Wokwi 官方零件說明（docs.wokwi.com）與零件登錄檔；Espressif《ESP32 Series Datasheet》v5.3 表 5-3；MicroPython 官方文件 machine.Pin 與 time。</span>
+    <span>國立東華大學通識課《創客入門—智慧生活裝置實作》補充教材（W4）。姊妹頁：<a href="../w05/button-bounce.html">按鈕彈跳實驗台</a>、<a href="esp32-pin-xray.html?io=in">ESP32 腳位透視鏡（輸入模式）</a>、<a href="timer-interrupt.html">程式在睡的時候，按鈕怎麼辦</a>。</span>
+    <span>版本 2026-09-25。</span>
+  </footer>
+
+</div></div>
+
+<script>
+(function () {
+'use strict';
+var $ = function (id) { return document.getElementById(id); };
+var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+var SB = '<span class="lat">S̄</span>', RB = '<span class="lat">R̄</span>', QB = '<span class="lat">Q̄</span>';
+var SBt = '<tspan class="lat">S̄</tspan>', RBt = '<tspan class="lat">R̄</tspan>';   /* S̄、R̄：HTML 用 span、SVG 用 tspan，拉丁字型才疊得準 */
+
+/* ===== 共用狀態 ===== */
+var S = { bench: 'ideal', wire: 1, speed: 0.5, paused: reduced, poll: 1, quiet: 20 };
+var POLLS = [1, 20, 200];
+var BEAT = 0.7;          /* 工作台一：1× 時每一級停 0.7 秒 */
+var SWEEP = 0.5;         /* 工作台二、三：1× 時每秒掃過圖寬的一半 */
+var HOLD_RATE = 120;     /* 按住不放時，1× 每秒走 120 ms 電路時間 */
+var HOLD_MS = 150;       /* 「按一下」＝按住 150 ms（跟 Wokwi 實跑腳本同參數） */
+var GAP_MS = 600;        /* 自動按的間隔 600 ms（同上） */
+var DG = 0.004;          /* 閘的延遲（簡化） */
+var dirty = true;
+try {
+  var sv = parseFloat(localStorage.getItem('rsLatchSpeed'));
+  if (sv >= 0.25 && sv <= 2) S.speed = Math.round(sv * 4) / 4;
+} catch (e) {}
+
+function show(el, on) { if (!el) return; if (on) el.removeAttribute('hidden'); else el.setAttribute('hidden', ''); }
+function setCls(el, cls) { if (el && el.getAttribute('class') !== cls) el.setAttribute('class', cls); }
+function setTxt(el, t) { if (el && el.textContent !== String(t)) el.textContent = t; }
+function nand(a, b) { return (a && b) ? 0 : 1; }
+function mulberry(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+/* ===== 工作台一：理想按鍵，一級一級走 ===== */
+var L = {};
+function l1Reset(q) {
+  L = { S: 1, R: 1, Q: q ? 1 : 0, QB: q ? 0 : 1, queue: [], active: null, acc: 0, crumbs: [], both: false, first: null, steps: 0, tally: (L.tally || [0, 0]) };
+  L.cap = '按左邊的 <b>' + SB + ' 接地鍵</b> 或 <b>' + RB + ' 接地鍵</b>，訊號會一級一級走給你看。';
+  dirty = true;
+}
+function l1Push(g) { if (L.queue.indexOf(g) < 0) L.queue.push(g); }
+function crumb(t) { L.crumbs.push(t); if (L.crumbs.length > 8) L.crumbs.shift(); }
+function l1Set(s, r) {
+  var ds = s !== L.S, dr = r !== L.R;
+  if (!ds && !dr) return;
+  var wasBoth = (L.S === 0 && L.R === 0);
+  L.S = s; L.R = r; L.crumbs = []; L.active = null; L.acc = 0; L.both = false; L.steps = 0;
+  flashNet(ds ? 'S' : 'R');
+  if (ds && dr && wasBoth && s === 1 && r === 1) {
+    /* 同時放開：兩顆閘都要重算，誰先誰後隨機（真的電路看誰慢） */
+    L.both = true;
+    L.queue = Math.random() < 0.5 ? ['N1', 'N2'] : ['N2', 'N1'];
+    L.first = L.queue[0];
+    crumb(SB + '、' + RB + ' 同時回到 1');
+    L.cap = '同時放開：' + SB + '、' + RB + ' 一起回到 1。兩顆閘的輸入都變成「兩個 1」，<b>兩顆都想把輸出變成 0</b>。誰先變？';
+    dirty = true; return;
+  }
+  var parts = [];
+  if (ds) { parts.push(s ? SB + ' 放開：上拉把它拉回 1' : SB + ' 接地鍵按住：' + SB + ' 變成 0'); crumb(SB + ' 變 ' + s); l1Push('N1'); }
+  if (dr) { parts.push(r ? RB + ' 放開：上拉把它拉回 1' : RB + ' 接地鍵按住：' + RB + ' 變成 0'); crumb(RB + ' 變 ' + r); l1Push('N2'); }
+  L.cap = parts.join('；') + '。下一步輪到 ' + (L.queue[0] === 'N1' ? 'NAND 1' : 'NAND 2') + ' 重算。';
+  dirty = true;
+}
+function l1Toggle(which) {
+  if (which === 'S') l1Set(L.S ? 0 : 1, L.R); else l1Set(L.S, L.R ? 0 : 1);
+}
+function l1Beat() {
+  if (!L.queue.length) return false;
+  var g = L.queue.shift(), a, b, out, old, name, oname, other;
+  if (g === 'N1') { a = L.S; b = L.QB; old = L.Q; name = 'NAND 1'; oname = 'Q'; other = 'NAND 2'; }
+  else { a = L.Q; b = L.R; old = L.QB; name = 'NAND 2'; oname = QB; other = 'NAND 1'; }
+  out = nand(a, b);
+  L.steps++;
+  L.active = g;
+  var inTxt = g === 'N1' ? (SB + '＝' + a + '、' + QB + '＝' + b) : ('Q＝' + a + '、' + RB + '＝' + b);
+  var rule = (a && b) ? '兩個都是 1 → 輸出 0' : '有一個 0 → 輸出 1';
+  var t;
+  if (L.both && g === L.first) {
+    t = '這次 <b>' + name + ' 快一點</b>：輸入 ' + inTxt + '，' + rule + '，' + oname + ' 從 ' + old + ' 變 ' + out + '，新值送到 ' + other + '。';
+  } else if (L.both) {
+    t = '<b>' + name + ' 慢了一點點</b>：等它重算時，輸入已經是 ' + inTxt + '，' + rule + '，' + oname + ' 留在 ' + out + '。';
+  } else if (out !== old) {
+    t = name + '：輸入 ' + inTxt + '，' + rule + '。<b>' + oname + ' 從 ' + old + ' 變 ' + out + '</b>，新值送到 ' + other + '。';
+  } else {
+    t = name + '：輸入 ' + inTxt + '，' + rule + '。' + oname + ' 本來就是 ' + out + '，<b>沒變，傳到這裡就停了</b>。';
+    if (L.steps >= 3) t = '訊號繞一圈回到 ' + name + '：輸入 ' + inTxt + '，' + rule + '，' + oname + ' 沒變，<b>繞完一圈，站穩了</b>。';
+  }
+  if (out !== old) {
+    if (g === 'N1') L.Q = out; else L.QB = out;
+    flashNet(g === 'N1' ? 'Q' : 'QB');
+    l1Push(g === 'N1' ? 'N2' : 'N1');
+    crumb(name + ' → ' + oname + '＝' + out);
+  } else crumb(name + ' 沒變');
+  if (!L.queue.length) {
+    if (L.both) {
+      L.tally[L.Q ? 0 : 1]++;
+      t += ' 結果 <b>Q＝' + L.Q + '</b>。再試一次可能不一樣。<b>這就是為什麼「兩個都按著」這個組合不該用</b>：放開之後 Q 是多少，事先不知道。';
+      L.both = false;
+    } else {
+      if (g === 'N1' && L.S === 1 && L.QB === 0) t += ' <b>這就是「記住」</b>：' + SB + ' 已經放開，Q 還是 1，因為 ' + QB + ' 繞回來的 0 撐著它。';
+      else if (g === 'N2' && L.R === 1 && L.Q === 0) t += ' <b>這就是「記住」</b>：' + RB + ' 已經放開，Q 還是 0，因為 Q 繞回來的 0 讓 NAND 2 一直輸出 1，NAND 1 就一直輸出 0。';
+      else t += ' 現在 Q＝' + L.Q + '、' + QB + '＝' + L.QB + '。';
+    }
+  }
+  L.cap = t;
+  dirty = true;
+  return true;
+}
+function rowName(s, r) { return s && r ? '保持' : (!s && r ? '設定' : (s && !r ? '重設' : '兩個都按著')); }
+
+/* ===== 電路圖：依工作台顯示、依訊號上色 ===== */
+var NETEL = {
+  S: ['wS1', 'wS2', 'wSg', 'wSn', 'nS', 'nSg', 'nSn'],
+  R: ['wR1', 'wR2', 'wR3a', 'wR3b', 'wR3c', 'nR'],
+  Q: ['wQ', 'nJ1'],
+  QB: ['wQB', 'wQB2', 'nJ2']
+};
+var drawn = { S: -1, R: -1, Q: -1, QB: -1 };
+var flashQ = {};
+function flashNet(k) { if (!reduced) flashQ[k] = 1; }
+function paintNets(n) {
+  ['S', 'R', 'Q', 'QB'].forEach(function (k) {
+    var v = n[k];
+    if (drawn[k] === v && !flashQ[k]) return;
+    var hl = v ? 'hi' : 'lo';
+    NETEL[k].forEach(function (id) {
+      var el = $(id); if (!el) return;
+      var base = el.tagName.toLowerCase() === 'circle' ? 'node' : 'wire';
+      el.setAttribute('class', base + ' ' + hl + (flashQ[k] && base === 'wire' ? ' flash' : ''));
+    });
+    drawn[k] = v;
+    if (flashQ[k]) {
+      delete flashQ[k];
+      setTimeout(function () { NETEL[k].forEach(function (id) { var el = $(id); if (el) el.setAttribute('class', (el.getAttribute('class') || '').replace(' flash', '')); }); }, 650);
+    }
+  });
+  setTxt($('dS'), n.S); setCls($('dS'), 'dg ' + (n.S ? 'hi' : 'lo'));
+  setTxt($('dR'), n.R); setCls($('dR'), 'dg ' + (n.R ? 'hi' : 'lo'));
+  setTxt($('dQ'), n.Q); setCls($('dQ'), 'dg ' + (n.Q ? 'hi' : 'lo'));
+  setTxt($('dQB'), n.QB); setCls($('dQB'), 'dg ' + (n.QB ? 'hi' : 'lo'));
+  setTxt($('dN1B'), n.QB); setCls($('dN1B'), 'dg s ' + (n.QB ? 'hi' : 'lo'));
+  setTxt($('dN2A'), n.Q); setCls($('dN2A'), 'dg s ' + (n.Q ? 'hi' : 'lo'));
+}
+function paintGates(act, queue) {
+  [['g1', 'g1b', 'N1'], ['g2', 'g2b', 'N2']].forEach(function (a) {
+    var c = 'gate' + (act === a[2] ? ' on' : (queue && queue.indexOf(a[2]) >= 0 ? ' wait' : ''));
+    setCls($(a[0]), c); setCls($(a[1]), c);
+  });
+}
+function layoutCircuit() {
+  var b = S.bench, w = S.wire, one = b === 'ideal', two = b === 'slide', three = b === 'button';
+  show($('pullR'), one || two || (three && w === 1));
+  show($('wS1'), one || three); show($('wS2'), two);
+  show($('wSg'), two || three); show($('nSg'), two || three);
+  show($('wSn'), three && w === 2); show($('nSn'), three && w === 2);
+  show($('wR1'), one); show($('wR2'), two);
+  show($('wR3a'), three && w === 1); show($('wR3b'), three && w === 2); show($('wR3c'), three && w === 3);
+  show($('nR'), one || two || (three && w === 1));
+  show($('wQB2'), one);
+  show($('keysIdeal'), one); show($('swSlide'), two); show($('btnTwo'), three);
+  show($('noteOnlyS'), three && w === 1); show($('notGate'), three && w === 2); show($('lblG25'), three && w === 3);
+  show($('esp'), two || three);
+  /* 只框住有畫東西的範圍：桌機是高度說了算，手機才會因此放大 */
+  $('ckt').setAttribute('viewBox', one ? '80 0 464 330' : (two ? '16 0 584 330' : (w === 1 ? '12 0 588 330' : '80 0 520 330')));
+  var e3 = three && w === 3;
+  $('espBox').setAttribute('height', e3 ? 290 : 128);
+  $('espT').setAttribute('y', e3 ? 200 : 140);
+  show($('p3dot'), e3); show($('p3a'), e3); show($('p3b'), e3);
+  setTxt($('p1a'), e3 ? 'GPIO27' : 'GPIO4');
+  setTxt($('p1b'), two ? '直接接 A 側' : (e3 ? '讀按鈕（看放開沒）' : '直接接按鈕'));
+  setTxt($('p2a'), e3 ? 'GPIO26' : 'GPIO5');
+  setTxt($('p2b'), e3 ? '讀閂鎖輸出 Q' : '接閂鎖輸出 Q');
+  drawn = { S: -1, R: -1, Q: -1, QB: -1 };
+}
+/* ===== 工作台二、三：照時間走的電路模型 ===== */
+var C = null, rnd = Math.random;
+function newSim() {
+  rnd = mulberry(20260925);
+  C = { t: 0, ev: [], seq: 0, nets: { S: 1, R: 1, Q: 0, QB: 1 }, con: { A: false, B: false, BTN: false }, side: 'A',
+        prog: { latched: false, lastLow: 0 }, cnt: { acts: 0, direct: 0, q: 0, both0: 0 },
+        sweep: null, pending: [], hold: null, flip: null, group: null };
+  if (S.bench === 'slide') { C.con.A = true; C.nets = { S: 0, R: 1, Q: 1, QB: 0 }; }
+  else if (S.bench === 'button' && S.wire === 2) C.nets = { S: 1, R: 0, Q: 0, QB: 1 };
+  if (S.bench === 'button' && S.wire === 3) addEv({ t: rnd() * S.poll, k: 'poll' });
+  dirty = true;
+}
+function addEv(e) {
+  e.seq = C.seq++;
+  var a = C.ev, i = a.length;
+  while (i > 0 && (a[i - 1].t > e.t || (a[i - 1].t === e.t && a[i - 1].seq > e.seq))) i--;
+  a.splice(i, 0, e);
+}
+function clockTo(t) {
+  if (t <= C.t) return;
+  if (C.nets.S === 0 && C.nets.R === 0) C.cnt.both0 += t - C.t;
+  C.t = t;
+}
+function runTo(t) {
+  var guard = 0;
+  while (C.ev.length && C.ev[0].t <= t && guard++ < 400000) { var e = C.ev.shift(); clockTo(e.t); handle(e); }
+  clockTo(t);
+}
+function setNet(k, v) {
+  if (C.nets[k] === v) return false;
+  C.nets[k] = v;
+  var sw = C.sweep;
+  if (sw && !sw.done && sw.rec[k]) sw.rec[k].push([C.t, v]);
+  if (k === 'S') { C.cnt.direct++; addEv({ t: C.t + DG, k: 'g', g: 'N1' }); if (S.bench === 'button' && S.wire === 2) addEv({ t: C.t + DG, k: 'g', g: 'NOT' }); }
+  else if (k === 'R') addEv({ t: C.t + DG, k: 'g', g: 'N2' });
+  else if (k === 'Q') { C.cnt.q++; addEv({ t: C.t + DG, k: 'g', g: 'N2' }); }
+  else if (k === 'QB') addEv({ t: C.t + DG, k: 'g', g: 'N1' });
+  dirty = true;
+  return true;
+}
+function handle(e) {
+  var n = C.nets;
+  if (e.k === 'con') {
+    C.con[e.w] = e.v;
+    if (S.bench === 'slide') { setNet('S', C.con.A ? 0 : 1); setNet('R', C.con.B ? 0 : 1); }
+    else setNet('S', C.con.BTN ? 0 : 1);
+  } else if (e.k === 'g') {
+    if (e.g === 'N1') setNet('Q', nand(n.S, n.QB));
+    else if (e.g === 'N2') setNet('QB', nand(n.Q, n.R));
+    else setNet('R', n.S ? 0 : 1);
+  } else if (e.k === 'poll') {
+    /* 05 的 main.py 迴圈，一次看一眼 */
+    var P = C.prog, now = C.t, a = n.S;
+    if (C.sweep && !C.sweep.done) C.sweep.polls.push(now);
+    if (a === 0) P.lastLow = now;
+    if (n.Q === 1) {
+      if (!P.latched) { P.latched = true; P.lastLow = now; }
+      else if (a === 1 && now - P.lastLow >= S.quiet) {
+        addEv({ t: now, k: 'r', v: 0 }); addEv({ t: now + 0.01, k: 'r', v: 1 });
+        P.latched = false;
+        if (C.sweep && !C.sweep.done) C.sweep.resets.push(now);
+      }
+    }
+    addEv({ t: now + S.poll, k: 'poll' });
+  } else if (e.k === 'r') setNet('R', e.v);
+}
+
+/* 動作：撥一下、按一下 */
+function queueAct(kind, o) { C.pending.push({ kind: kind, o: o || {} }); dirty = true; kick(); }
+function queueGroup(kind, n, o) {
+  var g = { gap: kind === 'press' ? GAP_MS : 0, last: null };
+  for (var i = 0; i < n; i++) C.pending.push({ kind: kind, o: Object.assign({ group: g }, o || {}) });
+  dirty = true; kick();
+}
+function busy() { return !!(C.sweep && !C.sweep.done); }
+function kick() { if (!busy()) startNext(); if (reduced && S.paused) completeAll(); }
+function startNext() {
+  var a = C.pending.shift();
+  if (!a) return false;
+  var pre = a.kind === 'flip' ? 0.5 : 1;
+  var ts = C.t + pre + (C.cnt.acts ? 3 : 0);
+  var g = a.o.group;
+  if (g && g.gap && g.last !== null) ts = Math.max(ts, g.last + g.gap);
+  if (g) g.last = ts;
+  runTo(ts - pre);
+  if (a.kind === 'flip') buildFlip(ts, a.o); else buildPress(ts, a.o);
+  return true;
+}
+function newSweep(t0, segs, info) {
+  C.sweep = { t0: t0, segs: segs, info: info, init: { S: C.nets.S, R: C.nets.R, Q: C.nets.Q }, rec: { S: [], R: [], Q: [] }, polls: [], resets: [], done: false };
+}
+function buildFlip(ts, o) {
+  var from = C.side, to = from === 'A' ? 'B' : 'A', t = ts, i;
+  addEv({ t: t, k: 'con', w: from, v: false });
+  var kl = 1 + Math.floor(rnd() * 3);                         /* 離開：抖 1–3 下 */
+  for (i = 0; i < kl; i++) { t += 0.22 + rnd() * 0.25; addEv({ t: t, k: 'con', w: from, v: true }); t += 0.12 + rnd() * 0.18; addEv({ t: t, k: 'con', w: from, v: false }); }
+  var tLeave = t;
+  t += 2.2 + rnd() * 0.8;                                     /* 空中（簡化：畫得很短） */
+  var tArrive = t;
+  addEv({ t: t, k: 'con', w: to, v: true });
+  var ka = o.bounces || (3 + Math.floor(rnd() * 4));          /* 碰上：抖 3–6 下 */
+  var sc = ka > 6 ? 0.55 : 1;
+  for (i = 0; i < ka; i++) { t += (0.2 + rnd() * 0.25) * sc; addEv({ t: t, k: 'con', w: to, v: false }); t += (0.15 + rnd() * 0.2) * sc; addEv({ t: t, k: 'con', w: to, v: true }); }
+  C.side = to;
+  C.flip = { from: from, to: to, ts: ts, tLeave: tLeave, tArrive: tArrive, tEnd: t, ka: ka };
+  C.cnt.acts++;
+  var span = Math.max(10, t - ts + 1.5);
+  newSweep(ts - 0.5, [{ ta: ts - 0.5, tb: ts - 0.5 + span, xa: 0, xb: 1, kind: 'lin', label: '撥一下（放大）' }], { flip: C.flip });
+}
+function buildPress(ts, o) {
+  var combo = [[1, 0], [2, 0], [1, 1]][Math.floor(rnd() * 3)];  /* 每按一下變 4 或 6 次（對齊 04 實跑） */
+  var t = ts, i;
+  addEv({ t: t, k: 'con', w: 'BTN', v: true });
+  for (i = 0; i < combo[0]; i++) {
+    t += 0.35 + rnd() * 0.5; addEv({ t: t, k: 'con', w: 'BTN', v: false });
+    t += (o.longGap && i === 0) ? 2.1 + rnd() * 0.3 : 0.5 + rnd() * 0.7; addEv({ t: t, k: 'con', w: 'BTN', v: true });
+  }
+  var p = { ts: ts, kr: combo[1], tR: null, relEnd: null };
+  C.cnt.acts++;
+  var segs = [{ ta: ts - 1, tb: ts + 7, xa: 0, xb: 0.28, kind: 'lin', label: '按下（放大）' }];
+  if (o.hold) {
+    segs.push({ ta: ts + 7, tb: ts + 7, xa: 0.28, xb: 0.40, kind: 'cmp', open: true, label: '按住' });
+    C.hold = p;
+  } else {
+    var tR = ts + HOLD_MS;
+    schedRelease(p, tR);
+    segs.push({ ta: ts + 7, tb: tR - 1, xa: 0.28, xb: 0.40, kind: 'cmp', label: '按住' });
+    segs = segs.concat(tailSegs(tR));
+  }
+  newSweep(ts - 1, segs, { press: p });
+}
+function schedRelease(p, tR) {
+  var t = tR, i;
+  addEv({ t: t, k: 'con', w: 'BTN', v: false });
+  for (i = 0; i < p.kr; i++) { t += 0.4 + rnd() * 0.5; addEv({ t: t, k: 'con', w: 'BTN', v: true }); t += 0.3 + rnd() * 0.3; addEv({ t: t, k: 'con', w: 'BTN', v: false }); }
+  p.tR = tR; p.relEnd = t;
+}
+function tailSegs(tR) {
+  var len = (S.bench === 'button' && S.wire === 3) ? (S.quiet + 2 * S.poll + 6) : 12;
+  return [{ ta: tR - 1, tb: tR + 5, xa: 0.40, xb: 0.62, kind: 'lin', label: '放開（放大）' },
+          { ta: tR + 5, tb: tR + 5 + len, xa: 0.62, xb: 1, kind: 'lin', label: '之後' }];
+}
+function releaseHold() {
+  var p = C.hold; if (!p) return;
+  var sw = C.sweep, seg = sw && sw.segs[1];
+  var tR = Math.max(C.t, p.ts + 7) + 1;
+  runTo(tR - 1);
+  schedRelease(p, tR);
+  if (seg) { seg.open = false; seg.tb = tR - 1; sw.segs = sw.segs.concat(tailSegs(tR)); }
+  C.hold = null; dirty = true;
+  if (reduced && S.paused) completeAll();
+}
+function segAt(sw, t) {
+  for (var i = 0; i < sw.segs.length; i++) { var s = sw.segs[i]; if (s.open || t < s.tb - 1e-9) return s; }
+  return null;
+}
+function finishSweep() {
+  var sw = C.sweep; if (!sw || sw.done) return false;
+  var last = sw.segs[sw.segs.length - 1];
+  if (last.open) return false;
+  runTo(last.tb); sw.done = true; dirty = true;
+  return true;
+}
+function advanceSweep(budget) {
+  var guard = 0;
+  while (budget > 1e-9 && guard++ < 30) {
+    var sw = C.sweep;
+    if (!sw || sw.done) { if (!startNext()) return; continue; }
+    var seg = segAt(sw, C.t);
+    if (!seg) { finishSweep(); continue; }
+    if (seg.open) { runTo(C.t + budget * HOLD_RATE); seg.tb = C.t; dirty = true; return; }
+    var rate = (seg.tb - seg.ta) / ((seg.xb - seg.xa) / SWEEP);
+    var need = (seg.tb - C.t) / rate;
+    if (need <= budget) { runTo(seg.tb); budget -= need; if (!segAt(sw, C.t)) finishSweep(); }
+    else { runTo(C.t + budget * rate); budget = 0; }
+    dirty = true;
+  }
+}
+function completeAll() {
+  var guard = 0;
+  while (guard++ < 200) {
+    if (busy()) { var sg = segAt(C.sweep, C.t); if (sg && sg.open) { if (sg.tb - sg.ta < 30) { runTo(sg.ta + 30); sg.tb = C.t; } break; } finishSweep(); }
+    else if (!startNext()) break;
+  }
+  dirty = true;
+}
+function stepSweep() {
+  if (!busy()) { if (!startNext()) return; }
+  var sw = C.sweep, seg = segAt(sw, C.t);
+  if (seg && seg.open) { runTo(C.t + 20); seg.tb = C.t; dirty = true; return; }
+  var end = sw.segs[sw.segs.length - 1].tb, before = [C.nets.S, C.nets.R, C.nets.Q].join(), guard = 0;
+  while (C.ev.length && C.ev[0].t <= end && guard++ < 100000) {
+    var e = C.ev.shift(); clockTo(e.t); handle(e);
+    if ([C.nets.S, C.nets.R, C.nets.Q].join() !== before) { dirty = true; return; }
+  }
+  finishSweep();
+}
+
+/* ===== 示波器 ===== */
+var SC = { W: 680, H: 204, gx: 104 };
+function buildScope() {
+  var svg = $('scope'), w = svg.parentNode.clientWidth || 680;
+  var small = w < 560;
+  SC.W = small ? 440 : Math.max(560, Math.min(1100, Math.round(w)));
+  SC.gx = small ? 76 : 104;
+  svg.setAttribute('viewBox', '0 0 ' + SC.W + ' ' + SC.H);
+  dirty = true;
+}
+function xOf(sw, t) {
+  var s, i;
+  if (t <= sw.segs[0].ta) return sw.segs[0].xa;
+  for (i = 0; i < sw.segs.length; i++) {
+    s = sw.segs[i];
+    if (s.open) return s.xa + (s.xb - s.xa) * 0.5 * Math.min(1, Math.max(0, (t - s.ta) / 30));
+    if (t <= s.tb) return s.xa + (s.xb - s.xa) * ((t - s.ta) / Math.max(1e-9, s.tb - s.ta));
+  }
+  return sw.segs[sw.segs.length - 1].xb;
+}
+function laneNames() {
+  if (S.bench === 'slide') return [['A 側', SBt + '／GPIO4'], ['B 側', RBt], ['Q', 'GPIO5']];
+  if (S.wire === 3) return [['按鈕那一點', SBt + '／GPIO27'], [RBt, 'GPIO25 給'], ['Q', 'GPIO26']];
+  return [['按鈕那一點', SBt + '／GPIO4'], [RBt, S.wire === 1 ? '只靠上拉' : 'NOT 的輸出'], ['Q', 'GPIO5']];
+}
+function niceBar(pxPerMs) {
+  var c = [0.5, 1, 2, 5, 10, 20, 50, 100, 200];
+  for (var i = 0; i < c.length; i++) if (c[i] * pxPerMs >= 34) return c[i];
+  return 200;
+}
+function fmtMs(v) { return (v < 1 ? v.toFixed(1) : String(Math.round(v))) + ' ms'; }
+function drawScope() {
+  var sw = C && C.sweep, W = SC.W, gx = SC.gx, pw = W - gx - 10, o = [];
+  var X = function (f) { return (gx + f * pw).toFixed(1); };
+  var names = laneNames();
+  var LY = [22, 68, 114];
+  for (var i = 0; i < 3; i++) {
+    o.push('<rect class="lanebg" x="' + gx + '" y="' + LY[i] + '" width="' + pw + '" height="40" rx="4"/>');
+    o.push('<text class="ln" x="' + (gx - 14) + '" y="' + (LY[i] + 18) + '" text-anchor="end">' + names[i][0] + '</text>');
+    o.push('<text class="ln2" x="' + (gx - 14) + '" y="' + (LY[i] + 33) + '" text-anchor="end">' + names[i][1] + '</text>');
+    o.push('<text class="lnum" x="' + (gx - 3) + '" y="' + (LY[i] + 11) + '" text-anchor="end">1</text><text class="lnum" x="' + (gx - 3) + '" y="' + (LY[i] + 37) + '" text-anchor="end">0</text>');
+  }
+  if (!sw) {
+    o.push('<text class="seglbl" x="' + (gx + pw / 2) + '" y="198" text-anchor="middle">' + (S.bench === 'slide' ? '按「撥到另一邊」，這裡會畫出來' : '按「按一下」，這裡會畫出來') + '</text>');
+    $('scope').innerHTML = o.join(''); return;
+  }
+  var now = C.t, nowF = xOf(sw, now);
+  sw.segs.forEach(function (s, k) {
+    var xa = +X(s.xa), xb = +X(s.xb);
+    if (s.kind === 'cmp') {
+      o.push('<rect class="cmpband" x="' + xa + '" y="18" width="' + (xb - xa) + '" height="136"/>');
+      var pr = sw.info.press;
+      var dur = s.open ? ('按住中… ' + fmtMs(now - pr.ts)) : ('按住 ' + fmtMs((pr && pr.tR !== null ? pr.tR : s.tb + 1) - (pr ? pr.ts : s.ta - 7)));
+      o.push('<text class="seglbl" x="' + ((xa + xb) / 2) + '" y="180" text-anchor="middle">≈ 壓縮 ≈</text>');
+      o.push('<text class="seglbl" x="' + ((xa + xb) / 2) + '" y="13" text-anchor="middle">' + dur + '</text>');
+    } else {
+      o.push('<text class="seglbl" x="' + ((xa + xb) / 2) + '" y="13" text-anchor="middle">' + s.label + '</text>');
+      var ppm = (xb - xa) / (s.tb - s.ta), bar = niceBar(ppm), bl = bar * ppm;
+      if (bl < xb - xa - 8) {
+        o.push('<path class="sbar" d="M' + (xa + 6) + ' 176 H' + (xa + 6 + bl).toFixed(1) + ' M' + (xa + 6) + ' 172 V180 M' + (xa + 6 + bl).toFixed(1) + ' 172 V180"/>');
+        o.push('<text class="lnum" x="' + (xa + 10 + bl).toFixed(1) + '" y="180">' + fmtMs(bar) + '</text>');
+      }
+      if (S.bench === 'button' && S.wire === 3 && sw.polls.length) {
+        var pxp = ppm * S.poll;
+        if (pxp >= 4) {
+          var d = '';
+          sw.polls.forEach(function (tp) { if (tp >= s.ta && tp <= s.tb && tp <= now) { var xx = X(xOf(sw, tp)); d += 'M' + xx + ' 158 V166 '; } });
+          if (d) o.push('<path class="pollmk" d="' + d + '"/>');
+        } else if (now > s.ta) {
+          o.push('<rect class="cmpband" x="' + xa + '" y="159" width="' + Math.max(0, +X(Math.min(nowF, s.xb)) - xa).toFixed(1) + '" height="6" style="fill:var(--c-yellow-deep)"/>');
+        }
+      }
+    }
+    if (k > 0) o.push('<path class="segsep" d="M' + xa + ' 18 V154"/>');
+  });
+  if (S.bench === 'button' && S.wire === 3) o.push('<text class="ln2" x="' + (gx - 8) + '" y="166" text-anchor="end">程式看一眼</text>');
+  var fl = sw.info.flip;
+  if (fl && now > fl.tLeave) {
+    var ax = +X(xOf(sw, fl.tLeave)), bx = +X(xOf(sw, Math.min(now, fl.tArrive)));
+    o.push('<rect class="airband" x="' + ax + '" y="18" width="' + Math.max(0, bx - ax).toFixed(1) + '" height="136"/>');
+    if (now > fl.tArrive) o.push('<text class="note-m" x="' + ((ax + bx) / 2).toFixed(1) + '" y="' + (LY[0] + 24) + '" text-anchor="middle">空中：兩邊都是 1</text>');
+  }
+  var keys = ['S', 'R', 'Q'], cls = ['trace', 'trace b', 'trace q'];
+  keys.forEach(function (k, li) {
+    var hi = LY[li] + 7, lo = LY[li] + 33, v = sw.init[k];
+    var x = +X(xOf(sw, sw.t0)), lastEdge = -99, d = 'M' + x + ' ' + (v ? hi : lo);
+    sw.rec[k].forEach(function (c) {
+      if (c[0] > now) return;
+      var xx = Math.max(+X(xOf(sw, c[0])), lastEdge + 2.4);
+      d += ' H' + xx.toFixed(1) + ' V' + (c[1] ? hi : lo);
+      lastEdge = xx; v = c[1];
+    });
+    d += ' H' + Math.max(+X(nowF), lastEdge).toFixed(1);
+    o.push('<path class="' + cls[li] + '" d="' + d + '"/>');
+  });
+  var qn = 0;
+  sw.rec.Q.forEach(function (c) { if (c[0] <= now) { qn++; var xx = +X(xOf(sw, c[0])); o.push('<path class="qmk" d="M' + (xx - 4).toFixed(1) + ' 107 H' + (xx + 4).toFixed(1) + ' L' + xx.toFixed(1) + ' 113 Z"/>'); } });
+  var note = '';
+  if (sw.done || !busy()) {
+    if (fl) note = qn === 1 ? 'Q 只翻這一次' : '';
+    else if (S.wire === 1) note = qn ? 'Q 變 1 之後，沒有人把它清回 0' : 'Q 沒變：本來就是 1，看不出有按';
+    else if (S.wire === 2) note = 'Q 跟著按鈕抖了 ' + qn + ' 次';
+    else note = qn === 2 ? 'Q 剛好變 2 次：按下變 1，安靜夠久才清回 0' : 'Q 變了 ' + qn + ' 次';
+  }
+  if (sw.resets.length) {
+    var rx = +X(xOf(sw, sw.resets[sw.resets.length - 1]));
+    o.push('<text class="note-s" x="' + Math.max(gx + 60, rx - 5).toFixed(1) + '" y="' + (LY[1] + 24) + '" text-anchor="end">' + RBt + ' 給 0 一下</text>');
+  }
+  if (note) o.push('<text class="note-s" x="' + (gx + pw - 4) + '" y="198" text-anchor="end">' + note + '</text>');
+  if (!sw.done) o.push('<path class="nowline" d="M' + X(nowF) + ' 16 V156"/>');
+  $('scope').innerHTML = o.join('');
+}
+/* ===== 畫面 ===== */
+var pulseBoth = false;
+function wiperTip() {
+  var A = [135, 77], B = [135, 253], Ao = [128, 89], Bo = [128, 241], f = C.flip;
+  if (C.con.A) return A;
+  if (C.con.B) return B;
+  if (!f) return C.side === 'A' ? Ao : Bo;
+  var p0 = f.from === 'A' ? Ao : Bo, p1 = f.to === 'A' ? Ao : Bo;
+  if (C.t <= f.tLeave) return p0;
+  if (C.t < f.tArrive) { var k = (C.t - f.tLeave) / (f.tArrive - f.tLeave); return [p0[0], p0[1] + (p1[1] - p0[1]) * k]; }
+  return p1;
+}
+function idleNow() {
+  if (S.bench === 'ideal') return !L.queue.length;
+  return !busy() && !C.pending.length && !C.hold;
+}
+function render() {
+  if (!dirty) return;
+  dirty = false;
+  var b = S.bench, hint;
+  if (b === 'ideal') {
+    paintNets(L); paintGates(L.active, L.queue);
+    if (L.S) $('kSbar').removeAttribute('transform'); else $('kSbar').setAttribute('transform', 'translate(0 5.5)');
+    if (L.R) $('kRbar').removeAttribute('transform'); else $('kRbar').setAttribute('transform', 'translate(0 5.5)');
+    setTxt($('kSst'), L.S ? '放開＝1' : '按住＝0'); setTxt($('kRst'), L.R ? '放開＝1' : '按住＝0');
+    $('kS').setAttribute('aria-pressed', L.S ? 'false' : 'true'); $('kR').setAttribute('aria-pressed', L.R ? 'false' : 'true');
+    setTxt($('kSs'), L.S ? '放開＝1' : '按住＝0'); setTxt($('kRs'), L.R ? '放開＝1' : '按住＝0');
+    setCls($('bQ'), 'badge' + (L.Q ? ' hi' : '')); setTxt($('bQd'), L.Q); setCls($('bQd'), 'dg ' + (L.Q ? 'hi' : 'lo'));
+    setCls($('bQB'), 'badge' + (L.QB ? ' hi' : '')); setTxt($('bQBd'), L.QB); setCls($('bQBd'), 'dg ' + (L.QB ? 'hi' : 'lo'));
+    var stable = !L.queue.length;
+    Array.prototype.forEach.call(document.querySelectorAll('#tblStates tbody tr'), function (tr) {
+      var on = stable && +tr.getAttribute('data-s') === L.S && +tr.getAttribute('data-r') === L.R;
+      tr.classList.toggle('on', on);
+    });
+    var canBoth = stable && !L.S && !L.R;
+    $('btnBoth').disabled = !canBoth;
+    $('btnBoth').classList.toggle('pulse', canBoth && pulseBoth);
+    var ta = L.tally[0] + L.tally[1];
+    var res = ta ? ('同時放開的結果：Q＝1 有 ' + L.tally[0] + ' 次、Q＝0 有 ' + L.tally[1] + ' 次。') : '';
+    setTxt($('tally'), canBoth ? ('兩顆都按住了，可以按「同時放開」。' + (res ? ' ' + res : '')) : (res || '「同時放開」要先把兩顆都按住。'));
+    $('cap1').innerHTML = L.cap;
+    $('crumbs').innerHTML = L.crumbs.map(function (c, i) { return '<li' + (i === L.crumbs.length - 1 ? ' class="now"' : '') + '>' + c + '</li>'; }).join('');
+    hint = stable ? ('現在：' + SB + '＝' + L.S + '、' + RB + '＝' + L.R + ' → <b>' + rowName(L.S, L.R) + '</b>，Q＝' + L.Q + '、' + QB + '＝' + L.QB)
+                  : ('訊號還在走' + (S.paused ? '：按「單步」走下一級' : '：每一級停一下，也可以按「暫停」再「單步」'));
+    setTxt($('rateTxt'), '每一級停 ' + (BEAT / S.speed).toFixed(1) + ' 秒');
+  } else {
+    paintNets(C.nets); paintGates(null, null);
+    var n = C.nets;
+    if (b === 'slide') {
+      var tip = wiperTip(), wp = $('wiper');
+      wp.setAttribute('x2', tip[0]); wp.setAttribute('y2', tip[1]);
+      var pos = C.con.A ? '碰在 <b>A 側</b>' : (C.con.B ? '碰在 <b>B 側</b>' : '<b>兩邊都沒碰到</b>（在空中）');
+      hint = '現在：' + pos + '（' + SB + '＝' + n.S + '、' + RB + '＝' + n.R + '）→ Q＝' + n.Q;
+      setTxt($('m2a'), C.cnt.acts); setTxt($('m2b'), C.cnt.direct); setTxt($('m2c'), C.cnt.q);
+    } else {
+      if (C.con.BTN) $('bBar').setAttribute('transform', 'translate(0 5.5)'); else $('bBar').removeAttribute('transform');
+      setTxt($('bSt'), C.con.BTN ? '接點接上＝0' : '接點分開＝1');
+      hint = '現在：接法' + ['①', '②', '③'][S.wire - 1] + '，' + (C.hold ? '<b>按住不放</b>' : (C.con.BTN ? '接點<b>接上</b>' : '按鈕<b>放開</b>')) + '（' + SB + '＝' + n.S + '、' + RB + '＝' + n.R + '）→ Q＝' + n.Q;
+      setTxt($('m3a'), C.cnt.acts); setTxt($('m3b'), C.cnt.direct); setTxt($('m3c'), C.cnt.q);
+      setTxt($('m3bl'), '按鈕那一點（' + (S.wire === 3 ? 'GPIO27' : 'GPIO4') + '）變了');
+      setTxt($('m3cl'), '閂鎖 Q（' + (S.wire === 3 ? 'GPIO26' : 'GPIO5') + '）變了');
+      var pp = C.cnt.acts && idleNow() ? (C.cnt.q / C.cnt.acts) : null;
+      setTxt($('perPress'), S.wire === 1 ? ('不管按幾下，Q 一共只變了 ' + C.cnt.q + ' 次。') :
+        (pp === null ? '' : ('平均每按一下，Q 變 ' + (Math.round(pp * 10) / 10) + ' 次' + (S.wire === 3 ? (S.quiet === 20 ? '（Wokwi 實跑也是每按 2 次）。' : '（安靜 20 ms 時是每按 2 次）。') : '。'))));
+      if (S.wire === 3) $('bothZero').innerHTML = SB + '、' + RB + ' 同時是 0 的時間：' + (C.cnt.both0 < 0.0005 ? '0' : C.cnt.both0.toFixed(3)) + ' ms';
+      $('btnHold').setAttribute('aria-pressed', C.hold ? 'true' : 'false');
+      setTxt($('btnHold'), C.hold ? '放開' : '按住不放');
+      $('btnHold').disabled = !C.hold && (busy() || C.pending.length > 0);
+      $('btnPress').disabled = !!C.hold; $('btnPress5').disabled = !!C.hold;
+    }
+    drawScope();
+    setTxt($('rateTxt'), '每張圖大約畫 ' + Math.round(1 / (SWEEP * S.speed)) + ' 秒');
+  }
+  $('stateLine').innerHTML = hint;
+  setTxt($('spdTxt'), S.speed + '×');
+  $('btnPause').setAttribute('aria-pressed', S.paused ? 'true' : 'false');
+  setTxt($('btnPause'), S.paused ? '繼續' : '暫停');
+  $('stage').setAttribute('data-idle', idleNow() ? '1' : '0');
+}
+
+/* ===== 切換工作台 ===== */
+var NOTES = {
+  ideal: '<b>Q 之所以能「記住」，是因為它的值繞一圈又回到自己的輸入。</b>',
+  slide: '<b>閂鎖只認第一次碰到。</b>同一邊之後再怎麼抖，都只是把同一件事再說一次。',
+  w1: '<b>沒有人重設。</b>兩腳按鈕只給閂鎖一個訊號。',
+  w2: '<b>NOT 閘做不出第二個接點。</b>' + SB + '、' + RB + ' 來自同一個接點，一起抖。',
+  w3: '<b>程式晚一點處理也不會漏掉這次。</b>但重設完成前不能接下一次；ESP32 只負責事後清掉。'
+};
+var CAPS = {
+  slide: '這張慢動作波形圖（示波器）每撥一次就從左邊重畫。上面兩條是 A 側、B 側（接點碰上＝0），最下面是 Q；綠色底是動片在空中、兩邊都是 1 的那一段；紅色小三角＝Q 變了一次。每一段下面的比例尺是那一段的時間長度。',
+  button: '這張慢動作波形圖（示波器）每按一次就從左邊重畫：按下、放開兩段放大，灰色底是按住那一段（壓縮畫），最後一段看 Q 有沒有回 0；紅色小三角＝Q 變了一次。'
+};
+function forKey() { return S.bench === 'button' ? 'w' + S.wire : S.bench; }
+function setBench(b, w) {
+  S.bench = b; if (w) S.wire = w;
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (t) {
+    var on = t.getAttribute('data-b') === b;
+    t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1;
+    if (on) $('tp-main').setAttribute('aria-labelledby', t.id);
+  });
+  show($('segWire'), b === 'button');
+  Array.prototype.forEach.call(document.querySelectorAll('#segWire button'), function (x) { x.setAttribute('aria-pressed', +x.getAttribute('data-w') === S.wire ? 'true' : 'false'); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-for]'), function (el) {
+    var f = el.getAttribute('data-for');
+    show(el, f === b || (b === 'button' && f === 'w' + S.wire));
+  });
+  $('stage').classList.toggle('bench-live', b !== 'ideal');
+  show($('view1'), b === 'ideal'); show($('scopeFig'), b !== 'ideal');
+  $('sideNote').innerHTML = NOTES[forKey()];
+  setTxt($('scopeCap'), b === 'slide' ? CAPS.slide : CAPS.button + (b === 'button' && S.wire === 3 ? '（接法③：黃色小刻度＝程式看按鈕的時間點，跟控制板上「程式多久看一次按鈕」拉桿對應）' : ''));
+  layoutCircuit();
+  pulseBoth = false;
+  if (b === 'ideal') l1Reset(0); else { newSim(); buildScope(); }
+  syncControls();
+  dirty = true;
+}
+function syncControls() {
+  $('rngSpeed').value = S.speed;
+  $('rngPoll').value = POLLS.indexOf(S.poll);
+  setTxt($('pollTxt'), S.poll + ' ms');
+  Array.prototype.forEach.call(document.querySelectorAll('#segQuiet button'), function (x) { x.setAttribute('aria-pressed', +x.getAttribute('data-q') === S.quiet ? 'true' : 'false'); });
+  show($('rmNote'), reduced);
+}
+
+/* ===== 操作 ===== */
+function onKeyAct(el, fn) {
+  el.addEventListener('click', fn);
+  el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } });
+}
+function doFlip() { if (S.bench === 'slide') queueAct('flip'); }
+function doPress() { if (S.bench === 'button' && !C.hold) queueAct('press'); }
+function toggleHold() {
+  if (S.bench !== 'button') return;
+  if (C.hold) { releaseHold(); return; }
+  if (busy() || C.pending.length) return;
+  queueAct('press', { hold: true });
+}
+Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (t, i, all) {
+  t.addEventListener('click', function () { setBench(t.getAttribute('data-b'), t.getAttribute('data-b') === 'button' ? 1 : 0); });
+  t.addEventListener('keydown', function (e) {
+    var d = e.key === 'ArrowRight' ? 1 : (e.key === 'ArrowLeft' ? -1 : 0);
+    if (!d) return;
+    e.preventDefault();
+    var nx = all[(i + d + all.length) % all.length];
+    nx.focus(); nx.click();
+  });
+});
+Array.prototype.forEach.call(document.querySelectorAll('#segWire button'), function (x) {
+  x.addEventListener('click', function () { setBench('button', +x.getAttribute('data-w')); });
+});
+onKeyAct($('hitS'), function () { l1Toggle('S'); pulseBoth = true; });
+onKeyAct($('hitR'), function () { l1Toggle('R'); pulseBoth = true; });
+$('kS').addEventListener('click', function () { l1Toggle('S'); pulseBoth = true; });
+$('kR').addEventListener('click', function () { l1Toggle('R'); pulseBoth = true; });
+$('btnBoth').addEventListener('click', function () { pulseBoth = false; l1Set(1, 1); });
+$('btnReset1').addEventListener('click', function () { L.tally = [0, 0]; l1Reset(0); });
+Array.prototype.forEach.call(document.querySelectorAll('#tblStates button'), function (x) {
+  x.addEventListener('click', function () { var v = x.getAttribute('data-set'); l1Set(+v[0], +v[1]); pulseBoth = true; });
+});
+onKeyAct($('hitSw'), doFlip);
+$('btnFlip').addEventListener('click', doFlip);
+$('btnFlip6').addEventListener('click', function () { if (S.bench === 'slide') queueGroup('flip', 6); });
+$('btnReset2').addEventListener('click', newSim);
+onKeyAct($('hitBtn'), doPress);
+$('btnPress').addEventListener('click', doPress);
+$('btnHold').addEventListener('click', toggleHold);
+$('btnPress5').addEventListener('click', function () { if (S.bench === 'button' && !C.hold) queueGroup('press', 5); });
+$('btnReset3').addEventListener('click', newSim);
+$('rngPoll').addEventListener('input', function () { S.poll = POLLS[+this.value] || 1; syncControls(); newSim(); });
+Array.prototype.forEach.call(document.querySelectorAll('#segQuiet button'), function (x) {
+  x.addEventListener('click', function () { S.quiet = +x.getAttribute('data-q'); syncControls(); newSim(); });
+});
+$('rngSpeed').addEventListener('input', function () {
+  S.speed = Math.min(2, Math.max(0.25, parseFloat(this.value) || 0.5));
+  try { localStorage.setItem('rsLatchSpeed', String(S.speed)); } catch (e) {}
+  dirty = true;
+});
+$('btnPause').addEventListener('click', function () { S.paused = !S.paused; dirty = true; });
+$('btnStep').addEventListener('click', function () {
+  S.paused = true;
+  if (S.bench === 'ideal') l1Beat(); else stepSweep();
+  dirty = true;
+});
+
+/* ===== 試試看與深連結 ===== */
+var PRESETS = {
+  hold: function () { setBench('ideal'); l1Reset(1); L.cap = '兩個都放開＝<b>保持</b>。Q 還是 1：這是上一次按 ' + SB + ' 留下來的。' + SB + ' 早就放開了，Q 靠 ' + QB + ' 繞回來的 0 撐著。'; },
+  set: function () { setBench('ideal'); l1Reset(0); l1Set(0, 1); },
+  reset: function () { setBench('ideal'); l1Reset(1); l1Set(1, 0); },
+  both0: function () {
+    setBench('ideal'); l1Reset(1); L.S = 0; L.R = 0; L.Q = 1; L.QB = 1;
+    L.cap = '兩個都按著：兩顆閘都有一個 0，都輸出 1，所以 <b>Q＝' + QB + '＝1</b>。按控制板上的「同時放開」，看 Q 停在哪一邊；多試幾次。';
+    pulseBoth = true;
+  },
+  bounce: function () { setBench('slide'); queueAct('flip', { bounces: 10 }); },
+  not: function () { setBench('button', 2); queueGroup('press', 1); },
+  esp32: function () { S.poll = 1; S.quiet = 20; setBench('button', 3); queueGroup('press', 1); },
+  quiet0: function () { S.poll = 1; S.quiet = 0; setBench('button', 3); queueGroup('press', 2, { longGap: true }); },
+  onlys: function () { setBench('button', 1); queueGroup('press', 2); },
+  holdbtn: function () { S.poll = 1; S.quiet = 20; setBench('button', 3); queueAct('press', { hold: true }); }
+};
+function applyPreset(k) { if (PRESETS[k]) { PRESETS[k](); dirty = true; } }
+function toBench() {
+  var top = $('bench');
+  if (top && top.scrollIntoView) top.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+}
+Array.prototype.forEach.call(document.querySelectorAll('[data-preset]'), function (x) {
+  x.addEventListener('click', function () { applyPreset(x.getAttribute('data-preset')); toBench(); });
+});
+Array.prototype.forEach.call(document.querySelectorAll('[data-go]'), function (x) {
+  x.addEventListener('click', function () { applyPreset(x.getAttribute('data-go')); toBench(); });
+});
+
+/* ===== 複製按鈕 ===== */
+function selectText(pre) {
+  try { var r = document.createRange(); r.selectNodeContents(pre); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); return true; } catch (e) { return false; }
+}
+Array.prototype.forEach.call(document.querySelectorAll('.copy'), function (b) {
+  b.addEventListener('click', function () {
+    var pre = $(b.getAttribute('data-copy')), label = b.getAttribute('data-label'), box = pre.closest('details');
+    var ok = function () { b.textContent = '已複製'; setTimeout(function () { b.textContent = label; }, 1800); };
+    var no = function () {
+      for (var d = pre.parentElement; d; d = d.parentElement) if (d.tagName === 'DETAILS') d.open = true;   /* 外層也打開 */
+      var picked = selectText(pre);
+      if (pre.scrollIntoView) pre.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+      b.textContent = picked ? '已選取，按 Ctrl+C 複製' : '請自己選取程式碼';
+      setTimeout(function () { b.textContent = label; }, 3500);
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(pre.textContent).then(ok, no);
+      else no();
+    } catch (e) { no(); }
+  });
+});
+
+/* ===== 開跑 ===== */
+var last = 0;
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (!last) { last = now; return; }
+  var dt = (now - last) / 1000; last = now;
+  if (document.hidden) return;
+  if (dt > 0.05) dt = 0.05;
+  if (!S.paused) {
+    if (S.bench === 'ideal') {
+      if (L.queue.length) { L.acc += dt * S.speed; if (L.acc >= BEAT) { L.acc = 0; l1Beat(); } }
+    } else if (busy() || C.pending.length) advanceSweep(dt * S.speed);
+  }
+  render();
+}
+document.addEventListener('visibilitychange', function () { last = 0; });
+var rt = 0;
+window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { if (S.bench !== 'ideal') buildScope(); }, 200); });
+
+/* 唯讀：給驗收與複驗看內部狀態用，不改任何東西 */
+window.__rsLatch = { state: function () {
+  var sw = C && C.sweep;
+  return { bench: S.bench, wire: S.wire, speed: S.speed, paused: S.paused, poll: S.poll, quiet: S.quiet, reduced: reduced, idle: idleNow(),
+    l1: { S: L.S, R: L.R, Q: L.Q, QB: L.QB, queue: L.queue.slice(), tally: L.tally.slice() },
+    sim: C ? { t: C.t, nets: Object.assign({}, C.nets), cnt: Object.assign({}, C.cnt), hold: !!C.hold, pending: C.pending.length,
+      flip: C.flip ? { ka: C.flip.ka, from: C.flip.from, to: C.flip.to } : null,
+      sweep: sw ? { done: sw.done, qChanges: sw.rec.Q.length, sChanges: sw.rec.S.length, rChanges: sw.rec.R.length, resets: sw.resets.length } : null } : null };
+} };
+
+setBench('ideal');
+try {
+  var qs = new URLSearchParams(location.search), pr = qs.get('preset'), bq = qs.get('bench');
+  if (pr && PRESETS[pr]) applyPreset(pr);
+  else if (bq === 'slide') setBench('slide');
+  else if (bq === 'button') setBench('button', 1);
+  else if (bq === 'esp32') setBench('button', 3);
+} catch (e) {}
+render();
+requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>

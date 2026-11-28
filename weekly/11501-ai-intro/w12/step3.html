@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W12 Step 3 · Attention &amp; layers</title>
+<meta name="description" content="Week 12 AI Intro, step 3 of 5: Attention &amp; layers, with a toy, core terms, Colab and a self-check.">
+<link rel="stylesheet" href="assets/w12.css">
+</head>
+<body data-step="3">
+<nav class="progress" id="progTop" aria-label="Steps"></nav>
+<main>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">AI Intro · Week 12 · Step 3 of 5</div>
+    <h1>Step 3 · Attention &amp; layers</h1>
+    <p class="zh">第 3 站 · 注意力與層</p>
+  </div>
+</header>
+
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">1</span>The question this step answers</h2>
+    <p class="zh">這一站回答的問題</p>
+    <p class="bigq">How does each piece (token) use itself and the pieces that came before it?</p>
+    <p class="bigq zh">每一小塊文字（token）怎麼利用自己和前面的塊？</p>
+    <div class="hualien"><h3 style="margin-top:0">Our sentence at this step: “Hualien is famous for” · 同一句走到這一站</h3>
+      <p>Now the pieces of <code>Hualien is famous for</code> look at each other. At <code>▁for</code>, the model may look at itself and every earlier piece (<code>H</code>, <code>ual</code>, <code>ien</code>, <code>▁is</code>, <code>▁famous</code>), and nothing after it. Which earlier word do you think matters most for guessing what comes next? This page did not measure this sentence in Gemma 4: the proportions in the toy and the video are illustrative. For real numbers, see the small-model run in Colab (section 6).</p>
+      <p class="zh">同一句的每一塊開始互相看。讀到 for 時，只能看自己和前面的塊（H、ual、ien、is、famous），後面的看不到。你覺得前面哪一塊最能幫它猜下一塊？（這一頁沒有拿這句去量 Gemma 4，玩具與短片裡的比例是示意；真的數字請看 Colab 小模型那次。）</p>
+    </div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">2</span>Guess first</h2>
+    <p class="zh">先猜</p>
+    <p>In “…because it was too big”, when the model is at “it”, can it already see “big”?</p>
+    <p class="zh">在「…because it was too big」裡，模型讀到 it 的時候，看得到後面的 big 嗎？</p>
+    <details class="guess"><summary>Write your guess on paper, then open the answer. 先猜再點開</summary><p>No. The causal mask hides every later word, so at “it” the word “big” has weight 0. “big” does the linking when it arrives. 看不到；因果遮罩把後面的字擋住，要等 big 出現再回頭連。</p></details>
+  </div>
+</section>
+
+<section class="block" id="video" data-key="step3"><div class="wrap"><h2><span class="n">▶</span>Short video</h2><p class="zh">看短片</p><div class="vslot"></div><details class="transcript"><summary>Transcript 逐幕文字（English narration + 中文字幕）</summary><ol><li><p>How does Gemma 4 know which earlier words matter most? Alone, the word for gives almost no clue what comes next.</p><p class="zh">模型怎麼知道前面哪個字重要？光看 for 根本猜不出後面。</p></li><li><p>Picture a classroom vote where the latest speaker looks back and gives more votes to helpful classmates. That scoring is called attention.</p><p class="zh">想成課堂投票：最新的字回頭看前面，這套打分叫注意力。</p></li><li><p>In this made-up example, at the word for, it casts strong votes for Hualien and famous, and a tiny vote for is, blending their meaning together.</p><p class="zh">在這個示意例子裡，for 會給花蓮和 famous 高票，再混成新意思。</p></li><li><p>There is one strict rule: words can only look at themselves and backward, never ahead. A one-way curtain hides future tokens, called a causal mask.</p><p class="zh">而且只能看自己和前面、不能偷看後面，這道遮簾叫因果遮罩。</p></li><li><p>One vote is not enough. Gemma 4 repeats this round inside a stack of layers—35 in E2B, up to 60 in 31B.</p><p class="zh">E2B 有 35 層，31B 有 60 層。</p></li><li><p>To save memory, most layers only check nearby words. Every fifth or sixth layer, and always the last, lets each piece look at itself and all earlier pieces.</p><p class="zh">每隔五、六層以及最後一層，每一塊可以看自己和前面所有的塊。</p></li><li><p>When for exits the final layer, its vector holds the full Hualien context. Now Gemma 4 is ready to guess what comes next.</p><p class="zh">走出最後一層，句尾的向量已經整合了前面的資訊，接著拿來猜下一塊。</p></li></ol></details></div></section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">3</span>On the official guide</h2>
+    <p class="zh">去官方頁做什麼</p>
+    <ol class="steps">
+      <li>In the row of buttons at the very top of the page, press “03 Attention” and stay on “Tab A: Causal Q·K·V + FFN”. 按頁面最上方的「03 Attention」，留在「Tab A: Causal Q·K·V + FFN」。</li>
+      <li>Task: in Tab A press “"polished" → trophy”, then “"zipped" → suitcase”. In each one, which word does “it” link to most? The percentages are pseudo, so compare where the links go. 任務：依序按前兩顆例句鈕，比較 it 各連到誰；百分比是示意值。</li>
+      <li>The third button, “Late clue: "fragile."”, is the case where the clue comes after “it” (like part B of toy ③). 第三顆是線索在後面的例子，對應玩具 ③ 的 B 段。</li>
+      <li>Then press “>_ Read the details” and read about Query, Key and Value under the heading “Stage A: Causal Self-Attention (Query, Key, and Value)”. 做完再按「>_ Read the details」讀 Q/K/V。</li>
+      <li>Optional: “How Gemma 4 handles 128K–256K context: Interleaved Local &amp; Global Attention”. 自選：長上下文怎麼處理。</li>
+    </ol>
+    <p class="count">Button names are as seen on 2026-11-23; they may differ after the official page is updated. 按鈕名稱是 2026-11-23 看到的，官方改版後可能不同。</p>
+    <p><a class="btn-official" href="https://gemma.ai/learn/how-llms-work/" target="_blank" rel="noopener">Open the official guide (new tab) ↗</a></p>
+    <p style="font-size:.92rem">Real: layer counts, window sizes, ratios, expert counts. Simulation: the word-to-word percentages (“pseudo”) and the lit-up expert dots (“simulated router trace”). 真的：層數、視窗、比例、專家數；示意：字對字百分比與亮起來的專家點。</p>
+    <p style="font-size:.92rem">If the official page is slow, keep going with the toy here; the teacher will project the official demo. 官方頁很慢的話，先玩這裡的玩具，老師會投影。</p>
+  </div>
+</section>
+
+<section class="block" id="toy">
+  <div class="wrap">
+    <h2><span class="n">4</span>Play</h2>
+    <p class="zh">玩一下</p>
+    <div class="toy" id="toy3">
+      <h3>③ Attention: what does “it” look at, itself and earlier words? (Stage 3)</h3>
+      <span class="label-ill">Illustrative weights — made up, not computed by Gemma 4</span>
+      <p>A similar trophy/suitcase example appears in the official Stage 3, but don't try to match its percentages — both are illustrations. Click any word to see where it looks. <b>Hatched words come later in the sentence</b>: the <a href="#term-causal-mask">causal mask</a> hides them, so their weight is 0.</p>
+      <p class="zh">官方第 3 站有類似的獎盃／行李箱例子，但不用對它的百分比，兩邊都是示意。點任何一個字，看它在自己和前面的字裡看誰；斜線的字在後面，被因果遮罩擋住，權重是 0。</p>
+      <div class="row" role="group" aria-label="Which sentence">
+        <button type="button" class="chip-btn" id="partA" aria-pressed="true">A · clue comes before “it”</button>
+        <button type="button" class="chip-btn" id="partB" aria-pressed="false">B · clue comes after “it”</button>
+      </div>
+      <div class="row" id="attnToggle" role="group" aria-label="Switch the clue word"></div>
+      <div class="row" id="attnWords" role="group" aria-label="Sentence words"></div>
+      <div class="bars" id="attnBars"></div>
+      <div class="explain" id="attnExplain"></div>
+    </div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">5</span>Core terms for this step</h2>
+    <p class="zh">這一站的核心名詞</p>
+    <p>Guess each card's answer before you open it. Other words from this stage: <a href="terms.html?stage=3#terms">all Stage 3 terms in the dictionary</a>. 先猜再點開；這一站其他名詞在名詞站。</p>
+    <div id="cores" data-slugs="attention query key value causal-mask"></div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">6</span>Run the real model (Colab)</h2>
+    <p class="zh">用真的模型跑（Colab）</p>
+    <div class="colab"><p>This step uses Gemma 3 270M, a much smaller model from the same family: the idea is the same, the numbers are different. 這一段用的是同家族、小很多的 Gemma 3 270M：道理一樣、數字不一樣。 Run <b>Step 3 Attention</b> in the notebook. It feeds in “The trophy didn't fit in the suitcase because it was too big.” and draws bars for how much “it” looks at itself and each earlier piece (last layer, average of its heads). When we ran it on 11/23, most of the weight went to the start mark &lt;bos&gt; (0.72) and trophy got only 0.027, not the textbook story; yours may differ slightly. Describe honestly what you see, then try another layer. 跑筆記本的 Step 3，會看到 it 看自己和前面每一塊的長條（最後一層、各注意力頭平均）。我們 11/23 那次最多落在句首記號 &lt;bos&gt;（0.72），trophy 只有 0.027，跟課本故事不一樣；你的可能略有不同。請照實描述，再換一層試試。</p>
+    <div id="colabSlot" data-label="Back to your Colab tab; click here only if it is not open yet ↗"></div><p class="zh">回到你的 Colab 分頁；還沒開才按這裡。</p></div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">7</span>Check yourself</h2>
+    <p class="zh">自我檢測</p>
+    <div id="quizBox" data-q="2"></div>
+    <p><a class="next-btn" href="step4.html">Next: Step 4 · Sampling →</a></p>
+  </div>
+</section>
+</main>
+<nav class="progress" id="progBot" aria-label="Steps (bottom)"></nav>
+<footer>
+  <div class="wrap">
+    <p>Source for every Gemma fact: Google's official guide “How LLMs work (with Gemma 4)”, gemma.ai/learn/how-llms-work/ (read 2026-11-22). Explanations, analogies, toys and examples are our own words; toy numbers are made up unless marked “from the guide”. If anything here disagrees with the official page, the official page wins. 所有 Gemma 事實出自官方導覽；解釋、比喻、玩具是我們自己寫的，玩具數字除非標明都是假的。與官方不一致時以官方為準。</p>
+    <p>Dictionary of all 113 terms: <a href="terms.html">terms.html</a>. 全部名詞：名詞站。</p>
+  </div>
+</footer>
+<script src="assets/config.js"></script>
+<script src="assets/terms-data.js"></script>
+<script src="assets/w12.js"></script>
+</body>
+</html>

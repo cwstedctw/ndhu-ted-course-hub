@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paper relay (backup) · W06 AA</title>
+<style>
+:root{--ink:#1A1A1A;--sea:#0E7C7B;--sand:#D9A441;--paper:#FFFDF8;--line:#C9D6D4;--muted:#55605e;--warn:#C8553D}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:"Segoe UI","Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;line-height:1.55}
+main{max-width:780px;margin:0 auto;padding:16px}
+h1{font-size:24px;margin:8px 0 2px;color:var(--sea)}
+h2{font-size:18px;margin:18px 0 6px}
+h3{font-size:16px;margin:10px 0 4px}
+.zh{display:block;color:var(--muted);font-size:.92em}
+.sim{display:inline-block;border:1.5px solid var(--warn);color:var(--warn);border-radius:6px;padding:1px 8px;font-size:13px;font-weight:700;margin:4px 0}
+.card{border:2px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0;background:#fff}
+.card.inbox{border-color:var(--sea)}
+.card.outbox{border-color:var(--sand)}
+.card .file{font-family:Consolas,"Courier New",monospace;font-size:13px;color:var(--muted);word-break:break-all}
+.card ol,.card ul{margin:6px 0 0 1.2em;padding:0}
+.card li{margin:5px 0}
+.facts{border:1.5px dashed var(--sea);border-radius:8px;padding:6px 10px;margin:8px 0;background:#F2F9F7}
+.hand{background:#FBF3E2;border-left:4px solid var(--sand);padding:6px 10px;margin:8px 0}
+table{width:100%;border-collapse:collapse;margin:8px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:6px 8px;vertical-align:top;text-align:left}
+th{background:#EEF5F4}
+td.blank{width:22%}
+.box{border:1.5px dashed var(--muted);border-radius:8px;min-height:120px;padding:8px;margin:8px 0}
+.lines{height:26px;border-bottom:1px solid var(--line)}
+.small{font-size:13px;color:var(--muted)}
+code{font-family:Consolas,"Courier New",monospace;font-size:.92em;overflow-wrap:anywhere}
+.pagebreak{break-before:page;page-break-before:always}
+@media print{
+  @page{size:A4;margin:9mm}
+  html,body{font-size:11px;line-height:1.3}
+  main{max-width:none;padding:0 3mm}
+  h1{font-size:17px;margin:0}
+  h2{font-size:14px;margin:8px 0 3px}
+  h3{font-size:12.5px;margin:5px 0 1px}
+  p{margin:4px 0}
+  .zh{font-size:.95em}
+  .card{break-inside:avoid;padding:6px 9px;margin:5px 0}
+  .card li{margin:1px 0}
+  .facts{padding:4px 8px;margin:5px 0}
+  .hand{margin:4px 0;padding:3px 8px}
+  th,td{padding:4px 6px}
+  .box{min-height:90px}
+  .lines{height:22px}
+}
+</style>
+</head>
+<body>
+<main>
+<p class="sim">SIMULATION · teaching material / 教學模擬</p>
+<h1>Paper relay: you are the leader who checks<span class="zh">紙本接力：你是負責驗收的領隊</span></h1>
+<p>No device, or the AI windows will not start? Practise the most important step on paper: check card 2 against the facts on card 1, circle what is wrong, write a send-back note, then fix it yourself: that is your v2.
+<span class="zh">沒有裝置、或 AI 視窗開不起來？在紙上練最重要的那一步：拿卡 1 的事實對照卡 2、圈出不對的地方、寫退回紙條，再自己改對，那就是你的 v2。</span></p>
+<p class="small">This is a prepared simulation, not your own AI's output. When you hand in, take a photo of the whole sheet and write “paper relay”.<span class="zh">這是預先做好的模擬，不是你自己的 AI 跑出來的；交作業時拍整張紙，並註明「紙本接力」。</span></p>
+
+<div class="card inbox">
+<b>Card 1 · Task note from the leader</b><span class="zh">卡 1・領隊的任務紙條</span>
+<div class="file">workspace/inbox/20261012-picker-user-guide.md</div>
+<ol>
+<li><b>What to do:</b> a one-page user guide for the picker page “What can I do between classes?”: how to use it, and three things it cannot do.<span class="zh">做什麼：替「課間我想做什麼？」挑選器寫一頁使用說明：怎麼用，加三件它做不到的事。</span></li>
+<li><b>Rule:</b> use only the files in <code>workspace/shared/</code>.<span class="zh">規則：只准用 shared 裡的檔案。</span></li>
+<li><b>Format:</b> English first, then Traditional Chinese. Save it as a new file in <code>outbox/</code> with one handoff line at the top.<span class="zh">格式：先英文、再繁體中文；在 outbox 另存新檔，檔頭一行交接。</span></li>
+<li><b>Done looks like:</b> every sentence can be found in the files; exactly three “cannot do” items.<span class="zh">怎樣算做完：每一句都在檔案裡找得到；「做不到的事」剛好三件。</span></li>
+</ol>
+<div class="facts"><b>What is in <code>shared/</code></b> (the facts you check against)<span class="zh">shared 裡有什麼（你驗收要對照的事實）</span>
+<ul>
+<li>One web page, <code>campus-picker.html</code>, that works offline when double-clicked.<span class="zh">一個網頁，雙擊就能離線開。</span></li>
+<li>Three filters: location (indoor / outdoor / all), time (15 / 30 / 60 minutes), energy (low / medium / all).<span class="zh">三個條件：地點（室內／室外／全部）、時間（15／30／60 分鐘）、體力（低／中／全部）。</span></li>
+<li>“Pick for me” picks one at random from the activities that match all three. None match: it says “No matching activities.”<span class="zh">「幫我選」從三個條件都符合的活動裡隨機抽一個；沒有就說「沒有符合條件的活動」。</span></li>
+<li>It keeps the last 5 picks, newest first, with a “Clear history” button. “Reset filters” goes back to all / 30 / all and keeps the history. A button switches English and Chinese.<span class="zh">記最近 5 次（最新在上），有「清除紀錄」；「重設條件」回到全部／30／全部、紀錄保留；有中英切換。</span></li>
+<li><code>activities.json</code>: <b>12</b> fictional activities.<span class="zh">activities.json：12 個虛構活動。</span></li>
+</ul></div>
+</div>
+
+<div class="card outbox">
+<b>Card 2 · v1 from the member</b><span class="zh">卡 2・隊員交回的 v1</span>
+<div class="file">workspace/outbox/20261012-picker-user-guide-v1.md</div>
+<div class="hand"><b>Handoff:</b> Done. Tested on my phone too. Ready to use.<span class="zh">交接：做完了，也在手機上測過。可以直接用。</span></div>
+<h3>How to use it<span class="zh">怎麼用</span></h3>
+<ol>
+<li>Double-click the page to open it. It works without the internet.<span class="zh">雙擊打開網頁，不用網路也能用。</span></li>
+<li>Choose from 40 activities with three filters: location, time and energy.<span class="zh">用地點、時間、體力三個條件，從 40 個活動裡挑。</span></li>
+<li>Press “Pick for me”. It picks one matching activity at random. If none match, it says “No matching activities.”<span class="zh">按「幫我選」，隨機抽一個符合的活動；都不符合就顯示「沒有符合條件的活動」。</span></li>
+<li>Your last 5 picks are listed, newest first. “Clear history” empties the list; “Reset filters” keeps it.<span class="zh">最近 5 次會列出來，最新在上；「清除紀錄」清空，「重設條件」不會清。</span></li>
+<li>Sign in to save your picks to the cloud.<span class="zh">登入後可以把選擇存到雲端。</span></li>
+</ol>
+<h3>Things it cannot do<span class="zh">它做不到的事</span></h3>
+<p>None.<span class="zh">沒有。</span></p>
+</div>
+
+<div class="pagebreak"></div>
+<p class="sim">SIMULATION · teaching material / 教學模擬</p>
+<h2>Card 3 · You check: card 2 against the facts on card 1<span class="zh">卡 3・你來驗收：拿卡 1 的事實對照卡 2</span></h2>
+<table>
+<tr><th>Check / 檢查</th><th>Yes or no? / 有沒有？</th><th>Where on card 2? / 卡 2 的哪裡？</th></tr>
+<tr><td>Does it say how to use the page?<span class="zh">有寫怎麼用嗎？</span></td><td class="blank"></td><td></td></tr>
+<tr><td>Are there exactly three things it cannot do?<span class="zh">「做不到的事」剛好三件嗎？</span></td><td class="blank"></td><td></td></tr>
+<tr><td>Any feature that is not in the files?<span class="zh">有沒有檔案裡沒有的功能？</span></td><td class="blank"></td><td></td></tr>
+<tr><td>Do the numbers match the files?<span class="zh">數字對得上檔案嗎？</span></td><td class="blank"></td><td></td></tr>
+<tr><td>“Ready to use”: is there any evidence for it?<span class="zh">「可以直接用」有證據嗎？</span></td><td class="blank"></td><td></td></tr>
+</table>
+<p>Circle every problem on card 2. What is not in the files is not true.<span class="zh">在卡 2 上把每個問題圈起來。檔案裡沒有的就不算。</span></p>
+
+<h2>Your send-back note to the member<span class="zh">你寫給隊員的退回紙條</span></h2>
+<p class="small">Say what to change, why, and what “fixed” looks like. “Not good” is not enough.<span class="zh">寫清楚：哪裡要改、為什麼、改好長什麼樣子。只寫「不好」不算。</span></p>
+<div class="box"><div class="lines"></div><div class="lines"></div><div class="lines"></div><div class="lines"></div></div>
+
+<h2>Your v2: fix it yourself<span class="zh">你的 v2：自己改對</span></h2>
+<p class="small">Rewrite only the lines you circled. Three things it cannot do must come from the facts on card 1 (for example: something the filters cannot choose).<span class="zh">只重寫你圈到的那幾行。三件做不到的事要從卡 1 的事實推得出來（例如：條件選不到的東西）。</span></p>
+<div class="box"><div class="lines"></div><div class="lines"></div><div class="lines"></div><div class="lines"></div><div class="lines"></div></div>
+</main>
+</body>
+</html>

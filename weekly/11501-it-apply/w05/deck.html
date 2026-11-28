@@ -1,0 +1,237 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>資訊科技與應用 W5 · 圖表換順序，「見圖 3」就錯了</title><style>:root{--paper:#f6f5f1;--navy:#152e49;--muted:#526071;--amber:#b66505;--line:#b9c2ca;--white:#fff;--scale:1}*{box-sizing:border-box}html,body{margin:0;font-family:'Segoe UI','Microsoft JhengHei',sans-serif;color:var(--navy)}body{background:#152332;overflow:hidden}button,a{-webkit-tap-highlight-color:transparent}a{color:inherit;text-underline-offset:7px}a:focus-visible,button:focus-visible{outline:4px solid #b66505;outline-offset:5px}button{font:inherit;cursor:pointer}#stage{position:fixed;left:50%;top:calc(50% - 26px);width:1280px;height:720px;transform:translate(-50%,-50%) scale(var(--scale));transform-origin:center}.slide{display:none;width:1280px;height:720px;background:var(--paper);padding:62px 78px 64px;position:relative;overflow:hidden}.slide.active{display:block}.slide--dark{background:var(--navy);color:var(--paper)}.kicker{font-size:19px;letter-spacing:.12em;font-weight:600;color:var(--muted);margin-bottom:18px}.slide--dark .kicker{color:#c3ccd5}.title{font-size:55px;line-height:1.18;font-weight:700;letter-spacing:-.03em;margin:0 0 44px;max-width:1120px}.cover .title{font-size:86px;line-height:1.18;max-width:900px;margin-top:72px;margin-bottom:24px}.lead{font-size:39px;line-height:1.55;margin:18px 0}.course{font-size:25px;margin-top:54px}.date{font-size:21px;color:var(--muted)}.footer-org{position:absolute;bottom:24px;left:78px;font-size:15px;letter-spacing:.05em;color:var(--muted)}.slide--dark .footer-org{color:#c3ccd5}.number{position:absolute;right:78px;bottom:21px;font-size:22px;font-variant-numeric:tabular-nums}.columns{display:grid;grid-template-columns:1fr 1fr;gap:56px}.columns article{border-top:4px solid var(--navy);padding-top:26px;min-height:238px}.columns small,.private small,.public small{font-size:23px;letter-spacing:.07em}.columns p{font-size:37px;line-height:1.5;margin-top:25px}.mark{display:block;font-weight:700;font-size:53px;line-height:1.5;color:var(--amber)}.bottom-note{font-size:28px;line-height:1.55;margin-top:34px}.filelist{max-width:1000px;margin-top:12px}.filelist p{border-bottom:1px solid var(--line);font-size:34px;padding:15px 0;margin:0;display:grid;grid-template-columns:90px 1fr 240px}.filelist b{color:var(--amber);font-weight:400}.filelist span{color:var(--muted)}.textlink{display:inline-block;font-size:27px;margin-top:34px;font-weight:600}.split h2{font-size:44px;margin:32px 0 12px}.split .columns p{font-size:29px;margin-top:15px}.public{border-color:var(--amber)!important}.public small{color:var(--amber)}.bigrow{display:flex;align-items:center;gap:48px;font-size:62px;margin:66px 0 36px}.bigrow strong{font-weight:400;color:var(--amber)}.bridge .lead{font-size:32px}div.timeline{display:flex;margin-top:80px;gap:38px}.timeline article{flex:1;border-top:3px solid var(--line);padding-top:24px}.timeline b{font-size:55px;color:var(--amber);font-weight:600}.timeline p{font-size:30px;margin:20px 0;white-space:nowrap}.timeline+.bottom-note{margin-top:60px}.path p,.workrows p{font-size:34px;line-height:1.6;margin:14px 0}.path b,.workrows b{display:inline-block;width:90px;color:var(--amber)}.filename{font-size:83px;line-height:1.2;margin:55px 0 15px;font-weight:700}.publish .lead{font-size:31px}.pathline{font-size:27px;line-height:1.65;margin-top:34px}.diffview{border:1px solid var(--line);margin-top:70px}.diffview p{font-size:41px;margin:0;padding:23px 34px}.diffview b{display:inline-block;width:66px;font-weight:400}.removed{background:#f8e3dc;color:#883321}.added{background:#dfece3;color:#22513a}.counts{display:flex;gap:70px;margin-top:68px}.counts article{flex:1}.counts b{font-size:100px;line-height:1.1;color:#edb867;font-weight:600}.counts p{font-size:35px;margin:24px 0}.checkpoints .bottom-note{margin-top:46px}.workrows{margin-top:50px}.contract .workrows{margin-top:22px}.contract .workrows p{font-size:31px;line-height:1.45;padding:9px 0;margin:5px 0}.contract .workrows b{width:120px}.workrows p{border-bottom:1px solid var(--line);padding:13px 0}.address{font-family:Consolas,monospace;font-size:49px;border-bottom:3px solid var(--amber);display:inline-block;padding-bottom:17px;margin-top:68px}.url .lead{margin-top:32px}.questions{padding-left:50px;margin-top:74px;font-size:38px;line-height:1.6}.questions li{margin-bottom:28px;padding-left:14px}.questions li::marker{color:var(--amber)}.closing .lead{font-size:49px;line-height:1.55;margin-top:80px}.resource-links{display:flex;gap:65px;font-size:29px;margin-top:52px}.controls{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:4;background:#f6f5f1ee;border:1px solid #a4aeb7;border-radius:9px;padding:5px;box-shadow:0 4px 20px #0003}.controls button{border:0;background:none;color:var(--navy);border-radius:4px;padding:6px 11px;font-size:14px}.controls button:hover{background:#dedfdd}.controls .counter{padding:6px 12px;min-width:68px;text-align:center;font-size:14px}.menu{position:fixed;inset:0;background:#152e49d9;z-index:10;padding:5vh 5vw;display:grid;place-items:center}.menu[hidden]{display:none}.menu-inner{background:var(--paper);padding:24px 32px;max-width:1040px;width:100%;max-height:90vh;overflow:auto}.menu-header{display:flex;justify-content:space-between;align-items:center;font-size:24px}.menu-header button{font-size:20px;padding:6px 14px}.toc{display:grid;grid-template-columns:1fr 1fr;gap:4px 30px;margin-top:18px}.toc button{border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;font-size:19px;padding:15px 4px;line-height:1.45}.toc button:hover{background:#e7e7e0}.toc span{color:var(--amber);margin-right:13px}.notes{display:none}.single-slide{background:var(--paper);overflow:visible}.single-slide .slide{display:block}.print-link{display:none}@media(max-width:600px){.controls{gap:0;width:max-content;max-width:98vw}.controls button{padding:7px 8px}.toc{grid-template-columns:1fr}.menu-inner{padding:18px}.toc button{font-size:16px}}@media print{@page{size:13.333333in 7.5in;margin:0}html,body{width:1280px;height:auto;margin:0;padding:0;background:white;overflow:visible;-webkit-print-color-adjust:exact;print-color-adjust:exact}#stage{position:static;transform:none;width:1280px;height:auto}.slide,.slide.active{display:block!important;width:1280px;height:720px;break-after:page;page-break-after:always}.slide:last-child{break-after:auto;page-break-after:auto}.controls,.menu{display:none!important}}
+/* ===== W4 追加（2026-09-25 複驗裁決後的 8 頁版）：每頁＝標題→一句為什麼→自繪視覺→底部一行「檢查點」或「✋」 =====
+   頁型 class 一律 pg- 開頭，別跟下面的版面 class 同名（同名會讓那一頁一直顯示）。 */
+.title{margin-bottom:12px}
+.why{font-size:27px;line-height:1.5;color:var(--muted);margin:0 0 24px;max-width:1100px}
+.slide--dark .why{color:#c9d2da}
+.cue{position:absolute;left:78px;right:230px;bottom:58px;margin:0;font-size:25px;line-height:1.4;font-weight:600;padding-left:16px;border-left:6px solid var(--amber)}
+.slide--dark .cue{border-left-color:#edb867}
+.cue .hand{margin-right:10px}
+/* p1 封面：簡報縮圖 → v1、v2（v3 課後補） */
+.cover .title{font-size:74px;line-height:1.2;max-width:1060px;margin-top:22px;margin-bottom:16px}
+.cover .lead{font-size:32px;margin:0 0 30px}
+.coverviz{display:flex;align-items:center;gap:30px}
+.coverviz figure{margin:0;display:flex;flex-direction:column;gap:14px}
+.coverviz figcaption{font-size:22px;color:var(--muted)}
+.thumbs{display:flex;gap:12px}
+.thumbs i{display:block;width:112px;height:70px;background:var(--white);border:2px solid var(--navy);position:relative}
+.thumbs i::before{content:'';position:absolute;left:11px;top:10px;width:56px;height:9px;background:var(--amber)}
+.thumbs i::after{content:'';position:absolute;left:11px;top:29px;width:82px;height:6px;background:var(--line);box-shadow:0 12px 0 var(--line),0 24px 0 var(--line)}
+.bigarrow{font-size:58px;line-height:1;color:var(--amber);font-weight:400}
+.commits{display:flex;gap:48px;position:relative;padding:10px 0}
+.commits::before{content:'';position:absolute;left:29px;width:106px;top:50%;margin-top:-2px;border-top:4px dashed var(--muted)}
+.commits::after{content:'';position:absolute;left:135px;width:106px;top:50%;margin-top:-2px;border-top:4px dashed var(--muted)}
+.commits span{position:relative;z-index:1;width:58px;height:58px;border-radius:50%;background:var(--navy);color:var(--paper);border:4px solid var(--navy);display:grid;place-items:center;font-size:20px;font-weight:700}
+.commits .later{background:var(--paper);color:var(--muted);border-style:dashed;border-color:var(--muted)}
+.cover .course{margin-top:40px;margin-bottom:4px}
+/* p2 看作業＋叫 AI 做事的三件事 */
+.showline{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 18px;margin:0 0 20px;font-size:24px;color:var(--muted)}
+.showline b{font-size:26px;color:var(--navy);white-space:nowrap}
+.steps3{display:flex;align-items:stretch;gap:16px}
+.steps3 article{flex:1;background:var(--white);border-top:6px solid var(--navy);padding:22px 26px 24px;min-height:216px}
+.steps3 b{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--amber);color:var(--white);font-size:26px}
+.steps3 h3{font-size:38px;line-height:1.3;margin:16px 0 8px}
+.steps3 p{font-size:24px;margin:0;color:var(--muted)}
+.steps3 .arr{align-self:center;font-style:normal;font-size:40px;color:var(--amber)}
+/* p3 版本庫＋三個動作（深底；兩個盒子白底） */
+.moves{display:grid;grid-template-columns:430px 1fr 360px;align-items:center;gap:14px}
+.machine{background:var(--white);color:var(--navy);border:3px solid var(--navy);padding:14px 22px 16px}
+.machine small{font-size:21px;letter-spacing:.06em;font-weight:600;color:var(--muted)}
+.machine .verline{display:block;margin:8px 0 4px}
+.machine p{font-size:21px;line-height:1.45;margin:4px 0 0}
+.machine p b{display:inline-block;min-width:150px;margin-right:10px;color:var(--amber)}
+.machine--gh{border-color:#edb867}
+.machine--gh small{color:var(--amber)}
+.machine--gh p{margin-top:8px}
+.pushlane{text-align:center;padding:0 4px}
+.pushlane b{display:block;font-size:28px;color:#edb867}
+.pushlane i{display:block;height:6px;background:#edb867;position:relative;margin:12px 18px 12px 0}
+.pushlane i::after{content:'';position:absolute;right:-18px;top:-10px;border-style:solid;border-width:13px 0 13px 20px;border-color:transparent transparent transparent #edb867}
+.pushlane span{display:block;font-size:21px;line-height:1.45;color:#c9d2da}
+/* p4 對號入座 */
+.routes{display:grid;gap:14px}
+.route{display:grid;grid-template-columns:60px 290px 1fr 230px;align-items:center;gap:18px;background:var(--white);border:2px solid var(--line);padding:14px 22px}
+.route b{font-size:48px;line-height:1;color:var(--amber);font-weight:600}
+.route h3{font-size:30px;margin:0}
+.route p{font-size:23px;line-height:1.45;margin:0;color:var(--muted)}
+.route span{font-size:23px;font-weight:700}
+.same{font-size:24px;line-height:1.5;margin:20px 0 0}
+.same a{color:var(--amber)}
+/* p5 動手：兩條路匯到同一個終點（步驟在學生頁） */
+.converge{display:grid;grid-template-columns:440px 64px 1fr;align-items:center;gap:10px}
+.lanes{display:grid;gap:16px}
+.lane{margin:0;display:flex;align-items:center;gap:14px;background:var(--white);border:2px solid var(--navy);padding:14px 18px;font-size:25px;font-weight:700}
+.lane b{display:inline-grid;place-items:center;flex:0 0 auto;width:42px;height:42px;background:var(--navy);color:var(--paper);font-size:23px}
+.lane span{margin-left:auto;font-size:19px;font-weight:400;color:var(--muted)}
+.converge>.arrow{font-size:58px;line-height:1;color:var(--amber);text-align:center;font-weight:400}
+.goal{background:var(--white);border:3px solid var(--amber);padding:16px 24px 18px}
+.goal small{font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--amber)}
+.goal .repourl{font-size:28px;margin:8px 0 6px}
+.goal p{margin:0;font-size:23px}
+.aside{font-size:22px;line-height:1.5;color:var(--muted);margin:26px 0 0}
+/* p6 再往前一步（老師示範、選做） */
+.oneline{display:grid;grid-template-columns:580px 1fr;gap:34px;align-items:start}
+.diffcard{background:var(--white);border:2px solid var(--line)}
+.diffcard .fname{margin:0;padding:9px 18px;font-family:Consolas,monospace;font-size:19px;background:#e3e7e9;border-bottom:1px solid var(--line)}
+.diffcard .ln{margin:0;padding:13px 16px;font-family:Consolas,'Microsoft JhengHei',monospace;font-size:21px;line-height:1.4;white-space:nowrap}
+.diffcard .ln b{display:inline-block;width:32px;font-weight:700}
+.diffcard .ctx{color:var(--muted)}
+.optbox{position:relative;background:var(--white);border:2px dashed var(--amber);padding:28px 22px 16px;margin-top:12px}
+.opttag{position:absolute;top:-17px;left:18px;background:var(--amber);color:var(--white);font-size:18px;font-weight:700;padding:3px 12px}
+.optbox p{display:flex;align-items:baseline;gap:12px;margin:0 0 14px;font-size:22px;line-height:1.45}
+.optbox p b{display:inline-grid;place-items:center;flex:0 0 auto;width:32px;height:32px;background:var(--navy);color:var(--paper);font-size:19px}
+.optbox .where{display:block;margin:4px 0 0;font-size:19px;color:var(--muted)}
+/* p7 完成線（深底）：上面完成線、下面再往前一步 */
+.doneline{margin-top:4px}
+.doneline .above,.doneline .below{display:grid;grid-template-columns:180px 1fr;align-items:center;gap:26px}
+.doneline small{font-size:24px;font-weight:700;letter-spacing:.04em;color:#edb867}
+.repourl{margin:0;font-family:Consolas,'Microsoft JhengHei',monospace;font-size:40px;line-height:1.3}
+.doneline .sub{margin:8px 0 0;font-size:24px;color:#c9d2da}
+.goldline{border:0;height:6px;background:#edb867;margin:24px 0}
+.doneline ul{list-style:none;display:flex;gap:44px;margin:0;padding:0;font-size:30px}
+.doneline li::before{content:'→ ';color:#edb867}
+.calm{font-size:22px;line-height:1.5;color:#c9d2da;margin:24px 0 0;padding:10px 16px;border:1px dashed #6b7f94}
+/* p8 目錄亂掉 → 按一下更新 */
+.tocfix{display:flex;align-items:center;gap:36px}
+.tocbox{width:380px;background:var(--white);border:2px solid var(--navy);padding:14px 24px 10px}
+.tocbox small{display:block;font-size:20px;color:var(--muted);margin-bottom:6px}
+.tocbox p{display:flex;justify-content:space-between;margin:0;padding:7px 0;font-size:25px;border-bottom:1px dotted var(--line)}
+.tocbox p:last-child{border-bottom:0}
+.tocbox .bad{color:#883321;text-decoration:line-through;text-decoration-thickness:3px}
+.tocbox--good{border-color:#22513a}
+.tocbox--good small,.tocbox--good span{color:#22513a;font-weight:700}
+.tocfix .arrow{font-size:54px;font-weight:400;color:var(--amber)}
+.when{font-size:26px;margin:22px 0 0}
+/* ===== W5 追加（2026-10-01，兩班共用的結構化文件）：沿 W4 每頁「標題→一句為什麼→自繪視覺→底部一行」 =====
+   頁型 class 一律 pg- 開頭；.fld＝Word 功能變數的灰底；圖表顏色跟範本的兩張圖一樣（藍直條＝圖 1、橘橫條＝圖 2）。 */
+.fld{background:#d9d9d9;padding:0 6px;border-radius:2px;font-style:normal}
+/* p1 封面：右邊一張「壞掉的文件」 */
+.cover .title{max-width:690px}
+.cover .lead{max-width:640px}
+.badpage{position:absolute;right:92px;top:92px;width:390px}
+.paper{background:var(--white);border:2px solid var(--navy);box-shadow:10px 10px 0 #dde1e5;padding:26px 28px 20px;transform:rotate(1.6deg)}
+.paper .ln{height:11px;background:var(--line);margin:0 0 12px}
+.paper .ln.short{width:62%}
+.paper .sent{font-size:25px;line-height:1.4;margin:18px 0 20px;white-space:nowrap}
+.paper mark.bad{background:#f8e3dc;color:#883321;padding:2px 6px;text-decoration:underline wavy #c0392b;text-underline-offset:7px}
+.paper .figs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.paper figure{margin:0;text-align:center}
+.paper figure svg{display:block;width:100%;height:auto;border:1px solid var(--line);background:#fbfbf9;padding:6px}
+.paper figcaption{font-size:20px;margin-top:6px;color:var(--muted)}
+.qmark{position:absolute;right:-26px;top:-34px;width:72px;height:72px;border-radius:50%;background:#c0392b;color:var(--white);font-size:46px;line-height:72px;text-align:center;font-weight:700}
+/* p2 外觀／結構 */
+.split2{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.card{position:relative;background:var(--white);border:2px solid var(--line);border-top:8px solid var(--muted);padding:24px 30px 28px;min-height:220px}
+.card small{display:block;font-size:26px;font-weight:700;letter-spacing:.04em;color:var(--muted)}
+.card p{font-size:42px;font-weight:700;line-height:1.35;margin:18px 0 0}
+.card .who{position:absolute;right:24px;top:20px;font-size:26px;font-weight:700;padding:4px 18px;border-radius:999px;background:#e3e7e9;color:var(--muted)}
+.card--mine{border-color:var(--amber);border-top-color:var(--amber)}
+.card--mine small,.card--mine .who{color:var(--amber)}
+.card--mine .who{background:#fff1dc}
+/* p3 功能窗格對照 */
+.navcmp{display:grid;grid-template-columns:1fr 1fr;gap:44px}
+.navcol small{display:block;font-size:25px;font-weight:700;color:var(--muted);margin-bottom:10px}
+.pane{background:var(--white);border:2px solid var(--navy);min-height:236px;padding:0 22px 14px}
+.pane::before{content:'';display:block;height:14px;background:#dfe3e7;margin:0 -22px 14px}
+.pane .empty{display:block;text-align:center;padding-top:62px;font-size:28px;color:#8995a1}
+.pane p{margin:0;padding:9px 12px;font-size:31px;border-left:6px solid transparent}
+.pane .l1{font-weight:700;border-left-color:var(--navy)}
+.pane .l2{padding-left:52px;color:var(--muted)}
+.navcol--bad .pane{border:2px dashed #9aa5b1}
+/* p4 目錄：沿 W4 的 .tocfix，盒子放大 */
+.pg-toc .tocbox{width:420px}
+.pg-toc .tocbox p{font-size:30px}
+.pg-toc .tocbox small{font-size:22px}
+/* p5 圖說 */
+.capdemo{display:grid;grid-template-columns:500px 1fr;gap:60px;align-items:center}
+.figcard{margin:0;background:var(--white);border:2px solid var(--line);padding:22px 26px 18px;text-align:center}
+.figcard svg{display:block;width:100%;height:auto}
+.figcard figcaption{font-size:30px;margin-top:14px}
+.path{list-style:none;margin:0;padding:0;display:grid;gap:16px}
+.path li{display:flex;align-items:center;gap:18px;font-size:34px;font-weight:700;background:var(--white);border:2px solid var(--navy);padding:12px 22px}
+.path li b{display:inline-grid;place-items:center;flex:0 0 auto;width:46px;height:46px;border-radius:50%;background:var(--amber);color:var(--white);font-size:24px}
+/* p6 交互參照 */
+.xref{display:grid;grid-template-columns:640px 80px 1fr;align-items:center;gap:10px}
+.dlg{background:var(--white);border:2px solid var(--navy)}
+.dlg::before{content:'';display:block;height:16px;background:var(--navy)}
+.dlg p{display:grid;grid-template-columns:250px 1fr;align-items:center;margin:0;padding:18px 24px;border-bottom:1px solid var(--line)}
+.dlg p:last-child{border-bottom:0}
+.dlg small{font-size:25px;color:var(--muted)}
+.dlg b{font-size:31px;border:2px solid var(--line);padding:6px 14px;background:#fbfbf9}
+.xref .arrow{font-size:56px;color:var(--amber);text-align:center;font-weight:400}
+.result{font-size:48px;font-weight:700;margin:0;white-space:nowrap}
+.result .fld{text-decoration:underline;text-decoration-color:#174c78;text-underline-offset:8px}
+/* p7 那一擊 */
+.swap{display:grid;grid-template-columns:290px 60px 280px 60px 290px;align-items:center;gap:10px}
+.stack{display:grid;gap:12px}
+.stack--move{outline:3px dashed var(--amber);outline-offset:9px}
+.blk{background:var(--white);border:2px solid var(--navy);padding:10px 16px 8px;text-align:center}
+.blk svg{display:block;width:100%;height:70px}
+.blk span{display:block;font-size:26px;margin-top:4px}
+.swapmark{font-size:56px;color:var(--amber);text-align:center;font-weight:400}
+.keys{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+kbd{display:inline-block;min-width:66px;padding:12px 14px;border:2px solid var(--navy);border-bottom-width:7px;border-radius:9px;background:var(--white);color:var(--navy);font:700 28px/1 'Segoe UI',sans-serif;text-align:center}
+.keys .then{font-size:34px;color:var(--amber);margin:0 4px}
+.steps{font-size:27px;margin:22px 0 0;color:var(--muted)}
+/* p8 來源：沿 W4 .steps3，只放動作 */
+.pg-source .steps3 article{min-height:170px}
+.pg-source .steps3 h3{font-size:40px}
+.pg-source .steps3 p{font-size:28px;margin-top:4px}
+/* p9 替代文字 */
+.altdemo{display:grid;grid-template-columns:440px 1fr;gap:44px;align-items:center}
+.altbox{background:var(--white);border:2px solid var(--navy);padding:18px 26px 22px}
+.altbox small{font-size:23px;font-weight:700;color:var(--muted)}
+.altbox p{font-size:33px;line-height:1.4;margin:10px 0 16px;padding:12px 16px;border:2px dashed var(--line)}
+.ok{font-size:26px;font-weight:700;color:#22513a}
+/* p10 互查（深底） */
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:18px 34px;margin-top:6px}
+.checks p{margin:0;display:flex;align-items:center;gap:18px;font-size:38px;font-weight:700;padding:18px 24px;border:2px solid #6b7f94}
+.checks p::before{content:'✔';color:#edb867}
+</style></head><body><main id="stage"><section class="slide slide--light cover" data-title="圖表換順序，「見圖 3」就錯了" aria-label="第 1 頁：圖表換順序，「見圖 3」就錯了"><div class="kicker">WEEK 5</div><div class="title">圖表換順序，<br>「見圖 3」就錯了</div><div class="body-content"><p class=lead>這份文件有幾個錯？</p><div class=badpage aria-hidden=true><div class=paper><p class=ln></p><p class='ln short'></p><p class=sent>……<mark class=bad>如圖 3 所示</mark>……</p><div class=figs><figure><svg viewBox='0 0 120 70'><rect x=10 y=44 width=16 height=20 fill='#2b5d8a'/><rect x=32 y=36 width=16 height=28 fill='#2b5d8a'/><rect x=54 y=30 width=16 height=34 fill='#2b5d8a'/><rect x=76 y=20 width=16 height=44 fill='#2b5d8a'/><rect x=98 y=8 width=16 height=56 fill='#2b5d8a'/></svg><figcaption>圖 1</figcaption></figure><figure><svg viewBox='0 0 120 70'><rect x=8 y=10 width=100 height=12 fill='#b66505'/><rect x=8 y=29 width=52 height=12 fill='#b66505'/><rect x=8 y=48 width=20 height=12 fill='#b66505'/></svg><figcaption>圖 2</figcaption></figure></div></div><b class=qmark>?</b></div><p class=course>資訊科技與應用　W5</p><p class=date>AA 10/05（一）・AB 10/06（二）16:10–18:00</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">01 / 10</div></section><section class="slide slide--light pg-bridge" data-title="上週讓 AI 管外觀，這週你自己管結構" aria-label="第 2 頁：上週讓 AI 管外觀，這週你自己管結構"><div class="kicker">AB · 接上週</div><div class="title">上週讓 AI 管外觀，<br>這週你自己管結構</div><div class="body-content"><p class=why>外觀交給 AI，結構你自己定。</p><div class=split2><div class=card><span class=who>AI</span><small>外觀</small><p>配色・字型・版面</p></div><div class='card card--mine'><span class=who>你</span><small>結構</small><p>標題・目錄・圖表編號</p></div></div><p class=cue><span class=hand>✋</span>AB 先看兩份上週作業</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">02 / 10</div></section><section class="slide slide--light pg-styles" data-title="標題樣式＝文件的骨架" aria-label="第 3 頁：標題樣式＝文件的骨架"><div class="kicker">STYLES</div><div class="title">標題樣式＝文件的骨架</div><div class="body-content"><p class=why>放大加粗不算標題，Word 認不得。</p><div class=navcmp><div class='navcol navcol--bad'><small>放大加粗</small><div class=pane><span class=empty>（空的）</span></div></div><div class=navcol><small>套標題樣式</small><div class=pane><p class=l1>一、動機</p><p class=l2>（一）背景</p><p class=l1>二、方法</p></div></div></div><p class=cue>檢視 → 勾「功能窗格」</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">03 / 10</div></section><section class="slide slide--light pg-toc" data-title="自動目錄：改了標題，按一下就更新" aria-label="第 4 頁：自動目錄：改了標題，按一下就更新"><div class="kicker">TABLE OF CONTENTS</div><div class="title">自動目錄：改了標題，按一下就更新</div><div class="body-content"><p class=why>目錄照標題樣式抓。</p><div class=tocfix><div class=tocbox><small>手打目錄</small><p>動機<span>2</span></p><p>方法<span class=bad>3</span></p><p>結果<span class=bad>5</span></p></div><b class=arrow aria-hidden=true>→</b><div class='tocbox tocbox--good'><small>更新整個目錄</small><p>動機<span>2</span></p><p>方法<span>2</span></p><p>結果<span>3</span></p></div></div><p class=cue>右鍵 → 更新功能變數</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">04 / 10</div></section><section class="slide slide--light pg-caption" data-title="圖說用「插入標號」，號碼自己跳" aria-label="第 5 頁：圖說用「插入標號」，號碼自己跳"><div class="kicker">CAPTION</div><div class="title">圖說用「插入標號」，號碼自己跳</div><div class="body-content"><p class=why>手打的「圖 2」不會變；插入標號的會。</p><div class=capdemo><figure class=figcard><svg viewBox='0 0 200 100'><rect x=16 y=64 width=26 height=28 fill='#2b5d8a'/><rect x=52 y=52 width=26 height=40 fill='#2b5d8a'/><rect x=88 y=44 width=26 height=48 fill='#2b5d8a'/><rect x=124 y=30 width=26 height=62 fill='#2b5d8a'/><rect x=160 y=12 width=26 height=80 fill='#2b5d8a'/><line x1=10 y1=92 x2=194 y2=92 stroke='#152e49' stroke-width=2 /></svg><figcaption>圖 <span class=fld>1</span>　練習時間</figcaption></figure><ol class=path><li><b>1</b>參考資料</li><li><b>2</b>插入標號</li><li><b>3</b>標籤：圖</li></ol></div><p class=cue>清單沒有「圖」：按「新增標籤」</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">05 / 10</div></section><section class="slide slide--light pg-xref" data-title="「見圖 1」要用「交互參照」插入" aria-label="第 6 頁：「見圖 1」要用「交互參照」插入"><div class="kicker">CROSS-REFERENCE</div><div class="title">「見圖 1」要用「交互參照」插入</div><div class="body-content"><p class=why>它記住的是哪張圖。</p><div class=xref><div class=dlg><p><small>參照類型</small><b>圖</b></p><p><small>插入參照類型的</small><b>僅標籤及數字</b></p></div><b class=arrow aria-hidden=true>→</b><p class=result>如<span class=fld>圖 1</span>所示</p></div><p class=cue>插入 → 交互參照</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">06 / 10</div></section><section class="slide slide--light pg-swap" data-title="那一擊：圖連同圖說對調，再按 F9" aria-label="第 7 頁：那一擊：圖連同圖說對調，再按 F9"><div class="kicker">THE MOVE</div><div class="title">那一擊：圖連同圖說對調，再按 F9</div><div class="body-content"><p class=why>只搬圖片，號碼不會動。</p><div class=swap><div class='stack stack--move'><div class='blk'><svg viewBox='0 0 120 50'><rect x=8 y=32 width=16 height=14 fill='#2b5d8a'/><rect x=30 y=26 width=16 height=20 fill='#2b5d8a'/><rect x=52 y=20 width=16 height=26 fill='#2b5d8a'/><rect x=74 y=12 width=16 height=34 fill='#2b5d8a'/><rect x=96 y=4 width=16 height=42 fill='#2b5d8a'/></svg><span>圖 <i class=fld>1</i></span></div><div class='blk'><svg viewBox='0 0 120 50'><rect x=8 y=4 width=100 height=10 fill='#b66505'/><rect x=8 y=20 width=52 height=10 fill='#b66505'/><rect x=8 y=36 width=20 height=10 fill='#b66505'/></svg><span>圖 <i class=fld>2</i></span></div></div><b class=swapmark aria-hidden=true>⇅</b><div class=keys><kbd>Ctrl</kbd><kbd>A</kbd><span class=then aria-hidden=true>→</span><kbd>F9</kbd></div><b class=swapmark aria-hidden=true>→</b><div class=stack><div class='blk'><svg viewBox='0 0 120 50'><rect x=8 y=4 width=100 height=10 fill='#b66505'/><rect x=8 y=20 width=52 height=10 fill='#b66505'/><rect x=8 y=36 width=20 height=10 fill='#b66505'/></svg><span>圖 <i class=fld>1</i></span></div><div class='blk'><svg viewBox='0 0 120 50'><rect x=8 y=32 width=16 height=14 fill='#2b5d8a'/><rect x=30 y=26 width=16 height=20 fill='#2b5d8a'/><rect x=52 y=20 width=16 height=26 fill='#2b5d8a'/><rect x=74 y=12 width=16 height=34 fill='#2b5d8a'/><rect x=96 y=4 width=16 height=42 fill='#2b5d8a'/></svg><span>圖 <i class=fld>2</i></span></div></div></div><p class=steps>整段剪下 → 貼到下一段開頭 → 全選 → F9</p><p class=cue><span class=hand>✋</span>「如圖 X 所示」跟著變了嗎？</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">07 / 10</div></section><section class="slide slide--light pg-source" data-title="來源：查得到，才寫得進參考文獻" aria-label="第 8 頁：來源：查得到，才寫得進參考文獻"><div class="kicker">SOURCES</div><div class="title">來源：查得到，才寫得進參考文獻</div><div class="body-content"><p class=why>數字和別人的圖，都要能回查。</p><div class=steps3><article><b>1</b><h3>樣式</h3><p>APA</p></article><i class=arr aria-hidden=true>→</i><article><b>2</b><h3>插入引文</h3><p>→ 新增來源</p></article><i class=arr aria-hidden=true>→</i><article><b>3</b><h3>書目</h3><p>→ 插入書目</p></article></div><p class=cue>AI 給的來源，點開確認真的有</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">08 / 10</div></section><section class="slide slide--light pg-alt" data-title="替代文字：AI 可以建議，你要核對" aria-label="第 9 頁：替代文字：AI 可以建議，你要核對"><div class="kicker">ALT TEXT</div><div class="title">替代文字：AI 可以建議，你要核對</div><div class="body-content"><p class=why>看不到圖的人，靠這一句。</p><div class=altdemo><figure class=figcard><svg viewBox='0 0 200 100'><rect x=16 y=64 width=26 height=28 fill='#2b5d8a'/><rect x=52 y=52 width=26 height=40 fill='#2b5d8a'/><rect x=88 y=44 width=26 height=48 fill='#2b5d8a'/><rect x=124 y=30 width=26 height=62 fill='#2b5d8a'/><rect x=160 y=12 width=26 height=80 fill='#2b5d8a'/><line x1=10 y1=92 x2=194 y2=92 stroke='#152e49' stroke-width=2 /></svg></figure><div class=altbox><small>替代文字</small><p>長條圖：練習時間逐週增加</p><span class=ok>✔ 跟圖對得上</span></div></div><p class=cue>右鍵 → 檢視替代文字</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">09 / 10</div></section><section class="slide slide--dark pg-done" data-title="匯出 PDF，跟隔壁互查" aria-label="第 10 頁：匯出 PDF，跟隔壁互查"><div class="kicker">PDF · CHECK</div><div class="title">匯出 PDF，跟隔壁互查</div><div class="body-content"><p class=why>PDF 是別人看到的樣子。</p><div class=checks><p>目錄有頁碼</p><p>圖表號碼連續</p><p>「見圖 N」指對</p><p>網址點得開</p></div><p class=cue>交件：在 e學苑，docx＋PDF</p></div><div class="footer-org">國立東華大學 · 資訊科技與應用</div><div class="number">10 / 10</div></section></main><div class="controls" aria-label="投影片導覽"><button data-action="prev" aria-label="上一頁">←</button><span class="counter" aria-live="polite"></span><button data-action="next" aria-label="下一頁">→</button><button data-action="menu" aria-expanded="false" aria-controls="slide-menu">目錄 M</button><button data-action="print">列印全份</button></div><div class="menu" id="slide-menu" role="dialog" aria-modal="true" aria-label="投影片目錄" hidden><div class="menu-inner"><div class="menu-header"><strong>W5 · 投影片目錄</strong><button data-action="close" aria-label="關閉目錄">×</button></div><div class="toc"><button data-page="0"><span>01</span>圖表換順序，「見圖 3」就錯了</button><button data-page="1"><span>02</span>上週讓 AI 管外觀，這週你自己管結構</button><button data-page="2"><span>03</span>標題樣式＝文件的骨架</button><button data-page="3"><span>04</span>自動目錄：改了標題，按一下就更新</button><button data-page="4"><span>05</span>圖說用「插入標號」，號碼自己跳</button><button data-page="5"><span>06</span>「見圖 1」要用「交互參照」插入</button><button data-page="6"><span>07</span>那一擊：圖連同圖說對調，再按 F9</button><button data-page="7"><span>08</span>來源：查得到，才寫得進參考文獻</button><button data-page="8"><span>09</span>替代文字：AI 可以建議，你要核對</button><button data-page="9"><span>10</span>匯出 PDF，跟隔壁互查</button></div></div></div><script>(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const menu = document.querySelector('.menu');
+  const counter = document.querySelector('.counter');
+  const toggle = document.querySelector('[data-action="menu"]');
+  let index = 0;
+  const fromHash = () => Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+  function show(next, changeHash = true) {
+    index = Math.max(0, Math.min(slides.length - 1, next));
+    slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.setAttribute('aria-hidden', String(i !== index)); });
+    counter.textContent = `${index + 1} / ${slides.length}`;
+    document.title = `${index + 1}. ${slides[index].dataset.title} · 資訊科技與應用 W5`;
+    if (changeHash) history.replaceState(null, '', `#${index + 1}`);
+  }
+  function resize() {
+    document.documentElement.style.setProperty('--scale', String(Math.min(innerWidth / 1280, (innerHeight - 52) / 720)));
+  }
+  function openMenu() { menu.hidden = false; toggle.setAttribute('aria-expanded', 'true'); menu.querySelector(`[data-page="${index}"]`).focus(); }
+  function closeMenu() { menu.hidden = true; toggle.setAttribute('aria-expanded', 'false'); toggle.focus(); }
+  document.querySelectorAll('[data-page]').forEach(button => button.addEventListener('click', () => { show(Number(button.dataset.page)); closeMenu(); }));
+  document.querySelector('[data-action="close"]').addEventListener('click', closeMenu);
+  toggle.addEventListener('click', () => menu.hidden ? openMenu() : closeMenu());
+  document.querySelector('[data-action="prev"]').addEventListener('click', () => show(index - 1));
+  document.querySelector('[data-action="next"]').addEventListener('click', () => show(index + 1));
+  document.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
+  addEventListener('keydown', event => {
+    if (!menu.hidden) {
+      if (event.key === 'Escape') { event.preventDefault(); closeMenu(); }
+      if (event.key === 'Tab') {
+        const buttons = [...menu.querySelectorAll('button')];
+        if (event.shiftKey && document.activeElement === buttons[0]) { event.preventDefault(); buttons.at(-1).focus(); }
+        else if (!event.shiftKey && document.activeElement === buttons.at(-1)) { event.preventDefault(); buttons[0].focus(); }
+      }
+      return;
+    }
+    if (event.target.closest('input,textarea,select')) return;
+    if (event.key === ' ' && event.target.closest('a,button')) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); show(index + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(event.key)) { event.preventDefault(); show(index - 1); }
+    if (event.key === 'Home') { event.preventDefault(); show(0); }
+    if (event.key === 'End') { event.preventDefault(); show(slides.length - 1); }
+    if (event.key.toLowerCase() === 'm') { event.preventDefault(); openMenu(); }
+  });
+  addEventListener('hashchange', () => show(fromHash(), false));
+  addEventListener('resize', resize);
+  show(fromHash(), false); resize();
+})();
+</script></body></html>

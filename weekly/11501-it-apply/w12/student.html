@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>資訊科技與應用 W12｜Zotero 管文獻、gnuplot 畫圖：先用手做一遍</title>
+<style>
+:root{--ink:#17312f;--muted:#4f6863;--bg:#f7f5ee;--panel:#fffefa;--panel2:#ffffff;--green:#075e56;--hero:#174b42;--line:#d2dfd7;--gold:#e8ae42;--link:#075f74;--soft:#edf5ee;--soft2:#e9f2ec;--warn-bg:#fff8e7;--warn-ink:#8a5a00;--see-bg:#f1f7f3;--docs-bg:#eef4fb;--docs-line:#c5d8ea;--docs-ink:#0b4f7a;--pre-bg:#1b3030;--pre-ink:#f1f7ee;--bad:#a3341f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e3ece8;--muted:#a9bdb7;--bg:#111b1a;--panel:#182624;--panel2:#1d2d2b;--green:#7fd1c3;--hero:#0e302b;--line:#2f4642;--gold:#d9a23c;--link:#8fd0e6;--soft:#1f3330;--soft2:#21403b;--warn-bg:#2d2616;--warn-ink:#f0c76e;--see-bg:#1a302c;--docs-bg:#172636;--docs-line:#2c4560;--docs-ink:#9ccaf0;--pre-bg:#0b1414;--pre-ink:#e6f1ea;--bad:#ff9a85}}
+:root[data-theme="dark"]{--ink:#e3ece8;--muted:#a9bdb7;--bg:#111b1a;--panel:#182624;--panel2:#1d2d2b;--green:#7fd1c3;--hero:#0e302b;--line:#2f4642;--gold:#d9a23c;--link:#8fd0e6;--soft:#1f3330;--soft2:#21403b;--warn-bg:#2d2616;--warn-ink:#f0c76e;--see-bg:#1a302c;--docs-bg:#172636;--docs-line:#2c4560;--docs-ink:#9ccaf0;--pre-bg:#0b1414;--pre-ink:#e6f1ea;--bad:#ff9a85}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--bg);font:16px/1.75 system-ui,-apple-system,"Microsoft JhengHei","PingFang TC",sans-serif;overflow-wrap:anywhere}
+a{color:var(--link);text-underline-offset:3px}button,input{font:inherit}
+button,.btn{cursor:pointer;min-height:44px;border:1px solid var(--line);border-radius:8px;padding:.5rem .9rem;background:var(--panel2);color:var(--ink)}
+:focus-visible{outline:3px solid #e09d1b;outline-offset:3px}.btn{display:inline-block;text-decoration:none;font-weight:700}.primary{background:#075e56;color:#fff;border-color:#075e56}
+.wrap{width:min(1120px,calc(100% - 2rem));margin:auto}
+.hero{background:var(--hero);color:#fff;padding:2.6rem 0}.hero a{color:#fff}.hero .light{background:#fff;color:#17312f}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:2rem;align-items:center}.hero h1{font-size:clamp(1.8rem,5vw,3rem);line-height:1.25;margin:.5rem 0}
+.eyebrow,.kicker{font-size:.8rem;letter-spacing:.09em;font-weight:800}.eyebrow{color:#f1ca79}.kicker{color:var(--green)}
+.paper,.card,details,.lab{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1rem 1.2rem}
+.paper{color:#17312f;background:#fffefa;padding:1.4rem;box-shadow:0 10px 0 #103d35}.paper h2{margin:.4rem 0;font-size:1.35rem}.paper code{background:#e9f2ec;color:#17312f}
+.layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:2.5rem}
+.toc{position:sticky;top:1rem;align-self:start;max-height:92vh;overflow:auto;padding-top:2rem}.toc a{display:block;text-decoration:none;color:var(--muted);padding:.15rem 0}.toc .tg{display:block;font-weight:800;color:var(--green);margin-top:.5rem;font-size:.85rem}
+.progress{margin-top:1rem;background:var(--soft);border-radius:8px;padding:.8rem;font-size:.87rem}
+main{min-width:0}section{padding:2.4rem 0;border-bottom:1px solid var(--line);scroll-margin-top:1rem}
+h2{font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.3;margin:.3rem 0 1rem}h3{margin:1.4rem 0 .3rem;scroll-margin-top:1rem}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.callout{background:var(--warn-bg);border-left:4px solid var(--gold);padding:.8rem 1rem;margin:1rem 0}
+.small,.source{font-size:.9rem;color:var(--muted)}
+.table{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel2)}
+table{border-collapse:collapse;min-width:560px;width:100%}th,td{padding:.7rem .8rem;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}th{background:var(--soft2)}
+table.narrow{min-width:0}
+details{margin:.75rem 0}summary{cursor:pointer;font-weight:750;color:var(--green)}
+ol li,ul li{margin:.5rem 0}
+pre{background:var(--pre-bg);color:var(--pre-ink);border-radius:8px;padding:1rem;white-space:pre-wrap;overflow-wrap:anywhere;margin:.5rem 0}code{font-family:Consolas,"Courier New",monospace}
+:not(pre)>code{background:var(--soft2);border-radius:4px;padding:0 .25rem}
+label{display:block;font-weight:700}
+.check{display:flex;gap:.6rem;font-weight:400;background:var(--soft);border-radius:8px;padding:.7rem .9rem;margin-top:1rem;align-items:flex-start}.check input{width:1.2rem;height:1.2rem;margin-top:.3rem;flex:0 0 auto}
+.tag{display:inline-block;font-size:.78rem;font-weight:800;border-radius:999px;padding:.05rem .6rem;background:var(--soft);color:var(--green);margin-right:.3rem}.tag.opt{background:var(--warn-bg);color:var(--warn-ink)}
+.skip{position:absolute;left:-999px}.skip:focus{left:1rem;top:1rem;background:#fff;color:#000;padding:.5rem;z-index:9}
+footer{padding:2rem 0;color:var(--muted);font-size:.9rem}
+.cbox{position:relative}.cbox pre{padding-top:2.4rem}.cbtn{position:absolute;top:.4rem;right:.4rem;min-height:32px;padding:.15rem .7rem;font-size:.85rem;background:var(--soft2);border-color:var(--line)}
+.see{background:var(--see-bg);border-left:4px solid var(--green);padding:.4rem .8rem;margin:.4rem 0}.see>b:first-child{color:var(--green)}.do>b:first-child{color:var(--warn-ink)}
+.see>b:first-child::after,.do>b:first-child::after{content:"　"}
+.part{background:var(--hero);color:#fff;border-radius:10px;padding:.7rem 1rem;margin:2.2rem 0 0;font-weight:800}.part span{display:block;font-weight:400;font-size:.95rem;color:#dfeee6}
+.ev{display:inline-block;background:#174b42;color:#fff;border-radius:6px;padding:0 .5rem;font-size:.85rem;font-weight:800}
+.docs{background:var(--docs-bg);border:1px solid var(--docs-line);border-radius:10px;padding:.8rem 1rem;margin:1rem 0}.docs b{color:var(--docs-ink)}
+.ref{background:var(--panel2);border:1px dashed var(--line);border-radius:8px;padding:.7rem .9rem;margin:.5rem 0}
+.bad{color:var(--bad);font-weight:700;text-decoration:underline wavy}
+.figs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1rem 0}.figs figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:8px;padding:.5rem}.figs img{width:100%;height:auto;display:block}.figs figcaption{color:#334;font-size:.85rem;padding:.3rem .2rem 0}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 .3rem;font-size:.9em;background:var(--panel2)}
+.theme{position:fixed;right:.8rem;bottom:.8rem;z-index:5;min-height:40px;font-size:.85rem;opacity:.9}
+@media(max-width:860px){.hero-grid,.layout,.cards,.figs{grid-template-columns:1fr}.toc{position:static;max-height:none;padding-top:1rem;display:flex;flex-wrap:wrap;gap:.2rem .9rem}.toc b,.toc .progress,.toc .tg,.toc nav{flex-basis:100%}.toc nav{display:flex;flex-wrap:wrap;gap:.1rem .9rem}.toc nav a{display:inline-block}}
+</style>
+</head><body><a class="skip" href="#start">跳至教材</a>
+<header class="hero"><div class="wrap hero-grid"><div><div class="eyebrow">資訊科技與應用 · AA／AB · W12</div><h1>Zotero 管文獻、gnuplot 畫圖：先用手做一遍</h1><p>上週把 LaTeX 走過一輪、看過三張工具卡。這週把其中兩個工具各自用手做一遍：用 Zotero 存一篇真的論文、核對、匯出書目檔；再用 gnuplot 畫兩張圖，看看哪張會騙人。下週（W13）換 AI 來做同樣的事，你才看得出它做得對不對。</p><a class="btn primary" href="#start">開始</a> <a class="btn light" href="#help">卡住了</a></div><div class="paper"><b>今天帶走</b><h2>Zotero 裡一篇核對過的論文，和兩張同一份資料的圖</h2><p>練習主題：<b>大學生的睡眠與成績</b>。<br>Zotero 存論文 → 匯出 <code>.bib</code> → gnuplot 畫圖 → 寫一句話。</p></div></div></header>
+
+<div class="wrap layout"><aside class="toc"><b>學習路線</b><nav aria-label="教材目錄"><a href="#start">0 今天交什麼</a><a href="#pack">練習包</a><a href="#why">為什麼要文獻管理</a><span class="tg">第一部分 Zotero</span><a href="#z1">1-1 裝桌面版</a><a href="#z2">1-2 建文獻集</a><a href="#z3">1-3 裝 Connector</a><a href="#z4">1-4 存今天這篇</a><a href="#z5">1-5 核對</a><a href="#z6">1-6 匯出 .bib</a><a href="#z7">1-7 加分：魔術棒</a><a href="#z8">1-8 加分：自己搜</a><a href="#z9">1-9 選做：Overleaf</a><a href="#zc">教室電腦怎麼辦</a><span class="tg">第二部分 gnuplot</span><a href="#g1">2-1 開終端機</a><a href="#g2">2-2 畫正常版</a><a href="#g3">2-3 改一行</a><a href="#g4">2-4 並排、寫一句</a><span class="tg">最後</span><a href="#hand">交件</a><a href="#help">卡住怎麼辦</a><a href="#next">下週 W13</a></nav><div class="progress"><b id="progress">學習記錄 0 / 0</b><p class="small" id="storage-note">自行勾選，只存在這個瀏覽器；不是成績，也不會上傳。</p></div></aside>
+<main>
+
+<section id="start"><div class="kicker">0 · 先看全貌</div><h2>今天最少要交什麼</h2>
+<div class="callout"><b>出席要交（交了這張就算出席）：</b><br><span class="ev">①</span> Zotero 畫面截圖：左邊點開 <code>W12-sleep</code> 文獻集，中間看得到今天那篇論文（Okano 等人，2019）。<br><b>做到的也一起交：</b><br><span class="ev">②</span> 匯出的 <code>W12-sleep.bib</code> 檔案本身（或用記事本打開它的截圖）。<br>
+<span class="ev">③</span> 兩張 gnuplot 圖並排的一張截圖，加上一句「哪張會騙人、為什麼」（寫在線上文字）。<br>交到 e學苑 本週的出席作業。</div>
+<p>第一部分約 55 分鐘，做完 ①② 再休息；第二部分約 25 分鐘。教材寫得很細，照著做就好，每一步最後的<b style="color:var(--green)">應該看到</b>是做對時畫面上會出現的東西。沒看到，就還沒完成。</p>
+<div class="table"><table><thead><tr><th>分鐘</th><th>做什麼</th><th>交什麼</th></tr></thead><tbody>
+<tr><td>0–8</td><td>今天要交什麼；<a href="#why">手打書目錯在哪</a>（找四個錯）</td><td></td></tr>
+<tr><td>8–22</td><td><a href="#z1">1-1</a> 裝 Zotero 桌面版、<a href="#z2">1-2</a> 建文獻集 <code>W12-sleep</code></td><td></td></tr>
+<tr><td>22–30</td><td><a href="#z3">1-3</a> Chrome 裝 Zotero Connector、釘在工具列</td><td></td></tr>
+<tr><td>30–45</td><td><a href="#z4">1-4</a> 存今天這篇、<a href="#z5">1-5</a> 跟出版社網頁核對</td><td><span class="ev">①</span></td></tr>
+<tr><td>45–55</td><td><a href="#z6">1-6</a> 匯出 <code>W12-sleep.bib</code>、打開看代號</td><td><span class="ev">②</span></td></tr>
+<tr><td>55–60</td><td>休息</td><td></td></tr>
+<tr><td>60–85</td><td>第二部分 gnuplot：<a href="#g2">正常版</a>、<a href="#g3">改一行變截斷版</a>、<a href="#g4">並排寫一句</a></td><td><span class="ev">③</span></td></tr>
+<tr><td>85–100</td><td>做得快的人：<a href="#z7">1-7 魔術棒</a>、<a href="#z8">1-8 自己搜</a>、<a href="#z9">1-9 Overleaf 引用</a>（下週一開始就會用到）</td><td>選做</td></tr>
+<tr><td>100–110</td><td><a href="#hand">交件</a>、<a href="#next">下週預告</a>；教室電腦登出</td><td></td></tr>
+</tbody></table></div>
+<p><b>用教室電腦的同學：</b>教室電腦可能裝不了軟體、也可能裝不了 Chrome 擴充功能。先照 1-1 試一次，不行就看 <a href="#zc">教室電腦怎麼辦</a>，不要卡在原地。</p>
+<label class="check"><input type="checkbox" data-check="start"><span>我知道交 ① 就算出席，②③ 做到再一起交。</span></label></section>
+
+<section id="pack"><div class="kicker">練習包</div><h2>先把練習檔拿到手</h2>
+<ol><li><p class="do"><b>做什麼</b>下載 <a href="practice/w12-practice.zip" download>w12-practice.zip</a>，解壓縮到桌面（Windows：在檔案上按右鍵 →「解壓縮全部」）。</p>
+<p class="see"><b>應該看到</b>一個資料夾，裡面有下表這些檔。「解壓縮全部」常會多包一層同名資料夾，再點進去一層，要看得到 <code>sleep-quiz.dat</code>。</p></li></ol>
+<div class="table"><table><thead><tr><th>檔案</th><th>是什麼</th><th>哪裡用</th></tr></thead><tbody>
+<tr><td><a href="practice/sleep-quiz.dat">sleep-quiz.dat</a></td><td>20 位「假想」學生的每週平均睡眠時數與小考分數。<b>虛構資料</b>，老師編的，只用來練畫圖</td><td>第二部分</td></tr>
+<tr><td><a href="practice/scatter.gp">scatter.gp</a></td><td>gnuplot 腳本：散點圖，Y 軸 0 到 100 分</td><td>2-2</td></tr>
+<tr><td><a href="practice/truncated.gp">truncated.gp</a></td><td>同一支腳本只改兩行：Y 軸只畫 69 到 83 分</td><td>2-3</td></tr>
+<tr><td><a href="practice/scatter.png">scatter.png</a>、<a href="practice/truncated.png">truncated.png</a></td><td>老師先畫好的兩張圖。電腦沒有 gnuplot 的人，拿這兩張做 2-4</td><td>2-4</td></tr>
+<tr><td><a href="practice/cite-one.tex">cite-one.tex</a></td><td>一頁中文 LaTeX，引用一篇論文</td><td>1-9 選做</td></tr>
+<tr><td><a href="practice/okano2019-teacher.bib">okano2019-teacher.bib</a></td><td>老師備的一筆書目，給<b>裝不了 Zotero</b> 的同學用</td><td><a href="#zc">教室電腦怎麼辦</a></td></tr>
+</tbody></table></div>
+<p class="small">教室電腦每週還原，下課前把要留的檔寄給自己或放雲端。</p>
+<label class="check"><input type="checkbox" data-check="pack"><span>練習包下載、解壓縮好了。</span></label></section>
+
+<section id="why"><div class="kicker">為什麼 · 約 5 分</div><h2>手打參考文獻，錯在哪裡？</h2>
+<p>報告最後的參考文獻，很多人是從網頁上看一眼、自己打。下面是今天那篇論文的「手打版」。跟它下面那份正確資料比，找找看有幾個地方不一樣：</p>
+<p class="small">手打版：</p>
+<div class="ref">Okano, K., Kaczmarzyk, J., &amp; Gabrieli, J. (2020). Sleep quality and duration are associated with better academic performance in college students. <i>Nature Science of Learning</i>, 4, 16.</div>
+<p class="small">正確資料（出版社登記在 DOI 系統裡的那一份）：</p>
+<div class="ref">Okano, K., Kaczmarzyk, J. R., Dave, N., Gabrieli, J. D. E., &amp; Grossman, J. C. (2019). Sleep quality, duration, and consistency are associated with better academic performance in college students. <i>npj Science of Learning</i>, 4, 16. https://doi.org/10.1038/s41539-019-0055-z</div>
+<details><summary>看答案（四個錯）</summary>
+<div class="ref">Okano, K., Kaczmarzyk, J., <span class="bad">（少了 Dave、Grossman 兩位作者）</span> &amp; Gabrieli, J. (<span class="bad">2020</span>). Sleep quality <span class="bad">and duration</span>（少了 consistency）are associated with better academic performance in college students. <i class="bad">Nature Science of Learning</i>, 4, 16.</div>
+<p>少作者、年份錯、題目少一個字、期刊名寫錯。每一個都是看一眼、打一次就會發生的錯。文獻一多、格式一換（APA 換 IEEE），手打就顧不完了。</p></details>
+<p><b>文獻管理軟體（reference manager）</b>做的事：從論文網頁把書目資料（作者、年份、期刊…）抓下來存好，要用時一次匯出、自動排格式。今天用的是 <b>Zotero</b>，免費、Windows 和 Mac 都有。</p>
+<div class="callout"><b>但是：</b>「存進來」不等於「資料對」。軟體抓的是網頁上寫的東西，網頁寫錯、抓錯欄位，它也照存。所以今天有一步專門在<a href="#z5">核對</a>。</div>
+<label class="check"><input type="checkbox" data-check="why"><span>我找到手打版至少三個錯，也知道「存進來 ≠ 資料對」。</span></label></section>
+
+<div class="part" id="part1">第一部分　Zotero：存一篇、核對、匯出（約 55 分）<span>Zotero 桌面版＋Chrome 上的 Zotero Connector。教室電腦裝不了的，看 <a href="#zc" style="color:#fff">教室電腦怎麼辦</a>。</span></div>
+
+<div class="docs"><b>卡住先查這裡（Zotero 官方說明，英文）</b><ul>
+<li><a href="https://www.zotero.org/support/adding_items_to_zotero" target="_blank" rel="noopener">Adding Items to Zotero</a>：怎麼把論文存進來</li>
+<li><a href="https://www.zotero.org/support/collections_and_tags" target="_blank" rel="noopener">Collections and Tags</a>：文獻集（資料夾）怎麼建</li>
+<li><a href="https://www.zotero.org/support/kb/exporting" target="_blank" rel="noopener">How do I export my Zotero library?</a>：匯出</li>
+<li><a href="https://www.zotero.org/support/kb/connector_zotero_unavailable" target="_blank" rel="noopener">Zotero Connector: "Is Zotero Running?"</a>：Connector 說找不到 Zotero</li>
+</ul></div>
+
+<section id="z1"><div class="kicker">1-1 · 約 8 分</div><h2>裝 Zotero 桌面版、第一次打開</h2>
+<ol>
+<li><p class="do"><b>做什麼</b>用 Chrome 打開官方下載頁 <a href="https://www.zotero.org/download/" target="_blank" rel="noopener">zotero.org/download</a>。只從這個官方網址下載，別點搜尋結果裡的廣告。</p>
+<p class="see"><b>應該看到</b>左邊是 Zotero 桌面版（標題寫「Zotero 10 for Windows」或 macOS），右邊是 Zotero Connector。頁面會自動猜你的作業系統。</p></li>
+<li><p class="do"><b>做什麼</b><b>Windows：</b>按下載鈕（64-bit 的安裝檔），下載完打開它，照畫面一直按「下一步」（Next）。跳出「使用者帳戶控制」問要不要允許變更，按「是」。<br><b>Mac：</b>下載 <code>.dmg</code>，打開後把 Zotero 圖示拖進「應用程式」（Applications）資料夾。</p>
+<p class="see"><b>應該看到</b>安裝完成。Windows 開始功能表、Mac 的「應用程式」裡找得到 Zotero。</p></li>
+<li><p class="do"><b>做什麼</b>打開 Zotero。</p>
+<p class="see"><b>應該看到</b>Zotero 視窗分三欄：左邊是<b>我的文獻庫</b>（英文介面：My Library），中間是項目清單（現在是空的），右邊顯示選到那一筆的詳細資料。介面語言跟著電腦，中文電腦多半是中文介面；下面每個按鈕都會寫中、英兩種名字。</p></li>
+</ol>
+<p class="small">教室電腦跳出要管理員密碼、或根本不讓你執行安裝檔：不要硬試，直接看 <a href="#zc">教室電腦怎麼辦</a>。</p>
+<label class="check"><input type="checkbox" data-check="z1"><span>Zotero 桌面版打開了，看得到「我的文獻庫」。</span></label></section>
+
+<section id="z2"><div class="kicker">1-2 · 約 3 分</div><h2>建一個文獻集 <code>W12-sleep</code></h2>
+<p>文獻集（collection）像音樂軟體的播放清單：同一篇論文可以放進好幾個文獻集，檔案只存一份。今天的論文都放進 <code>W12-sleep</code>。</p>
+<ol>
+<li><p class="do"><b>做什麼</b>按左欄上方的<b>新增文獻集……</b>按鈕（英文：New Collection…，一個資料夾加號的圖示）；或在左邊「我的文獻庫」上按右鍵 → <b>新增文獻集……</b>。</p></li>
+<li><p class="do"><b>做什麼</b>跳出的視窗裡，<b>名稱</b>（Name）填 <code>W12-sleep</code>，按<b>建立文獻集</b>（Create Collection）。</p>
+<p class="see"><b>應該看到</b>左欄「我的文獻庫」底下多了一個 <code>W12-sleep</code>。</p></li>
+<li><p class="do"><b>做什麼</b>在左欄<b>點一下 <code>W12-sleep</code></b>，讓它保持選取。</p>
+<p class="see"><b>應該看到</b><code>W12-sleep</code> 反白，中間是空的。官方說明寫得很清楚：存論文時哪個文獻集被選取，論文就進哪一個。</p></li>
+</ol>
+<label class="check"><input type="checkbox" data-check="z2"><span>左邊有 <code>W12-sleep</code>，而且我點選了它。</span></label></section>
+
+<section id="z3"><div class="kicker">1-3 · 約 8 分</div><h2>Chrome 裝 Zotero Connector，釘在工具列</h2>
+<p>Zotero Connector 是瀏覽器的<b>擴充功能</b>（extension）：工具列上多一顆「存進 Zotero」的按鈕。它負責從網頁抓資料，存進你剛剛打開的 Zotero 桌面版。</p>
+<ol>
+<li><p class="do"><b>做什麼</b>Zotero 桌面版<b>保持開著</b>，不要關。</p></li>
+<li><p class="do"><b>做什麼</b>用 Chrome 回到 <a href="https://www.zotero.org/download/" target="_blank" rel="noopener">zotero.org/download</a>，在右邊 Zotero Connector 那一塊點 Chrome 的連結（或直接開 <a href="https://chrome.google.com/webstore/detail/ekhagklcjbdpajgpjgmbionohlpdbjgc" target="_blank" rel="noopener">Chrome 線上應用程式商店的 Zotero Connector</a>），按「加到 Chrome」，再按「新增擴充功能」。</p>
+<p class="see"><b>應該看到</b>Chrome 說已新增 Zotero Connector。</p></li>
+<li><p class="do"><b>做什麼</b>按 Chrome 右上角的<b>拼圖圖示</b>（擴充功能），在清單裡找到 Zotero Connector，按它旁邊的<b>圖釘</b>。</p>
+<p class="see"><b>應該看到</b>Zotero Connector 的按鈕直接出現在網址列右邊。剛裝好時它躲在拼圖裡，不釘出來很容易找不到。</p></li>
+</ol>
+<p class="small">用 Edge 的同學：Edge 要裝 Edge 自己的版本，下載頁有 Edge 的連結。Chrome 裝的擴充功能 Edge 看不到，反過來也一樣。Mac 用 Safari 的：Safari 版跟著 Zotero 桌面版一起裝好了，到 Safari 的「設定 → 延伸功能」打開就好；但今天建議統一用 Chrome。</p>
+<label class="check"><input type="checkbox" data-check="z3"><span>Chrome 工具列上看得到 Zotero Connector 的按鈕。</span></label></section>
+
+<section id="z4"><div class="kicker">1-4 · 約 7 分</div><h2>存今天這篇論文：從出版社的網頁存</h2>
+<p>全班存同一篇，方便核對：</p>
+<div class="ref">Okano, K., Kaczmarzyk, J. R., Dave, N., Gabrieli, J. D. E., &amp; Grossman, J. C. (2019). Sleep quality, duration, and consistency are associated with better academic performance in college students. <i>npj Science of Learning</i>, 4, 16.</div>
+<p>這篇在一門大學化學課，發給 100 位學生穿戴式裝置記錄睡眠（88 位做完），再跟小考、期中考成績比對。結果是睡得比較好、比較久、比較規律的學生，成績也比較好。<b>注意：</b>這是「一起出現」的關係（相關），研究本身沒有說「睡多久就決定考幾分」。期刊是開放取用（open access），誰都能免費讀全文。</p>
+<p><b>DOI</b>（Digital Object Identifier，數位物件識別碼）是論文的「身分證號碼」，一篇一個、不會變。這篇是：</p>
+<div class="cbox"><pre class="copy">10.1038/s41539-019-0055-z</pre></div>
+<ol>
+<li><p class="do"><b>做什麼</b>先確認 Zotero 桌面版開著、左邊點選的是 <code>W12-sleep</code>。</p></li>
+<li><p class="do"><b>做什麼</b>用 Chrome 打開 <a href="https://doi.org/10.1038/s41539-019-0055-z" target="_blank" rel="noopener">https://doi.org/10.1038/s41539-019-0055-z</a>。在任何 DOI 前面加上 <code>https://doi.org/</code>，就會被帶到出版社放這篇論文的網頁。</p>
+<p class="see"><b>應該看到</b>網址變成 <code>nature.com/articles/s41539-019-0055-z</code>，頁面最上面是論文題目，下面有五位作者的名字。有 cookie 詢問的話，選只接受必要的（Reject optional／必要 cookie）就好。</p></li>
+<li><p class="do"><b>做什麼</b>按工具列上的 <b>Zotero Connector 按鈕</b>。</p>
+<p class="see"><b>應該看到</b>右上角跳出一個小框，寫著存進哪個文獻集（應該是 <code>W12-sleep</code>，不是的話可以在小框裡直接改）。回到 Zotero，中間多了一筆這篇論文；這篇能免費下載，通常底下還會多一個 PDF 附件。</p></li>
+</ol>
+<p class="small">為什麼從出版社網頁存，不從 Google Scholar 存？Zotero 官方說明寫：從出版社網站匯入，資料通常比從 Google Scholar 匯入好得多。Google Scholar 適合「找」，找到之後點進出版社網頁再存。</p>
+<p class="small">按了沒反應、或小框說找不到 Zotero：先看 <a href="#help">卡住怎麼辦</a> 的 Zotero 那張表。真的不行，在 Zotero 用 <a href="#z7">1-7 的魔術棒</a>貼上面那串 DOI，也能把同一篇加進來。</p>
+<label class="check"><input type="checkbox" data-check="z4"><span>Zotero 的 <code>W12-sleep</code> 裡有 Okano 那篇。</span></label></section>
+
+<section id="z5"><div class="kicker">1-5 · 約 8 分</div><h2>核對：存進來 ≠ 資料對</h2>
+<p>在 Zotero 中間點一下那一筆，右邊會列出它存了什麼。拿它跟出版社網頁（剛剛那個 nature.com 頁面）一欄一欄比：</p>
+<div class="table"><table><thead><tr><th>欄位（中文介面／英文介面）</th><th>Zotero 存的</th><th>網頁上寫的</th><th>一樣嗎</th></tr></thead><tbody>
+<tr><td>標題（Title）</td><td>自己看</td><td>網頁最上面的大標題</td><td><input type="checkbox" aria-label="標題一樣" data-check="c-title"></td></tr>
+<tr><td>作者（Author）</td><td>幾位？第一位是誰？</td><td>標題下面的作者列（應該是 5 位，第一位 Kana Okano）</td><td><input type="checkbox" aria-label="作者一樣" data-check="c-author"></td></tr>
+<tr><td>日期（Date）</td><td>年份是幾年？</td><td>網頁上的出版日期</td><td><input type="checkbox" aria-label="日期一樣" data-check="c-date"></td></tr>
+<tr><td>期刊名（Publication）</td><td>自己看</td><td>網頁上的期刊名 <i>npj Science of Learning</i></td><td><input type="checkbox" aria-label="期刊一樣" data-check="c-journal"></td></tr>
+<tr><td>卷（Volume）、頁（Pages）</td><td>自己看</td><td>網頁上的 volume 與 Article number</td><td><input type="checkbox" aria-label="卷頁一樣" data-check="c-vol"></td></tr>
+<tr><td>DOI</td><td>自己看</td><td><code>10.1038/s41539-019-0055-z</code></td><td><input type="checkbox" aria-label="DOI 一樣" data-check="c-doi"></td></tr>
+</tbody></table></div>
+<p class="see"><b>應該看到</b>六欄都對得上。有不一樣的：在 Zotero 右邊直接點那一欄改掉，以網頁為準。</p>
+<details><summary>為什麼要比？同一篇在不同網站長得不一樣</summary>
+<p>同一篇論文，從 PubMed（美國國家醫學圖書館的論文資料庫）存，期刊名會變成 <code>NPJ science of learning</code>（大小寫不同）；用老師備的 <code>okano2019-teacher.bib</code>，會發現它少了文章編號 16。都不算「錯得離譜」，但交出去的參考文獻就會一份一個樣。Google Scholar 抓到的資料更常缺東缺西。<b>工具幫你省打字，核對還是你的事。</b></p></details>
+<p class="do"><b>做什麼</b>截圖：Zotero 左邊選 <code>W12-sleep</code>、中間看得到這一筆（Windows 按 <kbd>Win</kbd>＋<kbd>Shift</kbd>＋<kbd>S</kbd>，Mac 按 <kbd>⌘</kbd>＋<kbd>Shift</kbd>＋<kbd>4</kbd>），存成圖檔。<span class="ev">證據 ①</span></p>
+<label class="check"><input type="checkbox" data-check="z5"><span>六欄核對完，有錯的改掉了；證據 ① 截好了。</span></label></section>
+
+<section id="z6"><div class="kicker">1-6 · 約 10 分</div><h2>匯出成 BibTeX 書目檔 <code>W12-sleep.bib</code></h2>
+<p><b>BibTeX</b> 是 LaTeX 讀的書目格式，檔名結尾是 <code>.bib</code>，就是上週 <code>refs.bib</code> 那種純文字檔。</p>
+<ol>
+<li><p class="do"><b>做什麼</b>在左欄 <code>W12-sleep</code> 上按右鍵 → <b>匯出……</b>（英文介面：Export…；官方說明寫 Export Collection…，新版選單上只寫 Export…）。</p>
+<p class="see"><b>應該看到</b>一個匯出視窗，最上面是<b>格式</b>（Format）下拉選單。</p></li>
+<li><p class="do"><b>做什麼</b>格式選 <b>BibTeX</b>。下面「匯出筆記」「匯出檔案」先不要勾。按確定（OK）。</p></li>
+<li><p class="do"><b>做什麼</b>存檔視窗裡，檔名改成 <code>W12-sleep.bib</code>，存到桌面或練習包的資料夾。</p>
+<p class="see"><b>應該看到</b>那個資料夾多了 <code>W12-sleep.bib</code>。</p></li>
+<li><p class="do"><b>做什麼</b>用記事本打開它（Windows：在檔案上按右鍵 →「開啟檔案」→ 記事本；Mac：按右鍵 →「打開檔案的應用程式」→ 文字編輯）。</p>
+<p class="see"><b>應該看到</b>一段像這樣的純文字（實際欄位以你的檔案為準）：</p>
+<pre>@article{okano_sleep_2019,
+	title = {Sleep quality, duration, and consistency are associated with ...},
+	journal = {npj Science of Learning},
+	author = {Okano, Kana and Kaczmarzyk, Jakub R. and ...},
+	year = {2019},
+	...
+}</pre>
+<p><code>@article{</code> 後面、第一個逗號前面那一串（例如 <code>okano_sleep_2019</code>）叫<b>代號</b>（citation key）。LaTeX 裡寫 <code>\cite{代號}</code> 就是靠它找到這一筆。Zotero 內建的代號通常是「第一作者姓_題目第一個字_年份」，但請<b>以你自己檔案裡寫的為準</b>。</p></li>
+</ol>
+<p class="do"><b>做什麼</b>把 <code>W12-sleep.bib</code> 留好（等一下交，也是下週的材料）。<span class="ev">證據 ②</span></p>
+<div class="callout">做到這裡，①② 都有了。可以先交到 e學苑（之後還能補傳），然後休息。</div>
+<label class="check"><input type="checkbox" data-check="z6"><span>我有 <code>W12-sleep.bib</code>，也找到裡面的代號；證據 ② 留好了。</span></label></section>
+
+<section id="z7"><div class="kicker">1-7 · 做得快再加</div><h2>魔術棒：只靠 DOI 加一篇</h2>
+<p>沒有網頁、只有一串 DOI（例如別人報告裡寫的），用 Zotero 桌面版的<b>魔術棒</b>就能加。<b>它在 Zotero 桌面版視窗上方的工具列</b>，不在 Chrome 的 Connector 小框裡。</p>
+<ol>
+<li><p class="do"><b>做什麼</b>左邊點選 <code>W12-sleep</code>。按 Zotero 工具列上的魔術棒圖示（滑鼠移上去會顯示「依辨識符號加入(可能是複數)項目」，英文介面：Add Item(s) by Identifier）。</p></li>
+<li><p class="do"><b>做什麼</b>在跳出的小框貼上這串 DOI，按 <kbd>Enter</kbd>：</p>
+<div class="cbox"><pre class="copy">10.1073/pnas.2209123120</pre></div>
+<p class="see"><b>應該看到</b>多一筆 2023 年刊在 PNAS（美國國家科學院院刊）的論文，題目是 <i>Nightly sleep duration predicts grade point average in the first year of college</i>，第一作者 Creswell。這篇在三所大學記錄大一新生學期初一個月的睡眠，再看學期末的成績，是追蹤同一群人的研究，不是把很多研究合起來的統合分析。</p></li>
+<li><p class="do"><b>做什麼</b>核對：點那一筆，看作者有幾位。這篇有 19 位作者，數數看 Zotero 有沒有全存進來。</p></li>
+</ol>
+<p class="small">魔術棒也吃 ISBN（書）、PubMed 的 PMID、arXiv 編號。做完記得重新匯出一次 <code>W12-sleep.bib</code>，新的那一筆才會在檔案裡。</p>
+<label class="check"><input type="checkbox" data-check="z7"><span>我用魔術棒加了第二篇，也數過作者人數。</span></label></section>
+
+<section id="z8"><div class="kicker">1-8 · 做得快再加</div><h2>自己搜：Google Scholar 找兩篇</h2>
+<ol>
+<li><p class="do"><b>做什麼</b>打開 <a href="https://scholar.google.com/" target="_blank" rel="noopener">Google Scholar</a>，搜尋：</p>
+<div class="cbox"><pre class="copy">sleep duration academic performance university students</pre></div>
+<p class="see"><b>應該看到</b>一串論文清單，每篇有題目、作者、期刊與年份。</p></li>
+<li><p class="do"><b>做什麼</b>挑兩篇看起來相關的，<b>點題目進到出版社的網頁</b>，在那邊按 Connector 存（理由見 1-4 最後那段）。存完一樣做 1-5 的核對。</p></li>
+</ol>
+<p class="small">Google Scholar 跳出「我不是機器人」驗證、或說偵測到自動化查詢：全班同一間教室、同一個對外網路位址，查太多次就會被擋（Zotero 官方的 <a href="https://www.zotero.org/support/kb/site_access_limits" target="_blank" rel="noopener">site access limits</a> 說明也寫到，通常幾小時後會恢復）。改用 <a href="https://pubmed.ncbi.nlm.nih.gov/?term=sleep+duration+academic+performance+university+students" target="_blank" rel="noopener">PubMed 搜同樣的字</a>，在論文頁按 Connector 存。</p>
+<label class="check"><input type="checkbox" data-check="z8"><span>我自己搜到、存進、核對了至少一篇。</span></label></section>
+
+<section id="z9"><div class="kicker">1-9 · 選做（下週一開始就會用到）</div><h2>在 Overleaf 引用：讓 [1] 自己出現</h2>
+<p>上週 1-7 你用過老師給的 <code>refs.bib</code>。這次換成你自己從 Zotero 匯出的 <code>W12-sleep.bib</code>。</p>
+<ol>
+<li><p class="do"><b>做什麼</b>打開上週的 Overleaf 專案（<code>w11-hand</code>），按左邊 File tree 上的上傳圖示，上傳 <code>W12-sleep.bib</code> 和練習包裡的 <code>cite-one.tex</code>。</p>
+<p class="see"><b>應該看到</b>左邊檔案清單多了這兩個檔。</p></li>
+<li><p class="do"><b>做什麼</b>點開 <code>cite-one.tex</code>，找到這一行，把大括號裡換成<b>你在 1-6 找到的代號</b>：</p>
+<div class="cbox"><pre class="copy">\cite{okano_sleep_2019}</pre></div>
+<p>檔名不是 <code>W12-sleep.bib</code> 的，把最後一行 <code>\bibliography{W12-sleep}</code> 的大括號也改成你的檔名（不寫 <code>.bib</code>）。</p></li>
+<li><p class="do"><b>做什麼</b>確認 Compiler 是 XeLaTeX（左下角齒輪 Settings → Compiler；上週設過就不用改），<b>先點著 <code>cite-one.tex</code></b>，再按 Recompile。</p>
+<p class="see"><b>應該看到</b>一頁中文 PDF，句子後面有 <code>[1]</code>，最下面「參考文獻」列出 Okano 那篇。</p></li>
+</ol>
+<p class="small">句子後面出現 <code>[?]</code>：代號跟 <code>.bib</code> 裡的對不上（大小寫也算），或 <code>\bibliography{…}</code> 的檔名不對。改好再 Recompile 一次。做了這步的人，可以把 PDF 換成證據 ② 交（PDF 最下面有參考文獻，就證明 <code>.bib</code> 能用）。</p>
+<label class="check"><input type="checkbox" data-check="z9"><span>（選做）Overleaf 編出 [1] 和參考文獻了。</span></label></section>
+
+<section id="zc"><div class="kicker">教室電腦／裝不了</div><h2>Zotero 裝不了，怎麼辦</h2>
+<p>照順序試，哪一條通了就用哪一條。<b>不管走哪一條，1-5 的核對都要做。</b></p>
+<div class="table"><table><thead><tr><th>情況</th><th>改走這條</th></tr></thead><tbody>
+<tr><td>有自己的筆電</td><td>改用筆電做第一部分，最省事。</td></tr>
+<tr><td>電腦不讓裝軟體，但 Chrome 可以裝擴充功能</td><td><b>存到網路上的文獻庫：</b>到 <a href="https://www.zotero.org/user/register" target="_blank" rel="noopener">zotero.org</a> 註冊帳號（要收確認信）、登入。照 1-3 裝 Connector。Zotero 桌面版沒開的時候，按 Connector 會請你授權連到 zotero.org 帳號，授權後就存進網路上的文獻庫。存好後到 zotero.org 的 Web Library，選取那一筆，用上方工具列的匯出（Export）圖示、格式選 BibTeX，就能拿到 <code>.bib</code>。<br><span class="small">要帳號、要收信，不是零設定；下課記得登出。</span></td></tr>
+<tr><td>連 Chrome 擴充功能也裝不了</td><td>跟旁邊有筆電的同學一組，看他做一遍；你自己用練習包的 <code>okano2019-teacher.bib</code> 當證據 ②，打開它跟 nature.com 網頁核對作者、年份、期刊（你會發現它少了文章編號）。證據 ① 改交「核對時的畫面截圖」。</td></tr>
+</tbody></table></div>
+<label class="check"><input type="checkbox" data-check="zc"><span>（教室電腦）我知道自己走哪一條，也做了核對。</span></label></section>
+
+<div class="part" id="part2">第二部分　gnuplot：同一份資料，兩張圖（約 25 分）<span>需要裝好 gnuplot 的電腦（上週在筆電上請 Antigravity 裝的那個）。沒有的，直接用練習包裡老師畫好的兩張圖做 2-4。</span></div>
+
+<section id="g1"><div class="kicker">2-1 · 約 5 分</div><h2>在練習包資料夾開終端機，先看字元版的圖</h2>
+<ul><li><b>Windows 11：</b>打開練習包資料夾（要看得到 <code>sleep-quiz.dat</code>），在空白處按右鍵 →「在終端機中開啟」。</li><li><b>Mac：</b>打開「終端機」，輸入 <code>cd</code> 加一個空白，把那個資料夾從 Finder 拖進終端機視窗，按 Enter。</li></ul>
+<p>終端機（terminal）是用打字下指令的視窗。複製下面這一行、貼上、按 Enter：</p>
+<div class="cbox"><pre class="copy" data-ps="1">gnuplot -e "set terminal dumb size 70,20; plot 'sleep-quiz.dat' using 1:2 with points pt '*' notitle"</pre></div>
+<p class="see"><b>應該看到</b>終端機裡出現一張用 <code>*</code> 畫的散點圖（scatter plot），點大致往右上走。<b>看一下左邊的 Y 軸：</b>它從 70 左右開始，不是從 0。gnuplot 沒被告知範圍時，會自己把軸縮到剛好包住資料，這一點等一下很重要。</p>
+<p class="small">Windows 說找不到 <code>gnuplot</code>：先把終端機關掉重開。還是找不到，改用完整路徑（上週裝的那版不會自動加進 PATH，PATH 是電腦找程式的路線清單）：</p>
+<div class="cbox"><pre class="copy" data-ps="1">&amp; "C:\Program Files\gnuplot\bin\gnuplot.exe" -e "set terminal dumb size 70,20; plot 'sleep-quiz.dat' using 1:2 with points pt '*' notitle"</pre></div>
+<p class="small">之後每一條 <code>gnuplot</code> 開頭的指令，都把 <code>gnuplot</code> 換成 <code>&amp; "C:\Program Files\gnuplot\bin\gnuplot.exe"</code> 就好。</p>
+<label class="check"><input type="checkbox" data-check="g1"><span>終端機裡出現字元版散點圖，我注意到 Y 軸不是從 0 開始。</span></label></section>
+
+<section id="g2"><div class="kicker">2-2 · 約 5 分</div><h2>畫正常版：Y 軸從 0 到 100 分</h2>
+<p>先用記事本打開 <code>scatter.gp</code> 看一眼：標題（title）、X 軸名稱（xlabel）、Y 軸名稱（ylabel）都寫了，括號裡是<b>單位</b>（hours、points）。圖上的字用英文，因為中文字型每台電腦不同，先求圖出得來。看完關掉，不用改。</p>
+<div class="cbox"><pre class="copy" data-ps="1">gnuplot scatter.gp</pre></div>
+<p class="see"><b>應該看到</b>資料夾裡的 <code>scatter.png</code> 修改時間變成現在。打開它：20 個點，Y 軸從 0 畫到 100，點都擠在 70 到 82 分之間，看起來<b>差不多平</b>。</p>
+<p class="small">練習包本來就附了 <code>scatter.png</code>，所以「檔案存在」不算數，要看<b>修改時間</b>有沒有變新。不確定的話，先把舊的 <code>scatter.png</code> 刪掉再跑。</p>
+<label class="check"><input type="checkbox" data-check="g2"><span>我自己重畫了 <code>scatter.png</code>（修改時間是現在）。</span></label></section>
+
+<section id="g3"><div class="kicker">2-3 · 約 7 分</div><h2>改一行，畫截斷版</h2>
+<p>用記事本打開 <code>truncated.gp</code>，跟 <code>scatter.gp</code> 比：只有標了 <code>&lt;--</code> 的兩行不一樣。一行是輸出檔名，另一行才是重點：</p>
+<pre>set yrange [0:100]     ← scatter.gp
+set yrange [69:83]     ← truncated.gp：Y 軸只畫 69 到 83 分</pre>
+<div class="cbox"><pre class="copy" data-ps="1">gnuplot truncated.gp</pre></div>
+<p class="see"><b>應該看到</b>多出（或更新了）<code>truncated.png</code>。同樣 20 個點、同一個標題，這次點從左下角一路衝到右上角，看起來<b>睡多一點、分數就高很多</b>。</p>
+<p class="do"><b>做什麼</b>（想多玩一下）把 <code>truncated.gp</code> 的 <code>[69:83]</code> 改成 <code>[60:90]</code>，存檔再跑一次，看斜度怎麼變。改完記得存檔，記事本要按 <kbd>Ctrl</kbd>＋<kbd>S</kbd>。</p>
+<label class="check"><input type="checkbox" data-check="g3"><span>我畫出了 <code>truncated.png</code>，也知道兩張只差在 <code>set yrange</code>。</span></label></section>
+
+<section id="g4"><div class="kicker">2-4 · 約 8 分</div><h2>兩張並排，寫一句話</h2>
+<p>這是老師先畫好的兩張（你自己畫的應該長得一樣）：</p>
+<div class="figs"><figure><img src="practice/scatter.png" alt="正常版散點圖：Y 軸 0 到 100 分，20 個點擠在 70 到 82 分之間，看起來差不多平" width="900" height="650" loading="lazy"><figcaption>scatter.png：Y 軸 0–100</figcaption></figure><figure><img src="practice/truncated.png" alt="截斷版散點圖：同樣 20 個點，Y 軸只畫 69 到 83 分，看起來從左下急升到右上" width="900" height="650" loading="lazy"><figcaption>truncated.png：Y 軸 69–83</figcaption></figure></div>
+<ol>
+<li><p class="do"><b>做什麼</b>把你的兩張圖並排打開（Windows：兩個圖片視窗一個拖到螢幕左半、一個拖到右半），截一張圖。<span class="ev">證據 ③</span></p></li>
+<li><p class="do"><b>做什麼</b>寫一句話：<b>哪一張比較容易讓人誤會？誤會成什麼？為什麼？</b></p>
+<p class="see"><b>應該看到</b>（寫完自己對一下）你的句子有講到「Y 軸從哪裡開始」或「軸上的數字」。</p></li>
+</ol>
+<details><summary>寫完再打開：老師的想法</summary>
+<p>兩張的資料一模一樣，差別只在 Y 軸的範圍。截斷版把 12 分的差距撐滿整張圖，看起來像「睡眠決定成績」；正常版放在 0–100 分的尺度上，差距其實不大。</p>
+<p>截斷 Y 軸不一定是作弊：想看清楚小差距時，放大是合理的，<b>只要軸上的數字標清楚、讀的人有看</b>。真正會騙人的是讀圖的人沒看軸。還有兩件事要記得：這份資料是<b>虛構</b>的；就算是真的資料，兩件事「一起出現」也不等於一件造成另一件。</p></details>
+<label class="check"><input type="checkbox" data-check="g4"><span>兩張並排截好了，一句話也寫好了。</span></label></section>
+
+<section id="hand"><div class="kicker">交件 · 約 5 分</div><h2>交到 e學苑「W12 出席：Zotero 畫面截圖」</h2>
+<div class="table"><table><thead><tr><th>放哪裡</th><th>交什麼</th><th></th></tr></thead><tbody>
+<tr><td>檔案 1</td><td><span class="ev">①</span> Zotero 截圖：<code>W12-sleep</code> 裡有 Okano 那篇</td><td><span class="tag">出席要交</span></td></tr>
+<tr><td>檔案 2</td><td><span class="ev">②</span> <code>W12-sleep.bib</code>（或用記事本打開它的截圖；做了 1-9 的可改交 Overleaf 的 PDF）</td><td><span class="tag opt">做到再交</span></td></tr>
+<tr><td>檔案 3</td><td><span class="ev">③</span> 兩張 gnuplot 圖並排的截圖</td><td><span class="tag opt">第二部分</span></td></tr>
+<tr><td>線上文字</td><td>一句話：哪張比較容易讓人誤會、為什麼</td><td><span class="tag opt">第二部分</span></td></tr>
+</tbody></table></div>
+<p class="small">檔案最多 3 個。用教室電腦的，交完登出 zotero.org、Overleaf，再把瀏覽器關掉。</p>
+<label class="check"><input type="checkbox" data-check="hand"><span>我交了，教室電腦也登出了。</span></label></section>
+
+<section id="help"><div class="kicker">卡住怎麼辦</div><h2>先看畫面寫什麼，再對下面的表</h2>
+<h3>Zotero</h3>
+<div class="table"><table><thead><tr><th>看到什麼</th><th>通常是</th><th>怎麼處理</th></tr></thead><tbody>
+<tr><td>按 Connector 沒反應，或說「Is Zotero running?」</td><td>Zotero 桌面版沒開</td><td>先把桌面版打開、再按一次。還是不行，照官方的 <a href="https://www.zotero.org/support/kb/connector_zotero_unavailable" target="_blank" rel="noopener">Is Zotero Running?</a> 說明：把瀏覽器整個關掉重開；擴充功能的「網站存取權」設成所有網站（On all sites）；暫時關掉廣告阻擋類的擴充功能</td></tr>
+<tr><td>按了 Connector，卻要我授權 zotero.org 帳號</td><td>它找不到桌面版，改問你要不要存到網路上的文獻庫</td><td>有裝桌面版的：先打開桌面版再按。沒裝的：照 <a href="#zc">教室電腦怎麼辦</a> 第二列授權</td></tr>
+<tr><td>工具列找不到 Connector</td><td>裝好後藏在拼圖圖示裡；或你用的是 Edge，卻只裝了 Chrome 版</td><td>拼圖 → 圖釘釘出來；用 Edge 就裝 Edge 版，或改用 Chrome</td></tr>
+<tr><td>存進來了，但不在 <code>W12-sleep</code></td><td>存的時候左邊選的不是 <code>W12-sleep</code></td><td>在「我的文獻庫」找到那一筆，拖到左邊 <code>W12-sleep</code> 上放開。下次先點選 <code>W12-sleep</code> 再存</td></tr>
+<tr><td>Google Scholar 要我證明不是機器人</td><td>全班同一個網路位址，查太多次（<a href="https://www.zotero.org/support/kb/site_access_limits" target="_blank" rel="noopener">官方說明</a>）</td><td>改用 PubMed 或直接用 DOI；Scholar 通常幾小時後會恢復</td></tr>
+<tr><td>魔術棒說查詢失敗（Lookup Failed）</td><td>DOI 貼錯，或前後多了空白</td><td>用本頁的「複製」鈕重貼，只貼 <code>10.</code> 開頭那一串</td></tr>
+<tr><td>匯出選單是灰的</td><td>那個文獻集是空的</td><td>先確認 <code>W12-sleep</code> 裡真的有那一筆</td></tr>
+<tr><td>教室電腦要管理員密碼、裝不了 Zotero</td><td>教室電腦鎖住安裝</td><td>看 <a href="#zc">教室電腦怎麼辦</a>，別硬試</td></tr>
+<tr><td>Overleaf 句子後面是 <code>[?]</code></td><td>代號或 <code>.bib</code> 檔名對不上</td><td>回 1-6 打開 <code>.bib</code> 抄代號，一個字都不能差；再 Recompile</td></tr>
+<tr><td>Overleaf 中文變方框、或一堆紅字</td><td>Compiler 不是 XeLaTeX</td><td>齒輪 Settings → Compiler 改 XeLaTeX，再 Recompile</td></tr>
+</tbody></table></div>
+<h3>gnuplot</h3>
+<div class="table"><table><thead><tr><th>看到什麼</th><th>通常是</th><th>怎麼處理</th></tr></thead><tbody>
+<tr><td>Windows 說找不到 <code>gnuplot</code>（不是內部或外部命令、無法辨識）</td><td>上週裝的版本不會自己加進 PATH；或終端機是安裝前就開的</td><td>關掉終端機重開；還是不行就用完整路徑：<code>&amp; "C:\Program Files\gnuplot\bin\gnuplot.exe" scatter.gp</code>（見 2-1）</td></tr>
+<tr><td><code>can't read data file "sleep-quiz.dat"</code></td><td>終端機不在練習包資料夾裡</td><td>回 2-1，在看得到 <code>sleep-quiz.dat</code> 的那一層按右鍵開終端機</td></tr>
+<tr><td>雙擊 <code>.gp</code> 檔，黑色視窗一閃就關</td><td>雙擊會跑完腳本馬上結束，看不到訊息</td><td>不要雙擊，照 2-1 在終端機打指令；跑完看資料夾裡的 PNG 修改時間</td></tr>
+<tr><td>跑完沒報錯，圖看起來沒變</td><td>開著的是舊圖，或改完 <code>.gp</code> 沒存檔</td><td>記事本按 <kbd>Ctrl</kbd>＋<kbd>S</kbd> 存檔；圖片視窗關掉重開</td></tr>
+<tr><td>把圖上的字改成中文，變方框或亂碼</td><td>gnuplot 找不到那台電腦的中文字型</td><td>今天圖上的字維持英文；中文說明寫在報告的圖說裡</td></tr>
+<tr><td><code>warning: iconv failed to convert degree sign</code></td><td>只是字元轉換提醒</td><td>可以忽略，圖照樣產生</td></tr>
+<tr><td>電腦根本沒有 gnuplot</td><td>教室電腦沒裝，筆電也沒裝</td><td>用練習包裡老師畫好的兩張圖做 2-4；有筆電的同學可以兩人一組</td></tr>
+</tbody></table></div>
+<h3>問 AI 可以，但照這三條</h3>
+<ol><li>不貼密碼、驗證碼。</li><li>只貼錯誤訊息，跟相關的那幾行。</li><li>AI 說「好了」，你自己再跑一次、打開看，才算好。</li></ol></section>
+
+<section id="next"><div class="kicker">下週 W13</div><h2>下週：換 AI 做同樣的事</h2>
+<p>今天你用手把「找論文 → 存進 Zotero → 核對 → 匯出 <code>.bib</code>」和「寫腳本 → 畫圖」各走了一遍。下週換 AI 上場：</p>
+<ul>
+<li>裝一個讓 AI 幫忙寫論文的技能（skill），看它怎麼做。</li>
+<li>讓 AI 透過 Zotero MCP（讓 AI 連上 Zotero 的接頭）替你加論文、查文獻庫。</li>
+<li>請 agent 用你今天存的文獻和畫的圖，寫一頁有引用、有圖的 LaTeX。</li>
+</ul>
+<div class="callout"><b>今天的東西留好：</b>Zotero 裡的 <code>W12-sleep</code>、<code>W12-sleep.bib</code>、兩張圖。下週一開始就是 1-9 那一步（Overleaf 引用），沒做的這週有空先試。你今天親手核對過，下週才看得出 AI 存進來的資料對不對。</div>
+<label class="check"><input type="checkbox" data-check="next"><span>我把今天的檔案存到雲端或自己的筆電了。</span></label></section>
+</main></div>
+<button type="button" class="theme" id="theme" aria-label="切換深色或淺色">深色／淺色</button>
+<footer><div class="wrap">資訊科技與應用 AA／AB · W12「Zotero 管文獻、gnuplot 畫圖：先用手做一遍」。練習資料 <code>sleep-quiz.dat</code> 為虛構。論文書目以 DOI 登記資料（Crossref）為準。Zotero 選單名稱以 Zotero 10 為準，各網站畫面以當下為準。2026-11-22 版。</div></footer>
+<script>
+(function(){'use strict';
+var $=function(id){return document.getElementById(id);};
+document.querySelectorAll('pre.copy').forEach(function(p){var b=document.createElement('button');b.type='button';b.className='cbtn';b.textContent='複製';b.addEventListener('click',function(){var t=p.innerText.replace(/\n$/,'');var done=function(){b.textContent='已複製';setTimeout(function(){b.textContent='複製';},1500);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,function(){fallback(t,done);});}else{fallback(t,done);}});(p.parentElement.classList.contains('cbox')?p.parentElement:p).appendChild(b);});
+function fallback(t,done){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){}document.body.removeChild(a);}
+var checks=Array.prototype.slice.call(document.querySelectorAll('input[data-check]'));var saved={};var key='it-apply-w12-zotero-gnuplot-20261122';
+try{saved=JSON.parse(localStorage.getItem(key)||'{}')||{};}catch(e){saved={};$('storage-note').textContent='這個瀏覽器無法讀取紀錄，關頁後勾選會消失；本頁照樣能用。';}
+function progress(){var n=checks.filter(function(c){return c.checked;}).length;$('progress').textContent='學習記錄 '+n+' / '+checks.length;}
+checks.forEach(function(c){c.checked=!!saved[c.dataset.check];c.addEventListener('change',function(){saved[c.dataset.check]=c.checked;try{localStorage.setItem(key,JSON.stringify(saved));}catch(e){$('storage-note').textContent='這個瀏覽器無法儲存，關頁後勾選會消失；本頁照樣能用。';}progress();});});progress();
+var root=document.documentElement;try{var th=localStorage.getItem(key+'-theme');if(th)root.setAttribute('data-theme',th);}catch(e){}
+$('theme').addEventListener('click',function(){var dark=root.getAttribute('data-theme')?root.getAttribute('data-theme')==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;var next=dark?'light':'dark';root.setAttribute('data-theme',next);try{localStorage.setItem(key+'-theme',next);}catch(e){}});
+})();
+</script></body></html>

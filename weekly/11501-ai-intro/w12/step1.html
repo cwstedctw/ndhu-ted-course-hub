@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W12 Step 1 · Tokenization</title>
+<meta name="description" content="Week 12 AI Intro, step 1 of 5: Tokenization, with a toy, core terms, Colab and a self-check.">
+<link rel="stylesheet" href="assets/w12.css">
+</head>
+<body data-step="1">
+<nav class="progress" id="progTop" aria-label="Steps"></nav>
+<main>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">AI Intro · Week 12 · Step 1 of 5</div>
+    <h1>Step 1 · Tokenization</h1>
+    <p class="zh">第 1 站 · 斷詞</p>
+  </div>
+</header>
+<section class="block"><div class="wrap"><div class="alert-colab" role="note">
+      <p><b>Do this first:</b> open the Colab notebook (button below) and choose Runtime → Run all, so it downloads in the background while you work. Keep that tab open for the whole class and switch back to it at later steps; don't reopen it at every step.</p>
+      <p>The first time, Google asks you to sign in, and Colab warns that this notebook was not written by Google: choose Run anyway to continue. Any Google account works; if your school account is blocked, use your personal Gmail. If you see red error text, do not worry: raise your hand, and meanwhile use the “real split” block in section 2. 用哪個 Google 帳號都可以；學校帳號被擋就換自己的 Gmail。看到紅色錯誤訊息不用慌：舉手，同時先看第 2 段「真的切法」。</p>
+      <p class="zh">先做這件事：打開 Colab 筆記本，按 Runtime → Run all（執行階段 → 全部執行），讓它在背景下載。這個分頁整堂課留著，後面幾站切回去看，不要每站重開。第一次開會要登入 Google，也會提醒「這本筆記本不是 Google 寫的」，按「仍要執行」繼續即可。</p>
+      <div id="colabSlot"></div>
+    </div></div></section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">1</span>The question this step answers</h2>
+    <p class="zh">這一站回答的問題</p>
+    <p class="bigq">How does text become numbers the model can use?</p>
+    <p class="bigq zh">文字怎麼變成模型能用的數字？</p>
+    <div class="hualien"><h3 style="margin-top:0">Our sentence at this step: “Hualien is famous for” · 同一句走到這一站</h3>
+      <p>Type <code>Hualien is famous for</code> into the official Stage 1 box. Once the full tokenizer has loaded, you will see the real pieces and their ID numbers. Look for the <code>▁</code> mark: it means “a space came before this piece” (on its own, it is just a space). Each ID is then used to look up a vector, and the later steps work on those vectors.</p>
+      <p class="zh">把 “Hualien is famous for” 打進官方第 1 站的框，完整斷詞器載入之後，會看到真的切法和每塊的編號。注意 ▁ 記號：代表這塊前面有空格。每個編號接著拿去查一個向量，後面各站處理的是這些向量。</p>
+    </div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">2</span>Guess first</h2>
+    <p class="zh">先猜</p>
+    <p>First: how many pieces will “Hualien is famous for” become? Then: will “2026” be one piece or four? Will a Chinese sentence be one piece per character?</p>
+    <p class="zh">先猜 “Hualien is famous for” 會被切成幾塊？再猜「2026」是一塊還是四塊、中文句子會不會一個字一塊。</p>
+    <details class="guess"><summary>Write your guess on paper, then open the answer. 先猜再點開</summary><p>“Hualien is famous for”: 6 pieces when we ran it (H｜ual｜ien｜▁is｜▁famous｜▁for). “2026”: four, plus one more: when we ran the real Gemma 4 tokenizer in Colab, in “I love 🍉 in 2026”, the number became one piece per digit (2｜0｜2｜6), with an extra space piece <code>▁</code> in front of it. The guide says the same rule (its example: “140” becomes 1, 4, 0). Chinese is not one piece per character: in 花蓮的海很藍, 的海 stuck together. Open the real split below, then check it yourself in the official box. 在 “I love 🍉 in 2026” 這一句裡，真的斷詞器把 2026 切成一位數一塊，前面還多一個空格塊；中文不是一字一塊，「的海」黏在一起。看下面真的切法，再去官方框自己打一次。</p></details>
+  </div>
+</section>
+<section class="block"><div class="wrap"><details class="guess" id="real"><summary>After you guess: open the real split 猜完再點開：真的切法</summary>
+      <span class="label-real">Real output from the Gemma 4 tokenizer, run in Colab on 2026-11-23</span>
+      <p style="font-size:.92rem">Each box is one token; the small number under it is its ID. <code>▁</code> = a space comes before this piece; when ▁ is a piece on its own, it is just a space. <code>&lt;0xE9&gt;</code> = one byte of a character the vocabulary doesn't have. 每格是一塊，下面的小數字是編號；▁＝前面有空格，單獨一塊時它本身就是一個空格；&lt;0xE9&gt;＝詞表沒有的字被拆成的位元組。</p>
+      <p style="margin:.6rem 0 .1rem"><code>Hualien is famous for</code> → 6 pieces</p><div class="tokrow"><span class="tok"><span>H</span><small class="tid">236814</small></span><span class="tok"><span>ual</span><small class="tid">884</small></span><span class="tok"><span>ien</span><small class="tid">1843</small></span><span class="tok"><span>▁is</span><small class="tid">563</small></span><span class="tok"><span>▁famous</span><small class="tid">9639</small></span><span class="tok"><span>▁for</span><small class="tid">573</small></span></div><p style="margin:.6rem 0 .1rem"><code>The cat sat on the mat.</code> → 7 pieces</p><div class="tokrow"><span class="tok"><span>The</span><small class="tid">818</small></span><span class="tok"><span>▁cat</span><small class="tid">5866</small></span><span class="tok"><span>▁sat</span><small class="tid">2838</small></span><span class="tok"><span>▁on</span><small class="tid">580</small></span><span class="tok"><span>▁the</span><small class="tid">506</small></span><span class="tok"><span>▁mat</span><small class="tid">1756</small></span><span class="tok"><span>.</span><small class="tid">236761</small></span></div><p style="margin:.6rem 0 .1rem"><code>花蓮的海很藍</code> → 5 pieces</p><div class="tokrow"><span class="tok"><span>花</span><small class="tid">238078</small></span><span class="tok"><span>蓮</span><small class="tid">242482</small></span><span class="tok"><span>的海</span><small class="tid">132046</small></span><span class="tok"><span>很</span><small class="tid">237614</small></span><span class="tok"><span>藍</span><small class="tid">241339</small></span></div><p style="margin:.6rem 0 .1rem"><code>加鬮</code> → 4 pieces</p><div class="tokrow"><span class="tok"><span>加</span><small class="tid">237410</small></span><span class="tok"><span>&lt;0xE9&gt;</span><small class="tid">471</small></span><span class="tok"><span>&lt;0xAC&gt;</span><small class="tid">410</small></span><span class="tok"><span>&lt;0xAE&gt;</span><small class="tid">412</small></span></div><p style="margin:.6rem 0 .1rem"><code>I love 🍉 in 2026</code> → 10 pieces</p><div class="tokrow"><span class="tok"><span>I</span><small class="tid">236777</small></span><span class="tok"><span>▁love</span><small class="tid">2765</small></span><span class="tok"><span>▁</span><small class="tid">236743</small></span><span class="tok"><span>🍉</span><small class="tid">248093</small></span><span class="tok"><span>▁in</span><small class="tid">528</small></span><span class="tok"><span>▁</span><small class="tid">236743</small></span><span class="tok"><span>2</span><small class="tid">236778</small></span><span class="tok"><span>0</span><small class="tid">236771</small></span><span class="tok"><span>2</span><small class="tid">236778</small></span><span class="tok"><span>6</span><small class="tid">236825</small></span></div><p style="margin:.6rem 0 .1rem"><code>2026</code> → 4 pieces</p><div class="tokrow"><span class="tok"><span>2</span><small class="tid">236778</small></span><span class="tok"><span>0</span><small class="tid">236771</small></span><span class="tok"><span>2</span><small class="tid">236778</small></span><span class="tok"><span>6</span><small class="tid">236825</small></span></div>
+      <p>What we saw: “Hualien” is not one piece but three (H｜ual｜ien). In “I love 🍉 in 2026”, 2026 is one piece per digit, with an extra space piece <code>▁</code> in front. The Chinese sentence is not one piece per character: 的海 sticks together. The rare character 鬮 becomes three byte pieces. Now type the same sentences into the official Stage 1 box and compare. 我們看到：Hualien 被切成三塊；在 “I love 🍉 in 2026” 這一句裡，2026 一位數一塊，前面還多一個空格塊；中文不是一字一塊，「的海」黏在一起；鬮變成三個位元組塊。請到官方第 1 站自己打一次對照。</p>
+    </details></div></section>
+<section class="block" id="video" data-key="step1"><div class="wrap"><h2><span class="n">▶</span>Short video</h2><p class="zh">看短片</p><div class="vslot"></div><details class="transcript"><summary>Transcript 逐幕文字（English narration + 中文字幕）</summary><ol><li><p>How does a computer read raw words like Hualien is famous for? Computers only do math on numbers, never directly on letters.</p><p class="zh">電腦怎麼讀文字？電腦只會算數字，沒辦法直接算英文字母。</p></li><li><p>Think of cooking: a chef chops whole ingredients into bite-sized pieces first. Cutting text into small pieces is called tokenization.</p><p class="zh">就像煮菜前要先切菜，把文字切成小塊的步驟叫斷詞。</p></li><li><p>Each piece is a token, and its fixed list number is a Token ID. All five Gemma 4 models share 262,144 numbers.</p><p class="zh">每小塊叫 token，配上 0 到 262,143 號。</p></li><li><p>Common words often stay in one piece, like cat at 5866 and the at 506, each with its leading space. Rare or long words often get chopped into smaller pieces.</p><p class="zh">常見字常常整塊留著，像前面帶空格的 cat 是 5866；罕見字常被切細。</p></li><li><p>Even an ultra-rare character never gets thrown away. If it is missing, Gemma 4 slices it into raw bytes instead of unknown.</p><p class="zh">遇到詞表沒有的冷僻字也不丟掉，改切更細的位元組。</p></li><li><p>Remember one key fact: chopping text uses zero AI thinking yet. It is just a fixed lookup table turning pieces into integer IDs.</p><p class="zh">這一步還沒動到神經網路，只是照表查出整數編號。</p></li><li><p>Next, those bare IDs need meaning. First, try your own sentence in the live demo and see how Gemma 4 chops it.</p><p class="zh">光有編號還沒意義。先到官方頁打一句你自己的話，看它怎麼切。</p></li></ol></details></div></section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">3</span>On the official guide</h2>
+    <p class="zh">去官方頁做什麼</p>
+    <ol class="steps">
+      <li>Open the official guide. The first time, a cookie window appears with “Accept” and “Reject”: either one works, you can press “Reject”. 第一次開會跳 Cookie 視窗，按哪一顆都能繼續，可以按「Reject」。</li>
+      <li>In the row of buttons at the very top of the page, press “01 Tokenization”. 按頁面最上方那一排的「01 Tokenization」。</li>
+      <li>Above the text box labelled “Text to tokenize with Gemma 4”, press the example button “Everyday English” once and look at the result. Each piece shows like “▁runs #8784” (the number after # is its ID). 先按文字框上方的範例鈕「Everyday English」看一次；每一塊會顯示成「▁runs #8784」，# 後面是編號。</li>
+      <li>Clear the text box and type the five sentences listed in section 4 below, one at a time (English, Chinese, a rare character, an emoji and a number). You can copy and paste them from this page. 把文字框清掉，一句一句打第 4 段列的那五句；打不出來的字（表情符號、罕用字）直接從這一頁複製貼上。</li>
+      <li>If the official page is too slow, skip it: open “the real split” block above and use that instead. 官方頁太慢就跳過，直接看上面「真的切法」那一塊。</li>
+      <li>Press “>_ Read the details” and read under the heading “Why subwords instead of characters or whole words?”, then “Inside Gemma 4's 262,144-token vocabulary”. 按「>_ Read the details」展開說明，讀這兩個標題底下。</li>
+      <li>Optional: “What happens when a word isn't in the vocabulary? (e.g., 똠얌꿍 and 加鬮さん)” explains the byte pieces like <code>&lt;0xE9&gt;</code>. 自選：罕用字怎麼變成位元組片段。</li>
+    </ol>
+    <p class="count">Button names are as seen on 2026-11-23; they may differ after the official page is updated. 按鈕名稱是 2026-11-23 看到的，官方改版後可能不同。</p>
+    <p><a class="btn-official" href="https://gemma.ai/learn/how-llms-work/" target="_blank" rel="noopener">Open the official guide (new tab) ↗</a></p>
+    <p style="font-size:.92rem">Real: once the full tokenizer has loaded, the pieces and IDs are real. If you are fully offline with no cached copy, the official page uses a small built-in subset instead. 真的：完整斷詞器載入後，切法與編號是真的；完全離線又沒有快取時，官方頁會改用內建的小子集。</p>
+    <p style="font-size:.92rem">If the official page is slow, open the “real split” block in section 2 above instead; the teacher will project the official demo. 官方頁很慢的話，先看上面第 2 段「真的切法」那一塊，老師會投影。</p>
+  </div>
+</section>
+
+<section class="block" id="toy">
+  <div class="wrap">
+    <h2><span class="n">4</span>Play</h2>
+    <p class="zh">玩一下</p>
+    <div class="toy" id="toy1">
+      <h3>① Try these in the official tokenizer (Stage 1)</h3>
+      <p><b>This is not a toy: these are the five sentences to type into the official page.</b> 這裡不是玩具，是要你打進官方頁的五句。</p>
+      <p>Once its full tokenizer has loaded, Stage 1 of the official guide runs Gemma 4's <b>real</b> tokenizer, so there is no fake toy here. Type each input below into the official Stage 1 box. Next to each one is what we saw when we ran the same tokenizer in Colab on 2026-11-23; check that the official page shows the same.</p>
+      <p class="zh">完整斷詞器載入之後，官方第 1 站跑的就是 Gemma 4 真正的斷詞器，所以這裡不做假的。把下面每一句打進官方第 1 站的框；每句後面是我們 11/23 在 Colab 跑同一個斷詞器看到的結果，對照官方頁是不是一樣。</p>
+      <ol class="trylist">
+        <li><code>Hualien is famous for</code> — we saw 6 pieces: H｜ual｜ien｜▁is｜▁famous｜▁for. A rare place name is cut into chunks; common words often stay whole. 罕見的地名被切成幾塊，常用字各自一塊。</li>
+        <li><code>The cat sat on the mat.</code> — we saw 7 pieces, IDs 818, 5866, 2838, 580, 506, 1756, 236761 (the same list the guide gives). 7 塊，編號跟導覽寫的一樣。</li>
+        <li><code>花蓮的海很藍</code> — 6 characters but 5 pieces: 的海 sticks together as one piece. 6 個字但只有 5 塊：「的海」黏成一塊。</li>
+        <li><code>加鬮</code> — 加 is one piece; the rare 鬮 becomes three byte pieces <code>&lt;0xE9&gt;</code> <code>&lt;0xAC&gt;</code> <code>&lt;0xAE&gt;</code>. 鬮變成三個位元組塊。</li>
+        <li><code>I love 🍉 in 2026</code> — the emoji is one piece with a separate space piece <code>▁</code> before it; 2026 is one piece per digit, also with a space piece in front. 西瓜一塊、前面有獨立的空格塊；2026 一位數一塊，前面也多一個空格塊。</li>
+      </ol>
+      <p>Words to check first: <a href="#term-token">token</a>, <a href="#term-subword">subword tokenization</a>, <a href="#term-token-id">Token ID</a>.</p>
+    </div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">5</span>Core terms for this step</h2>
+    <p class="zh">這一站的核心名詞</p>
+    <p>Guess each card's answer before you open it. Other words from this stage: <a href="terms.html?stage=1#terms">all Stage 1 terms in the dictionary</a>. 先猜再點開；這一站其他名詞在名詞站。</p>
+    <div id="cores" data-slugs="tokenization token subword"></div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">6</span>Run the real model (Colab)</h2>
+    <p class="zh">用真的模型跑（Colab）</p>
+    <div class="colab"><p>Run <b>Step 1 Tokenization</b> in the notebook. This step uses the real Gemma 4 tokenizer. You will see “Hualien is famous for” cut into pieces with their IDs (when we ran it on 11/23: 6 pieces, H｜ual｜ien｜▁is｜▁famous｜▁for; yours should match), a check that the IDs match the guide, and a cell where you type your own sentence. Describe one thing that surprised you. 跑筆記本的 Step 1，用的是真的 Gemma 4 斷詞器：會看到同一句被切成哪幾塊、每塊的編號（我們 11/23 那次是 6 塊），以及換成你自己句子的那一格。請描述一件讓你意外的事。</p>
+    <p>Use the Colab tab you opened at the top of this page. 用本頁最上面開的那個 Colab 分頁。</p></div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">7</span>Check yourself</h2>
+    <p class="zh">自我檢測</p>
+    <div id="quizBox" data-q="0"></div>
+    <p><a class="next-btn" href="step2.html">Next: Step 2 · Embeddings →</a></p>
+  </div>
+</section>
+</main>
+<nav class="progress" id="progBot" aria-label="Steps (bottom)"></nav>
+<footer>
+  <div class="wrap">
+    <p>Source for every Gemma fact: Google's official guide “How LLMs work (with Gemma 4)”, gemma.ai/learn/how-llms-work/ (read 2026-11-22). Explanations, analogies, toys and examples are our own words; toy numbers are made up unless marked “from the guide”. If anything here disagrees with the official page, the official page wins. 所有 Gemma 事實出自官方導覽；解釋、比喻、玩具是我們自己寫的，玩具數字除非標明都是假的。與官方不一致時以官方為準。</p>
+    <p>Dictionary of all 113 terms: <a href="terms.html">terms.html</a>. 全部名詞：名詞站。</p>
+  </div>
+</footer>
+<script src="assets/config.js"></script>
+<script src="assets/terms-data.js"></script>
+<script src="assets/w12.js"></script>
+</body>
+</html>

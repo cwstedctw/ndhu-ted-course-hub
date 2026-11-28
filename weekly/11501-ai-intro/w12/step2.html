@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W12 Step 2 · Embeddings</title>
+<meta name="description" content="Week 12 AI Intro, step 2 of 5: Embeddings, with a toy, core terms, Colab and a self-check.">
+<link rel="stylesheet" href="assets/w12.css">
+</head>
+<body data-step="2">
+<nav class="progress" id="progTop" aria-label="Steps"></nav>
+<main>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">AI Intro · Week 12 · Step 2 of 5</div>
+    <h1>Step 2 · Embeddings</h1>
+    <p class="zh">第 2 站 · 嵌入</p>
+  </div>
+</header>
+
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">1</span>The question this step answers</h2>
+    <p class="zh">這一站回答的問題</p>
+    <p class="bigq">How does an ID number turn into something with meaning?</p>
+    <p class="bigq zh">一個編號怎麼變成帶有意思的東西？</p>
+    <div class="hualien"><h3 style="margin-top:0">Our sentence at this step: “Hualien is famous for” · 同一句走到這一站</h3>
+      <p>Each piece of <code>Hualien is famous for</code> now has an ID from Step 1. Here every ID looks up its own long list of numbers, called an embedding: 1,536 numbers per piece in E2B, 2,560 in E4B, 5,376 in 31B (from the guide). The same piece always starts with the same list, wherever it appears.</p>
+      <p class="zh">同一句的每一塊都有第 1 站的編號；這一站用編號去查一串很長的數字（嵌入向量）：E2B 每塊 1,536 個數字、E4B 2,560 個、31B 5,376 個。同一塊不管出現在哪，起始那串數字都一樣。</p>
+    </div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">2</span>Guess first</h2>
+    <p class="zh">先猜</p>
+    <p>Which is closer to “cat”: “kitten” or “car”?</p>
+    <p class="zh">哪個比較接近 cat：kitten 還是 car？</p>
+    <details class="guess"><summary>Write your guess on paper, then open the answer. 先猜再點開</summary><p>In our toy below, both dog (1.00) and kitten (0.99) score very close to cat, and car is far. The guide reports cat–kitten at 0.43 in Gemma 4 E2B's starting embedding table (Layer 0), lower than the toy value. In the toy, the score means: +1 = the two arrows point the same way, 0 = they are at right angles, −1 = opposite. 玩具裡 dog（1.00）和 kitten（0.99）都跟 cat 很近，car 很遠；導覽說 E2B 起始嵌入表（Layer 0）裡這一對只有 0.43，比示意值低。分數的意思：+1 同方向、0 互相垂直、−1 相反。</p></details>
+  </div>
+</section>
+
+<section class="block" id="video" data-key="step2"><div class="wrap"><h2><span class="n">▶</span>Short video</h2><p class="zh">看短片</p><div class="vslot"></div><details class="transcript"><summary>Transcript 逐幕文字（English narration + 中文字幕）</summary><ol><li><p>Why can't Gemma 4 understand a Token ID yet? ID 5866 for cat is just an arbitrary label, like a dictionary page number.</p><p class="zh">為什麼光有編號還不懂意思？編號只是頁碼，沒有語意。</p></li><li><p>Think of a map: every spot gets coordinates so nearby places sit together. Giving each ID meaning coordinates is called an embedding.</p><p class="zh">想成一張地圖：每個字換成座標，這一步叫做嵌入。</p></li><li><p>Each token gets a long list of numbers called a vector. Gemma 4 E2B uses 1,536 numbers, and 31B uses 5,376.</p><p class="zh">這串數叫向量，維度從 1,536 到 5,376。</p></li><li><p>On our sketch map, after reading massive text, similar meanings cluster on this map. Taroko lands near ocean and mountains, far away from banana and laptop.</p><p class="zh">在我們畫的示意地圖上，模型看過大量文章後，意思接近的字會自動靠在一起。</p></li><li><p>We measure closeness by the angle between vectors, called cosine similarity. In Gemma 4 E2B's starting table, king and queen score 0.58, cat and kitten 0.43.</p><p class="zh">取夾角的餘弦叫餘弦相似度，國王配皇后是 0.58。</p></li><li><p>One limit remains: every time a word appears, this map gives one fixed spot. It cannot tell river bank from money bank yet.</p><p class="zh">但這只是固定起點：同一個字還沒看上下文，座標都一樣。</p></li><li><p>Now every piece of our sentence holds map coordinates. Next, Step Three lets them talk to each other for context.</p><p class="zh">現在句子裡每一塊都有了座標，下一站要讓它們互相看上下文。</p></li></ol></details></div></section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">3</span>On the official guide</h2>
+    <p class="zh">去官方頁做什麼</p>
+    <ol class="steps">
+      <li>In the row of buttons at the very top of the page, press “02 Embeddings”. Stay on “Tab A: Lookup &amp; Vector Space” (you can skip Tab B). 按頁面最上方的「02 Embeddings」，只看「Tab A: Lookup &amp; Vector Space」。</li>
+      <li>Look at the ID and the first stored numbers for a word, then try the analogy buttons “king − man + woman ≈ queen” and “kitten − cat + dog ≈ puppy”. Remember: the flat 2-D map is illustrative. 看一個字的編號和前幾個數字，再按兩顆類比鈕；平面圖是示意。</li>
+      <li>Press “>_ Read the details” and read under the heading “2. Embeddings: Turning IDs into meaning”, then “High-dimensional semantic space”. 按「>_ Read the details」，讀這兩個標題底下。</li>
+    </ol>
+    <p class="count">Button names are as seen on 2026-11-23; they may differ after the official page is updated. 按鈕名稱是 2026-11-23 看到的，官方改版後可能不同。</p>
+    <p><a class="btn-official" href="https://gemma.ai/learn/how-llms-work/" target="_blank" rel="noopener">Open the official guide (new tab) ↗</a></p>
+    <p style="font-size:.92rem">Real: token IDs, the first 8 stored numbers, model specs. Simulation: the 2-D map, similarity bars, analogy arrows, PLE bar spectrum. 真的：編號、前 8 個數字、規格；示意：平面圖、相似度長條、類比箭頭、PLE 長條。</p>
+    <p style="font-size:.92rem">If the official page is slow, keep going with the toy here; the teacher will project the official demo. 官方頁很慢的話，先玩這裡的玩具，老師會投影。</p>
+  </div>
+</section>
+
+<section class="block" id="toy">
+  <div class="wrap">
+    <h2><span class="n">4</span>Play</h2>
+    <p class="zh">玩一下</p>
+    <div class="toy" id="toy2">
+      <h3>② Meaning map: how close are two words? (Stage 2)</h3>
+      <span class="label-ill">Made-up illustrative vectors</span>
+      <p><b>Real embeddings have thousands of directions</b> (the guide gives 1,536 numbers per token in E2B, up to 5,376 in 31B), and nobody labels them. <b>This 2-D map and these 3-number vectors are made up</b> so you can see the idea: each word gets 3 invented numbers — how much it is an animal, a vehicle, a food. Similarity is the <a href="#term-cosine">cosine similarity</a> of those 3 numbers.</p>
+      <p class="zh">真正的嵌入向量有上千個方向（E2B 每個 token 有 1,536 個數字，31B 有 5,376 個），而且沒有人幫它們貼標籤。這張平面圖和每個字的 3 個數字都是編出來的，只是讓你看懂概念。</p>
+      <div class="row" id="vecBtns" role="group" aria-label="Pick a word"></div>
+      <svg class="map" id="vecMap" viewBox="0 0 400 300" role="img" aria-label="Made-up 2-D map of six words"></svg>
+      <div class="bars" id="vecBars"></div>
+      <div class="explain" id="vecExplain"></div>
+      <p style="font-size:.9rem">Compare with reality: the guide reports cat–kitten at only 0.43 in Gemma 4 E2B's starting embedding table (Layer 0) — lower than our toy's value. 跟真的比：導覽說 E2B 起始嵌入表（Layer 0）裡 cat 和 kitten 只有 0.43，這一對在真模型裡的分數比示意值低。</p>
+    </div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">5</span>Core terms for this step</h2>
+    <p class="zh">這一站的核心名詞</p>
+    <p>Guess each card's answer before you open it. Other words from this stage: <a href="terms.html?stage=2#terms">all Stage 2 terms in the dictionary</a>. 先猜再點開；這一站其他名詞在名詞站。</p>
+    <div id="cores" data-slugs="embedding cosine"></div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">6</span>Run the real model (Colab)</h2>
+    <p class="zh">用真的模型跑（Colab）</p>
+    <div class="colab"><p>This step uses Gemma 3 270M, a much smaller model from the same family: the idea is the same, the numbers are different. 這一段用的是同家族、小很多的 Gemma 3 270M：道理一樣、數字不一樣。 Run <b>Step 2 Embeddings</b> in the notebook. You will see the list of numbers for “cat” and a similarity table for cat, kitten, dog, car, truck, banana, tiger. When we ran it on 11/23, cat–dog was 0.80 but cat–kitten only 0.53, which is not what most people expect; yours may differ slightly. Why might a model put cat closer to dog than to kitten? Describe what you see. 跑筆記本的 Step 2，會看到 cat 的那串數字和一張相似度表。我們 11/23 那次 cat–dog 是 0.80、cat–kitten 只有 0.53，跟直覺不一樣；你的可能略有不同。想想為什麼，描述你看到的。</p>
+    <div id="colabSlot" data-label="Back to your Colab tab; click here only if it is not open yet ↗"></div><p class="zh">回到你的 Colab 分頁；還沒開才按這裡。</p></div>
+  </div>
+</section>
+<section class="block">
+  <div class="wrap">
+    <h2><span class="n">7</span>Check yourself</h2>
+    <p class="zh">自我檢測</p>
+    <div id="quizBox" data-q="5"></div>
+    <p><a class="next-btn" href="step3.html">Next: Step 3 · Attention & layers →</a></p>
+  </div>
+</section>
+</main>
+<nav class="progress" id="progBot" aria-label="Steps (bottom)"></nav>
+<footer>
+  <div class="wrap">
+    <p>Source for every Gemma fact: Google's official guide “How LLMs work (with Gemma 4)”, gemma.ai/learn/how-llms-work/ (read 2026-11-22). Explanations, analogies, toys and examples are our own words; toy numbers are made up unless marked “from the guide”. If anything here disagrees with the official page, the official page wins. 所有 Gemma 事實出自官方導覽；解釋、比喻、玩具是我們自己寫的，玩具數字除非標明都是假的。與官方不一致時以官方為準。</p>
+    <p>Dictionary of all 113 terms: <a href="terms.html">terms.html</a>. 全部名詞：名詞站。</p>
+  </div>
+</footer>
+<script src="assets/config.js"></script>
+<script src="assets/terms-data.js"></script>
+<script src="assets/w12.js"></script>
+</body>
+</html>

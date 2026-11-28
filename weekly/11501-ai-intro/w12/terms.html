@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gemma Learn Companion</title>
+<meta name="description" content="Every term in Google's official Gemma 'How LLMs work' guide, explained for non-IT students, with five small toys, a class route and a self-check quiz.">
+<style>
+:root{
+  --bg:#f6f4ee; --surface:#ffffff; --surface-2:#eef1ef; --ink:#1b262b; --muted:#56656c;
+  --line:#d6d2c6; --accent:#0d6672; --accent-ink:#ffffff; --accent-soft:#d7ecee;
+  --warm:#a8461f; --warm-soft:#f6e3d8; --gold:#8a6400; --gold-soft:#f5ebcc;
+  --blue:#2a5f93; --blue-soft:#dde8f3; --grey:#6c767b; --grey-soft:#e7e8e6;
+  --mask:#c9c6bd; --ok:#1f6e3a; --ok-soft:#dcefe2; --bad:#9b2c2c; --bad-soft:#f6dddd;
+  --focus:#d97706;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121719; --surface:#1a2124; --surface-2:#202a2e; --ink:#e5e8e4; --muted:#a1adb2;
+    --line:#33403f; --accent:#5bb8c3; --accent-ink:#0e1a1c; --accent-soft:#1d383c;
+    --warm:#e8956c; --warm-soft:#3a2a22; --gold:#e2bd5c; --gold-soft:#3a321c;
+    --blue:#8cb8e6; --blue-soft:#1f2e3d; --grey:#a3abaf; --grey-soft:#2a3134;
+    --mask:#3c4547; --ok:#7fd09a; --ok-soft:#1d3426; --bad:#f19a9a; --bad-soft:#3d2224;
+    --focus:#f5a524; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121719; --surface:#1a2124; --surface-2:#202a2e; --ink:#e5e8e4; --muted:#a1adb2;
+  --line:#33403f; --accent:#5bb8c3; --accent-ink:#0e1a1c; --accent-soft:#1d383c;
+  --warm:#e8956c; --warm-soft:#3a2a22; --gold:#e2bd5c; --gold-soft:#3a321c;
+  --blue:#8cb8e6; --blue-soft:#1f2e3d; --grey:#a3abaf; --grey-soft:#2a3134;
+  --mask:#3c4547; --ok:#7fd09a; --ok-soft:#1d3426; --bad:#f19a9a; --bad-soft:#3d2224;
+  --focus:#f5a524; color-scheme: dark;
+}
+*{box-sizing:border-box}
+html{font-size:19px;scroll-behavior:smooth;scroll-padding-top:4.2rem}
+@media (max-width:640px){html{font-size:17px}}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;
+  line-height:1.55;overflow-wrap:anywhere}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+code,.mono{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:.92em}
+code{background:var(--surface-2);padding:.05em .3em;border-radius:4px;word-break:break-word}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px}
+h1{font-size:2rem;line-height:1.2;margin:.2em 0 .1em}
+h2{font-size:1.5rem;margin:0 0 .5em;line-height:1.25}
+h3{font-size:1.15rem;margin:1.2em 0 .4em}
+.zh{color:var(--ink);font-size:1em}
+.sub{color:var(--muted);margin:.2em 0 0}
+header.top{background:var(--surface);border-bottom:1px solid var(--line);padding:1.2rem 0 1rem}
+.kicker{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.note-slow{margin:1rem 0 0;border-left:6px solid var(--warm);background:var(--warm-soft);padding:.7rem .9rem;border-radius:6px}
+.note-slow p{margin:.15em 0}
+.btn-official{display:inline-block;margin-top:.8rem;background:var(--accent);color:var(--accent-ink);text-decoration:none;
+  padding:.55rem 1rem;border-radius:8px;font-weight:700}
+nav.jump{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+nav.jump ul{list-style:none;margin:0 auto;padding:.4rem 16px;display:flex;flex-wrap:wrap;gap:.3rem .9rem;max-width:1000px}
+nav.jump a{text-decoration:none;font-weight:600;font-size:.9rem}
+section.block{padding:2rem 0 1rem;border-bottom:1px solid var(--line)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:1rem 1.1rem;margin:.8rem 0}
+ol.steps{padding-left:1.3rem;margin:.4rem 0}
+ol.steps li{margin:.3rem 0}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:.4rem .5rem;text-align:left;vertical-align:top}
+th{background:var(--surface-2)}
+.tablewrap{max-width:100%;overflow-x:auto}
+.tag-real{color:var(--ok);font-weight:700}
+.tag-sim{color:var(--warm);font-weight:700}
+
+/* term station */
+.controls{display:flex;flex-direction:column;gap:.6rem;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.8rem}
+.controls label.search{display:flex;flex-direction:column;gap:.2rem;font-weight:600}
+.controls input[type=search]{font-size:1rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}
+.chips .lbl{font-size:.85rem;color:var(--muted);margin-right:.2rem;min-width:3.2em}
+.chip-btn{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:.25rem .7rem;font-size:.85rem;cursor:pointer;font-family:inherit}
+.chip-btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.small-btn{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:8px;padding:.3rem .7rem;font-size:.85rem;cursor:pointer;font-family:inherit}
+.count{font-size:.9rem;color:var(--muted)}
+#termList{display:flex;flex-direction:column;gap:.5rem;margin-top:.8rem}
+details.card{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--grey);border-radius:8px}
+details.card.t1{border-left-color:var(--gold)}
+details.card.t2{border-left-color:var(--blue)}
+details.card > summary{cursor:pointer;padding:.6rem .8rem;list-style:none}
+details.card > summary::-webkit-details-marker{display:none}
+.sumline{display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem .6rem}
+.tiermark{font-size:1rem}
+.term{font-weight:700;font-size:1.05rem}
+.stagechip{font-size:.75rem;border:1px solid var(--line);border-radius:999px;padding:.05rem .5rem;color:var(--muted);white-space:nowrap}
+.qline{margin:.2rem 0 0;color:var(--muted);font-size:.95rem}
+.qline b{color:var(--ink);font-weight:600}
+.cardbody{padding:0 .9rem .8rem;border-top:1px dashed var(--line)}
+.def{margin:.6rem 0 .2rem;font-size:1.02rem}
+.def.zh{border-left:3px solid var(--accent);padding-left:.6rem}
+.def.en{border-left:3px solid var(--ink);padding-left:.6rem}
+dl.fields{margin:.5rem 0 0;display:grid;grid-template-columns:minmax(7.5em,auto) 1fr;gap:.35rem .8rem}
+dl.fields dt{font-weight:700;font-size:.88rem;color:var(--muted)}
+dl.fields dd{margin:0}
+@media (max-width:640px){dl.fields{grid-template-columns:1fr}dl.fields dt{margin-top:.3rem}}
+details.selftest{margin-top:.6rem;background:var(--gold-soft);border-radius:8px;padding:.4rem .7rem}
+details.selftest summary{cursor:pointer;font-weight:600}
+details.card.flash{box-shadow:0 0 0 4px var(--focus)}
+a.tl{text-decoration:underline dotted;text-underline-offset:3px}
+.related a{margin-right:.5rem;display:inline-block}
+
+/* toys */
+.toy{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:1rem;margin:1rem 0}
+.toy h3{margin-top:0}
+.label-ill{display:inline-block;background:var(--warm-soft);color:var(--warm);font-weight:700;font-size:.8rem;border-radius:6px;padding:.1rem .5rem;margin:.2rem 0}
+.label-real{display:inline-block;background:var(--ok-soft);color:var(--ok);font-weight:700;font-size:.8rem;border-radius:6px;padding:.1rem .5rem}
+.row{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:.5rem 0}
+.wbtn{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:.25rem .55rem;font-size:.95rem;cursor:pointer;font-family:inherit}
+.wbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.wbtn.masked{background:repeating-linear-gradient(45deg,var(--mask) 0 4px,transparent 4px 8px);color:var(--muted)}
+.bars{display:flex;flex-direction:column;gap:.25rem;margin:.6rem 0}
+.bar{display:grid;grid-template-columns:7.5em 1fr 5.4em;gap:.5rem;align-items:center;font-size:.9rem}
+@media (max-width:640px){.bar{grid-template-columns:6em 1fr 5em;gap:.35rem}}
+.bar .track{position:relative;height:1.1rem;background:var(--grey-soft);border-radius:4px;overflow:hidden}
+.bar .fill{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:4px;transition:width .2s}
+.bar .ghost{position:absolute;left:0;top:0;bottom:0;background:var(--blue-soft);border-right:2px solid var(--blue)}
+.bar.cut .fill{background:transparent}
+.bar.cut .name{color:var(--muted);text-decoration:line-through}
+.bar.masked .track{background:repeating-linear-gradient(45deg,var(--mask) 0 4px,transparent 4px 8px)}
+.bar .pct{text-align:right;font-variant-numeric:tabular-nums}
+.explain{background:var(--accent-soft);border-radius:8px;padding:.5rem .7rem;margin:.5rem 0}
+.slider{display:grid;grid-template-columns:8.5em 1fr 6.5em;gap:.5rem;align-items:center;margin:.35rem 0}
+.slider input{width:100%}
+@media (max-width:640px){.slider{grid-template-columns:1fr 5.5em}.slider label{grid-column:1 / -1}}
+.hist{display:flex;flex-wrap:wrap;gap:.3rem;min-height:2rem;margin:.4rem 0}
+.hist span{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:.1rem .45rem;font-size:.9rem}
+.toybtn{background:var(--accent);color:var(--accent-ink);border:none;border-radius:8px;padding:.45rem .9rem;font-weight:700;cursor:pointer;font-family:inherit;font-size:.95rem}
+.toybtn.secondary{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+.tokrow{display:flex;flex-wrap:wrap;gap:.25rem;margin:.4rem 0}
+.tok{border:1px solid var(--line);border-radius:6px;padding:.1rem .4rem;background:var(--surface-2);font-family:ui-monospace,Consolas,monospace;font-size:.9rem;white-space:pre}
+.tok.gen{background:var(--accent-soft);border-color:var(--accent)}
+.tok.new{background:var(--accent);color:var(--accent-ink)}
+.tok.stop{background:var(--warm-soft);border-color:var(--warm)}
+svg.map{width:100%;max-width:520px;height:auto;display:block;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+.trylist li{margin:.5rem 0}
+.trylist code{font-size:1em}
+
+/* route */
+.station{border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem;margin:.8rem 0;background:var(--surface)}
+.station h3{margin:.1rem 0 .4rem}
+.station .pcf{display:grid;grid-template-columns:7em 1fr;gap:.3rem .7rem}
+@media (max-width:640px){.station .pcf{grid-template-columns:1fr}}
+.station .pcf b{color:var(--muted);font-size:.9rem}
+
+/* card */
+#card .sheet{background:var(--surface);border:2px solid var(--ink);border-radius:6px;padding:1rem}
+.sheet .head{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--ink);padding-bottom:.4rem;margin-bottom:.5rem}
+.sheet .fill-line{display:inline-block;min-width:9em;border-bottom:1px solid var(--ink)}
+.box{border:1px solid var(--ink);border-radius:4px;padding:.4rem .6rem;margin:.5rem 0}
+.box h4{margin:0;font-size:.98rem}
+.box .starter{margin:.1rem 0 .3rem;color:var(--muted);font-size:.88rem}
+.box textarea{width:100%;min-height:3.4em;font-family:inherit;font-size:.95rem;border:1px dashed var(--line);border-radius:4px;background:var(--bg);color:var(--ink);padding:.3rem;resize:vertical}
+
+/* quiz */
+.qz{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem;margin:.8rem 0}
+.qz fieldset{border:none;margin:0;padding:0}
+.qz legend{font-weight:700;padding:0;margin-bottom:.3rem}
+.qz label{display:block;padding:.25rem .3rem;border-radius:6px;cursor:pointer}
+.qz label:hover{background:var(--surface-2)}
+.qz .opt-tag{font-size:.75rem;color:var(--muted);font-weight:600;margin-left:.4rem}
+.qz .qz-zh{display:block;margin-left:1.55rem}
+.qz .qz-zhq{font-weight:700}
+
+.fb{margin-top:.4rem;padding:.4rem .6rem;border-radius:6px;display:none}
+.fb.ok{display:block;background:var(--ok-soft);color:var(--ok)}
+.fb.bad{display:block;background:var(--bad-soft);color:var(--bad)}
+footer{padding:1.5rem 0 3rem;color:var(--muted);font-size:.85rem}
+
+@media print{
+  @page{size:A4;margin:11mm}
+  html{font-size:10.5pt}
+  body{background:#fff;color:#000}
+  header.top,nav.jump,footer,section.block:not(#card){display:none !important}
+  #card{padding:0;border:none}
+  #card .screen-only{display:none !important}
+  #card h2{font-size:14pt;margin:0 0 4pt}
+  #card .sheet{border:1.5pt solid #000;padding:6mm;background:#fff}
+  .box{page-break-inside:avoid;margin:3mm 0;padding:2mm 3mm;border-color:#000}
+  .box textarea{min-height:19mm;border:none;background:#fff;color:#000;resize:none;font-size:10pt}
+  .box .starter{color:#333}
+  .sheet .unknown textarea{min-height:9mm}
+}
+</style>
+</head>
+<body>
+<nav class="sitenav" aria-label="W12 steps" style="background:var(--surface-2);border-bottom:1px solid var(--line)">
+  <ul style="list-style:none;margin:0 auto;padding:.4rem 16px;display:flex;flex-wrap:wrap;gap:.2rem .8rem;max-width:1000px;font-size:.9rem;font-weight:600">
+    <li><a href="index.html">Start</a></li><li><a href="step1.html">Step 1</a></li><li><a href="step2.html">Step 2</a></li><li><a href="step3.html">Step 3</a></li><li><a href="step4.html">Step 4</a></li><li><a href="step5.html">Step 5</a></li><li><a href="finish.html">Finish</a></li><li><a href="terms.html" aria-current="page">Terms 名詞站</a></li>
+  </ul>
+</nav>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">AI Intro · Week 12 · 人工智慧概論 第 12 週</div>
+    <h1>Gemma Learn Companion: every term, explained</h1>
+    <p class="zh">Gemma 官方導覽陪讀站：把每一個小名詞都講清楚</p>
+    <p class="sub">A companion to Google's official interactive guide <b>“How LLMs work (with Gemma 4)”</b>. Keep both open side by side. 官方導覽和這一頁並排開著用。</p>
+    <a class="btn-official" href="https://gemma.ai/learn/how-llms-work/" target="_blank" rel="noopener">Open the official guide (new tab) ↗</a>
+    <div class="note-slow" role="note">
+      <p><b>If the official page is slow, keep going with the toys and cards here; the teacher will project the official demo.</b></p>
+      <p class="zh">官方頁面如果很慢（第 1 站要下載 32.2 MB 的檔案，全班同時開會塞車），就先用這一頁的小玩具和名詞卡繼續，老師會投影官方展示。</p>
+    </div>
+  </div>
+</header>
+<nav class="jump" aria-label="Sections">
+  <ul>
+    <li><a href="#start">Start</a></li>
+    <li><a href="#terms">Term station</a></li>
+    <li><a href="#toys">Toys</a></li>
+    <li><a href="#route">Class route</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+  </ul>
+</nav>
+
+<main>
+<section class="block" id="start">
+  <div class="wrap">
+    <h2>How to use this page with the official guide</h2>
+    <p class="zh">怎麼搭配官方導覽使用</p>
+    <ol class="steps">
+      <li><b>Open both.</b> Official guide in one window, this page in another (or phone + laptop). 兩個視窗並排。</li>
+      <li><b>On the official page,</b> pick a stage in the row of buttons at the top (“01 Tokenization” … “05 Chat &amp; tools”) to open its live demo; press “>_ Read the details” when you want the long explanation. 在官方頁的站別列（rail）選站、點開下方說明面板。</li>
+      <li><b>When you meet a word you don't know,</b> type it into the search box of the <a href="#terms">term station</a>. Start with ⭐ cards; 💤 cards are safe to skip. 看不懂的字就來這裡搜；先看 ⭐，💤 可以跳過。</li>
+      <li><b>Each card's “Where you'll see it”</b> names the stage and the heading you see after pressing “>_ Read the details” on the official page, so you can find the spot. 每張卡都寫了在官方頁哪一站、哪個標題底下。</li>
+    </ol>
+    <div class="panel">
+      <h3 style="margin-top:0">What's real and what's a teaching simulation on the official page</h3>
+      <p class="zh">官方頁哪些是真的、哪些是教學用的模擬（官方自己有標）</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Stage</th><th>Real (from the actual model files)</th><th>Teaching simulation (the guide says so)</th></tr></thead>
+        <tbody>
+          <tr><td>1 Tokenization</td><td class="tag-real">The tokenizer itself runs for real in your browser — the pieces and ID numbers you see are real.</td><td>Only if the big file can't load (e.g. offline) does it fall back to a smaller built-in subset.</td></tr>
+          <tr><td>2 Embeddings</td><td class="tag-real">Token IDs, the first 8 stored numbers, model specs.</td><td class="tag-sim">The flat 2-D map, the similarity bars, the analogy arrows, the PLE bar spectrum.</td></tr>
+          <tr><td>3 Attention</td><td class="tag-real">Layer counts, window sizes, ratios, expert counts.</td><td class="tag-sim">The word-to-word attention percentages (“pseudo”) and the lit-up expert dots (“simulated router trace”).</td></tr>
+          <tr><td>4 Sampling</td><td class="tag-real">Default settings and all the sampling math run live as you drag sliders.</td><td class="tag-sim">The candidate scores are a hand-picked top-6 table, not a real model run.</td></tr>
+          <tr><td>5 Chat &amp; tools</td><td class="tag-real">The chat template format and the special marker strings.</td><td class="tag-sim">The typed-out replies are replays of prepared examples.</td></tr>
+        </tbody>
+      </table></div>
+      <p><b>Stage 5 note:</b> don't run the Python example on the official page (it downloads a real model); the code you do run is our Colab notebook; the chat stream in the guide's stage-5 demo is simulated. 第 5 站：課堂上不要跑 Python 範例；官方頁的對話打字效果是模擬的。</p>
+      <p><b>On this page:</b> every toy number is made up for teaching unless it is marked “from the guide”. 這一頁玩具裡的數字，除了標「from the guide」的以外，全是教學用的假數字。</p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="terms">
+  <div class="wrap">
+    <h2>Term station · 名詞站</h2>
+    <p>Every technical term the guide uses, in three tiers. <b>⭐ Must know</b> · <b>🔹 Good to recognise</b> · <b>💤 OK to skip</b>. Each card opens with the question it answers — try to guess before you open it.</p>
+    <p class="zh">官方導覽用到的每一個技術名詞，分三層：⭐ 必懂、🔹 看得懂就好、💤 可以跳過。每張卡先寫「它回答什麼問題」，先猜再點開。</p>
+    <div class="controls">
+      <label class="search">Search terms · 搜尋
+        <input type="search" id="q" placeholder="e.g. temperature, token, 溫度" autocomplete="off">
+      </label>
+      <div class="chips" id="stageChips"><span class="lbl">Stage</span></div>
+      <div class="chips" id="tierChips"><span class="lbl">Tier</span></div>
+      <div class="chips">
+        <button type="button" class="small-btn" id="expandAll">Expand all shown</button>
+        <button type="button" class="small-btn" id="collapseAll">Collapse all</button>
+        <button type="button" class="small-btn" id="resetFilters">Reset filters</button>
+        <span class="count" id="count" aria-live="polite"></span>
+      </div>
+    </div>
+    <div id="termList"></div>
+  </div>
+</section>
+
+<section class="block" id="toys">
+  <div class="wrap">
+    <h2>Toys · 小玩具</h2>
+    <p>Small hands-on toys, one per stage. They are <b>not</b> copies of the official demos; all numbers are made up for teaching unless marked. 每站一個小玩具，不是官方展示的複製品；數字除非另外標明，都是教學用的假數字。</p>
+
+    <div class="toy" id="toy1">
+      <h3>① Try these in the official tokenizer (Stage 1)</h3>
+      <p>Stage 1 of the official guide already runs Gemma 4's <b>real</b> tokenizer, so there is no toy here — use the real thing. Type each input below into the official Stage 1 box and look closely.</p>
+      <p class="zh">官方第 1 站跑的就是 Gemma 4 真正的斷詞器，所以這裡不做假的，直接去用真的。把下面每一句打進官方第 1 站的輸入框，仔細看。</p>
+      <ol class="trylist">
+        <li><code>The cat sat on the mat.</code> — notice whether each common word becomes one piece, and whether the space shows up as a <code>▁</code> stuck to the front of the next word. 注意常用字是不是各自一塊、空格是不是變成黏在字前面的 ▁。</li>
+        <li><code>unbelievable</code> (or <code>antidisestablishmentarianism</code>) — notice whether it stays whole or splits into several reusable chunks, and where the cuts fall. 注意它有沒有被拆開、切在哪裡。</li>
+        <li><code>我在花蓮讀大學</code> — notice whether each Chinese character is its own piece or some characters join together; count pieces vs. characters. Then add the rare character <code>鬮</code> and notice whether it turns into byte pieces like <code>&lt;0xE9&gt;</code>. 注意中文是一字一塊還是會合併；再加一個罕用字「鬮」看看會不會變成位元組片段。</li>
+        <li><code>🚀🙂</code> — notice whether each emoji is one piece or several. 注意表情符號是一塊還是好幾塊。</li>
+        <li><code>2026</code> — notice whether the number is one piece or one piece per digit, and compare with <code>2,026</code>. 注意數字是整塊還是一個位數一塊。</li>
+      </ol>
+      <p>Words to check first: <a href="#term-token">token</a>, <a href="#term-subword">subword tokenization</a>, <a href="#term-token-id">Token ID</a>.</p>
+    </div>
+
+    <div class="toy" id="toy2">
+      <h3>② Meaning map: how close are two words? (Stage 2)</h3>
+      <span class="label-ill">Made-up illustrative vectors</span>
+      <p><b>Real embeddings have thousands of directions</b> (the guide gives 1,536 numbers per token in E2B, up to 5,376 in 31B), and nobody labels them. <b>This 2-D map and these 3-number vectors are made up</b> so you can see the idea: each word gets 3 invented numbers — how much it is an animal, a vehicle, a food. Similarity is the <a href="#term-cosine">cosine similarity</a> of those 3 numbers.</p>
+      <p class="zh">真正的嵌入向量有上千個方向（E2B 每個 token 有 1,536 個數字，31B 有 5,376 個），而且沒有人幫它們貼標籤。這張平面圖和每個字的 3 個數字都是編出來的，只是讓你看懂概念。</p>
+      <div class="row" id="vecBtns" role="group" aria-label="Pick a word"></div>
+      <svg class="map" id="vecMap" viewBox="0 0 400 300" role="img" aria-label="Made-up 2-D map of six words"></svg>
+      <div class="bars" id="vecBars"></div>
+      <div class="explain" id="vecExplain"></div>
+      <p style="font-size:.9rem">Compare with reality: the guide reports cat–kitten at only 0.43 in Gemma 4 E2B's starting embedding table (Layer 0) — lower than our toy's value. 跟真的比：導覽說 E2B 起始嵌入表（Layer 0）裡 cat 和 kitten 只有 0.43，這一對在真模型裡的分數比示意值低。</p>
+    </div>
+
+    <div class="toy" id="toy3">
+      <h3>③ Attention: what does “it” look at, itself and earlier words? (Stage 3)</h3>
+      <span class="label-ill">Illustrative weights — made up, not computed by Gemma 4</span>
+      <p>A similar trophy/suitcase example appears in the official Stage 3, but don't try to match its percentages — both are illustrations. Click any word to see where it looks. <b>Hatched words come later in the sentence</b>: the <a href="#term-causal-mask">causal mask</a> hides them, so their weight is 0.</p>
+      <p class="zh">官方第 3 站有類似的獎盃／行李箱例子，但不用對它的百分比，兩邊都是示意。點任何一個字，看它在自己和前面的字裡看誰；斜線的字在後面，被因果遮罩擋住，權重是 0。</p>
+      <div class="row" role="group" aria-label="Which sentence">
+        <button type="button" class="chip-btn" id="partA" aria-pressed="true">A · clue comes before “it”</button>
+        <button type="button" class="chip-btn" id="partB" aria-pressed="false">B · clue comes after “it”</button>
+      </div>
+      <div class="row" id="attnToggle" role="group" aria-label="Switch the clue word"></div>
+      <div class="row" id="attnWords" role="group" aria-label="Sentence words"></div>
+      <div class="bars" id="attnBars"></div>
+      <div class="explain" id="attnExplain"></div>
+    </div>
+
+    <div class="toy" id="toy4">
+      <h3>④ Temperature, Top-K, Top-P (Stage 4)</h3>
+      <span class="label-ill">Made-up scores (logits) for 8 candidates</span>
+      <p>Prompt: <b>“After class, I'm going to eat …”</b> Each candidate has a fixed made-up <a href="#term-logits">logit</a>. Move the sliders and watch the chances change. Pale blue edge = chance after <a href="#term-softmax">softmax</a> only; solid bar = final chance after the cuts. Crossed-out = cut.</p>
+      <p class="zh">提示：「下課後我要去吃……」。每個候選有一個固定的假分數。拉滑桿看機率怎麼變；淺藍邊＝只經過 softmax 的機率，實心長條是篩選後的抽樣機率，劃掉的候選不參與抽樣。</p>
+      <p style="font-size:.9rem">Order used here: score ÷ temperature → softmax → Top-K keeps K and rescales to 100% → Top-P adds from the top until the running total first reaches or passes P → rescale to 100% → draw. 順序：分數除以溫度 → softmax → Top-K 留 K 個並重新算成 100% → Top-P 由高到低累加到第一次達到或超過 P → 再重新算成 100% → 抽。</p>
+      <div class="slider"><label for="sT">Temperature</label><input type="range" id="sT" min="0" max="2" step="0.05" value="1"><output id="oT"></output></div>
+      <div class="slider"><label for="sK">Top-K</label><input type="range" id="sK" min="1" max="8" step="1" value="8"><output id="oK"></output></div>
+      <div class="slider"><label for="sP">Top-P</label><input type="range" id="sP" min="0.05" max="1" step="0.01" value="0.95"><output id="oP"></output></div>
+      <div class="bars" id="sampBars"></div>
+      <div class="row">
+        <button type="button" class="toybtn" id="sampOnce">Sample once</button>
+        <button type="button" class="toybtn secondary" id="samp10">Sample 10 times</button>
+        <button type="button" class="toybtn secondary" id="sampDefaults">Gemma 4 defaults</button>
+        <button type="button" class="toybtn secondary" id="sampClear">Clear history</button>
+      </div>
+      <p style="margin:.2rem 0" id="histLabel">Last 10 samples (newest first):</p>
+      <div class="hist" id="sampHist" aria-live="polite"></div>
+      <div class="explain" id="sampExplain"></div>
+      <p style="font-size:.9rem">Gemma 4's real defaults (from the guide): temperature 1.0, top_k 64, top_p 0.95. Our toy only has 8 candidates, so K = 8 here already keeps everything, just like 64 would. 我們只有 8 個候選，K = 8 就等於全留。</p>
+    </div>
+
+    <div class="toy" id="toy5">
+      <h3>⑤ The loop: one token at a time (Stages 4–5)</h3>
+      <span class="label-ill">Scripted — choices and chances are made up</span>
+      <p>Each press of <b>Step</b> is one full run of the model. It guesses, picks one piece, and that piece is <b>fed back</b> onto the end of the input for the next run. This is the <a href="#term-autoregressive">autoregressive loop</a>. (A real chat would also wrap the input in the <a href="#term-chat-template">chat template</a>; we skip that to keep it short.)</p>
+      <p class="zh">每按一次 Step＝模型完整跑一次：猜、挑一塊、把那一塊接回輸入尾巴，下一次再跑。這就是自迴歸迴圈。</p>
+      <div class="row">
+        <button type="button" class="toybtn" id="loopStep">Step ▶</button>
+        <button type="button" class="toybtn secondary" id="loopReset">Reset</button>
+        <span id="loopPass" class="count"></span>
+      </div>
+      <p style="margin:.2rem 0"><b>Input the model sees now:</b></p>
+      <div class="tokrow" id="loopInput"></div>
+      <div class="bars" id="loopCands"></div>
+      <div class="explain" id="loopExplain"></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="route">
+  <div class="wrap">
+    <h2>Class route · 課堂路線（150 min）</h2>
+    <p>Each station: <b>predict</b> → <b>click the official guide</b> → <b>come back and think about what you saw</b>. Read the 2–3 core terms first.</p>
+    <p class="zh">每一站：先猜 → 去官方頁點 → 回來想一想看到了什麼。先讀 2–3 個核心名詞。</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Minutes</th><th>What we do · 做什麼</th></tr></thead>
+      <tbody>
+        <tr><td>0–10</td><td>Wrap up the Kaggle homework; bridge: last week we watched AI cheat, this week we open it up. 收尾上週 Kaggle，銜接本週。</td></tr>
+        <tr><td>10–25</td><td>Term station demo (search, stage and tier filters). Then Overview: in the model table look only at the E2B row first. 示範名詞站篩選；總覽表先只看 E2B 那一列。</td></tr>
+        <tr><td>25–55</td><td>Station 1 (official tokenizer + box ①) and Station 2 (toy ②). 第 1、2 站。</td></tr>
+        <tr><td>55–65</td><td>Break 休息</td></tr>
+        <tr><td>65–100</td><td>Station 3 (toy ③) and Station 4 (toy ④). 第 3、4 站。</td></tr>
+        <tr><td>100–110</td><td>Break 休息</td></tr>
+        <tr><td>110–130</td><td><a href="step5.html">Step 5</a> (toy ⑤ + official chat &amp; tools; the Python on the official page is read only, run Step 5 of our Colab notebook instead). 第 5 站：官方頁的 Python 只讀不跑，要跑的是我們的 Colab 筆記本 Step 5。</td></tr>
+        <tr><td>130–140</td><td>Open <a href="finish.html">Finish</a> and do quiz questions 1–3 together. 開收尾頁，一起做小測驗第 1–3 題。</td></tr>
+        <tr><td>140–150</td><td><a href="finish.html">Finish</a>: look back at the five steps; quiz questions 4–5 are optional. 回顧五站；小測驗第 4–5 題自選。</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="station"><h3>Overview (10–25 min)</h3>
+      <div class="pcf"><b>Core terms</b><span><a href="#term-next-token">next-token prediction</a> · <a href="#term-effective-params">effective vs. total parameters</a> · <a href="#term-context-window">context window</a></span>
+      <b>Predict</b><span>E2B is listed as “2.3B effective (5.1B w/ PLE)”. Which number is its real size?</span>
+      <b>Official guide</b><span>Overview: the model family table. Look only at the E2B row first.</span></div></div>
+
+    <div class="station"><h3>Station 1 · Tokenization (25–40 min)</h3>
+      <div class="pcf"><b>Core terms</b><span><a href="#term-tokenization">Tokenization</a> (with tokenizer &amp; vocabulary) · <a href="#term-token">token</a> · <a href="#term-subword">subword tokenization</a></span>
+      <b>Predict</b><span>Will “2026” be one piece or four? Will a Chinese sentence be one piece per character?</span>
+      <b>Official guide</b><span>“01 Tokenization” in the top row of the official page; type the five inputs from <a href="#toy1">box ①</a>.</span></div></div>
+
+    <div class="station"><h3>Station 2 · Embeddings (40–55 min)</h3>
+      <div class="pcf"><b>Core terms</b><span><a href="#term-embedding">embedding</a> · <a href="#term-cosine">cosine similarity</a></span>
+      <b>Predict</b><span>Which is closer to “cat”: “kitten” or “car”? Guess a number between −1 and +1.</span>
+      <b>Official guide</b><span>Stage 2. Remember: its 2-D map is illustrative.</span></div></div>
+
+    <div class="station"><h3>Station 3 · Attention &amp; layers (65–82 min)</h3>
+      <div class="pcf"><b>Core terms</b><span><a href="#term-attention">attention</a> · <a href="#term-query">Query</a> / <a href="#term-key">Key</a> / <a href="#term-value">Value</a> · <a href="#term-causal-mask">causal mask</a></span>
+      <b>Predict</b><span>In “…because it was too big”, when the model is at “it”, can it already see “big”?</span>
+      <b>Official guide</b><span>Stage 3, Tab A. Its percentages are pseudo — look for the pattern, not the numbers.</span></div></div>
+
+    <div class="station"><h3>Station 4 · Sampling (82–100 min)</h3>
+      <div class="pcf"><b>Core terms</b><span><a href="#term-softmax">Softmax</a> · <a href="#term-temperature">Temperature</a> · <a href="#term-top-p">Top-P</a> (and <a href="#term-top-k">Top-K</a>)</span>
+      <b>Predict</b><span>If temperature is very low, will you get the same word every time?</span>
+      <b>Official guide</b><span>Stage 4: drag the temperature slider, sample several times.</span></div></div>
+
+    <div class="station"><h3>Station 5 · Chat, thinking &amp; tools (110–130 min)</h3>
+      <div class="pcf"><b>Core terms</b><span><a href="#term-autoregressive">autoregressive loop</a> · <a href="#term-chat-template">chat template</a> · <a href="#term-tool-call">tool call</a></span>
+      <b>Predict</b><span>When the model “thinks”, is it a different brain or the same next-token loop?</span>
+      <b>Official guide</b><span>Stage 5: watch where the thinking notes start and stop. The stream is simulated; don't run the Python.</span></div></div>
+  </div>
+</section>
+
+<section class="block" id="quiz">
+  <div class="wrap">
+    <h2>Self-check quiz · 小測驗</h2>
+    <p>Questions 1–3 in class; 4–5 are optional. Pick an answer to see feedback. 第 1–3 題課堂做，4–5 題自選。</p>
+    <div id="quizBox"></div>
+    <p class="count" id="quizScore" aria-live="polite"></p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Source for every Gemma fact on this page: Google's official guide “How LLMs work (with Gemma 4)”, gemma.ai/learn/how-llms-work/ (read 2026-11-22). Explanations, analogies, toys and examples are our own words. If anything here disagrees with the official page, the official page wins. 本頁所有 Gemma 事實皆出自官方導覽（2026-11-22 讀取）；解釋、比喻、玩具與例子是我們自己寫的。與官方頁不一致時以官方為準。</p>
+  </div>
+</footer>
+
+
+<script src="assets/terms-data.js"></script>
+
+<script>
+(function(){
+"use strict";
+var H = window.W12_HEADINGS;
+var TERMS = window.W12_TERMS;
+var STAGES = [["all","All"],["0","Overview"],["1","1 Tokenization"],["2","2 Embeddings"],["3","3 Attention"],["4","4 Sampling"],["5","5 Chat & tools"]];
+var STAGE_LONG = {"0":"Overview","1":"Stage 1 · Tokenization","2":"Stage 2 · Embeddings","3":"Stage 3 · Attention & layers","4":"Stage 4 · Sampling","5":"Stage 5 · Chat, thinking & tools"};
+var TIERS = [["all","All"],["1","⭐ Must know"],["2","🔹 Recognise"],["3","💤 Skip"]];
+var MARK = {1:"⭐",2:"🔹",3:"💤"};
+var bySlug = {};
+TERMS.forEach(function(t){ bySlug[t.s] = t; });
+
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];}); }
+function rxEsc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+/* auto-link: first mention of another term inside a card links to that card */
+var amap = new Map();
+TERMS.forEach(function(t){ (t.al||[]).forEach(function(a){ if(!amap.has(a)) amap.set(a,t.s); }); });
+var aliases = Array.from(amap.keys()).sort(function(a,b){return b.length-a.length;});
+var RX = new RegExp('(?<![A-Za-z0-9_])(?:' + aliases.map(rxEsc).join('|') + ')(?:es|s)?(?![A-Za-z0-9_])','g');
+function lookup(m){
+  if(amap.has(m)) return amap.get(m);
+  if(/es$/.test(m) && amap.has(m.slice(0,-2))) return amap.get(m.slice(0,-2));
+  if(/s$/.test(m) && amap.has(m.slice(0,-1))) return amap.get(m.slice(0,-1));
+  return null;
+}
+function linkify(text, used){
+  var out = "", last = 0, mm;
+  RX.lastIndex = 0;
+  while((mm = RX.exec(text)) !== null){
+    var slug = lookup(mm[0]);
+    if(slug && !used.has(slug)){
+      used.add(slug);
+      out += esc(text.slice(last, mm.index)) + '<a class="tl" href="#term-' + slug + '">' + esc(mm[0]) + '</a>';
+      last = mm.index + mm[0].length;
+    }
+    if(mm[0].length === 0) RX.lastIndex++;
+  }
+  return out + esc(text.slice(last));
+}
+function whereHTML(t){
+  return t.w.map(function(k){ return '<span>' + esc(STAGE_LONG[k.charAt(0)]) + ' → under the heading “' + esc(H[k]) + '”</span>'; }).join('<br>');
+}
+function cardHTML(t){
+  var used = new Set([t.s]);
+  var stages = Array.from(new Set(t.w.map(function(k){return k.charAt(0);})));
+  var h = '<details class="card t' + t.tier + '" id="term-' + t.s + '" data-tier="' + t.tier + '" data-stages="' + stages.join(' ') + '">';
+  h += '<summary><span class="sumline"><span class="tiermark" aria-label="tier">' + MARK[t.tier] + '</span><span class="term">' + esc(t.t) + '</span><span class="stagechip">' + esc(STAGE_LONG[stages[0]]) + '</span></span>';
+  h += '<p class="qline"><b>Answers:</b> ' + esc(t.q) + '</p></summary>';
+  h += '<div class="cardbody">';
+  h += '<p class="def en">' + esc(t.p) + '</p>';
+  h += '<p class="def zh" lang="zh-Hant">' + esc(t.zh) + '</p>';
+  h += '<dl class="fields">';
+  if(t.an) h += '<dt>Everyday analogy</dt><dd>' + linkify(t.an, used) + '</dd>';
+  if(t.ex) h += '<dt>Worked example</dt><dd>' + linkify(t.ex, used) + '</dd>';
+  h += '<dt>Where you\'ll see it</dt><dd>' + whereHTML(t) + '</dd>';
+  if(t.m) h += '<dt>Common mix-up</dt><dd>' + linkify(t.m, used) + '</dd>';
+  if(t.skip) h += '<dt>Why it\'s OK to skip</dt><dd>' + linkify(t.skip, used) + '</dd>';
+  if(t.r && t.r.length) h += '<dt>Related</dt><dd class="related">' + t.r.map(function(s){ var r = bySlug[s]; return r ? '<a href="#term-' + s + '">' + MARK[r.tier] + ' ' + esc(r.t) + '</a>' : ''; }).join(' ') + '</dd>';
+  h += '</dl>';
+  if(t.st) h += '<details class="selftest"><summary>Self-test: ' + esc(t.st[0]) + '</summary><p>' + esc(t.st[1]) + '</p></details>';
+  h += '</div></details>';
+  return h;
+}
+var list = document.getElementById('termList');
+list.innerHTML = TERMS.map(cardHTML).join('');
+
+var state = {q:"", stage:"all", tier:"all"};
+function chipRow(id, items, key){
+  var box = document.getElementById(id);
+  items.forEach(function(it){
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip-btn'; b.textContent = it[1];
+    b.dataset.val = it[0]; b.setAttribute('aria-pressed', it[0] === 'all' ? 'true' : 'false');
+    b.addEventListener('click', function(){ state[key] = it[0]; syncChips(); apply(); });
+    box.appendChild(b);
+  });
+}
+function syncChips(){
+  document.querySelectorAll('#stageChips .chip-btn').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.val === state.stage ? 'true':'false'); });
+  document.querySelectorAll('#tierChips .chip-btn').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.val === state.tier ? 'true':'false'); });
+}
+chipRow('stageChips', STAGES, 'stage');
+chipRow('tierChips', TIERS, 'tier');
+var qInput = document.getElementById('q');
+function matchesQuery(t, q){
+  if(!q) return true;
+  var hay = [t.t, t.q, t.p, t.zh].concat(t.al || []).join(' ').toLowerCase();
+  return hay.indexOf(q) !== -1;
+}
+function apply(){
+  var q = state.q.trim().toLowerCase(), shown = 0;
+  TERMS.forEach(function(t){
+    var el = document.getElementById('term-' + t.s);
+    var okStage = state.stage === 'all' || el.dataset.stages.split(' ').indexOf(state.stage) !== -1;
+    var okTier = state.tier === 'all' || String(t.tier) === state.tier;
+    var vis = okStage && okTier && matchesQuery(t, q);
+    el.hidden = !vis; if(vis) shown++;
+  });
+  document.getElementById('count').textContent = 'Showing ' + shown + ' of ' + TERMS.length + ' terms';
+}
+qInput.addEventListener('input', function(){ state.q = qInput.value; apply(); });
+function resetFilters(){ state = {q:"", stage:"all", tier:"all"}; qInput.value = ""; syncChips(); apply(); }
+document.getElementById('resetFilters').addEventListener('click', resetFilters);
+document.getElementById('expandAll').addEventListener('click', function(){ document.querySelectorAll('#termList details.card').forEach(function(d){ if(!d.hidden) d.open = true; }); });
+document.getElementById('collapseAll').addEventListener('click', function(){ document.querySelectorAll('#termList details.card').forEach(function(d){ d.open = false; }); });
+/* step pages link here as terms.html?stage=N#terms */
+try { var qsStage = new URLSearchParams(location.search).get('stage'); if(qsStage && STAGES.some(function(s){return s[0]===qsStage;})){ state.stage = qsStage; syncChips(); } } catch(err) {}
+apply();
+
+function openHash(){
+  var id = decodeURIComponent(location.hash.slice(1));
+  if(id.indexOf('term-') !== 0) return;
+  var el = document.getElementById(id);
+  if(!el) return;
+  if(el.hidden) resetFilters();
+  el.open = true;
+  el.scrollIntoView({block:'start'});
+  el.classList.add('flash');
+  setTimeout(function(){ el.classList.remove('flash'); }, 1600);
+}
+document.addEventListener('click', function(e){
+  var a = e.target.closest ? e.target.closest('a[href^="#term-"]') : null;
+  if(!a) return;
+  e.preventDefault();
+  var href = a.getAttribute('href');
+  try { history.pushState(null, '', href); } catch(err) { location.hash = href; }
+  openHash();
+});
+window.addEventListener('hashchange', openHash);
+if(location.hash) openHash();
+
+/* ---------- Toy 2: meaning map ---------- */
+var WORDS = [
+  {w:"cat",    v:[0.90,0.10,0.10], x:95,  y:85},
+  {w:"kitten", v:[0.85,0.05,0.20], x:150, y:60},
+  {w:"dog",    v:[0.90,0.15,0.05], x:70,  y:140},
+  {w:"car",    v:[0.10,0.90,0.05], x:300, y:85},
+  {w:"truck",  v:[0.05,0.95,0.10], x:335, y:140},
+  {w:"banana", v:[0.10,0.05,0.95], x:205, y:250}
+];
+function cos(a,b){ var d=0,na=0,nb=0; for(var i=0;i<a.length;i++){ d+=a[i]*b[i]; na+=a[i]*a[i]; nb+=b[i]*b[i]; } return d/Math.sqrt(na*nb); }
+var vecSel = 0;
+var vecBtns = document.getElementById('vecBtns');
+WORDS.forEach(function(o,i){
+  var b = document.createElement('button'); b.type='button'; b.className='wbtn'; b.textContent=o.w;
+  b.addEventListener('click', function(){ vecSel = i; drawVec(); });
+  vecBtns.appendChild(b);
+});
+function drawVec(){
+  var s = WORDS[vecSel], svg = document.getElementById('vecMap'), parts = [];
+  vecBtns.querySelectorAll('button').forEach(function(b,i){ b.setAttribute('aria-pressed', i===vecSel?'true':'false'); });
+  WORDS.forEach(function(o,i){
+    if(i===vecSel) return;
+    var c = cos(s.v,o.v);
+    parts.push('<line x1="'+s.x+'" y1="'+s.y+'" x2="'+o.x+'" y2="'+o.y+'" stroke="var(--accent)" stroke-opacity="'+(0.2+0.8*Math.max(0,c)).toFixed(2)+'" stroke-width="'+(1+4*Math.max(0,c)).toFixed(1)+'"/>');
+    var mx=(s.x+o.x)/2, my=(s.y+o.y)/2;
+    parts.push('<text x="'+mx+'" y="'+(my-4)+'" font-size="12" text-anchor="middle" fill="var(--muted)">'+c.toFixed(2)+'</text>');
+  });
+  WORDS.forEach(function(o,i){
+    parts.push('<circle cx="'+o.x+'" cy="'+o.y+'" r="'+(i===vecSel?9:6)+'" fill="'+(i===vecSel?'var(--warm)':'var(--accent)')+'"/>');
+    parts.push('<text x="'+o.x+'" y="'+(o.y+24)+'" font-size="15" text-anchor="middle" fill="var(--ink)" font-weight="'+(i===vecSel?'700':'400')+'">'+o.w+'</text>');
+  });
+  parts.push('<text x="8" y="16" font-size="11" fill="var(--muted)">hand-drawn layout · made-up numbers</text>');
+  svg.innerHTML = parts.join('');
+  var rows = WORDS.map(function(o,i){ return {o:o, c:cos(s.v,o.v), i:i}; }).filter(function(r){return r.i!==vecSel;}).sort(function(a,b){return b.c-a.c;});
+  document.getElementById('vecBars').innerHTML = rows.map(function(r){
+    return '<div class="bar"><span class="name">'+r.o.w+'</span><span class="track"><span class="fill" style="width:'+(Math.max(0,r.c)*100).toFixed(1)+'%"></span></span><span class="pct">'+r.c.toFixed(2)+'</span></div>';
+  }).join('');
+  document.getElementById('vecExplain').innerHTML = '<b>'+s.w+'</b> = ['+s.v.join(', ')+'] (animal, vehicle, food — invented). Closest: <b>'+rows[0].o.w+'</b> ('+rows[0].c.toFixed(2)+'); farthest: <b>'+rows[rows.length-1].o.w+'</b> ('+rows[rows.length-1].c.toFixed(2)+'). Scores near 1 = pointing the same way; near 0 = at right angles.';
+}
+drawVec();
+
+/* ---------- Toy 3: attention ---------- */
+var ATT = {
+  A: {
+    words: ["Leo","lifted","the","trophy","out","of","the","suitcase","and","{V}","it","carefully","."],
+    toggle: ["polished","zipped"], q: 10,
+    fixed: {
+      polished: {10:{3:48,9:18,7:9,10:8,1:5,0:4,8:3,2:2,6:1,4:1,5:1}},
+      zipped:   {10:{7:50,9:18,3:8,10:8,1:4,0:3,8:3,2:2,6:2,4:1,5:1}}
+    },
+    say: function(v,qi){
+      if(qi===10) return v==="polished" ? 'In this illustration, from “it”, the strongest link is <b>trophy</b>: the verb “polished” came <i>before</i> “it”, and you polish trophies. “carefully” and “.” come later, so they are masked (0%).' : 'In this illustration, from “it”, the strongest link is now <b>suitcase</b>: “zipped” came before “it”, and suitcases have zips. Only the earlier verb changed.';
+      return 'This word can only look back at itself and earlier words. Click “it” to see the interesting case.';
+    }
+  },
+  B: {
+    words: ["The","trophy","didn't","fit","in","the","suitcase","because","it","was","too","{V}","."],
+    toggle: ["big","small"], q: 8,
+    fixed: {
+      big:   {8:{0:3,1:30,2:6,3:10,4:3,5:3,6:29,7:8,8:8}, 11:{1:32,8:22,10:11,11:10,6:8,3:6,9:4,2:2,7:2,0:1,4:1,5:1}},
+      small: {8:{0:3,1:30,2:6,3:10,4:3,5:3,6:29,7:8,8:8}, 11:{6:32,8:22,10:11,11:10,1:8,3:6,9:4,2:2,7:2,0:1,4:1,5:1}}
+    },
+    say: function(v,qi){
+      if(qi===8) return 'In this illustration, at “it”, the clue (“'+v+'”) has not arrived yet — the causal mask hides it. So <b>trophy and suitcase stay almost tied</b>, whether the sentence ends in big or small. Now click “'+v+'”.';
+      if(qi===11) return v==="big" ? 'In this illustration, “big” looks back at “it” and <b>trophy</b>: too big → the trophy is what didn\'t fit. The later word does the linking.' : 'In this illustration, “small” looks back at “it” and <b>suitcase</b>: too small → the suitcase was the problem. The later word does the linking.';
+      return 'This word can only look back at itself and earlier words. Try “it”, then the last clue word.';
+    }
+  }
+};
+var att = {part:"A", v:{A:"polished",B:"big"}, qi:10};
+function genericWeights(i){
+  var raw = {}, tot = 0;
+  for(var j=0;j<=i;j++){ var s = (j===i)?5:(j===i-1)?4:1; raw[j]=s; tot+=s; }
+  var out = {}; for(var k in raw) out[k] = raw[k]*100/tot; return out;
+}
+function drawAtt(){
+  var P = ATT[att.part], v = att.v[att.part];
+  document.getElementById('partA').setAttribute('aria-pressed', att.part==="A"?'true':'false');
+  document.getElementById('partB').setAttribute('aria-pressed', att.part==="B"?'true':'false');
+  var tg = document.getElementById('attnToggle');
+  tg.innerHTML = '<span class="count">'+(att.part==="A"?'Verb before “it”:':'Last word:')+'</span>';
+  P.toggle.forEach(function(opt){
+    var b = document.createElement('button'); b.type='button'; b.className='chip-btn'; b.textContent=opt;
+    b.setAttribute('aria-pressed', opt===v?'true':'false');
+    b.addEventListener('click', function(){ att.v[att.part]=opt; drawAtt(); });
+    tg.appendChild(b);
+  });
+  var words = P.words.map(function(w){ return w==="{V}" ? v : w; });
+  var wbox = document.getElementById('attnWords'); wbox.innerHTML='';
+  words.forEach(function(w,i){
+    var b = document.createElement('button'); b.type='button'; b.className='wbtn'+(i>att.qi?' masked':''); b.textContent=w;
+    b.setAttribute('aria-pressed', i===att.qi?'true':'false');
+    b.addEventListener('click', function(){ att.qi=i; drawAtt(); });
+    wbox.appendChild(b);
+  });
+  var W = (P.fixed[v] && P.fixed[v][att.qi]) ? P.fixed[v][att.qi] : genericWeights(att.qi);
+  document.getElementById('attnBars').innerHTML = '<p style="margin:.2rem 0"><b>Looking back from “'+esc(words[att.qi])+'”</b> (illustrative %):</p>' + words.map(function(w,i){
+    if(i>att.qi) return '<div class="bar masked"><span class="name">'+esc(w)+'</span><span class="track"></span><span class="pct">0% masked</span></div>';
+    var p = W[i]||0;
+    return '<div class="bar"><span class="name">'+esc(w)+'</span><span class="track"><span class="fill" style="width:'+p.toFixed(1)+'%"></span></span><span class="pct">'+Math.round(p)+'%</span></div>';
+  }).join('') + '<p class="count" style="margin:.2rem 0">Hatched = causal mask: can\'t see later words.</p>';
+  document.getElementById('attnExplain').innerHTML = P.say(v, att.qi);
+}
+document.getElementById('partA').addEventListener('click', function(){ att.part="A"; att.qi=ATT.A.q; drawAtt(); });
+document.getElementById('partB').addEventListener('click', function(){ att.part="B"; att.qi=ATT.B.q; drawAtt(); });
+drawAtt();
+
+/* ---------- Toy 4: sampling ---------- */
+var CANDS = [["noodles",3.0],["rice",2.6],["dumplings",2.2],["pizza",1.6],["salad",0.9],["ice cream",0.4],["homework",-0.8],["a chair",-2.0]];
+var hist = [];
+var sT = document.getElementById('sT'), sK = document.getElementById('sK'), sP = document.getElementById('sP');
+function computeSamp(){
+  var T = parseFloat(sT.value), K = parseInt(sK.value,10), P = parseFloat(sP.value), n = CANDS.length, base = [], i;
+  if(T === 0){
+    var mx = 0; for(i=1;i<n;i++) if(CANDS[i][1] > CANDS[mx][1]) mx = i;
+    for(i=0;i<n;i++) base.push(i===mx?1:0);
+  } else {
+    var m = -Infinity; for(i=0;i<n;i++) m = Math.max(m, CANDS[i][1]/T);
+    var e = [], s = 0; for(i=0;i<n;i++){ e.push(Math.exp(CANDS[i][1]/T - m)); s += e[i]; }
+    for(i=0;i<n;i++) base.push(e[i]/s);
+  }
+  var order = base.map(function(p,i){return i;}).sort(function(a,b){return base[b]-base[a];});
+  var keepK = order.slice(0, K), sumK = 0; keepK.forEach(function(i){ sumK += base[i]; });
+  var keep = [], cum = 0;
+  for(var j=0;j<keepK.length;j++){ var ii = keepK[j]; keep.push(ii); cum += base[ii]/sumK; if(cum >= P - 1e-9) break; }
+  var sumKeep = 0; keep.forEach(function(i){ sumKeep += base[i]; });
+  var fin = base.map(function(p,i){ return keep.indexOf(i)!==-1 ? p/sumKeep : 0; });
+  return {T:T,K:K,P:P,base:base,fin:fin,keep:keep,cutK:n-keepK.length,cutP:keepK.length-keep.length};
+}
+function drawSamp(){
+  var r = computeSamp();
+  document.getElementById('oT').textContent = r.T===0 ? '0 (greedy)' : r.T.toFixed(2);
+  document.getElementById('oK').textContent = r.K===8 ? '8 (keeps all)' : String(r.K);
+  document.getElementById('oP').textContent = r.P.toFixed(2);
+  document.getElementById('sampBars').innerHTML = CANDS.map(function(c,i){
+    var cut = r.fin[i] === 0 && r.keep.indexOf(i)===-1;
+    return '<div class="bar'+(cut?' cut':'')+'"><span class="name">'+esc(c[0])+'</span><span class="track"><span class="ghost" style="width:'+(r.base[i]*100).toFixed(2)+'%"></span><span class="fill" style="width:'+(r.fin[i]*100).toFixed(2)+'%"></span></span><span class="pct">'+(cut?'✂ cut':(r.fin[i]*100).toFixed(1)+'%')+'</span></div>';
+  }).join('');
+  var top = 0; for(var i=1;i<CANDS.length;i++) if(r.fin[i]>r.fin[top]) top=i;
+  var msg = 'Top choice “'+CANDS[top][0]+'” has '+(r.fin[top]*100).toFixed(1)+'%. ';
+  if(r.T===0) msg += 'Temperature 0 = greedy: always the same pick. ';
+  else if(r.T<0.6) msg += 'Low temperature sharpens the peak. ';
+  else if(r.T>1.4) msg += 'High temperature flattens the chances, so odd picks appear. ';
+  msg += r.keep.length + ' of 8 candidates survive (Top-K cut ' + r.cutK + ', Top-P cut ' + r.cutP + ').';
+  document.getElementById('sampExplain').textContent = msg;
+  drawHist();
+}
+function drawHist(){
+  document.getElementById('sampHist').innerHTML = hist.length ? hist.map(function(h){ return '<span>'+esc(h)+'</span>'; }).join('') : '<span>(none yet)</span>';
+}
+function sampleOnce(){
+  var r = computeSamp(), x = Math.random(), acc = 0, pick = r.keep[0];
+  for(var i=0;i<CANDS.length;i++){ acc += r.fin[i]; if(r.fin[i]>0 && x < acc){ pick = i; break; } }
+  hist.unshift(CANDS[pick][0] + ' (T ' + (r.T===0?'0':r.T.toFixed(2)) + ')');
+  if(hist.length > 10) hist.length = 10;
+}
+[sT,sK,sP].forEach(function(el){ el.addEventListener('input', drawSamp); });
+document.getElementById('sampOnce').addEventListener('click', function(){ sampleOnce(); drawHist(); });
+document.getElementById('samp10').addEventListener('click', function(){ for(var i=0;i<10;i++) sampleOnce(); drawHist(); });
+document.getElementById('sampDefaults').addEventListener('click', function(){ sT.value='1'; sK.value='8'; sP.value='0.95'; drawSamp(); });
+document.getElementById('sampClear').addEventListener('click', function(){ hist = []; drawHist(); });
+drawSamp();
+
+/* ---------- Toy 5: autoregressive loop ---------- */
+var PROMPT = ["H","ual","ien"," is"," famous"," for"];  /* real Gemma 4 split (Colab 2026-11-23) */
+var STEPS = [
+  [[" Taroko",41],[" its",33],[" the",14]],
+  [[" Gorge",88],[" National",6],[",",2]],
+  [[" and",52],[",",27],[".",15]],
+  [[" its",38],[" the",35],[" beautiful",12]],
+  [[" ocean",44],[" coastline",29],[" mountains",17]],
+  [[" views",61],[" scenery",22],[" breeze",9]],
+  [[".",83],[",",9],[" from",3]],
+  [["<turn|>",71],[" It",19],[" The",6]]
+];
+var loopN = 0;
+function drawLoop(){
+  var gen = STEPS.slice(0, loopN).map(function(s){ return s[0][0]; });
+  var html = PROMPT.map(function(t){ return '<span class="tok">'+esc(t)+'</span>'; }).join('');
+  html += gen.map(function(t,i){ var cls = 'tok gen' + (i===gen.length-1?' new':'') + (t==='<turn|>'?' stop':''); return '<span class="'+cls+'">'+esc(t)+'</span>'; }).join('');
+  document.getElementById('loopInput').innerHTML = html;
+  var done = loopN >= STEPS.length;
+  document.getElementById('loopStep').disabled = done;
+  document.getElementById('loopPass').textContent = done ? 'Finished after ' + STEPS.length + ' runs' : 'Next: run #' + (loopN+1);
+  var cb = document.getElementById('loopCands'), ex = document.getElementById('loopExplain');
+  if(loopN === 0){
+    cb.innerHTML = '';
+    ex.innerHTML = 'The input is just the prompt (6 pieces, the real Gemma 4 split). Press <b>Step</b> to run the model once.';
+    return;
+  }
+  var s = STEPS[loopN-1];
+  cb.innerHTML = '<p style="margin:.2rem 0"><b>Run #'+loopN+' — top guesses (made-up chances):</b></p>' + s.map(function(c,i){
+    return '<div class="bar"><span class="name">'+esc(c[0])+'</span><span class="track"><span class="fill" style="width:'+c[1]+'%"></span></span><span class="pct">'+c[1]+'%'+(i===0?' ✓':'')+'</span></div>';
+  }).join('');
+  if(s[0][0] === '<turn|>') ex.innerHTML = 'The model picked <b>&lt;turn|&gt;</b>, the end-of-turn marker (ID 106, from the guide). The loop stops. ' + STEPS.length + ' new pieces took ' + STEPS.length + ' runs.';
+  else ex.innerHTML = 'Picked “' + esc(s[0][0]) + '” → <b>fed back</b>: it is now the last piece of the input (highlighted). Run #' + (loopN+1) + ' will read all ' + (PROMPT.length+loopN) + ' pieces to guess the next one.';
+}
+document.getElementById('loopStep').addEventListener('click', function(){ if(loopN < STEPS.length){ loopN++; drawLoop(); } });
+document.getElementById('loopReset').addEventListener('click', function(){ loopN = 0; drawLoop(); });
+drawLoop();
+
+/* ---------- Quiz ---------- */
+var QUIZ = [
+  {q:"Token IDs 5866 (▁cat) and 5867 are next to each other. Are their meanings close?", o:["Yes, close numbers mean close meanings","No, an ID is just a position in the list"], a:1, why:"IDs are positions in the list; meaning comes from embeddings in Stage 2.", link:"token-id", opt:false},
+  {q:"You lower temperature from 1.0 to 0.2. What happens?", o:["The model knows more facts","The top choice gets an even bigger share, so answers repeat more","Answers become more random"], a:1, why:"Low temperature sharpens the peak; it doesn't add knowledge.", link:"temperature", opt:false},
+  {q:"In “…because it was too big”, when the model is at “it”, can it see “big”?", o:["Yes, it reads the whole sentence at once","No, the causal mask hides later words"], a:1, why:"Gemma 4 is decoder-only: each piece looks only at itself and backward. “big” links things up when it arrives.", link:"causal-mask", opt:false},
+  {q:"Chances 50%, 30%, 15%, 5%. With Top-P = 0.9, how many candidates survive?", o:["1","2","3","4"], a:2, why:"50 → 80 → 95. The running total first reaches 90 at the third one.", link:"top-p", opt:true},
+  {q:"In a tool call, who actually runs the tool?", o:["The model runs it inside itself","Your program runs it and pastes the result back"], a:1, why:"The model only writes the request and reads the reply.", link:"tool-call", opt:true}
+];
+var QUIZ_ZH = [
+ {
+  "q": "編號 5866（▁cat）和 5867 緊鄰。它們的意思也接近嗎？",
+  "o": [
+   "接近，編號相近代表意思相近",
+   "不接近，編號只是清單裡的位置"
+  ],
+  "why": "編號只是清單上的位置；意思要到第 2 站的嵌入才有。"
+ },
+ {
+  "q": "把溫度從 1.0 調低到 0.2，會怎樣？",
+  "o": [
+   "模型知道的事實變多",
+   "第一名佔的比例更大，所以答案更常重複",
+   "答案變得更隨機"
+  ],
+  "why": "溫度低會讓最高的那個更突出，不會增加知識。"
+ },
+ {
+  "q": "在「…because it was too big」這句，模型處理到 it 的時候，看得到 big 嗎？",
+  "o": [
+   "看得到，它一次讀完整句",
+   "看不到，因果遮罩把後面的字遮住了"
+  ],
+  "why": "Gemma 4 只有解碼器：每一塊只能看自己和前面。big 出現時才回頭把關係連起來。"
+ },
+ {
+  "q": "機率是 50%、30%、15%、5%。Top-P = 0.9 時，留下幾個候選？",
+  "o": [
+   "1 個",
+   "2 個",
+   "3 個",
+   "4 個"
+  ],
+  "why": "50 → 80 → 95。累加到第三個時第一次達到 90。"
+ },
+ {
+  "q": "工具呼叫（tool call）時，實際執行工具的是誰？",
+  "o": [
+   "模型自己在內部執行",
+   "你的程式去執行，再把結果貼回給模型"
+  ],
+  "why": "模型只負責寫出請求、讀回結果。"
+ }
+];
+var qb = document.getElementById('quizBox'), answered = {};
+QUIZ.forEach(function(item, n){
+  var d = document.createElement('div'); d.className = 'qz';
+  var h = '<fieldset><legend>' + (n+1) + '. ' + esc(item.q) + (item.opt ? ' <span class="opt-tag">optional 自選</span>' : ' <span class="opt-tag">together in class 課堂一起做</span>') + (QUIZ_ZH[n] ? '<br><span class="qz-zhq">' + esc(QUIZ_ZH[n].q) + '</span>' : '') + '</legend>';
+  item.o.forEach(function(o,i){ h += '<label><input type="radio" name="qz' + n + '" value="' + i + '"> ' + esc(o) + (QUIZ_ZH[n] && QUIZ_ZH[n].o[i] ? ' <span class="qz-zh">' + esc(QUIZ_ZH[n].o[i]) + '</span>' : '') + '</label>'; });
+  h += '</fieldset><div class="fb" id="fb' + n + '" aria-live="polite"></div>';
+  d.innerHTML = h; qb.appendChild(d);
+  d.querySelectorAll('input').forEach(function(inp){
+    inp.addEventListener('change', function(){
+      var ok = parseInt(inp.value,10) === item.a, fb = document.getElementById('fb' + n);
+      fb.className = 'fb ' + (ok ? 'ok' : 'bad');
+      fb.innerHTML = (ok ? '✓ Right. ' : '✗ Not quite. ') + esc(item.why) + (QUIZ_ZH[n] ? ' ' + esc(QUIZ_ZH[n].why) : '') + ' <a href="#term-' + item.link + '">Open the card</a>';
+      answered[n] = ok;
+      var keys = Object.keys(answered), right = keys.filter(function(k){return answered[k];}).length;
+      document.getElementById('quizScore').textContent = right + ' right out of ' + keys.length + ' answered.';
+    });
+  });
+});
+
+var pc = document.getElementById('printCard'); if(pc) pc.addEventListener('click', function(){ window.print(); });
+})();
+</script>
+</body>
+</html>

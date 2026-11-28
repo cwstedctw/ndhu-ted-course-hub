@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>班級求援板｜AI 一起寫程式 W10</title>
+  <style>
+    :root { color-scheme: light; font: 100%/1.65 system-ui, sans-serif; color: #182b2a; background: #f4f7f4; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a { color: #075f60; text-underline-offset: .17em; }
+    a:hover { text-decoration-thickness: .16em; }
+    :focus-visible { outline: 3px solid #a35c16; outline-offset: 3px; }
+    [hidden] { display: none !important; }
+    .wrap { width: min(100% - 2rem, 62rem); margin-inline: auto; }
+    .hero { color: #fff; background: #144d4d; padding-block: clamp(2rem, 6vw, 4rem); }
+    .eyebrow { color: #fce1a1; font-weight: 650; letter-spacing: .07em; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 .7rem; }
+    h1 { font-size: clamp(2.25rem, 6vw, 3.65rem); }
+    h2 { font-size: clamp(1.4rem, 3.5vw, 1.8rem); }
+    h3 { font-size: 1.12rem; }
+    p, ol, ul { margin: .45rem 0 1rem; }
+    .hero p:last-of-type { max-width: 42rem; }
+    .choices, .jump { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0; list-style: none; margin-bottom: 0; }
+    .choices li { border: 1px solid #91beb9; padding: .25rem .7rem; border-radius: 1rem; }
+    .jump a { display: inline-block; padding: .35rem .65rem; }
+    .jump { margin-block: .85rem; }
+    main { padding-bottom: 2.5rem; }
+    section { scroll-margin-top: .8rem; margin-block: 1.1rem; }
+    .panel { background: #fff; border: 1px solid #d7e1dd; border-radius: 1rem; padding: clamp(1rem, 3.4vw, 1.75rem); }
+    .step-num { display: inline-grid; place-items: center; width: 1.7em; height: 1.7em; margin-right: .28em; border-radius: 50%; background: #0e6260; color: #fff; font-size: .83em; }
+    .layers, .files { display: grid; gap: .65rem; }
+    .layers { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+    .files { grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); }
+    .tile { background: #eff5f2; padding: .9rem 1rem; border-radius: .7rem; min-width: 0; }
+    .tile p:last-child, .panel > :last-child { margin-bottom: 0; }
+    li + li { margin-top: .32rem; }
+    .choices li + li, .jump li + li { margin-top: 0; }
+    .verify { background: #fff4db; border-left: 4px solid #a56721; padding: .65rem .85rem; border-radius: .25rem; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; }
+    button { background: #0e6260; color: #fff; border: 0; border-radius: .5rem; padding: .5rem .8rem; font: inherit; cursor: pointer; }
+    button:hover { background: #10494a; }
+    code { font-size: .93em; overflow-wrap: anywhere; }
+    details { margin-top: .65rem; }
+    summary { cursor: pointer; font-weight: 650; }
+    textarea { width: 100%; min-height: 7rem; margin-top: .5rem; padding: .6rem; resize: vertical; font: .92rem/1.45 ui-monospace, monospace; }
+    pre { margin: .55rem 0; padding: .65rem .85rem; background: #182b2a; color: #f4f7f4; border-radius: .5rem; overflow-x: auto; font-size: .9em; line-height: 1.5; }
+    blockquote { margin: .7rem 0; padding: .6rem .85rem; background: #eff5f2; border-left: 4px solid #0e6260; }
+    footer { border-top: 1px solid #d7e1dd; padding-top: .75rem; }
+    @media print { .hero { color: #182b2a; background: #fff; padding-block: .5rem; } .eyebrow { color: inherit; } .jump, button { display: none; } .panel { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">和 AI 一起寫程式　W10　11/9（一）</p>
+      <h1>班級求援板</h1>
+      <p>做一個小網站，讓同學用手機選「哪一關想看老師重做一次」。老師看票數，決定下一段要先示範哪一關。</p>
+      <ul class="choices" aria-label="班級求援板的三個選項">
+        <li>找不到部署按鈕</li>
+        <li>送出後試算表沒新增一筆</li>
+        <li>同學的手機打不開</li>
+      </ul>
+    </div>
+  </header>
+  <main class="wrap">
+    <nav aria-label="操作步驟">
+      <ol class="jump">
+        <li><a href="#step-1">1 建試算表</a></li>
+        <li><a href="#step-2">2 貼程式</a></li>
+        <li><a href="#step-3">3 執行與授權</a></li>
+        <li><a href="#step-4">4 部署與試投</a></li>
+        <li><a href="#route-a">改一行：兩條路</a></li>
+        <li><a href="#help">卡關時</a></li>
+        <li><a href="concepts.html">觀念頁</a></li>
+      </ol>
+    </nav>
+
+    <section class="panel" aria-labelledby="layers-title">
+      <h2 id="layers-title">按下去，那一票去了哪裡？</h2>
+      <div class="layers">
+        <div class="tile"><h3>前端（front end）</h3><p><code>Index.html</code> 是手機看得到的畫面。它把你選的按鈕交給後端，也顯示票數。</p></div>
+        <div class="tile"><h3>後端（back end）</h3><p><code>Code.gs</code> 跑在 Google 的伺服器上。它確認收到的是三個選項之一，再存票和算票。</p></div>
+        <div class="tile"><h3>資料儲存（storage）</h3><p>Google 試算表每票加一列，只記場次和選項。不同裝置看的都是這張表的票數。</p></div>
+      </div>
+      <p>部署（deployment）就是把這套程式放到一個網址，讓別人也能用。W5 的 bot 走的是同一套：Apps Script 當後端、試算表當儲存；這次多了一個你自己的畫面。</p>
+      <p>可跳過：<a href="starter/Index.html" target="_blank" rel="noopener">開啟本機預覽</a>看看按鈕長什麼樣。預覽按的票不會進練習表，正式投票只認 <code>/exec</code>。想知道每一步為什麼這樣做，開<a href="concepts.html">觀念頁</a>：一票的旅程、存檔不等於上線、授權畫面在問什麼，都可以按著玩。</p>
+    </section>
+
+    <section id="step-1" class="panel" aria-labelledby="step-1-title">
+      <h2 id="step-1-title"><span class="step-num">1</span>建自己的空白試算表</h2>
+      <ol>
+        <li>用電腦登入 Google，<strong>用 W5 做 bot 的那個個人 Gmail</strong>（學校帳號的 Apps Script 可能被管理員關掉）。開啟 <a href="https://sheets.google.com/" target="_blank" rel="noopener">Google 試算表</a>，新增一份空白試算表。</li>
+        <li>把檔名改成「班級求援板練習」。這是今天專用的練習表。</li>
+        <li>在試算表上方按「擴充功能」→「Apps Script」，會在另一個分頁打開編輯器。試算表分頁先留著。</li>
+      </ol>
+      <p class="verify"><strong>看到這裡就對了。</strong> 一個分頁是空白試算表，另一個分頁是 Apps Script 編輯器。</p>
+    </section>
+
+    <section id="step-2" class="panel" aria-labelledby="step-2-title">
+      <h2 id="step-2-title"><span class="step-num">2</span>把兩份程式貼到對的檔案</h2>
+      <div class="files">
+        <div class="tile">
+          <h3>後端放在指令碼檔</h3>
+          <p>點左邊已有的指令碼檔，名稱可能是「程式碼.gs」。把原有的範例整段換成 <code>Code.gs</code> 的內容。</p>
+          <div class="actions"><button type="button" data-copy-source="gs" hidden>複製 Code.gs</button><a href="starter/Code.gs" download="Code.gs">下載 Code.gs</a></div>
+          <details data-source-panel="gs" hidden><summary>查看 Code.gs 原始碼</summary><textarea data-source-text="gs" aria-label="Code.gs 原始碼" rows="7" readonly spellcheck="false"></textarea></details>
+        </div>
+        <div class="tile">
+          <h3>畫面放在 Index</h3>
+          <p>在左側「檔案」旁按「＋」，選「HTML」，輸入 <code>Index</code>（大寫 I、一字不差，後端會照這個名字找畫面）。開啟新增的 <code>Index.html</code>，把原有的範例整段換成起步檔 <code>Index.html</code> 的內容。</p>
+          <div class="actions"><button type="button" data-copy-source="html" hidden>複製 Index.html</button><a href="starter/Index.html" download="Index.html">下載 Index.html</a></div>
+          <details data-source-panel="html" hidden><summary>查看 Index.html 原始碼</summary><textarea data-source-text="html" aria-label="Index.html 原始碼" rows="7" readonly spellcheck="false"></textarea></details>
+        </div>
+      </div>
+      <p id="copy-status" aria-live="polite"></p>
+      <p>若從下載檔複製，請用記事本或其他純文字編輯器開檔。兩份程式都貼完後，在 Apps Script 按上方的儲存圖示（或 Ctrl+S）。</p>
+    </section>
+
+    <section id="step-3" class="panel" aria-labelledby="step-3-title">
+      <h2 id="step-3-title"><span class="step-num">3</span>執行一次，讓程式準備好試算表</h2>
+      <ol>
+        <li>在 Apps Script 點回左側的指令碼檔。在上方「執行」旁的函式下拉選單，選 <code>setupHelpBoard</code>，再按「執行」。</li>
+        <li>跳出「需要授權」→「審查權限」→ 選剛才用來開這份試算表的那個個人 Gmail → 看到「Google 尚未驗證這個應用程式」是正常的，這支程式是你自己剛貼的 → 左下「進階」→「前往 …（不安全）」→ 權限清單有勾選框就<strong>每一項都勾</strong> →「繼續」。跟 W5 做 bot 時按過的授權畫面一樣；拿不準要按哪一個，先找老師。</li>
+        <li>切回試算表，找底部的 <code>Votes</code> 分頁。必要時重新整理試算表。</li>
+      </ol>
+      <p class="verify"><strong>先看資料再往下走。</strong> <code>Votes</code> 的第一列應該有「場次」和「選項」兩個欄名。看得到再進下一步。</p>
+    </section>
+
+    <section id="step-4" class="panel" aria-labelledby="step-4-title">
+      <h2 id="step-4-title"><span class="step-num">4</span>部署後，換一台裝置投一票</h2>
+      <h3>拿到網站網址</h3>
+      <ol>
+        <li>在 Apps Script 右上角按「部署」→「新增部署作業」。按「選取類型」旁的齒輪，選「網頁應用程式」。</li>
+        <li>執行身分選「我」，讓程式用你的權限寫入練習表。同學只需要能開網站。</li>
+        <li>「誰可以存取」選「<strong>所有人</strong>」，跟 W5 的 bot 一樣。這張表只記場次和選項、沒有任何個人資料，所以可以開給所有人，同學的手機不用登入就能投。以後的表如果會記名字或成績，就要縮小到「任何擁有 Google 帳戶的使用者」或更小。</li>
+        <li>按「部署」，複製網頁應用程式的網址。認尾巴就好，這次要的是 <code>/exec</code>。先試投，再交網址。</li>
+      </ol>
+      <h3>手機送一票，電腦回來看</h3>
+      <ol>
+        <li>先在電腦開 <code>/exec</code>，看一下目前票數。</li>
+        <li>用手機開同一個 <code>/exec</code> 網址（選了「所有人」就不用登入），選一項送出一次。也可以請旁邊的同學用他的手機幫你投。</li>
+        <li>回電腦看試算表的 <code>Votes</code>。底下應該多一列，選項對得上剛才投的那一項。</li>
+        <li>在電腦的網站按「更新票數」，確認剛才選的那一項多一票。老師請你交網址時，交這個 <code>/exec</code>。</li>
+      </ol>
+      <p class="verify"><strong>做到這裡就完成。</strong> 手機能投票、試算表多一列、電腦按「更新票數」看得到新票數。</p>
+    </section>
+
+    <section id="route-a" class="panel" aria-labelledby="ai-title">
+      <h2 id="ai-title">做完再請 AI 改一行：兩條路同分</h2>
+      <p>目標一樣：把投票板的標題改成「下一段想看老師重做哪一關？」，手機重新整理後看到新標題。有自己的筆電、W6 或 W7 裝過 Node.js 的人走路線 A；其他人走路線 B。兩條路同分。</p>
+      <h3>路線 B：瀏覽器問 AI，自己貼回去</h3>
+      <p>用你手邊的 AI 工具，貼上起步檔的 <code>Code.gs</code> 來問。</p>
+      <blockquote>請找出這份程式裡的 <code>BOARD_TITLE</code>，把標題改成「下一段想看老師重做哪一關？」。請列出原本和改完的那一行。</blockquote>
+      <p>確認 AI 指的是畫面上看得到的那一行，再自己貼回編輯器。要讓手機看到改版，照〈卡關時〉的「我存了新程式，想更新同一個網址」做。</p>
+      <h3>路線 A：讓 agent 改程式、自己推上線</h3>
+      <p>W3 讓 agent 用 gh 替你按 GitHub 的按鈕，W6 用 gws 讀雲端硬碟。這次換 <code>clasp</code>，Google 出的 Apps Script 命令列工具：agent 改完程式，可以直接推上你的專案、更新同一個網址，不用再複製貼上。</p>
+      <ol>
+        <li><strong>裝 clasp</strong>（只做一次；教室機重開會消失，當天再貼一次）。開 PowerShell 貼這三行：
+<pre>winget install --id OpenJS.NodeJS.LTS -e --accept-package-agreements --accept-source-agreements --silent
+$env:PATH += ";$env:ProgramFiles\nodejs;$env:APPDATA\npm"
+npm install -g @google/clasp</pre>
+          W6、W7 裝過 Node.js 的筆電只要貼最後一行。你應該看到：新開一個 PowerShell 視窗打 <code>clasp -v</code>，出現版本號。</li>
+        <li><strong>登入、開 API</strong>。打 <code>clasp login</code>，瀏覽器會跳出來，選跟練習表同一個個人 Gmail、按允許，終端機說已登入。再開 <a href="https://script.google.com/home/usersettings" target="_blank" rel="noopener">script.google.com/home/usersettings</a>，把「Google Apps Script API」切成開啟，不開的話下一步會被擋。</li>
+        <li><strong>把專案抓下來</strong>。在 Apps Script 編輯器左側按齒輪「專案設定」，複製「指令碼 ID」。新建一個空資料夾，在裡面開 PowerShell 打 <code>clasp clone-script 貼上指令碼ID</code>（ID 接在指令後面、同一行，不是先按 Enter 再貼）。你應該看到：資料夾裡多出 <code>Code.js</code>、<code>Index.html</code>、<code>appsscript.json</code>。後端的副檔名從 .gs 變 .js 是正常的，內容一樣。</li>
+        <li><strong>交給 agent</strong>。用 Antigravity 或 Codex 開這個資料夾，用自己的話講目標，例如：「把 Code.js 裡的 BOARD_TITLE 改成『下一段想看老師重做哪一關？』，先列計畫等我同意；改完先給我看改前改後的對照，我說可以再執行 clasp push -f 推上去。」W3 的規矩照用：先看計畫、再看 diff、不對就退回一次。push 會用電腦上的檔整份蓋掉雲端，所以之後只在電腦上改。</li>
+        <li><strong>更新同一個網址</strong>。打 <code>clasp list-deployments</code>，找到有版本號和說明的那個部署 ID（另一個顯示 <code>@HEAD</code>、沒版本號的是測試用；有兩個以上就對照手機正在用的網址裡那串）。再打 <code>clasp create-deployment -i 貼上部署ID -d v2</code>。你應該看到：終端機印出同一個 ID，後面接 @2；手機重新整理看到新標題。只 push 不更新部署，手機看到的永遠是舊版。</li>
+        <li><strong>收尾</strong>。教室機下課前打 <code>clasp logout</code>，把這台電腦上的 clasp 登入拿掉（登入檔等於鑰匙）。想把程式放進 W3 的 repo 可以，但 <code>.clasp.json</code> 不要進 git。</li>
+      </ol>
+      <p class="verify"><strong>路線 A 做到這裡就完成。</strong> 手機重新整理看到新標題、<code>clasp list-deployments</code> 的版本號變了、試算表裡原本的票還在。</p>
+      <details class="ext"><summary>延伸（選做）：W6 的 gws 還在？叫 agent 幫你數票</summary>
+        <p>clasp 管程式，gws 管資料。W6 在自己筆電裝好 gws、登入還在的人，可以讓同一個 agent 順手把票數算出來；沒有的人跳過，不用為了這段重裝。</p>
+        <ol>
+          <li><strong>先確認還能用</strong>。打 <code>gws auth status</code>，<code>scopes</code> 裡要有 <code>spreadsheets</code>。說沒登入、或清單裡沒有，這段就跳過（教室機的還原卡會清掉 W6 裝的東西）。</li>
+          <li><strong>跟 agent 講目標</strong>。練習表網址裡 <code>/d/</code> 後面那一串就是試算表 ID。對 agent 說：「用 gws 讀我這張試算表的 Votes 分頁，算每個選項各幾票給我看。只准讀，不准改、不准刪。」它要下的指令長這樣，想自己打就貼這一行（引號照打）：
+<pre>gws.cmd sheets spreadsheets values get --params '{\"spreadsheetId\":\"貼上試算表ID\",\"range\":\"Votes!A:B\"}'</pre></li>
+          <li><strong>你應該看到</strong>：兩欄「場次、選項」，一列就是一票。agent 數出來的票數要跟網頁按「更新票數」的一樣，不一樣以試算表為準。它想跑 <code>update</code>、<code>append</code>、<code>delete</code>，一律回「只准讀」。</li>
+        </ol>
+        <p class="small">老師 11:35 換場次推上線後，可能也用這招當場數票。下週 W11 換 Python 來讀同一張表。</p>
+      </details>
+    </section>
+
+    <section id="help" class="panel" aria-labelledby="help-title">
+      <h2 id="help-title">卡關時先看這裡</h2>
+      <details><summary>下拉選單找不到 setupHelpBoard</summary><p>點左側的指令碼檔（通常叫「程式碼.gs」，檔名不用改），確認 <code>Code.gs</code> 的內容貼在這裡。按儲存，等一下再看選單。</p></details>
+      <details><summary>執行顯示完成，卻沒有 Votes 分頁</summary><p>確認目前看的就是第一步建的練習表，重新整理一次。還是沒有，多半是授權畫面少勾了：到 <a href="https://myaccount.google.com/connections" target="_blank" rel="noopener">Google 帳戶的「第三方應用程式與服務」</a> 找到這個專案 →「刪除所有連結」（按鈕名以畫面為準）→ 回編輯器重跑 <code>setupHelpBoard</code> → 這次每一項都勾。看到 <code>Votes</code> 兩個欄名才算過，執行記錄說完成不算。</p></details>
+      <details><summary>手機說沒有權限，或網站開不出來</summary><p>先看網址是不是 <code>/exec</code> 結尾。再到「部署」→「管理部署作業」看「誰可以存取」是不是「所有人」（不是「任何擁有 Google 帳戶的使用者」）；改了要選「新版本」再部署。網頁寫找不到 <code>Index</code> 之類的字，回第二步看 HTML 檔名是不是一字不差的 <code>Index</code>。</p></details>
+      <details><summary>改程式後不小心又按了「新增部署作業」</summary><p>會多出一個新的 <code>/exec</code> 網址。回「部署」→「管理部署作業」用原本那一個；多出來的可以封存。</p></details>
+      <details><summary>我存了新程式，想更新同一個網址</summary><p>先儲存，再走「部署」→「管理部署作業」→選原本的部署→按編輯。把版本改為「新版本」，再按「部署」。重新整理原本的 <code>/exec</code> 檢查新畫面。</p></details>
+      <details><summary>路線 A：打 clasp 跳「因為這個系統上已停用指令碼執行」</summary><p>PowerShell 擋住了 npm 裝的 <code>clasp.ps1</code>。把指令開頭改成 <code>clasp.cmd</code>（例如 <code>clasp.cmd login</code>），其餘不變；<code>npm</code> 被擋就改 <code>npm.cmd</code>。</p></details>
+      <details><summary>路線 A：打 clasp 說「不是內部或外部命令」或「無法辨識」</summary><p>這個視窗還沒讀到剛裝好的程式。再貼一次 <code>$env:PATH += ";$env:ProgramFiles\nodejs;$env:APPDATA\npm"</code>，或關掉 PowerShell 重開一個再打 <code>clasp -v</code>。</p></details>
+      <details><summary>路線 A：push 說 User has not enabled the Apps Script API</summary><p>這個帳號的 Apps Script API 開關沒開。到 <a href="https://script.google.com/home/usersettings" target="_blank" rel="noopener">script.google.com/home/usersettings</a> 切成開啟，等一分鐘再 push。</p></details>
+      <details><summary>路線 A：clasp login 的瀏覽器沒跳出來</summary><p>把終端機印出來的那串網址自己貼到瀏覽器開。還是不行就打 <code>clasp login --no-localhost</code>，照畫面把代碼貼回終端機。</p></details>
+      <details><summary>路線 A：push 成功了，手機還是舊的</summary><p>push 只更新程式，網址跑的是部署當時的版本。照路線 A 第 5 步 <code>clasp create-deployment -i 部署ID -d v3</code> 更新同一個部署；更新完用無痕視窗開一次，確認「誰可以存取」還是「所有人」。</p></details>
+      <details><summary>路線 A：我在編輯器也改了，push 之後不見了</summary><p>push 是用電腦上的檔整份蓋掉雲端。要以雲端為準，先確認電腦上沒有要保留的修改，再 <code>clasp pull</code> 抓下來改，之後只在電腦上改。</p></details>
+    </section>
+
+    <footer>
+      <p><a href="https://developers.google.com/apps-script/guides/web?hl=zh-tw#deploying_a_script_as_a_web_app">Google 官方部署說明</a> · <a href="https://developers.google.com/apps-script/concepts/deployments?hl=zh-tw#edit-versioned">Google 官方版本更新說明</a> · <a href="https://developers.google.com/apps-script/guides/clasp?hl=zh-tw">clasp 官方說明</a></p>
+    </footer>
+  </main>
+  <script type="application/json" id="source-gs">"const ROUND_ID = 'W10-1';\nconst BOARD_TITLE = '哪一關想看老師再做一次？';\nconst VOTE_SHEET = 'Votes';\nconst VOTE_HEADERS = ['場次', '選項'];\nconst SPREADSHEET_PROPERTY = 'HELP_BOARD_SPREADSHEET_ID';\nconst OPTIONS = [\n  { id: 'deploy', label: '找不到部署按鈕' },\n  { id: 'sheet', label: '送出後試算表沒新增一筆' },\n  { id: 'phone', label: '同學的手機打不開' },\n];\n\n// 從綁定在試算表的 Apps Script 編輯器執行一次。\nfunction setupHelpBoard() {\n  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();\n  if (!spreadsheet) {\n    throw new Error('請從目標試算表的「擴充功能 → Apps Script」開啟編輯器，再執行設定。');\n  }\n\n  const lock = LockService.getScriptLock();\n  if (!lock.tryLock(5000)) {\n    throw new Error('目前有人在送出，請稍後再執行設定。');\n  }\n  try {\n    const sheet = spreadsheet.getSheetByName(VOTE_SHEET) || spreadsheet.insertSheet(VOTE_SHEET);\n    if (sheet.getLastRow() === 0) {\n      sheet.getRange(1, 1, 1, VOTE_HEADERS.length).setValues([VOTE_HEADERS]);\n    } else if (!hasVoteHeaders_(sheet)) {\n      throw new Error('Votes 分頁已有資料，但欄名不是「場次」、「選項」。請先確認分頁內容。');\n    }\n    SpreadsheetApp.flush();\n    PropertiesService.getScriptProperties().setProperty(SPREADSHEET_PROPERTY, spreadsheet.getId());\n    console.log('設定完成。請到試算表確認 Votes 分頁有「場次」和「選項」兩欄。');\n  } finally {\n    lock.releaseLock();\n  }\n}\n\nfunction doGet(event) {\n  if (event && event.parameter && event.parameter.view === 'results') {\n    return ContentService.createTextOutput(JSON.stringify(getBoard()))\n      .setMimeType(ContentService.MimeType.JSON);\n  }\n  return HtmlService.createTemplateFromFile('Index').evaluate()\n    .setTitle(BOARD_TITLE)\n    .addMetaTag('viewport', 'width=device-width, initial-scale=1');\n}\n\nfunction getBoard() {\n  try {\n    const sheet = getVoteSheet_();\n    return sheet ? readBoard_(sheet) : setupRequired_();\n  } catch (error) {\n    return { error: '目前讀不到票數，請老師確認試算表和存取權限。' };\n  }\n}\n\nfunction submitVote(roundId, optionId) {\n  if (roundId !== ROUND_ID) {\n    return { error: '場次已更換。請先更新票數，再選一次。' };\n  }\n  const option = OPTIONS.find((item) => item.id === optionId);\n  if (!option) {\n    return { error: '請選擇畫面上的其中一個選項。' };\n  }\n\n  const lock = LockService.getScriptLock();\n  if (!lock.tryLock(5000)) {\n    return { error: '目前送出的人較多。這票還沒寫入，請稍後再試。' };\n  }\n  try {\n    const sheet = getVoteSheet_();\n    if (!sheet) {\n      return setupRequired_();\n    }\n\n    sheet.appendRow([ROUND_ID, option.label]);\n    SpreadsheetApp.flush();\n    return { ok: true };\n  } catch (error) {\n    return { error: '目前無法確認這票是否寫入。請更新票數，並請老師查看試算表。' };\n  } finally {\n    lock.releaseLock();\n  }\n}\n\nfunction getVoteSheet_() {\n  const id = PropertiesService.getScriptProperties().getProperty(SPREADSHEET_PROPERTY);\n  if (!id) {\n    return null;\n  }\n  const sheet = SpreadsheetApp.openById(id).getSheetByName(VOTE_SHEET);\n  return sheet && hasVoteHeaders_(sheet) ? sheet : null;\n}\n\nfunction hasVoteHeaders_(sheet) {\n  const headers = sheet.getRange(1, 1, 1, VOTE_HEADERS.length).getDisplayValues()[0];\n  return VOTE_HEADERS.every((header, index) => headers[index] === header);\n}\n\nfunction setupRequired_() {\n  return { error: '投票板還沒設定好。請老師執行 setupHelpBoard 並確認 Votes 分頁。' };\n}\n\nfunction readBoard_(sheet) {\n  const counts = new Map(OPTIONS.map((item) => [item.label, 0]));\n  const rowCount = sheet.getLastRow() - 1;\n  if (rowCount > 0) {\n    const rows = sheet.getRange(2, 1, rowCount, VOTE_HEADERS.length).getDisplayValues();\n    for (const [roundId, label] of rows) {\n      if (roundId === ROUND_ID && counts.has(label)) {\n        counts.set(label, counts.get(label) + 1);\n      }\n    }\n  }\n  return {\n    round: ROUND_ID,\n    title: BOARD_TITLE,\n    options: OPTIONS.map((option) => ({ ...option, count: counts.get(option.label) })),\n  };\n}\n"</script>
+  <script type="application/json" id="source-html">"\u003c!doctype html>\n\u003chtml lang=\"zh-Hant\" data-mode=\"\u003c?= 'cloud' ?>\">\n\u003chead>\n  \u003cmeta charset=\"utf-8\">\n  \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  \u003ctitle>哪一關想看老師再做一次？\u003c/title>\n  \u003cstyle>\n    :root {\n      color-scheme: light;\n      font-family: system-ui, sans-serif;\n      background: #f4f7f3;\n      color: #1b2c29;\n      line-height: 1.6;\n    }\n    * { box-sizing: border-box; }\n    body { margin: 0; }\n    main { width: min(100% - 2rem, 38rem); margin: 2rem auto; }\n    h1 { margin: .3rem 0; font-size: clamp(1.75rem, 6vw, 2.5rem); line-height: 1.2; }\n    h2, legend { font-size: 1.15rem; font-weight: 700; }\n    p { margin: .65rem 0; }\n    .mode {\n      display: inline-block;\n      padding: .15rem .65rem;\n      border: 1px solid #b2cec4;\n      border-radius: 1rem;\n      background: #e0f2ea;\n      color: #145747;\n      font-size: .9rem;\n      font-weight: 700;\n    }\n    .card {\n      margin-top: 1rem;\n      padding: 1rem;\n      background: white;\n      border: 1px solid #ccd8d3;\n      border-radius: 1rem;\n    }\n    fieldset { margin: 0 0 1rem; border: 0; padding: 0; min-width: 0; }\n    legend { padding: 0; margin-bottom: .4rem; }\n    label {\n      display: flex;\n      align-items: center;\n      gap: .65rem;\n      min-height: 48px;\n      margin-top: .5rem;\n      padding: .55rem .75rem;\n      background: #f3f8f5;\n      border: 1px solid #ccd8d3;\n      border-radius: .6rem;\n      cursor: pointer;\n    }\n    input[type=\"radio\"] { flex: none; margin: 0; accent-color: #0c6255; }\n    button {\n      min-height: 44px;\n      padding: .45rem .9rem;\n      border: 1px solid #0c6255;\n      border-radius: .55rem;\n      background: #0c6255;\n      color: white;\n      font: inherit;\n      font-weight: 650;\n      cursor: pointer;\n    }\n    button.secondary { background: white; color: #0c6255; }\n    button:disabled { opacity: .65; cursor: default; }\n    :focus-visible { outline: 3px solid #955500; outline-offset: 3px; }\n    .results-heading {\n      display: flex;\n      flex-wrap: wrap;\n      align-items: center;\n      justify-content: space-between;\n      gap: .5rem;\n    }\n    .results-heading h2 { margin: 0; }\n    ul { padding: 0; margin: .5rem 0 0; list-style: none; }\n    li {\n      display: flex;\n      justify-content: space-between;\n      gap: .75rem;\n      border-top: 1px solid #dbe5df;\n      padding: .55rem 0;\n    }\n    li strong { white-space: nowrap; }\n    #status { min-height: 1.6em; color: #304e47; }\n  \u003c/style>\n\u003c/head>\n\u003cbody>\n  \u003cmain>\n    \u003cheader>\n      \u003cspan class=\"mode\" id=\"mode-label\">載入中\u003c/span>\n      \u003ch1 id=\"board-title\">哪一關想看老師再做一次？\u003c/h1>\n      \u003cp id=\"mode-description\">\u003c/p>\n      \u003cp>場次 \u003cstrong id=\"round\">載入中\u003c/strong>\u003c/p>\n    \u003c/header>\n\n    \u003cform class=\"card\" id=\"vote-form\">\n      \u003cfieldset id=\"vote-options\" disabled>\n        \u003clegend>選一個想再看一次的步驟\u003c/legend>\n        \u003cdiv id=\"choices\">\u003c/div>\n      \u003c/fieldset>\n      \u003cbutton type=\"submit\" id=\"submit-vote\" disabled>送出一票\u003c/button>\n    \u003c/form>\n\n    \u003csection class=\"card\" aria-labelledby=\"results-title\">\n      \u003cdiv class=\"results-heading\">\n        \u003ch2 id=\"results-title\">目前票數\u003c/h2>\n        \u003cbutton type=\"button\" class=\"secondary\" id=\"refresh-votes\" disabled>更新票數\u003c/button>\n      \u003c/div>\n      \u003cul id=\"results\" role=\"list\">\u003c/ul>\n    \u003c/section>\n    \u003cp id=\"status\" role=\"status\" aria-live=\"polite\" aria-atomic=\"true\">載入投票板中。\u003c/p>\n    \u003cnoscript>請啟用 JavaScript，才能讀取選項和送出投票。\u003c/noscript>\n  \u003c/main>\n  \u003cscript>\n    const isCloud = document.documentElement.dataset.mode === 'cloud';\n    // 只供直接開啟 HTML 時預覽。雲端選項一律從 Code.gs 讀取。\n    const previewBoard = {\n      round: 'W10-1',\n      title: '哪一關想看老師再做一次？',\n      options: [\n        { id: 'deploy', label: '找不到部署按鈕' },\n        { id: 'sheet', label: '送出後試算表沒新增一筆' },\n        { id: 'phone', label: '同學的手機打不開' },\n      ],\n    };\n    const storageKey = 'w10-help-board-preview:' + previewBoard.round;\n    let previewCounts = {};\n    let canUseStorage = true;\n    let currentRound = '';\n    let busy = false;\n    const form = document.getElementById('vote-form');\n    const fieldset = document.getElementById('vote-options');\n    const choices = document.getElementById('choices');\n    const results = document.getElementById('results');\n    const submitButton = document.getElementById('submit-vote');\n    const refreshButton = document.getElementById('refresh-votes');\n    const status = document.getElementById('status');\n\n    document.getElementById('mode-label').textContent = isCloud ? '雲端投票' : '本機預覽';\n    document.getElementById('mode-description').textContent = isCloud\n      ? '每票只記場次和選項。'\n      : '這裡的票只在這個瀏覽器模擬，不會寫入 Google 試算表。';\n\n    function setBusy(value) {\n      busy = value;\n      fieldset.disabled = busy || !currentRound;\n      submitButton.disabled = busy || !currentRound;\n      refreshButton.disabled = busy;\n    }\n\n    function readPreviewCounts() {\n      if (canUseStorage) {\n        try {\n          previewCounts = JSON.parse(localStorage.getItem(storageKey)) || {};\n        } catch (error) {\n          canUseStorage = false;\n        }\n      }\n      return previewCounts;\n    }\n\n    function previewCount(counts, id) {\n      const count = counts[id];\n      return Number.isSafeInteger(count) && count >= 0 ? count : 0;\n    }\n\n    function readPreviewBoard() {\n      const counts = readPreviewCounts();\n      return {\n        ...previewBoard,\n        options: previewBoard.options.map((item) => ({\n          ...item,\n          count: previewCount(counts, item.id),\n        })),\n      };\n    }\n\n    function writePreviewVote(optionId) {\n      const counts = readPreviewCounts();\n      previewCounts = { ...counts, [optionId]: previewCount(counts, optionId) + 1 };\n      if (canUseStorage) {\n        try {\n          localStorage.setItem(storageKey, JSON.stringify(previewCounts));\n        } catch (error) {\n          canUseStorage = false;\n        }\n      }\n      return { ok: true };\n    }\n\n    function callServer(action, ...args) {\n      return new Promise((resolve, reject) => {\n        if (!window.google || !google.script || !google.script.run) {\n          reject(new Error('無法連線'));\n          return;\n        }\n        const runner = google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);\n        runner[action](...args);\n      });\n    }\n\n    function showBoard(board) {\n      const selected = currentRound === board.round\n        ? choices.querySelector('input:checked')?.value\n        : null;\n      currentRound = board.round;\n      document.getElementById('board-title').textContent = board.title;\n      document.getElementById('round').textContent = board.round;\n      choices.replaceChildren();\n      results.replaceChildren();\n      for (const option of board.options) {\n        const label = document.createElement('label');\n        const radio = document.createElement('input');\n        radio.type = 'radio';\n        radio.name = 'vote';\n        radio.value = option.id;\n        radio.checked = option.id === selected;\n        radio.required = true;\n        label.append(radio, document.createTextNode(option.label));\n        choices.append(label);\n\n        const row = document.createElement('li');\n        const count = document.createElement('strong');\n        count.textContent = option.count + ' 票';\n        row.append(document.createTextNode(option.label), count);\n        results.append(row);\n      }\n    }\n\n    async function updateResults() {\n      const board = isCloud ? await callServer('getBoard') : readPreviewBoard();\n      if (board.error) {\n        return board.error;\n      }\n      showBoard(board);\n      return '';\n    }\n\n    async function refreshResults() {\n      if (busy) return;\n      setBusy(true);\n      status.textContent = '正在讀取票數。';\n      try {\n        status.textContent = (await updateResults()) || '票數已更新。';\n      } catch (error) {\n        status.textContent = '暫時讀不到票數，請稍後按「更新票數」。';\n      } finally {\n        setBusy(false);\n      }\n    }\n\n    form.addEventListener('submit', async (event) => {\n      event.preventDefault();\n      const selection = choices.querySelector('input:checked');\n      if (busy || !selection) return;\n      setBusy(true);\n      status.textContent = '正在送出。';\n      try {\n        const reply = isCloud\n          ? await callServer('submitVote', currentRound, selection.value)\n          : writePreviewVote(selection.value);\n        if (!reply.ok) {\n          status.textContent = reply.error || '暫時無法確認是否寫入，請先更新票數。';\n          return;\n        }\n\n        selection.checked = false;\n        const success = isCloud ? '已送出一票。' : '已在本機模擬一票。';\n        status.textContent = success;\n        try {\n          if (await updateResults()) {\n            status.textContent = success + ' 目前讀不到最新票數，請稍後更新。';\n          }\n        } catch (error) {\n          status.textContent = success + ' 目前讀不到最新票數，請稍後更新。';\n        }\n      } catch (error) {\n        status.textContent = '暫時無法確認是否寫入，請先更新票數，再請老師查看試算表。';\n      } finally {\n        setBusy(false);\n      }\n    });\n\n    refreshButton.addEventListener('click', refreshResults);\n    refreshResults();\n  \u003c/script>\n\u003c/body>\n\u003c/html>\n"</script>
+  <script>
+    const status = document.getElementById('copy-status');
+    for (const button of document.querySelectorAll('[data-copy-source]')) {
+      const kind = button.dataset.copySource;
+      const source = JSON.parse(document.getElementById('source-' + kind).textContent);
+      if (!source) continue;
+      const panel = document.querySelector('[data-source-panel="' + kind + '"]');
+      const field = panel.querySelector('textarea');
+      field.value = source;
+      panel.hidden = false;
+      button.hidden = false;
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(source);
+          status.textContent = button.textContent.replace('複製 ', '') + ' 已複製。';
+        } catch {
+          panel.open = true;
+          field.focus();
+          field.select();
+          status.textContent = '已選取程式碼。Windows 請按 Ctrl+C，Mac 請按 Command+C。';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
