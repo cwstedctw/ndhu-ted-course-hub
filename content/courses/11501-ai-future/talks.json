@@ -442,7 +442,25 @@
       ],
       "poster": "/images/talks/t10-poster.webp",
       "worksheetUrl": null,
-      "materials": []
+      "materials": [
+        {
+          "label": "講者簡報（PDF，34 頁）",
+          "url": "https://drive.google.com/file/d/1z8FjIs7ZgBpBKzVpf_A3cB_B3gLR4EAM/view"
+        },
+        {
+          "label": "講前導讀一頁卡（原圖，3 分鐘看完）",
+          "url": "https://cwstedctw.github.io/ndhu-ted-course-hub/images/talks/t10-preread.webp"
+        },
+        {
+          "label": "30 秒預告短片（橫式）",
+          "url": "https://drive.google.com/file/d/1egptE157wLArAs5XMVd3l2w7efVlpw7U/view"
+        }
+      ],
+      "preread": "/images/talks/t10-preread.webp",
+      "teaser": {
+        "src": "/videos/t10-teaser-720p.mp4",
+        "poster": "/images/talks/t10-teaser-poster.jpg"
+      }
     },
     {
       "id": "t11",
